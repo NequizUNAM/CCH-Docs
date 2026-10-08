@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula Digital - Inicio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background:#f4f6fb; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    main { flex:1; }
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); }
+    .app-navbar .dropdown-menu { border:0; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); padding:.5rem; }
+    .app-navbar .dropdown-item { border-radius:8px; padding:.5rem .8rem; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:2px solid #0d6efd; }
+    .hero { background:linear-gradient(135deg,#1e293b,#0f172a); color:#fff; padding:4rem 1rem; border-bottom:5px solid #0d6efd; }
+    .section-card { border:0; border-radius:16px; box-shadow:0 6px 18px rgba(15,23,42,.08); transition:transform .2s, box-shadow .2s; }
+    .section-card:hover { transform:translateY(-5px); box-shadow:0 14px 30px rgba(15,23,42,.16); }
+    .icon-circle { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,.2); }
+    .c-mat { background:#6f42c1; } .c-cib { background:#0d6efd; } .c-est { background:#198754; }
+  </style>
+</head>
+<body>
+
+  <!-- Contenedor donde JS dibuja el header -->
+  <div id="app-header"></div>
+
+  <main>
+    <section class="hero text-center">
+      <div class="container">
+        <i class="bi bi-mortarboard-fill display-3"></i>
+        <h1 class="display-5 fw-bold mt-2">Aula Digital</h1>
+        <p class="lead mb-0">Matemáticas • Cibernética • Estadística</p>
+      </div>
+    </section>
+
+    <div class="container my-5">
+      <h2 class="fw-bold mb-4"><i class="bi bi-grid-fill text-primary me-2"></i>Contenido disponible</h2>
+      <div class="row g-4" id="home-cards"></div>
+    </div>
+  </main>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Menú controlado desde index.html</small></footer>
+
+  <!--
+    ============================================================
+    FUENTE ÚNICA DEL MENÚ
+    Para agregar una página nueva, solo añade un objeto en "items".
+    Todas las páginas leen esta configuración y dibujan el header.
+    ============================================================
+  -->
+  <script type="application/json" id="menu-config">
+  {
+    "brand": { "label": "Aula Digital", "icon": "bi-mortarboard-fill", "href": "index.html" },
+    "groups": [
+      {
+        "id": "matematicas", "label": "Matemáticas", "icon": "bi-calculator", "color": "c-mat",
+        "items": [
+          { "label": "Próximamente", "href": "#", "icon": "bi-hourglass-split", "disabled": true }
+        ]
+      },
+      {
+        "id": "cibernetica", "label": "Cibernética", "icon": "bi-cpu", "color": "c-cib",
+        "items": [
+          { "label": "Conversiones numéricas", "href": "conversiones.html", "icon": "bi-arrow-left-right", "desc": "Binario, octal, decimal y hexadecimal con ejercicios." }
+        ]
+      },
+      {
+        "id": "estadistica", "label": "Estadística", "icon": "bi-bar-chart-line", "color": "c-est",
+        "items": [
+          { "label": "Próximamente", "href": "#", "icon": "bi-hourglass-split", "disabled": true }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    /* ---------- Renderizador del header (misma función en todas las páginas) ---------- */
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `
+          <li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}">
+            <i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi ${g.icon} me-1"></i>${g.label}
+            </a>
+            <ul class="dropdown-menu">${items}</ul>
+          </li>`;
+      }).join('');
+
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+          <div class="container">
+            <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul>
+            </div>
+          </div>
+        </nav>`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const menu = JSON.parse(document.getElementById('menu-config').textContent);
+      const page = location.pathname.split('/').pop() || 'index.html';
+      renderHeader(menu, document.getElementById('app-header'), page);
+
+      // Tarjetas de inicio generadas desde el mismo menú
+      document.getElementById('home-cards').innerHTML = menu.groups.map(g => {
+        const links = g.items.map(i => i.disabled
+          ? `<li class="list-group-item text-muted"><i class="bi ${i.icon} me-2"></i>${i.label}</li>`
+          : `<a class="list-group-item list-group-item-action" href="${i.href}"><i class="bi ${i.icon} me-2 text-primary"></i><strong>${i.label}</strong>${i.desc ? `<br><small class="text-muted">${i.desc}</small>` : ''}</a>`
+        ).join('');
+        return `
+          <div class="col-md-4">
+            <div class="card section-card h-100">
+              <div class="card-body">
+                <div class="icon-circle ${g.color} mb-3"><i class="bi ${g.icon}"></i></div>
+                <h4 class="fw-bold">${g.label}</h4>
+                <div class="list-group list-group-flush mt-3">${links}</div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    });
+  </script>
+</body>
+</html>
