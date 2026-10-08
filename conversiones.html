@@ -63,6 +63,22 @@
     .result-tile:hover { transform:scale(1.02); }
     .result-tile .val { font-size:1.2rem; word-break:break-all; }
 
+    /* ESTILOS PARA EL SIMULADOR DE INTERRUPTORES Y FOCOS */
+    .switch-card { background:linear-gradient(145deg, #0f172a, #1e293b); color:#fff; border-radius:20px; padding:1.5rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,255,255,0.1); }
+    .bulb-box { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0.6rem 0.4rem; background:rgba(255,255,255,0.04); border-radius:14px; border:1px solid rgba(255,255,255,0.08); transition:all .25s ease; cursor:pointer; user-select:none; }
+    .bulb-box:hover { background:rgba(255,255,255,0.09); transform:translateY(-4px); }
+    .bulb-icon { font-size:2.2rem; transition:all .3s cubic-bezier(0.34, 1.56, 0.64, 1); filter:drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+    .bulb-box.bulb-on { background:rgba(255, 215, 0, 0.08); border-color:rgba(255, 215, 0, 0.4); }
+    .bulb-box.bulb-on .bulb-icon { color:#ffd700; transform:scale(1.18); filter:drop-shadow(0 0 12px #ffe600) drop-shadow(0 0 22px #ffaa00); }
+    .bulb-box.bulb-off .bulb-icon { color:#475569; opacity:0.4; }
+    .bit-weight { font-size:0.75rem; color:#94a3b8; font-weight:700; letter-spacing:0.5px; }
+    .bit-val { font-size:1.25rem; font-family:'Courier New',monospace; font-weight:800; margin-top:2px; }
+    .bulb-box.bulb-on .bit-val { color:#38bdf8; text-shadow:0 0 8px rgba(56,189,248,0.5); }
+    .bulb-box.bulb-off .bit-val { color:#64748b; }
+    .form-check-input.custom-toggle { width:2.8em; height:1.4em; cursor:pointer; background-color:#334155; border-color:#475569; }
+    .form-check-input.custom-toggle:checked { background-color:#0d6efd; border-color:#0d6efd; box-shadow:0 0 10px rgba(13,110,253,0.5); }
+    .calc-pill { background:rgba(15, 23, 42, 0.8); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:0.75rem 1rem; font-family:'Courier New',monospace; }
+
     /* Matriz de rutas */
     .route-table th, .route-table td { vertical-align:middle; text-align:center; }
     .route-btn { border:0; border-radius:20px; font-size:.78rem; padding:.25rem .7rem; box-shadow:var(--shadow-sm); }
@@ -165,6 +181,69 @@
             </div>
             <div id="live-error" class="text-danger mt-2 small"></div>
             <div class="row g-3 mt-2" id="live-results"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.5. SIMULADOR DE INTERRUPTORES Y FOCOS INTERACTIVOS -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-toggle2-on text-info me-2"></i>3.5. Simulador de Interruptores y Focos (Bitwise Switch Panel)</h2>
+        <p class="text-muted">Haz clic en los interruptores o focos para encenderlos ($1$) o apagarlos ($0$). Observa la conversión automática a Decimal, Hexadecimal y Octal en tiempo real.</p>
+        
+        <div class="card switch-card">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-lightbulb-fill fs-3 text-warning"></i>
+              <h5 class="fw-bold mb-0 text-white">Panel de 8 Bits (1 Byte)</h5>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-sm btn-outline-warning" id="sw-all-on"><i class="bi bi-check-all me-1"></i>Todos ON (255)</button>
+              <button class="btn btn-sm btn-outline-light" id="sw-all-off"><i class="bi bi-x-circle me-1"></i>Todos OFF (0)</button>
+              <button class="btn btn-sm btn-outline-info" id="sw-alternate"><i class="bi bi-arrow-repeat me-1"></i>Alternar (10101010)</button>
+              <button class="btn btn-sm btn-outline-success" id="sw-random"><i class="bi bi-shuffle me-1"></i>Aleatorio</button>
+              <button class="btn btn-sm btn-primary" id="sw-animate"><i class="bi bi-play-fill me-1"></i><span>Contador +1</span></button>
+            </div>
+          </div>
+
+          <!-- Matriz de 8 Focos con Interruptores -->
+          <div class="row row-cols-4 row-cols-sm-8 g-2 mb-4 justify-content-center" id="bulb-container">
+            <!-- Generado dinámicamente con JS -->
+          </div>
+
+          <!-- Resultados Dinámicos e Interpretación Matemática -->
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="calc-pill text-center h-100">
+                <small class="text-info d-block fw-bold mb-1"><i class="bi bi-toggles me-1"></i>BINARIO (Base 2)</small>
+                <span class="fs-4 fw-bold text-white mono" id="sw-res-bin">00000000</span>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="calc-pill text-center h-100">
+                <small class="text-warning d-block fw-bold mb-1"><i class="bi bi-123 me-1"></i>DECIMAL (Base 10)</small>
+                <span class="fs-4 fw-bold text-warning mono" id="sw-res-dec">0</span>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="calc-pill text-center h-100">
+                <small class="text-danger d-block fw-bold mb-1"><i class="bi bi-type me-1"></i>HEXADECIMAL (Base 16)</small>
+                <span class="fs-4 fw-bold text-danger mono" id="sw-res-hex">0x00</span>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="calc-pill text-center h-100">
+                <small class="text-success d-block fw-bold mb-1"><i class="bi bi-hash me-1"></i>OCTAL (Base 8)</small>
+                <span class="fs-4 fw-bold text-success mono" id="sw-res-oct">000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Desglose Matemático Posicional -->
+          <div class="calc-pill mt-3">
+            <small class="text-secondary d-block fw-bold mb-1"><i class="bi bi-calculator me-1"></i>DESGLOSE POSICIONAL DE PESOS SUMADOS:</small>
+            <div class="text-light small text-wrap mono" id="sw-res-math">
+              (0×128) + (0×64) + (0×32) + (0×16) + (0×8) + (0×4) + (0×2) + (0×1) = 0
+            </div>
           </div>
         </div>
       </section>
@@ -546,6 +625,67 @@
         </div>`).join('');
     }
 
+    /* ===================== 3.5. SIMULADOR DE INTERRUPTORES Y FOCOS ===================== */
+    const switchState = [0, 0, 0, 0, 0, 0, 0, 0]; // 8 bits (Bit 7 a Bit 0)
+    const switchWeights = [128, 64, 32, 16, 8, 4, 2, 1];
+    let animTimer = null;
+
+    function renderSwitchPanel() {
+      const container = document.getElementById('bulb-container');
+      container.innerHTML = switchState.map((val, idx) => {
+        const weight = switchWeights[idx];
+        const bitPos = 7 - idx;
+        const isOn = val === 1;
+        return `
+          <div class="col">
+            <div class="bulb-box ${isOn ? 'bulb-on' : 'bulb-off'}" data-sw-index="${idx}" title="Haz clic para conmutar Bit ${bitPos} (Peso ${weight})">
+              <span class="bit-weight">2<sup>${bitPos}</sup> = ${weight}</span>
+              <i class="bi bi-lightbulb-fill bulb-icon my-1"></i>
+              <div class="form-check form-switch m-0 pointer-events-none">
+                <input class="form-check-input custom-toggle" type="checkbox" ${isOn ? 'checked' : ''} tabindex="-1">
+              </div>
+              <span class="bit-val">${val}</span>
+            </div>
+          </div>`;
+      }).join('');
+
+      updateSwitchOutputs();
+    }
+
+    function updateSwitchOutputs() {
+      // Calcular valor decimal equivalente
+      let decVal = 0;
+      const mathTerms = [];
+      switchState.forEach((val, idx) => {
+        const weight = switchWeights[idx];
+        if (val === 1) decVal += weight;
+        mathTerms.push(`(${val}×${weight})`);
+      });
+
+      const binStr = switchState.join('');
+      const hexStr = '0x' + decVal.toString(16).toUpperCase().padStart(2, '0');
+      const octStr = decVal.toString(8).padStart(3, '0');
+
+      document.getElementById('sw-res-bin').textContent = binStr;
+      document.getElementById('sw-res-dec').textContent = decVal;
+      document.getElementById('sw-res-hex').textContent = hexStr;
+      document.getElementById('sw-res-oct').textContent = octStr;
+      document.getElementById('sw-res-math').textContent = mathTerms.join(' + ') + ' = ' + decVal;
+    }
+
+    function toggleBit(index) {
+      switchState[index] = switchState[index] === 1 ? 0 : 1;
+      renderSwitchPanel();
+    }
+
+    function setSwitchValue(num) {
+      const binStr = (num & 0xFF).toString(2).padStart(8, '0');
+      for (let i = 0; i < 8; i++) {
+        switchState[i] = parseInt(binStr[i], 10);
+      }
+      renderSwitchPanel();
+    }
+
     /* ===================== 4. MAPA DE MÉTODOS ===================== */
     const ROUTE_TEXT = {
       '2-8':   ['Agrupar 3 bits', 'Agrupa de 3 en 3 desde la derecha y convierte cada grupo (4-2-1).'],
@@ -660,14 +800,19 @@
       renderRoutes();
       renderExercises();
       renderLive();
+      renderSwitchPanel();
       updateScore();
+
       document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => { if (!bootstrap.Popover.getInstance(el)) new bootstrap.Popover(el); });
 
+      // Event listener global para interactividad
       document.addEventListener('click', e => {
         const open = e.target.closest('[data-open-modal]');
         if (open) openModal(+open.dataset.openModal);
+        
         const chk = e.target.closest('[data-check]');
         if (chk) checkAnswer(chk.dataset.check);
+        
         const cp = e.target.closest('[data-copy]');
         if (cp) {
           navigator.clipboard?.writeText(cp.dataset.copy).then(() => {
@@ -675,7 +820,14 @@
             setTimeout(() => cp.innerHTML = '<i class="bi bi-clipboard"></i>', 1200);
           });
         }
+
+        // Clic en Foco/Switch del Panel
+        const bulb = e.target.closest('[data-sw-index]');
+        if (bulb) {
+          toggleBit(parseInt(bulb.dataset.sw-index, 10));
+        }
       });
+
       document.addEventListener('keydown', e => {
         if (e.key === 'Enter' && e.target.dataset && e.target.dataset.ex) checkAnswer(e.target.dataset.ex);
       });
@@ -686,6 +838,7 @@
         btn.classList.add('active');
         renderEqTable(+btn.dataset.max);
       });
+
       document.getElementById('live-input').addEventListener('input', renderLive);
       document.getElementById('live-base').addEventListener('change', renderLive);
       document.getElementById('live-random').addEventListener('click', () => {
@@ -693,6 +846,32 @@
         document.getElementById('live-input').value = toBase(Math.floor(Math.random() * 1000), base);
         renderLive();
       });
+
+      // Controles del Panel de Interruptores y Focos
+      document.getElementById('sw-all-on').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(255); });
+      document.getElementById('sw-all-off').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(0); });
+      document.getElementById('sw-alternate').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(170); }); // 10101010 = 170
+      document.getElementById('sw-random').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(Math.floor(Math.random() * 256)); });
+
+      document.getElementById('sw-animate').addEventListener('click', function() {
+        if (animTimer) {
+          clearInterval(animTimer);
+          animTimer = null;
+          this.classList.remove('btn-danger');
+          this.classList.add('btn-primary');
+          this.innerHTML = '<i class="bi bi-play-fill me-1"></i><span>Contador +1</span>';
+        } else {
+          this.classList.remove('btn-primary');
+          this.classList.add('btn-danger');
+          this.innerHTML = '<i class="bi bi-stop-fill me-1"></i><span>Pausar</span>';
+          let count = switchState.reduce((acc, bit, idx) => acc + (bit * switchWeights[idx]), 0);
+          animTimer = setInterval(() => {
+            count = (count + 1) % 256;
+            setSwitchValue(count);
+          }, 350);
+        }
+      });
+
       document.getElementById('reset-all').addEventListener('click', resetAll);
     });
   </script>
