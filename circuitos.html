@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cibernética - Circuitos Eléctricos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --volt:#f08c00; --amp:#1c7ed6; --res:#e03131; --watt:#7048e8; --ok:#2f9e44;
+      --volt-soft:#fff4e0; --amp-soft:#e7f1fb; --res-soft:#fdeaea; --watt-soft:#efeafc;
+      --shadow-sm:0 2px 6px rgba(15,23,42,.08);
+      --shadow-md:0 8px 22px rgba(15,23,42,.12);
+      --shadow-lg:0 16px 38px rgba(15,23,42,.2);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f4f6fb; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:84px; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); }
+    .app-navbar .dropdown-menu { border:0; border-radius:12px; box-shadow:var(--shadow-lg); padding:.5rem; }
+    .app-navbar .dropdown-item { border-radius:8px; padding:.5rem .8rem; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:2px solid #0d6efd; }
+
+    .hero-header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); color:#fff; padding:3rem 1rem; border-bottom:5px solid var(--volt); }
+
+    /* Colores semánticos */
+    .t-volt { color:var(--volt); } .t-amp { color:var(--amp); } .t-res { color:var(--res); } .t-watt { color:var(--watt); }
+    .b-volt { background:var(--volt)!important; color:#fff; } .b-amp { background:var(--amp)!important; color:#fff; }
+    .b-res { background:var(--res)!important; color:#fff; } .b-watt { background:var(--watt)!important; color:#fff; }
+    .s-volt { background:var(--volt-soft); } .s-amp { background:var(--amp-soft); } .s-res { background:var(--res-soft); } .s-watt { background:var(--watt-soft); }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Navegación lateral */
+    .side-nav { position:sticky; top:84px; }
+    .side-nav .list-group-item { border:0; border-radius:10px!important; margin-bottom:4px; font-size:.92rem; transition:background .15s, transform .15s; }
+    .side-nav .list-group-item:hover { background:#e7efff; transform:translateX(3px); }
+    .side-nav .list-group-item.active { background:#0f172a; color:#fff; }
+    .side-nav .done-ico { margin-left:auto; color:#adb5bd; }
+    .side-nav .done .done-ico { color:var(--ok); }
+    .top-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .top-nav a { display:inline-block; padding:.6rem .8rem; font-size:.85rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; }
+    .top-nav a.active { border-bottom-color:var(--volt); font-weight:700; }
+    .progress { height:12px; border-radius:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
+
+    /* Lecciones */
+    .lesson-card { border:0; border-radius:18px; box-shadow:var(--shadow-md); overflow:hidden; }
+    .lesson-head { padding:1.1rem 1.4rem; color:#fff; display:flex; align-items:center; gap:.9rem; }
+    .lesson-head .num { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; flex:0 0 auto; }
+    .h-1 { background:linear-gradient(135deg,#1c7ed6,#1864ab); } .h-2 { background:linear-gradient(135deg,#f08c00,#c26e00); }
+    .h-3 { background:linear-gradient(135deg,#7048e8,#5130b9); } .h-4 { background:linear-gradient(135deg,#e03131,#a61e1e); }
+    .h-5 { background:linear-gradient(135deg,#d6336c,#a4204f); } .h-6 { background:linear-gradient(135deg,#2f9e44,#1f6f2f); }
+    .h-7 { background:linear-gradient(135deg,#0c8599,#075f6d); } .h-8 { background:linear-gradient(135deg,#495057,#212529); }
+    .h-9 { background:linear-gradient(135deg,#f08c00,#e03131); }
+    .lesson-foot { background:#f8f9fa; padding:.8rem 1.4rem; display:flex; flex-wrap:wrap; gap:.6rem; justify-content:space-between; align-items:center; }
+    .tip-box { border-radius:12px; padding:.7rem .9rem; font-size:.9rem; }
+    .panel { background:#fff; border-radius:14px; box-shadow:var(--shadow-sm); padding:1rem; }
+    .canvas-wrap { background:#fff; border-radius:14px; box-shadow:var(--shadow-sm); overflow:hidden; }
+    canvas { width:100%; height:auto; display:block; }
+
+    /* Stepper */
+    .step-card { background:#fff; border-left:5px solid var(--amp); border-radius:0 12px 12px 0; box-shadow:var(--shadow-sm); padding:.9rem 1.1rem; min-height:110px; }
+    .dot { width:28px; height:28px; border-radius:50%; border:2px solid #ced4da; background:#fff; font-size:.8rem; font-weight:700; cursor:pointer; transition:all .15s; }
+    .dot.active { background:#0f172a; color:#fff; border-color:#0f172a; transform:scale(1.15); }
+    .dot.seen { border-color:var(--ok); color:var(--ok); }
+    .dot.active.seen { color:#fff; }
+
+    /* Conceptos */
+    .concept-card { border:0; border-radius:16px; box-shadow:var(--shadow-md); transition:transform .2s, box-shadow .2s; overflow:hidden; height:100%; }
+    .concept-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); }
+    .concept-card .big { font-size:3rem; font-weight:800; line-height:1; }
+    .eq-table td, .eq-table th { vertical-align:middle; }
+
+    /* Ley de Ohm */
+    .tri-zone { cursor:pointer; transition:opacity .2s, transform .2s; }
+    .tri-zone:hover { opacity:.85; }
+    .tri-zone.target { opacity:.4; }
+    .btn-target { font-weight:800; font-size:1.2rem; width:56px; }
+    .result-big { border-radius:16px; padding:1rem 1.2rem; color:#fff; box-shadow:var(--shadow-md); }
+    .step-box { background:#fff; border-left:4px solid var(--watt); padding:.7rem .9rem; margin-bottom:.6rem; border-radius:0 10px 10px 0; box-shadow:var(--shadow-sm); font-size:.92rem; }
+    .step-num { display:inline-flex; width:22px; height:22px; border-radius:50%; background:#212529; color:#fff; align-items:center; justify-content:center; font-size:.75rem; margin-right:.4rem; }
+
+    /* Resistencias */
+    .swatch { width:34px; height:34px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 1px #adb5bd, var(--shadow-sm); cursor:pointer; transition:transform .12s, box-shadow .12s; padding:0; }
+    .swatch:hover { transform:scale(1.15); }
+    .swatch.sel { box-shadow:0 0 0 3px #0f172a, var(--shadow-md); transform:scale(1.18); }
+    .band-chip { display:inline-block; width:16px; height:34px; border-radius:3px; margin-right:3px; box-shadow:0 0 0 1px rgba(0,0,0,.25); vertical-align:middle; }
+
+    /* LED y circuitos (SVG) */
+    .flow { fill:none; stroke:#f08c00; stroke-width:4; stroke-linecap:round; stroke-dasharray:1 14; animation:dash 2s linear infinite; }
+    @keyframes dash { to { stroke-dashoffset:-15; } }
+    .wire { fill:none; stroke:#495057; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+    .sym { fill:none; stroke:#212529; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+    .svg-text { font-family:'Segoe UI',Tahoma,sans-serif; font-size:13px; fill:#343a40; font-weight:600; }
+    .svg-text.small { font-size:11px; font-weight:500; }
+    #led-svg .g-led, #led-svg .g-res, #led-svg .g-bat, #led-svg .g-sw { transition:filter .2s; }
+    #led-svg[data-hl="led"] .g-led, #led-svg[data-hl="resled"] .g-led,
+    #led-svg[data-hl="resistor"] .g-res, #led-svg[data-hl="resled"] .g-res,
+    #led-svg[data-hl="battery"] .g-bat, #led-svg[data-hl="switch"] .g-sw { filter:drop-shadow(0 0 7px #1c7ed6) drop-shadow(0 0 3px #1c7ed6); }
+    @keyframes burst { 0% { opacity:0; transform:scale(.5);} 30% { opacity:1; transform:scale(1.6);} 100% { opacity:.0; transform:scale(2.2);} }
+    .burst { transform-origin:center; transform-box:fill-box; animation:burst .8s ease-out 1; }
+    .rule-card { border-radius:14px; padding:1rem; box-shadow:var(--shadow-sm); height:100%; }
+
+    /* Símbolos */
+    .symbol-card { background:#fff; border-radius:14px; box-shadow:var(--shadow-sm); text-align:center; padding:.8rem .4rem; transition:transform .15s, box-shadow .15s; cursor:default; height:100%; }
+    .symbol-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+
+    /* Quiz */
+    .quiz-opt { text-align:left; border-radius:12px; box-shadow:var(--shadow-sm); }
+    @media (prefers-reduced-motion:reduce) { .flow, .burst { animation:none; } html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+
+  <!-- Navegación móvil -->
+  <div class="top-nav d-lg-none" id="top-nav"></div>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-lightning-charge-fill t-volt me-2"></i>Circuitos Eléctricos</h1>
+        <p class="lead mb-1">Voltaje • Corriente • Resistencia • Ley de Ohm • LED • Serie y paralelo</p>
+        <p class="mb-0 text-light">Una ruta de 9 pasos, con simuladores y calculadoras para experimentar</p>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+      <div class="row g-4">
+
+        <!-- Menú lateral -->
+        <aside class="col-lg-3 d-none d-lg-block">
+          <div class="side-nav">
+            <div class="panel mb-3">
+              <div class="d-flex justify-content-between small fw-semibold mb-1"><span><i class="bi bi-flag-fill text-success me-1"></i>Tu avance</span><span id="prog-text">0/9</span></div>
+              <div class="progress"><div id="prog-bar" class="progress-bar bg-success progress-bar-striped" style="width:0%"></div></div>
+            </div>
+            <div class="list-group" id="side-nav"></div>
+          </div>
+        </aside>
+
+        <div class="col-lg-9">
+
+          <!-- ============ 1. ANALOGÍA DEL AGUA ============ -->
+          <section class="lesson mb-5" id="s1" data-title="La analogía del agua" data-icon="bi-droplet-half">
+            <div class="card lesson-card">
+              <div class="lesson-head h-1"><div class="num">1</div><div><h2 class="h4 fw-bold mb-0">La analogía del agua</h2><small>Entender la electricidad sin fórmulas</small></div></div>
+              <div class="card-body">
+                <p>La electricidad no se ve, pero se parece mucho al <strong>agua que corre por tuberías</strong>. Si entiendes el agua, ya entiendes el circuito. Mueve los controles y mira qué pasa.</p>
+                <div class="row g-3">
+                  <div class="col-lg-8">
+                    <div class="canvas-wrap"><canvas id="water-canvas"></canvas></div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="panel mb-3">
+                      <label class="form-label fw-bold mb-0 t-volt" for="w-v"><i class="bi bi-battery-charging me-1"></i>Voltaje (altura del tanque): <span id="w-vout" class="mono">6 V</span></label>
+                      <input type="range" class="form-range" id="w-v" min="1" max="24" value="6">
+                      <label class="form-label fw-bold mb-0 t-res" for="w-r"><i class="bi bi-funnel-fill me-1"></i>Resistencia (estrechamiento): <span id="w-rout" class="mono">20 Ω</span></label>
+                      <input type="range" class="form-range" id="w-r" min="1" max="100" value="20">
+                      <div class="form-check form-switch mt-1">
+                        <input class="form-check-input" type="checkbox" id="w-labels" checked>
+                        <label class="form-check-label small" for="w-labels">Mostrar etiquetas</label>
+                      </div>
+                    </div>
+                    <div class="result-big b-amp text-center">
+                      <div class="small"><i class="bi bi-water me-1"></i>Corriente (caudal)</div>
+                      <div class="fs-3 mono" id="w-iout">0.3 A</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tip-box s-amp mt-3" id="w-msg"></div>
+
+                <h5 class="fw-bold mt-4"><i class="bi bi-signpost-2-fill text-primary me-1"></i>Recorrido paso a paso</h5>
+                <div id="water-stepper" class="mb-4"></div>
+
+                <h5 class="fw-bold"><i class="bi bi-arrow-left-right text-primary me-1"></i>Tabla de equivalencias</h5>
+                <div class="table-responsive panel p-0">
+                  <table class="table table-hover mb-0 text-center align-middle eq-table">
+                    <thead class="table-dark"><tr><th>En el agua</th><th>En electricidad</th><th>Unidad</th><th>Se mide con</th></tr></thead>
+                    <tbody>
+                      <tr><td><i class="bi bi-arrow-bar-up t-volt me-1"></i>Altura / presión</td><td class="fw-bold t-volt">Voltaje (V)</td><td>Volt (V)</td><td>Voltímetro</td></tr>
+                      <tr><td><i class="bi bi-water t-amp me-1"></i>Caudal (litros por segundo)</td><td class="fw-bold t-amp">Corriente (I)</td><td>Ampere (A)</td><td>Amperímetro</td></tr>
+                      <tr><td><i class="bi bi-funnel-fill t-res me-1"></i>Tubo estrecho</td><td class="fw-bold t-res">Resistencia (R)</td><td>Ohm (Ω)</td><td>Óhmetro</td></tr>
+                      <tr><td><i class="bi bi-gear-wide-connected me-1"></i>Rueda de agua</td><td class="fw-bold">Carga (foco, motor, LED)</td><td>Watt (W)</td><td>Wattímetro</td></tr>
+                      <tr><td><i class="bi bi-moisture me-1"></i>Bomba que sube el agua</td><td class="fw-bold">Batería / fuente</td><td>—</td><td>—</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="1"></div>
+            </div>
+          </section>
+
+          <!-- ============ 2. CONCEPTOS ============ -->
+          <section class="lesson mb-5" id="s2" data-title="Voltaje, corriente y resistencia" data-icon="bi-lightning-charge">
+            <div class="card lesson-card">
+              <div class="lesson-head h-2"><div class="num">2</div><div><h2 class="h4 fw-bold mb-0">Voltaje, corriente y resistencia</h2><small>Las tres magnitudes básicas</small></div></div>
+              <div class="card-body">
+                <p>Ya viste la idea con agua. Ahora ponles nombre, símbolo, unidad y el instrumento con el que se miden.</p>
+                <div class="row g-3 mb-4">
+                  <div class="col-md-4">
+                    <div class="card concept-card">
+                      <div class="card-body">
+                        <div class="big t-volt">V</div>
+                        <h4 class="fw-bold mt-2">Voltaje</h4>
+                        <span class="badge b-volt mb-2">Unidad: Volt (V)</span>
+                        <p class="small mb-2">Es la “fuerza” que empuja a los electrones por el circuito. También se llama <em>tensión</em> o <em>diferencia de potencial</em>.</p>
+                        <p class="small mb-2"><i class="bi bi-droplet-half me-1"></i><strong>Agua:</strong> la altura del tanque.</p>
+                        <p class="small mb-3"><i class="bi bi-speedometer2 me-1"></i><strong>Voltímetro:</strong> se conecta en <u>paralelo</u>.</p>
+                        <button class="btn btn-sm b-volt" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-title="Valores típicos" data-bs-content="Pila AA: 1.5 V · Puerto USB: 5 V · Pila rectangular: 9 V · Auto: 12 V · Contacto en México: 127 V"><i class="bi bi-info-circle me-1"></i>Valores típicos</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card concept-card">
+                      <div class="card-body">
+                        <div class="big t-amp">I</div>
+                        <h4 class="fw-bold mt-2">Corriente</h4>
+                        <span class="badge b-amp mb-2">Unidad: Ampere (A)</span>
+                        <p class="small mb-2">Es la cantidad de carga eléctrica que pasa por un punto cada segundo. Se usa <strong>I</strong> por “intensidad”.</p>
+                        <p class="small mb-2"><i class="bi bi-droplet-half me-1"></i><strong>Agua:</strong> el caudal del tubo.</p>
+                        <p class="small mb-3"><i class="bi bi-speedometer2 me-1"></i><strong>Amperímetro:</strong> se conecta en <u>serie</u>.</p>
+                        <button class="btn btn-sm b-amp" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-title="Valores típicos" data-bs-content="LED: 10–20 mA · Teléfono cargando: 1–2 A · Foco de 60 W en México: ≈ 0.5 A · Plancha: ≈ 8 A"><i class="bi bi-info-circle me-1"></i>Valores típicos</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card concept-card">
+                      <div class="card-body">
+                        <div class="big t-res">R</div>
+                        <h4 class="fw-bold mt-2">Resistencia</h4>
+                        <span class="badge b-res mb-2">Unidad: Ohm (Ω)</span>
+                        <p class="small mb-2">Es la oposición que un material pone al paso de la corriente. Más resistencia, menos corriente.</p>
+                        <p class="small mb-2"><i class="bi bi-droplet-half me-1"></i><strong>Agua:</strong> un tubo más angosto.</p>
+                        <p class="small mb-3"><i class="bi bi-speedometer2 me-1"></i><strong>Óhmetro:</strong> con el circuito <u>sin energía</u>.</p>
+                        <button class="btn btn-sm b-res" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top" data-bs-title="Valores típicos" data-bs-content="Cable de cobre: casi 0 Ω · Resistencia para LED: 150 Ω a 1 kΩ · Cuerpo humano seco: ≈ 100 kΩ · Aislante (plástico): millones de Ω"><i class="bi bi-info-circle me-1"></i>Valores típicos</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h5 class="fw-bold"><i class="bi bi-rulers text-warning me-1"></i>Prefijos y convertidor</h5>
+                <p class="small text-muted">En electrónica casi nunca se usan números enormes: se usan prefijos. Escribe un valor y mira sus equivalencias.</p>
+                <div class="row g-3 align-items-end">
+                  <div class="col-sm-5"><label class="form-label fw-semibold" for="uc-val">Valor</label><input type="number" step="any" class="form-control form-control-lg mono" id="uc-val" value="4.7"></div>
+                  <div class="col-sm-4"><label class="form-label fw-semibold" for="uc-pre">Prefijo</label>
+                    <select class="form-select form-select-lg" id="uc-pre">
+                      <option value="1e9">G (giga, 10⁹)</option><option value="1e6">M (mega, 10⁶)</option><option value="1e3" selected>k (kilo, 10³)</option>
+                      <option value="1">(unidad base)</option><option value="1e-3">m (mili, 10⁻³)</option><option value="1e-6">µ (micro, 10⁻⁶)</option><option value="1e-9">n (nano, 10⁻⁹)</option>
+                    </select></div>
+                  <div class="col-sm-3"><div class="tip-box s-amp small"><i class="bi bi-lightbulb-fill me-1"></i>Ej.: 4.7 kΩ = 4,700 Ω</div></div>
+                </div>
+                <div class="table-responsive panel p-0 mt-3"><table class="table table-sm mb-0 text-center mono"><thead class="table-light"><tr id="uc-head"></tr></thead><tbody><tr id="uc-row"></tr></tbody></table></div>
+              </div>
+              <div class="lesson-foot" data-lesson="2"></div>
+            </div>
+          </section>
+
+          <!-- ============ 3. CC vs CA ============ -->
+          <section class="lesson mb-5" id="s3" data-title="Corriente directa y alterna" data-icon="bi-activity">
+            <div class="card lesson-card">
+              <div class="lesson-head h-3"><div class="num">3</div><div><h2 class="h4 fw-bold mb-0">Corriente directa (CD) y alterna (CA)</h2><small>Hacia dónde se mueve la electricidad</small></div></div>
+              <div class="card-body">
+                <p>La corriente puede moverse de dos formas. Observa los electrones (puntos) y la gráfica de voltaje contra tiempo. Los controles solo cambian la velocidad visual: en tu casa la CA oscila <strong>60 veces por segundo</strong>.</p>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <div class="panel h-100">
+                      <h5 class="fw-bold t-amp"><i class="bi bi-battery-full me-1"></i>CD / DC — Corriente directa <span class="badge b-amp ms-1 mono">⎓</span></h5>
+                      <div class="canvas-wrap mb-2"><canvas id="dc-loop"></canvas></div>
+                      <div class="canvas-wrap mb-2"><canvas id="dc-wave"></canvas></div>
+                      <ul class="small mb-0">
+                        <li>Fluye <strong>siempre en el mismo sentido</strong> (de + a −).</li>
+                        <li>El voltaje es constante: una línea recta.</li>
+                        <li>Símbolo: línea continua sobre otra punteada (⎓) o “−−−”.</li>
+                        <li>Ejemplos: pilas, baterías, USB, celular, LED, Arduino.</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="panel h-100">
+                      <h5 class="fw-bold t-res"><i class="bi bi-plug-fill me-1"></i>CA / AC — Corriente alterna <span class="badge b-res ms-1 mono">~</span></h5>
+                      <div class="canvas-wrap mb-2"><canvas id="ac-loop"></canvas></div>
+                      <div class="canvas-wrap mb-2"><canvas id="ac-wave"></canvas></div>
+                      <ul class="small mb-0">
+                        <li>Cambia de sentido muchas veces por segundo: <strong>va y viene</strong>.</li>
+                        <li>El voltaje dibuja una onda senoidal (sube, baja, se hace negativo).</li>
+                        <li>Símbolo: una ondita (~).</li>
+                        <li>Ejemplos: el contacto de casa, la red eléctrica, motores grandes.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-md-4"><label class="form-label fw-semibold mb-0" for="ac-f">Frecuencia (visual): <span id="ac-f-out" class="mono">1 Hz</span></label><input type="range" class="form-range" id="ac-f" min="0.5" max="4" step="0.5" value="1"></div>
+                  <div class="col-md-4"><label class="form-label fw-semibold mb-0" for="ac-a">Amplitud: <span id="ac-a-out" class="mono">8 V</span></label><input type="range" class="form-range" id="ac-a" min="1" max="10" value="8"></div>
+                  <div class="col-md-4"><div class="tip-box s-watt"><i class="bi bi-arrow-repeat me-1"></i>Sentido ahora: <strong id="ac-dir" class="mono">→</strong></div></div>
+                </div>
+
+                <h5 class="fw-bold"><i class="bi bi-calculator text-primary me-1"></i>Calculadora de CA: valor eficaz y valor pico</h5>
+                <p class="small text-muted">Cuando dices “127 V” en el contacto, hablas del valor <strong>eficaz (RMS)</strong>. La onda en realidad sube más alto: su <strong>pico</strong> es RMS × √2.</p>
+                <div class="row g-3 align-items-end">
+                  <div class="col-sm-4"><label class="form-label fw-semibold" for="ac-val">Valor</label><input type="number" step="any" class="form-control mono" id="ac-val" value="127"></div>
+                  <div class="col-sm-4"><label class="form-label fw-semibold" for="ac-type">Es el voltaje…</label><select id="ac-type" class="form-select"><option value="rms">Eficaz (RMS)</option><option value="peak">Pico</option></select></div>
+                  <div class="col-sm-4"><label class="form-label fw-semibold" for="ac-hz">Frecuencia (Hz)</label><input type="number" step="any" min="0.1" class="form-control mono" id="ac-hz" value="60"></div>
+                </div>
+                <div class="row g-2 mt-1" id="ac-out"></div>
+                <div class="tip-box s-amp mt-3 small"><i class="bi bi-geo-alt-fill me-1"></i>En México y Estados Unidos la red es de ≈127/120 V a 60 Hz. En Europa es de 230 V a 50 Hz.</div>
+              </div>
+              <div class="lesson-foot" data-lesson="3"></div>
+            </div>
+          </section>
+
+          <!-- ============ 4. LEY DE OHM ============ -->
+          <section class="lesson mb-5" id="s4" data-title="Ley de Ohm" data-icon="bi-triangle-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-4"><div class="num">4</div><div><h2 class="h4 fw-bold mb-0">Ley de Ohm</h2><small>La relación entre V, I y R</small></div></div>
+              <div class="card-body">
+                <p>En 1827 Georg Ohm descubrió que, en muchos materiales, <strong>la corriente es proporcional al voltaje e inversamente proporcional a la resistencia</strong>. En la analogía: más altura → más caudal; tubo más angosto → menos caudal.</p>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-4"><div class="rule-card s-volt text-center"><div class="fs-3 mono">V = I × R</div><small>Voltaje (V) = corriente × resistencia</small></div></div>
+                  <div class="col-md-4"><div class="rule-card s-amp text-center"><div class="fs-3 mono">I = V ÷ R</div><small>Corriente (A) = voltaje ÷ resistencia</small></div></div>
+                  <div class="col-md-4"><div class="rule-card s-res text-center"><div class="fs-3 mono">R = V ÷ I</div><small>Resistencia (Ω) = voltaje ÷ corriente</small></div></div>
+                </div>
+
+                <div class="row g-4 align-items-start">
+                  <div class="col-lg-5">
+                    <div class="panel text-center">
+                      <h6 class="fw-bold"><i class="bi bi-hand-index-thumb me-1"></i>Triángulo de Ohm: toca lo que quieres calcular</h6>
+                      <svg id="ohm-tri" viewBox="0 0 300 180" style="width:100%;max-width:320px">
+                        <g class="tri-zone" data-v="V"><polygon points="150,10 220,90 80,90" fill="#f08c00"/><text x="150" y="76" text-anchor="middle" font-size="46" font-weight="800" fill="#fff">V</text></g>
+                        <g class="tri-zone" data-v="I"><polygon points="80,90 150,90 150,170 10,170" fill="#1c7ed6"/><text x="82" y="152" text-anchor="middle" font-size="46" font-weight="800" fill="#fff">I</text></g>
+                        <g class="tri-zone" data-v="R"><polygon points="150,90 220,90 290,170 150,170" fill="#e03131"/><text x="218" y="152" text-anchor="middle" font-size="46" font-weight="800" fill="#fff">R</text></g>
+                        <path d="M80,90 H220 M150,90 V170" stroke="#fff" stroke-width="4" fill="none"/>
+                      </svg>
+                      <div class="btn-group mt-2" role="group" aria-label="Qué calcular">
+                        <button class="btn btn-outline-warning btn-target" data-t="V">V</button>
+                        <button class="btn btn-outline-primary btn-target active" data-t="I">I</button>
+                        <button class="btn btn-outline-danger btn-target" data-t="R">R</button>
+                      </div>
+                      <div class="fs-4 mono mt-2" id="ohm-formula">I = V ÷ R</div>
+                      <small class="text-muted">“Tapa” la letra que buscas: lo que queda visible indica la operación.</small>
+                    </div>
+                  </div>
+                  <div class="col-lg-7">
+                    <div class="panel">
+                      <div class="d-flex flex-wrap gap-2 mb-2 align-items-center"><strong class="me-1"><i class="bi bi-magic me-1"></i>Ejemplos:</strong>
+                        <button class="btn btn-sm btn-outline-dark" data-preset="1">Hallar I</button>
+                        <button class="btn btn-sm btn-outline-dark" data-preset="2">Hallar R</button>
+                        <button class="btn btn-sm btn-outline-dark" data-preset="3">Hallar V</button></div>
+                      <div class="row g-3" id="ohm-inputs"></div>
+                      <div id="ohm-error" class="text-danger small mt-2"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-lg-6"><div id="ohm-result"></div></div>
+                  <div class="col-lg-6"><div class="panel"><h6 class="fw-bold mb-1"><i class="bi bi-graph-up me-1"></i>Gráfica V – I</h6><div class="canvas-wrap shadow-none"><canvas id="ohm-chart"></canvas></div><small class="text-muted">Con R fija, la corriente crece en línea recta con el voltaje. La pendiente es 1/R.</small></div></div>
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="4"></div>
+            </div>
+          </section>
+
+          <!-- ============ 5. RESISTENCIAS ============ -->
+          <section class="lesson mb-5" id="s5" data-title="Resistencias y código de colores" data-icon="bi-palette-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-5"><div class="num">5</div><div><h2 class="h4 fw-bold mb-0">Resistencias y código de colores</h2><small>Cómo leer el valor de una resistencia</small></div></div>
+              <div class="card-body">
+                <p>Una <strong>resistencia (resistor)</strong> es un componente que limita la corriente. Es tan pequeña que no cabe el número impreso, así que su valor se codifica con <strong>franjas de colores</strong>. Se lee de izquierda a derecha, empezando por el lado donde las franjas están más juntas.</p>
+                <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                  <strong><i class="bi bi-sliders me-1"></i>Tipo:</strong>
+                  <div class="btn-group" role="group"><button class="btn btn-outline-dark active" data-bands="4">4 franjas</button><button class="btn btn-outline-dark" data-bands="5">5 franjas</button></div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-lg-6">
+                    <div class="panel text-center mb-3"><svg id="rc-svg" viewBox="0 0 300 100" style="width:100%;max-width:420px"></svg></div>
+                    <div id="rc-result"></div>
+                  </div>
+                  <div class="col-lg-6"><div class="panel" id="rc-rows"></div></div>
+                </div>
+                <div class="panel mt-3">
+                  <h6 class="fw-bold"><i class="bi bi-arrow-repeat me-1"></i>Al revés: del valor a los colores</h6>
+                  <div class="input-group" style="max-width:420px">
+                    <input type="text" class="form-control mono" id="rc-rev" placeholder="Ej.: 4.7k, 330, 1M" aria-label="Valor en ohms" value="4.7k">
+                    <button class="btn btn-dark" id="rc-rev-btn"><i class="bi bi-palette me-1"></i>Mostrar colores</button>
+                  </div>
+                  <div class="small mt-2" id="rc-rev-msg"></div>
+                </div>
+                <div class="table-responsive panel p-0 mt-3">
+                  <table class="table table-sm mb-0 text-center align-middle">
+                    <thead class="table-dark"><tr><th>Color</th><th>Dígito</th><th>Multiplicador</th><th>Tolerancia</th></tr></thead>
+                    <tbody id="rc-table"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="5"></div>
+            </div>
+          </section>
+
+          <!-- ============ 6. LED ============ -->
+          <section class="lesson mb-5" id="s6" data-title="El LED y su resistencia" data-icon="bi-lightbulb-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-6"><div class="num">6</div><div><h2 class="h4 fw-bold mb-0">El LED y cómo conectarlo</h2><small>Tu primer circuito completo</small></div></div>
+              <div class="card-body">
+                <p>Un <strong>LED</strong> (diodo emisor de luz) solo deja pasar la corriente en <strong>un sentido</strong> y no limita la corriente por sí mismo. Por eso siempre va con una <strong>resistencia en serie</strong>; si no, pasa demasiada corriente y se quema. Aplicamos aquí la Ley de Ohm:</p>
+                <div class="rule-card s-watt text-center mb-3"><span class="fs-4 mono">R = (V<sub>fuente</sub> − V<sub>LED</sub>) ÷ I<sub>LED</sub></span><br><small>V<sub>LED</sub> (o V<sub>f</sub>) es la caída de voltaje típica del LED según su color.</small></div>
+
+                <h5 class="fw-bold"><i class="bi bi-signpost-2-fill text-success me-1"></i>Cómo conectarlo, paso a paso</h5>
+                <div id="led-stepper" class="mb-3"></div>
+
+                <div class="row g-3">
+                  <div class="col-lg-7">
+                    <div class="canvas-wrap p-2"><div id="led-svg-wrap"></div></div>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                      <button class="btn btn-success" id="led-sw"><i class="bi bi-toggle-on me-1"></i><span>Interruptor: cerrado</span></button>
+                      <div class="form-check form-switch align-self-center">
+                        <input class="form-check-input" type="checkbox" id="led-noR"><label class="form-check-label small" for="led-noR">Quitar la resistencia (solo en el simulador)</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <div class="panel mb-3">
+                      <div class="mb-2"><label class="form-label fw-semibold mb-1" for="led-vs">Fuente</label>
+                        <div class="input-group"><select class="form-select" id="led-vs"><option value="3">3 V (2 pilas AA)</option><option value="5" selected>5 V (USB / Arduino)</option><option value="9">9 V (pila rectangular)</option><option value="12">12 V</option><option value="custom">Otro…</option></select>
+                        <input type="number" step="any" min="0" class="form-control mono d-none" id="led-vs-c" value="6" aria-label="Voltaje de la fuente"></div></div>
+                      <div class="mb-2"><label class="form-label fw-semibold mb-1" for="led-color">Color del LED (V<sub>f</sub> típico)</label>
+                        <select class="form-select" id="led-color"></select></div>
+                      <label class="form-label fw-semibold mb-0" for="led-if">Corriente deseada: <span class="mono" id="led-if-out">20 mA</span></label>
+                      <input type="range" class="form-range" id="led-if" min="5" max="30" value="20">
+                    </div>
+                    <div id="led-out"></div>
+                  </div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6">
+                    <div class="panel h-100"><h6 class="fw-bold"><i class="bi bi-compass me-1"></i>¿Cómo sé cuál pata es cuál?</h6>
+                      <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <svg viewBox="0 0 120 150" style="width:110px">
+                          <path d="M30,70 V40 a30,30 0 0 1 60,0 V70 Z" fill="#ffc9c9" stroke="#e03131" stroke-width="3"/>
+                          <path d="M90,60 V70 H96" fill="none" stroke="none"/>
+                          <line x1="38" y1="70" x2="38" y2="145" stroke="#495057" stroke-width="4" stroke-linecap="round"/>
+                          <line x1="82" y1="70" x2="82" y2="118" stroke="#495057" stroke-width="4" stroke-linecap="round"/>
+                          <rect x="90" y="45" width="4" height="25" fill="#fff" opacity=".7"/>
+                          <text x="38" y="62" text-anchor="middle" font-size="14" font-weight="800" fill="#e03131">+</text>
+                          <text x="82" y="62" text-anchor="middle" font-size="14" font-weight="800" fill="#212529">−</text>
+                        </svg>
+                        <ul class="small mb-0 ps-3">
+                          <li><strong>Ánodo (+):</strong> la pata <u>larga</u>.</li>
+                          <li><strong>Cátodo (−):</strong> la pata corta, junto al lado <u>plano</u> de la cápsula.</li>
+                          <li>Si lo conectas al revés no se enciende (y con voltajes altos puede dañarse).</li>
+                        </ul>
+                      </div></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="panel h-100"><h6 class="fw-bold"><i class="bi bi-shield-check me-1"></i>Reglas de oro</h6>
+                      <ul class="small mb-0 ps-3">
+                        <li>Siempre una resistencia <strong>en serie</strong> con el LED.</li>
+                        <li>Usa el valor comercial <u>igual o mayor</u> al calculado (más seguro).</li>
+                        <li>Un LED común trabaja bien entre 10 y 20 mA.</li>
+                        <li>La resistencia puede ir antes o después del LED: da lo mismo.</li>
+                      </ul></div>
+                  </div>
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="6"></div>
+            </div>
+          </section>
+
+          <!-- ============ 7. SERIE Y PARALELO ============ -->
+          <section class="lesson mb-5" id="s7" data-title="Circuitos en serie y en paralelo" data-icon="bi-diagram-3-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-7"><div class="num">7</div><div><h2 class="h4 fw-bold mb-0">Circuitos en serie y en paralelo</h2><small>Cómo se conectan varios componentes</small></div></div>
+              <div class="card-body">
+                <p>Cuando hay más de un componente, hay dos formas básicas de conectarlos. <strong>Analogía:</strong> en <em>serie</em> el agua tiene un solo camino y pasa por todo en fila; en <em>paralelo</em> el tubo se divide y el agua se reparte por varios caminos.</p>
+                <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                  <strong><i class="bi bi-diagram-2 me-1"></i>Circuito:</strong>
+                  <div class="btn-group" role="group"><button class="btn btn-outline-dark active" data-mode="serie"><i class="bi bi-three-dots me-1"></i>Serie</button><button class="btn btn-outline-dark" data-mode="paralelo"><i class="bi bi-distribute-vertical me-1"></i>Paralelo</button></div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-lg-7"><div class="canvas-wrap p-2"><div id="sp-svg-wrap"></div></div>
+                    <div class="small text-muted mt-1"><i class="bi bi-cursor me-1"></i>Los puntos naranjas son la corriente: mientras más rápidos, más corriente. Los focos brillan según la potencia que reciben.</div></div>
+                  <div class="col-lg-5">
+                    <div class="panel mb-3">
+                      <label class="form-label fw-bold mb-0 t-volt" for="sp-v">Voltaje de la fuente: <span class="mono" id="sp-v-out">12 V</span></label>
+                      <input type="range" class="form-range" id="sp-v" min="1" max="24" value="12">
+                      <div class="row g-2">
+                        <div class="col-4"><label class="form-label small fw-semibold mb-0" for="sp-r1">R1 (Ω)</label><input type="number" min="1" step="any" class="form-control mono" id="sp-r1" value="100"></div>
+                        <div class="col-4"><label class="form-label small fw-semibold mb-0" for="sp-r2">R2 (Ω)</label><input type="number" min="1" step="any" class="form-control mono" id="sp-r2" value="220"></div>
+                        <div class="col-4"><label class="form-label small fw-semibold mb-0" for="sp-r3">R3 (Ω)</label><input type="number" min="1" step="any" class="form-control mono" id="sp-r3" value="330"></div>
+                      </div>
+                      <div class="mt-2 small fw-semibold">¿Se funde algún foco? (circuito abierto)</div>
+                      <div class="d-flex gap-3 flex-wrap">
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="sp-b1"><label class="form-check-label" for="sp-b1">R1</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="sp-b2"><label class="form-check-label" for="sp-b2">R2</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="sp-b3"><label class="form-check-label" for="sp-b3">R3</label></div>
+                      </div>
+                    </div>
+                    <div id="sp-msg" class="tip-box s-amp small"></div>
+                  </div>
+                </div>
+                <div class="table-responsive panel p-0 mt-3">
+                  <table class="table table-sm mb-0 text-center align-middle"><thead class="table-dark"><tr><th>Elemento</th><th>R</th><th>V en el elemento</th><th>I por el elemento</th><th>Potencia</th></tr></thead><tbody id="sp-table"></tbody></table>
+                </div>
+                <div class="row g-3 mt-1" id="sp-rules"></div>
+              </div>
+              <div class="lesson-foot" data-lesson="7"></div>
+            </div>
+          </section>
+
+          <!-- ============ 8. SÍMBOLOS Y SEGURIDAD ============ -->
+          <section class="lesson mb-5" id="s8" data-title="Símbolos y seguridad" data-icon="bi-shield-exclamation">
+            <div class="card lesson-card">
+              <div class="lesson-head h-8"><div class="num">8</div><div><h2 class="h4 fw-bold mb-0">Símbolos y seguridad</h2><small>Para leer esquemas y practicar sin riesgos</small></div></div>
+              <div class="card-body">
+                <p>Los esquemas son el “mapa” de un circuito. Pasa el cursor (o toca) cada símbolo para ver qué es.</p>
+                <div class="row g-3 mb-4" id="symbols"></div>
+                <div class="row g-3">
+                  <div class="col-md-6"><div class="tip-box s-res h-100"><h6 class="fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>Seguridad primero</h6>
+                    <ul class="small mb-0 ps-3"><li>Practica con pilas, USB o fuentes de 12 V o menos.</li><li>Nunca abras ni manipules el contacto de 127 V sin supervisión.</li><li>Apaga y desconecta antes de cambiar el circuito.</li><li>Las resistencias pueden calentarse: revisa su potencia (vatios).</li></ul></div></div>
+                  <div class="col-md-6"><div class="tip-box s-amp h-100"><h6 class="fw-bold"><i class="bi bi-stars me-1"></i>Datos curiosos</h6>
+                    <ul class="small mb-0 ps-3"><li>El Volt se llama así por Alessandro Volta, inventor de la pila.</li><li>El Ampere honra a André-Marie Ampère y el Ohm a Georg Ohm.</li><li>La corriente “convencional” se dibuja de + a −, aunque los electrones van de − a +.</li><li>Una pila AA nueva tiene unos 1.5 V, pero con carga baja cae por debajo de 1.2 V.</li></ul></div></div>
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="8"></div>
+            </div>
+          </section>
+
+          <!-- ============ 9. QUIZ ============ -->
+          <section class="lesson mb-5" id="s9" data-title="Pon a prueba lo aprendido" data-icon="bi-trophy-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-9"><div class="num">9</div><div><h2 class="h4 fw-bold mb-0">Pon a prueba lo aprendido</h2><small>9 preguntas rápidas</small></div></div>
+              <div class="card-body"><div id="quiz-box"></div></div>
+              <div class="lesson-foot" data-lesson="9"></div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Cibernética • Circuitos eléctricos</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    /* Copia de respaldo del menú (se usa si no se puede leer index.html, p. ej. con file://).
+       La fuente real es el bloque #menu-config de index.html. */
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] }
+      ]
+    };
+
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `
+          <li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}">
+            <i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi ${g.icon} me-1"></i>${g.label}
+            </a>
+            <ul class="dropdown-menu">${items}</ul>
+          </li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+          <div class="container">
+            <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul>
+            </div>
+          </div>
+        </nav>`;
+    }
+
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'index.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const menu = JSON.parse(doc.getElementById('menu-config').textContent);
+        renderHeader(menu, container, page);
+      } catch (e) { /* se queda con el respaldo */ }
+    })();
+  </script>
+
+  <!-- ===================== LÓGICA DE CIRCUITOS ===================== -->
+  <script>
+    /* ================== FUNCIONES PURAS (cálculo) ================== */
+    function eng(v, unit) {
+      if (!isFinite(v)) return '—';
+      if (v === 0) return '0 ' + unit;
+      const a = Math.abs(v);
+      const P = [[1e9,'G'],[1e6,'M'],[1e3,'k'],[1,''],[1e-3,'m'],[1e-6,'µ'],[1e-9,'n']];
+      for (const [m, p] of P) { if (a >= m * 0.9999999) return +(v / m).toPrecision(4) + ' ' + p + unit; }
+      return v.toExponential(2) + ' ' + unit;
+    }
+
+    const RC = [
+      { k:'negro',   n:'Negro',    h:'#1a1a1a', d:0,    m:0,  t:null },
+      { k:'cafe',    n:'Café',     h:'#8b4513', d:1,    m:1,  t:1 },
+      { k:'rojo',    n:'Rojo',     h:'#e03131', d:2,    m:2,  t:2 },
+      { k:'naranja', n:'Naranja',  h:'#fd7e14', d:3,    m:3,  t:null },
+      { k:'amarillo',n:'Amarillo', h:'#fcc419', d:4,    m:4,  t:null },
+      { k:'verde',   n:'Verde',    h:'#2f9e44', d:5,    m:5,  t:0.5 },
+      { k:'azul',    n:'Azul',     h:'#1c7ed6', d:6,    m:6,  t:0.25 },
+      { k:'violeta', n:'Violeta',  h:'#7048e8', d:7,    m:7,  t:0.1 },
+      { k:'gris',    n:'Gris',     h:'#868e96', d:8,    m:8,  t:0.05 },
+      { k:'blanco',  n:'Blanco',   h:'#f1f3f5', d:9,    m:9,  t:null },
+      { k:'dorado',  n:'Dorado',   h:'#d4a017', d:null, m:-1, t:5 },
+      { k:'plateado',n:'Plateado', h:'#c0c0c0', d:null, m:-2, t:10 }
+    ];
+    const rcBy = k => RC.find(c => c.k === k);
+
+    function valueFromBands(digitKeys, multKey) {
+      const digits = digitKeys.map(k => rcBy(k).d).join('');
+      return +(parseInt(digits, 10) * Math.pow(10, rcBy(multKey).m)).toPrecision(6);
+    }
+
+    function bandsForValue(v, n) {
+      if (!(v > 0)) return null;
+      const sig = n === 4 ? 2 : 3;
+      let e = Math.floor(Math.log10(v)) - (sig - 1);
+      let d = Math.round(v / Math.pow(10, e));
+      if (d >= Math.pow(10, sig)) { d = Math.round(d / 10); e += 1; }
+      if (e < -2 || e > 9) return null;
+      const ds = String(d).padStart(sig, '0').split('').map(x => RC.find(c => c.d === +x).k);
+      const mult = RC.find(c => c.m === e).k;
+      return { digits: ds, mult, approx: valueFromBands(ds, mult) };
+    }
+
+    function parseOhms(s) {
+      const m = String(s).trim().replace(',', '.').match(/^([0-9]*\.?[0-9]+)\s*([kKM]?)\s*(?:[RrΩω]|ohm|ohms)?$/);
+      if (!m) return NaN;
+      const mult = { '': 1, 'k': 1e3, 'K': 1e3, 'M': 1e6 }[m[2]];
+      return parseFloat(m[1]) * mult;
+    }
+
+    const E12 = [1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2];
+    function e12Up(r) {
+      const dec = Math.floor(Math.log10(r)), base = Math.pow(10, dec), m = r / base;
+      for (const e of E12) { if (e >= m - 1e-9) return +(e * base).toPrecision(3); }
+      return +(10 * base).toPrecision(3);
+    }
+
+    function solveOhm(target, V, I, R) {
+      if (target === 'V') return I * R;
+      if (target === 'I') return V / R;
+      return V / I;
+    }
+
+    function ledCalc(Vs, Vf, IfmA) {
+      const If = IfmA / 1000;
+      if (!(Vs > Vf)) return { ok: false };
+      const Rcalc = (Vs - Vf) / If;
+      const Rstd = e12Up(Rcalc);
+      const Ireal = (Vs - Vf) / Rstd;
+      const PR = (Vs - Vf) * Ireal;
+      const watt = [0.125, 0.25, 0.5, 1, 2, 5].find(w => w >= 2 * PR) || 5;
+      return { ok: true, Rcalc, Rstd, Ireal, PR, watt };
+    }
+
+    function calcCircuit(mode, V, R, broken) {
+      const rows = R.map((r, i) => ({ R: r, broken: broken[i], V: 0, I: 0, P: 0 }));
+      if (mode === 'serie') {
+        if (broken.some(b => b)) {
+          rows.forEach(r => { r.V = r.broken ? V : 0; });
+          return { rows, Req: Infinity, Itot: 0, open: true };
+        }
+        const Req = R.reduce((a, b) => a + b, 0);
+        const I = V / Req;
+        rows.forEach(r => { r.I = I; r.V = I * r.R; r.P = r.V * r.I; });
+        return { rows, Req, Itot: I, open: false };
+      }
+      let g = 0;
+      rows.forEach(r => { r.V = V; if (!r.broken) { r.I = V / r.R; r.P = r.V * r.I; g += 1 / r.R; } });
+      const Itot = rows.reduce((a, r) => a + r.I, 0);
+      return { rows, Req: g > 0 ? 1 / g : Infinity, Itot, open: g === 0 };
+    }
+
+    /* ================== DOM ================== */
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setupCanvas(cv, w, h) {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = w * dpr; cv.height = h * dpr;
+      const ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return ctx;
+    }
+
+    /* ---------- Stepper genérico ---------- */
+    function makeStepper(id, steps, onChange) {
+      const el = document.getElementById(id);
+      let i = 0; const seen = new Set([0]);
+      function render() {
+        seen.add(i);
+        el.innerHTML = `
+          <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
+            ${steps.map((s, k) => `<button class="dot ${k === i ? 'active' : ''} ${seen.has(k) ? 'seen' : ''}" data-k="${k}" aria-label="Paso ${k + 1}">${k + 1}</button>`).join('')}
+          </div>
+          <div class="step-card"><h6 class="fw-bold mb-1"><i class="bi ${steps[i].icon || 'bi-arrow-right-circle-fill'} me-1"></i>${steps[i].t}</h6><div class="small">${steps[i].d}</div></div>
+          <div class="d-flex justify-content-between mt-2">
+            <button class="btn btn-sm btn-outline-dark" data-nav="-1" ${i === 0 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i> Anterior</button>
+            <button class="btn btn-sm btn-dark" data-nav="1" ${i === steps.length - 1 ? 'disabled' : ''}>Siguiente <i class="bi bi-chevron-right"></i></button>
+          </div>`;
+        el.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => { i = +b.dataset.k; render(); }));
+        el.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => { i += +b.dataset.nav; render(); }));
+        if (onChange) onChange(i);
+      }
+      render();
+      return { get index() { return i; } };
+    }
+
+    /* ================== 1. ANALOGÍA DEL AGUA ================== */
+    const water = { V: 6, R: 20, step: 0, labels: true, parts: [], wheel: 0 };
+    const WSTEPS = [
+      { t: 'El tanque: el voltaje', icon: 'bi-droplet-half', d: 'Un tanque lleno y alto empuja el agua con más presión. Eso es el <strong>voltaje</strong>: la “presión eléctrica” que empuja las cargas. Sube el deslizador de voltaje y mira cómo sube el nivel.' },
+      { t: 'El tubo: la corriente', icon: 'bi-water', d: 'El agua que avanza por el tubo es la <strong>corriente</strong>. Se mide en amperes y representa cuánta agua (carga) pasa por segundo. Los puntos azules se mueven más rápido cuando hay más corriente.' },
+      { t: 'El estrechamiento: la resistencia', icon: 'bi-funnel-fill', d: 'Si el tubo se angosta, pasa menos agua. Eso es la <strong>resistencia</strong>. Aumenta la resistencia y verás el tubo cerrarse y el caudal bajar.' },
+      { t: 'La rueda: la carga', icon: 'bi-gear-wide-connected', d: 'El agua mueve una rueda: ahí se aprovecha la energía. En un circuito real esa rueda es un <strong>foco, un motor o un LED</strong>. Gira más rápido con más corriente.' },
+      { t: 'Todo junto: la Ley de Ohm', icon: 'bi-link-45deg', d: 'Más altura → más caudal. Más estrechamiento → menos caudal. En números: <strong class="mono">I = V ÷ R</strong>. Es justo la Ley de Ohm, que verás con calculadora en el paso 4.' }
+    ];
+
+    function wHW(x, m) {
+      if (x < 260 || x > 400) return 18;
+      if (x < 290) return 18 + (m - 18) * ((x - 260) / 30);
+      if (x < 370) return m;
+      return m + (18 - m) * ((x - 370) / 30);
+    }
+
+    function drawWater(ctx, t) {
+      const W = 700, H = 300, V = water.V, R = water.R, I = V / R, pipeY = 225;
+      const m = 18 - 15 * (Math.log10(R) / 2);
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#f8fbff'; ctx.fillRect(0, 0, W, H);
+
+      const tx = 20, ty = 20, tw = 130, th = 260, lvl = th * (0.12 + 0.8 * (V - 1) / 23), top = ty + th - lvl;
+      ctx.fillStyle = '#74c0fc'; ctx.beginPath(); ctx.moveTo(tx, ty + th);
+      ctx.lineTo(tx, top);
+      for (let x = tx; x <= tx + tw; x += 4) ctx.lineTo(x, top + Math.sin(x * 0.08 + t * 2) * 2.5);
+      ctx.lineTo(tx + tw, ty + th); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#495057'; ctx.lineWidth = 4; ctx.strokeRect(tx, ty, tw, th);
+
+      ctx.fillStyle = '#adb5bd'; ctx.beginPath(); ctx.moveTo(150, pipeY - 25);
+      for (let x = 150; x <= 590; x += 5) ctx.lineTo(x, pipeY - wHW(x, m) - 7);
+      for (let x = 590; x >= 150; x -= 5) ctx.lineTo(x, pipeY + wHW(x, m) + 7);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#d0ebff'; ctx.beginPath(); ctx.moveTo(150, pipeY);
+      for (let x = 150; x <= 590; x += 5) ctx.lineTo(x, pipeY - wHW(x, m));
+      for (let x = 590; x >= 150; x -= 5) ctx.lineTo(x, pipeY + wHW(x, m));
+      ctx.closePath(); ctx.fill();
+
+      const speed = reduceMotion ? 0 : 0.4 + 5 * Math.log10(1 + I) / Math.log10(25);
+      ctx.fillStyle = '#1c7ed6';
+      water.parts.forEach(p => {
+        p.x += speed; if (p.x > 590) { p.x = 150; p.f = Math.random() * 2 - 1; }
+        ctx.beginPath(); ctx.arc(p.x, pipeY + p.f * wHW(p.x, m) * 0.8, 3, 0, 6.283); ctx.fill();
+      });
+
+      water.wheel += speed * 0.02;
+      const cx = 640, cy = pipeY;
+      ctx.fillStyle = '#fff3bf'; ctx.strokeStyle = '#f08c00'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(cx, cy, 36, 0, 6.283); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#c26e00'; ctx.lineWidth = 4;
+      for (let k = 0; k < 6; k++) { const a = water.wheel + k * Math.PI / 3; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * 34, cy + Math.sin(a) * 34); ctx.stroke(); }
+
+      ctx.strokeStyle = '#f08c00'; ctx.fillStyle = '#f08c00'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(85, top - 4); ctx.lineTo(85, top + 30); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(78, top + 24); ctx.lineTo(85, top + 36); ctx.lineTo(92, top + 24); ctx.fill();
+
+      const hl = water.step;
+      ctx.save(); ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 3; ctx.setLineDash([8, 6]);
+      if (hl === 0) ctx.strokeRect(8, 8, 154, 284);
+      if (hl === 1) ctx.strokeRect(165, pipeY - 40, 100, 80);
+      if (hl === 2) { ctx.beginPath(); ctx.ellipse(330, pipeY, 78, 42, 0, 0, 6.283); ctx.stroke(); }
+      if (hl === 3) { ctx.beginPath(); ctx.arc(cx, cy, 52, 0, 6.283); ctx.stroke(); }
+      ctx.restore();
+
+      if (water.labels) {
+        const lab = (txt, x, y, col) => {
+          ctx.font = 'bold 13px Segoe UI, sans-serif';
+          const w = ctx.measureText(txt).width + 14;
+          ctx.fillStyle = col; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y - 14, w, 22, 8) : ctx.rect(x, y - 14, w, 22); ctx.fill();
+          ctx.fillStyle = '#fff'; ctx.fillText(txt, x + 7, y + 2);
+        };
+        lab('VOLTAJE = presión: ' + V + ' V', 165, 40, '#f08c00');
+        lab('RESISTENCIA = estrechamiento: ' + R + ' Ω', 235, 140, '#e03131');
+        lab('CORRIENTE = caudal', 440, 175, '#1c7ed6');
+        lab('CARGA', 600, 282, '#495057');
+      }
+    }
+
+    function updateWater() {
+      water.V = +$('#w-v').value; water.R = +$('#w-r').value; water.labels = $('#w-labels').checked;
+      const I = water.V / water.R;
+      $('#w-vout').textContent = water.V + ' V'; $('#w-rout').textContent = water.R + ' Ω'; $('#w-iout').textContent = eng(I, 'A');
+      let msg;
+      if (I >= 5) msg = '<i class="bi bi-exclamation-triangle-fill me-1"></i><strong>¡Muchísimo caudal!</strong> Mucha altura y casi nada de estrechamiento: en un circuito real el cable se calentaría. Por eso los circuitos llevan resistencias.';
+      else if (I >= 1) msg = '<i class="bi bi-water me-1"></i><strong>Caudal alto.</strong> Con poca resistencia y buen voltaje, la corriente es considerable.';
+      else if (I >= 0.1) msg = '<i class="bi bi-droplet me-1"></i><strong>Caudal moderado.</strong> Es el rango típico de muchos componentes de electrónica.';
+      else msg = '<i class="bi bi-moisture me-1"></i><strong>Apenas gotea.</strong> El tubo es muy angosto para la presión disponible: la corriente es pequeña.';
+      $('#w-msg').innerHTML = msg;
+    }
+
+    /* ================== 2. Convertidor de prefijos ================== */
+    function updateUnits() {
+      const v = parseFloat($('#uc-val').value), mult = parseFloat($('#uc-pre').value);
+      const P = [[1e9,'G'],[1e6,'M'],[1e3,'k'],[1,'base'],[1e-3,'m'],[1e-6,'µ'],[1e-9,'n']];
+      $('#uc-head').innerHTML = P.map(p => `<th>${p[1]}</th>`).join('');
+      if (!isFinite(v)) { $('#uc-row').innerHTML = P.map(() => '<td>—</td>').join(''); return; }
+      const base = v * mult;
+      $('#uc-row').innerHTML = P.map(p => `<td>${+(base / p[0]).toPrecision(6)}</td>`).join('');
+    }
+
+    /* ================== 3. CD vs CA ================== */
+    const ac = { f: 1, A: 8 };
+    function perim(s) {
+      const d = ((s % 1) + 1) % 1 * 720;
+      if (d < 240) return [40 + d, 40];
+      if (d < 360) return [280, 40 + (d - 240)];
+      if (d < 600) return [280 - (d - 360), 160];
+      return [40, 160 - (d - 600)];
+    }
+    function drawLoop(ctx, mode, t) {
+      ctx.clearRect(0, 0, 320, 200); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 320, 200);
+      ctx.strokeStyle = '#495057'; ctx.lineWidth = 3; ctx.strokeRect(40, 40, 240, 120);
+      ctx.fillStyle = '#fff'; ctx.fillRect(30, 80, 20, 40);
+      const s = Math.sin(2 * Math.PI * ac.f * t);
+      if (mode === 'dc') {
+        ctx.strokeStyle = '#212529'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(28, 90); ctx.lineTo(52, 90); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(33, 106); ctx.lineTo(47, 106); ctx.stroke();
+        ctx.fillStyle = '#e03131'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('+', 56, 94); ctx.fillStyle = '#212529'; ctx.fillText('−', 56, 112);
+      } else {
+        ctx.beginPath(); ctx.arc(40, 100, 16, 0, 6.283); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = '#212529'; ctx.stroke();
+        ctx.beginPath(); for (let x = -9; x <= 9; x++) { const y = 100 - Math.sin(x / 9 * Math.PI) * 6; if (x === -9) ctx.moveTo(40 + x, y); else ctx.lineTo(40 + x, y); } ctx.stroke();
+      }
+      const bright = mode === 'dc' ? 1 : 0.15 + 0.85 * s * s;
+      const g = ctx.createRadialGradient(280, 100, 2, 280, 100, 34);
+      g.addColorStop(0, `rgba(255,212,59,${bright})`); g.addColorStop(1, 'rgba(255,212,59,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(280, 100, 34, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#212529'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(280, 100, 14, 0, 6.283); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(270, 90); ctx.lineTo(290, 110); ctx.moveTo(290, 90); ctx.lineTo(270, 110); ctx.stroke();
+      const N = 22;
+      for (let i = 0; i < N; i++) {
+        const sPos = mode === 'dc' ? i / N + t * 0.08 : i / N + 0.035 * s * (ac.A / 8);
+        const [x, y] = perim(sPos);
+        ctx.fillStyle = '#f08c00'; ctx.beginPath(); ctx.arc(x, y, 4, 0, 6.283); ctx.fill();
+      }
+      ctx.fillStyle = '#495057'; ctx.font = '12px sans-serif';
+      ctx.fillText(mode === 'dc' ? 'Los puntos siempre avanzan en el mismo sentido' : 'Los puntos van y vienen, sin avanzar', 14, 190);
+    }
+    function drawWave(ctx, mode, t) {
+      const W = 320, H = 130, mid = 65, win = 2;
+      ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = '#e9ecef'; ctx.lineWidth = 1;
+      for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 5; y <= H; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      ctx.strokeStyle = '#495057'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(W, mid); ctx.stroke();
+      ctx.fillStyle = '#495057'; ctx.font = '11px sans-serif'; ctx.fillText('+V', 4, 12); ctx.fillText('0', 4, mid - 3); ctx.fillText('−V', 4, H - 4); ctx.fillText('tiempo →', W - 62, mid + 14);
+      const amp = ac.A / 10 * 52;
+      ctx.strokeStyle = mode === 'dc' ? '#1c7ed6' : '#e03131'; ctx.lineWidth = 3; ctx.beginPath();
+      let lastY = mid;
+      for (let px = 0; px <= W; px += 2) {
+        const tt = t - (W - px) / W * win;
+        const y = mode === 'dc' ? mid - amp : mid - Math.sin(2 * Math.PI * ac.f * tt) * amp;
+        if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+        lastY = y;
+      }
+      ctx.stroke();
+      ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.arc(W - 3, lastY, 5, 0, 6.283); ctx.fill();
+    }
+
+    function updateAC() {
+      ac.f = +$('#ac-f').value; ac.A = +$('#ac-a').value;
+      $('#ac-f-out').textContent = ac.f + ' Hz'; $('#ac-a-out').textContent = ac.A + ' V';
+    }
+    function updateACcalc() {
+      const v = parseFloat($('#ac-val').value), f = parseFloat($('#ac-hz').value), type = $('#ac-type').value;
+      const out = $('#ac-out');
+      if (!(v >= 0) || !(f > 0)) { out.innerHTML = '<div class="text-danger small">Escribe valores válidos (voltaje ≥ 0 y frecuencia &gt; 0).</div>'; return; }
+      const rms = type === 'rms' ? v : v / Math.SQRT2, peak = type === 'rms' ? v * Math.SQRT2 : v;
+      const card = (cls, title, val, note) => `<div class="col-6 col-lg-3"><div class="result-big ${cls} h-100"><div class="small">${title}</div><div class="fs-5 mono">${val}</div><div class="small opacity-75">${note}</div></div></div>`;
+      out.innerHTML = card('b-amp', 'Valor eficaz (RMS)', eng(rms, 'V'), 'Lo que “marca” el contacto')
+        + card('b-res', 'Valor pico', eng(peak, 'V'), 'RMS × √2')
+        + card('b-watt', 'Pico a pico', eng(peak * 2, 'V'), 'De la cresta al valle')
+        + card('b-volt', 'Periodo (T)', eng(1 / f, 's'), 'T = 1 ÷ f');
+    }
+
+    /* ================== 4. LEY DE OHM ================== */
+    const OHM_META = {
+      V: { name: 'Voltaje', units: [['mV', 1e-3], ['V', 1], ['kV', 1e3]], base: 1, cls: 'volt', sym: 'V', u: 'V' },
+      I: { name: 'Corriente', units: [['µA', 1e-6], ['mA', 1e-3], ['A', 1]], base: 2, cls: 'amp', sym: 'I', u: 'A' },
+      R: { name: 'Resistencia', units: [['Ω', 1], ['kΩ', 1e3], ['MΩ', 1e6]], base: 0, cls: 'res', sym: 'R', u: 'Ω' }
+    };
+    const ohm = { target: 'I', vals: { V: { v: '12', u: 1 }, I: { v: '20', u: 1e-3 }, R: { v: '470', u: 1 } } };
+    const FORMULA = { V: 'V = I × R', I: 'I = V ÷ R', R: 'R = V ÷ I' };
+
+    function renderOhmInputs() {
+      $('#ohm-formula').textContent = FORMULA[ohm.target];
+      $$('#ohm-tri .tri-zone').forEach(z => {
+        const v = z.dataset.v, isT = v === ohm.target;
+        z.classList.toggle('target', isT);
+        z.querySelector('text').textContent = isT ? '?' : v;
+      });
+      $$('.btn-target').forEach(b => b.classList.toggle('active', b.dataset.t === ohm.target));
+      $('#ohm-inputs').innerHTML = ['V', 'I', 'R'].filter(k => k !== ohm.target).map(k => {
+        const M = OHM_META[k], cur = ohm.vals[k];
+        return `<div class="col-sm-6"><label class="form-label fw-semibold mb-1"><span class="badge b-${M.cls}">${M.sym}</span> ${M.name}</label>
+          <div class="input-group"><input type="number" step="any" min="0" class="form-control mono" data-ov="${k}" value="${cur.v}" aria-label="${M.name}">
+          <select class="form-select" data-ou="${k}" style="max-width:92px" aria-label="Unidad de ${M.name}">${M.units.map(u => `<option value="${u[1]}" ${u[1] === cur.u ? 'selected' : ''}>${u[0]}</option>`).join('')}</select></div></div>`;
+      }).join('');
+      computeOhm();
+    }
+
+    function readOhm(k) {
+      const raw = ohm.vals[k].v;
+      if (raw === '' || raw === null) return NaN;
+      return parseFloat(raw) * ohm.vals[k].u;
+    }
+
+    function computeOhm() {
+      const t = ohm.target, err = $('#ohm-error'), box = $('#ohm-result');
+      let V = readOhm('V'), I = readOhm('I'), R = readOhm('R');
+      const need = ['V', 'I', 'R'].filter(k => k !== t), vals = { V, I, R };
+      let msg = '';
+      for (const k of need) { if (!isFinite(vals[k])) msg = 'Escribe un valor en ' + OHM_META[k].name.toLowerCase() + '.'; else if (vals[k] < 0) msg = OHM_META[k].name + ' no puede ser negativo en este simulador.'; }
+      if (!msg && t === 'I' && R <= 0) msg = 'La resistencia debe ser mayor que 0 (con 0 Ω la corriente sería infinita: un cortocircuito).';
+      if (!msg && t === 'R' && I <= 0) msg = 'La corriente debe ser mayor que 0 para poder calcular la resistencia.';
+      if (msg) { err.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i>' + msg; box.innerHTML = ''; drawChart(null); return; }
+      err.textContent = '';
+      const res = solveOhm(t, V, I, R); vals[t] = res; V = vals.V; I = vals.I; R = vals.R;
+      const M = OHM_META[t], P = V * I;
+      const sub = { V: `V = ${eng(I, 'A')} × ${eng(R, 'Ω')}`, I: `I = ${eng(V, 'V')} ÷ ${eng(R, 'Ω')}`, R: `R = ${eng(V, 'V')} ÷ ${eng(I, 'A')}` }[t];
+      const cover = { V: 'Tapa la V: queda I × R (se multiplican)', I: 'Tapa la I: queda V arriba y R abajo (V ÷ R)', R: 'Tapa la R: queda V arriba e I abajo (V ÷ I)' }[t];
+      let warn = '';
+      if (P > 0.25) warn = `<div class="tip-box s-res small mt-2"><i class="bi bi-exclamation-triangle-fill me-1"></i>Esa potencia (${eng(P, 'W')}) supera ¼ W: una resistencia pequeña común se calentaría. Usa una de mayor potencia.</div>`;
+      box.innerHTML = `
+        <div class="result-big b-${M.cls} mb-2"><div class="small"><i class="bi bi-check-circle me-1"></i>Resultado: ${M.name}</div><div class="fs-2 mono">${eng(res, M.u)}</div></div>
+        <div class="step-box"><span class="step-num">1</span>${cover}. Fórmula: <strong class="mono">${FORMULA[t]}</strong></div>
+        <div class="step-box"><span class="step-num">2</span>Sustituye (en unidades base): <span class="mono">${sub}</span></div>
+        <div class="step-box"><span class="step-num">3</span>Resultado: <span class="mono">${t} = ${+res.toPrecision(5)} ${M.u}</span> = <strong>${eng(res, M.u)}</strong></div>
+        <div class="step-box" style="border-left-color:var(--watt)"><i class="bi bi-fire me-1 t-watt"></i>Extra: potencia <span class="mono">P = V × I = ${eng(P, 'W')}</span></div>${warn}`;
+      drawChart({ V, I, R });
+    }
+
+    function drawChart(d) {
+      const cv = $('#ohm-chart'), ctx = setupCanvas(cv, 320, 200);
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 320, 200);
+      if (!d) { ctx.fillStyle = '#868e96'; ctx.font = '13px sans-serif'; ctx.fillText('Completa los datos para ver la gráfica', 40, 100); return; }
+      const L = 52, B = 160, Tt = 14, Rr = 304, Vmax = Math.max(d.V * 1.5, 1e-6), Imax = Vmax / d.R;
+      ctx.strokeStyle = '#dee2e6'; ctx.lineWidth = 1;
+      for (let k = 0; k <= 4; k++) { const x = L + (Rr - L) * k / 4, y = B - (B - Tt) * k / 4; ctx.beginPath(); ctx.moveTo(x, Tt); ctx.lineTo(x, B); ctx.moveTo(L, y); ctx.lineTo(Rr, y); ctx.stroke(); }
+      ctx.strokeStyle = '#212529'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(L, Tt); ctx.lineTo(L, B); ctx.lineTo(Rr, B); ctx.stroke();
+      ctx.strokeStyle = '#e03131'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(L, B); ctx.lineTo(Rr, Tt); ctx.stroke();
+      const px = L + (Rr - L) * d.V / Vmax, py = B - (B - Tt) * d.I / Imax;
+      ctx.setLineDash([5, 4]); ctx.strokeStyle = '#7048e8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(px, B); ctx.lineTo(px, py); ctx.lineTo(L, py); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#7048e8'; ctx.beginPath(); ctx.arc(px, py, 6, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#343a40'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(eng(d.V, 'V'), Math.min(px, Rr - 18), B + 14); ctx.fillText('Voltaje (V) →', (L + Rr) / 2, 192);
+      ctx.textAlign = 'right'; ctx.fillText(eng(d.I, 'A'), L - 4, py + 4); ctx.fillText(eng(Imax, 'A'), L - 4, Tt + 8);
+      ctx.textAlign = 'left'; ctx.fillStyle = '#e03131'; ctx.fillText('R = ' + eng(d.R, 'Ω'), L + 8, Tt + 14);
+      ctx.save(); ctx.translate(11, 95); ctx.rotate(-Math.PI / 2); ctx.fillStyle = '#343a40'; ctx.textAlign = 'center'; ctx.fillText('Corriente (I)', 0, 0); ctx.restore();
+    }
+
+    const OHM_PRESETS = {
+      1: { target: 'I', vals: { V: { v: '12', u: 1 }, I: { v: '20', u: 1e-3 }, R: { v: '470', u: 1 } } },
+      2: { target: 'R', vals: { V: { v: '3', u: 1 }, I: { v: '20', u: 1e-3 }, R: { v: '470', u: 1 } } },
+      3: { target: 'V', vals: { V: { v: '12', u: 1 }, I: { v: '2', u: 1 }, R: { v: '6', u: 1 } } }
+    };
+
+    /* ================== 5. CÓDIGO DE COLORES ================== */
+    const rc = { n: 4, sel: { d1: 'cafe', d2: 'negro', d3: 'negro', mult: 'rojo', tol: 'dorado' } };
+    function rcKeysList() { return rc.n === 4 ? ['d1', 'd2', 'mult', 'tol'] : ['d1', 'd2', 'd3', 'mult', 'tol']; }
+    function rcSetMode(n) {
+      rc.n = n;
+      rc.sel = n === 4 ? { d1: 'cafe', d2: 'negro', d3: 'negro', mult: 'rojo', tol: 'dorado' } : { d1: 'cafe', d2: 'negro', d3: 'negro', mult: 'cafe', tol: 'cafe' };
+    }
+    function rcValue() {
+      const dk = rc.n === 4 ? [rc.sel.d1, rc.sel.d2] : [rc.sel.d1, rc.sel.d2, rc.sel.d3];
+      return valueFromBands(dk, rc.sel.mult);
+    }
+    function renderRC() {
+      const names = { d1: '1ª franja (1er dígito)', d2: '2ª franja (2º dígito)', d3: '3ª franja (3er dígito)', mult: rc.n === 4 ? '3ª franja (multiplicador)' : '4ª franja (multiplicador)', tol: rc.n === 4 ? '4ª franja (tolerancia)' : '5ª franja (tolerancia)' };
+      const filt = { d1: c => c.d !== null, d2: c => c.d !== null, d3: c => c.d !== null, mult: c => c.m !== null, tol: c => c.t !== null };
+      $('#rc-rows').innerHTML = rcKeysList().map(k => {
+        const opts = RC.filter(filt[k]).filter(c => !(k === 'd1' && c.d === 0));
+        return `<div class="mb-3"><div class="small fw-semibold mb-1">${names[k]}</div><div class="d-flex flex-wrap gap-2">${opts.map(c =>
+          `<button type="button" class="swatch ${rc.sel[k] === c.k ? 'sel' : ''}" style="background:${c.h}" data-band="${k}" data-color="${c.k}" title="${c.n}" aria-label="${c.n}"></button>`).join('')}</div></div>`;
+      }).join('');
+      const pos = rc.n === 4 ? [90, 120, 150, 215] : [80, 106, 132, 158, 215];
+      const keys = rcKeysList();
+      const bands = keys.map((k, i) => `<rect x="${pos[i]}" y="26" width="14" height="48" fill="${rcBy(rc.sel[k]).h}" stroke="rgba(0,0,0,.35)" stroke-width="1"/>`).join('');
+      $('#rc-svg').innerHTML = `<line x1="5" y1="50" x2="295" y2="50" stroke="#868e96" stroke-width="6" stroke-linecap="round"/>
+        <rect x="55" y="20" width="190" height="60" rx="26" fill="#f0d9a8" stroke="#b08d4a" stroke-width="3"/>${bands}`;
+      const val = rcValue(), tol = rcBy(rc.sel.tol).t;
+      const lo = val * (1 - tol / 100), hi = val * (1 + tol / 100);
+      const bandNames = keys.map(k => rcBy(rc.sel[k]).n).join(' – ');
+      $('#rc-result').innerHTML = `<div class="result-big b-res"><div class="small">${bandNames}</div><div class="fs-2 mono">${eng(val, 'Ω')} <span class="fs-5">±${tol}%</span></div><div class="small">Valor real entre ${eng(lo, 'Ω')} y ${eng(hi, 'Ω')}</div></div>`;
+    }
+    function renderRCTable() {
+      $('#rc-table').innerHTML = RC.map(c => `<tr><td><span class="band-chip" style="background:${c.h}"></span> ${c.n}</td><td>${c.d === null ? '—' : c.d}</td><td>×${c.m < 0 ? (c.m === -1 ? '0.1' : '0.01') : '10' + (c.m ? '<sup>' + c.m + '</sup>' : '⁰')}</td><td>${c.t === null ? '—' : '±' + c.t + '%'}</td></tr>`).join('');
+    }
+    function rcReverse() {
+      const v = parseOhms($('#rc-rev').value), msg = $('#rc-rev-msg');
+      if (!isFinite(v) || v <= 0) { msg.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>No entendí el valor. Prueba con 330, 4.7k, 1M…</span>'; return; }
+      const b = bandsForValue(v, rc.n);
+      if (!b) { msg.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>Ese valor no se puede representar con ${rc.n} franjas (rango 0.1 Ω a ${rc.n === 4 ? '99 GΩ' : '999 GΩ'}).</span>`; return; }
+      rc.sel.d1 = b.digits[0]; rc.sel.d2 = b.digits[1]; if (rc.n === 5) rc.sel.d3 = b.digits[2]; rc.sel.mult = b.mult;
+      renderRC();
+      const same = Math.abs(b.approx - v) < v * 1e-9;
+      msg.innerHTML = same ? `<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Listo: ${eng(v, 'Ω')} con ${rc.n} franjas.</span>` : `<span class="text-warning-emphasis"><i class="bi bi-info-circle me-1"></i>Se aproximó a ${eng(b.approx, 'Ω')} (con ${rc.n} franjas solo hay ${rc.n === 4 ? '2' : '3'} cifras significativas).</span>`;
+    }
+
+    /* ================== 6. LED ================== */
+    const LED_COLORS = [
+      { n: 'Rojo', vf: 2.0, h: '#ff3b3b' }, { n: 'Naranja', vf: 2.0, h: '#ff9500' }, { n: 'Amarillo', vf: 2.1, h: '#ffe600' },
+      { n: 'Verde', vf: 2.2, h: '#2bd94b' }, { n: 'Azul', vf: 3.0, h: '#2b7bff' }, { n: 'Blanco', vf: 3.2, h: '#fff3b0' }
+    ];
+    const led = { on: true, noR: false, hl: 'all' };
+    const LSTEPS = [
+      { t: 'Identifica la polaridad del LED', icon: 'bi-compass', hl: 'led', d: 'El LED tiene <strong>ánodo (+)</strong>, la pata larga, y <strong>cátodo (−)</strong>, la pata corta con el lado plano. La corriente solo pasa del ánodo al cátodo (la punta del triángulo del símbolo apunta al cátodo).' },
+      { t: 'Calcula la resistencia', icon: 'bi-calculator', hl: 'resistor', d: 'Usa <span class="mono">R = (V<sub>fuente</sub> − V<sub>f</sub>) ÷ I</span>. Elige fuente, color y corriente en el panel de la derecha; el simulador te da el valor comercial más seguro.' },
+      { t: 'Pon la resistencia en serie con el LED', icon: 'bi-link-45deg', hl: 'resled', d: 'La resistencia y el LED van <strong>uno tras otro</strong>, por el mismo camino. Así la misma corriente pasa por ambos y la resistencia “se queda” con el voltaje sobrante.' },
+      { t: 'Conecta con la polaridad correcta', icon: 'bi-battery-charging', hl: 'battery', d: 'Del <strong>positivo (+)</strong> de la fuente → resistencia → <strong>ánodo</strong> del LED. Del <strong>cátodo</strong> del LED → <strong>negativo (−)</strong> de la fuente.' },
+      { t: 'Cierra el interruptor y prueba', icon: 'bi-toggle-on', hl: 'switch', d: 'Usa el botón del interruptor para cerrar el circuito. Luego marca “Quitar la resistencia” para ver (solo en simulación) por qué nunca debes omitirla.' }
+    ];
+
+    function ledState() {
+      const sel = $('#led-vs').value, Vs = sel === 'custom' ? parseFloat($('#led-vs-c').value) : parseFloat(sel);
+      const col = LED_COLORS[+$('#led-color').value], IfmA = +$('#led-if').value;
+      return { Vs, col, IfmA, calc: isFinite(Vs) ? ledCalc(Vs, col.vf, IfmA) : { ok: false } };
+    }
+
+    function zigPts(cx, cy, len, vertical) {
+      const pts = [[-len / 2, 0], [-len / 2 + 8, 0]], n = 6, seg = (len - 16) / n;
+      for (let k = 0; k < n; k++) pts.push([-len / 2 + 8 + seg * (k + 0.5), k % 2 ? 14 : -14]);
+      pts.push([len / 2 - 8, 0], [len / 2, 0]);
+      return pts.map(([a, b]) => vertical ? `${cx + b},${cy + a}` : `${cx + a},${cy + b}`).join(' ');
+    }
+    function flowDur(I) { return Math.min(8, Math.max(0.5, 4 / (0.3 + Math.log10(1 + I * 100)))).toFixed(2) + 's'; }
+
+    function renderLed() {
+      const s = ledState(), c = s.calc, hasR = !led.noR;
+      let I = 0, burnt = false, msg = '';
+      if (!c.ok) { msg = '<div class="tip-box s-res small"><i class="bi bi-exclamation-triangle-fill me-1"></i>La fuente debe tener <strong>más voltaje</strong> que el LED (V<sub>f</sub> = ' + s.col.vf + ' V). Con esta fuente el LED no encendería.</div>'; }
+      else if (!hasR) { burnt = led.on; I = led.on ? 5 : 0; }
+      else { I = led.on ? c.Ireal : 0; }
+      const brightness = !c.ok ? 0 : burnt ? 0 : Math.min(1, 0.15 + 0.85 * (I * 1000) / 20);
+      const on = led.on && c.ok;
+      const rLabel = hasR && c.ok ? eng(c.Rstd, 'Ω') : (hasR ? 'R' : '(sin R)');
+      const hex = s.col.h;
+      const flowStyle = I > 0 ? `animation-duration:${flowDur(burnt ? 1 : I)}` : 'display:none';
+      const svg = `
+      <svg id="led-svg" viewBox="0 0 430 260" data-hl="${led.hl}" style="width:100%;height:auto" role="img" aria-label="Esquema: fuente, resistencia, LED e interruptor en serie">
+        <defs><radialGradient id="lg"><stop offset="0" stop-color="${hex}" stop-opacity="${brightness}"/><stop offset="1" stop-color="${hex}" stop-opacity="0"/></radialGradient></defs>
+        <path class="wire" d="M50,50 H150 M250,50 H370 V105 M370,148 V210 H250 M190,210 H50 V150 M50,115 V50"/>
+        <path class="flow" style="${flowStyle}" d="M50,150 V50 H370 V210 H50 V150"/>
+        <g class="g-bat"><rect x="30" y="100" width="40" height="60" fill="#fff"/>
+          <line class="sym" x1="33" y1="115" x2="67" y2="115"/><line class="sym" x1="41" y1="136" x2="59" y2="136"/>
+          <text class="svg-text" x="76" y="119" style="fill:#e03131">+</text><text class="svg-text" x="76" y="142">−</text>
+          <text class="svg-text small" x="8" y="182">Fuente</text><text class="svg-text" x="8" y="198">${s.Vs} V</text></g>
+        <g class="g-res"><rect x="146" y="26" width="108" height="48" fill="#fff"/>
+          ${hasR ? `<polyline class="sym" points="${zigPts(200, 50, 96, false)}"/>` : `<path class="sym" d="M150,50 H250" stroke-dasharray="4 6"/>`}
+          <text class="svg-text" x="200" y="22" text-anchor="middle">${rLabel}</text></g>
+        <g class="g-led"><circle cx="370" cy="127" r="46" fill="url(#lg)" ${led.on ? '' : 'opacity="0"'}/>
+          <rect x="344" y="100" width="52" height="52" fill="#fff" fill-opacity="${brightness > 0 ? 0.0 : 1}"/>
+          <polygon class="sym" points="352,105 388,105 370,143" fill="${on && !burnt ? hex : '#f1f3f5'}" fill-opacity="${on && !burnt ? 0.55 : 1}"/>
+          <line class="sym" x1="350" y1="145" x2="390" y2="145"/>
+          <path class="sym" d="M394,110 L410,94 M404,94 H410 V100 M398,124 L414,108 M408,108 H414 V114"/>
+          <text class="svg-text small" x="338" y="104" text-anchor="end">ánodo (+)</text><text class="svg-text small" x="338" y="152" text-anchor="end">cátodo (−)</text>
+          ${burnt ? `<text x="370" y="132" text-anchor="middle" font-size="30" fill="#e03131" font-weight="800">✖</text><circle class="burst" cx="370" cy="127" r="26" fill="#ffa94d"/>` : ''}
+          <text class="svg-text" x="370" y="178" text-anchor="middle">LED ${s.col.n.toLowerCase()}</text></g>
+        <g class="g-sw"><rect x="186" y="186" width="68" height="40" fill="#fff"/>
+          <circle cx="250" cy="210" r="4" fill="#212529"/><circle cx="190" cy="210" r="4" fill="#212529"/>
+          <line class="sym" x1="250" y1="210" x2="${led.on ? 191 : 205}" y2="${led.on ? 209 : 184}"/>
+          <text class="svg-text" x="220" y="244" text-anchor="middle">Interruptor ${led.on ? '(cerrado)' : '(abierto)'}</text></g>
+      </svg>`;
+      $('#led-svg-wrap').innerHTML = svg;
+      const sw = $('#led-sw'); sw.className = 'btn ' + (led.on ? 'btn-success' : 'btn-outline-secondary');
+      sw.innerHTML = `<i class="bi bi-toggle-${led.on ? 'on' : 'off'} me-1"></i><span>Interruptor: ${led.on ? 'cerrado' : 'abierto'}</span>`;
+
+      $('#led-if-out').textContent = s.IfmA + ' mA';
+      const colorSel = $('#led-color'); if (!colorSel.options.length) colorSel.innerHTML = LED_COLORS.map((l, i) => `<option value="${i}">${l.n} (${l.vf} V)</option>`).join('');
+
+      if (!c.ok) { $('#led-out').innerHTML = msg; return; }
+      const b = bandsForValue(c.Rstd, 4);
+      const chips = b ? [b.digits[0], b.digits[1], b.mult, 'dorado'].map(k => `<span class="band-chip" style="background:${rcBy(k).h}" title="${rcBy(k).n}"></span>`).join('') : '';
+      const bandNames = b ? [b.digits[0], b.digits[1], b.mult, 'dorado'].map(k => rcBy(k).n).join(' – ') : '';
+      const card = (cls, t, v, n) => `<div class="col-6"><div class="result-big ${cls} h-100 p-2"><div class="small">${t}</div><div class="fs-6 mono">${v}</div><div class="small opacity-75">${n}</div></div></div>`;
+      let extra = '';
+      if (burnt) extra = '<div class="tip-box s-res small mt-2"><i class="bi bi-fire me-1"></i><strong>¡LED quemado!</strong> Sin resistencia, nada limita la corriente: pasa muchísima y el LED se destruye en un instante. Vuelve a poner la resistencia.</div>';
+      else if (c.Ireal * 1000 > 25) extra = '<div class="tip-box s-res small mt-2"><i class="bi bi-exclamation-triangle-fill me-1"></i>La corriente real supera 25 mA: es mucho para un LED común.</div>';
+      $('#led-out').innerHTML = `
+        <div class="row g-2">
+          ${card('b-res', 'R calculada', eng(c.Rcalc, 'Ω'), `(${s.Vs} − ${s.col.vf}) ÷ ${s.IfmA / 1000} A`)}
+          ${card('b-watt', 'R comercial (E12)', eng(c.Rstd, 'Ω'), 'valor estándar ≥ calculado')}
+          ${card('b-amp', 'Corriente real', eng(c.Ireal, 'A'), '(Vfuente − Vf) ÷ R comercial')}
+          ${card('b-volt', 'Potencia en R', eng(c.PR, 'W'), 'usa una de ' + (c.watt < 1 ? (c.watt === 0.125 ? '⅛' : c.watt === 0.25 ? '¼' : '½') : c.watt) + ' W o más')}
+        </div>
+        <div class="panel mt-2 p-2 small"><span class="fw-semibold">Colores de la resistencia (4 franjas, ±5%):</span><br>${chips} <span class="ms-1">${bandNames}</span></div>${extra}`;
+    }
+
+    /* ================== 7. SERIE / PARALELO ================== */
+    const sp = { mode: 'serie' };
+    function spInputs() {
+      return { V: +$('#sp-v').value, R: [1, 2, 3].map(i => Math.max(parseFloat($('#sp-r' + i).value) || 1, 0.001)), broken: [1, 2, 3].map(i => $('#sp-b' + i).checked) };
+    }
+    function bulb(x, y, b, on) {
+      const g = on ? `<circle cx="${x}" cy="${y}" r="26" fill="#ffd43b" opacity="${(0.15 + 0.7 * b).toFixed(2)}"/>` : '';
+      return `${g}<circle cx="${x}" cy="${y}" r="12" fill="${on ? '#fff3bf' : '#f1f3f5'}" stroke="#212529" stroke-width="2.5"/><path class="sym" style="stroke-width:2" d="M${x - 7},${y - 7} L${x + 7},${y + 7} M${x + 7},${y - 7} L${x - 7},${y + 7}"/>`;
+    }
+    function renderSP() {
+      const { V, R, broken } = spInputs();
+      $('#sp-v-out').textContent = V + ' V';
+      const c = calcCircuit(sp.mode, V, R, broken);
+      const maxP = Math.max(...c.rows.map(r => r.P), 1e-12);
+      const fl = I => I > 1e-12 ? `style="animation-duration:${flowDur(I)}"` : 'style="display:none"';
+      let svg;
+      if (sp.mode === 'serie') {
+        const xs = [150, 260, 370];
+        svg = `<svg viewBox="0 0 520 290" style="width:100%;height:auto" role="img" aria-label="Esquema de tres resistencias en serie">
+          <path class="wire" d="M50,240 V60 H470 V240 H50"/>
+          <path class="flow" ${fl(c.Itot)} d="M50,150 V60 H470 V240 H50 V150"/>
+          <rect x="35" y="125" width="30" height="50" fill="#fff"/>
+          <line class="sym" x1="33" y1="135" x2="67" y2="135"/><line class="sym" x1="41" y1="156" x2="59" y2="156"/>
+          <text class="svg-text" x="74" y="139" style="fill:#e03131">+</text><text class="svg-text" x="74" y="162">−</text><text class="svg-text" x="10" y="200">${V} V</text>
+          ${xs.map((x, i) => `<rect x="${x - 40}" y="42" width="80" height="36" fill="#fff"/><polyline class="sym" points="${zigPts(x, 60, 70, false)}"/>
+            ${broken[i] ? `<path d="M${x - 14},44 L${x + 14},76 M${x + 14},44 L${x - 14},76" stroke="#e03131" stroke-width="4"/>` : ''}
+            <text class="svg-text" x="${x}" y="32" text-anchor="middle">R${i + 1} = ${eng(R[i], 'Ω')}</text>
+            ${bulb(x, 130, c.rows[i].P / maxP, c.rows[i].P > 0)}
+            <text class="svg-text small" x="${x}" y="172" text-anchor="middle">${eng(c.rows[i].V, 'V')}</text>`).join('')}
+          <text class="svg-text" x="260" y="275" text-anchor="middle">Un solo camino: la misma corriente pasa por todas</text>
+        </svg>`;
+      } else {
+        const xs = [180, 290, 400], i1 = c.rows[0].I, i2 = c.rows[1].I, i3 = c.rows[2].I;
+        svg = `<svg viewBox="0 0 520 290" style="width:100%;height:auto" role="img" aria-label="Esquema de tres resistencias en paralelo">
+          <path class="wire" d="M60,240 V60 H400 M60,240 H400 M180,60 V240 M290,60 V240 M400,60 V240"/>
+          <path class="flow" ${fl(c.Itot)} d="M60,150 V60 H180"/><path class="flow" ${fl(i2 + i3)} d="M180,60 H290"/><path class="flow" ${fl(i3)} d="M290,60 H400"/>
+          <path class="flow" ${fl(i1)} d="M180,60 V240"/><path class="flow" ${fl(i2)} d="M290,60 V240"/><path class="flow" ${fl(i3)} d="M400,60 V240"/>
+          <path class="flow" ${fl(i3)} d="M400,240 H290"/><path class="flow" ${fl(i2 + i3)} d="M290,240 H180"/><path class="flow" ${fl(c.Itot)} d="M180,240 H60 V150"/>
+          <rect x="45" y="125" width="30" height="50" fill="#fff"/>
+          <line class="sym" x1="43" y1="135" x2="77" y2="135"/><line class="sym" x1="51" y1="156" x2="69" y2="156"/>
+          <text class="svg-text" x="84" y="139" style="fill:#e03131">+</text><text class="svg-text" x="84" y="162">−</text><text class="svg-text" x="8" y="200">${V} V</text>
+          ${xs.map((x, i) => `<rect x="${x - 16}" y="108" width="32" height="84" fill="#fff"/><polyline class="sym" points="${zigPts(x, 150, 70, true)}"/>
+            ${broken[i] ? `<path d="M${x - 16},120 L${x + 16},180 M${x + 16},120 L${x - 16},180" stroke="#e03131" stroke-width="4"/>` : ''}
+            <text class="svg-text" x="${x}" y="48" text-anchor="middle">R${i + 1} = ${eng(R[i], 'Ω')}</text>
+            ${bulb(x + 44, 150, c.rows[i].P / maxP, c.rows[i].P > 0)}
+            <text class="svg-text small" x="${x}" y="262" text-anchor="middle">${eng(c.rows[i].I, 'A')}</text>`).join('')}
+          <text class="svg-text" x="330" y="282" text-anchor="middle">Varios caminos: el voltaje es el mismo, la corriente se reparte</text>
+        </svg>`;
+      }
+      $('#sp-svg-wrap').innerHTML = svg;
+      $('#sp-table').innerHTML = c.rows.map((r, i) => `<tr class="${r.broken ? 'table-danger' : ''}"><td class="fw-bold">R${i + 1}${r.broken ? ' <span class="badge bg-danger">abierto</span>' : ''}</td><td class="mono">${eng(r.R, 'Ω')}</td><td class="mono">${eng(r.V, 'V')}</td><td class="mono">${eng(r.I, 'A')}</td><td class="mono">${eng(r.P, 'W')}</td></tr>`).join('')
+        + `<tr class="table-light fw-bold"><td>Total</td><td class="mono">${isFinite(c.Req) ? eng(c.Req, 'Ω') : '∞ (abierto)'}</td><td class="mono">${eng(V, 'V')}</td><td class="mono">${eng(c.Itot, 'A')}</td><td class="mono">${eng(c.rows.reduce((a, r) => a + r.P, 0), 'W')}</td></tr>`;
+      const anyBroken = broken.some(Boolean);
+      let m;
+      if (sp.mode === 'serie') m = anyBroken ? '<i class="bi bi-exclamation-octagon-fill me-1"></i><strong>Se abrió el circuito:</strong> como en serie solo hay un camino, <u>todo se apaga</u> aunque un solo foco falle.' : `<i class="bi bi-info-circle me-1"></i>Resistencia total: <strong>${eng(c.Req, 'Ω')}</strong> (la suma). Corriente única: <strong>${eng(c.Itot, 'A')}</strong>. El voltaje se reparte entre las resistencias.`;
+      else m = anyBroken ? '<i class="bi bi-check-circle-fill me-1"></i><strong>Los demás siguen encendidos:</strong> cada rama tiene su propio camino. Por eso la instalación de tu casa es en paralelo.' : `<i class="bi bi-info-circle me-1"></i>Resistencia total: <strong>${eng(c.Req, 'Ω')}</strong> (siempre menor que la menor de las R). Cada rama recibe los ${V} V completos.`;
+      $('#sp-msg').innerHTML = m;
+      $('#sp-rules').innerHTML = sp.mode === 'serie' ? `
+        <div class="col-md-4"><div class="rule-card s-res"><h6 class="fw-bold">Resistencia total</h6><div class="mono">R<sub>T</sub> = R1 + R2 + R3</div><small>Se suman.</small></div></div>
+        <div class="col-md-4"><div class="rule-card s-amp"><h6 class="fw-bold">Corriente</h6><div class="mono">I<sub>T</sub> = I1 = I2 = I3</div><small>Es la misma en todos.</small></div></div>
+        <div class="col-md-4"><div class="rule-card s-volt"><h6 class="fw-bold">Voltaje</h6><div class="mono">V = V1 + V2 + V3</div><small>Se reparte entre los elementos.</small></div></div>` : `
+        <div class="col-md-4"><div class="rule-card s-res"><h6 class="fw-bold">Resistencia total</h6><div class="mono">1/R<sub>T</sub> = 1/R1 + 1/R2 + 1/R3</div><small>Se suman los inversos: R<sub>T</sub> baja.</small></div></div>
+        <div class="col-md-4"><div class="rule-card s-amp"><h6 class="fw-bold">Corriente</h6><div class="mono">I<sub>T</sub> = I1 + I2 + I3</div><small>Se reparte entre las ramas.</small></div></div>
+        <div class="col-md-4"><div class="rule-card s-volt"><h6 class="fw-bold">Voltaje</h6><div class="mono">V = V1 = V2 = V3</div><small>Es el mismo en todas las ramas.</small></div></div>`;
+    }
+
+    /* ================== 8. SÍMBOLOS ================== */
+    const SYMBOLS = [
+      { n: 'Fuente / pila', d: 'Línea larga = positivo (+), corta = negativo (−).', svg: '<line class="sym" x1="5" y1="25" x2="30" y2="25"/><line class="sym" x1="30" y1="10" x2="30" y2="40"/><line class="sym" x1="42" y1="17" x2="42" y2="33"/><line class="sym" x1="42" y1="25" x2="75" y2="25"/>' },
+      { n: 'Resistencia', d: 'Limita la corriente. Se mide en ohms (Ω).', svg: '<polyline class="sym" points="5,25 15,25 21,11 33,39 45,11 57,39 63,25 75,25"/>' },
+      { n: 'LED', d: 'Diodo que emite luz. La corriente va del ánodo (+) al cátodo (−).', svg: '<line class="sym" x1="5" y1="25" x2="28" y2="25"/><polygon class="sym" points="28,10 28,40 52,25"/><line class="sym" x1="52" y1="10" x2="52" y2="40"/><line class="sym" x1="52" y1="25" x2="75" y2="25"/><path class="sym" d="M40,8 L48,0 M46,0 H48 V3 M50,10 L58,2 M56,2 H58 V5"/>' },
+      { n: 'Interruptor', d: 'Abre o cierra el camino de la corriente.', svg: '<circle cx="12" cy="30" r="3" fill="#212529"/><circle cx="68" cy="30" r="3" fill="#212529"/><line class="sym" x1="12" y1="30" x2="60" y2="10"/><line class="sym" x1="2" y1="30" x2="12" y2="30"/><line class="sym" x1="68" y1="30" x2="78" y2="30"/>' },
+      { n: 'Tierra / GND', d: 'Punto de referencia de 0 V.', svg: '<line class="sym" x1="40" y1="5" x2="40" y2="22"/><line class="sym" x1="20" y1="22" x2="60" y2="22"/><line class="sym" x1="27" y1="31" x2="53" y2="31"/><line class="sym" x1="34" y1="40" x2="46" y2="40"/>' },
+      { n: 'Fuente de CA', d: 'Entrega voltaje alterno (~).', svg: '<line class="sym" x1="5" y1="25" x2="22" y2="25"/><circle class="sym" cx="40" cy="25" r="18"/><path class="sym" d="M30,25 C34,10 38,10 40,25 C42,40 46,40 50,25"/><line class="sym" x1="58" y1="25" x2="75" y2="25"/>' },
+      { n: 'Voltímetro / Amperímetro', d: 'Un círculo con V o A. V va en paralelo; A, en serie.', svg: '<circle class="sym" cx="40" cy="25" r="18"/><text x="40" y="32" text-anchor="middle" font-size="20" font-weight="800" fill="#212529">V</text><line class="sym" x1="2" y1="25" x2="22" y2="25"/><line class="sym" x1="58" y1="25" x2="78" y2="25"/>' },
+      { n: 'Cable unido / cruce', d: 'Con punto: se unen. Sin punto: solo se cruzan.', svg: '<line class="sym" x1="5" y1="25" x2="75" y2="25"/><line class="sym" x1="40" y1="5" x2="40" y2="45"/><circle cx="40" cy="25" r="5" fill="#212529"/>' }
+    ];
+    function renderSymbols() {
+      $('#symbols').innerHTML = SYMBOLS.map(s => `<div class="col-6 col-md-3"><div class="symbol-card" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top" data-bs-title="${s.n}" data-bs-content="${s.d}">
+        <svg viewBox="0 0 80 50" style="width:100%;max-width:110px;height:56px">${s.svg}</svg><div class="small fw-semibold mt-1">${s.n}</div></div></div>`).join('');
+    }
+
+    /* ================== 9. QUIZ ================== */
+    const QUIZ = [
+      { q: 'En la analogía del agua, ¿qué representa el voltaje?', o: ['La altura (presión) del agua', 'El caudal', 'El estrechamiento del tubo', 'El tamaño del tanque'], a: 0, e: 'El voltaje es la “presión” que empuja a las cargas, como la altura del tanque.' },
+      { q: '¿En qué unidad se mide la corriente eléctrica?', o: ['Ampere (A)', 'Volt (V)', 'Ohm (Ω)', 'Watt (W)'], a: 0, e: 'La corriente se mide en amperes. Volt es voltaje, Ohm es resistencia y Watt es potencia.' },
+      { q: 'Si V = 12 V y R = 4 Ω, ¿cuánto vale la corriente?', o: ['3 A', '48 A', '0.33 A', '8 A'], a: 0, e: 'I = V ÷ R = 12 ÷ 4 = 3 A.' },
+      { q: 'Una resistencia con franjas café – negro – rojo – dorado vale…', o: ['1 kΩ ±5%', '10 Ω ±5%', '100 kΩ ±5%', '1.2 kΩ ±5%'], a: 0, e: 'Café = 1, negro = 0, rojo = ×100: 10 × 100 = 1000 Ω. Dorado = ±5%.' },
+      { q: 'Un LED rojo (2 V) con fuente de 5 V a 20 mA necesita una resistencia de…', o: ['150 Ω', '250 Ω', '15 Ω', '1.5 kΩ'], a: 0, e: 'R = (5 − 2) ÷ 0.02 = 150 Ω.' },
+      { q: 'En un circuito en serie, ¿qué es igual en todos los elementos?', o: ['La corriente', 'El voltaje', 'La resistencia', 'La potencia'], a: 0, e: 'Con un solo camino, la misma corriente pasa por todo. El voltaje se reparte.' },
+      { q: 'En un circuito en paralelo, ¿qué es igual en todas las ramas?', o: ['El voltaje', 'La corriente', 'La resistencia', 'Nada'], a: 0, e: 'Todas las ramas están conectadas a los mismos dos puntos, así que reciben el mismo voltaje.' },
+      { q: '¿Cuál es la frecuencia de la corriente alterna en México?', o: ['60 Hz', '50 Hz', '120 Hz', '0 Hz'], a: 0, e: 'En México y Estados Unidos la red es de 60 Hz (en Europa, 50 Hz).' },
+      { q: '¿Para qué sirve la resistencia en serie con un LED?', o: ['Limitar la corriente para que no se queme', 'Cambiar su color', 'Invertir su polaridad', 'Convertir CA en CD'], a: 0, e: 'El LED no limita su corriente; la resistencia evita que pase demasiada.' }
+    ];
+    const quiz = { i: 0, score: 0, answered: false, order: [] };
+    function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+    function renderQuiz() {
+      const box = $('#quiz-box');
+      if (quiz.i >= QUIZ.length) {
+        const pct = Math.round(quiz.score / QUIZ.length * 100);
+        const medal = pct >= 80 ? ['bi-trophy-fill text-warning', '¡Excelente! Dominas los fundamentos.'] : pct >= 50 ? ['bi-emoji-smile-fill text-primary', 'Vas muy bien. Repasa los pasos donde dudaste.'] : ['bi-book-fill text-secondary', 'Buen comienzo. Vuelve a recorrer la ruta y prueba otra vez.'];
+        box.innerHTML = `<div class="text-center py-3"><i class="bi ${medal[0]}" style="font-size:4rem"></i><h3 class="fw-bold mt-2">${quiz.score} / ${QUIZ.length}</h3><p>${medal[1]}</p><button class="btn btn-dark" id="quiz-restart"><i class="bi bi-arrow-counterclockwise me-1"></i>Intentar de nuevo</button></div>`;
+        $('#quiz-restart').addEventListener('click', () => { quiz.i = 0; quiz.score = 0; renderQuiz(); });
+        markDone(9, true);
+        return;
+      }
+      const q = QUIZ[quiz.i]; quiz.answered = false;
+      quiz.order = shuffle(q.o.map((t, k) => k));
+      box.innerHTML = `<div class="d-flex justify-content-between small fw-semibold mb-2"><span>Pregunta ${quiz.i + 1} de ${QUIZ.length}</span><span><i class="bi bi-star-fill text-warning"></i> ${quiz.score}</span></div>
+        <div class="progress mb-3"><div class="progress-bar bg-warning" style="width:${quiz.i / QUIZ.length * 100}%"></div></div>
+        <h5 class="fw-bold mb-3">${q.q}</h5>
+        <div class="d-grid gap-2" id="quiz-opts">${quiz.order.map(k => `<button class="btn btn-light border quiz-opt py-2" data-k="${k}">${q.o[k]}</button>`).join('')}</div>
+        <div id="quiz-fb" class="mt-3" aria-live="polite"></div>`;
+      $$('#quiz-opts .quiz-opt').forEach(b => b.addEventListener('click', () => {
+        if (quiz.answered) return; quiz.answered = true;
+        const ok = +b.dataset.k === q.a; if (ok) quiz.score++;
+        $$('#quiz-opts .quiz-opt').forEach(x => { x.disabled = true; if (+x.dataset.k === q.a) x.className = 'btn btn-success quiz-opt py-2'; });
+        if (!ok) b.className = 'btn btn-danger quiz-opt py-2';
+        $('#quiz-fb').innerHTML = `<div class="tip-box ${ok ? 's-amp' : 's-res'}"><strong><i class="bi ${ok ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'} me-1"></i>${ok ? '¡Correcto!' : 'Casi.'}</strong> ${q.e}</div>
+          <button class="btn btn-dark mt-2" id="quiz-next">${quiz.i === QUIZ.length - 1 ? 'Ver resultado' : 'Siguiente'} <i class="bi bi-chevron-right"></i></button>`;
+        $('#quiz-next').addEventListener('click', () => { quiz.i++; renderQuiz(); });
+      }));
+    }
+
+    /* ================== NAVEGACIÓN / PROGRESO ================== */
+    const sections = [], done = new Set();
+    function markDone(n, val) {
+      if (val) done.add(n); else done.delete(n);
+      const cb = document.getElementById('seen-' + n); if (cb) cb.checked = val;
+      const li = document.getElementById('nav-' + n); if (li) li.classList.toggle('done', val);
+      $('#prog-text').textContent = done.size + '/' + sections.length;
+      $('#prog-bar').style.width = (done.size / sections.length * 100) + '%';
+    }
+    function buildNav() {
+      $$('section.lesson').forEach((s, i) => sections.push({ n: i + 1, id: s.id, title: s.dataset.title, icon: s.dataset.icon }));
+      $('#side-nav').innerHTML = sections.map(s => `<a href="#${s.id}" id="nav-${s.n}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><i class="bi ${s.icon}"></i><span>${s.n}. ${s.title}</span><i class="bi bi-check-circle-fill done-ico"></i></a>`).join('');
+      $('#top-nav').innerHTML = sections.map(s => `<a href="#${s.id}" id="tnav-${s.n}">${s.n}. ${s.title}</a>`).join('');
+      $$('.lesson-foot').forEach(f => {
+        const n = +f.dataset.lesson, prev = sections[n - 2], next = sections[n];
+        f.innerHTML = `<div class="form-check"><input class="form-check-input" type="checkbox" id="seen-${n}"><label class="form-check-label" for="seen-${n}">Ya lo entendí</label></div>
+          <div class="d-flex gap-2">${prev ? `<a class="btn btn-sm btn-outline-dark" href="#${prev.id}"><i class="bi bi-arrow-up"></i> Paso ${prev.n}</a>` : ''}${next ? `<a class="btn btn-sm btn-dark" href="#${next.id}">Paso ${next.n}: ${next.title} <i class="bi bi-arrow-down"></i></a>` : ''}</div>`;
+        $('#seen-' + n).addEventListener('change', e => markDone(n, e.target.checked));
+      });
+      markDone(0, false);
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (en.isIntersecting) {
+            const n = sections.find(s => s.id === en.target.id).n;
+            $$('#side-nav .list-group-item').forEach(a => a.classList.remove('active')); $('#nav-' + n).classList.add('active');
+            $$('#top-nav a').forEach(a => a.classList.remove('active')); const t = $('#tnav-' + n); t.classList.add('active');
+            t.scrollIntoView({ block: 'nearest', inline: 'center' });
+          }
+        });
+      }, { rootMargin: '-35% 0px -55% 0px' });
+      $$('section.lesson').forEach(s => io.observe(s));
+    }
+
+    /* ================== ARRANQUE ================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      buildNav();
+
+      // 1. Agua
+      const wcv = $('#water-canvas'), wctx = setupCanvas(wcv, 700, 300);
+      for (let i = 0; i < 70; i++) water.parts.push({ x: 150 + Math.random() * 440, f: Math.random() * 2 - 1 });
+      makeStepper('water-stepper', WSTEPS, i => { water.step = i; });
+      ['#w-v', '#w-r', '#w-labels'].forEach(s => $(s).addEventListener('input', updateWater));
+      updateWater();
+
+      // 2. Unidades
+      ['#uc-val', '#uc-pre'].forEach(s => $(s).addEventListener('input', updateUnits)); updateUnits();
+
+      // 3. CD / CA
+      const ctxs = { dcl: setupCanvas($('#dc-loop'), 320, 200), dcw: setupCanvas($('#dc-wave'), 320, 130), acl: setupCanvas($('#ac-loop'), 320, 200), acw: setupCanvas($('#ac-wave'), 320, 130) };
+      ['#ac-f', '#ac-a'].forEach(s => $(s).addEventListener('input', updateAC)); updateAC();
+      ['#ac-val', '#ac-type', '#ac-hz'].forEach(s => $(s).addEventListener('input', updateACcalc)); updateACcalc();
+
+      // 4. Ohm
+      $('#ohm-tri').addEventListener('click', e => { const z = e.target.closest('.tri-zone'); if (z) { ohm.target = z.dataset.v; renderOhmInputs(); } });
+      $$('.btn-target').forEach(b => b.addEventListener('click', () => { ohm.target = b.dataset.t; renderOhmInputs(); }));
+      $('#ohm-inputs').addEventListener('input', e => {
+        const k = e.target.dataset.ov, u = e.target.dataset.ou;
+        if (k) ohm.vals[k].v = e.target.value; if (u) ohm.vals[u].u = parseFloat(e.target.value);
+        computeOhm();
+      });
+      $$('[data-preset]').forEach(b => b.addEventListener('click', () => { const p = OHM_PRESETS[b.dataset.preset]; ohm.target = p.target; ohm.vals = JSON.parse(JSON.stringify(p.vals)); renderOhmInputs(); }));
+      renderOhmInputs();
+
+      // 5. Resistencias
+      $$('[data-bands]').forEach(b => b.addEventListener('click', () => {
+        $$('[data-bands]').forEach(x => x.classList.remove('active')); b.classList.add('active');
+        rcSetMode(+b.dataset.bands); $('#rc-rev-msg').textContent = ''; renderRC();
+      }));
+      $('#rc-rows').addEventListener('click', e => { const s = e.target.closest('.swatch'); if (s) { rc.sel[s.dataset.band] = s.dataset.color; renderRC(); } });
+      $('#rc-rev-btn').addEventListener('click', rcReverse);
+      $('#rc-rev').addEventListener('keydown', e => { if (e.key === 'Enter') rcReverse(); });
+      renderRCTable(); renderRC();
+
+      // 6. LED
+      $('#led-color').innerHTML = LED_COLORS.map((l, i) => `<option value="${i}">${l.n} (${l.vf} V)</option>`).join('');
+      makeStepper('led-stepper', LSTEPS, i => { led.hl = LSTEPS[i].hl; const svg = $('#led-svg'); if (svg) svg.setAttribute('data-hl', led.hl); });
+      ['#led-vs', '#led-vs-c', '#led-color', '#led-if'].forEach(s => $(s).addEventListener('input', () => { $('#led-vs-c').classList.toggle('d-none', $('#led-vs').value !== 'custom'); renderLed(); }));
+      $('#led-sw').addEventListener('click', () => { led.on = !led.on; renderLed(); });
+      $('#led-noR').addEventListener('change', e => { led.noR = e.target.checked; renderLed(); });
+      renderLed();
+
+      // 7. Serie / paralelo
+      $$('[data-mode]').forEach(b => b.addEventListener('click', () => { $$('[data-mode]').forEach(x => x.classList.remove('active')); b.classList.add('active'); sp.mode = b.dataset.mode; renderSP(); }));
+      ['#sp-v', '#sp-r1', '#sp-r2', '#sp-r3', '#sp-b1', '#sp-b2', '#sp-b3'].forEach(s => $(s).addEventListener('input', renderSP));
+      renderSP();
+
+      // 8. Símbolos y 9. Quiz
+      renderSymbols(); renderQuiz();
+
+      // Popovers
+      $$('[data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el));
+
+      // Bucle de animación (solo dibuja lo visible)
+      const vis = { water: false, acdc: false };
+      const io = new IntersectionObserver(es => es.forEach(e => { vis[e.target.dataset.vis] = e.isIntersecting; }), { threshold: 0.05 });
+      $('#water-canvas').dataset.vis = 'water'; io.observe($('#water-canvas'));
+      $('#s3').dataset.vis = 'acdc'; io.observe($('#s3'));
+      let prev = performance.now(), T = 0;
+      function frame(now) {
+        const dt = Math.min((now - prev) / 1000, 0.1); prev = now; if (!reduceMotion) T += dt;
+        if (vis.water) drawWater(wctx, T);
+        if (vis.acdc) {
+          drawLoop(ctxs.dcl, 'dc', T); drawWave(ctxs.dcw, 'dc', T); drawLoop(ctxs.acl, 'ac', T); drawWave(ctxs.acw, 'ac', T);
+          const s = Math.sin(2 * Math.PI * ac.f * T); $('#ac-dir').textContent = s >= 0 ? '→ (horario)' : '← (antihorario)';
+        }
+        requestAnimationFrame(frame);
+      }
+      drawWater(wctx, 0); drawLoop(ctxs.dcl, 'dc', 0); drawWave(ctxs.dcw, 'dc', 0); drawLoop(ctxs.acl, 'ac', 0); drawWave(ctxs.acw, 'ac', 0);
+      requestAnimationFrame(frame);
+    });
+  </script>
+</body>
+</html>
