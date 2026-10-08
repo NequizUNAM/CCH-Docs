@@ -8,6 +8,9 @@
   <!-- CDNs Recomendados -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
@@ -15,24 +18,31 @@
     :root {
       --volt:#f08c00; --amp:#1c7ed6; --res:#e03131; --watt:#7048e8; --ok:#2f9e44;
       --volt-soft:#fff4e0; --amp-soft:#e7f1fb; --res-soft:#fdeaea; --watt-soft:#efeafc;
-      --shadow-sm:0 2px 6px rgba(15,23,42,.08);
-      --shadow-md:0 8px 22px rgba(15,23,42,.12);
-      --shadow-lg:0 16px 38px rgba(15,23,42,.2);
+      --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 10px 25px rgba(15, 23, 42, 0.12);
+      --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.18);
+      --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.12);
     }
     html { scroll-behavior:smooth; }
-    body { background:#f4f6fb; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color: #1e293b; }
     main { flex:1; }
     section.lesson { scroll-margin-top:84px; }
 
     /* Header y Hero */
-    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); }
-    .app-navbar .dropdown-menu { border:0; border-radius:12px; box-shadow:var(--shadow-lg); padding:.5rem; }
-    .app-navbar .dropdown-item { border-radius:8px; padding:.5rem .8rem; }
-    .app-navbar .dropdown-item:hover { background:#e7efff; }
-    .app-navbar .dropdown-item.active { background:#0d6efd; }
-    .app-navbar .nav-link.active-group { color:#fff; border-bottom:2px solid #0d6efd; }
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight: 500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
 
-    .hero-header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); color:#fff; padding:3rem 1rem; border-bottom:5px solid var(--amp); }
+    .hero-header { 
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); 
+      color:#fff; 
+      padding:3.5rem 1rem; 
+      border-bottom:5px solid var(--amp); 
+      box-shadow: var(--shadow-md);
+    }
 
     /* Clases semánticas */
     .t-volt { color:var(--volt); } .t-amp { color:var(--amp); } .t-res { color:var(--res); } .t-watt { color:var(--watt); }
@@ -43,49 +53,99 @@
 
     /* Lateral / Top Nav */
     .side-nav { position:sticky; top:84px; }
-    .side-nav .list-group-item { border:0; border-radius:10px!important; margin-bottom:4px; font-size:.92rem; transition:background .15s, transform .15s; }
-    .side-nav .list-group-item:hover { background:#e7efff; transform:translateX(3px); }
-    .side-nav .list-group-item.active { background:#0f172a; color:#fff; }
+    .side-nav .list-group-item { 
+      border:0; 
+      border-radius:12px!important; 
+      margin-bottom:6px; 
+      font-size:.92rem; 
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+      transition: all .2s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+    .side-nav .list-group-item:hover { background:#e2e8f0; transform:translateX(4px); box-shadow: var(--shadow-md); }
+    .side-nav .list-group-item.active { background:#0f172a; color:#fff; box-shadow: var(--shadow-md); }
     .side-nav .done-ico { margin-left:auto; color:#adb5bd; }
     .side-nav .done .done-ico { color:var(--ok); }
     .top-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
-    .top-nav a { display:inline-block; padding:.6rem .8rem; font-size:.85rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; }
-    .top-nav a.active { border-bottom-color:var(--amp); font-weight:700; }
-    .progress { height:12px; border-radius:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
+    .top-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight: 600; }
+    .top-nav a.active { border-bottom-color:var(--amp); color:var(--amp); font-weight:700; }
+    .progress { height:14px; border-radius:12px; box-shadow:var(--shadow-inner); background-color: #e2e8f0; }
 
-    /* Cards y Lecciones */
-    .lesson-card { border:0; border-radius:18px; box-shadow:var(--shadow-md); overflow:hidden; }
-    .lesson-head { padding:1.1rem 1.4rem; color:#fff; display:flex; align-items:center; gap:.9rem; }
-    .lesson-head .num { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; flex:0 0 auto; }
+    /* Cards y Lecciones con sombras enriquecidas */
+    .lesson-card { 
+      border:0; 
+      border-radius:20px; 
+      box-shadow:var(--shadow-md); 
+      overflow:hidden; 
+      background: #ffffff;
+      transition: box-shadow .3s ease;
+    }
+    .lesson-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    .lesson-head { padding:1.20rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); backdrop-filter: blur(4px); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; box-shadow: var(--shadow-sm); }
     .h-1 { background:linear-gradient(135deg,#0c8599,#075f6d); }
     .h-2 { background:linear-gradient(135deg,#1c7ed6,#1864ab); }
     .h-3 { background:linear-gradient(135deg,#f08c00,#c26e00); }
     .h-4 { background:linear-gradient(135deg,#7048e8,#5130b9); }
     .h-5 { background:linear-gradient(135deg,#2f9e44,#1f6f2f); }
-    .lesson-foot { background:#f8f9fa; padding:.8rem 1.4rem; display:flex; flex-wrap:wrap; gap:.6rem; justify-content:space-between; align-items:center; }
-    .tip-box { border-radius:12px; padding:.7rem .9rem; font-size:.9rem; }
-    .panel { background:#fff; border-radius:14px; box-shadow:var(--shadow-sm); padding:1rem; }
+    .h-6 { background:linear-gradient(135deg,#d97706,#b45309); }
+    .lesson-foot { background:#f8fafc; padding:1rem 1.6rem; display:flex; flex-wrap:wrap; gap:.8rem; justify-content:space-between; align-items:center; border-top: 1px solid #e2e8f0; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow: var(--shadow-sm); }
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border: 1px solid #f1f5f9; transition: transform .2s ease, box-shadow .2s ease; }
+    .panel:hover { box-shadow: var(--shadow-md); }
     
     /* Contenedores Canvas */
-    .canvas-wrap { background:#fff; border-radius:14px; box-shadow:var(--shadow-sm); overflow:hidden; position:relative; }
+    .canvas-wrap { background:#fff; border-radius:16px; box-shadow:var(--shadow-md); overflow:hidden; position:relative; border: 1px solid #e2e8f0; }
     canvas { display:block; width:100%; height:auto; cursor:crosshair; }
 
     /* Stepper */
-    .step-card { background:#fff; border-left:5px solid var(--amp); border-radius:0 12px 12px 0; box-shadow:var(--shadow-sm); padding:.9rem 1.1rem; min-height:100px; }
-    .dot { width:28px; height:28px; border-radius:50%; border:2px solid #ced4da; background:#fff; font-size:.8rem; font-weight:700; cursor:pointer; transition:all .15s; }
-    .dot.active { background:#0f172a; color:#fff; border-color:#0f172a; transform:scale(1.15); }
+    .step-card { background:#fff; border-left:6px solid var(--amp); border-radius:0 14px 14px 0; box-shadow:var(--shadow-sm); padding:1.1rem 1.3rem; min-height:100px; }
+    .dot { width:30px; height:30px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s ease; box-shadow: var(--shadow-sm); }
+    .dot.active { background:#0f172a; color:#fff; border-color:#0f172a; transform:scale(1.2); box-shadow: var(--shadow-md); }
     .dot.seen { border-color:var(--ok); color:var(--ok); }
     .dot.active.seen { color:#fff; }
 
-    .component-card { border:0; border-radius:14px; box-shadow:var(--shadow-sm); transition:transform .2s; height:100%; }
-    .component-card:hover { transform:translateY(-4px); }
-    .quiz-opt { text-align:left; border-radius:12px; box-shadow:var(--shadow-sm); }
+    .component-card { border:0; border-radius:16px; box-shadow:var(--shadow-sm); transition:transform .2s ease, box-shadow .2s ease; height:100%; }
+    .component-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-md); }
+    .quiz-opt { text-align:left; border-radius:14px; box-shadow:var(--shadow-sm); transition: all .2s; }
+    .quiz-opt:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+    /* Drag & Drop Workbench UI */
+    .workbench-item {
+      cursor: grab;
+      user-select: none;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0.6rem 0.9rem;
+      font-weight: 700;
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .workbench-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: #0d6efd;
+    }
+    .workbench-item.active-drag {
+      cursor: grabbing;
+      opacity: 0.7;
+      transform: scale(1.05);
+      border-color: #f08c00;
+    }
     
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
 </head>
 <body>
 
+  <!-- Contenedor dinámico de navegación -->
   <div id="app-header"></div>
   <div class="top-nav d-lg-none" id="top-nav"></div>
 
@@ -93,8 +153,8 @@
     <header class="hero-header text-center mb-4">
       <div class="container">
         <h1 class="display-5 fw-bold"><i class="bi bi-grid-3x3-gap-fill t-amp me-2"></i>La Protoboard e Interconexiones</h1>
-        <p class="lead mb-1">Estructura interna • Prueba de continuidad interactiva • Circuito de precisión en Canvas</p>
-        <p class="mb-0 text-light">Haz clic en dos orificios para medir la continuidad o interactúa directamente con los componentes</p>
+        <p class="lead mb-1">Estructura interna • Probador de continuidad interactivo • Laboratorio Virtual de Cableado Drag & Drop</p>
+        <p class="mb-0 text-light opacity-90">Haz clic en los orificios para medir continuidad o arrastra componentes para ensamblar circuitos reales</p>
       </div>
     </header>
 
@@ -105,11 +165,11 @@
         <aside class="col-lg-3 d-none d-lg-block">
           <div class="side-nav">
             <div class="panel mb-3">
-              <div class="d-flex justify-content-between small fw-semibold mb-1">
+              <div class="d-flex justify-content-between small fw-semibold mb-2">
                 <span><i class="bi bi-flag-fill text-success me-1"></i>Tu avance</span>
-                <span id="prog-text">0/5</span>
+                <span id="prog-text">0/6</span>
               </div>
-              <div class="progress"><div id="prog-bar" class="progress-bar bg-success progress-bar-striped" style="width:0%"></div></div>
+              <div class="progress"><div id="prog-bar" class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width:0%"></div></div>
             </div>
             <div class="list-group" id="side-nav"></div>
           </div>
@@ -147,7 +207,7 @@
                   <div class="col-md-6">
                     <div class="panel h-100 border-start border-4 border-danger">
                       <h6 class="fw-bold t-res"><i class="bi bi-plus-slash-minus me-1"></i>Búses de Alimentación (Líneas horizontales)</h6>
-                      <p class="small mb-0">Ubicados arriba y abajo (+ y −). Corren de forma <strong>horizontal</strong> uniendo todos los pines de esa fila. Se usan para distribuir la energía.</p>
+                      <p class="small mb-0">Ubicados arriba y abajo ($+$ y $-$). Corren de forma <strong>horizontal</strong> uniendo todos los pines de esa fila. Se usan para distribuir energía.</p>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -175,7 +235,7 @@
                       <div class="card-body">
                         <div class="fs-2 t-volt mb-1"><i class="bi bi-battery-charging"></i></div>
                         <h5 class="fw-bold">1. Fuente / Batería</h5>
-                        <p class="small text-secondary mb-0">Suministra la fuerza electromotriz $V$. Su terminal positivo ($+$) entrega la energía y el negativo ($-$) es el retorno o tierra (GND).</p>
+                        <p class="small text-secondary mb-0">Suministra la fuerza electromotriz $V$. Su terminal positivo ($+$) entrega la energía y el negativo ($-$) es la tierra (GND).</p>
                       </div>
                     </div>
                   </div>
@@ -184,7 +244,7 @@
                       <div class="card-body">
                         <div class="fs-2 t-res mb-1"><i class="bi bi-dash-lg"></i><i class="bi bi-activity"></i></div>
                         <h5 class="fw-bold">2. Resistencia Limitadora</h5>
-                        <p class="small text-secondary mb-0">Calculada mediante $R = \frac{V_{fuente} - V_f}{I}$. Absorbe el voltaje excedente evitando que el LED sufra sobrecorriente.</p>
+                        <p class="small text-secondary mb-0">Calculada con $R = \frac{V_{fuente} - V_f}{I}$. Absorbe el voltaje excedente evitando sobrecorriente en el LED.</p>
                       </div>
                     </div>
                   </div>
@@ -193,7 +253,7 @@
                       <div class="card-body">
                         <div class="fs-2 t-amp mb-1"><i class="bi bi-lightbulb-fill"></i></div>
                         <h5 class="fw-bold">3. LED (Diodo Emisor)</h5>
-                        <p class="small text-secondary mb-0">Semiconductor emisor de luz. Requiere un voltaje directo $V_f$. Conecta el Ánodo ($+$) a la fuente y el Cátodo ($-$) a masa.</p>
+                        <p class="small text-secondary mb-0">Semiconductor emisor de luz. Requiere un voltaje directo $V_f$. Conecta el Ánodo ($+$) a la fuente y Cátodo ($-$) a masa.</p>
                       </div>
                     </div>
                   </div>
@@ -259,26 +319,66 @@
             </div>
           </section>
 
-          <!-- ============ 4. PASO A PASO INTERACTIVO ============ -->
-          <section class="lesson mb-5" id="s4" data-title="Guía de Ensamblaje Paso a Paso" data-icon="bi-list-ol">
+          <!-- ============ 4. NUEVA SECCIÓN INTERACTIVA: LABORATORIO DRAG & DROP ============ -->
+          <section class="lesson mb-5" id="s4" data-title="Laboratorio Virtual: Ensamblaje Interactivo" data-icon="bi-hand-index-thumb-fill">
             <div class="card lesson-card">
-              <div class="lesson-head h-4"><div class="num">4</div><div><h2 class="h4 fw-bold mb-0">Guía de Ensamblaje Paso a Paso</h2><small>Secuencia ordenada de cableado sin cortocircuitos</small></div></div>
+              <div class="lesson-head h-6"><div class="num">4</div><div><h2 class="h4 fw-bold mb-0">Laboratorio Virtual de Conexiones</h2><small>Haz clic y coloca los componentes para armar tu circuito en la placa</small></div></div>
               <div class="card-body">
-                <p>Navega paso a paso para aprender el orden recomendado de ensamblaje en protoboard.</p>
-                <div id="proto-stepper" class="mb-3"></div>
+                <p>Práctica interactiva: Haz clic en los componentes del banco de trabajo y colócalos o conéctalos directamente en los pines de la protoboard para cerrar el circuito correctamente.</p>
+
+                <div class="panel mb-3 bg-light">
+                  <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                    <div>
+                      <strong class="me-2"><i class="bi bi-box-seam me-1"></i>Componentes disponibles:</strong>
+                      <span class="small text-muted">Haz clic en un componente para seleccionarlo y luego en la Protoboard</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger" id="wb-reset-btn"><i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar Banco</button>
+                  </div>
+                  <div class="d-flex flex-wrap gap-3 mt-3">
+                    <div class="workbench-item" id="wb-item-wire1" data-comp="wire_pos">
+                      <i class="bi bi-text-indent-left text-danger fs-5"></i><span>1. Cable (+) Fuente a Columna 5</span>
+                    </div>
+                    <div class="workbench-item" id="wb-item-res" data-comp="resistor">
+                      <i class="bi bi-activity text-warning fs-5"></i><span>2. Resistencia Columna 5 a 15</span>
+                    </div>
+                    <div class="workbench-item" id="wb-item-led" data-comp="led">
+                      <i class="bi bi-lightbulb text-info fs-5"></i><span>3. LED Ánodo Columna 15, Cátodo (-)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="canvas-wrap mb-3 text-center">
+                  <canvas id="workbench-canvas"></canvas>
+                </div>
+
+                <div id="workbench-feedback" class="tip-box s-amp">
+                  <i class="bi bi-info-circle-fill me-1"></i>Haz clic en <strong>"1. Cable (+)"</strong> para comenzar a conectar la alimentación a la columna 5.
+                </div>
               </div>
               <div class="lesson-foot" data-lesson="4"></div>
             </div>
           </section>
 
-          <!-- ============ 5. QUIZ DE EVALUACIÓN ============ -->
-          <section class="lesson mb-5" id="s5" data-title="Pon a prueba tus conocimientos" data-icon="bi-trophy-fill">
+          <!-- ============ 5. PASO A PASO INTERACTIVO ============ -->
+          <section class="lesson mb-5" id="s5" data-title="Guía de Ensamblaje Paso a Paso" data-icon="bi-list-ol">
             <div class="card lesson-card">
-              <div class="lesson-head h-5"><div class="num">5</div><div><h2 class="h4 fw-bold mb-0">Pon a prueba tus conocimientos</h2><small>Demuestra tu dominio sobre la protoboard</small></div></div>
+              <div class="lesson-head h-4"><div class="num">5</div><div><h2 class="h4 fw-bold mb-0">Guía de Ensamblaje Paso a Paso</h2><small>Secuencia ordenada de cableado sin cortocircuitos</small></div></div>
+              <div class="card-body">
+                <p>Navega paso a paso para aprender el orden recomendado de ensamblaje en protoboard.</p>
+                <div id="proto-stepper" class="mb-3"></div>
+              </div>
+              <div class="lesson-foot" data-lesson="5"></div>
+            </div>
+          </section>
+
+          <!-- ============ 6. QUIZ DE EVALUACIÓN ============ -->
+          <section class="lesson mb-5" id="s6" data-title="Pon a prueba tus conocimientos" data-icon="bi-trophy-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-5"><div class="num">6</div><div><h2 class="h4 fw-bold mb-0">Pon a prueba tus conocimientos</h2><small>Demuestra tu dominio sobre la protoboard</small></div></div>
               <div class="card-body">
                 <div id="quiz-box"></div>
               </div>
-              <div class="lesson-foot" data-lesson="5"></div>
+              <div class="lesson-foot" data-lesson="6"></div>
             </div>
           </section>
 
@@ -289,16 +389,19 @@
 
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Cibernética • Protoboard e Interconexiones</small></footer>
 
-  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <!-- ===================== SCRIPT HEADER DINÁMICO ===================== -->
   <script>
+    /* Copia de respaldo: se usa si no se puede leer index.html (por ejemplo al abrir con file://).
+       La fuente real del menú es el bloque #menu-config de index.html. */
     const FALLBACK_MENU = {
       brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
       groups: [
         { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] },
-        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [ 
           { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
           { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
-          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" } ] },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" }
+        ] },
         { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] }
       ]
     };
@@ -334,18 +437,17 @@
     (async function initHeader() {
       const container = document.getElementById('app-header');
       const page = location.pathname.split('/').pop() || 'protoboard.html';
-      renderHeader(FALLBACK_MENU, container, page);
-      try {
+      renderHeader(FALLBACK_MENU, container, page);          // pinta de inmediato
+      try {                                                  // y luego intenta usar el menú maestro
         const res = await fetch('index.html', { cache: 'no-store' });
         if (!res.ok) throw new Error('sin index');
         const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
         const menu = JSON.parse(doc.getElementById('menu-config').textContent);
         renderHeader(menu, container, page);
-      } catch (e) { /* Fallback activo */ }
+      } catch (e) { /* se queda con el respaldo */ }
     })();
   </script>
 
-  <!-- ===================== SINTETIZADOR WEB AUDIO API & CANVAS ===================== -->
   <script>
     /* Sintetizador de efectos de audio nativo (Sin dependencias externas) */
     const SoundFX = {
@@ -485,7 +587,7 @@
       // Puntas de prueba del Multímetro de Continuidad
       if (selectedHoles.length > 0) {
         selectedHoles.forEach((sh, idx) => {
-          const col = idx === 0 ? '#e03131' : '#212529'; // Roja y Negra
+          const col = idx === 0 ? '#e03131' : '#212529';
           protoCtx.strokeStyle = col; protoCtx.lineWidth = 3;
           protoCtx.beginPath(); protoCtx.moveTo(sh.x, sh.y); protoCtx.lineTo(sh.x + (idx === 0 ? -15 : 15), sh.y - 25); protoCtx.stroke();
           protoCtx.fillStyle = col; protoCtx.beginPath(); protoCtx.arc(sh.x, sh.y, 5, 0, Math.PI * 2); protoCtx.fill();
@@ -538,7 +640,6 @@
       if (!clickedHole) return;
 
       if (protoViewMode !== 'tester') {
-        // Cambia automáticamente al modo probador
         protoViewMode = 'tester';
         $$('#s1 .btn-group button').forEach(b => b.classList.remove('active'));
         $('#btn-v-tester').classList.add('active');
@@ -607,7 +708,7 @@
         ok = false;
       } else {
         I = (Vs - ledCol.vf) / R;
-        if (I > 0.035) burnt = true; // LED quemado
+        if (I > 0.035) burnt = true;
       }
 
       return { Vs, R, ledCol, I, burnt, ok, isPowered: simState.on && ok && !burnt };
@@ -707,7 +808,7 @@
         }
       }
 
-      // Métricas y UI
+      // Métricas
       $('#sim-v-out').textContent = d.Vs + ' V';
       $('#sim-r-out').textContent = (simState.noR ? '0 Ω (Puente)' : eng(d.R, 'Ω'));
 
@@ -727,6 +828,7 @@
             <div class="small opacity-75">Potencia consumida ($P$): ${eng(P, 'W')}</div>
           </div>`;
       }
+      if (window.renderMathInElement) renderMathInElement(metricsBox);
     }
 
     function getPointOnPolyline(points, t) {
@@ -749,7 +851,7 @@
       return { x: points[points.length-1][0], y: points[points.length-1][1] };
     }
 
-    // Interacción Canvas 2 (Clic en el interruptor de la batería)
+    // Interacción Canvas 2 (Clic Batería)
     simCv.addEventListener('click', e => {
       const rect = simCv.getBoundingClientRect();
       const mx = (e.clientX - rect.left) * (540 / rect.width);
@@ -777,8 +879,167 @@
       drawSimCanvas();
     });
 
+    /* ---------- LECCIÓN 4: LABORATORIO DE CABLEADO INTERACTIVO (BANCO VIRTUAL) ---------- */
+    const workbench = {
+      selectedComp: null,
+      placed: { wire_pos: false, resistor: false, led: false },
+      activeAnim: 0
+    };
 
-    /* ---------- LECCIÓN 4: STEPPER ---------- */
+    const wbCv = $('#workbench-canvas');
+    const wbCtx = setupCanvas(wbCv, 640, 240);
+
+    function drawWorkbench() {
+      const W = 640, H = 240;
+      wbCtx.clearRect(0, 0, W, H);
+
+      // Base Protoboard
+      wbCtx.fillStyle = '#ffffff'; wbCtx.strokeStyle = '#cbd5e1'; wbCtx.lineWidth = 3;
+      wbCtx.beginPath();
+      wbCtx.roundRect ? wbCtx.roundRect(10, 10, W - 20, H - 20, 12) : wbCtx.rect(10, 10, W - 20, H - 20);
+      wbCtx.fill(); wbCtx.stroke();
+
+      // Canal central
+      wbCtx.fillStyle = '#e2e8f0'; wbCtx.fillRect(10, 115, W - 20, 10);
+
+      // Líneas polaridad
+      wbCtx.strokeStyle = '#e03131'; wbCtx.lineWidth = 2;
+      wbCtx.beginPath(); wbCtx.moveTo(40, 24); wbCtx.lineTo(W - 40, 24); wbCtx.stroke();
+      wbCtx.strokeStyle = '#1c7ed6';
+      wbCtx.beginPath(); wbCtx.moveTo(40, 206); wbCtx.lineTo(W - 40, 206); wbCtx.stroke();
+
+      // Etiquetas Columnas (5, 15, etc)
+      wbCtx.fillStyle = '#64748b'; wbCtx.font = 'bold 11px Segoe UI, sans-serif';
+      wbCtx.fillText('Col 5', 130, 230);
+      wbCtx.fillText('Col 15', 330, 230);
+
+      // Perforaciones de la placa
+      for (let c = 0; c < 26; c++) {
+        const x = 50 + c * 21;
+        const isCol5 = c === 4, isCol15 = c === 14;
+
+        [30, 48, 68, 80, 92, 104, 136, 148, 160, 172, 196, 214].forEach(y => {
+          wbCtx.beginPath(); wbCtx.arc(x, y, 3.5, 0, Math.PI * 2);
+          wbCtx.fillStyle = (isCol5 || isCol15) ? '#0284c7' : '#334155';
+          wbCtx.fill();
+        });
+      }
+
+      // Fuente de Alimentación a la izquierda
+      wbCtx.fillStyle = '#1e293b'; wbCtx.fillRect(25, 70, 45, 75);
+      wbCtx.fillStyle = '#f08c00'; wbCtx.font = 'bold 11px sans-serif'; wbCtx.textAlign = 'center';
+      wbCtx.fillText('5V GND', 47, 110);
+
+      // Dibujar elementos colocados
+      // 1. Cable (+)
+      if (workbench.placed.wire_pos) {
+        wbCtx.strokeStyle = '#e03131'; wbCtx.lineWidth = 4; wbCtx.lineCap = 'round';
+        wbCtx.beginPath(); wbCtx.moveTo(47, 70); wbCtx.lineTo(47, 30); wbCtx.lineTo(134, 30); wbCtx.lineTo(134, 68); wbCtx.stroke();
+        wbCtx.fillStyle = '#e03131'; wbCtx.beginPath(); wbCtx.arc(134, 68, 5, 0, Math.PI * 2); wbCtx.fill();
+      }
+
+      // 2. Resistencia Columna 5 (x=134) a Columna 15 (x=344)
+      if (workbench.placed.resistor) {
+        wbCtx.strokeStyle = '#64748b'; wbCtx.lineWidth = 3;
+        wbCtx.beginPath(); wbCtx.moveTo(134, 80); wbCtx.lineTo(344, 80); wbCtx.stroke();
+        wbCtx.fillStyle = '#f0d9a8'; wbCtx.strokeStyle = '#b08d4a'; wbCtx.lineWidth = 2;
+        wbCtx.fillRect(210, 72, 58, 16); wbCtx.strokeRect(210, 72, 58, 16);
+        ['#e03131', '#1c7ed6', '#fd7e14'].forEach((col, idx) => {
+          wbCtx.fillStyle = col; wbCtx.fillRect(222 + idx * 10, 72, 4, 16);
+        });
+      }
+
+      // 3. LED Columna 15 (x=344, y=92) a Bus GND (x=344, y=214)
+      if (workbench.placed.led) {
+        wbCtx.strokeStyle = '#334155'; wbCtx.lineWidth = 3;
+        wbCtx.beginPath(); wbCtx.moveTo(344, 92); wbCtx.lineTo(344, 214); wbCtx.stroke();
+
+        // Brillo LED
+        const isComplete = workbench.placed.wire_pos && workbench.placed.resistor && workbench.placed.led;
+        if (isComplete) {
+          const rad = wbCtx.createRadialGradient(344, 105, 2, 344, 105, 30);
+          rad.addColorStop(0, '#38bdf8'); rad.addColorStop(1, 'rgba(255,255,255,0)');
+          wbCtx.fillStyle = rad; wbCtx.beginPath(); wbCtx.arc(344, 105, 30, 0, Math.PI * 2); wbCtx.fill();
+        }
+
+        wbCtx.fillStyle = isComplete ? '#0ea5e9' : '#cbd5e1';
+        wbCtx.strokeStyle = '#0f172a'; wbCtx.lineWidth = 2;
+        wbCtx.beginPath(); wbCtx.arc(344, 105, 11, 0, Math.PI * 2); wbCtx.fill(); wbCtx.stroke();
+      }
+
+      // Cable permanente a GND para cerrar el circuito general
+      wbCtx.strokeStyle = '#1e293b'; wbCtx.lineWidth = 3;
+      wbCtx.beginPath(); wbCtx.moveTo(47, 145); wbCtx.lineTo(47, 214); wbCtx.lineTo(344, 214); wbCtx.stroke();
+
+      // Animación de corriente si está completo
+      const isComplete = workbench.placed.wire_pos && workbench.placed.resistor && workbench.placed.led;
+      if (isComplete && !reduceMotion) {
+        workbench.activeAnim = (workbench.activeAnim + 0.05) % 1;
+        wbCtx.fillStyle = '#f59e0b';
+        const path = [[47, 145], [47, 214], [344, 214], [344, 105], [344, 80], [134, 80], [134, 30], [47, 30], [47, 70]];
+        for (let i = 0; i < 10; i++) {
+          const pt = getPointOnPolyline(path, (workbench.activeAnim + i / 10) % 1);
+          wbCtx.beginPath(); wbCtx.arc(pt.x, pt.y, 3, 0, Math.PI * 2); wbCtx.fill();
+        }
+      }
+    }
+
+    // Lógica Clic en componentes para colocar en Workbench
+    $$('.workbench-item').forEach(item => {
+      item.addEventListener('click', () => {
+        SoundFX.click();
+        const comp = item.dataset.comp;
+        workbench.selectedComp = comp;
+        $$('.workbench-item').forEach(x => x.classList.remove('active-drag'));
+        item.classList.add('active-drag');
+        $('#workbench-feedback').className = 'tip-box s-amp';
+        $('#workbench-feedback').innerHTML = `<i class="bi bi-hand-index-fill me-1"></i>Componente seleccionado. Haz clic sobre la <strong>Protoboard</strong> para conectarlo.`;
+      });
+    });
+
+    wbCv.addEventListener('click', () => {
+      if (!workbench.selectedComp) {
+        $('#workbench-feedback').className = 'tip-box s-res';
+        $('#workbench-feedback').innerHTML = `<i class="bi bi-exclamation-triangle-fill me-1"></i>Primero haz clic arriba en uno de los componentes disponibles.`;
+        return;
+      }
+
+      SoundFX.click();
+      workbench.placed[workbench.selectedComp] = true;
+      const itemEl = $(`[data-comp="${workbench.selectedComp}"]`);
+      if (itemEl) {
+        itemEl.classList.remove('active-drag');
+        itemEl.classList.add('bg-success', 'text-white', 'border-success');
+      }
+
+      workbench.selectedComp = null;
+      drawWorkbench();
+
+      const allDone = workbench.placed.wire_pos && workbench.placed.resistor && workbench.placed.led;
+      if (allDone) {
+        SoundFX.continuityOk();
+        if (typeof confetti === 'function') confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+        $('#workbench-feedback').className = 'tip-box s-amp border border-success border-2';
+        $('#workbench-feedback').innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i><strong>¡CIRCUITO COMPLETO Y FUNCIONAL!</strong> La corriente viaja desde la fuente $5V \rightarrow$ Columna 5 $\rightarrow$ Resistencia $\rightarrow$ Columna 15 $\rightarrow$ Ánodo LED $\rightarrow$ Tierra (GND).`;
+        if (window.renderMathInElement) renderMathInElement($('#workbench-feedback'));
+      } else {
+        $('#workbench-feedback').className = 'tip-box s-amp';
+        $('#workbench-feedback').innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i>Componente insertado con éxito en la protoboard. Selecciona el siguiente.`;
+      }
+    });
+
+    $('#wb-reset-btn').addEventListener('click', () => {
+      SoundFX.click();
+      workbench.placed = { wire_pos: false, resistor: false, led: false };
+      workbench.selectedComp = null;
+      $$('.workbench-item').forEach(x => x.className = 'workbench-item');
+      $('#workbench-feedback').className = 'tip-box s-amp';
+      $('#workbench-feedback').innerHTML = `<i class="bi bi-info-circle-fill me-1"></i>Haz clic en <strong>"1. Cable (+)"</strong> para comenzar.`;
+      drawWorkbench();
+    });
+
+
+    /* ---------- LECCIÓN 5: STEPPER ---------- */
     const PROTO_STEPS = [
       { t: '1. Energiza los Búses laterales', icon: 'bi-battery-charging', d: 'Conecta el terminal positivo ($+$) de la batería al bus rojo ($+$) de la protoboard, y el negativo ($-$) al bus azul ($-$).' },
       { t: '2. Llama la energía a las pistas', icon: 'bi-box-arrow-in-right', d: 'Usa un cable puente desde el bus positivo ($+$) hasta una columna de trabajo (ej. Columna 10).' },
@@ -805,12 +1066,13 @@
           </div>`;
         el.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => { SoundFX.click(); i = +b.dataset.k; render(); }));
         el.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => { SoundFX.click(); i += +b.dataset.nav; render(); }));
+        if (window.renderMathInElement) renderMathInElement(el);
       }
       render();
     }
 
 
-    /* ---------- LECCIÓN 5: QUIZ CON CONFETI ---------- */
+    /* ---------- LECCIÓN 6: QUIZ CON CONFETI ---------- */
     const QUIZ_PROTO = [
       { q: '¿Cómo están conectadas internamente las 5 perforaciones de una fila (A-B-C-D-E)?', o: ['En columna vertical (comparten pletina)', 'En línea horizontal a lo largo de toda la placa', 'No tienen conexión interna', 'En diagonal'], a: 0, e: 'Cada columna de 5 orificios comparte una misma pletina metálica vertical.' },
       { q: '¿Para qué se utilizan principalmente las líneas laterales marcadas con + y −?', o: ['Para distribuir la alimentación eléctrica a la placa', 'Exclusivamente para conectar LEDs', 'Para aislar los componentes', 'Para medir el voltaje con el multímetro'], a: 0, e: 'Son los búses de alimentación horizontales.' },
@@ -835,7 +1097,7 @@
             <button class="btn btn-dark" id="quiz-reset"><i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar Quiz</button>
           </div>`;
         $('#quiz-reset').addEventListener('click', () => { SoundFX.click(); quizState.i = 0; quizState.score = 0; renderQuiz(); });
-        markDone(5, true);
+        markDone(6, true);
         return;
       }
 
@@ -913,7 +1175,7 @@
     }
 
 
-    /* ---------- INICIALIZACIÓN ---------- */
+    /* ---------- INICIALIZACIÓN GENERAL ---------- */
     document.addEventListener('DOMContentLoaded', () => {
       buildNav();
       drawProtoStructureCanvas();
@@ -922,9 +1184,20 @@
 
       makeStepper('proto-stepper', PROTO_STEPS);
       renderQuiz();
+      drawWorkbench();
+
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ]
+        });
+      }
 
       function animFrame(now) {
         drawSimCanvas();
+        drawWorkbench();
         requestAnimationFrame(animFrame);
       }
       requestAnimationFrame(animFrame);
