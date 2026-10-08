@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cibernética - Conversiones Numéricas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --c2:#0d6efd; --c8:#198754; --c16:#fd7e14; --c10:#6f42c1;
+      --c2-soft:#e7f0ff; --c8-soft:#e3f5ec; --c16-soft:#fff0e1; --c10-soft:#f0e9fb;
+      --shadow-sm:0 2px 6px rgba(15,23,42,.08);
+      --shadow-md:0 8px 22px rgba(15,23,42,.12);
+      --shadow-lg:0 16px 38px rgba(15,23,42,.2);
+    }
+    body { background:#f4f6fb; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    main { flex:1; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); }
+    .app-navbar .dropdown-menu { border:0; border-radius:12px; box-shadow:var(--shadow-lg); padding:.5rem; }
+    .app-navbar .dropdown-item { border-radius:8px; padding:.5rem .8rem; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:2px solid #0d6efd; }
+
+    .hero-header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); color:#fff; padding:3rem 1rem; border-bottom:5px solid var(--c2); }
+    .section-title { border-bottom:3px solid #dee2e6; padding-bottom:.5rem; font-weight:700; margin-bottom:1.5rem; }
+
+    /* Colores por base */
+    .bg-b2 { background:var(--c2)!important; color:#fff; } .bg-b8 { background:var(--c8)!important; color:#fff; }
+    .bg-b16 { background:var(--c16)!important; color:#212529; } .bg-b10 { background:var(--c10)!important; color:#fff; }
+    .txt-b2 { color:var(--c2); } .txt-b8 { color:var(--c8); } .txt-b16 { color:#c25e00; } .txt-b10 { color:var(--c10); }
+    .soft-b2 { background:var(--c2-soft); } .soft-b8 { background:var(--c8-soft); } .soft-b16 { background:var(--c16-soft); } .soft-b10 { background:var(--c10-soft); }
+
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Tarjetas */
+    .base-card { border:0; border-radius:16px; box-shadow:var(--shadow-md); transition:transform .2s, box-shadow .2s; overflow:hidden; }
+    .base-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+    .base-card .card-top { color:#fff; padding:1rem 1.25rem; }
+    .base-card.b2 .card-top { background:linear-gradient(135deg,#0d6efd,#0a4fc2); }
+    .base-card.b8 .card-top { background:linear-gradient(135deg,#198754,#115c39); }
+    .base-card.b16 .card-top { background:linear-gradient(135deg,#fd7e14,#d45f00); }
+    .base-card.b10 .card-top { background:linear-gradient(135deg,#6f42c1,#4d2a8c); }
+    .icon-circle { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:1.4rem; }
+    .tip-box { border-radius:10px; padding:.6rem .8rem; font-size:.88rem; }
+
+    /* Tabla interactiva */
+    .table-eq { border-radius:14px; overflow:hidden; box-shadow:var(--shadow-md); }
+    .table-eq thead th { color:#fff; vertical-align:middle; }
+    .table-eq tbody tr { cursor:pointer; transition:background .15s, transform .15s; }
+    .table-eq tbody tr:hover { background:#fff8e1; }
+    .table-eq tbody tr.row-selected { background:#fff3cd!important; box-shadow:inset 4px 0 0 #ffc107; }
+    .bit-on { display:inline-block; min-width:1.2rem; border-radius:4px; background:var(--c2); color:#fff; margin:0 1px; }
+    .bit-off { display:inline-block; min-width:1.2rem; border-radius:4px; background:#e9ecef; color:#6c757d; margin:0 1px; }
+    .hex-letter { background:var(--c16); color:#212529; border-radius:6px; padding:.1rem .5rem; box-shadow:var(--shadow-sm); }
+
+    /* Conversor en vivo */
+    .live-card { border:0; border-radius:16px; box-shadow:var(--shadow-md); }
+    .result-tile { border-radius:12px; padding:.8rem 1rem; box-shadow:var(--shadow-sm); transition:transform .15s; }
+    .result-tile:hover { transform:scale(1.02); }
+    .result-tile .val { font-size:1.2rem; word-break:break-all; }
+
+    /* Matriz de rutas */
+    .route-table th, .route-table td { vertical-align:middle; text-align:center; }
+    .route-btn { border:0; border-radius:20px; font-size:.78rem; padding:.25rem .7rem; box-shadow:var(--shadow-sm); }
+
+    /* Modal */
+    .modal-content { border:0; border-radius:18px; box-shadow:var(--shadow-lg); overflow:hidden; }
+    .modal-header.b2 { background:linear-gradient(135deg,#0d6efd,#0a4fc2); } .modal-header.b8 { background:linear-gradient(135deg,#198754,#115c39); }
+    .modal-header.b16 { background:linear-gradient(135deg,#fd7e14,#d45f00); } .modal-header.b10 { background:linear-gradient(135deg,#6f42c1,#4d2a8c); }
+    .modal-header { color:#fff; }
+    .chip { display:inline-block; padding:.25rem .6rem; border-radius:8px; margin:.15rem; font-family:'Courier New',monospace; font-weight:700; box-shadow:var(--shadow-sm); background:#fff; border:1px solid #dee2e6; }
+    .chip small { display:block; font-size:.65rem; color:#6c757d; font-weight:400; text-align:center; }
+    .step-box { background:#fff; border-left:4px solid var(--c2); padding:.8rem 1rem; margin-bottom:.8rem; border-radius:0 10px 10px 0; box-shadow:var(--shadow-sm); }
+    .step-num { display:inline-flex; width:24px; height:24px; border-radius:50%; background:#212529; color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    .result-line { background:#212529; color:#fff; border-radius:10px; padding:.6rem 1rem; font-family:'Courier New',monospace; font-weight:700; }
+
+    /* Ejercicios */
+    .exercise-card { border:0; border-radius:14px; box-shadow:var(--shadow-sm); transition:box-shadow .2s, transform .2s; border-left:5px solid #adb5bd; }
+    .exercise-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .exercise-card.solved { border-left-color:#198754; background:#f4fbf7; }
+    .nav-pills .nav-link { border-radius:12px; box-shadow:var(--shadow-sm); background:#fff; color:#343a40; font-weight:600; }
+    .nav-pills .nav-link.t2.active { background:var(--c2); } .nav-pills .nav-link.t8.active { background:var(--c8); }
+    .nav-pills .nav-link.t16.active { background:var(--c16); color:#212529; } .nav-pills .nav-link.t10.active { background:var(--c10); }
+    .solution-box { background:#eef2f7; border-radius:10px; padding:.8rem; font-size:.9rem; }
+    .solution-box table { font-size:.82rem; }
+    .progress { height:14px; border-radius:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
+  </style>
+</head>
+<body>
+
+  <!-- El header se dibuja con JS desde el menú de index.html -->
+  <div id="app-header"></div>
+
+  <main>
+    <header class="hero-header text-center mb-5">
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-cpu me-2"></i>Conversiones Numéricas</h1>
+        <p class="lead mb-1">Binario • Octal • Decimal • Hexadecimal</p>
+        <p class="mb-0 text-light">Teoría paso a paso, ejemplos en ventanas, conversor en vivo y 80 ejercicios</p>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+
+      <!-- 1. Tarjetas de cada base -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-book-half text-primary me-2"></i>1. Conoce cada sistema</h2>
+        <p class="text-muted">Pulsa el botón de cada tarjeta para abrir un ejemplo completo: ese sistema convertido a los otros tres, con el procedimiento detallado.</p>
+        <div class="row g-4" id="base-cards"></div>
+      </section>
+
+      <!-- 2. Tabla interactiva -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-table text-warning me-2"></i>2. Tabla de equivalencias interactiva</h2>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+          <span class="fw-semibold me-1"><i class="bi bi-sliders me-1"></i>Rango:</span>
+          <div class="btn-group shadow-sm" role="group" id="range-group">
+            <button class="btn btn-outline-dark active" data-max="15">0 – 15</button>
+            <button class="btn btn-outline-dark" data-max="31">0 – 31</button>
+            <button class="btn btn-outline-dark" data-max="63">0 – 63</button>
+          </div>
+          <small class="text-muted ms-md-3"><i class="bi bi-hand-index me-1"></i>Pasa el cursor por el binario para ver sus pesos. Pulsa una fila para resaltarla.</small>
+        </div>
+        <div class="table-responsive table-eq bg-white">
+          <table class="table table-hover mb-0 text-center align-middle">
+            <thead>
+              <tr>
+                <th class="bg-b10"><i class="bi bi-123 me-1"></i>Decimal <small>(base 10)</small></th>
+                <th class="bg-b2"><i class="bi bi-toggles me-1"></i>Binario <small>(base 2)</small></th>
+                <th class="bg-b8"><i class="bi bi-hash me-1"></i>Octal <small>(base 8)</small></th>
+                <th class="bg-b16"><i class="bi bi-type me-1"></i>Hexadecimal <small>(base 16)</small></th>
+              </tr>
+            </thead>
+            <tbody id="eq-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. Conversor en vivo -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-lightning-charge-fill text-danger me-2"></i>3. Conversor en vivo</h2>
+        <div class="card live-card">
+          <div class="card-body">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="live-input">Escribe un número</label>
+                <input type="text" id="live-input" class="form-control form-control-lg mono" value="45" autocomplete="off">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="live-base">Está en base</label>
+                <select id="live-base" class="form-select form-select-lg">
+                  <option value="10">Decimal (10)</option>
+                  <option value="2">Binario (2)</option>
+                  <option value="8">Octal (8)</option>
+                  <option value="16">Hexadecimal (16)</option>
+                </select>
+              </div>
+              <div class="col-md-2 d-grid">
+                <button class="btn btn-dark btn-lg" id="live-random"><i class="bi bi-shuffle me-1"></i>Azar</button>
+              </div>
+            </div>
+            <div id="live-error" class="text-danger mt-2 small"></div>
+            <div class="row g-3 mt-2" id="live-results"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Mapa de rutas -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-signpost-split-fill text-success me-2"></i>4. Mapa de métodos</h2>
+        <p class="text-muted">Qué método usar para ir de un sistema a otro. Pulsa cualquier etiqueta para ver un recordatorio.</p>
+        <div class="table-responsive bg-white rounded-4 shadow">
+          <table class="table route-table mb-0">
+            <thead class="table-dark"><tr><th>De ↓ / A →</th><th>Binario</th><th>Octal</th><th>Decimal</th><th>Hexadecimal</th></tr></thead>
+            <tbody id="route-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. Ejercicios -->
+      <section>
+        <h2 class="section-title"><i class="bi bi-pencil-square text-success me-2"></i>5. Ejercicios prácticos (80)</h2>
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong><i class="bi bi-trophy-fill text-warning me-1"></i>Progreso total: <span id="score-total">0</span>/80</strong>
+              <button class="btn btn-sm btn-outline-secondary" id="reset-all"><i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar</button>
+            </div>
+            <div class="progress"><div id="score-bar" class="progress-bar bg-success progress-bar-striped" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <ul class="nav nav-pills nav-justified mb-4 gap-2" id="exerciseTabs" role="tablist">
+          <li class="nav-item"><button class="nav-link t2 active" data-bs-toggle="pill" data-bs-target="#pane-2" type="button"><i class="bi bi-toggles me-1"></i>Desde Binario <span class="badge bg-light text-dark" id="badge-2">0/20</span></button></li>
+          <li class="nav-item"><button class="nav-link t8" data-bs-toggle="pill" data-bs-target="#pane-8" type="button"><i class="bi bi-hash me-1"></i>Desde Octal <span class="badge bg-light text-dark" id="badge-8">0/20</span></button></li>
+          <li class="nav-item"><button class="nav-link t16" data-bs-toggle="pill" data-bs-target="#pane-16" type="button"><i class="bi bi-type me-1"></i>Desde Hexadecimal <span class="badge bg-light text-dark" id="badge-16">0/20</span></button></li>
+          <li class="nav-item"><button class="nav-link t10" data-bs-toggle="pill" data-bs-target="#pane-10" type="button"><i class="bi bi-123 me-1"></i>Desde Decimal <span class="badge bg-light text-dark" id="badge-10">0/20</span></button></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pane-2"><div class="row g-3" id="ex-2"></div></div>
+          <div class="tab-pane fade" id="pane-8"><div class="row g-3" id="ex-8"></div></div>
+          <div class="tab-pane fade" id="pane-16"><div class="row g-3" id="ex-16"></div></div>
+          <div class="tab-pane fade" id="pane-10"><div class="row g-3" id="ex-10"></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal reutilizable -->
+  <div class="modal fade" id="baseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
+      <div class="modal-content">
+        <div class="modal-header" id="modal-header">
+          <h5 class="modal-title" id="modal-title"></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body bg-light" id="modal-body"></div>
+        <div class="modal-footer"><button class="btn btn-dark" data-bs-dismiss="modal"><i class="bi bi-check2 me-1"></i>Entendido</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Cibernética • Conversiones numéricas</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    /* Copia de respaldo: se usa si no se puede leer index.html (por ejemplo al abrir con file://).
+       La fuente real del menú es el bloque #menu-config de index.html. */
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [ { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] }
+      ]
+    };
+
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `
+          <li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}">
+            <i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi ${g.icon} me-1"></i>${g.label}
+            </a>
+            <ul class="dropdown-menu">${items}</ul>
+          </li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+          <div class="container">
+            <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul>
+            </div>
+          </div>
+        </nav>`;
+    }
+
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'index.html';
+      renderHeader(FALLBACK_MENU, container, page);          // pinta de inmediato
+      try {                                                   // y luego intenta usar el menú maestro
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const menu = JSON.parse(doc.getElementById('menu-config').textContent);
+        renderHeader(menu, container, page);
+      } catch (e) { /* se queda con el respaldo */ }
+    })();
+  </script>
+
+  <!-- ===================== LÓGICA DE CONVERSIONES ===================== -->
+  <script>
+    const DIGITS = '0123456789ABCDEF';
+    const BASES = {
+      2:  { name: 'Binario',     icon: 'bi-toggles', cls: 'b2',  digits: '0 y 1' },
+      8:  { name: 'Octal',       icon: 'bi-hash',    cls: 'b8',  digits: '0 al 7' },
+      10: { name: 'Decimal',     icon: 'bi-123',     cls: 'b10', digits: '0 al 9' },
+      16: { name: 'Hexadecimal', icon: 'bi-type',    cls: 'b16', digits: '0-9 y A-F (A=10 … F=15)' }
+    };
+    const ORDER = [2, 8, 10, 16];
+    const VALID = { 2: /^[01]+$/, 8: /^[0-7]+$/, 10: /^[0-9]+$/, 16: /^[0-9A-F]+$/ };
+    const sub = (s, b) => `${s}<sub>${b}</sub>`;
+    const sup = n => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]).join('');
+    const toBase = (n, b) => n.toString(b).toUpperCase();
+    const fromBase = (s, b) => parseInt(s, b);
+    const dv = ch => DIGITS.indexOf(ch);
+    const pad = (s, size) => s.padStart(Math.ceil(s.length / size) * size, '0');
+
+    /* ----- Generadores de pasos ----- */
+    function stepsToDecimal(str, b) {
+      const ds = str.split('');
+      const n = ds.length;
+      let rows = '', terms = [], total = 0;
+      ds.forEach((ch, i) => {
+        const p = n - 1 - i, v = dv(ch), w = Math.pow(b, p);
+        total += v * w;
+        terms.push(v * w);
+        rows += `<tr><td class="mono">${ch}${ch !== String(v) ? ` (=${v})` : ''}</td><td>${b}${sup(p)}</td><td>${w}</td><td>${v} × ${w} = <strong>${v * w}</strong></td></tr>`;
+      });
+      return `
+        <div class="step-box"><span class="step-num">1</span>Escribe cada dígito con su <strong>peso</strong> (la base elevada a su posición, empezando por 0 a la derecha).
+          <div class="table-responsive mt-2"><table class="table table-sm table-bordered bg-white mb-0 text-center">
+            <thead class="table-light"><tr><th>Dígito</th><th>Potencia</th><th>Peso</th><th>Producto</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+        <div class="step-box"><span class="step-num">2</span>Suma todos los productos:
+          <div class="result-line mt-2">${terms.join(' + ')} = ${total}</div></div>`;
+    }
+
+    function stepsFromDecimal(n, b) {
+      if (n === 0) return `<div class="step-box">El cero se escribe igual en cualquier base: <strong>0</strong></div>`;
+      let q = n, rows = '', rems = [];
+      while (q > 0) {
+        const r = q % b, nq = Math.floor(q / b);
+        rows += `<tr><td>${q} ÷ ${b}</td><td>${nq}</td><td><strong>${r}</strong>${r > 9 ? ` → <span class="hex-letter">${DIGITS[r]}</span>` : ''}</td></tr>`;
+        rems.push(DIGITS[r]);
+        q = nq;
+      }
+      return `
+        <div class="step-box"><span class="step-num">1</span>Divide entre <strong>${b}</strong> una y otra vez hasta que el cociente sea 0. Guarda cada residuo.
+          <div class="table-responsive mt-2"><table class="table table-sm table-bordered bg-white mb-0 text-center">
+            <thead class="table-light"><tr><th>División</th><th>Cociente</th><th>Residuo</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+        <div class="step-box"><span class="step-num">2</span>Lee los residuos <strong>de abajo hacia arriba</strong> <i class="bi bi-arrow-up-circle-fill text-primary"></i>
+          <div class="result-line mt-2">${rems.slice().reverse().join('')}</div></div>`;
+    }
+
+    function stepsGroup(bin, size) {
+      const padded = pad(bin, size);
+      const groups = padded.match(new RegExp(`.{${size}}`, 'g'));
+      const chips = groups.map(g => `<span class="chip">${g}<small>= ${DIGITS[parseInt(g, 2)]}</small></span>`).join('');
+      const out = groups.map(g => DIGITS[parseInt(g, 2)]).join('');
+      return `
+        <div class="step-box"><span class="step-num">1</span>Agrupa los bits de <strong>${size} en ${size}</strong>, de derecha a izquierda (rellena con ceros a la izquierda si falta).
+          <div class="mt-2">${chips}</div></div>
+        <div class="step-box"><span class="step-num">2</span>Convierte cada grupo a su dígito (${size === 3 ? 'pesos 4-2-1' : 'pesos 8-4-2-1'}):
+          <div class="result-line mt-2">${out}</div></div>`;
+    }
+
+    function stepsExpand(str, b) {
+      const size = b === 8 ? 3 : 4;
+      const parts = str.split('').map(ch => ({ ch, bits: dv(ch).toString(2).padStart(size, '0') }));
+      const chips = parts.map(p => `<span class="chip">${p.ch}<small>${p.bits}</small></span>`).join('');
+      const all = parts.map(p => p.bits).join('');
+      const clean = all.replace(/^0+(?=.)/, '');
+      return `
+        <div class="step-box"><span class="step-num">1</span>Cambia cada dígito por sus <strong>${size} bits</strong>:
+          <div class="mt-2">${chips}</div></div>
+        <div class="step-box"><span class="step-num">2</span>Une todos los bits${clean !== all ? ' y quita los ceros sobrantes de la izquierda' : ''}:
+          <div class="result-line mt-2">${clean}</div></div>`;
+    }
+
+    function explain(from, to, str) {
+      const n = fromBase(str, from);
+      const result = toBase(n, to);
+      let html;
+      if (to === 10) html = stepsToDecimal(str, from);
+      else if (from === 10) html = stepsFromDecimal(n, to);
+      else if (from === 2) html = stepsGroup(str, to === 8 ? 3 : 4);
+      else if (to === 2) html = stepsExpand(str, from);
+      else { // octal <-> hexadecimal pasando por binario
+        const bin = toBase(n, 2);
+        html = `<div class="alert alert-info py-2 small mb-3"><i class="bi bi-info-circle me-1"></i>Octal y hexadecimal no se convierten directo: se pasa por <strong>binario</strong>.</div>
+          <h6 class="fw-bold txt-b2"><i class="bi bi-1-circle-fill me-1"></i>${BASES[from].name} → Binario</h6>${stepsExpand(str, from)}
+          <h6 class="fw-bold txt-b2 mt-3"><i class="bi bi-2-circle-fill me-1"></i>Binario → ${BASES[to].name}</h6>${stepsGroup(bin, to === 8 ? 3 : 4)}`;
+      }
+      return { html, result, n };
+    }
+
+    /* ===================== 1. TARJETAS DE BASES ===================== */
+    const INFO = {
+      2:  { what: 'Es el idioma del hardware: cada bit es un interruptor apagado (0) o encendido (1).',
+            weights: [7,6,5,4,3,2,1,0].map(p => Math.pow(2, p)).join(' · '),
+            use: 'Procesadores, memoria, redes (máscaras de subred).',
+            tip: 'Memoriza los pesos 128-64-32-16-8-4-2-1 y suma solo donde haya un 1.',
+            example: '11011010' },
+      8:  { what: 'Cada dígito octal equivale exactamente a 3 bits, por eso abrevia el binario.',
+            weights: '8³=512 · 8²=64 · 8¹=8 · 8⁰=1',
+            use: 'Permisos de archivos en Linux (chmod 755).',
+            tip: 'Un dígito = 3 bits con pesos 4-2-1. Ejemplo: 5 = 4+1 = 101.',
+            example: '345' },
+      10: { what: 'El sistema de todos los días, con diez dígitos. Cada posición vale 10 veces la anterior.',
+            weights: '10³=1000 · 10²=100 · 10¹=10 · 10⁰=1',
+            use: 'Cantidades cotidianas, dinero, medidas.',
+            tip: 'Para salir del decimal: divide entre la base destino y lee los residuos al revés.',
+            example: '187' },
+      16: { what: 'Cada dígito hexadecimal equivale exactamente a 4 bits. Usa letras para 10 a 15.',
+            weights: '16³=4096 · 16²=256 · 16¹=16 · 16⁰=1',
+            use: 'Colores web (#FF5733), direcciones de memoria, MAC.',
+            tip: 'Un dígito = 4 bits con pesos 8-4-2-1. A=10, B=11, C=12, D=13, E=14, F=15.',
+            example: 'B7' }
+    };
+
+    function renderBaseCards() {
+      document.getElementById('base-cards').innerHTML = ORDER.map(b => {
+        const i = INFO[b], m = BASES[b];
+        return `
+          <div class="col-sm-6 col-xl-3">
+            <div class="card base-card ${m.cls} h-100">
+              <div class="card-top d-flex align-items-center gap-3">
+                <div class="icon-circle"><i class="bi ${m.icon}"></i></div>
+                <div><div class="fw-bold fs-5">${m.name}</div><small>Base ${b} · dígitos ${m.digits}</small></div>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <p class="small">${i.what}</p>
+                <p class="small mb-2"><i class="bi bi-gear-fill me-1"></i><strong>Uso:</strong> ${i.use}</p>
+                <p class="small mb-2" data-bs-toggle="popover" data-bs-trigger="hover focus" tabindex="0" data-bs-placement="top"
+                   data-bs-title="Pesos de cada posición" data-bs-content="${i.weights}"><i class="bi bi-bar-chart-steps me-1"></i><strong>Pesos</strong> <i class="bi bi-info-circle text-muted"></i></p>
+                <div class="tip-box soft-${m.cls} mb-3"><i class="bi bi-lightbulb-fill me-1"></i>${i.tip}</div>
+                <button class="btn mt-auto bg-${m.cls} shadow-sm fw-bold" data-open-modal="${b}"><i class="bi bi-window-stack me-1"></i>Ver ejemplo: ${m.name} → los otros 3</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    /* ===================== MODAL ===================== */
+    let modalBase = 10, modalValue = '', modalTab = 0;
+    function renderModal() {
+      const b = modalBase, m = BASES[b], info = INFO[b];
+      const targets = ORDER.filter(x => x !== b);
+      const header = document.getElementById('modal-header');
+      header.className = `modal-header ${m.cls}`;
+      document.getElementById('modal-title').innerHTML = `<i class="bi ${m.icon} me-2"></i>${m.name} (base ${b}) → ${targets.map(t => BASES[t].name).join(', ')}`;
+
+      const valid = VALID[b].test(modalValue);
+      let body = `
+        <div class="row g-3 mb-3">
+          <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <h6 class="fw-bold txt-${m.cls}"><i class="bi bi-mortarboard me-1"></i>Antes de empezar</h6>
+              <p class="small mb-2">${info.what}</p>
+              <p class="small mb-2"><strong>Dígitos:</strong> ${m.digits}</p>
+              <p class="small mb-2"><strong>Pesos:</strong> ${info.weights}</p>
+              <div class="tip-box soft-${m.cls}"><i class="bi bi-lightbulb-fill me-1"></i>${info.tip}</div>
+            </div></div>
+          </div>
+          <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+              <label class="form-label fw-bold" for="modal-input">Número de ejemplo en ${m.name.toLowerCase()} <small class="text-muted">(puedes cambiarlo)</small></label>
+              <div class="input-group mb-2">
+                <span class="input-group-text bg-${m.cls}"><i class="bi ${m.icon}"></i></span>
+                <input type="text" id="modal-input" class="form-control form-control-lg mono ${valid ? '' : 'is-invalid'}" value="${modalValue}" autocomplete="off">
+                <button class="btn btn-outline-dark" id="modal-reset" title="Restaurar ejemplo"><i class="bi bi-arrow-counterclockwise"></i></button>
+              </div>
+              <div class="invalid-feedback d-block small ${valid ? 'd-none' : ''}">Usa solo dígitos válidos de la base ${b}: ${m.digits}.</div>`;
+      if (valid) {
+        const n = fromBase(modalValue, b);
+        body += `<div class="mt-2">${targets.map(t => `<span class="chip">${toBase(n, t)}<small>${BASES[t].name} (${t})</small></span>`).join('')}</div>`;
+      }
+      body += `</div></div></div></div>`;
+
+      if (valid) {
+        const tabs = targets.map((t, idx) => `
+          <li class="nav-item"><button class="nav-link t${t} ${idx === modalTab ? 'active' : ''}" data-bs-toggle="pill" data-bs-target="#mt-${t}" data-idx="${idx}" type="button">
+            <i class="bi ${BASES[t].icon} me-1"></i>A ${BASES[t].name}</button></li>`).join('');
+        const panes = targets.map((t, idx) => {
+          const ex = explain(b, t, modalValue);
+          return `<div class="tab-pane fade ${idx === modalTab ? 'show active' : ''}" id="mt-${t}">
+            <h6 class="fw-bold mb-3">${sub(modalValue, b)} <i class="bi bi-arrow-right"></i> ${sub(ex.result, t)}</h6>${ex.html}</div>`;
+        }).join('');
+        body += `<ul class="nav nav-pills nav-fill gap-2 mb-3">${tabs}</ul><div class="tab-content">${panes}</div>`;
+      }
+      document.getElementById('modal-body').innerHTML = body;
+
+      const inp = document.getElementById('modal-input');
+      inp.addEventListener('input', () => {
+        modalValue = inp.value.trim().toUpperCase();
+        if (VALID[b].test(modalValue) && fromBase(modalValue, b) > 4294967295) modalValue = modalValue.slice(0, -1);
+        renderModal();
+        const again = document.getElementById('modal-input'); again.focus(); again.setSelectionRange(again.value.length, again.value.length);
+      });
+      document.getElementById('modal-reset').addEventListener('click', () => { modalValue = INFO[b].example; modalTab = 0; renderModal(); });
+      document.querySelectorAll('#modal-body [data-idx]').forEach(btn => btn.addEventListener('shown.bs.tab', e => { modalTab = +e.target.dataset.idx; }));
+    }
+
+    function openModal(b) {
+      modalBase = b; modalValue = INFO[b].example; modalTab = 0;
+      renderModal();
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('baseModal')).show();
+    }
+
+    /* ===================== 2. TABLA INTERACTIVA ===================== */
+    function renderEqTable(max) {
+      const bitsLen = max <= 15 ? 4 : max <= 31 ? 5 : 6;
+      let html = '';
+      for (let n = 0; n <= max; n++) {
+        const bin = n.toString(2).padStart(bitsLen, '0');
+        const bits = bin.split('').map(c => `<span class="${c === '1' ? 'bit-on' : 'bit-off'}">${c}</span>`).join('');
+        const weights = bin.split('').map((c, i) => c === '1' ? Math.pow(2, bitsLen - 1 - i) : null).filter(x => x !== null);
+        const explainTxt = n === 0 ? 'Todos los bits en 0 = 0' : weights.join(' + ') + ' = ' + n;
+        const hx = n.toString(16).toUpperCase();
+        const hexCell = n >= 10 ? `<span class="hex-letter fw-bold" data-bs-toggle="tooltip" title="${hx} vale ${n}">${hx}</span>` : `<span class="fw-bold">${hx}</span>`;
+        html += `<tr data-n="${n}">
+          <td class="fw-bold txt-b10">${n}</td>
+          <td class="mono" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top" data-bs-title="Pesos activos" data-bs-content="${explainTxt}">${bits}</td>
+          <td class="fw-bold txt-b8">${n.toString(8)}</td>
+          <td>${hexCell}</td></tr>`;
+      }
+      const body = document.getElementById('eq-body');
+      body.querySelectorAll('[data-bs-toggle="popover"],[data-bs-toggle="tooltip"]').forEach(el => {
+        (bootstrap.Popover.getInstance(el) || bootstrap.Tooltip.getInstance(el))?.dispose();
+      });
+      body.innerHTML = html;
+      body.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el));
+      body.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+      body.querySelectorAll('tr').forEach(tr => tr.addEventListener('click', () => {
+        const was = tr.classList.contains('row-selected');
+        body.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
+        if (!was) tr.classList.add('row-selected');
+      }));
+    }
+
+    /* ===================== 3. CONVERSOR EN VIVO ===================== */
+    function renderLive() {
+      const base = +document.getElementById('live-base').value;
+      const raw = document.getElementById('live-input').value.trim().toUpperCase();
+      const err = document.getElementById('live-error');
+      const out = document.getElementById('live-results');
+      if (!raw) { err.textContent = ''; out.innerHTML = ''; return; }
+      if (!VALID[base].test(raw)) { err.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-1"></i>Dígitos no válidos para base ${base} (${BASES[base].digits}).`; out.innerHTML = ''; return; }
+      const n = fromBase(raw, base);
+      if (n > 4294967295) { err.textContent = 'El número es demasiado grande (máximo 4,294,967,295).'; out.innerHTML = ''; return; }
+      err.textContent = '';
+      out.innerHTML = ORDER.map(b => `
+        <div class="col-sm-6 col-lg-3">
+          <div class="result-tile soft-${BASES[b].cls} h-100">
+            <div class="d-flex justify-content-between align-items-center small fw-semibold txt-${BASES[b].cls}">
+              <span><i class="bi ${BASES[b].icon} me-1"></i>${BASES[b].name}</span>
+              <button class="btn btn-sm btn-light py-0 px-2" data-copy="${toBase(n, b)}" title="Copiar"><i class="bi bi-clipboard"></i></button>
+            </div>
+            <div class="val mono">${toBase(n, b)}</div>
+          </div>
+        </div>`).join('');
+    }
+
+    /* ===================== 4. MAPA DE MÉTODOS ===================== */
+    const ROUTE_TEXT = {
+      '2-8':   ['Agrupar 3 bits', 'Agrupa de 3 en 3 desde la derecha y convierte cada grupo (4-2-1).'],
+      '2-10':  ['Suma de potencias', 'Suma los pesos 2ⁿ donde haya un 1.'],
+      '2-16':  ['Agrupar 4 bits', 'Agrupa de 4 en 4 desde la derecha y convierte cada grupo (8-4-2-1).'],
+      '8-2':   ['1 dígito → 3 bits', 'Reemplaza cada dígito octal por 3 bits.'],
+      '8-10':  ['Suma de potencias de 8', 'Multiplica cada dígito por 8ⁿ y suma.'],
+      '8-16':  ['Vía binario', 'Octal → bits (3) → reagrupa en 4 → hexadecimal.'],
+      '10-2':  ['Dividir entre 2', 'Divide entre 2 y lee los residuos de abajo hacia arriba.'],
+      '10-8':  ['Dividir entre 8', 'Divide entre 8 y lee los residuos de abajo hacia arriba.'],
+      '10-16': ['Dividir entre 16', 'Divide entre 16; residuos 10-15 se escriben A-F.'],
+      '16-2':  ['1 dígito → 4 bits', 'Reemplaza cada dígito hexadecimal por 4 bits.'],
+      '16-8':  ['Vía binario', 'Hexadecimal → bits (4) → reagrupa en 3 → octal.'],
+      '16-10': ['Suma de potencias de 16', 'Multiplica cada dígito por 16ⁿ (A=10…F=15) y suma.']
+    };
+    function renderRoutes() {
+      document.getElementById('route-body').innerHTML = ORDER.map(f => `
+        <tr><th class="soft-${BASES[f].cls} txt-${BASES[f].cls}"><i class="bi ${BASES[f].icon} me-1"></i>${BASES[f].name}</th>
+        ${ORDER.map(t => {
+          if (f === t) return '<td class="text-muted">—</td>';
+          const [label, tip] = ROUTE_TEXT[`${f}-${t}`];
+          return `<td><button class="route-btn btn bg-${BASES[t].cls}" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="top"
+                    data-bs-title="${BASES[f].name} → ${BASES[t].name}" data-bs-content="${tip}">${label}</button></td>`;
+        }).join('')}</tr>`).join('');
+      document.querySelectorAll('#route-body [data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el));
+    }
+
+    /* ===================== 5. EJERCICIOS ===================== */
+    const SETS = {
+      2:  [['1010',10],['1101',8],['1111',16],['100001',10],['101110',8],['1101011',16],['11100',10],['100101',8],['10101010',16],['11111111',10],
+           ['1011',10],['111000',8],['11001100',16],['10001',10],['110111',8],['1010011',16],['1100011',10],['10101',8],['11110000',16],['10000000',10]],
+      8:  [['17',2],['25',10],['74',16],['52',2],['100',10],['175',16],['43',2],['66',10],['234',16],['77',2],
+           ['31',10],['123',16],['61',2],['150',10],['377',16],['12',2],['47',10],['312',16],['205',2],['200',10]],
+      16: [['1A',2],['2F',10],['3C',8],['A5',2],['64',10],['5D',8],['B2',2],['FF',10],['80',8],['E4',2],
+           ['100',10],['4B',8],['7D',2],['91',10],['FE',8],['33',2],['C8',10],['A0',8],['1F',2],['7B',10]],
+      10: [['25',2],['42',8],['60',16],['100',2],['75',8],['128',16],['15',2],['99',8],['255',16],['50',2],
+           ['150',8],['200',16],['85',2],['64',8],['171',16],['31',2],['210',8],['300',16],['127',2],['512',8]]
+    };
+    const solved = new Set();
+
+    function renderExercises() {
+      ORDER.forEach(from => {
+        const html = SETS[from].map(([val, to], idx) => {
+          const id = `${from}-${idx}`;
+          const ex = explain(from, to, val);
+          return `
+            <div class="col-lg-6">
+              <div class="card exercise-card h-100" id="card-${id}">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-${BASES[from].cls}">#${idx + 1}</span>
+                    <span class="badge rounded-pill bg-${BASES[to].cls}"><i class="bi ${BASES[from].icon}"></i> <i class="bi bi-arrow-right"></i> <i class="bi ${BASES[to].icon}"></i></span>
+                  </div>
+                  <h6 class="fw-bold mb-3">Convierte ${sub(val, from)} a ${BASES[to].name}</h6>
+                  <div class="input-group mb-2">
+                    <input type="text" class="form-control mono" id="in-${id}" placeholder="Tu respuesta (base ${to})" autocomplete="off" data-ex="${id}">
+                    <button class="btn btn-outline-primary" data-check="${id}"><i class="bi bi-check2-circle me-1"></i>Comprobar</button>
+                  </div>
+                  <div id="fb-${id}" class="mb-2" aria-live="polite"></div>
+                  <button class="btn btn-sm btn-light border w-100 text-start" data-bs-toggle="collapse" data-bs-target="#sol-${id}"><i class="bi bi-eye me-1"></i>Ver solución paso a paso</button>
+                  <div class="collapse mt-2" id="sol-${id}">
+                    <div class="solution-box">
+                      <div class="mb-2"><strong>Respuesta:</strong> <span class="mono text-success">${ex.result}</span><sub>${to}</sub></div>
+                      ${ex.html}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+        document.getElementById(`ex-${from}`).innerHTML = html;
+      });
+    }
+
+    function checkAnswer(id) {
+      const [from, idx] = id.split('-').map(Number);
+      const [val, to] = SETS[from][idx];
+      const raw = document.getElementById(`in-${id}`).value.trim().toUpperCase();
+      const fb = document.getElementById(`fb-${id}`);
+      if (!raw) { fb.innerHTML = `<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-circle me-1"></i>Ingresa un valor</span>`; return; }
+      if (!VALID[to].test(raw)) { fb.innerHTML = `<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle me-1"></i>Caracteres no válidos para base ${to} (${BASES[to].digits})</span>`; return; }
+      if (fromBase(raw, to) === fromBase(val, from)) {
+        fb.innerHTML = `<span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>¡Correcto! Excelente.</span>`;
+        document.getElementById(`card-${id}`).classList.add('solved');
+        solved.add(id); updateScore();
+      } else {
+        fb.innerHTML = `<span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Incorrecto. Revisa el procedimiento e inténtalo de nuevo.</span>`;
+      }
+    }
+
+    function updateScore() {
+      ORDER.forEach(b => {
+        const c = [...solved].filter(k => k.startsWith(b + '-')).length;
+        document.getElementById(`badge-${b}`).textContent = `${c}/20`;
+      });
+      document.getElementById('score-total').textContent = solved.size;
+      document.getElementById('score-bar').style.width = (solved.size / 80 * 100) + '%';
+    }
+
+    function resetAll() {
+      solved.clear();
+      document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('solved'));
+      document.querySelectorAll('[id^="fb-"]').forEach(f => f.innerHTML = '');
+      document.querySelectorAll('[id^="in-"]').forEach(i => i.value = '');
+      updateScore();
+    }
+
+    /* ===================== INICIO ===================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderBaseCards();
+      renderEqTable(15);
+      renderRoutes();
+      renderExercises();
+      renderLive();
+      updateScore();
+      document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => { if (!bootstrap.Popover.getInstance(el)) new bootstrap.Popover(el); });
+
+      document.addEventListener('click', e => {
+        const open = e.target.closest('[data-open-modal]');
+        if (open) openModal(+open.dataset.openModal);
+        const chk = e.target.closest('[data-check]');
+        if (chk) checkAnswer(chk.dataset.check);
+        const cp = e.target.closest('[data-copy]');
+        if (cp) {
+          navigator.clipboard?.writeText(cp.dataset.copy).then(() => {
+            cp.innerHTML = '<i class="bi bi-clipboard-check-fill text-success"></i>';
+            setTimeout(() => cp.innerHTML = '<i class="bi bi-clipboard"></i>', 1200);
+          });
+        }
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && e.target.dataset && e.target.dataset.ex) checkAnswer(e.target.dataset.ex);
+      });
+
+      document.getElementById('range-group').addEventListener('click', e => {
+        const btn = e.target.closest('button'); if (!btn) return;
+        document.querySelectorAll('#range-group .btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderEqTable(+btn.dataset.max);
+      });
+      document.getElementById('live-input').addEventListener('input', renderLive);
+      document.getElementById('live-base').addEventListener('change', renderLive);
+      document.getElementById('live-random').addEventListener('click', () => {
+        const base = +document.getElementById('live-base').value;
+        document.getElementById('live-input').value = toBase(Math.floor(Math.random() * 1000), base);
+        renderLive();
+      });
+      document.getElementById('reset-all').addEventListener('click', resetAll);
+    });
+  </script>
+</body>
+</html>
