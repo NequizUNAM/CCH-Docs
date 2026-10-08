@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cibernética - La Protoboard y Conexiones</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --volt:#f08c00; --amp:#1c7ed6; --res:#e03131; --watt:#7048e8; --ok:#2f9e44;
+      --volt-soft:#fff4e0; --amp-soft:#e7f1fb; --res-soft:#fdeaea; --watt-soft:#efeafc;
+      --proto-bg:#f8f9fa; --proto-board:#e9ecef; --hole-fill:#343a40;
+      --shadow-sm:0 2px 6px rgba(15,23,42,.08);
+      --shadow-md:0 8px 22px rgba(15,23,42,.12);
+      --shadow-lg:0 16px 38px rgba(15,23,42,.2);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f4f6fb; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:84px; }
+
+    /* Header y Hero */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); }
+    .app-navbar .dropdown-menu { border:0; border-radius:12px; box-shadow:var(--shadow-lg); padding:.5rem; }
+    .app-navbar .dropdown-item { border-radius:8px; padding:.5rem .8rem; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:2px solid #0d6efd; }
+
+    .hero-header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); color:#fff; padding:3rem 1rem; border-bottom:5px solid var(--amp); }
+
+    /* Clases semánticas */
+    .t-volt { color:var(--volt); } .t-amp { color:var(--amp); } .t-res { color:var(--res); } .t-watt { color:var(--watt); }
+    .b-volt { background:var(--volt)!important; color:#fff; } .b-amp { background:var(--amp)!important; color:#fff; }
+    .b-res { background:var(--res)!important; color:#fff; } .b-watt { background:var(--watt)!important; color:#fff; }
+    .s-volt { background:var(--volt-soft); } .s-amp { background:var(--amp-soft); } .s-res { background:var(--res-soft); } .s-watt { background:var(--watt-soft); }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Lateral / Top Nav */
+    .side-nav { position:sticky; top:84px; }
+    .side-nav .list-group-item { border:0; border-radius:10px!important; margin-bottom:4px; font-size:.92rem; transition:background .15s, transform .15s; }
+    .side-nav .list-group-item:hover { background:#e7efff; transform:translateX(3px); }
+    .side-nav .list-group-item.active { background:#0f172a; color:#fff; }
+    .side-nav .done-ico { margin-left:auto; color:#adb5bd; }
+    .side-nav .done .done-ico { color:var(--ok); }
+    .top-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .top-nav a { display:inline-block; padding:.6rem .8rem; font-size:.85rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; }
+    .top-nav a.active { border-bottom-color:var(--amp); font-weight:700; }
+    .progress { height:12px; border-radius:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
+
+    /* Cards y Lecciones */
+    .lesson-card { border:0; border-radius:18px; box-shadow:var(--shadow-md); overflow:hidden; }
+    .lesson-head { padding:1.1rem 1.4rem; color:#fff; display:flex; align-items:center; gap:.9rem; }
+    .lesson-head .num { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; flex:0 0 auto; }
+    .h-1 { background:linear-gradient(135deg,#0c8599,#075f6d); }
+    .h-2 { background:linear-gradient(135deg,#1c7ed6,#1864ab); }
+    .h-3 { background:linear-gradient(135deg,#f08c00,#c26e00); }
+    .h-4 { background:linear-gradient(135deg,#7048e8,#5130b9); }
+    .h-5 { background:linear-gradient(135deg,#2f9e44,#1f6f2f); }
+    .lesson-foot { background:#f8f9fa; padding:.8rem 1.4rem; display:flex; flex-wrap:wrap; gap:.6rem; justify-content:space-between; align-items:center; }
+    .tip-box { border-radius:12px; padding:.7rem .9rem; font-size:.9rem; }
+    .panel { background:#fff; border-radius:14px; box-shadow:var(--shadow-sm); padding:1rem; }
+    .canvas-wrap { background:#fff; border-radius:14px; box-shadow:var(--shadow-sm); overflow:hidden; }
+
+    /* Stepper */
+    .step-card { background:#fff; border-left:5px solid var(--amp); border-radius:0 12px 12px 0; box-shadow:var(--shadow-sm); padding:.9rem 1.1rem; min-height:100px; }
+    .dot { width:28px; height:28px; border-radius:50%; border:2px solid #ced4da; background:#fff; font-size:.8rem; font-weight:700; cursor:pointer; transition:all .15s; }
+    .dot.active { background:#0f172a; color:#fff; border-color:#0f172a; transform:scale(1.15); }
+    .dot.seen { border-color:var(--ok); color:var(--ok); }
+    .dot.active.seen { color:#fff; }
+
+    /* Componentes SVG y Animaciones */
+    .proto-wire { fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-width:4; transition:all .3s ease; }
+    .wire-red { stroke:#e03131; }
+    .wire-black { stroke:#212529; }
+    .wire-green { stroke:#2f9e44; }
+    .flow-dots { fill:none; stroke:#ffd43b; stroke-width:4; stroke-linecap:round; stroke-dasharray:1 12; animation:dash 1.8s linear infinite; }
+    @keyframes dash { to { stroke-dashoffset:-26; } }
+
+    .glow-led { transition:filter .3s, fill .3s; }
+    @keyframes burst-led { 0% { opacity:0; transform:scale(.5);} 30% { opacity:1; transform:scale(1.5);} 100% { opacity:0; transform:scale(2.2);} }
+    .burst-eff { transform-origin:center; transform-box:fill-box; animation:burst-led .8s ease-out 1; }
+
+    .interactive-hole { cursor:pointer; fill:#343a40; transition:fill .15s, transform .15s; }
+    .interactive-hole:hover { fill:#0d6efd; transform:scale(1.2); }
+    .interactive-hole.highlight { fill:#f08c00; filter:drop-shadow(0 0 4px #f08c00); }
+
+    .component-card { border:0; border-radius:14px; box-shadow:var(--shadow-sm); transition:transform .2s; height:100%; }
+    .component-card:hover { transform:translateY(-4px); }
+
+    .quiz-opt { text-align:left; border-radius:12px; box-shadow:var(--shadow-sm); }
+    @media (prefers-reduced-motion:reduce) { .flow-dots, .burst-eff { animation:none; } html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <div class="top-nav d-lg-none" id="top-nav"></div>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-grid-3x3-gap-fill t-amp me-2"></i>La Protoboard e Interconexiones</h1>
+        <p class="lead mb-1">Estructura interna • Búses de alimentación • Pistas de componentes • Circuito real animado</p>
+        <p class="mb-0 text-light">Explora las pletinas metálicas internas y simula la conexión interactiva de un circuito</p>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+      <div class="row g-4">
+
+        <!-- Menú lateral -->
+        <aside class="col-lg-3 d-none d-lg-block">
+          <div class="side-nav">
+            <div class="panel mb-3">
+              <div class="d-flex justify-content-between small fw-semibold mb-1">
+                <span><i class="bi bi-flag-fill text-success me-1"></i>Tu avance</span>
+                <span id="prog-text">0/5</span>
+              </div>
+              <div class="progress"><div id="prog-bar" class="progress-bar bg-success progress-bar-striped" style="width:0%"></div></div>
+            </div>
+            <div class="list-group" id="side-nav"></div>
+          </div>
+        </aside>
+
+        <!-- Área de Contenido Principal -->
+        <div class="col-lg-9">
+
+          <!-- ============ 1. ANATOMÍA Y CONEXIONES INTERNAS ============ -->
+          <section class="lesson mb-5" id="s1" data-title="Anatomía interna de la Protoboard" data-icon="bi-bounding-box-circles">
+            <div class="card lesson-card">
+              <div class="lesson-head h-1"><div class="num">1</div><div><h2 class="h4 fw-bold mb-0">Anatomía y Conexiones Internas</h2><small>Descubre qué hay debajo del plástico</small></div></div>
+              <div class="card-body">
+                <p>Una <strong>protoboard</strong> (o placa de pruebas sin soldadura) permite armar circuitos rápidamente. Por dentro tiene <strong>laminas de cobre elásticas</strong> que unen mecánicamente y eléctricamente los orificios. Haz clic en las opciones para alternar la vista interna.</p>
+                
+                <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                  <strong><i class="bi bi-eye-fill me-1"></i>Modo de vista:</strong>
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-outline-dark active" id="btn-v-real"><i class="bi bi-grid-3x3 me-1"></i>Vista Externa (Plástico)</button>
+                    <button class="btn btn-outline-dark" id="btn-v-metal"><i class="bi bi-layers-half me-1"></i>Rayos X (Pletinas internas)</button>
+                  </div>
+                </div>
+
+                <div class="canvas-wrap p-2 text-center mb-3">
+                  <div id="proto-diagram-wrap"></div>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="panel h-100 border-start border-4 border-danger">
+                      <h6 class="fw-bold t-res"><i class="bi bi-plus-slash-minus me-1"></i>Búses de Alimentación (Líneas horizontales)</h6>
+                      <p class="small mb-0">Ubicados a los lados (+ y −). Corren de forma <strong>horizontal</strong> a lo largo de casi toda la placa. Se usan para distribuir el voltaje de la fuente a cualquier punto del circuito.</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="panel h-100 border-start border-4 border-primary">
+                      <h6 class="fw-bold t-amp"><i class="bi bi-distribute-vertical me-1"></i>Pistas de Componentes (Filas verticales)</h6>
+                      <p class="small mb-0">Organizadas en columnas numeradas (1, 2, 3...). Cada columna de 5 orificios (A-B-C-D-E) está unida internamente por <strong>una misma pletina vertical</strong>. El canal central aísla el lado superior del inferior.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="1"></div>
+            </div>
+          </section>
+
+          <!-- ============ 2. COMPONENTES DEL CIRCUITO ============ -->
+          <section class="lesson mb-5" id="s2" data-title="Los Componentes del Ensamblaje" data-icon="bi-cpu-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-2"><div class="num">2</div><div><h2 class="h4 fw-bold mb-0">Los Componentes del Ensamblaje</h2><small>Qué función cumple cada elemento en la placa</small></div></div>
+              <div class="card-body">
+                <p>Para crear nuestro primer circuito funcional en la protoboard necesitamos 3 elementos esenciales conectados en bucle cerrado:</p>
+                
+                <div class="row g-3 mb-3">
+                  <div class="col-md-4">
+                    <div class="card component-card s-volt">
+                      <div class="card-body">
+                        <div class="fs-2 t-volt mb-1"><i class="bi bi-battery-charging"></i></div>
+                        <h5 class="fw-bold">1. Fuente / Batería</h5>
+                        <p class="small text-secondary mb-0">Suministra la fuerza electromotriz (Voltaje). Su terminal positivo (+) entrega la energía y el negativo (−) sirve de retorno a tierra (GND).</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card component-card s-res">
+                      <div class="card-body">
+                        <div class="fs-2 t-res mb-1"><i class="bi bi-dash-lg"></i><i class="bi bi-activity"></i></div>
+                        <h5 class="fw-bold">2. Resistencia Limitadora</h5>
+                        <p class="small text-secondary mb-0">Protege al semiconductor. Sin ella, la corriente aumenta drásticamente destruyendo el LED al instante.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card component-card s-amp">
+                      <div class="card-body">
+                        <div class="fs-2 t-amp mb-1"><i class="bi bi-lightbulb-fill"></i></div>
+                        <h5 class="fw-bold">3. LED (Diodo Emisor)</h5>
+                        <p class="small text-secondary mb-0">Transforma la corriente en luz. Es polarizado: el Ánodo (+) va hacia el positivo y el Cátodo (−) al negativo.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tip-box s-watt">
+                  <i class="bi bi-lightbulb-fill me-1 t-watt"></i><strong>Regla de oro de conexión:</strong> Dos componentes se conectan entre sí cuando insertas sus patas en la <strong>misma columna vertical</strong> de la protoboard.
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="2"></div>
+            </div>
+          </section>
+
+          <!-- ============ 3. SIMULADOR INTERACTIVO ============ -->
+          <section class="lesson mb-5" id="s3" data-title="Simulador de Conexión en Protoboard" data-icon="bi-sliders">
+            <div class="card lesson-card">
+              <div class="lesson-head h-3"><div class="num">3</div><div><h2 class="h4 fw-bold mb-0">Simulador de Conexión Real</h2><small>Ajusta parámetros, activa el circuito y observa el flujo</small></div></div>
+              <div class="card-body">
+                <p>Personaliza los valores del circuito en tiempo real. Activa el interruptor para hacer fluir los electrones por las pletinas internas de la protoboard.</p>
+
+                <div class="row g-3">
+                  <!-- Columna del esquema visual SVG -->
+                  <div class="col-lg-7">
+                    <div class="canvas-wrap p-2 mb-2">
+                      <div id="sim-proto-svg-wrap"></div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                      <button class="btn btn-success" id="sim-sw"><i class="bi bi-toggle-on me-1"></i><span>Circuito: Encendido</span></button>
+                      <div class="form-check form-switch align-self-center">
+                        <input class="form-check-input" type="checkbox" id="sim-noR">
+                        <label class="form-check-label small text-danger fw-bold" for="sim-noR">Puentear Resistencia (Sin R)</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Columna de Controles y Parámetros -->
+                  <div class="col-lg-5">
+                    <div class="panel mb-3">
+                      <h6 class="fw-bold mb-3"><i class="bi bi-sliders me-1"></i>Parámetros Editables</h6>
+
+                      <div class="mb-3">
+                        <label class="form-label fw-semibold mb-1 t-volt" for="sim-v"><i class="bi bi-battery-charging me-1"></i>Voltaje Fuente: <span id="sim-v-out" class="mono">5 V</span></label>
+                        <input type="range" class="form-range" id="sim-v" min="1.5" max="12" step="0.5" value="5">
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label fw-semibold mb-1 t-res" for="sim-r"><i class="bi bi-activity me-1"></i>Resistencia (R): <span id="sim-r-out" class="mono">220 Ω</span></label>
+                        <input type="range" class="form-range" id="sim-r" min="10" max="1000" step="10" value="220">
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label fw-semibold mb-1" for="sim-led-col"><i class="bi bi-palette me-1"></i>Color del LED</label>
+                        <select class="form-select" id="sim-led-col"></select>
+                      </div>
+                    </div>
+
+                    <!-- Cuadro de Estado Electrónico -->
+                    <div id="sim-metrics"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="lesson-foot" data-lesson="3"></div>
+            </div>
+          </section>
+
+          <!-- ============ 4. PASO A PASO INTERACTIVO ============ -->
+          <section class="lesson mb-5" id="s4" data-title="Guía de Ensamblaje Paso a Paso" data-icon="bi-list-ol">
+            <div class="card lesson-card">
+              <div class="lesson-head h-4"><div class="num">4</div><div><h2 class="h4 fw-bold mb-0">Guía de Ensamblaje Paso a Paso</h2><small>Sigue la secuencia correcta para armar tu circuito</small></div></div>
+              <div class="card-body">
+                <p>Navega paso a paso para aprender el orden recomendado de cableado sin cometer cortocircuitos.</p>
+                <div id="proto-stepper" class="mb-3"></div>
+              </div>
+              <div class="lesson-foot" data-lesson="4"></div>
+            </div>
+          </section>
+
+          <!-- ============ 5. QUIZ DE EVALUACIÓN ============ -->
+          <section class="lesson mb-5" id="s5" data-title="Pon a prueba tus conocimientos" data-icon="bi-trophy-fill">
+            <div class="card lesson-card">
+              <div class="lesson-head h-5"><div class="num">5</div><div><h2 class="h4 fw-bold mb-0">Pon a prueba tus conocimientos</h2><small>Demuestra que dominas la Protoboard</small></div></div>
+              <div class="card-body">
+                <div id="quiz-box"></div>
+              </div>
+              <div class="lesson-foot" data-lesson="5"></div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Cibernética • Protoboard</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] }
+      ]
+    };
+
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `
+          <li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}">
+            <i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi ${g.icon} me-1"></i>${g.label}
+            </a>
+            <ul class="dropdown-menu">${items}</ul>
+          </li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+          <div class="container">
+            <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul>
+            </div>
+          </div>
+        </nav>`;
+    }
+
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'protoboard.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const menu = JSON.parse(doc.getElementById('menu-config').textContent);
+        renderHeader(menu, container, page);
+      } catch (e) { /* Fallback activo */ }
+    })();
+  </script>
+
+  <!-- ===================== LÓGICA INTERACTIVA ===================== -->
+  <script>
+    /* Utility de ingeniería */
+    function eng(v, unit) {
+      if (!isFinite(v)) return '—';
+      if (v === 0) return '0 ' + unit;
+      const a = Math.abs(v);
+      const P = [[1e9,'G'],[1e6,'M'],[1e3,'k'],[1,''],[1e-3,'m'],[1e-6,'µ'],[1e-9,'n']];
+      for (const [m, p] of P) { if (a >= m * 0.9999999) return +(v / m).toPrecision(4) + ' ' + p + unit; }
+      return v.toExponential(2) + ' ' + unit;
+    }
+
+    const $ = s => document.querySelector(s);     const $\$ = s => [...document.querySelectorAll(s)];
+
+    /* ---------- LECCIÓN 1: DIAGRAMA ESTRUCTURAL DE PROTOBOARD ---------- */
+    let protoViewMode = 'real'; // 'real' | 'metal'
+
+    function renderProtoStructure() {
+      const isMetal = protoViewMode === 'metal';
+      let html = `<svg viewBox="0 0 600 240" style="width:100%;max-width:680px" role="img" aria-label="Anatomía interna de Protoboard">
+        <!-- Cuerpo plástico -->
+        <rect x="10" y="10" width="580" height="220" rx="12" fill="${isMetal ? '#212529' : '#f8f9fa'}" stroke="#ced4da" stroke-width="3"/>
+        <rect x="10" y="115" width="580" height="10" fill="${isMetal ? '#111' : '#e9ecef'}"/> <!-- Canal central -->
+        
+        <!-- Marcadores (+ y -) -->
+        <text x="25" y="32" font-size="14" font-weight="bold" fill="#e03131">+</text>
+        <text x="25" y="52" font-size="16" font-weight="bold" fill="#1c7ed6">−</text>
+        <text x="25" y="195" font-size="14" font-weight="bold" fill="#e03131">+</text>
+        <text x="25" y="215" font-size="16" font-weight="bold" fill="#1c7ed6">−</text>`;
+
+      // Pletinas metálicas internas (Rayos X)
+      if (isMetal) {
+        // Pletinas horizontales (búses)
+        html += `<rect x="45" y="22" width="510" height="12" rx="3" fill="#f08c00" opacity="0.75"/>
+                 <rect x="45" y="42" width="510" height="12" rx="3" fill="#1c7ed6" opacity="0.75"/>
+                 <rect x="45" y="182" width="510" height="12" rx="3" fill="#f08c00" opacity="0.75"/>
+                 <rect x="45" y="202" width="510" height="12" rx="3" fill="#1c7ed6" opacity="0.75"/>`;
+
+        // Pletinas verticales (columnas de 5)
+        for (let col = 0; col < 25; col++) {
+          const x = 50 + col * 21;
+          html += `<rect x="${x - 5}" y="60" width="10" height="50" rx="2" fill="#e03131" opacity="0.65"/>`;
+          html += `<rect x="${x - 5}" y="130" width="10" height="50" rx="2" fill="#e03131" opacity="0.65"/>`;
+        }
+      }
+
+      // Orificios
+      for (let col = 0; col < 25; col++) {
+        const x = 50 + col * 21;
+        // Búses superiores
+        html += `<circle class="interactive-hole" cx="${x}" cy="28" r="3.5"/>`;
+        html += `<circle class="interactive-hole" cx="${x}" cy="48" r="3.5"/>`;
+
+        // Pistas superiores A-E
+        for (let row = 0; row < 5; row++) {
+          html += `<circle class="interactive-hole" cx="${x}" cy="${65 + row * 9}" r="3.5"/>`;
+        }
+
+        // Pistas inferiores F-J
+        for (let row = 0; row < 5; row++) {
+          html += `<circle class="interactive-hole" cx="${x}" cy="${135 + row * 9}" r="3.5"/>`;
+        }
+
+        // Búses inferiores
+        html += `<circle class="interactive-hole" cx="${x}" cy="188" r="3.5"/>`;
+        html += `<circle class="interactive-hole" cx="${x}" cy="208" r="3.5"/>`;
+      }
+
+      html += `</svg>`;
+      \$('#proto-diagram-wrap').innerHTML = html;
+    }
+
+    // Interacción de botones de vista
+    \$('#btn-v-real').addEventListener('click', () => {
+      protoViewMode = 'real';
+      \$('#btn-v-real').classList.add('active');
+      \$('#btn-v-metal').classList.remove('active');
+      renderProtoStructure();
+    });
+    \$('#btn-v-metal').addEventListener('click', () => {
+      protoViewMode = 'metal';
+      \$('#btn-v-metal').classList.add('active');
+      \$('#btn-v-real').classList.remove('active');
+      renderProtoStructure();
+    });
+
+
+    /* ---------- LECCIÓN 3: SIMULADOR DE CIRCUITO REAL ---------- */
+    const LED_TYPES = [
+      { n: 'Rojo', vf: 2.0, h: '#ff3b3b' },
+      { n: 'Verde', vf: 2.2, h: '#2bd94b' },
+      { n: 'Azul', vf: 3.0, h: '#2b7bff' },
+      { n: 'Amarillo', vf: 2.1, h: '#ffe600' }
+    ];
+
+    const simState = { on: true, noR: false, stepHl: null };
+
+    function getSimData() {
+      const Vs = parseFloat(\$('#sim-v').value);
+      const R = simState.noR ? 0.001 : parseFloat(\$('#sim-r').value);
+      const ledCol = LED_TYPES[+\$('#sim-led-col').value];
+      
+      let I = 0, burnt = false, ok = true;
+      if (Vs <= ledCol.vf) {
+        ok = false;
+      } else {
+        I = (Vs - ledCol.vf) / R;
+        if (I > 0.040) burnt = true; // Se destruye con > 40 mA
+      }
+
+      return { Vs, R, ledCol, I, burnt, ok, isPowered: simState.on && ok && !burnt };
+    }
+
+    function flowDurSim(I) {
+      return Math.min(6, Math.max(0.4, 3 / (0.2 + Math.log10(1 + I * 100)))).toFixed(2) + 's';
+    }
+
+    function renderSimProto() {
+      const d = getSimData();
+      const flowStyle = d.isPowered ? `style="animation-duration:${flowDurSim(d.I)}"` : 'style="display:none"';
+      const brightness = d.isPowered ? Math.min(1, 0.2 + (d.I * 1000) / 25) : 0;
+
+      \$('#sim-v-out').textContent = d.Vs + ' V';
+      \$('#sim-r-out').textContent = (simState.noR ? '0 Ω (Puente)' : eng(d.R, 'Ω'));
+
+      const svg = `
+      <svg viewBox="0 0 540 260" style="width:100%;height:auto" role="img" aria-label="Simulador de Protoboard Animado">
+        <defs>
+          <radialGradient id="sim-led-glow">
+            <stop offset="0" stop-color="${d.ledCol.h}" stop-opacity="${brightness}"/>
+            <stop offset="1" stop-color="${d.ledCol.h}" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Base Protoboard -->
+        <rect x="20" y="20" width="500" height="220" rx="10" fill="#f8f9fa" stroke="#ced4da" stroke-width="3"/>
+        <rect x="20" y="125" width="500" height="10" fill="#e9ecef"/> <!-- Canal -->
+
+        <!-- Búses horizontales impresos -->
+        <line x1="50" y1="35" x2="490" y2="35" stroke="#e03131" stroke-width="2" stroke-dasharray="4 2"/>
+        <line x1="50" y1="50" x2="490" y2="50" stroke="#1c7ed6" stroke-width="2" stroke-dasharray="4 2"/>
+        <line x1="50" y1="210" x2="490" y2="210" stroke="#1c7ed6" stroke-width="2" stroke-dasharray="4 2"/>
+
+        <!-- Filas de orificios decorativas -->
+        ${[80,140,200,260,320,380,440].map(x => `
+          <circle cx="\${x}" cy="35" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="50" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="75" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="90" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="105" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="150" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="165" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="180" r="3" fill="#343a40"/>
+          <circle cx="\${x}" cy="210" r="3" fill="#343a40"/>
+        `).join('')}
+
+        <!-- Pletinas destacadas dinámicas -->
+        <rect x="133" y="68" width="14" height="45" rx="3" fill="#ffd8a8" opacity="${d.isPowered ? 0.8 : 0.2}"/>
+        <rect x="253" y="68" width="14" height="45" rx="3" fill="#ffd8a8" opacity="${d.isPowered ? 0.8 : 0.2}"/>
+
+        <!-- BATERÍA / FUENTE -->
+        <g transform="translate(30, 75)">
+          <rect x="0" y="0" width="40" height="80" rx="4" fill="#343a40"/>
+          <rect x="10" y="-8" width="20" height="8" fill="#adb5bd"/>
+          <text x="20" y="30" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">BAT</text>
+          <text x="20" y="50" text-anchor="middle" fill="#f08c00" font-size="12" font-weight="bold">${d.Vs}V</text>
+        </g>
+
+        <!-- CABLE ROJO (De Bat + a Bus +) -->
+        <path class="proto-wire wire-red" d="M50,75 V35"/>
+        <!-- CABLE NEGRO (De Bat - a Bus -) -->
+        <path class="proto-wire wire-black" d="M50,155 V210"/>
+
+        <!-- CABLE ROJO DE PUENTE (Bus + a Columna 140) -->
+        <path class="proto-wire wire-red" d="M140,35 V75"/>
+
+        <!-- RESISTENCIA (Entre Columna 140 y Columna 260) -->
+        <g>
+          <path class="proto-wire wire-green" d="M140,90 H260"/>
+          ${!simState.noR ? `
+            <rect x="175" y="82" width="50" height="16" rx="4" fill="#f0d9a8" stroke="#b08d4a" stroke-width="2"/>
+            <line x1="188" y1="82" x2="188" y2="98" stroke="#e03131" stroke-width="3"/>
+            <line x1="200" y1="82" x2="200" y2="98" stroke="#1c7ed6" stroke-width="3"/>
+            <line x1="212" y1="82" x2="212" y2="98" stroke="#fd7e14" stroke-width="3"/>
+            <text x="200" y="76" text-anchor="middle" font-size="11" font-weight="bold" fill="#343a40">\${eng(d.R,'Ω')}</text>
+          ` : `
+            <line x1="140" y1="90" x2="260" y2="90" stroke="#e03131" stroke-width="4"/>
+          `}
+        </g>
+
+        <!-- LED (En Columna 260 Ánodo, Cátodo a Bus -) -->
+        <g>
+          <!-- Cable Cátodo a GND -->
+          <path class="proto-wire wire-black" d="M260,105 V210"/>
+          
+          <!-- Brillo del LED -->
+          <circle cx="260" cy="105" r="35" fill="url(#sim-led-glow)"/>
+          
+          <!-- Cuerpo del LED -->
+          <circle cx="260" cy="105" r="12" fill="${d.isPowered && !d.burnt ? d.ledCol.h : '#e9ecef'}" stroke="#343a40" stroke-width="2"/>
+          <text x="280" y="110" font-size="11" font-weight="bold" fill="#343a40">LED ${d.ledCol.n}</text>
+          
+          ${d.burnt ? `
+            <text x="260" y="111" text-anchor="middle" font-size="20" fill="#e03131" font-weight="bold">✖</text>
+            <circle class="burst-eff" cx="260" cy="105" r="20" fill="#ffa94d"/>
+          ` : ''}
+        </g>
+
+        <!-- FLUJO DE ELECTRONES (ANIMACIÓN) -->
+        <path class="flow-dots" ${flowStyle} d="M50,155 V210 H260 V105 H260 H140 V35 H50 V75"/>
+      </svg>`;
+
+      \$('#sim-proto-svg-wrap').innerHTML = svg;
+
+      // Actualizar Métrica Electrónica
+      const metricsBox = \$('#sim-metrics');
+      if (!d.ok) {
+        metricsBox.innerHTML = `<div class="tip-box s-res"><i class="bi bi-exclamation-octagon-fill me-1"></i><strong>Sin iluminación:</strong> El voltaje de la fuente (${d.Vs} V) es menor o igual al umbral del LED (${d.ledCol.vf} V). Aumenta el voltaje.</div>`;
+      } else if (d.burnt) {
+        metricsBox.innerHTML = `<div class="tip-box s-res"><i class="bi bi-fire me-1"></i><strong>¡LED DESTRUIDO!</strong> Pasaron ${eng(d.I,'A')}. Sin resistencia limitadora, la corriente excedió los 40 mA máximos del semiconductor.</div>`;
+      } else if (!simState.on) {
+        metricsBox.innerHTML = `<div class="tip-box s-amp"><i class="bi bi-pause-circle me-1"></i>Circuito apagado por el interruptor.</div>`;
+      } else {
+        const P = d.Vs * d.I;
+        metricsBox.innerHTML = `
+          <div class="result-big b-amp p-3">
+            <div class="small"><i class="bi bi-check-circle-fill me-1"></i>Circuito Funcional</div>
+            <div class="fs-4 mono">Corriente: ${eng(d.I, 'A')}</div>
+            <div class="small opacity-75">Potencia consumida: ${eng(P, 'W')}</div>
+          </div>`;
+      }
+    }
+
+    // Listeners del Simulador
+    ['#sim-v', '#sim-r', '#sim-led-col'].forEach(s => $(s).addEventListener('input', renderSimProto));$('#sim-sw').addEventListener('click', () => {
+      simState.on = !simState.on;
+      \$('#sim-sw').className = 'btn ' + (simState.on ? 'btn-success' : 'btn-outline-secondary');
+      \$('#sim-sw').innerHTML = `<i class="bi bi-toggle-${simState.on ? 'on' : 'off'} me-1"></i><span>Circuito: ${simState.on ? 'Encendido' : 'Apagado'}</span>`;
+      renderSimProto();
+    });
+    \$('#sim-noR').addEventListener('change', e => {
+      simState.noR = e.target.checked;
+      renderSimProto();
+    });
+
+
+    /* ---------- LECCIÓN 4: STEPPER ---------- */
+    const PROTO_STEPS = [
+      { t: '1. Energiza los Búses laterales', icon: 'bi-battery-charging', d: 'Conecta el terminal positivo (+) de la batería al bus rojo (+) de la protoboard, y el negativo (−) al bus azul (−).' },
+      { t: '2. Llama la energía a las pistas', icon: 'bi-box-arrow-in-right', d: 'Usa un cable puente desde el bus positivo (+) hasta una columna de trabajo (ej. Columna 10).' },
+      { t: '3. Inserta la Resistencia limitadora', icon: 'bi-activity', d: 'Conecta una pata de la resistencia en la Columna 10 y la otra pata en la Columna 20 para cruzar corriente.' },
+      { t: '4. Conecta el LED respetando la polaridad', icon: 'bi-lightbulb', d: 'Inserta el Ánodo (+, pata larga) en la Columna 20 junto a la resistencia, y el Cátodo (−, pata corta) en el bus negativo (−).' }
+    ];
+
+    function makeStepper(id, steps) {
+      const el = document.getElementById(id);
+      let i = 0; const seen = new Set([0]);
+      function render() {
+        seen.add(i);
+        el.innerHTML = `
+          <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
+            ${steps.map((s, k) => `<button class="dot ${k === i ? 'active' : ''} ${seen.has(k) ? 'seen' : ''}" data-k="${k}">${k + 1}</button>`).join('')}
+          </div>
+          <div class="step-card">
+            <h6 class="fw-bold mb-1"><i class="bi ${steps[i].icon} me-1"></i>${steps[i].t}</h6>
+            <div class="small">${steps[i].d}</div>
+          </div>
+          <div class="d-flex justify-content-between mt-2">
+            <button class="btn btn-sm btn-outline-dark" data-nav="-1" ${i === 0 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i> Anterior</button>
+            <button class="btn btn-sm btn-dark" data-nav="1" ${i === steps.length - 1 ? 'disabled' : ''}>Siguiente <i class="bi bi-chevron-right"></i></button>
+          </div>`;
+        el.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => { i = +b.dataset.k; render(); }));
+        el.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => { i += +b.dataset.nav; render(); }));
+      }
+      render();
+    }
+
+
+    /* ---------- LECCIÓN 5: QUIZ ---------- */
+    const QUIZ_PROTO = [
+      { q: '¿Cómo están conectadas internamente las 5 perforaciones de una fila (A-B-C-D-E)?', o: ['En columna vertical (entre sí)', 'En línea horizontal a lo largo de toda la placa', 'No tienen conexión interna', 'En diagonal'], a: 0, e: 'Cada columna de 5 orificios comparte una misma pletina metálica vertical.' },
+      { q: '¿Para qué se utilizan principalmente las líneas laterales marcadas con + y −?', o: ['Para distribuir la alimentación eléctrica a la placa', 'Exclusivamente para conectar LEDs', 'Para aislar los componentes', 'Para medir el voltaje con el multímetro'], a: 0, e: 'Son los búses de alimentación horizontales.' },
+      { q: 'Si conectas dos patas de componentes en la MISMA columna de 5 orificios, ¿qué ocurre?', o: ['Quedan conectados eléctricamente en serie/nodo', 'Ocurre un cortocircuito inevitable', 'Se destruyen los componentes', 'La protoboard se calienta'], a: 0, e: 'Esa es la forma estándar de unir componentes sin soldar.' },
+      { q: '¿Qué función cumple el canal central que divide la protoboard por la mitad?', o: ['Aísla el bloque superior del inferior (ideal para circuitos integrados)', 'Conecta la tierra del circuito', 'Aumenta el voltaje', 'Sirve como soporte físico únicamente'], a: 0, e: 'Separa los pines de ambos lados de los microchips o CI.' }
+    ];
+
+    const quizState = { i: 0, score: 0, answered: false };
+
+    function renderQuiz() {
+      const box = \$('#quiz-box');
+      if (quizState.i >= QUIZ_PROTO.length) {
+        const pct = Math.round((quizState.score / QUIZ_PROTO.length) * 100);
+        box.innerHTML = `
+          <div class="text-center py-3">
+            <i class="bi bi-trophy-fill text-warning" style="font-size:4rem"></i>
+            <h3 class="fw-bold mt-2">${quizState.score} / ${QUIZ_PROTO.length} Aciertos</h3>
+            <p>${pct >= 75 ? '¡Excelente! Comprendes el funcionamiento interno de la protoboard.' : 'Buen intento. Repasa la anatomía interna y vuelve a probar.'}</p>
+            <button class="btn btn-dark" id="quiz-reset"><i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar Quiz</button>
+          </div>`;
+        \$('#quiz-reset').addEventListener('click', () => { quizState.i = 0; quizState.score = 0; renderQuiz(); });
+        markDone(5, true);
+        return;
+      }
+
+      const q = QUIZ_PROTO[quizState.i];
+      quizState.answered = false;
+      box.innerHTML = `
+        <div class="d-flex justify-content-between small fw-semibold mb-2">
+          <span>Pregunta ${quizState.i + 1} de ${QUIZ_PROTO.length}</span>
+          <span><i class="bi bi-star-fill text-warning"></i> ${quizState.score}</span>
+        </div>
+        <div class="progress mb-3"><div class="progress-bar bg-warning" style="width:${(quizState.i / QUIZ_PROTO.length) * 100}%"></div></div>
+        <h5 class="fw-bold mb-3">${q.q}</h5>
+        <div class="d-grid gap-2" id="quiz-opts">
+          ${q.o.map((opt, idx) => `<button class="btn btn-light border quiz-opt py-2" data-k="${idx}">${opt}</button>`).join('')}
+        </div>
+        <div id="quiz-fb" class="mt-3"></div>`;
+
+      $$('#quiz-opts .quiz-opt').forEach(btn => btn.addEventListener('click', () => {         if (quizState.answered) return;         quizState.answered = true;         const sel = +btn.dataset.k;         const ok = sel === q.a;         if (ok) quizState.score++;          $$
+('#quiz-opts .quiz-opt').forEach(x => {
+          x.disabled = true;
+          if (+x.dataset.k === q.a) x.className = 'btn btn-success quiz-opt py-2';
+        });
+        if (!ok) btn.className = 'btn btn-danger quiz-opt py-2';
+
+        \$('#quiz-fb').innerHTML = `
+          <div class="tip-box ${ok ? 's-amp' : 's-res'}">
+            <strong><i class="bi ${ok ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'} me-1"></i>${ok ? '¡Correcto!' : 'Incorrecto.'}</strong> ${q.e}
+          </div>
+          <button class="btn btn-dark mt-2" id="quiz-next">${quizState.i === QUIZ_PROTO.length - 1 ? 'Ver Resultado' : 'Siguiente'} <i class="bi bi-chevron-right"></i></button>`;
+        \$('#quiz-next').addEventListener('click', () => { quizState.i++; renderQuiz(); });
+      }));
+    }
+
+
+    /* ---------- SISTEMA DE PROGRESO Y NAVEGACIÓN ---------- */
+    const sections = [], done = new Set();
+
+    function markDone(n, val) {
+      if (val) done.add(n); else done.delete(n);
+      const cb = document.getElementById('seen-' + n); if (cb) cb.checked = val;
+      const li = document.getElementById('nav-' + n); if (li) li.classList.toggle('done', val);
+      \$('#prog-text').textContent = done.size + '/' + sections.length;
+      $('#prog-bar').style.width = (done.size / sections.length * 100) + '\%';     }      function buildNav() {       $$('section.lesson').forEach((s, i) => sections.push({ n: i + 1, id: s.id, title: s.dataset.title, icon: s.dataset.icon }));$('#side-nav').innerHTML = sections.map(s => `<a href="#${s.id}" id="nav-${s.n}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><i class="bi ${s.icon}"></i><span>${s.n}. ${s.title}</span><i class="bi bi-check-circle-fill done-ico"></i></a>`).join('');
+      \$('#top-nav').innerHTML = sections.map(s => `<a href="#${s.id}" id="tnav-${s.n}">${s.n}. ${s.title}</a>`).join('');
+      \$\$('.lesson-foot').forEach(f => {
+        const n = +f.dataset.lesson, prev = sections[n - 2], next = sections[n];
+        f.innerHTML = `<div class="form-check"><input class="form-check-input" type="checkbox" id="seen-${n}"><label class="form-check-label" for="seen-${n}">Ya lo entendí</label></div>
+          <div class="d-flex gap-2">${prev ? `<a class="btn btn-sm btn-outline-dark" href="#\${prev.id}"><i class="bi bi-arrow-up"></i> Paso \${prev.n}</a>` : ''}${next ? `<a class="btn btn-sm btn-dark" href="#\${next.id}">Paso ${next.n}:${next.title} <i class="bi bi-arrow-down"></i></a>` : ''}</div>`;
+        $('#seen-' + n).addEventListener('change', e => markDone(n, e.target.checked));       });        const io = new IntersectionObserver(entries => {         entries.forEach(en => {           if (en.isIntersecting) {             const n = sections.find(s => s.id === en.target.id).n;             $\$('#side-nav .list-group-item').forEach(a => a.classList.remove('active')); $('#nav-' + n).classList.add('active');             $\$('#top-nav a').forEach(a => a.classList.remove('active')); const t = $('#tnav-' + n); t.classList.add('active');             t.scrollIntoView({ block: 'nearest', inline: 'center' });           }         });       }, { rootMargin: '-35\% 0px -55\% 0px' });       $\$('section.lesson').forEach(s => io.observe(s));
+    }
+
+
+    /* ---------- INICIALIZACIÓN GENERAL ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      buildNav();
+      renderProtoStructure();
+
+      // Cargar Select de LEDs
+      \$('#sim-led-col').innerHTML = LED_TYPES.map((l, i) => `<option value="${i}">${l.n} (${l.vf} V)</option>`).join('');
+      renderSimProto();
+
+      makeStepper('proto-stepper', PROTO_STEPS);
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>
