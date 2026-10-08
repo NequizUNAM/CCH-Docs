@@ -389,7 +389,7 @@
 
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Cibernética • Protoboard e Interconexiones</small></footer>
 
-  <!-- ===================== SCRIPT HEADER DINÁMICO ===================== -->
+  <!-- ===================== HEADER DINÁMICO ===================== -->
   <script>
     /* Copia de respaldo: se usa si no se puede leer index.html (por ejemplo al abrir con file://).
        La fuente real del menú es el bloque #menu-config de index.html. */
@@ -397,11 +397,7 @@
       brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
       groups: [
         { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] },
-        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [ 
-          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
-          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
-          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" }
-        ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [ { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" } ] },
         { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] }
       ]
     };
@@ -436,6 +432,19 @@
 
     (async function initHeader() {
       const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'index.html';
+      renderHeader(FALLBACK_MENU, container, page);          // pinta de inmediato
+      try {                                                   // y luego intenta usar el menú maestro
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const menu = JSON.parse(doc.getElementById('menu-config').textContent);
+        renderHeader(menu, container, page);
+      } catch (e) { /* se queda con el respaldo */ }
+    })();
+
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
       const page = location.pathname.split('/').pop() || 'protoboard.html';
       renderHeader(FALLBACK_MENU, container, page);          // pinta de inmediato
       try {                                                  // y luego intenta usar el menú maestro
@@ -446,7 +455,9 @@
         renderHeader(menu, container, page);
       } catch (e) { /* se queda con el respaldo */ }
     })();
+
   </script>
+  <!-- ===================== FIN ===================== -->
 
   <script>
     /* Sintetizador de efectos de audio nativo (Sin dependencias externas) */
