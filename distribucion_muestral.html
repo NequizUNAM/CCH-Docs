@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadística - Distribución Muestral y Datos Agrupados</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, KaTeX (fórmulas tipográficas), Chart.js (histograma y polígono), SweetAlert2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --mean:#1864ab; --med:#c26e00; --mode:#5130b9; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con barras de histograma */
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
+    .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
+    .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+
+    /* Tarjetas */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .stat-pill { background:#f1f5f9; border-radius:12px; padding:.45rem .8rem; font-size:.88rem; border:1px solid #e2e8f0; }
+    .stat-pill b { font-family:'Courier New',monospace; }
+    #data { font-family:'Courier New',monospace; font-size:.9rem; }
+
+    /* Instructivo: pasos vivos */
+    .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
+    .istep h6 { color:var(--c); font-weight:800; }
+    .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
+    .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
+
+    /* Fórmulas y leyendas */
+    .fx { overflow-x:auto; padding:.4rem 0; }
+    .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
+    .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
+    .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
+    .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
+
+    /* Tablas de frecuencias */
+    .freq-table { font-size:.95rem; text-align:center; margin:0; }
+    .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
+    .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
+    .freq-table tbody tr { transition:background .2s; cursor:default; }
+    .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
+    .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
+    .hl-legend { font-size:.85rem; min-height:1.4rem; }
+    /* Resaltados por medida */
+    [data-hl="mean"] td.c-xi, [data-hl="mean"] td.c-fi { background:rgba(24,100,171,.2); font-weight:800; }
+    [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
+    [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
+    [data-hl="mode"] tr.r-mode td { background:rgba(112,72,232,.3); font-weight:800; }
+    [data-hl="mode"] tr.r-near td { background:rgba(12,133,153,.2); }
+    .hl-btn.active[data-hl="mean"] { background:var(--mean); color:#fff; border-color:var(--mean); }
+    .hl-btn.active[data-hl="med"] { background:var(--med); color:#fff; border-color:var(--med); }
+    .hl-btn.active[data-hl="mode"] { background:var(--mode); color:#fff; border-color:var(--mode); }
+    .hl-btn.active[data-hl="none"] { background:#334155; color:#fff; border-color:#334155; }
+
+    .measure-head { color:#fff; padding:.9rem 1.2rem; border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .measure { border-radius:14px; box-shadow:var(--shadow-md); background:#fff; overflow:hidden; border:1px solid #e2e8f0; }
+    .result-big { font-size:1.6rem; font-weight:800; font-family:'Courier New',monospace; border-radius:14px; padding:.6rem 1rem; text-align:center; color:#fff; }
+    .chart-box { position:relative; height:420px; }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep{animation:none} }
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla de frecuencias</a><a href="#s4">4. Media, mediana y moda</a><a href="#s5">5. Gráfica</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bars" id="hero-bars"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-bar-chart-line-fill text-info me-2"></i>Distribución Muestral</h1>
+        <p class="lead mb-1">Estadística descriptiva con datos agrupados: intervalos • frecuencias • media, mediana y moda • histograma</p>
+        <p class="mb-3 text-light opacity-75">Escribe tus datos y mira cómo se construye cada resultado, paso a paso</p>
+        <button class="btn btn-warning rounded-pill px-4 fw-semibold" data-manual="size"><i class="bi bi-journal-bookmark-fill me-1"></i>Abrir manual de fórmulas</button>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+
+      <!-- 1. DATOS -->
+      <section class="lesson mb-5" id="s1">
+        <div class="card lesson-card">
+          <div class="lesson-head h-1"><div class="num">1</div><div><h2 class="h4 fw-bold mb-0">Tus datos</h2><small>Sepáralos con comas. Se actualiza todo en vivo.</small></div></div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-lg-7">
+                <label class="form-label fw-semibold" for="data"><i class="bi bi-pencil-square me-1"></i>Conjunto de datos (separados por coma)</label>
+                <textarea id="data" class="form-control" rows="6" spellcheck="false"></textarea>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                  <button class="btn btn-sm btn-outline-primary" id="b-sample"><i class="bi bi-database me-1"></i>Ejemplo (60 datos)</button>
+                  <button class="btn btn-sm btn-outline-secondary" id="b-random"><i class="bi bi-shuffle me-1"></i>Datos aleatorios</button>
+                  <button class="btn btn-sm btn-outline-danger" id="b-clear"><i class="bi bi-eraser me-1"></i>Limpiar</button>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-3" id="data-stats"></div>
+              </div>
+              <div class="col-lg-5">
+                <div class="panel h-100">
+                  <h6 class="fw-bold mb-3"><i class="bi bi-sliders me-1"></i>Parámetros de la clase</h6>
+                  <label class="form-label small fw-semibold" for="k">Número de intervalos deseados ($k$): <span id="k-out" class="mono">9</span></label>
+                  <input type="range" class="form-range" id="k" min="2" max="20" step="1" value="9">
+                  <label class="form-label small fw-semibold mt-2" for="dec">Decimales de tus datos (precisión del redondeo)</label>
+                  <select id="dec" class="form-select form-select-sm"><option value="0" selected>0 (números enteros)</option><option value="1">1 decimal</option><option value="2">2 decimales</option></select>
+                  <div class="form-check form-switch mt-3">
+                    <input class="form-check-input" type="checkbox" id="manual"><label class="form-check-label small fw-semibold" for="manual">Fijar yo el tamaño de clase ($c$)</label>
+                  </div>
+                  <input type="number" class="form-control form-control-sm mt-1" id="c-manual" min="0.01" step="any" value="5" disabled aria-label="Tamaño de clase manual">
+                  <div class="small text-muted mt-1">Con tamaño fijo, el número de intervalos se calcula solo.</div>
+                </div>
+              </div>
+            </div>
+            <div id="err" class="tip-box s-res mt-3 d-none"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="results">
+
+      <!-- 2. INSTRUCTIVO TAMAÑO DEL INTERVALO -->
+      <section class="lesson mb-5" id="s2">
+        <div class="card lesson-card">
+          <div class="lesson-head h-2"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Tamaño del intervalo (instructivo)</h2><small>Rango entre número de intervalos deseados, con su comprobación</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-manual="size"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+          <div class="card-body">
+            <div class="row g-3 align-items-center mb-3">
+              <div class="col-lg-6"><div class="fx" data-f="range"></div><div class="fx" data-f="size"></div></div>
+              <div class="col-lg-6"><div class="tip-box s-volt"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Regla de la comprobación:</strong> multiplica el tamaño obtenido por el número de intervalos. Si el resultado <strong>es igual al rango</strong>, la fracción es <span class="verdict pure">pura</span>. Si <strong>no</strong>, es <span class="verdict impure">impura</span>: se <strong>redondea el decimal</strong> (hacia arriba, para que los intervalos cubran todos los datos).</div></div>
+            </div>
+            <div class="row g-3" id="steps"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. TABLA -->
+      <section class="lesson mb-5" id="s3">
+        <div class="card lesson-card">
+          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Tabla de distribución de frecuencias</h2><small>El límite superior de cada intervalo es el inferior del siguiente</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-manual="marca"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+          <div class="card-body">
+            <div class="row g-3 mb-3">
+              <div class="col-md-6"><div class="panel"><div class="small fw-bold text-muted mb-1">Marca de clase</div><div class="fx" data-f="xi"></div></div></div>
+              <div class="col-md-6"><div class="panel"><div class="small fw-bold text-muted mb-1">Frecuencia relativa</div><div class="fx" data-f="fr"></div></div></div>
+            </div>
+            <div class="table-responsive rounded-3 border" id="tbl-wrap" data-hl="none">
+              <table class="table table-bordered freq-table" id="tbl">
+                <thead><tr><th>Clase</th><th>Intervalos</th><th>Frecuencia ($f_i$)</th><th>Marca de clase ($x_i$)</th><th>Frecuencia relativa</th></tr></thead>
+                <tbody></tbody><tfoot></tfoot>
+              </table>
+            </div>
+            <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Cada dato cae en <strong>[Li, Ls)</strong>; el último intervalo incluye su límite superior. Pasa el cursor por una fila para verla en la gráfica.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. MEDIDAS -->
+      <section class="lesson mb-5" id="s4">
+        <div class="card lesson-card">
+          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Media, mediana y moda</h2><small>Fórmula → qué usamos de la tabla → sustitución → resultado</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <strong><i class="bi bi-highlighter me-1"></i>Resaltar en las tablas lo que se usa:</strong>
+              <div class="btn-group btn-group-sm" role="group" id="hl-group">
+                <button class="btn btn-outline-dark hl-btn" data-hl="mean">Media</button>
+                <button class="btn btn-outline-dark hl-btn" data-hl="med">Mediana</button>
+                <button class="btn btn-outline-dark hl-btn" data-hl="mode">Moda</button>
+                <button class="btn btn-outline-dark hl-btn active" data-hl="none">Nada</button>
+              </div>
+              <span class="hl-legend text-muted" id="hl-legend"></span>
+            </div>
+
+            <div class="panel mb-4">
+              <h6 class="fw-bold"><i class="bi bi-table me-1"></i>Tabla auxiliar (lo que necesitan las fórmulas)</h6>
+              <div class="table-responsive rounded-3 border" id="aux-wrap" data-hl="none">
+                <table class="table table-bordered freq-table" id="aux"><thead><tr><th>Clase</th><th>Intervalo</th><th>$x_i$</th><th>$f_i$</th><th>$x_i \cdot f_i$</th><th>Frec. acumulada (Fa)</th></tr></thead><tbody></tbody><tfoot></tfoot></table>
+              </div>
+            </div>
+
+            <div class="row g-4">
+              <div class="col-12"><div class="measure" id="m-mean"></div></div>
+              <div class="col-12"><div class="measure" id="m-med"></div></div>
+              <div class="col-12"><div class="measure" id="m-mode"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. GRÁFICA -->
+      <section class="lesson mb-5" id="s5">
+        <div class="card lesson-card">
+          <div class="lesson-head h-5"><div class="num">5</div><div><h2 class="h4 fw-bold mb-0">Histograma y polígono de frecuencias</h2><small>Se redibuja con tu tabla</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+              <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-hist" checked><label class="form-check-label" for="g-hist">Histograma</label></div>
+              <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-poly" checked><label class="form-check-label" for="g-poly">Polígono</label></div>
+              <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-mean"><label class="form-check-label" style="color:#1864ab" for="g-mean">Media</label></div>
+              <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-med"><label class="form-check-label" style="color:#c26e00" for="g-med">Mediana</label></div>
+              <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-mode"><label class="form-check-label" style="color:#5130b9" for="g-mode">Moda</label></div>
+              <select id="g-type" class="form-select form-select-sm w-auto g-opt" aria-label="Tipo de frecuencia"><option value="fi">Frecuencia absoluta ($f_i$)</option><option value="fr">Frecuencia relativa</option></select>
+            </div>
+            <div class="chart-box"><canvas id="chart"></canvas></div>
+            <div class="tip-box s-amp mt-3 small"><i class="bi bi-info-circle-fill me-1"></i>El polígono une las <strong>marcas de clase</strong> y se cierra en el eje con una clase vacía a cada lado. Activa las líneas de media, mediana y moda para ver dónde caen sobre el histograma.</div>
+          </div>
+        </div>
+      </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: MANUAL DE FÓRMULAS -->
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#0f172a"><h5 class="modal-title fw-bold"><i class="bi bi-journal-bookmark-fill me-2"></i>Manual de fórmulas · Datos agrupados</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light">
+          <ul class="nav nav-pills mb-3 flex-wrap gap-1" id="man-tabs"></ul>
+          <div id="man-body" class="panel"></div>
+        </div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Entendido</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Distribución Muestral</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" },
+          { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }
+        ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+          <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div>
+        </div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'distribucion_muestral.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- ===================== LÓGICA ===================== -->
+  <script>
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const math = el => window.renderMathInElement && renderMathInElement(el || document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError: false });
+    const fmt = (x, d = 4) => isFinite(x) ? String(+x.toFixed(d)) : '—';
+    const r10 = x => Math.round(x * 1e10) / 1e10;
+
+    const SAMPLE = [55,56,58,59,60,61,61,62,63,63,64,65,65,66,66,67,67,68,68,68,69,70,70,71,71,72,72,72,73,74,74,75,75,76,76,77,78,78,79,80,80,81,82,83,84,85,85,86,87,88,89,90,91,92,93,94,95,97,98,100];
+
+    /*PURE*/
+    const parseData = t => t.split(/[,;\s]+/).map(s => s.trim()).filter(Boolean).map(Number).filter(Number.isFinite);
+
+    // Núcleo de cálculo (sin DOM): intervalos, frecuencias y medidas
+    function calc(data, o) {
+      const n = data.length; if (n < 2) return { err: 'Escribe al menos 2 datos separados por coma.' };
+      const mn = Math.min(...data), mx = Math.max(...data), R = r10(mx - mn);
+      if (R === 0) return { err: 'Todos los datos son iguales: el rango es 0 y no se pueden formar intervalos.' };
+      const p = Math.pow(10, o.d); let k, c, step;
+      if (o.manual) {
+        c = o.cm; if (!(c > 0)) return { err: 'El tamaño de clase debe ser mayor que 0.' };
+        k = Math.ceil(R / c - 1e-9); if (k > 40) return { err: 'Con ese tamaño resultarían más de 40 intervalos.' };
+        step = { manual: true };
+      } else {
+        k = Math.round(o.k); if (!(k >= 1 && k <= 40)) return { err: 'El número de intervalos debe estar entre 1 y 40.' };
+        const raw = R / k, trunc = Math.floor(raw * p + 1e-9) / p, prod = r10(trunc * k), pure = Math.abs(prod - R) < 1e-9;
+        c = pure ? trunc : Math.ceil(raw * p - 1e-9) / p;
+        step = { raw, trunc, prod, pure };
+      }
+      const rows = Array.from({ length: k }, (_, j) => { const Li = r10(mn + j * c), Ls = r10(mn + (j + 1) * c); return { j, Li, Ls, fi: 0, xi: r10((Li + Ls) / 2) }; });
+      data.forEach(v => { rows[Math.min(k - 1, Math.max(0, Math.floor((v - mn) / c + 1e-9)))].fi++; });
+      let Fa = 0, sxf = 0;
+      rows.forEach(r => { r.fr = r.fi / n; r.xifi = r10(r.xi * r.fi); sxf += r.xifi; r.faPrev = Fa; Fa += r.fi; r.Fa = Fa; });
+      const mean = sxf / n, half = n / 2;
+      const mi = rows.findIndex(r => r.Fa >= half), mr = rows[mi];
+      const median = mr.Li + ((half - mr.faPrev) / mr.fi) * c;
+      const maxF = Math.max(...rows.map(r => r.fi)), modals = rows.filter(r => r.fi === maxF).map(r => r.j), oi = modals[0], or = rows[oi];
+      const fprev = oi > 0 ? rows[oi - 1].fi : 0, fnext = oi < k - 1 ? rows[oi + 1].fi : 0, d1 = or.fi - fprev, d2 = or.fi - fnext;
+      const mode = d1 + d2 === 0 ? NaN : or.Li + (d1 / (d1 + d2)) * c;
+      return { n, mn, mx, R, k, c, step, rows, sxf, mean, half, mi, median, modals, oi, fprev, fnext, d1, d2, mode, manual: !!o.manual };
+    }
+    /*ENDPURE*/
+
+    /* ---------- Fórmulas (una sola definición, se usan en la página y en el manual) ---------- */
+    const CL = { n:'#343a40', xi:'#2f9e44', fi:'#d6336c', c:'#0ca678', Li:'#1c7ed6', fa:'#e03131', fmed:'#f08c00', d1:'#7048e8', d2:'#0c8599', mean:'#1864ab', med:'#c26e00', mode:'#5130b9', sup:'#e03131', inf:'#1c7ed6' };
+    const K = (c, s) => String.raw`\textcolor{${c}}{${s}}`;
+    const F = {
+      range: String.raw`$$R \;=\; ${K(CL.sup, 'X_{sup}')} \;-\; ${K(CL.inf, 'X_{inf}')}$$`,
+      size:  String.raw`$$${K(CL.c, 'c')} \;=\; \frac{\text{Rango}}{\text{N.º de intervalos deseados}} \;=\; \frac{R}{k}$$`,
+      check: String.raw`$$c \cdot k = R \Rightarrow \text{fracción pura} \qquad\qquad c \cdot k \neq R \Rightarrow \text{fracción impura (se redondea)}$$`,
+      xi:    String.raw`$$${K(CL.xi, 'x_i')} \;=\; \frac{L_i + L_s}{2}$$`,
+      fr:    String.raw`$$f_r \;=\; \frac{${K(CL.fi, 'f_i')}}{${K(CL.n, 'n')}}$$`,
+      mean:  String.raw`$$${K(CL.mean, '\\bar{x}')} \;=\; \frac{\sum_{i=1}^{n} ${K(CL.xi, 'x_i')} \cdot ${K(CL.fi, 'f_i')}}{${K(CL.n, 'n')}}$$`,
+      med:   String.raw`$$${K(CL.med, '\\tilde{x}')} \;=\; ${K(CL.Li, 'L_i')} + \left( \frac{\frac{${K(CL.n, 'n')}}{2} - ${K(CL.fa, '\\sum_{i=1}^{n} fa')}}{${K(CL.fmed, 'f_{med}')}} \right) ${K(CL.c, 'c')}$$`,
+      mode:  String.raw`$$${K(CL.mode, '\\hat{x}')} \;=\; ${K(CL.Li, 'L_i')} + \left( \frac{${K(CL.d1, '\\Delta_1')}}{${K(CL.d1, '\\Delta_1')} + ${K(CL.d2, '\\Delta_2')}} \right) ${K(CL.c, 'c')}$$`
+    };
+    const LEG = {
+      range: [['X_{sup}', 'Es el dato mayor (límite superior de los datos)', CL.sup], ['X_{inf}', 'Es el dato menor (límite inferior de los datos)', CL.inf], ['R', 'Es el rango o recorrido de los datos', '#495057']],
+      size:  [['c', 'Es el tamaño del intervalo (ancho de clase)', CL.c], ['R', 'Es el rango', '#495057'], ['k', 'Es el número de intervalos deseados', '#495057']],
+      xi:    [['x_i', 'Es la marca de clase (punto medio del intervalo)', CL.xi], ['L_i', 'Límite inferior del intervalo', CL.Li], ['L_s', 'Límite superior del intervalo', CL.fa]],
+      fr:    [['f_r', 'Es la frecuencia relativa (proporción de datos en la clase)', '#495057'], ['f_i', 'Es la frecuencia de clase', CL.fi], ['n', 'Es el tamaño de la muestra', CL.n]],
+      mean:  [['\\bar{x}', 'La media de la muestra', CL.mean], ['n', 'Es el tamaño de la muestra', CL.n], ['x_i', 'Es la marca de clase', CL.xi], ['f_i', 'Es la frecuencia de clase', CL.fi]],
+      med:   [['\\tilde{x}', 'Es la mediana de la muestra', CL.med], ['n', 'Es el tamaño de la muestra', CL.n], ['L_i', 'Es el límite inferior del intervalo que contiene a la mediana', CL.Li], ['\\sum fa', 'La suma de las frecuencias anteriores al intervalo donde se localiza la mediana', CL.fa], ['f_{med}', 'Es la frecuencia del intervalo donde se ubica la mediana', CL.fmed], ['c', 'Es el tamaño del intervalo', CL.c]],
+      mode:  [['\\hat{x}', 'Es la moda de la muestra', CL.mode], ['L_i', 'Es el límite inferior del intervalo que contiene a la moda', CL.Li], ['\\Delta_1', 'Es el exceso de frecuencia del intervalo donde se localiza la moda con el intervalo contiguo anterior', CL.d1], ['\\Delta_2', 'Es el exceso de frecuencia del intervalo donde se ubica la moda con el intervalo contiguo posterior', CL.d2], ['c', 'Es el tamaño del intervalo', CL.c]]
+    };
+    const legend = key => LEG[key].map(([s, t, c]) => `<div class="legend-row"><span class="vchip" style="--c:${c}">$${s}$</span><span>${t}</span></div>`).join('');
+
+    const MAN = {
+      size:    { t: 'Rango y tamaño del intervalo', ic: 'bi-rulers', f: ['range', 'size', 'check'], leg: ['range', 'size'],
+        how: ['Busca el dato <strong>mayor</strong> y el <strong>menor</strong>; réstalos para obtener el rango $R$.', 'Divide el rango entre el número de intervalos deseados $k$: ese es el tamaño $c$.', '<strong>Comprueba:</strong> multiplica $c \\cdot k$. Si da exactamente $R$, la fracción es <strong>pura</strong> y usas $c$ tal cual.', 'Si no coincide, es <strong>impura</strong>: redondea el decimal (hacia arriba) a la precisión de tus datos. Los intervalos cubrirán un poco más que el rango.', 'Construye los intervalos desde el dato menor: <code>55-60</code>, <code>60-65</code>, <code>65-70</code>… el límite superior se repite como inferior del siguiente.'] },
+      marca:   { t: 'Marca de clase y frecuencia relativa', ic: 'bi-table', f: ['xi', 'fr'], leg: ['xi', 'fr'],
+        how: ['Cuenta cuántos datos caen en cada intervalo: esa es la frecuencia $f_i$.', 'La marca de clase es el punto medio: suma los dos límites y divide entre 2.', 'La frecuencia relativa se obtiene dividiendo $f_i$ entre $n$. Todas deben sumar 1.'] },
+      media:   { t: 'Media', ic: 'bi-graph-up', f: ['mean'], leg: ['mean'],
+        how: ['Multiplica cada marca de clase $x_i$ por su frecuencia $f_i$.', 'Suma todos esos productos.', 'Divide la suma entre el tamaño de la muestra $n$.', '<em>Nota:</em> la suma recorre todas las clases de la tabla.'] },
+      mediana: { t: 'Mediana', ic: 'bi-distribute-vertical', f: ['med'], leg: ['med'],
+        how: ['Calcula $n/2$.', 'En la columna de frecuencia acumulada, busca la <strong>primera clase</strong> cuya Fa sea mayor o igual a $n/2$: es la clase mediana.', 'Toma de esa clase su límite inferior $L_i$ y su frecuencia $f_{med}$.', 'La suma de frecuencias anteriores es la Fa de la clase previa.', 'Sustituye y calcula; multiplica por el tamaño del intervalo $c$.'] },
+      moda:    { t: 'Moda', ic: 'bi-bar-chart-fill', f: ['mode'], leg: ['mode'],
+        how: ['La clase modal es la de <strong>mayor frecuencia</strong>.', 'Calcula $\\Delta_1$ = frecuencia modal − frecuencia anterior (0 si no hay anterior).', 'Calcula $\\Delta_2$ = frecuencia modal − frecuencia posterior (0 si no hay posterior).', 'Sustituye en la fórmula junto con $L_i$ y $c$.', 'Si hay varias clases con la misma frecuencia máxima, la distribución es multimodal; aquí se usa la primera.'] }
+    };
+    function showManual(key) {
+      $('#man-tabs').innerHTML = Object.entries(MAN).map(([k, m]) => `<li class="nav-item"><button class="nav-link ${k === key ? 'active' : ''}" data-man="${k}"><i class="bi ${m.ic} me-1"></i>${m.t}</button></li>`).join('');
+      const m = MAN[key];
+      $('#man-body').innerHTML = `<h5 class="fw-bold mb-2"><i class="bi ${m.ic} me-1"></i>${m.t}</h5>${m.f.map(f => `<div class="fx">${F[f]}</div>`).join('')}
+        <h6 class="fw-bold mt-3">Donde:</h6>${m.leg.map(legend).join('')}
+        <h6 class="fw-bold mt-3">Cómo se usa</h6><ol class="small lh-lg mb-0">${m.how.map(h => `<li>${h}</li>`).join('')}</ol>`;
+      math($('#man-body')); bootstrap.Modal.getOrCreateInstance($('#manualModal')).show();
+    }
+    document.addEventListener('click', e => {
+      const b = e.target.closest('[data-manual]'); if (b) showManual(b.dataset.manual);
+      const t = e.target.closest('[data-man]'); if (t) showManual(t.dataset.man);
+    });
+
+    /* ---------- Render ---------- */
+    let ST = null, chart = null, HL = 'none', hov = -1;
+
+    function renderSteps(s) {
+      const a = '#e03131', b = '#1c7ed6', cc = '#f08c00', d = '#2f9e44', st = s.step;
+      let s3, s4;
+      if (st.manual) {
+        s3 = `Elegiste $c = ${fmt(s.c)}$ manualmente, así que el número de intervalos sale de $\\lceil R / c \\rceil = ${s.k}$.`;
+        s4 = `$c \\cdot k = ${fmt(s.c)} \\cdot ${s.k} = ${fmt(s.c * s.k)}$ ${s.c * s.k === s.R ? '= R' : '≥ R'}. Los intervalos llegan hasta <strong>${fmt(s.mn + s.c * s.k)}</strong>.`;
+      } else {
+        s3 = `$${fmt(st.trunc)} \\times ${s.k} = ${fmt(st.prod)}$ y el rango es $${fmt(s.R)}$ → ${st.pure ? `<span class="verdict pure">son iguales: fracción PURA</span>` : `<span class="verdict impure">son distintos: fracción IMPURA</span>`}`;
+        s4 = st.pure ? `Se usa el tamaño tal cual: $c = ${fmt(s.c)}$.` : `Redondeo hacia arriba: $${fmt(st.raw)} \\rightarrow ${fmt(s.c)}$. Ahora $c \\cdot k = ${fmt(s.c * s.k)} \\ge R$ y los intervalos cubren hasta <strong>${fmt(s.mn + s.c * s.k)}</strong>.`;
+      }
+      $('#steps').innerHTML = [
+        [a, 'Hallar el rango', `$R = ${fmt(s.mx)} - ${fmt(s.mn)} = ${fmt(s.R)}$`],
+        [b, 'Dividir entre $k$', st.manual ? `Tamaño fijado por ti.` : `$c = \\dfrac{${fmt(s.R)}}{${s.k}} = ${fmt(st.raw, 6)}$`],
+        [cc, 'Comprobar multiplicando', s3],
+        [d, st.manual || st.pure ? 'Tamaño final' : 'Redondear el decimal', s4]
+      ].map(([c, t, body], i) => `<div class="col-md-6 col-xl-3"><div class="istep" style="--c:${c};animation-delay:${i * 90}ms"><h6><span class="badge-n">${i + 1}</span>${t}</h6><div class="small">${body}</div></div></div>`).join('');
+    }
+
+    function renderTable(s) {
+      const cls = r => [r.j <= s.mi ? (r.j < s.mi ? 'r-before' : 'r-med') : '', s.modals[0] === r.j ? 'r-mode' : '', (r.j === s.oi - 1 || r.j === s.oi + 1) ? 'r-near' : ''].join(' ');
+      $('#tbl tbody').innerHTML = s.rows.map(r => `<tr data-j="${r.j}" class="${cls(r)}"><td>${r.j + 1}</td><td class="c-int mono">${fmt(r.Li)}-${fmt(r.Ls)}</td><td class="c-fi">${r.fi}</td><td class="c-xi">${fmt(r.xi)}</td><td class="c-fr">${fmt(r.fr)} <span class="text-muted small">(${fmt(r.fr * 100, 2)}%)</span></td></tr>`).join('');
+      $('#tbl tfoot').innerHTML = `<tr><td colspan="2">Total</td><td>${s.n}</td><td>—</td><td>${fmt(s.rows.reduce((a, r) => a + r.fr, 0), 4)}</td></tr>`;
+      $('#aux tbody').innerHTML = s.rows.map(r => `<tr class="${cls(r)}"><td>${r.j + 1}</td><td class="mono">${fmt(r.Li)}-${fmt(r.Ls)}</td><td class="c-xi">${fmt(r.xi)}</td><td class="c-fi">${r.fi}</td><td>${fmt(r.xifi)}</td><td>${r.Fa}</td></tr>`).join('');
+      $('#aux tfoot').innerHTML = `<tr><td colspan="3">Totales</td><td>${s.n}</td><td>${fmt(s.sxf)}</td><td>—</td></tr>`;
+      $$('#tbl tbody tr').forEach(tr => { tr.onmouseenter = () => setHover(+tr.dataset.j); tr.onmouseleave = () => setHover(-1); });
+    }
+
+    function measure(id, color, icon, title, key, bodyHtml, result, hl) {
+      $(id).innerHTML = `<div class="measure-head" style="background:${color}"><i class="bi ${icon} fs-4"></i><h5 class="fw-bold mb-0 me-auto">${title}</h5>
+        <button class="btn btn-sm btn-light rounded-pill" data-hl-go="${hl}"><i class="bi bi-highlighter me-1"></i>Resaltar en tabla</button>
+        <button class="btn btn-sm btn-outline-light rounded-pill" data-manual="${MAN_KEY[key]}"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="p-3"><div class="row g-3"><div class="col-lg-5"><div class="small fw-bold text-muted">Fórmula</div><div class="fx">${F[key]}</div><div class="small fw-bold text-muted mt-2">Dónde</div>${legend(key)}</div>
+        <div class="col-lg-7">${bodyHtml}<div class="result-big mt-2" style="background:${color}">${result}</div></div></div></div>`;
+    }
+    const MAN_KEY = { mean: 'media', med: 'mediana', mode: 'moda' };
+    const use = (c, h) => `<div class="usebox" style="--c:${c}">${h}</div>`;
+    const chip = (c, s) => `<span class="vchip" style="--c:${c}">${s}</span>`;
+
+    function renderMeasures(s) {
+      // MEDIA
+      const terms = s.rows.map(r => `(${K(CL.xi, fmt(r.xi))})(${K(CL.fi, r.fi)})`), tx = terms.length > 6 ? [...terms.slice(0, 3), '\\cdots', terms[terms.length - 1]] : terms;
+      measure('#m-mean', CL.mean, 'bi-graph-up', 'Media', 'mean',
+        use(CL.xi, `<strong>De la tabla usamos:</strong> ${chip(CL.xi, 'marca de clase $x_i$')} y ${chip(CL.fi, 'frecuencia $f_i$')} de <em>todas</em> las clases, y ${chip(CL.n, '$n = ' + s.n + '$')}.`) +
+        `<div class="small fw-bold text-muted">Sustitución</div><div class="fx">$$\\bar{x} = \\frac{${tx.join(' + ')}}{${K(CL.n, s.n)}} = \\frac{${fmt(s.sxf)}}{${s.n}}$$</div>`,
+        `x̄ = ${fmt(s.mean)}`, 'mean');
+      // MEDIANA
+      const r = s.rows[s.mi];
+      measure('#m-med', CL.med, 'bi-distribute-vertical', 'Mediana', 'med',
+        use(CL.fmed, `<strong>1) Posición:</strong> $n/2 = ${s.n}/2 = ${fmt(s.half)}$. La primera frecuencia acumulada ≥ ${fmt(s.half)} es <strong>Fa = ${r.Fa}</strong>, en la <strong>clase ${r.j + 1}</strong> (${fmt(r.Li)}-${fmt(r.Ls)}).`) +
+        use(CL.Li, `<strong>2) De esa clase tomamos:</strong> ${chip(CL.Li, '$L_i = ' + fmt(r.Li) + '$')} ${chip(CL.fmed, '$f_{med} = ' + r.fi + '$')} y de la anterior ${chip(CL.fa, '$\\sum fa = ' + r.faPrev + '$')} ${chip(CL.c, '$c = ' + fmt(s.c) + '$')}`) +
+        `<div class="small fw-bold text-muted">Sustitución</div><div class="fx">$$\\tilde{x} = ${K(CL.Li, fmt(r.Li))} + \\left( \\frac{\\frac{${K(CL.n, s.n)}}{2} - ${K(CL.fa, r.faPrev)}}{${K(CL.fmed, r.fi)}} \\right) ${K(CL.c, fmt(s.c))}$$
+        $$= ${fmt(r.Li)} + \\left( \\frac{${fmt(s.half - r.faPrev)}}{${r.fi}} \\right) ${fmt(s.c)} = ${fmt(r.Li)} + ${fmt((s.half - r.faPrev) / r.fi, 4)} \\cdot ${fmt(s.c)}$$</div>`,
+        `x̃ = ${fmt(s.median)}`, 'med');
+      // MODA
+      const o = s.rows[s.oi];
+      measure('#m-mode', CL.mode, 'bi-bar-chart-fill', 'Moda', 'mode',
+        use(CL.mode, `<strong>1) Clase modal:</strong> la de mayor frecuencia, <strong>${o.fi}</strong>, es la <strong>clase ${o.j + 1}</strong> (${fmt(o.Li)}-${fmt(o.Ls)}).${s.modals.length > 1 ? ` <span class="text-danger">Hay ${s.modals.length} clases empatadas (multimodal); se usa la primera.</span>` : ''}`) +
+        use(CL.d1, `<strong>2) Excesos:</strong> ${chip(CL.d1, '$\\Delta_1 = ' + o.fi + ' - ' + s.fprev + ' = ' + s.d1 + '$')} ${chip(CL.d2, '$\\Delta_2 = ' + o.fi + ' - ' + s.fnext + ' = ' + s.d2 + '$')} ${chip(CL.Li, '$L_i = ' + fmt(o.Li) + '$')} ${chip(CL.c, '$c = ' + fmt(s.c) + '$')}<br><span class="text-muted">Anterior: ${o.j ? 'f = ' + s.fprev : 'no existe → 0'} · Posterior: ${o.j < s.k - 1 ? 'f = ' + s.fnext : 'no existe → 0'}</span>`) +
+        `<div class="small fw-bold text-muted">Sustitución</div><div class="fx">$$\\hat{x} = ${K(CL.Li, fmt(o.Li))} + \\left( \\frac{${K(CL.d1, s.d1)}}{${K(CL.d1, s.d1)} + ${K(CL.d2, s.d2)}} \\right) ${K(CL.c, fmt(s.c))} = ${fmt(o.Li)} + \\left( \\frac{${s.d1}}{${s.d1 + s.d2}} \\right) ${fmt(s.c)}$$</div>`,
+        isNaN(s.mode) ? 'x̂ indeterminada' : `x̂ = ${fmt(s.mode)}`, 'mode');
+    }
+
+    const HL_TXT = {
+      none: '', mean: 'Azul: marca de clase y frecuencia de todas las clases.',
+      med: 'Naranja fuerte: clase mediana · naranja suave: clases anteriores (suman Σfa).',
+      mode: 'Violeta: clase modal · turquesa: clases contiguas (para Δ₁ y Δ₂).'
+    };
+    function setHL(m) {
+      HL = m; $$('#hl-group .hl-btn').forEach(b => b.classList.toggle('active', b.dataset.hl === m));
+      $('#tbl-wrap').dataset.hl = m; $('#aux-wrap').dataset.hl = m; $('#hl-legend').textContent = HL_TXT[m];
+    }
+    $('#hl-group').addEventListener('click', e => { const b = e.target.closest('[data-hl]'); if (b) setHL(b.dataset.hl); });
+    document.addEventListener('click', e => { const b = e.target.closest('[data-hl-go]'); if (b) { setHL(b.dataset.hlGo); $('#s3').scrollIntoView({ behavior: 'smooth' }); } });
+
+    /* ---------- Gráfica ---------- */
+    const vlines = { id: 'vlines', afterDatasetsDraw(ch) {
+      if (!ST) return; const { ctx, chartArea: a } = ch, N = ch.data.labels.length, w = (a.right - a.left) / N;
+      [['g-mean', ST.mean, CL.mean, 'Media'], ['g-med', ST.median, CL.med, 'Mediana'], ['g-mode', ST.mode, CL.mode, 'Moda']].forEach(([id, v, col, lb], i) => {
+        if (!$('#' + id).checked || !isFinite(v)) return;
+        const x = a.left + ((v - (ST.mn - ST.c)) / ST.c) * w;
+        ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.setLineDash([7, 5]); ctx.beginPath(); ctx.moveTo(x, a.top); ctx.lineTo(x, a.bottom); ctx.stroke();
+        ctx.setLineDash([]); ctx.fillStyle = col; ctx.font = 'bold 12px Segoe UI, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(`${lb} ${fmt(v, 2)}`, x, a.top + 14 + i * 15); ctx.restore();
+      });
+    } };
+    function setHover(j) {
+      hov = j; $$('#tbl tbody tr').forEach(tr => tr.classList.toggle('row-hover', +tr.dataset.j === j));
+      if (chart) chart.update('none');
+    }
+    function drawChart() {
+      if (!ST) return; if (chart) chart.destroy();
+      const s = ST, fr = $('#g-type').value === 'fr', val = r => fr ? r.fr : r.fi;
+      const labels = [-1, ...s.rows.map(r => r.j), s.k].map(j => `${fmt(s.mn + j * s.c)}-${fmt(s.mn + (j + 1) * s.c)}`);
+      const ds = [];
+      if ($('#g-hist').checked) ds.push({ type: 'bar', label: 'Histograma', data: [null, ...s.rows.map(val), null], barPercentage: 1, categoryPercentage: 1, borderColor: '#1864ab', borderWidth: 1.5,
+        backgroundColor: c => c.dataIndex === hov + 1 ? 'rgba(255,212,59,.85)' : 'rgba(28,126,214,.55)', order: 2 });
+      if ($('#g-poly').checked) ds.push({ type: 'line', label: 'Polígono', data: [0, ...s.rows.map(val), 0], borderColor: '#e03131', backgroundColor: '#e03131', borderWidth: 3, tension: 0, pointRadius: 5, pointHoverRadius: 8, order: 1 });
+      chart = new Chart($('#chart'), { data: { labels, datasets: ds }, plugins: [vlines], options: {
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+        onHover: (e, els, ch) => { const el = ch.getElementsAtEventForMode(e, 'index', { intersect: false }, true)[0], j = el ? el.index - 1 : -1; const nj = j >= 0 && j < s.k ? j : -1; if (nj !== hov) setHover(nj); },
+        scales: { x: { title: { display: true, text: 'Intervalos de clase' }, grid: { display: false } }, y: { beginAtZero: true, title: { display: true, text: fr ? 'Frecuencia relativa' : 'Frecuencia (fi)' } } },
+        plugins: { tooltip: { callbacks: { title: i => 'Intervalo ' + i[0].label, label: c => { const r = s.rows[c.dataIndex - 1]; return r ? `${c.dataset.label}: ${fmt(c.parsed.y)}  (xi = ${fmt(r.xi)}, fi = ${r.fi})` : `${c.dataset.label}: 0 (clase vacía de cierre)`; } } }, legend: { position: 'bottom' } }
+      } });
+    }
+    $$('.g-opt').forEach(el => el.addEventListener('change', drawChart));
+
+    /* ---------- Orquestador ---------- */
+    function update() {
+      const k = $('#k'); $('#k-out').textContent = k.value;
+      $('#c-manual').disabled = !$('#manual').checked; k.disabled = $('#manual').checked;
+      const data = parseData($('#data').value);
+      const s = calc(data, { k: +k.value, d: +$('#dec').value, manual: $('#manual').checked, cm: +$('#c-manual').value });
+      const err = $('#err');
+      $('#data-stats').innerHTML = data.length ? [['n', data.length], ['Mínimo', Math.min(...data)], ['Máximo', Math.max(...data)]].map(([a, b]) => `<span class="stat-pill">${a}: <b>${b}</b></span>`).join('') : '';
+      if (s.err) { err.classList.remove('d-none'); err.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>${s.err}`; $('#results').classList.add('d-none'); ST = null; return; }
+      err.classList.add('d-none'); $('#results').classList.remove('d-none'); ST = s;
+      $('#data-stats').insertAdjacentHTML('beforeend', `<span class="stat-pill">Rango: <b>${fmt(s.R)}</b></span><span class="stat-pill">Intervalos: <b>${s.k}</b></span><span class="stat-pill">$c$ = <b>${fmt(s.c)}</b></span>`);
+      renderSteps(s); renderTable(s); renderMeasures(s); setHL(HL); drawChart(); math();
+    }
+    let tm; const later = () => { clearTimeout(tm); tm = setTimeout(update, 220); };
+    ['#data', '#k', '#dec', '#manual', '#c-manual'].forEach(s => $(s).addEventListener('input', later));
+    $('#b-sample').onclick = () => { $('#data').value = SAMPLE.join(', '); $('#manual').checked = false; $('#k').value = 9; update(); };
+    $('#b-random').onclick = () => {
+      const g = () => { let u = 0; for (let i = 0; i < 6; i++) u += Math.random(); return (u - 3) / .7071; };
+      $('#data').value = Array.from({ length: 60 }, () => Math.max(55, Math.min(100, Math.round(76 + 9 * g())))).sort((a, b) => a - b).join(', '); update();
+    };
+    $('#b-clear').onclick = () => { $('#data').value = ''; update(); };
+
+    /* Fórmulas estáticas, barras del hero y arranque */
+    $$('[data-f]').forEach(el => el.innerHTML = F[el.dataset.f]);
+    $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    $('#data').value = SAMPLE.join(', ');
+    document.addEventListener('DOMContentLoaded', () => { update(); });
+  </script>
+</body>
+</html>
