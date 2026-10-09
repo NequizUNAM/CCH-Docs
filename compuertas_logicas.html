@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cibernética - Compuertas Lógicas y Álgebra de Boole</title>
+  
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, KaTeX for math formulas, SweetAlert2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --gate-not:#e03131; --gate-and:#1c7ed6; --gate-or:#f08c00;
+      --gate-nand:#7048e8; --gate-nor:#0c8599; --gate-xor:#2f9e44; --gate-xnor:#d97706;
+      --shadow-sm:0 2px 6px rgba(15,23,42,.06);
+      --shadow-md:0 8px 22px rgba(15,23,42,.12);
+      --shadow-lg:0 16px 38px rgba(15,23,42,.18);
+    }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+
+    /* Header Nav Styling */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); }
+    .app-navbar .dropdown-menu { border:0; border-radius:12px; box-shadow:var(--shadow-lg); padding:.5rem; }
+    .app-navbar .dropdown-item { border-radius:8px; padding:.5rem .8rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    .hero-header { background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem; border-bottom:5px solid #1c7ed6; }
+    .section-title { border-bottom:3px solid #cbd5e1; padding-bottom:.5rem; font-weight:700; margin-bottom:1.5rem; }
+
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Gate Card Shadows & Layout */
+    .gate-card { border:0; border-radius:18px; box-shadow:var(--shadow-md); transition:transform .2s, box-shadow .2s; background:#fff; overflow:hidden; }
+    .gate-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+    .gate-card-header { padding:0.9rem 1.25rem; color:#fff; font-weight:700; display:flex; align-items:center; justify-content:space-between; }
+
+    /* Specific Gate Header Colors */
+    .gh-not { background:linear-gradient(135deg,var(--gate-not),#b91c1c); }
+    .gh-and { background:linear-gradient(135deg,var(--gate-and),#1d4ed8); }
+    .gh-or { background:linear-gradient(135deg,var(--gate-or),#c2410c); }
+    .gh-nand { background:linear-gradient(135deg,var(--gate-nand),#6d28d9); }
+    .gh-nor { background:linear-gradient(135deg,var(--gate-nor),#0f766e); }
+    .gh-xor { background:linear-gradient(135deg,var(--gate-xor),#15803d); }
+    .gh-xnor { background:linear-gradient(135deg,var(--gate-xnor),#b45309); }
+
+    /* Interactive Inputs & Truth Table */
+    .bit-btn { width:42px; height:42px; border-radius:10px; font-weight:800; font-size:1.1rem; transition:all .15s ease; border:2px solid #cbd5e1; }
+    .bit-btn.off { background:#e2e8f0; color:#64748b; }
+    .bit-btn.on { background:#0ea5e9; color:#fff; border-color:#0284c7; box-shadow:0 0 12px rgba(14,165,233,.5); }
+
+    .truth-table { font-size:.88rem; text-align:center; margin:0; border-radius:10px; overflow:hidden; }
+    .truth-table th { background:#1e293b; color:#fff; padding:.5rem; }
+    .truth-table td { padding:.45rem .6rem; vertical-align:middle; transition:background .2s; }
+    .truth-table tr.active-row { background:#fef08a!important; font-weight:800; box-shadow:inset 3px 0 0 #eab308; }
+
+    .out-badge { padding:.4rem .8rem; border-radius:8px; font-weight:800; font-family:'Courier New',monospace; }
+    .out-badge.high { background:#22c55e; color:#fff; box-shadow:0 0 10px rgba(34,197,94,.4); }
+    .out-badge.low { background:#94a3b8; color:#fff; }
+
+    /* Canvas / SVG Containers */
+    .gate-svg-wrap { background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; padding:.75rem; display:flex; align-items:center; justify-content:center; min-height:120px; }
+
+    /* Circuit Builder Styles */
+    .builder-card { background:linear-gradient(145deg,#0f172a,#1e293b); color:#fff; border-radius:22px; padding:1.75rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,255,255,0.1); }
+    .builder-workspace { background:#ffffff; border:2px solid #e2e8f0; border-radius:16px; min-height:300px; width:100%; overflow:hidden; box-shadow:inset var(--shadow-sm); position: relative; }
+    .builder-input { font-size:1.3rem; letter-spacing:2px; font-family:'Courier New', monospace; font-weight: bold; }
+    
+    /* Karnaugh Map Styles */
+    .kmap-table { border-collapse: collapse; margin: auto; font-family: 'Courier New', monospace; font-size: 1.1rem; }
+    .kmap-table th, .kmap-table td { border: 2px solid #cbd5e1; width: 58px; height: 58px; text-align: center; vertical-align: middle; position: relative; }
+    .kmap-table th { background: #f1f5f9; color: #334155; font-weight: 800; transition: background .3s, color .3s; }
+    .kmap-table th.km-corner { font-size: .68rem; color: #64748b; line-height: 1.15; width: 62px; }
+    .kmap-table td { font-weight: bold; transition: background .25s; }
+    .kmap-cell-1 { background-color: #dcfce7; color: #166534; }
+    .kmap-cell-0 { background-color: #fff; color: #cbd5e1; }
+    .km-m { position: absolute; top: 2px; left: 5px; font-size: .62rem; font-weight: 700; color: #94a3b8; }
+    .km-v { display: inline-block; font-size: 1.25rem; }
+
+    /* Capa de agrupaciones (overlays) */
+    .km-wrap { position: relative; display: inline-block; }
+    .km-ov { position: absolute; inset: 0; pointer-events: none; }
+    .km-box { position: absolute; border: 3px solid var(--c); border-radius: 14px; background: color-mix(in srgb, var(--c) 16%, transparent);
+              animation: kmPop .6s cubic-bezier(.2,.9,.3,1.3) both; animation-delay: var(--dl, 0ms); transition: opacity .3s; }
+    .km-box.split { border-style: dashed; }
+    .km-box.dim { opacity: .3; animation: none; }
+    .km-box.still { animation: none; }
+    .km-box.active { box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 25%, transparent), 0 0 20px color-mix(in srgb, var(--c) 55%, transparent); }
+    .km-box.pulse { animation: kmPulse .8s ease-in-out infinite; z-index: 3; box-shadow: 0 0 18px var(--c); }
+    .km-cell-drop .km-v { animation: kmDrop .55s both; animation-delay: var(--d, 0ms); }
+    @keyframes kmPop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes kmPulse { 50% { transform: scale(1.05); } }
+    @keyframes kmDrop { from { transform: scale(0) rotate(-120deg); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes wzIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes wzRow { from { opacity: .2; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+
+    /* Laboratorio paso a paso */
+    .wz-progress { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; justify-content: center; }
+    .wz-dot { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #cbd5e1; background: #fff; color: #64748b; font-weight: 800; font-size: .85rem; transition: all .25s; display: inline-flex; align-items: center; justify-content: center; }
+    .wz-dot:hover { transform: translateY(-2px); }
+    .wz-dot.done { background: color-mix(in srgb, var(--c, #6f42c1) 18%, #fff); border-color: var(--c, #6f42c1); color: var(--c, #6f42c1); }
+    .wz-dot.on { background: var(--c, #6f42c1); border-color: var(--c, #6f42c1); color: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--c, #6f42c1) 25%, transparent); transform: scale(1.12); }
+    .wz-stage { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); padding: 1.25rem; min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: auto; }
+    .wz-panel { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; border-top: 5px solid var(--c, #6f42c1); box-shadow: var(--shadow-sm); padding: 1.25rem; height: 100%; animation: wzIn .45s both; }
+    .wz-chip { display: inline-block; padding: .15rem .55rem; border-radius: 999px; font-family: 'Courier New', monospace; font-weight: 700; font-size: .85rem; background: color-mix(in srgb, var(--c, #6f42c1) 15%, #fff); color: var(--c, #6f42c1); border: 1.5px solid var(--c, #6f42c1); margin: .1rem; }
+    .wz-chip[data-kg], .wz-chip[data-jump] { cursor: pointer; transition: transform .15s; }
+    .wz-chip[data-kg]:hover, .wz-chip[data-jump]:hover { transform: translateY(-2px) scale(1.05); }
+    .wz-eq { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: .65rem .9rem; margin: .75rem 0; }
+    .wz-tt { font-family: 'Courier New', monospace; text-align: center; font-size: .85rem; margin: 0; }
+    .wz-tt th { background: #1e293b; color: #fff; padding: .3rem .6rem; }
+    .wz-tt td { padding: .2rem .6rem; }
+    .wz-tt tr.wz-on td { background: #dcfce7; color: #166534; font-weight: 800; animation: wzRow .5s both; animation-delay: var(--d, 0ms); }
+    .wz-bin { font-family: 'Courier New', monospace; text-align: center; margin: .5rem auto; }
+    .wz-bin th, .wz-bin td { padding: .3rem .75rem; border: 1px solid #e2e8f0; }
+    .wz-bin th { background: #f1f5f9; }
+    .wz-keep { background: #dcfce7; color: #166534; font-weight: 800; }
+    .wz-drop { background: #fee2e2; color: #b91c1c; font-weight: 800; }
+    .wz-final { background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; border-radius: 16px; padding: 1.1rem; text-align: center; font-size: 1.6rem; }
+    .wz-hover { min-height: 1.6rem; color: #475569; font-family: 'Courier New', monospace; }
+    @media (prefers-reduced-motion: reduce) { .km-box, .km-cell-drop .km-v, .wz-panel, .wz-tt tr.wz-on td { animation-duration: .01ms !important; animation-delay: 0ms !important; } }
+
+    /* Modals Component Cards */
+    .ic-btn { border:0; border-radius:14px; background:#fff; box-shadow:var(--shadow-sm); padding:1rem; transition:all .2s; height:100%; text-align:left; display:flex; align-items:center; gap:1rem; border-left:5px solid #0d6efd; cursor:pointer; }
+    .ic-btn:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); background:#f8fafc; }
+    
+    /* Custom Scrollbar for tables */
+    .table-responsive::-webkit-scrollbar { height: 8px; }
+    .table-responsive::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header Dinámico -->
+  <div id="app-header"></div>
+
+  <main>
+    <header class="hero-header text-center mb-5">
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-diagram-3-fill me-2 text-info"></i>Compuertas Lógicas y Álgebra de Boole</h1>
+        <p class="lead mb-1">Catálogo Interactivo • Mapas de Karnaugh • Simulador a partir de Ecuación • Circuitos Internos TTL</p>
+        <p class="mb-0 text-light opacity-75">Domina el diseño de circuitos digitales desde el álgebra hasta la simplificación lógica.</p>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+
+      <!-- ===================== 1. TODAS LAS COMPUERTAS LÓGICAS ===================== -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-cpu text-primary me-2"></i>1. Catálogo de Compuertas Lógicas</h2>
+        <p class="text-muted">Presiona los botones de entrada ($A$ y $B$) de cada compuerta para conmutar entre $0$ y $1$. La fila correspondiente de la <strong>Tabla de Verdad</strong> se resaltará automáticamente.</p>
+        <div class="row g-4" id="gates-container">
+          <!-- Dinámicamente generado por JS con las 7 compuertas -->
+        </div>
+      </section>
+
+      <!-- ===================== 2. ÁLGEBRA DE BOOLE Y LEYES ===================== -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-journal-bookmark-fill text-warning me-2"></i>2. Álgebra de Boole, Operadores y Leyes</h2>
+        
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3 bg-white">
+              <h5 class="fw-bold text-primary"><i class="bi bi-intersect me-2"></i>Conjunción ($\land$ / AND)</h5>
+              <p class="small text-muted mb-2">Equivale al producto lógico ($A \cdot B$). El resultado es $1$ únicamente si <strong>todas</strong> sus proposiciones son verdaderas ($1$).</p>
+              <div class="bg-light p-2 rounded mono small text-center">$P \land Q \iff A \cdot B$</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3 bg-white">
+              <h5 class="fw-bold text-warning"><i class="bi bi-union me-2"></i>Disyunción ($\lor$ / OR)</h5>
+              <p class="small text-muted mb-2">Equivale a la suma lógica ($A + B$). El resultado es $1$ si <strong>al menos una</strong> de sus proposiciones es verdadera ($1$).</p>
+              <div class="bg-light p-2 rounded mono small text-center">$P \lor Q \iff A + B$</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3 bg-white">
+              <h5 class="fw-bold text-danger"><i class="bi bi-slash-circle me-2"></i>Negación ($\neg$ / NOT)</h5>
+              <p class="small text-muted mb-2">Invierte el valor de verdad ($\overline{A}$ o $\neg A$). Convierte un $1$ en $0$ y un $0$ en $1$.</p>
+              <div class="bg-light p-2 rounded mono small text-center">$\neg P \iff \overline{A}$</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verificador Interactivo de Leyes -->
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-calculator-fill text-info me-2"></i>Verificador Interactivo de Leyes Booleanas</h5>
+          <p class="text-muted small">Selecciona una ley booleana y cambia los valores de las variables $A$ y $B$ para comprobar matemáticamente que ambos lados de la igualdad son idénticos.</p>
+          
+          <div class="row g-3 align-items-center mb-3">
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label fw-semibold mb-0" for="law-select">Selecciona una Ley Booleana:</label>
+                <button class="btn btn-sm btn-outline-info rounded-circle px-2 py-1 shadow-sm" data-bs-toggle="modal" data-bs-target="#lawDetailModal" title="¿Cómo funciona esta ley?"><i class="bi bi-info-lg"></i></button>
+              </div>
+              <select class="form-select" id="law-select">
+                <option value="id_and">Identidad AND: A · 1 = A</option>
+                <option value="id_or">Identidad OR: A + 0 = A</option>
+                <option value="dom_and">Dominación AND: A · 0 = 0</option>
+                <option value="dom_or">Dominación OR: A + 1 = 1</option>
+                <option value="idemp_and">Idempotencia AND: A · A = A</option>
+                <option value="idemp_or">Idempotencia OR: A + A = A</option>
+                <option value="double_not">Doble Negación: (A')' = A</option>
+                <option value="comm_and">Conmutativa AND: A · B = B · A</option>
+                <option value="comm_or">Conmutativa OR: A + B = B + A</option>
+                <option value="demorgan_1">De Morgan 1: (A · B)' = A' + B'</option>
+                <option value="demorgan_2">De Morgan 2: (A + B)' = A' · B'</option>
+                <option value="absorp">Absorción: A + (A · B) = A</option>
+              </select>
+            </div>
+            <div class="col-md-3 text-center">
+              <label class="form-label fw-semibold d-block">Variable A</label>
+              <button class="btn bit-btn off" id="law-var-a">0</button>
+            </div>
+            <div class="col-md-3 text-center" id="law-var-b-container">
+              <label class="form-label fw-semibold d-block">Variable B</label>
+              <button class="btn bit-btn off" id="law-var-b">0</button>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-3 bg-light border text-center">
+            <div class="fs-4 fw-bold mono text-dark" id="law-eval-expression">A · 1 = A</div>
+            <div class="mt-2" id="law-eval-result"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 3. SIMULADOR EN LÍNEA A PARTIR DE EXPRESIÓN ===================== -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-diagram-2-fill text-danger me-2"></i>3. Generador de Diagramas y Simulador</h2>
+        <p class="text-muted">Introduce una función booleana lógica (ejemplo: <code>A*B + C*D</code> o <code>A'*B</code>). El sistema dibujará en tiempo real el diagrama esquemático con las compuertas correspondientes.</p>
+
+        <div class="card builder-card">
+          <div class="row g-3 align-items-center mb-4">
+            <div class="col-md-3">
+              <label class="form-label text-light fw-bold">Número de Entradas:</label>
+              <select class="form-select form-select-lg" id="builder-vars">
+                <option value="2">2 Variables (A, B)</option>
+                <option value="3">3 Variables (A, B, C)</option>
+                <option value="4" selected>4 Variables (A, B, C, D)</option>
+              </select>
+            </div>
+            <div class="col-md-9">
+              <label class="form-label text-light fw-bold">Ecuación de la Función Lógica ($F$):</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-primary text-white border-primary fw-bold">F =</span>
+                <input type="text" class="form-control builder-input" id="builder-expr" placeholder="Ej: A*B + C'*D" value="A*B + C'*D" autocomplete="off">
+                <button class="btn btn-warning fw-bold" id="builder-render-btn"><i class="bi bi-lightning-fill"></i> Renderizar</button>
+              </div>
+              <small class="text-light opacity-75 mt-1 d-block"><i class="bi bi-info-circle me-1"></i> Usa <strong>*</strong> (AND), <strong>+</strong> (OR), <strong>'</strong> (NOT). Ejemplo: <code>(A+B)*C'</code></small>
+            </div>
+          </div>
+
+          <!-- Espacio de trabajo gráfico interconectado SVG -->
+          <div class="builder-workspace" id="builder-svg-container">
+            <!-- Diagrama SVG renderizado dinámicamente -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 4. TABLA DE VERDAD Y DESGLOSE ===================== -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-table text-success me-2"></i>4. Tabla de Verdad y Simplificación Paso a Paso</h2>
+        <p class="text-muted">Desglose analítico de la función introducida en el simulador anterior, mostrando cada multiplicación, suma y negación intermedia.</p>
+        
+        <div class="card border-0 shadow-sm overflow-hidden">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered text-center align-middle mb-0" id="tt-table">
+              <thead class="table-dark" id="tt-head">
+                <!-- Generado por JS -->
+              </thead>
+              <tbody id="tt-body">
+                <!-- Generado por JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 5. MAPAS DE KARNAUGH ===================== -->
+      <section class="mb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-center section-title mb-3" style="padding-bottom:.5rem;">
+          <h2 class="fw-bold border-0 mb-0"><i class="bi bi-grid-3x3 text-purple me-2" style="color:#6f42c1"></i>5. Mapas de Karnaugh (K-Maps)</h2>
+          <button class="btn btn-sm text-white rounded-pill px-3 shadow-sm mt-2 mt-md-0 hover-lift" style="background-color: #6f42c1; transition: transform 0.2s;" data-bs-toggle="modal" data-bs-target="#kmapTutorialModal" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+            <i class="bi bi-journal-bookmark-fill me-1"></i>Aprender Paso a Paso
+          </button>
+        </div>
+        <p class="text-muted">El Mapa de Karnaugh es una herramienta visual para la simplificación de funciones algebraicas booleanas. Al agrupar los unos ($1$) adyacentes en bloques de $2^n$ ($1, 2, 4, 8...$), eliminamos las variables que cambian de estado, logrando la expresión mínima (Suma de Productos).</p>
+        
+        <div class="row g-4 align-items-start">
+          <div class="col-lg-7">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-white text-center">
+              <h5 class="fw-bold mb-4 text-dark">Mapa Interactivo para la Función Generada</h5>
+              <div id="kmap-container" style="position: relative; display: inline-block;">
+                <!-- Tabla K-map inyectada por JS -->
+              </div>
+              <p class="small text-muted mt-4 mb-2"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Cada color es un <strong>grupo (implicante primo)</strong>. Los recuadros punteados cruzan el borde del mapa (efecto Pac-Man). Pasa el cursor por la lista de grupos para resaltarlos.</p>
+              <button class="btn btn-sm text-white rounded-pill px-3 shadow-sm" id="kmap-solve-mine" style="background-color:#6f42c1;"><i class="bi bi-play-circle-fill me-1"></i>Resolver esta función paso a paso</button>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-light">
+              <h5 class="fw-bold text-primary border-bottom border-primary pb-2 mb-3"><i class="bi bi-funnel-fill me-1"></i>Expresión Mínima Simplificada</h5>
+              <div class="p-3 bg-white rounded shadow-sm text-center mb-4">
+                <div class="fs-4 fw-bold text-success mono" id="kmap-simplified-expr">F = ...</div>
+              </div>
+              
+              <h6 class="fw-bold text-secondary">Grupos Identificados (Suma de Productos):</h6>
+              <ul class="list-group list-group-flush small" id="kmap-groups-list">
+                <!-- Lista de grupos generada dinámicamente -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 6. CIRCUITOS ELECTRÓNICOS Y PINOUTS (TTL Modales) ===================== -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-motherboard text-dark me-2"></i>6. Estructura Interna, Transistores y Chips TTL (74XX)</h2>
+        <p class="text-muted">Haz clic en cualquiera de las tarjetas para desplegar su esquema electrónico interno a nivel de transistores (BJT), basado en la familia comercial estandarizada TTL (Lógica Transistor-Transistor).</p>
+
+        <div class="row g-3" id="ic-buttons-container">
+          <!-- Generado dinámicamente -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modal Detalle de Ley Booleana -->
+  <div class="modal fade" id="lawDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" id="lawDetailModalHeader">
+          <h5 class="modal-title fw-bold" id="lawDetailModalLabel">Explicación de la Ley</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-4 bg-white" id="lawDetailModalBody">
+          <!-- Contenido inyectado con JS -->
+        </div>
+        <div class="modal-footer bg-light border-0">
+          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Entendido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tutorial Mapas de Karnaugh -->
+  <div class="modal fade" id="kmapTutorialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background-color:#6f42c1;">
+          <h5 class="modal-title fw-bold"><i class="bi bi-map-fill me-2"></i>Guía Interactiva: ¿Cómo resolver Mapas de Karnaugh?</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-4 bg-light text-dark">
+          
+          <div class="text-center mb-5 mt-2">
+            <h3 class="fw-bold text-dark">Simplifica circuitos jugando a "atrapar números"</h3>
+            <p class="text-muted fs-6 mx-auto" style="max-width: 800px;">Un Mapa de Karnaugh te evita hacer largas ecuaciones matemáticas llenas de leyes confusas. Funciona como un rompecabezas visual donde "agrupas celdas" para reducir tu circuito a lo mínimo indispensable.</p>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="wz-goto"><i class="bi bi-arrow-down-circle me-1"></i>Ir directo al ejemplo animado</button>
+          </div>
+
+          <div class="row g-4">
+            <!-- Paso 1 -->
+            <div class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="background-color:#1c7ed6; width:45px; height:45px; font-size:1.4rem;">1</div>
+                    <h5 class="fw-bold mb-0" style="color:#1c7ed6;">El Tablero y los Minitérminos</h5>
+                  </div>
+                  <p class="small">El mapa es una cuadrícula donde cada cuadro es una fila de tu Tabla de Verdad, a esto se le llama <strong>minitérmino ($m$)</strong>. Presta atención a los bordes: no van en orden normal, sino en <strong>Código Gray</strong> (<code>00, 01, 11, 10</code>).</p>
+                  
+                  <div class="text-center my-3 p-3 bg-white rounded border shadow-sm overflow-auto">
+                    <h6 class="fw-bold text-secondary mb-2 small">Distribución de Minitérminos</h6>
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                      <!-- Tabla 3 Variables -->
+                      <div>
+                        <span class="d-block small text-muted mb-1">3 Variables (A, BC)</span>
+                        <table class="table table-bordered table-sm text-center font-monospace mb-0" style="font-size:0.75rem; border-color:#cbd5e1; width: max-content;">
+                          <thead class="bg-light">
+                            <tr><th class="border-0 bg-transparent"></th><th colspan="4" class="text-muted pb-0">BC</th></tr>
+                            <tr><th class="border-0 bg-transparent align-middle text-muted pe-2">A</th><th>00</th><th>01</th><th class="text-primary">11</th><th class="text-primary">10</th></tr>
+                          </thead>
+                          <tbody>
+                            <tr><th class="bg-light align-middle">0</th><td>$m_0$</td><td>$m_1$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_3$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_2$</td></tr>
+                            <tr><th class="bg-light align-middle">1</th><td>$m_4$</td><td>$m_5$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_7$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_6$</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <!-- Tabla 4 Variables -->
+                      <div>
+                        <span class="d-block small text-muted mb-1">4 Variables (AB, CD)</span>
+                        <table class="table table-bordered table-sm text-center font-monospace mb-0" style="font-size:0.75rem; border-color:#cbd5e1; width: max-content;">
+                          <thead class="bg-light">
+                            <tr><th class="border-0 bg-transparent"></th><th colspan="4" class="text-muted pb-0">CD</th></tr>
+                            <tr><th class="border-0 bg-transparent align-middle text-muted pe-2">AB</th><th>00</th><th>01</th><th class="text-primary">11</th><th class="text-primary">10</th></tr>
+                          </thead>
+                          <tbody>
+                            <tr><th class="bg-light align-middle">00</th><td>$m_0$</td><td>$m_1$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_3$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_2$</td></tr>
+                            <tr><th class="bg-light align-middle">01</th><td>$m_4$</td><td>$m_5$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_7$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_6$</td></tr>
+                            <tr><th class="bg-light align-middle text-primary">11</th><td class="bg-primary bg-opacity-10 fw-bold">$m_{12}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{13}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{15}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{14}$</td></tr>
+                            <tr><th class="bg-light align-middle text-primary">10</th><td class="bg-primary bg-opacity-10 fw-bold">$m_8$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_9$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{11}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{10}$</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <p class="text-muted mt-3 mb-0" style="font-size: 0.75rem;"><i class="bi bi-info-circle-fill text-primary"></i> Nota cómo las columnas "11" y "10" invierten su orden natural. Por ello, el minitérmino 3 aparece antes que el 2.</p>
+                  </div>
+
+                  <div class="alert alert-primary p-3 small mb-0 border-0 bg-primary bg-opacity-10 text-primary-emphasis rounded-3">
+                    <i class="bi bi-lightbulb-fill me-1 text-primary"></i><strong>¿Por qué este orden raro?</strong> Para asegurar que entre cualquier celda vecina, <em>solo cambie un bit a la vez</em>.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Paso 2 -->
+            <div class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="background-color:#2f9e44; width:45px; height:45px; font-size:1.4rem;">2</div>
+                    <h5 class="fw-bold mb-0" style="color:#2f9e44;">Colocar los "1"s</h5>
+                  </div>
+                  <p class="small">Revisa la última columna de tu Tabla de Verdad (tu resultado <strong>$F$</strong>). Busca todas las combinaciones que hayan dado <code>1</code> (Verdadero) y dibuja un <code>1</code> en la celda correspondiente al minitérmino de esa fila en el tablero.</p>
+                  <p class="small text-muted mb-0 mt-3 p-3 bg-light rounded border"><i class="bi bi-info-circle text-success me-1"></i>Las celdas cuyo resultado sea <code>0</code> se dejan vacías o se rellenan con ceros, pero <strong>no nos interesan</strong> para agrupar. Enfócate exclusivamente en "atrapar" los unos.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Paso 3 -->
+            <div class="col-12">
+              <div class="card border-0 shadow-sm rounded-4 border-start border-5" style="border-color:#6f42c1 !important;">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center mb-4">
+                    <div class="text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="background-color:#6f42c1; width:45px; height:45px; font-size:1.4rem;">3</div>
+                    <h5 class="fw-bold mb-0" style="color:#6f42c1;">¡A Agrupar! (Reglas y Casos de Solapamiento)</h5>
+                  </div>
+                  <p class="small mb-3">Tu misión es "encerrar" absolutamente todos los <code>1</code> del tablero dibujando círculos o rectángulos. Se permite <strong>compartir unos (solapamiento)</strong> entre varios grupos si eso ayuda a que el grupo sea más grande. Observa las siguientes reglas visuales:</p>
+                  
+                  <div class="d-flex flex-wrap justify-content-center gap-4 mb-4 p-4 bg-light rounded-4 border">
+                    
+                    <div class="text-center">
+                      <span class="d-block small fw-bold mb-2">✔️ Permitido (2x2)</span>
+                      <table class="table table-bordered text-center bg-white m-0 font-monospace shadow-sm" style="font-size:0.8rem; width:80px; border-color:#cbd5e1;">
+                        <tr><td class="bg-success text-white" style="box-shadow: inset 0 0 0 3px #198754;">1</td><td class="bg-success text-white" style="box-shadow: inset 0 0 0 3px #198754;">1</td><td class="text-muted">0</td></tr>
+                        <tr><td class="bg-success text-white" style="box-shadow: inset 0 0 0 3px #198754;">1</td><td class="bg-success text-white" style="box-shadow: inset 0 0 0 3px #198754;">1</td><td class="text-muted">0</td></tr>
+                      </table>
+                    </div>
+
+                    <div class="text-center">
+                      <span class="d-block small fw-bold mb-2">❌ Prohibido (Diagonales)</span>
+                      <div class="position-relative">
+                        <table class="table table-bordered text-center bg-white m-0 font-monospace shadow-sm" style="font-size:0.8rem; width:80px; border-color:#cbd5e1;">
+                          <tr><td class="text-dark bg-danger bg-opacity-25" style="border: 2px solid #dc3545">1</td><td class="text-muted">0</td></tr>
+                          <tr><td class="text-muted">0</td><td class="text-dark bg-danger bg-opacity-25" style="border: 2px solid #dc3545">1</td></tr>
+                        </table>
+                        <div class="position-absolute top-50 start-50 translate-middle text-danger fw-bold" style="font-size:2rem; pointer-events:none;">X</div>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <span class="d-block small fw-bold mb-2">✔️ Compartir (Solapamiento)</span>
+                      <table class="table table-bordered text-center bg-white m-0 font-monospace shadow-sm" style="font-size:0.8rem; width:80px; border-color:#cbd5e1;">
+                        <tr><td class="bg-primary bg-opacity-25" style="border: 2px solid #0d6efd; border-right:none;">1</td><td class="fw-bold" style="background: linear-gradient(135deg, #cfe2ff 50%, #f8d7da 50%); border: 2px solid #0d6efd; border-right-color:#dc3545; border-bottom-color:#dc3545;">1</td></tr>
+                        <tr><td class="text-muted">0</td><td class="bg-danger bg-opacity-25" style="border: 2px solid #dc3545; border-top:none;">1</td></tr>
+                      </table>
+                    </div>
+
+                    <div class="text-center">
+                      <span class="d-block small fw-bold mb-2">✔️ Efecto Esfera (Pac-Man)</span>
+                      <table class="table table-bordered text-center bg-white m-0 font-monospace shadow-sm" style="font-size:0.8rem; width:100px; border-color:#cbd5e1;">
+                        <tr><td class="bg-warning bg-opacity-50" style="border-left: 4px solid #ffc107;">1</td><td class="text-muted">0</td><td class="text-muted">0</td><td class="bg-warning bg-opacity-50" style="border-right: 4px solid #ffc107;">1</td></tr>
+                        <tr><td class="text-muted">0</td><td class="text-muted">0</td><td class="text-muted">0</td><td class="text-muted">0</td></tr>
+                      </table>
+                    </div>
+
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-md-3 text-center">
+                      <div class="p-4 bg-white rounded-4 shadow-sm h-100 border border-light">
+                        <i class="bi bi-aspect-ratio fs-1 text-primary mb-2 d-block"></i>
+                        <h6 class="fw-bold">Tamaños Exactos</h6>
+                        <p class="small text-muted mb-0">Tus grupos solo pueden tener <strong>1, 2, 4, 8 o 16</strong> celdas (potencias de 2). ¡Nunca grupos de 3 o 5!</p>
+                      </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                      <div class="p-4 bg-white rounded-4 shadow-sm h-100 border border-light">
+                        <i class="bi bi-arrows-move fs-1 text-danger mb-2 d-block"></i>
+                        <h6 class="fw-bold">No Diagonales</h6>
+                        <p class="small text-muted mb-0">Los agrupamientos deben ser estrictamente <strong>horizontales o verticales</strong>. Las cruces están prohibidas.</p>
+                      </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                      <div class="p-4 bg-white rounded-4 shadow-sm h-100 border border-light">
+                        <i class="bi bi-arrows-angle-expand fs-1 text-success mb-2 d-block"></i>
+                        <h6 class="fw-bold">Lo Más Grande</h6>
+                        <p class="small text-muted mb-0">Un grupo de 4 es mucho mejor que dos grupos de 2. Mientras más grande el grupo, <strong>más se simplifica</strong> la fórmula.</p>
+                      </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                      <div class="p-4 bg-white rounded-4 shadow-sm h-100 border border-light">
+                        <i class="bi bi-globe fs-1 text-warning mb-2 d-block"></i>
+                        <h6 class="fw-bold">Efecto Pac-Man</h6>
+                        <p class="small text-muted mb-0">¡El mapa es esférico! Puedes agrupar celdas del extremo izquierdo cruzando hasta el extremo derecho.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Paso 4 -->
+            <div class="col-12">
+              <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="width:45px; height:45px; font-size:1.4rem;">4</div>
+                    <h5 class="fw-bold mb-0 text-dark">Extraer la Ecuación Final (Suma de Productos)</h5>
+                  </div>
+                  <p class="small mb-3">Una vez que todos tus unos están encerrados, analizaremos <strong>cada grupo individualmente</strong> para extraer y agrupar cada elemento en una fórmula final:</p>
+                  
+                  <div class="bg-white p-3 rounded-3 border border-secondary border-opacity-25">
+                    <ul class="small mb-0 lh-lg text-secondary-emphasis">
+                      <li>Observa un grupo y revisa qué valores tienen sus variables ($A, B, C, D$) en los encabezados de su fila/columna.</li>
+                      <li><strong>La regla mágica de extracción:</strong> Si una variable <strong>cambia de valor</strong> (por ejemplo, pasa de 0 a 1) en las celdas que abarca tu grupo... <strong>¡Elimínala!</strong> Es irrelevante para ese subcircuito.</li>
+                      <li>Si una variable <strong>se mantiene constante</strong>, se queda. Si vale <code>1</code>, se escribe normal (e.g., $A$). Si vale <code>0</code>, se escribe negada (e.g., $\overline{A}$).</li>
+                      <li>Haz esto por cada grupo formado. Finalmente, une las expresiones resultantes con un signo de suma (<code>+</code>, es decir, compuertas OR).</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Paso 5: Laboratorio paso a paso (dinámico) -->
+            <div class="col-12 mt-2" id="wz-root">
+              <div class="card border-0 shadow-sm rounded-4 border-start border-5" style="border-color:#0d6efd !important;">
+                <div class="card-body p-4">
+                  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <div class="d-flex align-items-center">
+                      <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="width:45px; height:45px; font-size:1.4rem;">5</div>
+                      <div>
+                        <h5 class="fw-bold mb-0 text-primary">Laboratorio Paso a Paso</h5>
+                        <small class="text-muted">De la tabla de verdad a la función simplificada, con animaciones</small>
+                      </div>
+                    </div>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Función a resolver">
+                      <button type="button" class="btn btn-outline-primary" id="wz-src-example"><i class="bi bi-bookmark-star me-1"></i>Ejemplo guiado</button>
+                      <button type="button" class="btn btn-outline-primary" id="wz-src-mine"><i class="bi bi-cpu me-1"></i>Mi función (constructor)</button>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-light border shadow-sm small mb-3">
+                    Ejemplo: <strong class="mono">$F(A,B,C,D) = \sum m(0, 1, 2, 5, 8, 9, 10)$</strong>. Incluye grupos de 4 y de 2, <strong>solapamiento</strong> y <strong>efecto Pac-Man</strong>. Usa los controles o haz clic en los círculos para navegar.
+                  </div>
+
+                  <div class="wz-progress mb-3" id="wz-progress"></div>
+
+                  <div class="row g-4 align-items-stretch">
+                    <div class="col-lg-6"><div class="wz-stage" id="wz-stage"></div></div>
+                    <div class="col-lg-6"><div class="wz-panel" id="wz-panel"></div></div>
+                  </div>
+
+                  <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4">
+                    <button class="btn btn-outline-secondary rounded-pill px-3" id="wz-restart" title="Reiniciar"><i class="bi bi-skip-start-fill"></i></button>
+                    <button class="btn btn-outline-primary rounded-pill px-3" id="wz-prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button>
+                    <button class="btn btn-primary rounded-pill px-4" id="wz-next">Siguiente<i class="bi bi-chevron-right ms-1"></i></button>
+                    <button class="btn btn-dark rounded-pill px-3" id="wz-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button>
+                    <span class="small text-muted ms-2" id="wz-count"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div> <!-- row final -->
+        </div>
+        <div class="modal-footer bg-light border-0 py-3">
+          <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">¡Entendido, vamos a practicar!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Reutilizable para Estructura Interna TTL -->
+  <div class="modal fade" id="icModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header bg-dark text-white" id="ic-modal-header">
+          <h5 class="modal-title fw-bold" id="ic-modal-title">Estructura Interna TTL</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-4 bg-light" id="ic-modal-body">
+          <!-- Contenido inyectado con JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Cibernética • Compuertas Lógicas y Álgebra de Boole</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    /* Copia de respaldo: se usa si no se puede leer index.html (por ejemplo al abrir con file://).
+       La fuente real del menú es el bloque #menu-config de index.html. */
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [ { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Próximamente", href: "#", icon: "bi-hourglass-split", disabled: true } ] }
+      ]
+    };
+
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `
+          <li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}">
+            <i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi ${g.icon} me-1"></i>${g.label}
+            </a>
+            <ul class="dropdown-menu">${items}</ul>
+          </li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+          <div class="container">
+            <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul>
+            </div>
+          </div>
+        </nav>`;
+    }
+
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'compuertas_logicas.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      
+      // Evitar error CORS al ejecutar el archivo localmente (file://)
+      if (window.location.protocol !== 'file:') {
+        try {
+          const res = await fetch('index.html', { cache: 'no-store' });
+          if (!res.ok) throw new Error('sin index');
+          const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+          const menu = JSON.parse(doc.getElementById('menu-config').textContent);
+          renderHeader(menu, container, page);
+        } catch (e) {}
+      }
+    })();
+  </script>
+
+  <!-- ===================== LÓGICA PRINCIPAL DEL SIMULADOR ===================== -->
+  <script>
+    /* Renderizador KaTeX global */
+    function updateMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    /* 1. Catálogo de Compuertas Base */
+    const GATES_DATA = {
+      NOT: { name: 'NOT (Inversor)', cls: 'not', gh: 'gh-not', inps: 1, sym: '\\overline{A}', eval: a => a===0?1:0, tb: [{a:0,out:1},{a:1,out:0}],
+        svg: `<svg width="140" height="70" viewBox="0 0 140 70"><line x1="10" y1="35" x2="40" y2="35" stroke="#0f172a" stroke-width="3"/><polygon points="40,15 40,55 85,35" fill="#fee2e2" stroke="#e03131" stroke-width="3"/><circle cx="91" cy="35" r="6" fill="#ffffff" stroke="#e03131" stroke-width="3"/><line x1="97" y1="35" x2="130" y2="35" stroke="#0f172a" stroke-width="3"/><text x="18" y="28" font-size="12" font-weight="bold">A</text><text x="115" y="28" font-size="12" font-weight="bold">Y</text></svg>` },
+      AND: { name: 'AND (Y)', cls: 'and', gh: 'gh-and', inps: 2, sym: 'A \\cdot B', eval: (a,b) => a&&b?1:0, tb: [{a:0,b:0,out:0},{a:0,b:1,out:0},{a:1,b:0,out:0},{a:1,b:1,out:1}],
+        svg: `<svg width="140" height="70" viewBox="0 0 140 70"><line x1="10" y1="20" x2="40" y2="20" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="50" x2="40" y2="50" stroke="#0f172a" stroke-width="3"/><path d="M 40 10 L 65 10 A 25 25 0 0 1 65 60 L 40 60 Z" fill="#dbeafe" stroke="#1c7ed6" stroke-width="3"/><line x1="90" y1="35" x2="130" y2="35" stroke="#0f172a" stroke-width="3"/><text x="18" y="16" font-size="12" font-weight="bold">A</text><text x="18" y="62" font-size="12" font-weight="bold">B</text><text x="115" y="28" font-size="12" font-weight="bold">Y</text></svg>` },
+      OR: { name: 'OR (O)', cls: 'or', gh: 'gh-or', inps: 2, sym: 'A + B', eval: (a,b) => a||b?1:0, tb: [{a:0,b:0,out:0},{a:0,b:1,out:1},{a:1,b:0,out:1},{a:1,b:1,out:1}],
+        svg: `<svg width="140" height="70" viewBox="0 0 140 70"><line x1="10" y1="20" x2="45" y2="20" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="50" x2="45" y2="50" stroke="#0f172a" stroke-width="3"/><path d="M 35 10 Q 55 35 35 60 Q 75 60 95 35 Q 75 10 35 10 Z" fill="#ffedd5" stroke="#f08c00" stroke-width="3"/><line x1="95" y1="35" x2="130" y2="35" stroke="#0f172a" stroke-width="3"/><text x="18" y="16" font-size="12" font-weight="bold">A</text><text x="18" y="62" font-size="12" font-weight="bold">B</text><text x="115" y="28" font-size="12" font-weight="bold">Y</text></svg>` },
+      NAND: { name: 'NAND (NO-Y)', cls: 'nand', gh: 'gh-nand', inps: 2, sym: '\\overline{A \\cdot B}', eval: (a,b) => !(a&&b)?1:0, tb: [{a:0,b:0,out:1},{a:0,b:1,out:1},{a:1,b:0,out:1},{a:1,b:1,out:0}],
+        svg: `<svg width="140" height="70" viewBox="0 0 140 70"><line x1="10" y1="20" x2="40" y2="20" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="50" x2="40" y2="50" stroke="#0f172a" stroke-width="3"/><path d="M 40 10 L 65 10 A 25 25 0 0 1 65 60 L 40 60 Z" fill="#f3e8ff" stroke="#7048e8" stroke-width="3"/><circle cx="96" cy="35" r="5" fill="#ffffff" stroke="#7048e8" stroke-width="3"/><line x1="101" y1="35" x2="130" y2="35" stroke="#0f172a" stroke-width="3"/></svg>` },
+      NOR: { name: 'NOR (NO-O)', cls: 'nor', gh: 'gh-nor', inps: 2, sym: '\\overline{A + B}', eval: (a,b) => !(a||b)?1:0, tb: [{a:0,b:0,out:1},{a:0,b:1,out:0},{a:1,b:0,out:0},{a:1,b:1,out:0}],
+        svg: `<svg width="140" height="70" viewBox="0 0 140 70"><path d="M 35 10 Q 55 35 35 60 Q 75 60 95 35 Q 75 10 35 10 Z" fill="#ccfbf1" stroke="#0c8599" stroke-width="3"/><circle cx="101" cy="35" r="5" fill="#ffffff" stroke="#0c8599" stroke-width="3"/><line x1="10" y1="20" x2="40" y2="20" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="50" x2="40" y2="50" stroke="#0f172a" stroke-width="3"/><line x1="106" y1="35" x2="130" y2="35" stroke="#0f172a" stroke-width="3"/></svg>` },
+      XOR: { name: 'XOR', cls: 'xor', gh: 'gh-xor', inps: 2, sym: 'A \\oplus B', eval: (a,b) => a!==b?1:0, tb: [{a:0,b:0,out:0},{a:0,b:1,out:1},{a:1,b:0,out:1},{a:1,b:1,out:0}],
+        svg: `<svg width="140" height="70" viewBox="0 0 140 70"><path d="M 28 10 Q 48 35 28 60" fill="none" stroke="#2f9e44" stroke-width="3"/><path d="M 35 10 Q 55 35 35 60 Q 75 60 95 35 Q 75 10 35 10 Z" fill="#dcfce7" stroke="#2f9e44" stroke-width="3"/><line x1="10" y1="20" x2="40" y2="20" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="50" x2="40" y2="50" stroke="#0f172a" stroke-width="3"/><line x1="95" y1="35" x2="130" y2="35" stroke="#0f172a" stroke-width="3"/></svg>` },
+      XNOR: { name: 'XNOR', cls: 'xnor', gh: 'gh-xnor', inps: 2, sym: '\\overline{A \\oplus B}', eval: (a,b) => a===b?1:0, tb: [{a:0,b:0,out:1},{a:0,b:1,out:0},{a:1,b:0,out:0},{a:1,b:1,out:1}],
+        svg: `<svg width="140" height="70" viewBox="0 0 140 70"><path d="M 28 10 Q 48 35 28 60" fill="none" stroke="#d97706" stroke-width="3"/><path d="M 35 10 Q 55 35 35 60 Q 75 60 95 35 Q 75 10 35 10 Z" fill="#fef3c7" stroke="#d97706" stroke-width="3"/><circle cx="101" cy="35" r="5" fill="#ffffff" stroke="#d97706" stroke-width="3"/><line x1="10" y1="20" x2="40" y2="20" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="50" x2="40" y2="50" stroke="#0f172a" stroke-width="3"/><line x1="106" y1="35" x2="130" y2="35" stroke="#0f172a" stroke-width="3"/></svg>` }
+    };
+    const gateStates = { NOT:{a:0}, AND:{a:0,b:0}, OR:{a:0,b:0}, NAND:{a:0,b:0}, NOR:{a:0,b:0}, XOR:{a:0,b:0}, XNOR:{a:0,b:0} };
+
+    function renderCatalog() {
+      const cont = document.getElementById('gates-container');
+      cont.innerHTML = Object.keys(GATES_DATA).map(k => {
+        const g = GATES_DATA[k], st = gateStates[k];
+        const out = g.inps === 1 ? g.eval(st.a) : g.eval(st.a, st.b);
+        const rows = g.tb.map(r => {
+          const act = g.inps===1 ? r.a===st.a : (r.a===st.a && r.b===st.b);
+          return `<tr class="${act?'active-row':''}">${g.inps===2?`<td>${r.a}</td><td>${r.b}</td>`:`<td>${r.a}</td>`}<td><strong class="${r.out?'text-success':''}">${r.out}</strong></td></tr>`;
+        }).join('');
+        return `
+          <div class="col-lg-6 col-xl-4">
+            <div class="card gate-card h-100">
+              <div class="gate-card-header ${g.gh}"><span>${g.name}</span><span class="mono">$${g.sym}$</span></div>
+              <div class="card-body d-flex flex-column">
+                <div class="gate-svg-wrap mb-3">${g.svg}</div>
+                <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                  <div class="d-flex gap-2">
+                    <button class="btn bit-btn ${st.a?'on':'off'}" data-g="${k}" data-i="a">${st.a}</button>
+                    ${g.inps===2?`<button class="btn bit-btn ${st.b?'on':'off'}" data-g="${k}" data-i="b">${st.b}</button>`:''}
+                  </div>
+                  <div class="text-end"><span class="out-badge ${out?'high':'low'}">${out} (${out?'HIGH':'LOW'})</span></div>
+                </div>
+                <table class="table table-bordered truth-table bg-white mt-auto">
+                  <thead><tr>${g.inps===2?'<th>A</th><th>B</th>':'<th>A</th>'}<th>Y</th></tr></thead><tbody>${rows}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+      updateMath();
+    }
+
+    /* 2. Leyes Booleanas */
+    const LAW_DETAILS = {
+      id_and: { title: "Ley de Identidad (AND)", math: "A \\cdot 1 = A", desc: "Cualquier variable multiplicada lógicamente por 1 (verdadero) conserva su propio valor. Es como tener un interruptor en serie con otro que siempre está cerrado.", color: "primary", icon: "bi-intersect" },
+      id_or: { title: "Ley de Identidad (OR)", math: "A + 0 = A", desc: "Cualquier variable sumada lógicamente con 0 (falso) conserva su propio valor. Es como tener un interruptor en paralelo con una vía abierta.", color: "warning", icon: "bi-union" },
+      dom_and: { title: "Ley de Dominación (AND)", math: "A \\cdot 0 = 0", desc: "Cualquier variable multiplicada por 0 resulta en 0. El 0 'domina' o absorbe toda la operación AND (basta con que una condición sea falsa).", color: "primary", icon: "bi-intersect" },
+      dom_or: { title: "Ley de Dominación (OR)", math: "A + 1 = 1", desc: "Cualquier variable sumada con 1 resulta en 1. El 1 'domina' la operación OR (basta con que una condición sea verdadera).", color: "warning", icon: "bi-union" },
+      idemp_and: { title: "Ley de Idempotencia (AND)", math: "A \\cdot A = A", desc: "Operar una variable consigo misma mediante AND no cambia su valor. En el álgebra de Boole no existen las 'potencias' ($A^2$).", color: "primary", icon: "bi-intersect" },
+      idemp_or: { title: "Ley de Idempotencia (OR)", math: "A + A = A", desc: "Operar una variable consigo misma mediante OR no cambia su valor. En el álgebra de Boole no existen los 'coeficientes' ($2A$).", color: "warning", icon: "bi-union" },
+      double_not: { title: "Ley de Doble Negación", math: "\\overline{\\overline{A}} = A", desc: "Negar (invertir) una variable dos veces anula la inversión, devolviéndola a su estado original lógico.", color: "danger", icon: "bi-slash-circle" },
+      comm_and: { title: "Ley Conmutativa (AND)", math: "A \\cdot B = B \\cdot A", desc: "El orden de los factores (entradas) no altera el producto lógico en una compuerta AND.", color: "primary", icon: "bi-intersect" },
+      comm_or: { title: "Ley Conmutativa (OR)", math: "A + B = B + A", desc: "El orden de los sumandos no altera el resultado lógico en una compuerta OR.", color: "warning", icon: "bi-union" },
+      demorgan_1: { title: "Teorema de De Morgan (NAND)", math: "\\overline{A \\cdot B} = \\overline{A} + \\overline{B}", desc: "La negación de un producto lógico (NAND) equivale a la suma de las variables negadas individualmente. Regla de oro: 'Rompe la barra y cambia el signo'.", color: "purple", icon: "bi-symmetry-horizontal" },
+      demorgan_2: { title: "Teorema de De Morgan (NOR)", math: "\\overline{A + B} = \\overline{A} \\cdot \\overline{B}", desc: "La negación de una suma lógica (NOR) equivale al producto de las variables negadas individualmente.", color: "purple", icon: "bi-symmetry-horizontal" },
+      absorp: { title: "Ley de Absorción", math: "A + (A \\cdot B) = A", desc: "La variable externa ($A$) absorbe al término redundante ($A \\cdot B$). Si $A=1$, toda la expresión es $1$; y si $A=0$, toda la expresión forzosamente será $0$.", color: "info", icon: "bi-arrows-collapse" }
+    };
+
+    let lState = {a:0, b:0};
+    function evalLaw() {
+      const t = document.getElementById('law-select').value, a = lState.a, b = lState.b;
+      let l=0, r=0, ex='';
+      switch(t) {
+        case 'id_and': l=a&&1; r=a; ex=`${a} \\cdot 1 = ${a}`; break;
+        case 'id_or': l=a||0; r=a; ex=`${a} + 0 = ${a}`; break;
+        case 'dom_and': l=a&&0; r=0; ex=`${a} \\cdot 0 = 0`; break;
+        case 'dom_or': l=a||1; r=1; ex=`${a} + 1 = 1`; break;
+        case 'idemp_and': l=a&&a; r=a; ex=`${a} \\cdot ${a} = ${a}`; break;
+        case 'idemp_or': l=a||a; r=a; ex=`${a} + ${a} = ${a}`; break;
+        case 'double_not': l=(a===0?1:0)===0?1:0; r=a; ex=`\\overline{\\overline{${a}}} = ${a}`; break;
+        case 'comm_and': l=a&&b; r=b&&a; ex=`${a} \\cdot ${b} = ${b} \\cdot ${a}`; break;
+        case 'comm_or': l=a||b; r=b||a; ex=`${a} + ${b} = ${b} + ${a}`; break;
+        case 'demorgan_1': l=!(a&&b)?1:0; r=((!a?1:0)||(!b?1:0))?1:0; ex=`\\overline{${a} \\cdot ${b}} = \\overline{${a}} + \\overline{${b}}`; break;
+        case 'demorgan_2': l=!(a||b)?1:0; r=((!a?1:0)&&(!b?1:0))?1:0; ex=`\\overline{${a} + ${b}} = \\overline{${a}} \\cdot \\overline{${b}}`; break;
+        case 'absorp': l=(a||(a&&b))?1:0; r=a; ex=`${a} + (${a} \\cdot ${b}) = ${a}`; break;
+      }
+      
+      /* Actualiza Ecuaciones Verificador */
+      document.getElementById('law-eval-expression').innerHTML = `$${ex}$`;
+      document.getElementById('law-eval-result').innerHTML = l===r 
+        ? `<span class="badge bg-success fs-6"><i class="bi bi-check-circle-fill me-1"></i>${l} = ${r} (Cumplido)</span>`
+        : `<span class="badge bg-danger fs-6">Error</span>`;
+
+      /* Actualiza el Modal Dinámico de Explicación */
+      const info = LAW_DETAILS[t];
+      document.getElementById('lawDetailModalLabel').innerHTML = `<i class="bi ${info.icon} me-2"></i>${info.title}`;
+      const headerClasses = document.getElementById('lawDetailModalHeader').className.split(' ');
+      document.getElementById('lawDetailModalHeader').className = `modal-header text-white bg-${info.color}`;
+      
+      document.getElementById('lawDetailModalBody').innerHTML = `
+        <div class="text-center mb-4 p-4 bg-light rounded-4 border border-${info.color} border-opacity-50">
+          <span class="fs-1 fw-bold text-${info.color} mono">$${info.math}$</span>
+        </div>
+        <div class="d-flex align-items-start gap-3">
+          <div class="fs-1 text-${info.color} opacity-75"><i class="bi bi-lightbulb"></i></div>
+          <p class="fs-6 text-muted mb-0 lh-lg" style="text-align: justify;">${info.desc}</p>
+        </div>
+      `;
+
+      updateMath();
+    }
+
+    /* 3. Parser Lógico y Generador de Diagramas SVG + Tablas + KMap */
+    
+    // Simple Tokenizer & Recursive Descent Parser for Boolean Expressions
+    function parseExpr(str) {
+      str = str.replace(/\s+/g, '').toUpperCase();
+      let pos = 0;
+      function match(c) { if(str[pos] === c) { pos++; return true; } return false; }
+      function parsePrimary() {
+        if(match('(')) { const n = parseOr(); if(match(')')) { /* ok */ } return n; }
+        const c = str[pos];
+        if(/[A-D]/.test(c)) { pos++; return { type: 'VAR', val: c, str: c }; }
+        return null;
+      }
+      function parseNot() {
+        let n = parsePrimary();
+        while(match("'")) { n = { type: 'NOT', child: n, str: `(${n.str})'` }; }
+        return n;
+      }
+      function parseAnd() {
+        let n = parseNot();
+        while(pos < str.length && (str[pos] === '*' || /[A-D\(]/.test(str[pos]))) {
+          if(match('*')) { /* explicit AND */ }
+          const right = parseNot();
+          n = { type: 'AND', left: n, right: right, str: `(${n.str}*${right.str})` };
+        }
+        return n;
+      }
+      function parseOr() {
+        let n = parseAnd();
+        while(match('+')) {
+          const right = parseAnd();
+          n = { type: 'OR', left: n, right: right, str: `(${n.str}+${right.str})` };
+        }
+        return n;
+      }
+      try {
+        const ast = parseOr();
+        if(pos < str.length) throw new Error("Carácter inesperado: " + str[pos]);
+        return ast;
+      } catch(e) { return null; }
+    }
+
+    function evalAST(node, env) {
+      if(node.type === 'VAR') return env[node.val];
+      if(node.type === 'NOT') return evalAST(node.child, env) === 0 ? 1 : 0;
+      if(node.type === 'AND') return (evalAST(node.left, env) && evalAST(node.right, env)) ? 1 : 0;
+      if(node.type === 'OR')  return (evalAST(node.left, env) || evalAST(node.right, env)) ? 1 : 0;
+      return 0;
+    }
+
+    function getSubExpressions(node, set) {
+      if(!node) return;
+      if(node.type !== 'VAR') {
+        if(node.left) getSubExpressions(node.left, set);
+        if(node.right) getSubExpressions(node.right, set);
+        if(node.child) getSubExpressions(node.child, set);
+        set.add(node);
+      }
+    }
+
+    function formatMath(str) {
+      return str.replace(/\*/g, ' \\cdot ').replace(/\+/g, ' + ').replace(/\((.*?)\)'/g, '\\overline{$1}').replace(/([A-D])'/g, '\\overline{$1}');
+    }
+
+    // SVG Drawing logic
+    function drawDiagramSVG(ast) {
+      let svgs = '', links = '';
+      let idCounter = 0;
+      
+      // Calculate depth and set positions
+      function computeLayout(node) {
+        if(!node) return;
+        node.id = 'n' + (idCounter++);
+        if(node.type === 'VAR') { node.depth = 0; }
+        else if(node.type === 'NOT') { computeLayout(node.child); node.depth = node.child.depth + 1; }
+        else { computeLayout(node.left); computeLayout(node.right); node.depth = Math.max(node.left.depth, node.right.depth) + 1; }
+      }
+      computeLayout(ast);
+      
+      const maxDepth = ast ? ast.depth : 0;
+      const X_SPACING = 120, Y_SPACING = 70;
+      let leafY = 0;
+
+      function assignCoords(node, isRoot=false) {
+        if(node.type === 'VAR') {
+          node.x = 40; node.y = leafY * Y_SPACING + 40; leafY++;
+        } else if(node.type === 'NOT') {
+          assignCoords(node.child);
+          node.x = node.child.x + X_SPACING; node.y = node.child.y;
+        } else {
+          assignCoords(node.left); assignCoords(node.right);
+          node.x = Math.max(node.left.x, node.right.x) + X_SPACING;
+          node.y = (node.left.y + node.right.y) / 2;
+        }
+      }
+      assignCoords(ast, true);
+      
+      const W = (maxDepth + 2) * X_SPACING;
+      const H = Math.max(leafY * Y_SPACING + 20, 150);
+
+      function drawNode(node) {
+        if(node.type === 'VAR') {
+          svgs += `<text x="${node.x-20}" y="${node.y+5}" font-size="16" font-family="monospace" font-weight="bold" fill="#0f172a">${node.val}</text>
+                   <circle cx="${node.x}" cy="${node.y}" r="4" fill="#38bdf8"/>`;
+        } else if(node.type === 'NOT') {
+          drawNode(node.child);
+          links += `<path d="M ${node.child.x} ${node.child.y} C ${node.child.x+30} ${node.child.y} ${node.x-40} ${node.y} ${node.x-30} ${node.y}" fill="none" stroke="#64748b" stroke-width="3"/>`;
+          svgs += `<polygon points="${node.x-30},${node.y-15} ${node.x-30},${node.y+15} ${node.x},${node.y}" fill="#fee2e2" stroke="#e03131" stroke-width="2"/>
+                   <circle cx="${node.x+4}" cy="${node.y}" r="4" fill="#fff" stroke="#e03131" stroke-width="2"/>`;
+          node.outX = node.x+8;
+        } else if(node.type === 'AND') {
+          drawNode(node.left); drawNode(node.right);
+          links += `<path d="M ${node.left.outX || node.left.x} ${node.left.y} C ${node.left.x+40} ${node.left.y} ${node.x-50} ${node.y-10} ${node.x-30} ${node.y-10}" fill="none" stroke="#64748b" stroke-width="3"/>`;
+          links += `<path d="M ${node.right.outX || node.right.x} ${node.right.y} C ${node.right.x+40} ${node.right.y} ${node.x-50} ${node.y+10} ${node.x-30} ${node.y+10}" fill="none" stroke="#64748b" stroke-width="3"/>`;
+          svgs += `<path d="M ${node.x-30} ${node.y-20} L ${node.x-15} ${node.y-20} A 20 20 0 0 1 ${node.x-15} ${node.y+20} L ${node.x-30} ${node.y+20} Z" fill="#dbeafe" stroke="#1c7ed6" stroke-width="2"/>`;
+          node.outX = node.x+5;
+        } else if(node.type === 'OR') {
+          drawNode(node.left); drawNode(node.right);
+          links += `<path d="M ${node.left.outX || node.left.x} ${node.left.y} C ${node.left.x+40} ${node.left.y} ${node.x-50} ${node.y-10} ${node.x-30} ${node.y-10}" fill="none" stroke="#64748b" stroke-width="3"/>`;
+          links += `<path d="M ${node.right.outX || node.right.x} ${node.right.y} C ${node.right.x+40} ${node.right.y} ${node.x-50} ${node.y+10} ${node.x-30} ${node.y+10}" fill="none" stroke="#64748b" stroke-width="3"/>`;
+          svgs += `<path d="M ${node.x-35} ${node.y-20} Q ${node.x-15} ${node.y} ${node.x-35} ${node.y+20} Q ${node.x} ${node.y+20} ${node.x+5} ${node.y} Q ${node.x} ${node.y-20} ${node.x-35} ${node.y-20} Z" fill="#ffedd5" stroke="#f08c00" stroke-width="2"/>`;
+          node.outX = node.x+5;
+        }
+      }
+      
+      if(ast) {
+        drawNode(ast);
+        links += `<path d="M ${ast.outX || ast.x} ${ast.y} L ${ast.outX+40} ${ast.y}" fill="none" stroke="#22c55e" stroke-width="4"/>`;
+        svgs += `<text x="${ast.outX+45}" y="${ast.y+5}" font-size="16" font-family="monospace" font-weight="bold" fill="#22c55e">F</text>`;
+      }
+      
+      return `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}">${links}${svgs}</svg>`;
+    }
+
+    // Builder Update Function
+    function processBuilder() {
+      const expr = document.getElementById('builder-expr').value;
+      const numVars = parseInt(document.getElementById('builder-vars').value);
+      const vars = ['A', 'B', 'C', 'D'].slice(0, numVars);
+      
+      const ast = parseExpr(expr);
+      if(!ast) {
+        Swal.fire({icon: 'error', title: 'Error de Sintaxis', text: 'Revisa la expresión lógica. Usa A,B,C,D y operadores *, +, \''});
+        return;
+      }
+
+      // 1. Render Diagram
+      document.getElementById('builder-svg-container').innerHTML = drawDiagramSVG(ast);
+
+      // 2. Truth Table
+      const subExprSet = new Set();
+      getSubExpressions(ast, subExprSet);
+      const subExprs = Array.from(subExprSet).sort((a,b) => a.str.length - b.str.length);
+      
+      // Limpiar popovers anteriores para evitar superposiciones/fugas de memoria
+      document.querySelectorAll('#tt-head [data-bs-toggle="popover"]').forEach(el => {
+        const p = bootstrap.Popover.getInstance(el);
+        if (p) p.dispose();
+      });
+
+      let thead = '<tr>';
+      vars.forEach(v => thead += `<th class="align-middle">$${v}$</th>`);
+      
+      subExprs.forEach(node => {
+        let popTitle = "", popContent = "", icon = "", colorClass = "";
+        
+        // Determinar qué popover colocar según el nodo actual
+        if (node.type === 'NOT') {
+          popTitle = "Inversor (NOT)"; popContent = "Se invierte el valor lógico de la expresión. Si era 1 pasa a 0 y viceversa."; icon = "bi-slash-circle"; colorClass = "text-danger";
+        } else if (node.type === 'AND') {
+          popTitle = "Producto Lógico (AND)"; popContent = "La salida es 1 únicamente si <strong>todas</strong> las variables que se multiplican valen 1."; icon = "bi-intersect"; colorClass = "text-primary";
+        } else if (node.type === 'OR') {
+          popTitle = "Suma Lógica (OR)"; popContent = "La salida es 1 si <strong>al menos una</strong> de las variables sumadas vale 1."; icon = "bi-union"; colorClass = "text-warning";
+        }
+        
+        let popAttr = `data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-html="true" data-bs-placement="top" data-bs-title="<i class='bi ${icon} ${colorClass} me-1'></i> ${popTitle}" data-bs-content="${popContent}"`;
+        
+        thead += `<th class="align-middle"><span class="d-inline-block" tabindex="0" ${popAttr} style="border-bottom: 2px dotted #cbd5e1; cursor: help; padding-bottom: 2px;">$${formatMath(node.str)}$</span></th>`;
+      });
+      thead += `<th class="bg-primary text-white align-middle fs-5">$F$</th></tr>`;
+      
+      let tbody = '';
+      const rows = Math.pow(2, numVars);
+      const ttResults = []; // store for K-map
+
+      for(let i=0; i<rows; i++) {
+        const env = {};
+        vars.forEach((v, idx) => env[v] = (i >> (numVars - 1 - idx)) & 1);
+        
+        const fVal = evalAST(ast, env);
+        ttResults.push(fVal);
+
+        let tr = `<tr>`;
+        vars.forEach(v => tr += `<td>${env[v]}</td>`);
+        subExprs.forEach(node => tr += `<td>${evalAST(node, env)}</td>`);
+        tr += `<td class="fw-bold text-${fVal?'success':'danger'}">${fVal}</td></tr>`;
+        tbody += tr;
+      }
+      
+      document.getElementById('tt-head').innerHTML = thead;
+      document.getElementById('tt-body').innerHTML = tbody;
+
+      // Inicializar Popovers en la cabecera de la tabla de verdad
+      document.querySelectorAll('#tt-head [data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el));
+
+      // 3. Karnaugh Map
+      renderKMap(numVars, ttResults);
+
+      updateMath();
+    }
+
+    /* ===================== MOTOR DE MAPAS DE KARNAUGH ===================== */
+    const KM_COLORS = ['#e03131', '#1c7ed6', '#2f9e44', '#f08c00', '#7048e8', '#0c8599', '#d6336c', '#5c940d'];
+    const KM_VARS = ['A', 'B', 'C', 'D'];
+    // Función fija del ejemplo guiado: F(A,B,C,D) = Σm(0,1,2,5,8,9,10) → incluye Pac-Man, solapamiento y grupos de 2 y 4
+    const KM_EXAMPLE = { n: 4, ones: [0, 1, 2, 5, 8, 9, 10] };
+
+    function kmMath(el) {
+      if (window.renderMathInElement && el) renderMathInElement(el, { delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}], throwOnError: false });
+    }
+    const kmBin = (v, b) => v.toString(2).padStart(b, '0');
+
+    // Disposición del mapa: filas/columnas en código Gray
+    function kmLay(n) {
+      const rb = n === 4 ? 2 : 1, cb = n - rb;
+      const gray = b => b === 2 ? [0, 1, 3, 2] : [0, 1];
+      const ro = gray(rb), co = gray(cb);
+      return { rb, cb, ro, co, R: ro.length, C: co.length,
+        idx: (r, c) => (ro[r] << cb) | co[c],
+        pos: m => ({ r: ro.indexOf(m >> cb), c: co.indexOf(m & ((1 << cb) - 1)) }) };
+    }
+
+    const kmLit = (v, val) => val === 1 ? KM_VARS[v] : `\\overline{${KM_VARS[v]}}`;
+    const kmTerm = pat => pat.map((p, v) => p === 2 ? '' : kmLit(v, p)).join('') || '1';
+
+    // Implicantes primos + cobertura mínima (esenciales primero, el resto por búsqueda exhaustiva)
+    function kmSolve(n, tt) {
+      const N = 1 << n, ones = [];
+      tt.forEach((v, i) => { if (v === 1) ones.push(i); });
+      if (!ones.length) return { ones, groups: [], constant: 0 };
+      if (ones.length === N) return { ones, groups: [], constant: 1 };
+
+      const cubes = [];
+      for (let k = 0; k < Math.pow(3, n); k++) {
+        let t = k; const pat = [];
+        for (let v = 0; v < n; v++) { pat.push(t % 3); t = Math.floor(t / 3); }   // 0, 1, 2 (= variable eliminada)
+        const cov = [];
+        for (let m = 0; m < N; m++) if (pat.every((p, v) => p === 2 || p === ((m >> (n - 1 - v)) & 1))) cov.push(m);
+        if (cov.every(m => tt[m] === 1)) cubes.push({ pat, cov });
+      }
+      const primes = cubes.filter(a => !cubes.some(b => b !== a && b.cov.length > a.cov.length && a.cov.every(m => b.cov.includes(m))));
+      const chosen = new Set(), covered = new Set();
+      ones.forEach(m => { const c = primes.filter(p => p.cov.includes(m)); if (c.length === 1) chosen.add(c[0]); });
+      chosen.forEach(p => p.cov.forEach(m => covered.add(m)));
+      const rest = ones.filter(m => !covered.has(m));
+      if (rest.length) {
+        const cand = primes.filter(p => !chosen.has(p) && p.cov.some(m => rest.includes(m)));
+        let best = null;
+        for (let mask = 1; mask < (1 << cand.length); mask++) {
+          const pick = cand.filter((_, i) => mask & (1 << i));
+          if (!rest.every(m => pick.some(p => p.cov.includes(m)))) continue;
+          const lit = pick.reduce((s, p) => s + p.pat.filter(x => x !== 2).length, 0);
+          if (!best || pick.length < best.len || (pick.length === best.len && lit < best.lit)) best = { pick, len: pick.length, lit };
+        }
+        best.pick.forEach(p => chosen.add(p));
+      }
+      const groups = [...chosen].sort((a, b) => b.cov.length - a.cov.length || a.cov[0] - b.cov[0]).map((g, i) => ({
+        ...g, color: KM_COLORS[i % KM_COLORS.length], size: g.cov.length, p: Math.log2(g.cov.length),
+        term: kmTerm(g.pat), lits: g.pat.filter(x => x !== 2).length,
+        unique: g.cov.filter(m => primes.filter(p => p.cov.includes(m)).length === 1)
+      }));
+      return { ones, groups, constant: null };
+    }
+
+    // Segmentos cíclicos (para grupos que cruzan el borde del mapa → efecto Pac-Man)
+    function kmSegs(list, size) {
+      list = [...new Set(list)].sort((a, b) => a - b);
+      if (list.length === size) return [[0, size - 1]];
+      const start = list.find(p => !list.includes((p - 1 + size) % size)), end = start + list.length - 1;
+      return end < size ? [[start, end]] : [[start, size - 1], [0, end - size]];
+    }
+
+    function kmTableHTML(n, tt, o = {}) {
+      const L = kmLay(n), pre = o.prefix || 'km';
+      const rv = KM_VARS.slice(0, L.rb).join(''), cv = KM_VARS.slice(L.rb, n).join('');
+      let h = `<table class="kmap-table shadow-sm bg-white"><tr><th class="km-corner">${rv}<br>╲ ${cv}</th>`;
+      L.co.forEach((v, c) => h += `<th data-c="${c}">${kmBin(v, L.cb)}</th>`);
+      h += '</tr>';
+      let k = 0;
+      L.ro.forEach((rr, r) => {
+        h += `<tr><th data-r="${r}">${kmBin(rr, L.rb)}</th>`;
+        L.co.forEach((cc, c) => {
+          const m = L.idx(r, c), v = tt[m];
+          const drop = o.drop && v === 1 ? ` km-cell-drop" style="--d:${(k++) * 130}ms` : '';
+          h += `<td id="${pre}-c-${m}" data-r="${r}" data-c="${c}" data-m="${m}" title="m${m} = ${kmBin(m, n)}" class="kmap-cell-${v}${drop}"><span class="km-m">m${m}</span><span class="km-v">${v}</span></td>`;
+        });
+        h += '</tr>';
+      });
+      return h + '</table>';
+    }
+
+    // Dibuja los recuadros de agrupación sobre la tabla
+    // opts: show (índices a dibujar), active, dim[], still, stagger
+    function kmDraw(wrap, n, groups, opts = {}) {
+      if (!wrap) return;
+      const ov = wrap.querySelector('.km-ov'), table = wrap.querySelector('table'), wr = wrap.getBoundingClientRect(), L = kmLay(n);
+      ov.innerHTML = '';
+      groups.forEach((g, gi) => {
+        if (opts.show && !opts.show.includes(gi)) return;
+        const rows = kmSegs(g.cov.map(m => L.pos(m).r), L.R), cols = kmSegs(g.cov.map(m => L.pos(m).c), L.C);
+        const pad = 3 + (gi % 3) * 3;
+        rows.forEach(rs => cols.forEach(cs => {
+          const a = table.querySelector(`td[data-r="${rs[0]}"][data-c="${cs[0]}"]`).getBoundingClientRect();
+          const b = table.querySelector(`td[data-r="${rs[1]}"][data-c="${cs[1]}"]`).getBoundingClientRect();
+          const d = document.createElement('div');
+          d.className = 'km-box' + (opts.active === gi ? ' active' : '') + (opts.dim && opts.dim.includes(gi) ? ' dim' : '') + (opts.still && opts.active !== gi ? ' still' : '') + (rows.length > 1 || cols.length > 1 ? ' split' : '');
+          d.dataset.g = gi;
+          d.style.cssText = `left:${a.left - wr.left + pad}px;top:${a.top - wr.top + pad}px;width:${b.right - a.left - pad * 2}px;height:${b.bottom - a.top - pad * 2}px;--c:${g.color};--dl:${opts.stagger ? gi * 350 : 0}ms`;
+          ov.appendChild(d);
+        }));
+      });
+    }
+
+    /* ---------- Sección 5: mapa de la función del constructor ---------- */
+    function renderKMap(n, tt) {
+      window.KM_CURRENT = { n, tt };
+      const cont = document.getElementById('kmap-container');
+      const listEl = document.getElementById('kmap-groups-list');
+      const exprEl = document.getElementById('kmap-simplified-expr');
+      const sol = kmSolve(n, tt);
+      window.KM_MAIN = { n, sol };
+      cont.innerHTML = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'km' })}<div class="km-ov"></div></div>`;
+
+      if (sol.constant !== undefined && sol.constant !== null) {
+        exprEl.innerHTML = `F = ${sol.constant}`;
+        listEl.innerHTML = `<li class="list-group-item text-muted">${sol.constant ? 'Todas las celdas valen 1: no hay variables que conservar.' : 'No hay 1s para agrupar.'}</li>`;
+        return;
+      }
+      listEl.innerHTML = sol.groups.map((g, i) => `
+        <li class="list-group-item d-flex align-items-center gap-2" data-kg data-g="${i}" data-target="#kmap-container" style="cursor:pointer">
+          <span class="d-inline-block rounded-circle flex-shrink-0" style="width:14px;height:14px;background:${g.color}"></span>
+          <span class="fw-bold">$${g.term}$</span>
+          <span class="text-muted ms-auto text-end">${g.cov.map(m => 'm' + m).join(' + ')} <span class="badge bg-light text-dark border">${g.size} celdas</span></span>
+        </li>`).join('');
+      exprEl.innerHTML = '$F = ' + sol.groups.map(g => `\\textcolor{${g.color}}{${g.term}}`).join(' + ') + '$';
+      requestAnimationFrame(() => kmDraw(cont.querySelector('.km-wrap'), n, sol.groups, {}));
+    }
+
+    // Resaltar un grupo al pasar el cursor por su chip/fila
+    document.addEventListener('mouseover', e => {
+      document.querySelectorAll('.km-box.pulse').forEach(b => b.classList.remove('pulse'));
+      const el = e.target.closest('[data-kg]');
+      if (el) document.querySelectorAll(`${el.dataset.target} .km-box[data-g="${el.dataset.g}"]`).forEach(b => b.classList.add('pulse'));
+    });
+
+    /* ---------- Laboratorio paso a paso (modal) ---------- */
+    const WZ = { src: 'example', n: 4, tt: [], sol: null, frames: [], i: 0, timer: null, scroll: false };
+
+    function wzLoad(src) {
+      let n, tt;
+      if (src === 'mine' && window.KM_CURRENT) { n = window.KM_CURRENT.n; tt = window.KM_CURRENT.tt; WZ.src = 'mine'; }
+      else { n = KM_EXAMPLE.n; tt = Array.from({ length: 1 << n }, (_, m) => KM_EXAMPLE.ones.includes(m) ? 1 : 0); WZ.src = 'example'; }
+      WZ.n = n; WZ.tt = tt; WZ.sol = kmSolve(n, tt);
+      const G = WZ.sol.groups.length;
+      WZ.frames = [{ t: 'table' }, { t: 'map' }, ...WZ.sol.groups.map((_, g) => ({ t: 'group', g })), ...WZ.sol.groups.map((_, g) => ({ t: 'extract', g })), { t: 'final' }];
+      WZ.i = 0; wzStop(); wzRender();
+    }
+    function wzStop() { clearInterval(WZ.timer); WZ.timer = null; const b = document.getElementById('wz-play'); if (b) b.innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; }
+    function wzGo(i) { WZ.i = Math.max(0, Math.min(WZ.frames.length - 1, i)); wzRender(); }
+    function wzPlay() {
+      if (WZ.timer) return wzStop();
+      if (WZ.i >= WZ.frames.length - 1) WZ.i = -1;
+      document.getElementById('wz-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar';
+      const tick = () => { if (WZ.i >= WZ.frames.length - 1) return wzStop(); wzGo(WZ.i + 1); };
+      tick(); WZ.timer = setInterval(tick, 3600);
+    }
+
+    const wzChip = (m, color) => `<span class="wz-chip" style="--c:${color || '#6f42c1'}">m${m}</span>`;
+
+    function wzRender() {
+      if (!WZ.sol) return;
+      const { n, tt, sol, frames, i } = WZ, f = frames[i], G = sol.groups.length, N = 1 << n;
+      const stage = document.getElementById('wz-stage'), panel = document.getElementById('wz-panel');
+      document.getElementById('wz-src-example').classList.toggle('active', WZ.src === 'example');
+      document.getElementById('wz-src-mine').classList.toggle('active', WZ.src === 'mine');
+      document.getElementById('wz-prev').disabled = i === 0;
+      document.getElementById('wz-next').disabled = i === frames.length - 1;
+      document.getElementById('wz-count').textContent = `Paso ${i + 1} de ${frames.length}`;
+
+      // Barra de progreso (puntos clicables)
+      const icon = fr => ({ table: '<i class="bi bi-table"></i>', map: '<i class="bi bi-grid-3x3"></i>', final: '<i class="bi bi-flag-fill"></i>' }[fr.t] || (fr.t === 'group' ? fr.g + 1 : '<i class="bi bi-scissors"></i>'));
+      document.getElementById('wz-progress').innerHTML = frames.map((fr, k) => {
+        const col = fr.g !== undefined ? sol.groups[fr.g].color : '#6f42c1';
+        const ttl = { table: 'Minitérminos', map: 'Colocar 1s', group: 'Agrupar ' + (fr.g + 1), extract: 'Extraer grupo ' + ((fr.g || 0) + 1), final: 'Función final' }[fr.t];
+        return `<button class="wz-dot ${k === i ? 'on' : k < i ? 'done' : ''}" style="--c:${col}" data-jump="${k}" title="${ttl}">${icon(fr)}</button>`;
+      }).join('');
+
+      const ones = sol.ones, g = f.g !== undefined ? sol.groups[f.g] : null;
+      let st = '', body = '', title = '', color = '#6f42c1', after = null;
+
+      if (f.t === 'table') {
+        title = '1 · De la tabla de verdad a los minitérminos';
+        let k = 0;
+        st = `<table class="table table-sm wz-tt"><thead><tr><th>m</th>${KM_VARS.slice(0, n).map(v => `<th>${v}</th>`).join('')}<th>F</th></tr></thead><tbody>` +
+          tt.map((v, m) => `<tr class="${v ? 'wz-on' : ''}" style="--d:${v ? (k++) * 140 : 0}ms"><td>${m}</td>${kmBin(m, n).split('').map(b => `<td>${b}</td>`).join('')}<td>${v}</td></tr>`).join('') + '</tbody></table>';
+        body = `<p>Cada fila de la tabla es un <strong>minitérmino</strong> <code>m<sub>i</sub></code>: el número <em>i</em> es el valor decimal de las entradas. Solo nos interesan las filas donde <strong>F = 1</strong>.</p>
+          <div class="wz-eq text-center">$F(${KM_VARS.slice(0, n).join(',')}) = \\sum m(${ones.join(', ')})$</div>
+          <div class="small">${ones.map(m => `${wzChip(m)} <span class="mono">${kmBin(m, n)}</span> → $${kmTerm(kmBin(m, n).split('').map(Number))}$`).join('<br>')}</div>
+          <p class="small text-muted mt-3 mb-0"><i class="bi bi-calculator me-1"></i>Sin simplificar: ${ones.length} términos × ${n} variables = <strong>${ones.length * n} literales</strong>. ¡Veamos cuánto podemos reducir!</p>`;
+      } else if (f.t === 'map') {
+        title = '2 · Colocar los 1s en el mapa';
+        st = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'wz', drop: true })}<div class="km-ov"></div></div><div class="wz-hover mt-3 small" id="wz-hover">Pasa el cursor sobre una celda…</div>`;
+        body = `<p>Cada celda del mapa es un minitérmino: <code>m<sub>i</sub></code> ya trae su lugar. Los encabezados usan <strong>código Gray</strong> (<code>00, 01, 11, 10</code>) para que <em>entre vecinas solo cambie un bit</em>.</p>
+          <p>Los <strong class="text-success">${ones.length} unos</strong> caen en: ${ones.map(m => wzChip(m)).join('')}</p>
+          <div class="alert alert-light border small mb-0"><i class="bi bi-hand-index-thumb me-1 text-primary"></i><strong>Interactivo:</strong> pasa el cursor sobre cualquier celda para ver su minitérmino y el valor de cada variable.</div>`;
+      } else if (f.t === 'group') {
+        color = g.color; title = `3 · Agrupar — Grupo ${f.g + 1} de ${G}`;
+        st = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'wz' })}<div class="km-ov"></div></div><div class="wz-hover mt-3 small" id="wz-hover"></div>`;
+        const L = kmLay(n), wrapsMap = kmSegs(g.cov.map(m => L.pos(m).r), L.R).length > 1 || kmSegs(g.cov.map(m => L.pos(m).c), L.C).length > 1;
+        const shared = sol.groups.slice(0, f.g).map((h, hi) => ({ hi, h, s: g.cov.filter(m => h.cov.includes(m)) })).filter(x => x.s.length);
+        body = `<p>Encerramos un bloque rectangular de <strong style="color:${color}">${g.size} celdas</strong> con 1 (2<sup>${g.p}</sup>), sin diagonales.</p>
+          <div class="wz-eq"><div class="small text-muted mb-1">Este grupo equivale a la suma de minitérminos:</div>
+            <div>${g.cov.map(m => wzChip(m, color)).join(' + ')}</div>
+            <div class="small mt-2">$= \\sum m(${g.cov.join(', ')})$</div></div>
+          <ul class="small mb-0 lh-lg">
+            ${wrapsMap ? `<li>🟡 <strong>Efecto Pac-Man:</strong> cruza el borde del mapa (recuadro punteado): los extremos son vecinos porque solo cambia un bit.</li>` : ''}
+            ${shared.map(x => `<li>🔗 Comparte ${x.s.map(m => 'm' + m).join(', ')} con el <span class="wz-chip" style="--c:${x.h.color}">grupo ${x.hi + 1}</span>. Solapar está permitido si agranda el grupo.</li>`).join('')}
+            ${g.unique.length ? `<li>⭐ <strong>Esencial:</strong> ${g.unique.map(m => 'm' + m).join(', ')} solo ${g.unique.length > 1 ? 'pueden' : 'puede'} cubrirse con este grupo.</li>` : ''}
+            <li>Al agrupar 2<sup>${g.p}</sup> celdas se podrán eliminar <strong>${g.p}</strong> variable${g.p === 1 ? '' : 's'}.</li>
+          </ul>`;
+      } else if (f.t === 'extract') {
+        color = g.color; title = `4 · Extraer el término — Grupo ${f.g + 1} de ${G}`;
+        st = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'wz' })}<div class="km-ov"></div></div>`;
+        const cols = KM_VARS.slice(0, n).map((_, v) => new Set(g.cov.map(m => (m >> (n - 1 - v)) & 1)));
+        body = `<p>Revisamos qué bits <strong>cambian</strong> y cuáles <strong>permanecen constantes</strong> dentro del grupo:</p>
+          <table class="wz-bin"><thead><tr><th>m</th>${KM_VARS.slice(0, n).map(v => `<th>${v}</th>`).join('')}</tr></thead><tbody>
+            ${g.cov.map(m => `<tr><td>${wzChip(m, color)}</td>${kmBin(m, n).split('').map((b, v) => `<td class="${cols[v].size === 1 ? 'wz-keep' : 'wz-drop'}">${b}</td>`).join('')}</tr>`).join('')}
+            <tr><th>Queda</th>${cols.map((s, v) => s.size === 1 ? `<td class="wz-keep">$${kmLit(v, [...s][0])}$</td>` : `<td class="wz-drop">—</td>`).join('')}</tr>
+          </tbody></table>
+          <p class="small mb-2"><span class="wz-keep px-2 rounded">verde</span> = constante, se conserva (1 → normal, 0 → negada) · <span class="wz-drop px-2 rounded">rojo</span> = cambia, <strong>se elimina</strong>.</p>
+          <div class="wz-eq text-center fs-3 mb-0" style="color:${color}">$${g.term}$</div>`;
+      } else {
+        title = '5 · Función final simplificada'; color = '#212529';
+        st = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'wz' })}<div class="km-ov"></div></div><div class="wz-hover mt-3 small" id="wz-hover">Pasa el cursor sobre un término para ver su grupo.</div>`;
+        if (sol.constant !== null) {
+          body = `<div class="wz-final">$F = ${sol.constant}$</div><p class="small mt-3 mb-0">${sol.constant ? 'Todas las celdas valen 1: la función es siempre verdadera, no queda ninguna variable.' : 'No hay ningún 1: la función es siempre falsa.'}</p>`;
+        } else {
+          const lits = sol.groups.reduce((s, x) => s + x.lits, 0);
+          body = `<div class="wz-final">$F = ${sol.groups.map(x => `\\textcolor{${x.color}}{${x.term}}`).join(' + ')}$</div>
+            <p class="small text-muted text-center mt-2 mb-3">Pasa el cursor o haz clic en un término ↓</p>
+            <div class="text-center mb-3">${sol.groups.map((x, k) => `<span class="wz-chip" style="--c:${x.color}" data-kg data-g="${k}" data-target="#wz-stage" data-jump="${2 + G + k}">$${x.term}$</span>`).join('')}</div>
+            <table class="table table-sm small align-middle"><thead><tr><th>Grupo</th><th>Minitérminos</th><th class="text-center">Término</th></tr></thead><tbody>
+              ${sol.groups.map((x, k) => `<tr><td><span class="wz-chip" style="--c:${x.color}">${k + 1}</span></td><td>${x.cov.map(m => 'm' + m).join(' + ')}</td><td class="text-center">$${x.term}$</td></tr>`).join('')}
+            </tbody></table>
+            <div class="alert alert-success small py-2"><i class="bi bi-graph-down-arrow me-1"></i>De <strong>${ones.length} minitérminos (${ones.length * n} literales)</strong> a <strong>${G} términos (${lits} literales)</strong>.</div>
+            <button class="btn btn-sm btn-dark rounded-pill px-3" data-act="verify"><i class="bi bi-patch-check me-1"></i>Verificar con la tabla de verdad</button>
+            <span id="wz-verify" class="ms-2 small fw-bold"></span>`;
+        }
+      }
+
+      stage.innerHTML = st;
+      panel.style.setProperty('--c', color);
+      panel.style.animation = 'none'; void panel.offsetWidth; panel.style.animation = '';
+      panel.innerHTML = `<h5 class="fw-bold mb-3" style="color:${color}">${title}</h5>${body}`;
+
+      // Capa de agrupaciones y resaltados según el paso
+      const wrap = stage.querySelector('.km-wrap');
+      if (wrap) requestAnimationFrame(() => {
+        if (f.t === 'group') kmDraw(wrap, n, sol.groups, { show: sol.groups.map((_, k) => k).filter(k => k <= f.g), active: f.g, dim: sol.groups.map((_, k) => k).filter(k => k < f.g) });
+        else if (f.t === 'extract') kmDraw(wrap, n, sol.groups, { show: [f.g], active: f.g });
+        else if (f.t === 'final') kmDraw(wrap, n, sol.groups, { stagger: true });
+        if (g) {
+          const L = kmLay(n), mix = a => `color-mix(in srgb, ${g.color} ${a}%, #fff)`;
+          g.cov.forEach(m => { const td = document.getElementById(`wz-c-${m}`); if (td) td.style.background = mix(28); });
+          if (f.t === 'extract') {
+            new Set(g.cov.map(m => L.pos(m).r)).forEach(r => { const th = stage.querySelector(`th[data-r="${r}"]`); th.style.background = mix(35); th.style.color = g.color; });
+            new Set(g.cov.map(m => L.pos(m).c)).forEach(c => { const th = stage.querySelector(`th[data-c="${c}"]`); th.style.background = mix(35); th.style.color = g.color; });
+          }
+        }
+      });
+      kmMath(stage); kmMath(panel);
+    }
+
+    function wzVerify() {
+      const { n, tt, sol } = WZ, N = 1 << n; let ok = 0;
+      for (let m = 0; m < N; m++) {
+        const f = sol.groups.some(g => g.pat.every((p, v) => p === 2 || p === ((m >> (n - 1 - v)) & 1))) ? 1 : 0;
+        if (f === tt[m]) ok++;
+      }
+      const el = document.getElementById('wz-verify');
+      el.className = 'ms-2 small fw-bold ' + (ok === N ? 'text-success' : 'text-danger');
+      el.textContent = ok === N ? `✔ ${ok}/${N} combinaciones coinciden` : `✘ ${ok}/${N} coinciden`;
+    }
+
+    (function wzInit() {
+      const root = document.getElementById('wz-root');
+      root.addEventListener('click', e => {
+        const j = e.target.closest('[data-jump]'); if (j) { wzStop(); return wzGo(+j.dataset.jump); }
+        if (e.target.closest('[data-act="verify"]')) wzVerify();
+      });
+      root.addEventListener('mouseover', e => {
+        const td = e.target.closest('#wz-stage td[data-m]'), info = document.getElementById('wz-hover');
+        if (!td || !info) return;
+        const m = +td.dataset.m, bits = kmBin(m, WZ.n).split('');
+        info.innerHTML = `m${m} → ${KM_VARS.slice(0, WZ.n).map((v, k) => `${v}=${bits[k]}`).join(' ')} → <strong>F=${WZ.tt[m]}</strong>`;
+      });
+      document.getElementById('wz-prev').onclick = () => { wzStop(); wzGo(WZ.i - 1); };
+      document.getElementById('wz-next').onclick = () => { wzStop(); wzGo(WZ.i + 1); };
+      document.getElementById('wz-restart').onclick = () => { wzStop(); wzGo(0); };
+      document.getElementById('wz-play').onclick = wzPlay;
+      document.getElementById('wz-src-example').onclick = () => wzLoad('example');
+      document.getElementById('wz-src-mine').onclick = () => wzLoad('mine');
+      const modal = document.getElementById('kmapTutorialModal');
+      modal.addEventListener('shown.bs.modal', () => { wzRender(); if (WZ.scroll) { WZ.scroll = false; root.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+      modal.addEventListener('hidden.bs.modal', wzStop);
+      document.getElementById('kmap-solve-mine').onclick = () => { WZ.scroll = true; wzLoad('mine'); bootstrap.Modal.getOrCreateInstance(modal).show(); };
+      document.getElementById('wz-goto').onclick = () => root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
+        if (window.KM_MAIN) kmDraw(document.querySelector('#kmap-container .km-wrap'), KM_MAIN.n, KM_MAIN.sol.groups, {});
+        if (modal.classList.contains('show')) wzRender();
+      }, 150); });
+      wzLoad('example');
+    })();
+
+    /* 6. Circuitos Internos TTL */
+    const TTL_ICS = [
+      {
+        id: '7408', name: '7408 (AND)', desc: 'Cuádruple compuerta AND de 2 entradas.',
+        svg: `<svg viewBox="0 0 400 200" class="w-100 bg-white border rounded"><text x="10" y="20" font-family="monospace">Circuito Equivalente AND (Interruptores en serie)</text><path d="M 50 100 L 100 100 L 120 70 M 150 100 L 200 100 L 220 70 M 250 100 L 300 100" stroke="#000" stroke-width="2" fill="none"/><text x="100" y="60">Sw A</text><text x="200" y="60">Sw B</text><circle cx="310" cy="100" r="10" fill="#f08c00"/><text x="330" y="105">LED Salida</text></svg>`
+      },
+      {
+        id: '7432', name: '7432 (OR)', desc: 'Cuádruple compuerta OR de 2 entradas.',
+        svg: `<svg viewBox="0 0 400 200" class="w-100 bg-white border rounded"><text x="10" y="20" font-family="monospace">Circuito Equivalente OR (Interruptores en paralelo)</text><path d="M 50 100 L 100 100 L 100 50 L 150 50 L 170 20 M 100 100 L 100 150 L 150 150 L 170 120 M 200 50 L 250 50 L 250 100 M 200 150 L 250 150 L 250 100 L 300 100" stroke="#000" stroke-width="2" fill="none"/><circle cx="310" cy="100" r="10" fill="#f08c00"/></svg>`
+      },
+      {
+        id: '7404', name: '7404 (NOT)', desc: 'Séxtuple Inversor. Circuito a transistor NPN.',
+        svg: `<svg viewBox="0 0 400 200" class="w-100 bg-white border rounded"><text x="10" y="20" font-family="monospace">Esquema Transistor NPN (Inversor)</text><path d="M 200 50 L 200 100 L 180 120 L 150 120 M 200 100 L 220 120 L 220 150 M 220 150 L 200 150 L 240 150" stroke="#000" stroke-width="2" fill="none"/><rect x="195" y="60" width="10" height="30" fill="#fff" stroke="#000"/><text x="215" y="80">R</text><circle cx="200" cy="110" r="20" fill="none" stroke="#000"/><text x="120" y="125">In (A)</text><text x="250" y="125">GND</text><path d="M 200 50 L 300 50 L 300 100" stroke="#000" stroke-width="2" fill="none"/><circle cx="300" cy="110" r="10" fill="#f08c00"/><text x="320" y="115">Out (Y)</text><text x="200" y="30">VCC (+5V)</text></svg>`
+      },
+      {
+        id: '7400', name: '7400 (NAND)', desc: 'Cuádruple compuerta NAND.',
+        svg: `<p class="text-muted text-center p-4 border rounded bg-white">El TTL 7400 utiliza en su etapa de entrada transistores multi-emisor acoplados a una etapa inversora tipo Totem-Pole de alta velocidad.</p>`
+      }
+    ];
+
+    function renderICCards() {
+      document.getElementById('ic-buttons-container').innerHTML = TTL_ICS.map(ic => `
+        <div class="col-md-6 col-lg-3">
+          <button class="ic-btn w-100" data-ic="${ic.id}">
+            <div class="fs-1 text-primary"><i class="bi bi-chip"></i></div>
+            <div><div class="fw-bold">${ic.name}</div><small class="text-muted">${ic.desc.substring(0, 30)}...</small></div>
+          </button>
+        </div>`).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCatalog();
+      evalLaw();
+      processBuilder();
+      renderICCards();
+
+      // Events Catalog
+      document.addEventListener('click', e => {
+        const b = e.target.closest('[data-g]');
+        if(b) {
+          gateStates[b.dataset.g][b.dataset.i] = gateStates[b.dataset.g][b.dataset.i] ? 0 : 1;
+          renderCatalog();
+        }
+        const icBtn = e.target.closest('[data-ic]');
+        if(icBtn) {
+          const ic = TTL_ICS.find(x => x.id === icBtn.dataset.ic);
+          document.getElementById('ic-modal-title').innerHTML = `<i class="bi bi-chip me-2"></i>IC ${ic.name}`;
+          document.getElementById('ic-modal-body').innerHTML = `<p>${ic.desc}</p>${ic.svg}`;
+          bootstrap.Modal.getOrCreateInstance(document.getElementById('icModal')).show();
+        }
+      });
+
+      // Events Law
+      document.getElementById('law-select').addEventListener('change', evalLaw);
+      ['a','b'].forEach(v => document.getElementById(`law-var-${v}`).addEventListener('click', function() {
+        lState[v] = lState[v]?0:1; this.textContent = lState[v]; this.className = `btn bit-btn ${lState[v]?'on':'off'}`; evalLaw();
+      }));
+
+      // Events Builder
+      document.getElementById('builder-render-btn').addEventListener('click', processBuilder);
+      document.getElementById('builder-expr').addEventListener('keydown', e => { if(e.key==='Enter') processBuilder(); });
+      document.getElementById('builder-vars').addEventListener('change', processBuilder);
+    });
+  </script>
+</body>
+</html>
