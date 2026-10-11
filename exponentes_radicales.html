@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matemáticas - Leyes de Exponentes y Radicales</title>
+
+  <!-- CDNs: Bootstrap 5 (+JS), Bootstrap Icons, KaTeX, canvas-confetti -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root { --c1:#e03131; --c2:#1c7ed6; --c3:#2f9e44; --c4:#f08c00; --c5:#7048e8; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18); }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; } .mono { font-family:'Courier New',monospace; font-weight:700; }
+
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; } .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3rem 1rem 2.6rem; border-bottom:5px solid #7048e8; box-shadow:var(--shadow-md); }
+    .hero-header .sym { position:absolute; font-weight:800; color:#fff; opacity:.1; animation:floaty 7s ease-in-out infinite; pointer-events:none; user-select:none; }
+    @keyframes floaty { 50% { transform:translateY(-14px) rotate(4deg); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.1rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.8rem 1rem; font-size:.92rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .manual-bar { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:.8rem 1rem; margin-bottom:1rem; border:1px solid #f1f5f9; }
+    .nav-pills .nav-link { color:#334155; font-weight:700; border-radius:12px; background:#fff; box-shadow:var(--shadow-sm); margin:0 .35rem .5rem 0; }
+    .nav-pills .nav-link.active { background:#0f172a; color:#fff; box-shadow:var(--shadow-md); }
+    .tab-pane { animation:pop .35s both; } @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .intro-box { background:linear-gradient(135deg,#f1ecff,#fff); border:1px solid #ddd2ff; border-left:5px solid #7048e8; border-radius:14px; padding:.8rem 1rem; margin-bottom:1rem; }
+
+    /* Leyes (acordeón) */
+    .law-item { border:0; border-radius:16px !important; box-shadow:var(--shadow-sm); margin-bottom:.7rem; overflow:hidden; }
+    .law-item .accordion-button { gap:.7rem; flex-wrap:wrap; font-weight:700; }
+    .law-item .accordion-button:not(.collapsed) { background:#efeafc; color:#5130b9; }
+    .law-num { width:30px; height:30px; border-radius:50%; background:#7048e8; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; flex:0 0 auto; }
+    .law-f { margin-left:auto; font-weight:400; color:#1e293b; }
+    .pinput { width:78px; font-family:'Courier New',monospace; font-weight:700; text-align:center; }
+    .tk { display:inline-block; width:18px; height:18px; border-radius:50%; margin:2px; animation:tkIn .35s both; box-shadow:inset 0 -2px 0 rgba(0,0,0,.18); }
+    .tk.cut { opacity:.25; text-decoration:line-through; position:relative; } .tk.cut::after { content:"×"; position:absolute; inset:0; text-align:center; line-height:18px; font-size:.8rem; color:#000; }
+    @keyframes tkIn { from { transform:scale(0); } to { transform:scale(1); } }
+    .tkgrp { display:inline-flex; flex-wrap:wrap; border:2px dashed var(--c,#94a3b8); border-radius:10px; padding:2px 4px; margin:3px; background:color-mix(in srgb,var(--c,#94a3b8) 8%,#fff); }
+    .tkgrp.out { border-style:solid; background:color-mix(in srgb,var(--c) 18%,#fff); }
+    .dot { width:30px; height:30px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-size:.8rem; font-weight:800; color:#64748b; transition:all .2s; }
+    .dot.on { background:var(--c,#7048e8); border-color:var(--c,#7048e8); color:#fff; transform:scale(1.15); } .dot.done { border-color:var(--c,#7048e8); color:var(--c,#7048e8); }
+    .stepcard { background:#f8fafc; border-radius:14px; padding:.8rem 1rem; border-left:5px solid #7048e8; animation:pop .3s both; }
+    .ln { background:#fff; border-left:4px solid #94a3b8; border-radius:0 10px 10px 0; padding:.05rem .6rem; margin:.35rem 0; overflow-x:auto; opacity:0; animation:lnIn .5s forwards; }
+    .ln .katex-display { margin:.35em 0; } @keyframes lnIn { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }
+    .badge-ok { display:inline-block; padding:.12rem .6rem; border-radius:999px; color:#fff; font-weight:800; font-size:.8rem; background:var(--ok); } .badge-ok.no { background:var(--bad); } .badge-ok.na { background:#868e96; }
+
+    /* Jerarquía */
+    .lvl { display:inline-flex; align-items:center; gap:.35rem; border-radius:999px; padding:.15rem .7rem; font-size:.8rem; font-weight:800; color:#fff; margin:.1rem; }
+    .l1{background:#7048e8} .l2{background:#e03131} .l3{background:#1c7ed6} .l4{background:#2f9e44}
+    .solver-in { font-family:'Courier New',monospace; font-weight:700; font-size:1.15rem; }
+    .key { min-width:42px; font-weight:800; }
+    .big-expr { overflow-x:auto; text-align:center; font-size:1.25rem; padding:.4rem 0; }
+    .res-box { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:14px; padding:.7rem 1rem; text-align:center; font-size:1.3rem; }
+
+    /* Ejercicios */
+    .ex-card { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid #f1f5f9; border-top:5px solid var(--c,#94a3b8); padding:1rem; height:100%; transition:transform .2s, box-shadow .2s; }
+    .ex-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); } .ex-card.done { background:#f0fbf3; }
+    .lv1{--c:#2f9e44} .lv2{--c:#f08c00} .lv3{--c:#e03131}
+    .lvb { display:inline-block; padding:.1rem .6rem; border-radius:999px; background:var(--c); color:#fff; font-size:.75rem; font-weight:800; }
+    .chip-law { cursor:pointer; display:inline-block; border:1.5px solid #7048e8; color:#5130b9; background:#f1ecff; border-radius:999px; padding:0 .55rem; font-size:.75rem; font-weight:700; margin:.1rem; }
+    .chip-law:hover { background:#7048e8; color:#fff; }
+
+    /* Manual (modal) */
+    .mm-dot { width:32px; height:32px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-weight:800; font-size:.8rem; color:#64748b; transition:all .2s; }
+    .mm-dot.done { border-color:var(--c); color:var(--c); background:color-mix(in srgb,var(--c) 14%,#fff); } .mm-dot.on { background:var(--c); border-color:var(--c); color:#fff; transform:scale(1.15); box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent); }
+    .mm-visual { background:#fff; border-radius:16px; border:1px solid #e2e8f0; box-shadow:var(--shadow-sm); padding:1rem; position:sticky; top:0; min-height:240px; }
+    .mm-kicker { font-weight:800; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+    .mm-say { line-height:1.6; margin-bottom:.5rem; }
+    footer small { font-size:.85rem; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-header .sym,.tk,.ln,.tab-pane,.stepcard{animation:none;opacity:1} }
+  </style>
+</head>
+<body>
+  <div id="app-header"></div>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <span class="sym" style="left:6%;top:18%;font-size:4.5rem">x<sup>n</sup></span><span class="sym" style="left:20%;bottom:6%;font-size:3.5rem;animation-delay:1s">√</span>
+      <span class="sym" style="right:8%;top:14%;font-size:4rem;animation-delay:2s">a<sup>-1</sup></span><span class="sym" style="right:22%;bottom:8%;font-size:3.5rem;animation-delay:3s">∛</span>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-superscript text-info me-2"></i>Exponentes y Radicales</h1>
+        <p class="lead mb-1">Formulario completo de leyes · resolutor paso a paso · +30 ejercicios graduados · manuales</p>
+        <p class="mb-0 text-light opacity-75">Cambia los números de cada ejemplo y mira cómo se resuelve, con jerarquía de operaciones</p>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+      <div class="manual-bar"><div class="d-flex flex-wrap align-items-center gap-2"><strong class="me-1"><i class="bi bi-journal-bookmark-fill text-primary me-1"></i>Manuales paso a paso:</strong>
+        <button class="btn btn-sm btn-outline-primary rounded-pill" data-man="exp">Exponentes desde cero</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="rad">Radicales desde cero</button>
+        <button class="btn btn-sm btn-outline-primary rounded-pill" data-man="jer">Jerarquía de operaciones</button><button class="btn btn-sm btn-outline-success rounded-pill" data-man="n1">Ejemplos nivel básico</button>
+        <button class="btn btn-sm btn-outline-warning rounded-pill" data-man="n2">Ejemplos nivel intermedio</button><button class="btn btn-sm btn-outline-danger rounded-pill" data-man="n3">Ejemplos nivel avanzado</button></div>
+        <div class="small text-muted mt-1">De lo más básico a lo avanzado: cada ejemplo se resuelve con las leyes y, después, operación por operación.</div></div>
+
+      <ul class="nav nav-pills" id="tabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t-e"><i class="bi bi-superscript me-1"></i>1. Leyes de exponentes</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-r"><i class="bi bi-calculator me-1"></i>2. Propiedades de radicales</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-s"><i class="bi bi-magic me-1"></i>3. Resolutor</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-x"><i class="bi bi-list-check me-1"></i>4. Ejercicios</button></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="t-e">
+          <div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i>Formulario de las leyes de exponentes (10 leyes)</div><div class="small">Abre una ley, <b>cambia los números</b> y avanza con «Siguiente» para ver la explicación, la sustitución y la comprobación.</div></div>
+          <div class="accordion" id="acc-e"></div>
+        </div>
+        <div class="tab-pane fade" id="t-r">
+          <div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i>Formulario de las propiedades de los radicales (14 propiedades)</div><div class="small">Incluye definición, producto, cociente, raíz de raíz, índices, extracción de factores, suma, multiplicación y división, racionalización y raíces de negativos.</div></div>
+          <div class="accordion" id="acc-r"></div>
+        </div>
+        <div class="tab-pane fade" id="t-s">
+          <div class="panel mb-3">
+            <h5 class="fw-bold"><i class="bi bi-magic me-1 text-primary"></i>Resolutor de ejercicios propuestos</h5>
+            <p class="small text-muted mb-2">Escribe tu expresión. Usa <code>^</code> para potencias, <code>sqrt(x)</code> o <code>√</code> para raíz cuadrada, <code>root(n,x)</code> para raíz de índice n, <code>/</code> para fracciones y paréntesis. Exponentes fraccionarios: <code>8^(2/3)</code>.</p>
+            <input id="s-in" class="form-control solver-in" spellcheck="false" autocomplete="off" value="(2^3 + 3^2 * 2 - 4) / sqrt(16)" aria-label="Expresión">
+            <div class="d-flex flex-wrap gap-1 mt-2" id="keys"></div>
+            <div class="d-flex flex-wrap gap-1 mt-2 align-items-center"><span class="small fw-semibold me-1">Ejemplos:</span><span id="s-ex"></span></div>
+          </div>
+          <div class="panel mb-3"><div class="fw-bold small mb-1">Jerarquía de operaciones (se resuelve en este orden):</div>
+            <span class="lvl l1">① Paréntesis, fracciones y radicales (por dentro)</span><span class="lvl l2">② Potencias y raíces</span><span class="lvl l3">③ Multiplicación y división</span><span class="lvl l4">④ Suma y resta</span></div>
+          <div id="s-out"></div>
+        </div>
+        <div class="tab-pane fade" id="t-x">
+          <div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i>37 ejercicios graduados</div><div class="small">De una sola ley hasta fracciones de <b>2×2</b> y <b>3×3</b> factores con potencias, radicales y jerarquía de operaciones. Escribe tu respuesta (por ejemplo <code>3/4</code> o <code>8</code>), compárala y revisa el paso a paso.</div></div>
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-3"><div class="btn-group" id="x-filter"><button class="btn btn-outline-dark active" data-lv="0">Todos</button><button class="btn btn-outline-success" data-lv="1">Básico</button><button class="btn btn-outline-warning" data-lv="2">Intermedio</button><button class="btn btn-outline-danger" data-lv="3">Avanzado</button></div><span class="ms-auto pill"><b id="x-score">0</b> / <span id="x-total"></span> resueltos</span></div>
+          <div class="row g-3" id="x-grid"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"><div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="modal-header text-white" id="mm-head"><h5 class="modal-title fw-bold" id="mm-title"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+    <div class="modal-body bg-light"><div class="d-flex flex-wrap gap-2 justify-content-center mb-3" id="mm-dots"></div>
+      <div class="row g-3"><div class="col-lg-5"><div class="mm-visual" id="mm-vis"></div></div><div class="col-lg-7"><div id="mm-step"></div></div></div></div>
+    <div class="modal-footer bg-light justify-content-between"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" id="mm-prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" id="mm-next">Siguiente<i class="bi bi-chevron-right ms-1"></i></button></div><span class="small text-muted" id="mm-count"></span><button class="btn btn-warning rounded-pill fw-semibold" id="mm-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button></div>
+  </div></div></div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Matemáticas • Exponentes y Radicales</small></footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" }, { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" }, { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+        <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div></div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header'), page = location.pathname.split('/').pop() || 'exponentes_radicales.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try { const res = await fetch('index.html', { cache: 'no-store' }); if (!res.ok) throw 0;
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html'); renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page); } catch (e) {}
+    })();
+  </script>
+
+  <!-- ===================== MOTOR MATEMÁTICO ===================== -->
+  <script>
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const math = el => window.renderMathInElement && renderMathInElement(el || document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError: false });
+
+    /*ENGINE*/
+    /* ---- Fracciones exactas con BigInt ---- */
+    const gcdB = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) { const t = a % b; a = b; b = t; } return a; };
+    const Fr = (n, d = 1n) => { n = BigInt(n); d = BigInt(d); if (d === 0n) throw new Error('div0'); if (d < 0n) { n = -n; d = -d; } const g = gcdB(n, d) || 1n; return { n: n / g, d: d / g }; };
+    const fadd = (a, b) => Fr(a.n * b.d + b.n * a.d, a.d * b.d), fsub = (a, b) => Fr(a.n * b.d - b.n * a.d, a.d * b.d), fmul = (a, b) => Fr(a.n * b.n, a.d * b.d), fdiv = (a, b) => Fr(a.n * b.d, a.d * b.n);
+    const fpow = (f, e) => { if (e < 0) { if (f.n === 0n) throw new Error('div0'); return fpow(Fr(f.d, f.n), -e); }
+      if (e * (String(f.n).length + String(f.d).length) > 4000) throw new Error('big'); return Fr(f.n ** BigInt(e), f.d ** BigInt(e)); };
+    const ONE = Fr(1);
+    function iroot(N, n) { if (N < 2n) return N; let lo = 1n, hi = 1n << (BigInt(N.toString(2).length) / BigInt(n) + 1n); while (lo < hi) { const m = (lo + hi + 1n) / 2n; if (m ** BigInt(n) <= N) lo = m; else hi = m - 1n; } return lo; }
+    function factorN(N) { if (N < 1n || N > 10n ** 15n) return null; let x = Number(N); const mp = new Map(); for (let p = 2; p * p <= x; p += p === 2 ? 1 : 2) while (x % p === 0) { mp.set(p, (mp.get(p) || 0) + 1); x /= p; } if (x > 1) mp.set(x, (mp.get(x) || 0) + 1); return mp; }
+    function simpRoot(N, n) { N = BigInt(N); if (N === 0n || N === 1n) return { k: N, r: N }; const f = factorN(N); if (!f) return null; let k = 1n, r = 1n; for (const [p, e] of f) { k *= BigInt(p) ** BigInt(Math.floor(e / n)); r *= BigInt(p) ** BigInt(e % n); } return { k, r }; }
+    const factorTex = N => { const f = factorN(BigInt(N)); return f ? [...f].map(([p, e]) => e === 1 ? `${p}` : `${p}^{${e}}`).join('\\cdot ') : String(N); };
+
+    /* ---- Valores: fr (racional), rd (k·ⁿ√r), dec (aproximado) ---- */
+    const VF = f => ({ t: 'fr', f }), VI = n => VF(Fr(n)), VD = x => { if (!isFinite(x)) throw new Error('nonreal'); return { t: 'dec', x }; };
+    const toNum = v => v.t === 'fr' ? Number(v.f.n) / Number(v.f.d) : v.t === 'rd' ? toNum(VF(v.k)) * Math.pow(Number(v.r), 1 / v.n) : v.x;
+    function rdMake(k, n, r) { if (k.n === 0n || r === 0n) return VI(0); if (r === 1n) return VF(k); const s = simpRoot(r, n); if (s) { k = fmul(k, Fr(s.k)); r = s.r; } return r === 1n ? VF(k) : { t: 'rd', k, n, r }; }
+    const vNeg = v => v.t === 'fr' ? VF(Fr(-v.f.n, v.f.d)) : v.t === 'rd' ? { ...v, k: Fr(-v.k.n, v.k.d) } : VD(-v.x);
+    function vAdd(a, b) { if (a.t === 'fr' && b.t === 'fr') return VF(fadd(a.f, b.f)); if (a.t === 'rd' && b.t === 'rd' && a.n === b.n && a.r === b.r) return rdMake(fadd(a.k, b.k), a.n, a.r); return VD(toNum(a) + toNum(b)); }
+    const vSub = (a, b) => vAdd(a, vNeg(b));
+    function vMul(a, b) { if (a.t === 'fr' && b.t === 'fr') return VF(fmul(a.f, b.f)); if (a.t === 'fr' && b.t === 'rd') return rdMake(fmul(a.f, b.k), b.n, b.r); if (a.t === 'rd' && b.t === 'fr') return vMul(b, a);
+      if (a.t === 'rd' && b.t === 'rd' && a.n === b.n) return rdMake(fmul(a.k, b.k), a.n, a.r * b.r); return VD(toNum(a) * toNum(b)); }
+    function vDiv(a, b) { if (toNum(b) === 0) throw new Error('div0'); if (a.t === 'fr' && b.t === 'fr') return VF(fdiv(a.f, b.f)); if (a.t === 'rd' && b.t === 'fr') return rdMake(fdiv(a.k, b.f), a.n, a.r);
+      if (a.t === 'fr' && b.t === 'rd') return rdMake(fdiv(a.f, fmul(b.k, Fr(b.r))), b.n, b.r ** BigInt(b.n - 1));
+      if (a.t === 'rd' && b.t === 'rd' && a.n === b.n) return rdMake(fdiv(a.k, fmul(b.k, Fr(b.r))), a.n, a.r * b.r ** BigInt(b.n - 1)); return VD(toNum(a) / toNum(b)); }
+    function vRoot(v, n) {
+      if (v.t === 'dec') { const x = Math.pow(Math.abs(v.x), 1 / n); if (v.x < 0) { if (n % 2 === 0) throw new Error('nonreal'); return VD(-x); } return VD(x); }
+      if (v.t === 'fr') { const f = v.f; if (f.n < 0n) { if (n % 2 === 0) throw new Error('nonreal'); return vNeg(vRoot(VF(Fr(-f.n, f.d)), n)); }
+        const a = simpRoot(f.n, n), b = simpRoot(f.d, n); if (!a || !b) return VD(Math.pow(toNum(v), 1 / n)); return vDiv(rdMake(Fr(a.k), n, a.r), rdMake(Fr(b.k), n, b.r)); }
+      if (v.k.n === 1n && v.k.d === 1n) { const s = simpRoot(v.r, v.n * n); if (s) return rdMake(Fr(s.k), v.n * n, s.r); }
+      const x = toNum(v); if (x < 0 && n % 2 === 0) throw new Error('nonreal'); return VD(Math.pow(Math.abs(x), 1 / n) * (x < 0 ? -1 : 1));
+    }
+    function vPow(a, e) {
+      if (e.t === 'fr' && e.f.d === 1n) { const m = Number(e.f.n); if (Math.abs(m) > 400) throw new Error('big');
+        if (a.t === 'fr') return VF(fpow(a.f, m)); if (a.t === 'rd') return m >= 0 ? rdMake(fpow(a.k, m), a.n, a.r ** BigInt(m)) : vDiv(VI(1), vPow(a, VI(-m))); return VD(Math.pow(a.x, m)); }
+      if (e.t === 'fr' && (a.t === 'fr' || a.t === 'rd')) return vPow(vRoot(a, Number(e.f.d)), VF(Fr(e.f.n)));
+      return VD(Math.pow(toNum(a), toNum(e)));
+    }
+    const ftex = f => f.d === 1n ? String(f.n) : `${f.n < 0n ? '-' : ''}\\frac{${f.n < 0n ? -f.n : f.n}}{${f.d}}`;
+    const rt = (n, x) => n === 2 ? `\\sqrt{${x}}` : `\\sqrt[${n}]{${x}}`;
+    function vtex(v) { if (v.t === 'fr') return ftex(v.f); if (v.t === 'dec') return String(+v.x.toFixed(4));
+      const rad = rt(v.n, v.r), k = v.k, neg = k.n < 0n, kn = neg ? -k.n : k.n; if (k.d === 1n) return `${neg ? '-' : ''}${kn === 1n ? '' : kn}${rad}`; return `${neg ? '-' : ''}\\frac{${kn === 1n ? '' : kn}${rad}}{${k.d}}`; }
+    const isNegV = v => toNum(v) < 0;
+
+    /* ---- Analizador sintáctico ---- */
+    const NUM = v => ({ k: 'num', v });
+    function parse(src) {
+      const s = src.replace(/×|·/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/√/g, 'sqrt').replace(/∛/g, 'cbrt'), tk = []; const re = /\s*(?:(\d+(?:\.\d+)?)|([a-z]+)|(.))/gy; let m;
+      while (re.lastIndex < s.length && (m = re.exec(s))) { if (m[1] !== undefined) tk.push({ t: 'n', v: m[1] }); else if (m[2]) tk.push({ t: 'i', v: m[2] }); else if (m[3] && m[3].trim()) tk.push({ t: 'o', v: m[3] }); }
+      let i = 0; const pk = () => tk[i], eat = v => { if (!pk() || pk().v !== v) throw new Error('parse'); i++; };
+      const dec2fr = str => { const [a, b = ''] = str.split('.'); return Fr(BigInt(a + b), 10n ** BigInt(b.length)); };
+      const unwrap = n => n.k === 'par' ? n.x : n;
+      function atom() { const t = pk(); if (!t) throw new Error('parse');
+        if (t.t === 'n') { i++; return NUM(VF(dec2fr(t.v))); }
+        if (t.t === 'o' && t.v === '(') { i++; const x = expr(); eat(')'); return x.k === 'num' && !isNegV(x.v) ? x : { k: 'par', x }; }
+        if (t.t === 'i') { i++; const f = t.v; if (!['sqrt', 'cbrt', 'root'].includes(f)) throw new Error('parse');
+          if (pk() && pk().v === '(') { i++; const a = expr(); if (f === 'root') { eat(','); const b = expr(); eat(')'); return { k: 'root', n: a, x: b }; } eat(')'); return { k: 'root', n: NUM(VI(f === 'sqrt' ? 2 : 3)), x: a }; }
+          return { k: 'root', n: NUM(VI(f === 'sqrt' ? 2 : 3)), x: atom() }; }
+        throw new Error('parse'); }
+      function power() { const b = atom(); if (pk() && pk().v === '^') { i++; return { k: 'pow', b, e: unary() }; } return b; }
+      function unary() { if (pk() && pk().v === '-') { i++; const x = unary(); return x.k === 'num' ? NUM(vNeg(x.v)) : { k: 'neg', x }; } if (pk() && pk().v === '+') { i++; return unary(); } return power(); }
+      function term() { let l = unary();
+        for (;;) { const t = pk(); if (!t) break;
+          if (t.v === '*') { i++; l = { k: 'bin', op: '*', l, r: unary() }; } else if (t.v === '/') { i++; l = { k: 'bin', op: '/', l: unwrap(l), r: unwrap(unary()), frac: true }; }
+          else if (t.t === 'n' || t.t === 'i' || t.v === '(') l = { k: 'bin', op: '*', l, r: unary() }; else break; } return l; }
+      function expr() { let l = term(); while (pk() && (pk().v === '+' || pk().v === '-')) { const op = pk().v; i++; l = { k: 'bin', op, l, r: term() }; } return l; }
+      const r = expr(); if (i < tk.length) throw new Error('parse'); return r;
+    }
+
+    /* ---- Impresión LaTeX del árbol ---- */
+    const isVal = n => n.k === 'num' || (n.k === 'par' && n.x.k === 'num'), valOf = n => n.k === 'num' ? n.v : n.x.v;
+    const needPar = v => v.t !== 'fr' || v.f.d !== 1n || v.f.n < 0n;
+    function tex(n, ctx = 'top', hl) {
+      let s;
+      switch (n.k) {
+        case 'num': s = vtex(n.v); if (isNegV(n.v) && ['addR', 'mulL', 'mulR', 'powB', 'neg'].includes(ctx)) s = `\\left(${s}\\right)`; break;
+        case 'par': s = n.x.k === 'num' ? (isNegV(n.x.v) ? `\\left(${vtex(n.x.v)}\\right)` : vtex(n.x.v)) : `\\left(${tex(n.x, 'top', hl)}\\right)`; break;
+        case 'neg': s = `-${tex(n.x, 'neg', hl)}`; break;
+        case 'bin': { const c = n.op === '/' ? ['div', 'div'] : n.op === '*' ? ['mulL', 'mulR'] : ['addL', 'addR'], L = tex(n.l, c[0], hl), R = tex(n.r, c[1], hl);
+          s = n.op === '/' ? `\\frac{${L}}{${R}}` : n.op === '*' ? `${L}\\cdot ${R}` : `${L} ${n.op} ${R}`; break; }
+        case 'pow': { let b = isVal(n.b) ? vtex(valOf(n.b)) : tex(n.b, 'powB', hl); if (isVal(n.b) && needPar(valOf(n.b))) b = `\\left(${b}\\right)`; const e = n.e.k === 'par' && !isVal(n.e) ? tex(n.e.x, 'powE', hl) : tex(n.e, 'powE', hl); s = `${b}^{${e}}`; break; }
+        case 'root': { const x = n.x.k === 'par' && !isVal(n.x) ? tex(n.x.x, 'root', hl) : tex(n.x, 'root', hl); const idx = isVal(n.n) ? Number(valOf(n.n).f.n) : null; s = idx === 2 ? `\\sqrt{${x}}` : `\\sqrt[${tex(n.n, 'top', hl)}]{${x}}`; break; }
+      }
+      return hl && hl.has(n) ? `\\textcolor{#2f9e44}{${s}}` : s;
+    }
+
+    /* ---- Reducción paso a paso por jerarquía de operaciones ---- */
+    function collect(n, depth, out) {
+      if (n.k === 'num') return;
+      if (n.k === 'par') return collect(n.x, depth + 1, out);
+      if (n.k === 'neg') { if (isVal(n.x)) out.push({ n, depth, cls: 3 }); else collect(n.x, depth, out); return; }
+      if (n.k === 'bin') { if (isVal(n.l) && isVal(n.r)) out.push({ n, depth, cls: n.op === '*' || n.op === '/' ? 2 : 1 }); else { const d = n.frac ? depth + 1 : depth; collect(n.l, d, out); collect(n.r, d, out); } return; }
+      if (n.k === 'pow') { if (isVal(n.b) && isVal(n.e)) out.push({ n, depth, cls: 3 }); else { collect(n.b, depth, out); collect(n.e, depth + 1, out); } return; }
+      if (n.k === 'root') { if (isVal(n.n) && isVal(n.x)) out.push({ n, depth, cls: 3 }); else { collect(n.n, depth + 1, out); collect(n.x, depth + 1, out); } }
+    }
+    function compute(n) {
+      if (n.k === 'neg') return vNeg(valOf(n.x));
+      if (n.k === 'bin') { const a = valOf(n.l), b = valOf(n.r); return n.op === '+' ? vAdd(a, b) : n.op === '-' ? vSub(a, b) : n.op === '*' ? vMul(a, b) : vDiv(a, b); }
+      if (n.k === 'pow') return vPow(valOf(n.b), valOf(n.e));
+      const ix = valOf(n.n); if (ix.t !== 'fr' || ix.f.d !== 1n || ix.f.n < 2n) throw new Error('index'); return vRoot(valOf(n.x), Number(ix.f.n));
+    }
+    function rebuild(n, map) {
+      if (map.has(n)) return map.get(n);
+      switch (n.k) { case 'num': return n; case 'par': return { ...n, x: rebuild(n.x, map) }; case 'neg': return { ...n, x: rebuild(n.x, map) };
+        case 'bin': return { ...n, l: rebuild(n.l, map), r: rebuild(n.r, map) }; case 'pow': return { ...n, b: rebuild(n.b, map), e: rebuild(n.e, map) }; case 'root': return { ...n, n: rebuild(n.n, map), x: rebuild(n.x, map) }; }
+    }
+    const RULE = n => n.k === 'pow' ? 'Potencia' : n.k === 'root' ? 'Raíz' : n.k === 'neg' ? 'Signo' : { '+': 'Suma', '-': 'Resta', '*': 'Multiplicación', '/': 'División' }[n.op];
+    function solveSteps(src) {
+      let ast; try { ast = parse(src); } catch (e) { return { error: 'No pude leer la expresión. Revisa paréntesis, operadores y funciones (sqrt, root).' }; }
+      const steps = [{ tex: tex(ast), cap: 'Expresión original', cls: 0 }];
+      try {
+        for (let it = 0; it < 80 && !isVal(ast); it++) {
+          const c = []; collect(ast, 0, c); if (!c.length) break;
+          const best = c.reduce((a, b) => b.depth > a.depth || (b.depth === a.depth && b.cls > a.cls) ? b : a), sel = c.filter(x => x.depth === best.depth && x.cls === best.cls), map = new Map(), news = new Set(), notes = [];
+          for (const x of sel) { const v = compute(x.n), nn = NUM(v); map.set(x.n, nn); news.add(nn);
+            let extra = ''; if (x.n.k === 'pow') { const e = valOf(x.n.e); if (e.t === 'fr' && e.f.d !== 1n) extra = ' (exponente fraccionario → raíz)'; else if (e.t === 'fr' && e.f.n < 0n) extra = ' (exponente negativo → recíproco)'; }
+            if (x.n.k === 'root' && v.t === 'rd') extra = ' (se extraen los factores perfectos)'; if (x.n.k === 'bin' && x.n.op === '/' && v.t === 'rd') extra = ' (se racionaliza)';
+            notes.push(`$${tex(x.n)}=${vtex(v)}$${extra}`); }
+          ast = rebuild(ast, map); const lv = best.cls === 3 ? 2 : best.cls === 2 ? 3 : 4;
+          steps.push({ tex: tex(ast, 'top', news), cap: `${RULE(sel[0].n)}${sel.length > 1 ? 's' : ''}${best.depth ? ' (dentro de paréntesis/fracción/radical)' : ''}: ${notes.join('; ')}`, cls: best.depth ? 1 : lv, lv });
+        }
+        const v = valOf(isVal(ast) ? ast : NUM(VI(0))); return { steps, result: v, ast };
+      } catch (e) { return { steps, error: e.message === 'div0' ? 'División entre cero: la expresión es indefinida.' : e.message === 'nonreal' ? 'Raíz par de un número negativo: no es un número real.' : e.message === 'big' ? 'El resultado es demasiado grande para mostrarlo.' : 'No pude resolver esta expresión.' }; }
+    }
+    /*ENDENGINE*/
+  </script>
+
+  <!-- ===================== LEYES (FORMULARIO INTERACTIVO) ===================== -->
+  <script>
+    const FI = n => Fr(BigInt(n)), pw = (a, e) => fpow(FI(a), e), X = ftex, gcdN = (a, b) => b ? gcdN(b, a % b) : a, lcmN = (a, b) => a / gcdN(a, b) * b;
+    const COLS = ['#1c7ed6', '#2f9e44', '#e03131', '#f08c00', '#7048e8'];
+    const tok = (n, c, cut = 0) => Array.from({ length: Math.min(n, 30) }, (_, i) => `<span class="tk${i < cut ? ' cut' : ''}" style="background:${c};animation-delay:${i * 30}ms"></span>`).join('');
+    const pr = (k, label, min, max, val) => ({ k, label, min, max, val });
+    const rootLines = (N, n) => { const f = factorN(BigInt(N)), res = vtex(vRoot(VI(N), n)); if (!f || N < 2) return [T`${rt(n, N)}=${res}`];
+      const L = [T`${N}=${factorTex(N)}`]; for (const [p, e] of f) if (e >= n) L.push(T`${p}^{${e}}=(${p}^{${Math.floor(e / n)}})^{${n}}\cdot ${p}^{${e % n}}`); L.push(T`${rt(n, N)}=${res}`); return L; };
+    const same = (a, b) => Math.abs(toNum(a) - toNum(b)) <= 1e-9 * (1 + Math.abs(toNum(a)));
+    const S = (say, ...lines) => ({ say, lines });
+
+    const LAWS = [
+      { id: 'e1', g: 'e', title: 'Producto de potencias de igual base', f: T`a^m\cdot a^n=a^{m+n}`, say: 'Si las bases son iguales y se <b>multiplican</b>, se conserva la base y se <b>suman</b> los exponentes.', params: [pr('a', 'base a', 2, 9, 3), pr('m', 'm', 1, 6, 3), pr('n', 'n', 1, 6, 4)],
+        build: p => { const { a, m, n } = p, A = pw(a, m), Bn = pw(a, n), R = pw(a, m + n); return { l: VF(fmul(A, Bn)), r: VF(R), vis: `<div class="small fw-bold">${a}<sup>${m}</sup> = ${m} factores</div>${tok(m, COLS[0])}<div class="small fw-bold mt-1">${a}<sup>${n}</sup> = ${n} factores</div>${tok(n, COLS[1])}<div class="small mt-1">Juntos: <b>${m + n}</b> factores = ${a}<sup>${m + n}</sup></div>`,
+          steps: [S('Identifica la <b>misma base</b> multiplicándose.', T`${a}^{${m}}\cdot ${a}^{${n}}`), S('Conserva la base y <b>suma los exponentes</b>.', T`=${a}^{${m}+${n}}`, T`=${a}^{${m + n}}`), S('Calcula la potencia.', T`=${X(R)}`), S('Comprobación expandiendo:', T`${a}^{${m}}\cdot ${a}^{${n}}=${X(A)}\cdot ${X(Bn)}=${X(fmul(A, Bn))}`)] }; } },
+      { id: 'e2', g: 'e', title: 'Cociente de potencias de igual base', f: T`\dfrac{a^m}{a^n}=a^{m-n}`, say: 'Al <b>dividir</b> potencias de la misma base, se <b>restan</b> los exponentes (numerador − denominador).', params: [pr('a', 'base a', 2, 9, 5), pr('m', 'm', 1, 8, 6), pr('n', 'n', 1, 8, 4)],
+        build: p => { const { a, m, n } = p, A = pw(a, m), Bn = pw(a, n), R = pw(a, m - n); return { l: VF(fdiv(A, Bn)), r: VF(R), vis: `<div class="small fw-bold">Numerador (${m})</div>${tok(m, COLS[0], Math.min(m, n))}<div class="small fw-bold">Denominador (${n})</div>${tok(n, COLS[2], Math.min(m, n))}<div class="small mt-1">Se cancelan ${Math.min(m, n)}; quedan ${Math.abs(m - n)}.</div>`,
+          steps: [S('Misma base arriba y abajo.', T`\frac{${a}^{${m}}}{${a}^{${n}}}`), S('<b>Resta</b> exponentes: numerador − denominador.', T`=${a}^{${m}-${n}}`, T`=${a}^{${m - n}}`), S(m < n ? 'El exponente es negativo: se invierte la potencia.' : 'Calcula.', T`=${X(R)}`), S('Comprobación:', T`\frac{${X(A)}}{${X(Bn)}}=${X(fdiv(A, Bn))}`)] }; } },
+      { id: 'e3', g: 'e', title: 'Potencia de una potencia', f: T`(a^m)^n=a^{m\cdot n}`, say: 'Una potencia elevada a otra potencia: se <b>multiplican</b> los exponentes.', params: [pr('a', 'base a', 2, 9, 3), pr('m', 'm', 1, 5, 2), pr('n', 'n', 1, 4, 3)],
+        build: p => { const { a, m, n } = p, A = pw(a, m), R = pw(a, m * n); return { l: VF(fpow(A, n)), r: VF(R), vis: `<div class="small fw-bold">${n} grupos de ${m} factores</div>${Array.from({ length: Math.min(n, 6) }, (_, i) => `<span class="tkgrp" style="--c:${COLS[i % 5]}">${tok(m, COLS[i % 5])}</span>`).join('')}<div class="small mt-1">Total: ${m}·${n} = <b>${m * n}</b> factores</div>`,
+          steps: [S('Potencia dentro de otra potencia.', T`(${a}^{${m}})^{${n}}`), S('<b>Multiplica</b> los exponentes.', T`=${a}^{${m}\cdot ${n}}`, T`=${a}^{${m * n}}`), S('Calcula.', T`=${X(R)}`), S('Comprobación:', T`(${a}^{${m}})^{${n}}=(${X(A)})^{${n}}=${X(fpow(A, n))}`)] }; } },
+      { id: 'e4', g: 'e', title: 'Potencia de un producto', f: T`(a\cdot b)^n=a^n\cdot b^n`, say: 'El exponente de un producto se <b>distribuye</b> a cada factor.', params: [pr('a', 'a', 2, 9, 2), pr('b', 'b', 2, 9, 5), pr('n', 'n', 1, 5, 3)],
+        build: p => { const { a, b, n } = p, A = pw(a, n), Bn = pw(b, n); return { l: VF(fpow(FI(a * b), n)), r: VF(fmul(A, Bn)), steps: [S('Producto elevado a una potencia.', T`(${a}\cdot ${b})^{${n}}`), S('El exponente <b>se reparte</b> a cada factor.', T`=${a}^{${n}}\cdot ${b}^{${n}}`), S('Calcula cada potencia.', T`=${X(A)}\cdot ${X(Bn)}=${X(fmul(A, Bn))}`), S('Comprobación directa:', T`(${a * b})^{${n}}=${X(fpow(FI(a * b), n))}`)] }; } },
+      { id: 'e5', g: 'e', title: 'Potencia de un cociente', f: T`\left(\dfrac{a}{b}\right)^n=\dfrac{a^n}{b^n}`, say: 'El exponente de una fracción se aplica al <b>numerador y al denominador</b>.', params: [pr('a', 'a', 1, 9, 2), pr('b', 'b', 2, 9, 3), pr('n', 'n', 1, 5, 3)],
+        build: p => { const { a, b, n } = p, F0 = Fr(a, b); return { l: VF(fpow(F0, n)), r: VF(fdiv(pw(a, n), pw(b, n))), steps: [S('Fracción elevada a una potencia.', T`\left(\frac{${a}}{${b}}\right)^{${n}}`), S('Se eleva <b>cada término</b>.', T`=\frac{${a}^{${n}}}{${b}^{${n}}}=\frac{${X(pw(a, n))}}{${X(pw(b, n))}}`), S('Simplifica si es posible.', T`=${X(fpow(F0, n))}`)] }; } },
+      { id: 'e6', g: 'e', title: 'Exponente cero', f: T`a^0=1\quad(a\neq0)`, say: 'Todo número distinto de cero elevado a la 0 vale <b>1</b>. Sale de dividir una potencia entre sí misma.', params: [pr('a', 'base a', 1, 9, 7), pr('n', 'n', 1, 6, 3)],
+        build: p => { const { a, n } = p; return { l: VI(1), r: VF(fpow(FI(a), 0)), steps: [S('Parte de una división de potencias iguales.', T`\frac{${a}^{${n}}}{${a}^{${n}}}`), S('Cualquier cosa entre sí misma es 1…', T`\frac{${X(pw(a, n))}}{${X(pw(a, n))}}=1`), S('…y por la ley del cociente es resta de exponentes.', T`${a}^{${n}-${n}}=${a}^{0}`), S('Conclusión:', T`${a}^{0}=1`)] }; } },
+      { id: 'e7', g: 'e', title: 'Exponente uno', f: T`a^1=a`, say: 'Un número elevado a la 1 es él mismo. Cuando no ves exponente, es 1.', params: [pr('a', 'base a', 1, 99, 8)],
+        build: p => { const { a } = p; return { l: VI(a), r: VF(pw(a, 1)), steps: [S('Usa la ley del cociente con un ejemplo.', T`\frac{${a}^{2}}{${a}}=\frac{${a}^{2}}{${a}^{1}}=${a}^{2-1}=${a}^{1}`), S('Simplificando directamente:', T`\frac{${a * a}}{${a}}=${a}`), S('Conclusión:', T`${a}^{1}=${a}`)] }; } },
+      { id: 'e8', g: 'e', title: 'Exponente negativo', f: T`a^{-n}=\dfrac{1}{a^n}`, say: 'Un exponente negativo <b>no</b> hace negativo el número: significa tomar el <b>recíproco</b>.', params: [pr('a', 'base a', 2, 9, 2), pr('n', 'n', 1, 6, 3)],
+        build: p => { const { a, n } = p, R = pw(a, -n); return { l: VF(R), r: VF(fdiv(ONE, pw(a, n))), steps: [S('Exponente negativo.', T`${a}^{-${n}}`), S('Pasa la potencia al <b>denominador</b> con exponente positivo.', T`=\frac{1}{${a}^{${n}}}`), S('Calcula.', T`=\frac{1}{${X(pw(a, n))}}`), S('Por qué funciona:', T`\frac{1}{${a}^{${n}}}=\frac{${a}^{0}}{${a}^{${n}}}=${a}^{0-${n}}=${a}^{-${n}}`)] }; } },
+      { id: 'e9', g: 'e', title: 'Fracción con exponente negativo', f: T`\left(\dfrac{a}{b}\right)^{-n}=\left(\dfrac{b}{a}\right)^{n}`, say: 'Con exponente negativo, se <b>invierte la fracción</b> y el exponente se vuelve positivo.', params: [pr('a', 'a', 1, 9, 2), pr('b', 'b', 1, 9, 3), pr('n', 'n', 1, 5, 2)],
+        build: p => { const { a, b, n } = p, F0 = Fr(a, b); return { l: VF(fpow(F0, -n)), r: VF(fpow(Fr(b, a), n)), steps: [S('Fracción con exponente negativo.', T`\left(\frac{${a}}{${b}}\right)^{-${n}}`), S('<b>Invierte</b> la fracción y cambia el signo del exponente.', T`=\left(\frac{${b}}{${a}}\right)^{${n}}`), S('Eleva numerador y denominador.', T`=\frac{${X(pw(b, n))}}{${X(pw(a, n))}}=${X(fpow(Fr(b, a), n))}`)] }; } },
+      { id: 'e10', g: 'e', title: 'Exponente fraccionario', f: T`a^{m/n}=\sqrt[n]{a^m}=\left(\sqrt[n]{a}\right)^m`, say: 'El <b>denominador</b> del exponente es el índice de la raíz y el <b>numerador</b> es la potencia.', params: [pr('a', 'base a', 1, 200, 8), pr('m', 'm', 1, 5, 2), pr('n', 'n', 2, 5, 3)],
+        build: p => { const { a, m, n } = p, A = VI(a), r1 = vRoot(vPow(A, VI(m)), n), r2 = vPow(vRoot(A, n), VI(m)); return { l: r1, r: r2, steps: [S('Exponente fraccionario.', T`${a}^{${m}/${n}}`), S('Se reescribe como <b>raíz</b>: índice = denominador.', T`=${rt(n, `${a}^{${m}}`)}=${rt(n, X(pw(a, m)))}`), S('Resuelve la raíz (factorizando).', ...rootLines(X(pw(a, m)) === '' ? 1 : Number(pw(a, m).n), n)), S('Camino alternativo: raíz primero, potencia después.', T`=\left(${rt(n, a)}\right)^{${m}}=\left(${vtex(vRoot(A, n))}\right)^{${m}}=${vtex(r2)}`)] }; } },
+      { id: 'r1', g: 'r', title: 'Definición: raíz como exponente', f: T`\sqrt[n]{a}=a^{1/n}`, say: 'Una raíz es una potencia con <b>exponente fraccionario</b> 1/n. La raíz enésima de a es el número que elevado a n da a.', params: [pr('a', 'a', 1, 500, 64), pr('n', 'índice n', 2, 6, 3)],
+        build: p => { const { a, n } = p, v = vRoot(VI(a), n); return { l: v, r: vPow(VI(a), VF(Fr(1, n))), steps: [S('Raíz enésima.', T`${rt(n, a)}`), S('Como potencia:', T`${rt(n, a)}=${a}^{1/${n}}`), S('Factoriza el radicando y extrae.', ...rootLines(a, n)), S(`Verificación: ${vtex(v)} elevado a ${n}`, T`\left(${vtex(v)}\right)^{${n}}=${vtex(vPow(v, VI(n)))}`)] }; } },
+      { id: 'r2', g: 'r', title: 'Raíz de un producto', f: T`\sqrt[n]{a\cdot b}=\sqrt[n]{a}\cdot\sqrt[n]{b}`, say: 'La raíz de un producto es el producto de las raíces (mismo índice).', params: [pr('a', 'a', 1, 200, 4), pr('b', 'b', 1, 200, 9), pr('n', 'n', 2, 4, 2)],
+        build: p => { const { a, b, n } = p, ra = vRoot(VI(a), n), rb = vRoot(VI(b), n); return { l: vRoot(VI(a * b), n), r: vMul(ra, rb), steps: [S('Raíz de un producto.', T`${rt(n, `${a}\\cdot ${b}`)}=${rt(n, a * b)}`), S('Se <b>separa</b> en dos raíces.', T`=${rt(n, a)}\cdot ${rt(n, b)}`), S('Resuelve cada una.', T`=${vtex(ra)}\cdot ${vtex(rb)}=${vtex(vMul(ra, rb))}`), S('Directo:', T`${rt(n, a * b)}=${vtex(vRoot(VI(a * b), n))}`)] }; } },
+      { id: 'r3', g: 'r', title: 'Raíz de un cociente', f: T`\sqrt[n]{\dfrac{a}{b}}=\dfrac{\sqrt[n]{a}}{\sqrt[n]{b}}`, say: 'La raíz de una fracción es la raíz del numerador entre la raíz del denominador (b ≠ 0).', params: [pr('a', 'a', 1, 200, 36), pr('b', 'b', 1, 200, 4), pr('n', 'n', 2, 4, 2)],
+        build: p => { const { a, b, n } = p, ra = vRoot(VI(a), n), rb = vRoot(VI(b), n); return { l: vRoot(VF(Fr(a, b)), n), r: vDiv(ra, rb), steps: [S('Raíz de una fracción.', T`${rt(n, `\\frac{${a}}{${b}}`)}`), S('Raíz del numerador entre raíz del denominador.', T`=\frac{${rt(n, a)}}{${rt(n, b)}}`), S('Resuelve.', T`=\frac{${vtex(ra)}}{${vtex(rb)}}=${vtex(vDiv(ra, rb))}`)] }; } },
+      { id: 'r4', g: 'r', title: 'Raíz de una raíz', f: T`\sqrt[m]{\sqrt[n]{a}}=\sqrt[m\cdot n]{a}`, say: 'Al anidar raíces, los índices se <b>multiplican</b>.', params: [pr('a', 'a', 1, 500, 64), pr('m', 'índice m', 2, 4, 2), pr('n', 'índice n', 2, 4, 3)],
+        build: p => { const { a, m, n } = p, inner = vRoot(VI(a), n); return { l: vRoot(inner, m), r: vRoot(VI(a), m * n), steps: [S('Raíz dentro de raíz.', T`${rt(m, rt(n, a))}`), S('Los índices se <b>multiplican</b>.', T`=${rt(m * n, a)}`), S('Resuelve (factorizando).', ...rootLines(a, m * n)), S('Comprobación por partes:', T`${rt(n, a)}=${vtex(inner)}\;\Rightarrow\;${rt(m, vtex(inner))}=${vtex(vRoot(inner, m))}`)] }; } },
+      { id: 'r5', g: 'r', title: 'Raíz y potencia son operaciones inversas', f: T`\left(\sqrt[n]{a}\right)^n=a\qquad\sqrt[n]{a^n}=\begin{cases}a&n\text{ impar}\\|a|&n\text{ par}\end{cases}`, say: 'Elevar y extraer la raíz del mismo índice se cancelan. Con índice <b>par</b> el resultado es el valor absoluto.', params: [pr('a', 'a', -9, 9, -3), pr('n', 'n', 2, 6, 2)],
+        build: p => { const { a, n } = p, ev = n % 2 === 0, ra = a >= 0 ? vRoot(VI(a), n) : null; return { l: vRoot(VF(fpow(FI(a), n)), n), r: VI(ev ? Math.abs(a) : a), steps: [S('Primero eleva y luego extrae raíz.', T`${rt(n, `(${a})^{${n}}`)}=${rt(n, X(fpow(FI(a), n)))}`), S(ev ? 'Índice <b>par</b>: la raíz siempre es positiva → valor absoluto.' : 'Índice <b>impar</b>: se conserva el signo.', T`=${ev ? `|${a}|=${Math.abs(a)}` : a}`), S('Parte (a)ⁿ con raíz:', a >= 0 ? T`\left(${rt(n, a)}\right)^{${n}}=\left(${vtex(ra)}\right)^{${n}}=${vtex(vPow(ra, VI(n)))}` : 'Con a negativo, la raíz par de a no es real (solo se cumple para a ≥ 0 o índice impar).')] }; } },
+      { id: 'r6', g: 'r', title: 'Raíz de una potencia', f: T`\sqrt[n]{a^m}=\left(\sqrt[n]{a}\right)^m=a^{m/n}`, say: 'Puedes elevar y luego extraer, o extraer y luego elevar: es lo mismo (a ≥ 0 si el índice es par).', params: [pr('a', 'a', 1, 100, 4), pr('m', 'm', 1, 6, 3), pr('n', 'n', 2, 5, 2)],
+        build: p => { const { a, m, n } = p, v1 = vRoot(vPow(VI(a), VI(m)), n), v2 = vPow(vRoot(VI(a), n), VI(m)); return { l: v1, r: v2, steps: [S('Raíz de una potencia.', T`${rt(n, `${a}^{${m}}`)}`), S('Opción 1: eleva y extrae.', T`=${rt(n, X(pw(a, m)))}=${vtex(v1)}`), S('Opción 2: extrae y eleva.', T`=\left(${rt(n, a)}\right)^{${m}}=\left(${vtex(vRoot(VI(a), n))}\right)^{${m}}=${vtex(v2)}`), S('Como exponente fraccionario:', T`=${a}^{${m}/${n}}`)] }; } },
+      { id: 'r7', g: 'r', title: 'Simplificación e igualación de índices', f: T`\sqrt[n\cdot p]{a^{m\cdot p}}=\sqrt[n]{a^{m}}`, say: 'Si el índice y el exponente del radicando tienen un <b>factor común</b>, se pueden dividir ambos entre él (y al revés para amplificar).', params: [pr('a', 'a', 2, 20, 2), pr('n', 'n', 1, 4, 2), pr('m', 'm', 1, 4, 1), pr('p', 'p', 2, 4, 2)],
+        build: p => { const { a, n, m, p: q } = p, N = n * q, M = m * q; return { l: vRoot(VI(Number(pw(a, M).n)), N), r: vRoot(VI(Number(pw(a, m).n)), n), steps: [S('Radical con índice y exponente múltiplos de p.', T`${rt(N, `${a}^{${M}}`)}`), S(`Divide índice y exponente entre ${q}.`, T`=${rt(n, `${a}^{${m}}`)}`), S('Calcula.', T`=${rt(n, X(pw(a, m)))}=${vtex(vRoot(VI(Number(pw(a, m).n)), n))}`)] }; } },
+      { id: 'r8', g: 'r', title: 'Extraer factores del radical (simplificar)', f: T`\sqrt[n]{a^{q\cdot n+r}}=a^{q}\sqrt[n]{a^{r}}`, say: 'Descompón el radicando en primos. Cada grupo de <b>n</b> factores iguales <b>sale</b> del radical como un solo factor.', params: [pr('N', 'radicando N', 2, 5000, 72), pr('n', 'índice n', 2, 5, 2)],
+        build: p => { const { N, n } = p, v = vRoot(VI(N), n), f = factorN(BigInt(N)); let vis = ''; if (f) { let i = 0; for (const [pm, e] of f) { const q = Math.floor(e / n), r = e % n; vis += `<div class="small fw-bold">${pm}<sup>${e}</sup></div>` + Array.from({ length: q }, () => `<span class="tkgrp out" style="--c:${COLS[1]}">${tok(n, COLS[1])}</span>`).join('') + (r ? `<span class="tkgrp" style="--c:${COLS[2]}">${tok(r, COLS[2])}</span>` : '') + '<br>'; i++; } vis += '<div class="small mt-1"><span style="color:#2f9e44">■ sale</span> · <span style="color:#e03131">■ se queda</span></div>'; }
+          return { l: v, r: v, vis, steps: [S('Descompón en factores primos.', T`${N}=${factorTex(N)}`), S(`Agrupa de ${n} en ${n}.`, ...rootLines(N, n).slice(1, -1).concat([T`${rt(n, N)}`])), S('Los grupos completos salen; el resto se queda.', T`${rt(n, N)}=${vtex(v)}`)] }; } },
+      { id: 'r9', g: 'r', title: 'Suma y resta de radicales', f: T`c_1\sqrt[n]{a}\pm c_2\sqrt[n]{a}=(c_1\pm c_2)\sqrt[n]{a}`, say: 'Solo se pueden sumar o restar radicales <b>semejantes</b> (mismo índice y mismo radicando). Primero simplifica cada uno.', params: [pr('c1', 'c₁', 1, 9, 2), pr('N1', 'radicando 1', 2, 300, 8), pr('c2', 'c₂', 1, 9, 1), pr('N2', 'radicando 2', 2, 300, 18), pr('s', 'signo (1 suma, -1 resta)', -1, 1, 1)],
+        build: p => { const { c1, N1, c2, N2 } = p, sg = p.s < 0 ? -1 : 1, a = vMul(VI(c1), vRoot(VI(N1), 2)), b = vMul(VI(c2), vRoot(VI(N2), 2)), res = sg > 0 ? vAdd(a, b) : vSub(a, b), op = sg > 0 ? '+' : '-';
+          return { l: res, r: VD(toNum(a) + sg * toNum(b)), steps: [S('Expresión inicial.', T`${c1}\sqrt{${N1}}${op}${c2}\sqrt{${N2}}`), S('Simplifica cada radical.', ...rootLines(N1, 2).slice(-1), ...rootLines(N2, 2).slice(-1)), S('Sustituye.', T`=${vtex(a)}${op}${vtex(b)}`), S(res.t === 'dec' ? 'Radicandos distintos: <b>no son semejantes</b>, no se pueden combinar (se da el valor aproximado).' : 'Son semejantes: suma/resta los coeficientes.', T`=${res.t === 'dec' ? '\\approx ' : ''}${vtex(res)}`)] }; } },
+      { id: 'r10', g: 'r', title: 'Multiplicación de radicales', f: T`\sqrt[n]{a}\cdot\sqrt[n]{b}=\sqrt[n]{ab}\qquad \sqrt[m]{a}\cdot\sqrt[n]{b}=\sqrt[l]{a^{l/m}b^{l/n}}`, say: 'Con el <b>mismo índice</b> se multiplican los radicandos. Con índices distintos, primero se reducen a <b>índice común</b> (mcm).', params: [pr('a', 'a', 2, 30, 2), pr('m', 'índice 1', 2, 6, 2), pr('b', 'b', 2, 30, 3), pr('n', 'índice 2', 2, 6, 3)],
+        build: p => { const { a, m, b, n } = p, l = lcmN(m, n), A = Number(pw(a, l / m).n), B = Number(pw(b, l / n).n), v = vMul(vRoot(VI(a), m), vRoot(VI(b), n)), res = vRoot(VI(A * B), l), st = m === n ? [S('Mismo índice: se multiplican los radicandos.', T`${rt(m, a)}\cdot ${rt(n, b)}=${rt(m, `${a}\\cdot ${b}`)}=${rt(m, a * b)}`)] : [S(`Índices distintos: mcm(${m}, ${n}) = ${l}.`, T`l=${l}`), S('Convierte cada radical al índice común.', T`${rt(m, a)}=${rt(l, `${a}^{${l / m}}`)}=${rt(l, A)},\;\;${rt(n, b)}=${rt(l, `${b}^{${l / n}}`)}=${rt(l, B)}`), S('Ahora multiplica los radicandos.', T`=${rt(l, `${A}\\cdot ${B}`)}=${rt(l, A * B)}`)];
+          return { l: VD(toNum(v)), r: VD(toNum(res)), steps: [...st, S('Simplifica y comprueba (valor decimal).', T`=${vtex(res)}\approx${(+toNum(res).toFixed(4))}`)] }; } },
+      { id: 'r11', g: 'r', title: 'División de radicales', f: T`\dfrac{\sqrt[n]{a}}{\sqrt[n]{b}}=\sqrt[n]{\dfrac{a}{b}}\qquad\dfrac{\sqrt[m]{a}}{\sqrt[n]{b}}=\sqrt[l]{\dfrac{a^{l/m}}{b^{l/n}}}`, say: 'Mismo índice: se dividen los radicandos. Distinto índice: se llevan antes a índice común.', params: [pr('a', 'a', 2, 200, 18), pr('m', 'índice 1', 2, 6, 2), pr('b', 'b', 2, 200, 2), pr('n', 'índice 2', 2, 6, 2)],
+        build: p => { const { a, m, b, n } = p, l = lcmN(m, n), A = Number(pw(a, l / m).n), B = Number(pw(b, l / n).n), v = vDiv(vRoot(VI(a), m), vRoot(VI(b), n)), res = vRoot(VF(Fr(A, B)), l), st = m === n ? [S('Mismo índice: se dividen los radicandos.', T`\frac{${rt(m, a)}}{${rt(n, b)}}=${rt(m, `\\frac{${a}}{${b}}`)}`)] : [S(`Índice común: mcm(${m}, ${n}) = ${l}.`, T`\frac{${rt(l, `${a}^{${l / m}}`)}}{${rt(l, `${b}^{${l / n}}`)}}=\frac{${rt(l, A)}}{${rt(l, B)}}`), S('Une en un solo radical.', T`=${rt(l, `\\frac{${A}}{${B}}`)}`)];
+          return { l: VD(toNum(v)), r: VD(toNum(res)), steps: [...st, S('Resultado y comprobación.', T`=${vtex(res)}\approx${(+toNum(res).toFixed(4))}`)] }; } },
+      { id: 'r12', g: 'r', title: 'Racionalización: denominador monomio', f: T`\dfrac{k}{\sqrt[n]{a^m}}=\dfrac{k\sqrt[n]{a^{n-m}}}{a}`, say: 'Se multiplica arriba y abajo por el radical que completa el exponente a <b>n</b>, para que el denominador quede sin raíz.', params: [pr('k', 'numerador k', 1, 20, 6), pr('a', 'a', 2, 12, 3), pr('m', 'm', 1, 4, 1), pr('n', 'índice n', 2, 5, 2)],
+        build: p => { const { k, a, n } = p, m = Math.min(p.m, n - 1), den = vRoot(VI(Number(pw(a, m).n)), n), res = vDiv(VI(k), den), c = n - m; return { l: VD(toNum(res)), r: VD(k / toNum(den)), steps: [S('Denominador con raíz.', T`\frac{${k}}{${rt(n, `${a}^{${m}}`)}}`), S(`Multiplica arriba y abajo por ${rt(n, `${a}^{${c}}`)} (completa a ${n}).`, T`=\frac{${k}\cdot ${rt(n, `${a}^{${c}}`)}}{${rt(n, `${a}^{${m}}`)}\cdot ${rt(n, `${a}^{${c}}`)}}`), S('Abajo: ⁿ√aⁿ = a.', T`=\frac{${k}${rt(n, `${a}^{${c}}`)}}{${a}}`), S('Simplifica.', T`=${vtex(res)}\approx${(+toNum(res).toFixed(4))}`)] }; } },
+      { id: 'r13', g: 'r', title: 'Racionalización: denominador binomio (conjugado)', f: T`\dfrac{k}{\sqrt{a}+\sqrt{b}}=\dfrac{k(\sqrt{a}-\sqrt{b})}{a-b}`, say: 'Se multiplica por el <b>conjugado</b> (cambiando el signo). Así aparece el producto notable (x+y)(x−y)=x²−y².', params: [pr('k', 'k', 1, 20, 4), pr('a', 'a', 2, 50, 5), pr('b', 'b', 1, 49, 1)],
+        build: p => { const { k, a } = p, b = Math.min(p.b, a - 1), val = k / (Math.sqrt(a) + Math.sqrt(b)); return { l: VD(val), r: VD(k * (Math.sqrt(a) - Math.sqrt(b)) / (a - b)), steps: [S('Denominador binomio con raíces.', T`\frac{${k}}{\sqrt{${a}}+\sqrt{${b}}}`), S('Multiplica por el <b>conjugado</b>.', T`=\frac{${k}(\sqrt{${a}}-\sqrt{${b}})}{(\sqrt{${a}}+\sqrt{${b}})(\sqrt{${a}}-\sqrt{${b}})}`), S('Denominador: (x+y)(x−y) = x² − y².', T`=\frac{${k}(\sqrt{${a}}-\sqrt{${b}})}{${a}-${b}}=\frac{${k}(\sqrt{${a}}-\sqrt{${b}})}{${a - b}}`), S('Comprobación decimal.', T`\frac{${k}}{\sqrt{${a}}+\sqrt{${b}}}\approx${+val.toFixed(4)}`)] }; } },
+      { id: 'r14', g: 'r', title: 'Raíz de un número negativo', f: T`\sqrt[n]{-a}=\begin{cases}-\sqrt[n]{a}&n\text{ impar}\\ \text{no real}&n\text{ par}\end{cases}`, say: 'Con índice <b>impar</b> existe raíz real (negativa). Con índice <b>par</b> no existe en los reales (en los complejos aparece <i>i</i>).', params: [pr('a', 'a (positivo)', 1, 200, 27), pr('n', 'índice n', 2, 6, 3)],
+        build: p => { const { a, n } = p, odd = n % 2 === 1; return { l: odd ? vRoot(VI(-a), n) : VI(0), r: odd ? vNeg(vRoot(VI(a), n)) : VI(0), steps: [S('Raíz de un negativo.', T`${rt(n, -a)}`), odd ? S('Índice <b>impar</b>: el signo negativo sale de la raíz.', T`=-${rt(n, a)}=-${vtex(vRoot(VI(a), n))}`) : S('Índice <b>par</b>: ningún real elevado a una potencia par da un negativo.', T`${rt(n, -a)}\;\text{no es real}`), odd ? S('Comprobación:', T`\left(${vtex(vRoot(VI(-a), n))}\right)^{${n}}=${vtex(vPow(vRoot(VI(-a), n), VI(n)))}`) : S('En complejos (n = 2):', T`\sqrt{-${a}}=i\sqrt{${a}}=i\cdot ${vtex(vRoot(VI(a), 2))}`)] }; } }
+    ];
+
+    const LS = {};
+    function buildLawAccordion() {
+      ['e', 'r'].forEach(g => { let n = 0;
+        $('#acc-' + g).innerHTML = LAWS.filter(l => l.g === g).map(l => { n++; return `<div class="accordion-item law-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#law-${l.id}"><span class="law-num">${n}</span><span>${l.title}</span><span class="law-f">$${l.f}$</span></button></h2>
+          <div id="law-${l.id}" class="accordion-collapse collapse" data-law="${l.id}"><div class="accordion-body" id="lb-${l.id}"></div></div></div>`; }).join(''); });
+      math($('#acc-e')); math($('#acc-r'));
+      document.addEventListener('shown.bs.collapse', e => { const id = e.target.dataset.law; if (id && !$('#lb-' + id).innerHTML) renderLaw(id); });
+    }
+    function renderLaw(id) {
+      const L = LAWS.find(x => x.id === id), st = LS[id] || (LS[id] = { p: Object.fromEntries(L.params.map(q => [q.k, q.val])), s: 0 });
+      $('#lb-' + id).innerHTML = `<div class="row g-3"><div class="col-lg-5"><div class="tip-box s-watt mb-3">${L.say}</div>
+        <div class="fw-bold small mb-1"><i class="bi bi-sliders me-1"></i>Cambia los números:</div><div class="d-flex flex-wrap gap-2 mb-2">${L.params.map(q => `<label class="small fw-semibold">${q.label}<br><input type="number" class="form-control form-control-sm pinput" data-law="${id}" data-k="${q.k}" min="${q.min}" max="${q.max}" value="${st.p[q.k]}"></label>`).join('')}</div>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill" data-rand="${id}"><i class="bi bi-shuffle me-1"></i>Aleatorio</button><div class="mt-3" id="lv-${id}"></div></div>
+        <div class="col-lg-7"><div id="ls-${id}"></div></div></div>`; lawSteps(id);
+    }
+    function lawSteps(id) {
+      const L = LAWS.find(x => x.id === id), st = LS[id]; let B; try { B = L.build(st.p); } catch (e) { $('#ls-' + id).innerHTML = '<div class="tip-box s-res">Esos valores no son válidos para esta ley. Prueba con otros.</div>'; return; }
+      st.s = Math.min(st.s, B.steps.length - 1); const cur = B.steps[st.s], ok = same(B.l, B.r);
+      $('#lv-' + id).innerHTML = B.vis || ''; const col = COLS[4];
+      $('#ls-' + id).innerHTML = `<div class="d-flex flex-wrap gap-1 mb-2">${B.steps.map((_, k) => `<button class="dot ${k === st.s ? 'on' : k < st.s ? 'done' : ''}" data-ldot="${id}:${k}">${k + 1}</button>`).join('')}</div>
+        <div class="stepcard"><div class="fw-bold small text-uppercase mb-1" style="color:${col}">Paso ${st.s + 1} de ${B.steps.length}</div><div class="mb-2">${cur.say}</div>${cur.lines.map((l, i) => `<div class="ln" style="animation-delay:${i * 450}ms">$$${l}$$</div>`).join('')}</div>
+        <div class="d-flex flex-wrap gap-2 mt-2 align-items-center"><button class="btn btn-sm btn-outline-dark rounded-pill" data-lnav="${id}:-1" ${st.s === 0 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i> Anterior</button><button class="btn btn-sm btn-dark rounded-pill" data-lnav="${id}:1" ${st.s === B.steps.length - 1 ? 'disabled' : ''}>Siguiente <i class="bi bi-chevron-right"></i></button>
+          <span class="ms-auto"><span class="badge-ok ${ok ? '' : 'no'}">${ok ? '✓ Ambos lados de la ley valen ' : '✗ difieren: '}${ok ? (B.l.t === 'dec' || B.l.t === 'rd' ? '≈ ' + (+toNum(B.l).toFixed(4)) : '$' + vtex(B.l) + '$') : ''}</span></span></div>`;
+      math($('#ls-' + id)); math($('#lv-' + id));
+    }
+    document.addEventListener('input', e => { const t = e.target; if (t.classList.contains('pinput')) { const id = t.dataset.law, L = LAWS.find(x => x.id === id), q = L.params.find(z => z.k === t.dataset.k); let v = Math.round(parseFloat(t.value)); if (!isFinite(v)) return; v = Math.max(q.min, Math.min(q.max, v)); LS[id].p[q.k] = v; lawSteps(id); } });
+    document.addEventListener('click', e => {
+      const d = e.target.closest('[data-ldot]'); if (d) { const [id, k] = d.dataset.ldot.split(':'); LS[id].s = +k; lawSteps(id); }
+      const n = e.target.closest('[data-lnav]'); if (n) { const [id, k] = n.dataset.lnav.split(':'); LS[id].s += +k; lawSteps(id); }
+      const r = e.target.closest('[data-rand]'); if (r) { const id = r.dataset.rand, L = LAWS.find(x => x.id === id); L.params.forEach(q => { const hi = Math.min(q.max, q.max > 20 ? 30 : q.max); LS[id].p[q.k] = q.min + Math.floor(Math.random() * (hi - q.min + 1)); }); renderLaw(id); }
+    });
+    function goLaw(id) { const L = LAWS.find(x => x.id === id); if (!L) return; bootstrap.Modal.getInstance($('#manualModal'))?.hide(); bootstrap.Tab.getOrCreateInstance($(`[data-bs-target="#t-${L.g}"]`)).show();
+      setTimeout(() => { const c = $('#law-' + id); bootstrap.Collapse.getOrCreateInstance(c, { toggle: false }).show(); c.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 250); }
+  </script>
+
+  <!-- ===================== RESOLUTOR, EJERCICIOS Y MANUALES ===================== -->
+  <script>
+    /* ---------- Resolutor ---------- */
+    const KEYS = ['^', '√(', 'root(', '(', ')', '/', '*', '+', '-', '⌫', 'C'], SEX = ['2^3 * 2^4 / 2^5', '(2/3)^-2', '8^(2/3) + sqrt(49)', 'sqrt(72) + sqrt(8)', '1/sqrt(3)', '(2^3 + 3^2 * 2 - 4) / sqrt(16)', 'root(3, 2^6 * 5^3) / sqrt(100)'];
+    $('#keys').innerHTML = KEYS.map(k => `<button class="btn btn-outline-dark key" data-key="${k}">${k}</button>`).join('');
+    $('#s-ex').innerHTML = SEX.map((e, i) => `<button class="btn btn-sm btn-outline-primary rounded-pill me-1 mb-1" data-sex="${i}">${e}</button>`).join('');
+    let SOL = { steps: [], i: 0 };
+    function solverRun(reset = true) {
+      const src = $('#s-in').value, out = $('#s-out'); if (!src.trim()) { out.innerHTML = ''; return; }
+      const r = solveSteps(src); if (r.error && !r.steps) { out.innerHTML = `<div class="tip-box s-res"><i class="bi bi-exclamation-triangle-fill me-1"></i>${r.error}</div>`; return; }
+      if (reset || SOL.src !== src) SOL = { src, i: 0 }; SOL.r = r; const total = r.steps.length, shown = Math.min(SOL.i, total - 1);
+      const lv = ['', 'l1', 'l2', 'l3', 'l4'];
+      const list = r.steps.slice(0, shown + 1).map((s, k) => `<div class="mb-2"><div class="small">${k ? `<span class="lvl ${lv[s.cls] || 'l2'}">${k}</span> ` : '<span class="badge bg-secondary">Inicio</span> '}${s.cap}</div><div class="ln" style="animation-delay:0ms">$$${k ? '=\\;' : ''}${s.tex}$$</div></div>`).join('');
+      const done = shown === total - 1, res = r.result;
+      out.innerHTML = `<div class="panel"><div class="d-flex flex-wrap gap-2 align-items-center mb-2"><button class="btn btn-sm btn-dark rounded-pill" id="s-next" ${done ? 'disabled' : ''}>Siguiente paso <i class="bi bi-chevron-right"></i></button><button class="btn btn-sm btn-outline-dark rounded-pill" id="s-all">Mostrar todo</button><button class="btn btn-sm btn-outline-secondary rounded-pill" id="s-reset">Reiniciar</button><span class="small text-muted ms-auto">Paso ${shown} de ${total - 1}</span></div>${list}
+        ${done ? (r.error ? `<div class="tip-box s-res">${r.error}</div>` : `<div class="res-box mt-2">Resultado: $${vtex(res)}$${res.t !== 'fr' || res.f.d !== 1n ? ` <span class="small opacity-75">≈ ${+toNum(res).toFixed(6)}</span>` : ''}</div>`) : ''}</div>`;
+      math(out);
+    }
+    document.addEventListener('click', e => {
+      const k = e.target.closest('[data-key]'); if (k) { const inp = $('#s-in'), v = k.dataset.key; if (v === 'C') inp.value = ''; else if (v === '⌫') inp.value = inp.value.slice(0, -1); else inp.value += v; solverRun(); inp.focus(); }
+      const x = e.target.closest('[data-sex]'); if (x) { $('#s-in').value = SEX[+x.dataset.sex]; solverRun(); }
+      if (e.target.closest('#s-next')) { SOL.i++; solverRun(false); } if (e.target.closest('#s-all')) { SOL.i = 999; solverRun(false); } if (e.target.closest('#s-reset')) { SOL.i = 0; solverRun(false); }
+      const a = e.target.closest('[data-chip]'); if (a) goLaw(a.dataset.chip);
+    });
+    $('#s-in').addEventListener('input', () => solverRun());
+
+    /* ---------- Ejercicios (36) ---------- */
+    const LN = { e1: 'producto', e2: 'cociente', e3: 'potencia de potencia', e4: '(ab)ⁿ', e5: '(a/b)ⁿ', e6: 'exp. 0', e7: 'exp. 1', e8: 'exp. negativo', e9: '(a/b)⁻ⁿ', e10: 'exp. fraccionario', r1: 'raíz = exponente', r2: 'raíz de producto', r3: 'raíz de cociente', r4: 'raíz de raíz', r5: 'raíz y potencia', r6: 'raíz de potencia', r7: 'índices', r8: 'extraer factores', r9: 'suma de radicales', r10: 'mult. radicales', r11: 'div. radicales', r12: 'racionalizar', r13: 'conjugado', r14: 'raíz de negativo' };
+    const EXS = [
+      [1, '2^3 * 2^4', T`2^{3+4}=2^7=128`, ['e1']], [1, '5^6 / 5^4', T`5^{6-4}=5^2=25`, ['e2']], [1, '(3^2)^3', T`3^{2\cdot3}=3^6=729`, ['e3']], [1, '(2*5)^3', T`2^3\cdot5^3=8\cdot125=1000`, ['e4']], [1, '(4/3)^2', T`\frac{4^2}{3^2}=\frac{16}{9}`, ['e5']],
+      [1, '7^0 + 9^1', T`1+9=10`, ['e6', 'e7']], [1, '2^-3', T`\frac{1}{2^3}=\frac18`, ['e8']], [1, 'sqrt(81)', T`\sqrt{81}=\sqrt{9^2}=9`, ['r1']], [1, 'root(3, 64)', T`\sqrt[3]{4^3}=4`, ['r1']], [1, '(1/2)^-3', T`\left(\frac21\right)^3=8`, ['e9']],
+      [2, '2^5 * 2^-2 / 2^2', T`2^{5-2-2}=2^1=2`, ['e1', 'e2', 'e8']], [2, '(2^3)^2 / 2^4', T`\frac{2^6}{2^4}=2^2=4`, ['e3', 'e2']], [2, '3^2 * 3^3 / 3^4', T`3^{2+3-4}=3`, ['e1', 'e2']], [2, '(2/3)^-2 * (2/3)^3', T`\left(\frac23\right)^{-2+3}=\frac23`, ['e1', 'e9']],
+      [2, '8^(2/3)', T`\left(\sqrt[3]{8}\right)^2=2^2=4`, ['e10']], [2, '27^(-2/3)', T`\frac{1}{27^{2/3}}=\frac{1}{(\sqrt[3]{27})^2}=\frac19`, ['e8', 'e10']], [2, 'sqrt(12) * sqrt(3)', T`\sqrt{36}=6`, ['r2']], [2, 'sqrt(50) / sqrt(2)', T`\sqrt{\frac{50}{2}}=\sqrt{25}=5`, ['r3']],
+      [2, 'sqrt(72) + sqrt(8)', T`6\sqrt2+2\sqrt2=8\sqrt2`, ['r8', 'r9']], [2, 'root(3, 2) * root(3, 4)', T`\sqrt[3]{2\cdot4}=\sqrt[3]{8}=2`, ['r2', 'r10']], [2, 'root(3, root(2, 64))', T`\sqrt[6]{64}=2`, ['r4']], [2, '2^3 + 3^2 * 2 - 4', T`8+18-4=22\quad(\text{primero potencias, luego }\times)`, ['e1']],
+      [3, '(2^3 * 3^2) / (2^2 * 3)', T`2^{3-2}\cdot3^{2-1}=2\cdot3=6`, ['e2']], [3, '(2^4 * 3^3 * 5^2) / (2^2 * 3^2 * 5)', T`2^{2}\cdot3^{1}\cdot5^{1}=60`, ['e2']], [3, '((2^3)^2 * 3^-1) / (3^2 * 2^4)', T`\frac{2^{6}\cdot3^{-1}}{3^2\cdot2^4}=2^{2}\cdot3^{-3}=\frac{4}{27}`, ['e3', 'e2', 'e8']],
+      [3, '(sqrt(18) + sqrt(2)) * sqrt(2)', T`(3\sqrt2+\sqrt2)\sqrt2=4\sqrt2\cdot\sqrt2=8`, ['r8', 'r9', 'r10']], [3, '1/sqrt(3)', T`\frac{1}{\sqrt3}\cdot\frac{\sqrt3}{\sqrt3}=\frac{\sqrt3}{3}`, ['r12']], [3, '(sqrt(8) * sqrt(2)) / (3^2 - 5)', T`\frac{\sqrt{16}}{9-5}=\frac44=1`, ['r2']],
+      [3, '(1/4)^(-1/2) + 16^(3/4)', T`4^{1/2}+(\sqrt[4]{16})^3=2+8=10`, ['e9', 'e10']], [3, '((2/3)^-2 * 9^(1/2)) / (3/2)^2', T`\frac{(3/2)^2\cdot3}{(3/2)^2}=3`, ['e9', 'e10', 'e2']], [3, 'root(4, 81) * 2^-1 + sqrt(1/4)', T`3\cdot\frac12+\frac12=2`, ['r1', 'e8', 'r3']],
+      [3, '(sqrt(2))^4 + (root(3, 3))^3 - 2^0', T`2^2+3-1=6`, ['r5', 'e6']], [3, '(2^-1 + 3^-1)^2 / (1/6)^-1', T`\frac{(5/6)^2}{6}=\frac{25}{216}`, ['e8', 'e9', 'e5']], [3, 'root(3, 2^6 * 5^3) / sqrt(100)', T`\frac{2^2\cdot5}{10}=\frac{20}{10}=2`, ['r6', 'r3']],
+      [3, '((sqrt(3))^2 * 2^3 - 4^2 / 2) / (root(3, 8) + 1)', T`\frac{3\cdot8-8}{2+1}=\frac{16}{3}`, ['r5']], [3, '(sqrt(12) * sqrt(27) * root(3, 8)) / (sqrt(3) * sqrt(3) * 2)', T`\frac{18\cdot2}{6}=6`, ['r2', 'r8']], [3, '(2^3 * 3^2 * 5) / (2 * 3 * 5^2)', T`2^{2}\cdot3^{1}\cdot5^{-1}=\frac{12}{5}`, ['e2', 'e8']]
+    ].map(([lv, q, ley, ids], i) => ({ n: i + 1, lv, q, ley, ids }));
+    const LVN = ['', 'Básico', 'Intermedio', 'Avanzado'], doneEx = new Set();
+    $('#x-total').textContent = EXS.length;
+    function exTex(q) { try { return tex(parse(q)); } catch (e) { return q; } }
+    function renderEx(lv = 0) {
+      $('#x-grid').innerHTML = EXS.filter(e => !lv || e.lv === lv).map(e => `<div class="col-md-6 col-xl-4"><div class="ex-card lv${e.lv} ${doneEx.has(e.n) ? 'done' : ''}" id="ex-${e.n}">
+        <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Ejercicio ${e.n}</span><span class="lvb">${LVN[e.lv]}</span></div><div class="big-expr">$${exTex(e.q)}$</div>
+        <div class="mb-2">${e.ids.map(id => `<span class="chip-law" data-chip="${id}" title="Ir a la ley">${LN[id]}</span>`).join('')}</div>
+        <div class="input-group input-group-sm mb-2"><input class="form-control" placeholder="Tu respuesta (ej. 3/4)" data-ans="${e.n}"><button class="btn btn-dark" data-chk="${e.n}">Comprobar</button></div><div id="fb-${e.n}"></div>
+        <button class="btn btn-sm btn-outline-primary rounded-pill" data-sol="${e.n}"><i class="bi bi-eye me-1"></i>Ver solución paso a paso</button> <button class="btn btn-sm btn-outline-secondary rounded-pill" data-try="${e.n}">Resolutor</button><div id="sl-${e.n}" class="mt-2"></div></div></div>`).join(''); math($('#x-grid')); $('#x-score').textContent = doneEx.size; }
+    function solutionHTML(e) { const r = solveSteps(e.q), lines = r.steps.map((s, k) => `<div class="small mt-1">${k ? '' : '<b>Original</b>'}</div><div class="ln" style="animation-delay:${k * 350}ms">$$${k ? '=\\;' : ''}${s.tex}$$</div>`).join('');
+      return `<div class="tip-box s-watt small mb-2"><b>Con las leyes:</b> $$${e.ley}$$</div><div class="small fw-bold mb-1">Por jerarquía de operaciones:</div>${lines}${r.result ? `<div class="res-box">$${vtex(r.result)}$${r.result.t !== 'fr' || r.result.f.d !== 1n ? ` <span class="small opacity-75">≈ ${+toNum(r.result).toFixed(5)}</span>` : ''}</div>` : ''}`; }
+    document.addEventListener('click', e => {
+      const f = e.target.closest('#x-filter [data-lv]'); if (f) { $$('#x-filter button').forEach(b => b.classList.toggle('active', b === f)); renderEx(+f.dataset.lv); }
+      const s = e.target.closest('[data-sol]'); if (s) { const ex = EXS[+s.dataset.sol - 1], box = $('#sl-' + ex.n); if (box.innerHTML) box.innerHTML = ''; else { box.innerHTML = solutionHTML(ex); math(box); } }
+      const t = e.target.closest('[data-try]'); if (t) { $('#s-in').value = EXS[+t.dataset.try - 1].q; bootstrap.Tab.getOrCreateInstance($('[data-bs-target="#t-s"]')).show(); solverRun(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      const c = e.target.closest('[data-chk]'); if (c) { const n = +c.dataset.chk, ex = EXS[n - 1], inp = $(`[data-ans="${n}"]`).value, fb = $('#fb-' + n), want = solveSteps(ex.q).result, got = solveSteps(inp);
+        if (!inp.trim() || got.error || !got.result) { fb.innerHTML = '<div class="small text-danger">Escribe un número o fracción válida.</div>'; return; }
+        const ok = Math.abs(toNum(got.result) - toNum(want)) < 1e-6 * (1 + Math.abs(toNum(want)));
+        fb.innerHTML = ok ? '<div class="small text-success fw-bold">✓ ¡Correcto!</div>' : '<div class="small text-danger fw-bold">✗ Aún no. Revisa las leyes sugeridas o mira la solución.</div>';
+        if (ok && !doneEx.has(n)) { doneEx.add(n); $('#ex-' + n).classList.add('done'); $('#x-score').textContent = doneEx.size; if (typeof confetti === 'function') confetti({ particleCount: doneEx.size === EXS.length ? 200 : 40, spread: 60, origin: { y: .7 } }); } }
+    });
+
+    /* ---------- Manuales ---------- */
+    const fr = (t, say, lines = [], vis = '') => ({ t, say, lines, vis });
+    const big = q => `<div class="big-expr">$${exTex(q)}$</div>`;
+    const levelBar = n => `<div class="mb-2 small fw-bold">Jerarquía de operaciones</div>${[['l1', '① Paréntesis, fracciones, radicales'], ['l2', '② Potencias y raíces'], ['l3', '③ × y ÷'], ['l4', '④ + y −']].map(([c, t], i) => `<div><span class="lvl ${c}" style="${n === i + 1 ? 'transform:scale(1.12);box-shadow:0 0 0 3px #fde68a' : n ? 'opacity:.4' : ''}">${t}</span></div>`).join('')}`;
+    const exFrames = lv => EXS.filter(e => e.lv === lv).map(e => { const r = solveSteps(e.q), lines = [T`\text{Con las leyes: }${e.ley}`, ...r.steps.map((s, k) => (k ? '=\\;' : '') + s.tex)];
+      return fr(`Ejercicio ${e.n}`, `Identifica las leyes: ${e.ids.map(id => `<span class="chip-law" data-chip="${id}">${LN[id]}</span>`).join(' ')} Primero el camino corto con las leyes; después, la comprobación operación por operación.`, lines, big(e.q) + `<div class="mt-2">${levelBar(0)}</div>`); });
+    const MANUALS = {
+      exp: ['Exponentes desde cero', 'bi-superscript', '#7048e8', () => [
+        fr('¿Qué es un exponente?', 'El exponente dice <b>cuántas veces se multiplica la base</b> por sí misma. En $a^n$, $a$ es la base y $n$ el exponente.', [T`2^4=2\cdot2\cdot2\cdot2=16`], tok(4, COLS[0]) + '<div class="small mt-1">4 factores de 2</div>'),
+        fr('Producto de potencias de igual base', 'Contar factores: $2^3$ tiene 3 y $2^2$ tiene 2; juntos hay 5 factores.', [T`2^3\cdot2^2=(2\cdot2\cdot2)(2\cdot2)=2^{3+2}=2^5=32`], tok(3, COLS[0]) + tok(2, COLS[1]) + '<div class="small mt-1">3 + 2 = 5 factores</div>'),
+        fr('Cociente de potencias', 'Lo que está arriba y abajo se <b>cancela</b>: quedan los exponentes restados.', [T`\frac{3^5}{3^2}=\frac{3\cdot3\cdot3\cdot3\cdot3}{3\cdot3}=3^{5-2}=3^3=27`], tok(5, COLS[0], 2) + '<br>' + tok(2, COLS[2], 2) + '<div class="small mt-1">se cancelan 2</div>'),
+        fr('Potencia de una potencia', '$(2^3)^2$ son <b>2 grupos</b> de $2^3$: se multiplican los exponentes.', [T`(2^3)^2=2^3\cdot2^3=2^{3\cdot2}=2^6=64`], `<span class="tkgrp" style="--c:${COLS[0]}">${tok(3, COLS[0])}</span><span class="tkgrp" style="--c:${COLS[1]}">${tok(3, COLS[1])}</span>`),
+        fr('Producto y cociente elevados', 'El exponente se <b>reparte</b> en cada factor o término.', [T`(2\cdot3)^2=2^2\cdot3^2=36`, T`\left(\frac23\right)^3=\frac{2^3}{3^3}=\frac{8}{27}`]),
+        fr('Exponente cero y uno', 'Cualquier base (≠0) a la 0 es 1; a la 1 es ella misma.', [T`5^0=\frac{5^2}{5^2}=1\qquad 5^1=5`]),
+        fr('Exponente negativo', 'No cambia el signo: indica <b>recíproco</b>.', [T`2^{-3}=\frac{1}{2^3}=\frac18`, T`\left(\frac23\right)^{-2}=\left(\frac32\right)^2=\frac94`]),
+        fr('Exponente fraccionario', 'El denominador es el <b>índice</b> de la raíz; el numerador, la potencia.', [T`8^{2/3}=\left(\sqrt[3]{8}\right)^2=2^2=4`, T`16^{-1/2}=\frac{1}{\sqrt{16}}=\frac14`]),
+        fr('¡A practicar!', 'Ya conoces las 10 leyes. Ábrelas en el formulario, cambia los números y resuelve los ejercicios del nivel básico.', [])]],
+      rad: ['Radicales desde cero', 'bi-calculator', '#e03131', () => [
+        fr('¿Qué es una raíz?', 'La raíz enésima de $a$ es el número que elevado a $n$ da $a$. El <b>índice</b> $n$ indica la raíz (si no aparece, es 2).', [T`\sqrt{9}=3\ \text{porque}\ 3^2=9`, T`\sqrt[3]{27}=3\ \text{porque}\ 3^3=27`]),
+        fr('Raíces exactas e inexactas', 'Si el radicando es una potencia perfecta, la raíz es exacta. Si no, se <b>simplifica</b> extrayendo factores.', [T`\sqrt{50}=\sqrt{25\cdot2}=5\sqrt2`]),
+        fr('Simplificar: grupos que salen', 'Descompón en primos y agrupa de $n$ en $n$: cada grupo completo <b>sale</b>; lo demás se queda. Prueba con el formulario (Ley 8).', [T`72=2^3\cdot3^2\Rightarrow\sqrt{72}=2\cdot3\sqrt{2}=6\sqrt2`], `<span class="tkgrp out" style="--c:${COLS[1]}">${tok(2, COLS[1])}</span><span class="tkgrp" style="--c:${COLS[2]}">${tok(1, COLS[2])}</span><br><span class="tkgrp out" style="--c:${COLS[1]}">${tok(2, COLS[1])}</span><div class="small mt-1">2³ → sale un 2, queda un 2 · 3² → sale un 3</div>`),
+        fr('Producto, cociente y raíz de raíz', 'Las raíces del mismo índice se multiplican y dividen bajo un solo radical.', [T`\sqrt{12}\cdot\sqrt3=\sqrt{36}=6`, T`\frac{\sqrt{50}}{\sqrt2}=\sqrt{25}=5`, T`\sqrt{\sqrt[3]{64}}=\sqrt[6]{64}=2`]),
+        fr('Suma y resta: radicales semejantes', 'Primero simplifica; solo se suman los que tienen <b>igual índice y radicando</b>.', [T`\sqrt{72}+\sqrt8=6\sqrt2+2\sqrt2=8\sqrt2`]),
+        fr('Índices distintos', 'Se reducen a <b>índice común</b> con el mcm.', [T`\sqrt{2}\cdot\sqrt[3]{3}=\sqrt[6]{2^3}\cdot\sqrt[6]{3^2}=\sqrt[6]{72}`]),
+        fr('Racionalizar', 'Se elimina la raíz del denominador multiplicando arriba y abajo.', [T`\frac{6}{\sqrt3}=\frac{6\sqrt3}{3}=2\sqrt3`, T`\frac{4}{\sqrt5+1}=\frac{4(\sqrt5-1)}{5-1}=\sqrt5-1`]),
+        fr('Raíces de negativos', 'Índice impar: sí existe. Índice par: no es real.', [T`\sqrt[3]{-8}=-2\qquad\sqrt{-4}\ \text{no es real}`])]],
+      jer: ['Jerarquía de operaciones', 'bi-sort-numeric-down', '#1c7ed6', () => { const q = '2^3 + 3^2 * 2 - 4', r = solveSteps(q); return [
+        fr('Las 4 prioridades', 'Siempre se resuelve en este orden. Si hay varias del mismo nivel, de <b>izquierda a derecha</b>.', [T`\text{① grupos}\to\text{② potencias y raíces}\to\text{③ }\times\ \div\to\text{④ }+\ -`], levelBar(0)),
+        fr('Fracciones y radicales cuentan como grupos', 'El numerador, el denominador y lo que está bajo un radical se resuelven <b>por separado</b> primero.', [T`\frac{2+4}{3^2-3}=\frac{6}{9-3}=\frac66=1`], levelBar(1)),
+        ...r.steps.map((s, k) => fr(k ? `Paso ${k}` : 'Ejemplo guiado', k ? s.cap : 'Resolvamos paso a paso:', [(k ? '=\\;' : '') + s.tex], big(q) + levelBar(s.lv || 0))),
+        fr('Error frecuente', '$-2^2$ es $-(2^2)=-4$, pero $(-2)^2=4$. Los paréntesis cambian la base.', [T`-2^2=-4\qquad(-2)^2=4`], levelBar(2))]; }],
+      n1: ['Ejemplos resueltos · nivel básico', 'bi-1-circle-fill', '#2f9e44', () => exFrames(1)], n2: ['Ejemplos resueltos · nivel intermedio', 'bi-2-circle-fill', '#f08c00', () => exFrames(2)], n3: ['Ejemplos resueltos · nivel avanzado', 'bi-3-circle-fill', '#e03131', () => exFrames(3)]
+    };
+    let MM = { i: 0, timer: null };
+    function openManual(key) { const m = MANUALS[key]; mmStop(); MM = { m, frames: m[3](), i: 0, timer: null }; mmRender(); bootstrap.Modal.getOrCreateInstance($('#manualModal')).show(); }
+    function mmStop() { clearInterval(MM.timer); MM.timer = null; const b = $('#mm-play'); if (b) b.innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; }
+    function mmGo(i) { MM.i = Math.max(0, Math.min(MM.frames.length - 1, i)); mmRender(); }
+    function mmRender() {
+      const [title, ic, c] = MM.m, f = MM.frames[MM.i], N = MM.frames.length; $('#mm-head').style.background = c; $('#mm-title').innerHTML = `<i class="bi ${ic} me-2"></i>Manual · ${title}`;
+      $('#mm-dots').innerHTML = MM.frames.map((_, k) => `<button class="mm-dot ${k === MM.i ? 'on' : k < MM.i ? 'done' : ''}" style="--c:${c}" data-mmgo="${k}">${k + 1}</button>`).join('');
+      $('#mm-vis').innerHTML = f.vis || `<div class="text-center text-muted py-4"><i class="bi bi-lightbulb fs-1"></i><div class="small">Sigue los pasos →</div></div>`;
+      $('#mm-step').innerHTML = `<div class="stepcard" style="border-color:${c}"><div class="mm-kicker" style="color:${c}">Paso ${MM.i + 1} de ${N}</div><h5 class="fw-bold mb-2">${f.t}</h5><div class="mm-say">${f.say}</div>${f.lines.map((l, k) => `<div class="ln" style="animation-delay:${k * 600}ms">$$${l}$$</div>`).join('')}</div>`;
+      $('#mm-prev').disabled = MM.i === 0; $('#mm-next').disabled = MM.i === N - 1; $('#mm-count').textContent = `${MM.i + 1} / ${N}`; math($('#mm-step')); math($('#mm-vis'));
+    }
+    document.addEventListener('click', e => {
+      const mb = e.target.closest('[data-man]'); if (mb) return openManual(mb.dataset.man); const g = e.target.closest('[data-mmgo]'); if (g) { mmStop(); return mmGo(+g.dataset.mmgo); }
+      if (e.target.closest('#mm-prev')) { mmStop(); mmGo(MM.i - 1); } if (e.target.closest('#mm-next')) { mmStop(); mmGo(MM.i + 1); }
+      if (e.target.closest('#mm-play')) { if (MM.timer) return mmStop(); if (MM.i >= MM.frames.length - 1) MM.i = -1; const tick = () => { if (MM.i >= MM.frames.length - 1) return mmStop(); mmGo(MM.i + 1); $('#mm-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar'; }; tick(); MM.timer = setInterval(tick, 8000); }
+    });
+    $('#manualModal').addEventListener('hidden.bs.modal', mmStop);
+
+    buildLawAccordion(); renderEx(0); solverRun(); math($('#t-s'));
+  </script>
+</body>
+</html>
