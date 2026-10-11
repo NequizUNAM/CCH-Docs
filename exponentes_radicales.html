@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matemáticas - Leyes de Exponentes y Radicales</title>
 
-  <!-- CDNs: Bootstrap 5 (+JS), Bootstrap Icons, KaTeX, canvas-confetti -->
+  <!-- CDNs: Bootstrap 5 (+JS), Bootstrap Icons, canvas-confetti, html2canvas (exportar el formulario como imagen) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -56,7 +54,7 @@
     .dot.on { background:var(--c,#7048e8); border-color:var(--c,#7048e8); color:#fff; transform:scale(1.15); } .dot.done { border-color:var(--c,#7048e8); color:var(--c,#7048e8); }
     .stepcard { background:#f8fafc; border-radius:14px; padding:.8rem 1rem; border-left:5px solid #7048e8; animation:pop .3s both; }
     .ln { background:#fff; border-left:4px solid #94a3b8; border-radius:0 10px 10px 0; padding:.05rem .6rem; margin:.35rem 0; overflow-x:auto; opacity:0; animation:lnIn .5s forwards; }
-    .ln .katex-display { margin:.35em 0; } @keyframes lnIn { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }
+    @keyframes lnIn { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }
     .badge-ok { display:inline-block; padding:.12rem .6rem; border-radius:999px; color:#fff; font-weight:800; font-size:.8rem; background:var(--ok); } .badge-ok.no { background:var(--bad); } .badge-ok.na { background:#868e96; }
 
     /* Jerarquía */
@@ -81,6 +79,49 @@
     .mm-visual { background:#fff; border-radius:16px; border:1px solid #e2e8f0; box-shadow:var(--shadow-sm); padding:1rem; position:sticky; top:0; min-height:240px; }
     .mm-kicker { font-weight:800; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
     .mm-say { line-height:1.6; margin-bottom:.5rem; }
+    /* ===== Fórmulas estilo calculadora (reemplaza al LaTeX) ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.1em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; letter-spacing:.01em; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.22em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-family:inherit; font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; }
+    .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; }
+    .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; }
+    .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; line-height:1.3; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; z-index:1; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; }
+    .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; }
+    .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.55rem 1rem; min-height:3.6rem; overflow-x:auto; font-size:1.3rem; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); display:flex; align-items:center; }
+    .keypad { display:grid; gap:6px; } .keypad.k5 { grid-template-columns:repeat(5,52px); } .keypad.k4 { grid-template-columns:repeat(4,52px); }
+    .kb { border:0; border-radius:12px; padding:.55rem 0; font-weight:700; font-size:1.05rem; box-shadow:0 3px 0 rgba(0,0,0,.2); background:#e2e8f0; color:#0f172a; transition:transform .08s, box-shadow .08s; }
+    .kb:hover { filter:brightness(.97); } .kb:active { transform:translateY(3px); box-shadow:none; } .kb sup { font-size:.62em; position:relative; top:-.1em; }
+    .kb.fn { background:#dbe7ff; color:#1c4fd7; } .kb.op { background:#ffe3c2; color:#9a4b00; } .kb.ct { background:#ffd6d6; color:#b01818; } .kb.eq { background:#0f172a; color:#fff; } .kb.w2 { grid-column:span 2; }
+    .chip-sx { border:1.5px solid #1c7ed6; background:#eef5ff; border-radius:999px; padding:.1rem .8rem; margin:0 .3rem .3rem 0; color:#0f172a; }
+    .chip-sx:hover { background:#dbe9ff; }
+    /* Formulario tipo imagen */
+    .sheet-view { overflow-x:auto; border-radius:16px; box-shadow:var(--shadow-md); background:#fff; }
+    #sheet-wrap, .sheet-clone { min-width:1000px; background:#fff; }
+    .sheet { background:#fff; border-bottom:6px solid var(--c); }
+    .sh-head { background:linear-gradient(135deg,var(--c),#0f172a); color:#fff; padding:1.2rem 1.6rem; display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+    .sh-t { font-size:2rem; font-weight:800; letter-spacing:.14em; } .sh-s { font-size:1.15rem; opacity:.92; }
+    .sh-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:1.2rem 1.4rem; }
+    .sh-card { position:relative; border:2px solid var(--cb); border-radius:14px; padding:.8rem 1rem .8rem 3.1rem; background:var(--cs); }
+    .sh-n { position:absolute; left:.8rem; top:.8rem; width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sh-name { font-weight:800; color:var(--c); font-size:.95rem; }
+    .sh-f .cx.d { font-size:1.4em; overflow:visible; white-space:normal; } .sh-f .cx.d .fr, .sh-f .cx.d .rd { white-space:nowrap; }
+    .sh-card.wide { grid-column:1/-1; } .sh-card.wide .cx.d { white-space:nowrap; overflow:visible; }
+    .sh-ex { font-size:.95rem; color:#475569; border-top:1px dashed #94a3b8; margin-top:.3rem; padding-top:.35rem; }
+    .sh-ex b { color:var(--c); }
+    .sh-foot { margin:0 1.4rem; padding:.7rem 1rem; background:#0f172a; color:#fff; border-radius:12px; font-weight:600; text-align:center; }
     footer small { font-size:.85rem; }
     :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
     @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-header .sym,.tk,.ln,.tab-pane,.stepcard{animation:none;opacity:1} }
@@ -110,8 +151,9 @@
       <ul class="nav nav-pills" id="tabs" role="tablist">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t-e"><i class="bi bi-superscript me-1"></i>1. Leyes de exponentes</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-r"><i class="bi bi-calculator me-1"></i>2. Propiedades de radicales</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-s"><i class="bi bi-magic me-1"></i>3. Resolutor</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-x"><i class="bi bi-list-check me-1"></i>4. Ejercicios</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-f"><i class="bi bi-image-fill me-1"></i>3. Formulario</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-s"><i class="bi bi-magic me-1"></i>4. Resolutor</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-x"><i class="bi bi-list-check me-1"></i>5. Ejercicios</button></li>
       </ul>
 
       <div class="tab-content">
@@ -123,12 +165,19 @@
           <div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i>Formulario de las propiedades de los radicales (14 propiedades)</div><div class="small">Incluye definición, producto, cociente, raíz de raíz, índices, extracción de factores, suma, multiplicación y división, racionalización y raíces de negativos.</div></div>
           <div class="accordion" id="acc-r"></div>
         </div>
+        <div class="tab-pane fade" id="t-f">
+          <div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-image-fill text-warning me-1"></i>Formulario</div><div class="small">Todas las fórmulas en una hoja tipo imagen, con un ejemplo numérico cada una. Elige la hoja, <b>amplíala</b> o <b>descárgala como imagen PNG</b>.</div></div>
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-3"><div class="btn-group" id="f-sel"><button class="btn btn-outline-dark active" data-fs="e">Exponentes</button><button class="btn btn-outline-dark" data-fs="r">Radicales</button><button class="btn btn-outline-dark" data-fs="all">Ambas hojas</button></div>
+            <button class="btn btn-warning rounded-pill fw-semibold ms-auto" id="f-zoom"><i class="bi bi-arrows-fullscreen me-1"></i>Ampliar</button><button class="btn btn-dark rounded-pill" id="f-dl"><i class="bi bi-download me-1"></i>Descargar PNG</button></div>
+          <div class="sheet-view"><div id="sheet-wrap"></div></div>
+        </div>
         <div class="tab-pane fade" id="t-s">
           <div class="panel mb-3">
             <h5 class="fw-bold"><i class="bi bi-magic me-1 text-primary"></i>Resolutor de ejercicios propuestos</h5>
-            <p class="small text-muted mb-2">Escribe tu expresión. Usa <code>^</code> para potencias, <code>sqrt(x)</code> o <code>√</code> para raíz cuadrada, <code>root(n,x)</code> para raíz de índice n, <code>/</code> para fracciones y paréntesis. Exponentes fraccionarios: <code>8^(2/3)</code>.</p>
+            <p class="small text-muted mb-2">Escribe tu expresión. Usa el teclado de abajo (xⁿ, √, ⁿ√, ÷, ×…) o escribe: <code>^</code> potencia, <code>√(x)</code> raíz cuadrada, <code>root(n,x)</code> raíz de índice n, <code>/</code> fracción. Exponentes fraccionarios: <code>8^(2/3)</code>.</p>
             <input id="s-in" class="form-control solver-in" spellcheck="false" autocomplete="off" value="(2^3 + 3^2 * 2 - 4) / sqrt(16)" aria-label="Expresión">
-            <div class="d-flex flex-wrap gap-1 mt-2" id="keys"></div>
+            <div class="mt-3"><div class="small fw-bold text-muted mb-1">Pantalla (así se lee tu expresión):</div><div id="s-prev" class="calc-screen"></div></div>
+            <div class="d-flex flex-wrap gap-4 mt-3 align-items-start"><div><div class="small fw-bold text-muted mb-1">Potencias y raíces</div><div class="keypad k5" id="keys-f"></div></div><div><div class="small fw-bold text-muted mb-1">Números y operaciones</div><div class="keypad k4" id="keys-n"></div></div></div>
             <div class="d-flex flex-wrap gap-1 mt-2 align-items-center"><span class="small fw-semibold me-1">Ejemplos:</span><span id="s-ex"></span></div>
           </div>
           <div class="panel mb-3"><div class="fw-bold small mb-1">Jerarquía de operaciones (se resuelve en este orden):</div>
@@ -150,6 +199,8 @@
       <div class="row g-3"><div class="col-lg-5"><div class="mm-visual" id="mm-vis"></div></div><div class="col-lg-7"><div id="mm-step"></div></div></div></div>
     <div class="modal-footer bg-light justify-content-between"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" id="mm-prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" id="mm-next">Siguiente<i class="bi bi-chevron-right ms-1"></i></button></div><span class="small text-muted" id="mm-count"></span><button class="btn btn-warning rounded-pill fw-semibold" id="mm-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button></div>
   </div></div></div>
+
+  <div class="modal fade" id="fzModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-fullscreen"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold"><i class="bi bi-image-fill me-2"></i>Formulario</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body bg-light" id="fz-body" style="overflow:auto"></div></div></div></div>
 
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Matemáticas • Exponentes y Radicales</small></footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -190,7 +241,71 @@
   <script>
     const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
     const T = String.raw;
-    const math = el => window.renderMathInElement && renderMathInElement(el || document.body, { delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError: false });
+    /*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    const escH = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? `<div class="cx d">${fx(m[1])}</div>` : `<span class="cx">${fx(m[2])}</span>`); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+    /*ENDFX*/
 
     /*ENGINE*/
     /* ---- Fracciones exactas con BigInt ---- */
@@ -239,7 +354,7 @@
     /* ---- Analizador sintáctico ---- */
     const NUM = v => ({ k: 'num', v });
     function parse(src) {
-      const s = src.replace(/×|·/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/√/g, 'sqrt').replace(/∛/g, 'cbrt'), tk = []; const re = /\s*(?:(\d+(?:\.\d+)?)|([a-z]+)|(.))/gy; let m;
+      const s = src.replace(/×|·/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/⁻¹/g, '^(-1)').replace(/²/g, '^2').replace(/³/g, '^3').replace(/√/g, 'sqrt').replace(/∛/g, 'cbrt'), tk = []; const re = /\s*(?:(\d+(?:\.\d+)?)|([a-z]+)|(.))/gy; let m;
       while (re.lastIndex < s.length && (m = re.exec(s))) { if (m[1] !== undefined) tk.push({ t: 'n', v: m[1] }); else if (m[2]) tk.push({ t: 'i', v: m[2] }); else if (m[3] && m[3].trim()) tk.push({ t: 'o', v: m[3] }); }
       let i = 0; const pk = () => tk[i], eat = v => { if (!pk() || pk().v !== v) throw new Error('parse'); i++; };
       const dec2fr = str => { const [a, b = ''] = str.split('.'); return Fr(BigInt(a + b), 10n ** BigInt(b.length)); };
@@ -426,12 +541,20 @@
   <!-- ===================== RESOLUTOR, EJERCICIOS Y MANUALES ===================== -->
   <script>
     /* ---------- Resolutor ---------- */
-    const KEYS = ['^', '√(', 'root(', '(', ')', '/', '*', '+', '-', '⌫', 'C'], SEX = ['2^3 * 2^4 / 2^5', '(2/3)^-2', '8^(2/3) + sqrt(49)', 'sqrt(72) + sqrt(8)', '1/sqrt(3)', '(2^3 + 3^2 * 2 - 4) / sqrt(16)', 'root(3, 2^6 * 5^3) / sqrt(100)'];
-    $('#keys').innerHTML = KEYS.map(k => `<button class="btn btn-outline-dark key" data-key="${k}">${k}</button>`).join('');
-    $('#s-ex').innerHTML = SEX.map((e, i) => `<button class="btn btn-sm btn-outline-primary rounded-pill me-1 mb-1" data-sex="${i}">${e}</button>`).join('');
+    const SEX = ['2^3 * 2^4 / 2^5', '(2/3)^-2', '8^(2/3) + sqrt(49)', 'sqrt(72) + sqrt(8)', '1/sqrt(3)', '(2^3 + 3^2 * 2 - 4) / sqrt(16)', 'root(3, 2^6 * 5^3) / sqrt(100)'];
+    const KF = [['x<sup>n</sup>', '^', 'fn'], ['x<sup>2</sup>', '^2', 'fn'], ['x<sup>3</sup>', '^3', 'fn'], ['x<sup>−1</sup>', '^(-1)', 'fn'], ['(', '(', ''], ['√', '√(', 'fn'], ['∛', '∛(', 'fn'], ['<sup>n</sup>√', 'root(', 'fn'], [',', ',', ''], [')', ')', '']];
+    const KN = [['7', '7', ''], ['8', '8', ''], ['9', '9', ''], ['÷', '/', 'op'], ['4', '4', ''], ['5', '5', ''], ['6', '6', ''], ['×', '*', 'op'], ['1', '1', ''], ['2', '2', ''], ['3', '3', ''], ['−', '-', 'op'], ['0', '0', ''], ['.', '.', ''], ['+', '+', 'op'], ['⌫', '⌫', 'ct'], ['C', 'C', 'ct w2'], ['=', '=', 'eq w2']];
+    const keyHtml = (L, g) => L.map(([h, v, c], k) => `<button class="kb ${c}" data-kk="${g}${k}" aria-label="${v}">${h}</button>`).join('');
+    $('#keys-f').innerHTML = keyHtml(KF, 'f'); $('#keys-n').innerHTML = keyHtml(KN, 'n');
+    function typeKey(v) { const inp = $('#s-in'); let a = inp.selectionStart ?? inp.value.length, b = inp.selectionEnd ?? a;
+      if (v === 'C') inp.value = ''; else if (v === '=') { SOL.i = 999; solverRun(false); return; }
+      else if (v === '⌫') { if (a === b && a > 0) a--; inp.value = inp.value.slice(0, a) + inp.value.slice(b); inp.setSelectionRange(a, a); }
+      else { inp.value = inp.value.slice(0, a) + v + inp.value.slice(b); inp.setSelectionRange(a + v.length, a + v.length); }
+      solverRun(); inp.focus(); }
+    $('#s-ex').innerHTML = SEX.map((e, i) => `<button class="btn btn-sm chip-sx" data-sex="${i}">$${exTex(e)}$</button>`).join(''); math($('#s-ex'));
     let SOL = { steps: [], i: 0 };
     function solverRun(reset = true) {
-      const src = $('#s-in').value, out = $('#s-out'); if (!src.trim()) { out.innerHTML = ''; return; }
+      const src = $('#s-in').value, out = $('#s-out'), pv = $('#s-prev'); try { pv.innerHTML = src.trim() ? '$' + tex(parse(src)) + '$' : ''; } catch (e) { pv.textContent = '…'; } math(pv); if (!src.trim()) { out.innerHTML = ''; return; }
       const r = solveSteps(src); if (r.error && !r.steps) { out.innerHTML = `<div class="tip-box s-res"><i class="bi bi-exclamation-triangle-fill me-1"></i>${r.error}</div>`; return; }
       if (reset || SOL.src !== src) SOL = { src, i: 0 }; SOL.r = r; const total = r.steps.length, shown = Math.min(SOL.i, total - 1);
       const lv = ['', 'l1', 'l2', 'l3', 'l4'];
@@ -442,7 +565,7 @@
       math(out);
     }
     document.addEventListener('click', e => {
-      const k = e.target.closest('[data-key]'); if (k) { const inp = $('#s-in'), v = k.dataset.key; if (v === 'C') inp.value = ''; else if (v === '⌫') inp.value = inp.value.slice(0, -1); else inp.value += v; solverRun(); inp.focus(); }
+      const k = e.target.closest('[data-kk]'); if (k) { const L = k.dataset.kk[0] === 'f' ? KF : KN; typeKey(L[+k.dataset.kk.slice(1)][1]); }
       const x = e.target.closest('[data-sex]'); if (x) { $('#s-in').value = SEX[+x.dataset.sex]; solverRun(); }
       if (e.target.closest('#s-next')) { SOL.i++; solverRun(false); } if (e.target.closest('#s-all')) { SOL.i = 999; solverRun(false); } if (e.target.closest('#s-reset')) { SOL.i = 0; solverRun(false); }
       const a = e.target.closest('[data-chip]'); if (a) goLaw(a.dataset.chip);
@@ -536,7 +659,25 @@
     });
     $('#manualModal').addEventListener('hidden.bs.modal', mmStop);
 
-    buildLawAccordion(); renderEx(0); solverRun(); math($('#t-s'));
+    /* ---------- Formulario (hoja tipo imagen) ---------- */
+    const FEX = { e1: T`2^3\cdot2^4=2^7=128`, e2: T`\frac{5^6}{5^4}=5^2=25`, e3: T`(3^2)^3=3^6=729`, e4: T`(2\cdot5)^3=2^3\cdot5^3=1000`, e5: T`\left(\frac23\right)^3=\frac{8}{27}`, e6: T`9^0=1`, e7: T`8^1=8`, e8: T`2^{-3}=\frac18`, e9: T`\left(\frac23\right)^{-2}=\frac94`, e10: T`8^{2/3}=\left(\sqrt[3]{8}\right)^2=4`,
+      r1: T`\sqrt[3]{64}=64^{1/3}=4`, r2: T`\sqrt{4\cdot9}=2\cdot3=6`, r3: T`\sqrt{\frac{36}{4}}=\frac62=3`, r4: T`\sqrt{\sqrt[3]{64}}=\sqrt[6]{64}=2`, r5: T`\sqrt{(-3)^2}=|-3|=3`, r6: T`\sqrt{4^3}=\left(\sqrt4\right)^3=8`, r7: T`\sqrt[4]{2^2}=\sqrt2`, r8: T`\sqrt{72}=6\sqrt2`, r9: T`2\sqrt2+\sqrt{18}=5\sqrt2`, r10: T`\sqrt2\cdot\sqrt[3]{3}=\sqrt[6]{72}`, r11: T`\frac{\sqrt{18}}{\sqrt2}=3`, r12: T`\frac{6}{\sqrt3}=2\sqrt3`, r13: T`\frac{4}{\sqrt5+1}=\sqrt5-1`, r14: T`\sqrt[3]{-27}=-3` };
+    const SHEETS = { e: ['Leyes de los exponentes', '#5130b9', '#f4f0ff', '#d5c9ff'], r: ['Propiedades de los radicales', '#c92a2a', '#fff3f3', '#ffc9c9'] };
+    function sheetHTML(g) { const [title, c, cs, cb] = SHEETS[g];
+      return `<div class="sheet" style="--c:${c};--cs:${cs};--cb:${cb}"><div class="sh-head"><div class="sh-t">FORMULARIO</div><div class="sh-s">${title}</div></div><div class="sh-grid">${LAWS.filter(l => l.g === g).map((l, k) => `<div class="sh-card${l.f.length > 60 ? ' wide' : ''}"><div class="sh-n">${k + 1}</div><div class="sh-name">${l.title}</div><div class="sh-f"><div class="cx d">${fx(l.f)}</div></div><div class="sh-ex"><b>Ejemplo:</b> <span class="cx">${fx(FEX[l.id])}</span></div></div>`).join('')}</div>
+        <div class="sh-foot">Jerarquía de operaciones: ① paréntesis y radicales · ② potencias y raíces · ③ × y ÷ · ④ + y −</div><div style="height:14px"></div></div>`; }
+    let sheetSel = 'e';
+    const sheetsFor = sel => (sel === 'all' ? ['e', 'r'] : [sel]).map(sheetHTML).join('');
+    function renderSheets() { $('#sheet-wrap').innerHTML = sheetsFor(sheetSel); $$('#f-sel button').forEach(b => b.classList.toggle('active', b.dataset.fs === sheetSel)); }
+    document.addEventListener('click', e => {
+      const f = e.target.closest('[data-fs]'); if (f) { sheetSel = f.dataset.fs; renderSheets(); }
+      if (e.target.closest('#f-zoom')) { $('#fz-body').innerHTML = `<div class="sheet-clone mx-auto" style="max-width:1200px">${sheetsFor(sheetSel)}</div>`; bootstrap.Modal.getOrCreateInstance($('#fzModal')).show(); }
+      if (e.target.closest('#f-dl')) { const b = $('#f-dl'); b.disabled = true; b.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Generando…';
+        html2canvas($('#sheet-wrap'), { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(c => { const a = document.createElement('a'); a.download = `formulario_${sheetSel === 'e' ? 'exponentes' : sheetSel === 'r' ? 'radicales' : 'completo'}.png`; a.href = c.toDataURL('image/png'); a.click(); })
+          .catch(() => alert('No se pudo generar la imagen. Usa «Ampliar» y toma una captura de pantalla.')).finally(() => { b.disabled = false; b.innerHTML = '<i class="bi bi-download me-1"></i>Descargar PNG'; }); }
+    });
+
+    buildLawAccordion(); renderEx(0); solverRun(); math($('#t-s')); renderSheets();
   </script>
 </body>
 </html>
