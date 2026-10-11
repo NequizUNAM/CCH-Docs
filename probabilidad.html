@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadística - Probabilidad</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root { --c1:#e03131; --c2:#1c7ed6; --c3:#2f9e44; --c4:#f08c00; --c5:#7048e8; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18); }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; } .mono { font-family:'Courier New',monospace; font-weight:700; }
+
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; } .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3rem 1rem 2.6rem; border-bottom:5px solid #e8590c; box-shadow:var(--shadow-md); }
+    .hero-header .sym { position:absolute; font-weight:800; color:#fff; opacity:.1; animation:floaty 7s ease-in-out infinite; pointer-events:none; user-select:none; }
+    @keyframes floaty { 50% { transform:translateY(-14px) rotate(4deg); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.1rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.8rem 1rem; font-size:.92rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .manual-bar { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:.8rem 1rem; margin-bottom:1rem; border:1px solid #f1f5f9; }
+    .nav-pills .nav-link { color:#334155; font-weight:700; border-radius:12px; background:#fff; box-shadow:var(--shadow-sm); margin:0 .35rem .5rem 0; }
+    .nav-pills .nav-link.active { background:#0f172a; color:#fff; box-shadow:var(--shadow-md); }
+    .tab-pane { animation:pop .35s both; } @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .intro-box { background:linear-gradient(135deg,#f1ecff,#fff); border:1px solid #ddd2ff; border-left:5px solid #7048e8; border-radius:14px; padding:.8rem 1rem; margin-bottom:1rem; }
+
+    /* Leyes (acordeón) */
+    .law-item { border:0; border-radius:16px !important; box-shadow:var(--shadow-sm); margin-bottom:.7rem; overflow:hidden; }
+    .law-item .accordion-button { gap:.7rem; flex-wrap:wrap; font-weight:700; }
+    .law-item .accordion-button:not(.collapsed) { background:#efeafc; color:#5130b9; }
+    .law-num { width:30px; height:30px; border-radius:50%; background:#7048e8; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; flex:0 0 auto; }
+    .law-f { margin-left:auto; font-weight:400; color:#1e293b; }
+    .pinput { width:78px; font-family:'Courier New',monospace; font-weight:700; text-align:center; }
+    .tk { display:inline-block; width:18px; height:18px; border-radius:50%; margin:2px; animation:tkIn .35s both; box-shadow:inset 0 -2px 0 rgba(0,0,0,.18); }
+    .tk.cut { opacity:.25; text-decoration:line-through; position:relative; } .tk.cut::after { content:"×"; position:absolute; inset:0; text-align:center; line-height:18px; font-size:.8rem; color:#000; }
+    @keyframes tkIn { from { transform:scale(0); } to { transform:scale(1); } }
+    .tkgrp { display:inline-flex; flex-wrap:wrap; border:2px dashed var(--c,#94a3b8); border-radius:10px; padding:2px 4px; margin:3px; background:color-mix(in srgb,var(--c,#94a3b8) 8%,#fff); }
+    .tkgrp.out { border-style:solid; background:color-mix(in srgb,var(--c) 18%,#fff); }
+    .dot { width:30px; height:30px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-size:.8rem; font-weight:800; color:#64748b; transition:all .2s; }
+    .dot.on { background:var(--c,#7048e8); border-color:var(--c,#7048e8); color:#fff; transform:scale(1.15); } .dot.done { border-color:var(--c,#7048e8); color:var(--c,#7048e8); }
+    .stepcard { background:#f8fafc; border-radius:14px; padding:.8rem 1rem; border-left:5px solid #7048e8; animation:pop .3s both; }
+    .ln { background:#fff; border-left:4px solid #94a3b8; border-radius:0 10px 10px 0; padding:.05rem .6rem; margin:.35rem 0; overflow-x:auto; opacity:0; animation:lnIn .5s forwards; }
+    @keyframes lnIn { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }
+    .badge-ok { display:inline-block; padding:.12rem .6rem; border-radius:999px; color:#fff; font-weight:800; font-size:.8rem; background:var(--ok); } .badge-ok.no { background:var(--bad); } .badge-ok.na { background:#868e96; }
+
+    /* Jerarquía */
+    .lvl { display:inline-flex; align-items:center; gap:.35rem; border-radius:999px; padding:.15rem .7rem; font-size:.8rem; font-weight:800; color:#fff; margin:.1rem; }
+    .l1{background:#7048e8} .l2{background:#e03131} .l3{background:#1c7ed6} .l4{background:#2f9e44}
+    .solver-in { font-family:'Courier New',monospace; font-weight:700; font-size:1.15rem; }
+    .key { min-width:42px; font-weight:800; }
+    .big-expr { overflow-x:auto; text-align:center; font-size:1.25rem; padding:.4rem 0; }
+    .res-box { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:14px; padding:.7rem 1rem; text-align:center; font-size:1.3rem; }
+
+    /* Ejercicios */
+    .ex-card { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid #f1f5f9; border-top:5px solid var(--c,#94a3b8); padding:1rem; height:100%; transition:transform .2s, box-shadow .2s; }
+    .ex-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); } .ex-card.done { background:#f0fbf3; }
+    .lv1{--c:#2f9e44} .lv2{--c:#f08c00} .lv3{--c:#e03131}
+    .lvb { display:inline-block; padding:.1rem .6rem; border-radius:999px; background:var(--c); color:#fff; font-size:.75rem; font-weight:800; }
+    .chip-law { cursor:pointer; display:inline-block; border:1.5px solid #7048e8; color:#5130b9; background:#f1ecff; border-radius:999px; padding:0 .55rem; font-size:.75rem; font-weight:700; margin:.1rem; }
+    .chip-law:hover { background:#7048e8; color:#fff; }
+
+    /* Manual (modal) */
+    .mm-dot { width:32px; height:32px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-weight:800; font-size:.8rem; color:#64748b; transition:all .2s; }
+    .mm-dot.done { border-color:var(--c); color:var(--c); background:color-mix(in srgb,var(--c) 14%,#fff); } .mm-dot.on { background:var(--c); border-color:var(--c); color:#fff; transform:scale(1.15); box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent); }
+    .mm-visual { background:#fff; border-radius:16px; border:1px solid #e2e8f0; box-shadow:var(--shadow-sm); padding:1rem; position:sticky; top:0; min-height:240px; }
+    .mm-kicker { font-weight:800; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+    .mm-say { line-height:1.6; margin-bottom:.5rem; }
+    /* ===== Fórmulas estilo calculadora (reemplaza al LaTeX) ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.1em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; letter-spacing:.01em; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.22em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-family:inherit; font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; }
+    .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; }
+    .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; }
+    .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; line-height:1.3; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; z-index:1; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; }
+    .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; }
+    .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.55rem 1rem; min-height:3.6rem; overflow-x:auto; font-size:1.3rem; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); display:flex; align-items:center; }
+    .keypad { display:grid; gap:6px; } .keypad.k5 { grid-template-columns:repeat(5,52px); } .keypad.k4 { grid-template-columns:repeat(4,52px); }
+    .kb { border:0; border-radius:12px; padding:.55rem 0; font-weight:700; font-size:1.05rem; box-shadow:0 3px 0 rgba(0,0,0,.2); background:#e2e8f0; color:#0f172a; transition:transform .08s, box-shadow .08s; }
+    .kb:hover { filter:brightness(.97); } .kb:active { transform:translateY(3px); box-shadow:none; } .kb sup { font-size:.62em; position:relative; top:-.1em; }
+    .kb.fn { background:#dbe7ff; color:#1c4fd7; } .kb.op { background:#ffe3c2; color:#9a4b00; } .kb.ct { background:#ffd6d6; color:#b01818; } .kb.eq { background:#0f172a; color:#fff; } .kb.w2 { grid-column:span 2; }
+    .chip-sx { border:1.5px solid #1c7ed6; background:#eef5ff; border-radius:999px; padding:.1rem .8rem; margin:0 .3rem .3rem 0; color:#0f172a; }
+    .chip-sx:hover { background:#dbe9ff; }
+    /* Formulario tipo imagen */
+    .sheet-view { overflow-x:auto; border-radius:16px; box-shadow:var(--shadow-md); background:#fff; }
+    #sheet-wrap, .sheet-clone { min-width:1000px; background:#fff; }
+    .sheet { background:#fff; border-bottom:6px solid var(--c); }
+    .sh-head { background:linear-gradient(135deg,var(--c),#0f172a); color:#fff; padding:1.2rem 1.6rem; display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+    .sh-t { font-size:2rem; font-weight:800; letter-spacing:.14em; } .sh-s { font-size:1.15rem; opacity:.92; }
+    .sh-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:1.2rem 1.4rem; }
+    .sh-card { position:relative; border:2px solid var(--cb); border-radius:14px; padding:.8rem 1rem .8rem 3.1rem; background:var(--cs); }
+    .sh-n { position:absolute; left:.8rem; top:.8rem; width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sh-name { font-weight:800; color:var(--c); font-size:.95rem; }
+    .sh-f .cx.d { font-size:1.4em; overflow:visible; white-space:normal; } .sh-f .cx.d .fr, .sh-f .cx.d .rd { white-space:nowrap; }
+    .sh-card.wide { grid-column:1/-1; } .sh-card.wide .cx.d { white-space:nowrap; overflow:visible; }
+    .sh-ex { font-size:.95rem; color:#475569; border-top:1px dashed #94a3b8; margin-top:.3rem; padding-top:.35rem; }
+    .sh-ex b { color:var(--c); }
+    .sh-foot { margin:0 1.4rem; padding:.7rem 1rem; background:#0f172a; color:#fff; border-radius:12px; font-weight:600; text-align:center; }
+    footer small { font-size:.85rem; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-header .sym,.tk,.ln,.tab-pane,.stepcard{animation:none;opacity:1} }
+
+    /* ===== Fracciones: estructura ===== */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem .9rem; font-size:.86rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#e8590c; color:#e8590c; }
+    section.sec { scroll-margin-top:110px; margin-bottom:2.4rem; } .sec-h h2, .lesson h5 { color:#0f172a; }
+    .sec-h { display:flex; align-items:center; gap:.8rem; margin-bottom:.9rem; flex-wrap:wrap; }
+    .sec-h .num { width:44px; height:44px; border-radius:14px; background:linear-gradient(135deg,#e8590c,#f08c00); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; box-shadow:var(--shadow-md); }
+    .sec-h h2 { margin:0; font-size:1.55rem; font-weight:800; } .lvtag { font-size:.75rem; font-weight:800; padding:.15rem .65rem; border-radius:999px; color:#fff; }
+    .lt1{background:#2f9e44} .lt2{background:#f08c00} .lt3{background:#e03131} .lt4{background:#7048e8}
+    .lesson { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid #f1f5f9; padding:1.1rem; margin-bottom:1rem; }
+    .lesson h5 { font-weight:800; } .lesson p { margin-bottom:.5rem; }
+    .demo { background:linear-gradient(135deg,#fff7ed,#fff); border:1px solid #fed7aa; border-left:6px solid #e8590c; border-radius:16px; padding:1rem; margin-bottom:1rem; box-shadow:var(--shadow-sm); }
+    .demo-t { font-weight:800; color:#c2410c; margin-bottom:.5rem; } .demo-t i { margin-right:.4rem; }
+    .kc { border-radius:14px; padding:.7rem .9rem; border:2px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); height:100%; }
+    .kc .kt { font-weight:800; color:var(--c); } .kc .ktx { font-size:.88rem; color:#475569; }
+    .pill { display:inline-block; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:.15rem .8rem; font-size:.85rem; box-shadow:var(--shadow-sm); }
+    .tb { display:inline-block; padding:.1rem .65rem; border-radius:999px; font-size:.78rem; font-weight:800; color:#fff; margin:.1rem .15rem .1rem 0; }
+
+    /* Entrada de fracción apilada */
+    .fin { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .35rem; }
+    .fin input { width:66px; text-align:center; font-weight:800; font-size:1.15rem; border:2px solid #cbd5e1; border-radius:10px; padding:.1rem .2rem; background:#fff; font-family:'Segoe UI',sans-serif; }
+    .fin input:focus { border-color:#e8590c; outline:none; box-shadow:0 0 0 3px rgba(232,89,12,.2); }
+    .fin .bar { width:78px; height:3px; background:#0f172a; border-radius:2px; margin:3px 0; }
+    .fin.wh input.w { width:52px; margin-right:.4rem; }
+    .fin.c1 input { border-color:#e8590c; } .fin.c2 input { border-color:#1c7ed6; } .fin.c3 input { border-color:#2f9e44; }
+    .opb { font-size:1.6rem; font-weight:800; color:#334155; margin:0 .3rem; vertical-align:middle; }
+    .opsel .btn { font-weight:800; min-width:42px; }
+    .row-fr { display:flex; align-items:center; flex-wrap:wrap; gap:.2rem; }
+
+    /* Visuales */
+    .vis { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:.6rem; box-shadow:var(--shadow-sm); }
+    .vis svg { max-width:100%; height:auto; display:block; margin:0 auto; } .vis .cap { font-size:.78rem; color:#64748b; text-align:center; margin-top:.2rem; }
+    .pies { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; }
+    .wall { background:#fff; border-radius:14px; padding:.6rem; box-shadow:var(--shadow-sm); border:1px solid #e2e8f0; overflow-x:auto; }
+    .wrow { display:flex; height:28px; margin-bottom:3px; min-width:620px; align-items:stretch; } .wlab { width:34px; font-size:.75rem; font-weight:800; display:flex; align-items:center; justify-content:flex-end; padding-right:6px; color:#475569; flex:0 0 auto; }
+    .wbar { flex:1; display:flex; gap:2px; } .wc { flex:1; border-radius:5px; background:var(--wc,#ffd8a8); cursor:pointer; font-size:.68rem; display:flex; align-items:center; justify-content:center; color:#7c2d12; font-weight:700; transition:filter .15s, transform .15s; border:1px solid rgba(0,0,0,.08); }
+    .wc:hover { filter:brightness(.92); transform:scaleY(1.1); } .wc.on { background:#e8590c; color:#fff; } .wc.eq { background:#2f9e44; color:#fff; box-shadow:0 0 0 2px #b2f2bb; } .wc.part { background:#ffc078; }
+    .ba { display:inline-flex; align-items:center; gap:.3rem; font-weight:800; }
+    .cmpsym { font-size:3rem; font-weight:800; line-height:1; color:#e8590c; }
+
+    /* Pasos */
+    .stp { background:#fff; border-radius:14px; border:1px solid #e2e8f0; border-left:6px solid var(--c,#94a3b8); box-shadow:var(--shadow-sm); padding:.55rem .8rem; margin:.55rem 0; animation:pop .35s both; }
+    .stp .sh { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; font-weight:700; font-size:.88rem; }
+    .stp .sn { width:26px; height:26px; border-radius:50%; background:var(--c,#94a3b8); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:800; flex:0 0 auto; }
+    .stp details { margin-top:.25rem; } .stp summary { cursor:pointer; font-size:.82rem; color:#1c7ed6; font-weight:700; }
+    .opc { background:#f8fafc; border-radius:12px; padding:.4rem .7rem; margin:.4rem 0; border:1px dashed #cbd5e1; }
+    .opc .on { font-weight:800; font-size:.82rem; color:#334155; }
+    .opc .cl { font-size:.82rem; color:#475569; margin-top:.2rem; } .opc .cx.d { font-size:1.12em; }
+    .stbar { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin:.5rem 0; }
+    .prog { height:8px; border-radius:6px; background:#e2e8f0; overflow:hidden; flex:1; min-width:100px; } .prog > i { display:block; height:100%; background:linear-gradient(90deg,#e8590c,#f08c00); transition:width .3s; }
+    .resb { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:14px; padding:.7rem 1rem; display:flex; flex-wrap:wrap; gap:.6rem 1.4rem; align-items:center; justify-content:center; }
+    .resb .rl { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; opacity:.7; text-align:center; } .resb .cx { font-size:1.25rem; }
+    .per { text-decoration:overline; text-decoration-thickness:2px; }
+    .ldiv { border-collapse:collapse; font-family:'Courier New',monospace; font-weight:700; } .ldiv td { padding:.1rem .5rem; border:1px solid #e2e8f0; text-align:center; }
+    .ldiv tr.rep td { background:#fff3bf; }
+
+    /* Ejercicios */
+    .ex-card.ok { background:#f0fbf3; border-top-color:#2f9e44; } .ex-card.no { animation:shake .35s; }
+    @keyframes shake { 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+    .ans-in { width:96px; font-family:'Courier New',monospace; font-weight:800; text-align:center; }
+    .ex-n { font-weight:800; color:var(--c); }
+    .fb { font-weight:700; font-size:.88rem; min-height:1.3rem; }
+    .ex-steps { margin-top:.5rem; max-height:560px; overflow:auto; }
+    .tagN { display:inline-block; padding:.05rem .55rem; border-radius:6px; font-size:.72rem; font-weight:800; background:#0f172a; color:#fff; margin-right:.2rem; }
+    .ex20 { border:0; border-radius:16px !important; box-shadow:var(--shadow-sm); margin-bottom:.7rem; overflow:hidden; border-left:6px solid var(--c) !important; }
+    .ex20 .accordion-button { gap:.7rem; flex-wrap:wrap; font-weight:700; } .ex20 .accordion-button:not(.collapsed) { background:color-mix(in srgb,var(--c) 10%,#fff); }
+    .ex20 .nn { width:32px; height:32px; border-radius:50%; background:var(--c); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:800; flex:0 0 auto; }
+    .ex20 .ex-f { margin-left:auto; font-weight:400; color:#1e293b; }
+    .nxn { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.6rem; }
+    .hl-n { outline:3px solid #e8590c; outline-offset:2px; border-radius:6px; } .hl-d { outline:3px solid #1c7ed6; outline-offset:2px; border-radius:6px; }
+    .cplx { display:inline-block; padding:.7rem 1rem; background:#fff; border-radius:14px; border:2px dashed #cbd5e1; }
+    .cplx .blk-n { border:2px solid #e8590c; border-radius:10px; padding:.1rem .5rem; background:#fff4e6; } .cplx .blk-d { border:2px solid #1c7ed6; border-radius:10px; padding:.1rem .5rem; background:#e7f5ff; }
+    .tl-k { cursor:pointer; }
+    .toast-lite { position:fixed; right:1rem; bottom:1rem; background:#0f172a; color:#fff; padding:.6rem 1rem; border-radius:12px; z-index:2000; box-shadow:var(--shadow-lg); animation:pop .3s both; }
+    @media (max-width:576px) { .fin input { width:54px; } .fin .bar { width:62px; } .sec-h h2 { font-size:1.25rem; } }
+
+    /* ===== Barra de control (grupos + interruptor de círculos) ===== */
+    .sec-nav { position:static; box-shadow:none; background:transparent; }
+    .ctl { position:sticky; top:56px; z-index:1020; background:rgba(255,255,255,.97); backdrop-filter:blur(6px); box-shadow:var(--shadow-sm); border-bottom:1px solid #e2e8f0; }
+    .ctl-row { display:flex; align-items:center; gap:.6rem 1rem; flex-wrap:wrap; padding:.5rem 0 .2rem; }
+    .grp-bar { display:flex; gap:.35rem; flex-wrap:wrap; }
+    .grp-bar button { border:0; border-radius:999px; padding:.3rem .9rem; font-size:.84rem; font-weight:800; background:#f1f5f9; color:#334155; transition:all .2s; display:inline-flex; align-items:center; gap:.3rem; }
+    .grp-bar button:hover { background:#e2e8f0; } .grp-bar button.active { background:var(--g,#0f172a); color:#fff; box-shadow:0 4px 10px rgba(15,23,42,.25); transform:translateY(-1px); }
+    .pie-sw { margin-left:auto; display:flex; align-items:center; gap:.5rem; font-size:.84rem; font-weight:700; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:999px; padding:.2rem .8rem .2rem .5rem; }
+    .pie-sw .form-check-input { width:2.4em; height:1.25em; margin:0; cursor:pointer; } .pie-sw .form-check-input:checked { background-color:#e8590c; border-color:#e8590c; }
+    .sec-nav a[hidden], section.sec[hidden] { display:none !important; }
+    section.sec { margin-bottom:3.2rem; } .demo, .lesson { margin-bottom:1.3rem; }
+    .nextbar { display:flex; justify-content:space-between; align-items:center; gap:.6rem; flex-wrap:wrap; margin-top:1.4rem; padding-top:1rem; border-top:2px dashed #cbd5e1; }
+    .nextbar .btn { font-weight:700; }
+    .stepfold { margin-top:.4rem; } .stepfold > summary { cursor:pointer; font-weight:800; font-size:.85rem; color:#1c7ed6; list-style:none; padding:.25rem 0; } .stepfold > summary::before { content:"▸ "; } .stepfold[open] > summary::before { content:"▾ "; }
+    .no-pies .pie-g, .no-pies .pies, .no-pies div:has(> .pies) { display:none !important; }
+    .to-top { position:fixed; right:1rem; bottom:1rem; z-index:1030; width:44px; height:44px; border-radius:50%; border:0; background:#0f172a; color:#fff; box-shadow:var(--shadow-lg); opacity:0; pointer-events:none; transition:opacity .25s; }
+    .to-top.on { opacity:1; pointer-events:auto; }
+    .hero-btns .btn { font-weight:800; }
+
+    /* ===== Formulario (tipos de fracciones, animado) ===== */
+    .fchips { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+    .fchip { border:2px solid var(--c); color:var(--c); background:#fff; border-radius:999px; padding:.15rem .75rem; font-weight:800; font-size:.82rem; transition:all .2s; }
+    .fchip:hover { background:var(--c); color:#fff; transform:translateY(-2px); }
+    .fcard { background:#fff; border-radius:18px; box-shadow:var(--shadow-sm); border:1px solid #eef2f6; border-top:6px solid var(--c); padding:1rem 1.1rem 1.1rem; height:100%; display:flex; flex-direction:column; gap:.7rem; transition:box-shadow .25s, transform .25s; scroll-margin-top:170px; }
+    .fcard:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); } .fcard.flash { animation:flash 1.1s; }
+    @keyframes flash { 0%,100% { box-shadow:var(--shadow-sm); } 40% { box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 35%,transparent); } }
+    .fc-h { display:flex; align-items:center; gap:.7rem; }
+    .fc-n { width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; }
+    .fc-t { font-weight:800; font-size:1.08rem; color:var(--c); line-height:1.15; } .fc-s { font-size:.8rem; color:#64748b; }
+    .fc-ex { margin-left:auto; font-size:1.35em; background:color-mix(in srgb,var(--c) 10%,#fff); border-radius:12px; padding:.15rem .7rem; }
+    .fv { background:linear-gradient(180deg,color-mix(in srgb,var(--c) 6%,#fff),#fff); border:1px dashed color-mix(in srgb,var(--c) 45%,#fff); border-radius:14px; padding:.9rem .8rem; display:flex; flex-direction:column; gap:.55rem; align-items:center; justify-content:center; min-height:150px; }
+    .frow { display:flex; align-items:center; gap:.6rem; width:100%; justify-content:center; flex-wrap:wrap; } .frow .fbar { max-width:170px; }
+    .fbar { --c:#adb5bd; display:flex; gap:3px; width:100%; max-width:360px; }
+    .fcell { flex:1; height:34px; border-radius:7px; background:#e9ecef; border:1px solid rgba(0,0,0,.08); transform-origin:bottom; }
+    .fcell.on { background:var(--c); box-shadow:inset 0 -4px 0 rgba(0,0,0,.14); }
+    .fv.play .fcell.on { animation:fcIn .6s cubic-bezier(.2,.9,.3,1.35) both; animation-delay:calc(var(--i)*.13s); }
+    @keyframes fcIn { from { transform:scaleY(0); opacity:0; } to { transform:none; opacity:1; } }
+    .fcell.pulse { animation:fpulse 1.3s ease-in-out infinite; } @keyframes fpulse { 50% { transform:scale(1.14); filter:brightness(1.18); box-shadow:0 0 0 4px rgba(240,140,0,.28); } }
+    .plus { font-size:1.7rem; font-weight:800; color:var(--c); }
+    .fcap { font-size:.82rem; color:#475569; text-align:center; } .fcap .cx { font-size:1.05em; }
+    .bigeq { font-size:2rem; font-weight:800; color:var(--c); }
+    .fv.play .bigeq { animation:popIn .7s 1.3s cubic-bezier(.2,.9,.3,1.6) both; } @keyframes popIn { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
+    .scanwrap { position:relative; width:100%; max-width:360px; display:flex; flex-direction:column; gap:6px; }
+    .scanwrap .fbar { max-width:none; }
+    .scan { position:absolute; top:-6px; bottom:-6px; width:4px; border-radius:3px; background:#0f172a; left:0; animation:scan 3.2s ease-in-out infinite; box-shadow:0 0 0 3px rgba(15,23,42,.12); }
+    @keyframes scan { 0%,10% { left:0; } 55%,100% { left:calc(50% - 2px); } }
+    .chipseq { display:inline-block; padding:.1rem .65rem; border-radius:999px; font-weight:800; font-size:.8rem; background:#f1f3f5; color:#c92a2a; border:1px solid #ffc9c9; }
+    .chipseq.ok { background:#d3f9d8; color:#2b8a3e; border-color:#8ce99a; }
+    .fv.play .chipseq { animation:chipIn .45s both; animation-delay:calc(var(--i)*.75s + .9s); } @keyframes chipIn { from { transform:translateY(8px) scale(.6); opacity:0; } to { transform:none; opacity:1; } }
+    .g100 { display:grid; grid-template-columns:repeat(10,1fr); gap:2px; width:100%; max-width:210px; }
+    .g100 i { aspect-ratio:1; border-radius:3px; background:#e9ecef; display:block; } .g100 i.on { background:var(--c); }
+    .fv.play .g100 i.on { animation:fcIn .5s both; animation-delay:calc(var(--i)*.22s); }
+    .nl svg { width:100%; max-width:380px; height:auto; } .nl .dot { fill:var(--c); } .nl .seg { fill:color-mix(in srgb,var(--c) 40%,transparent); transform-box:fill-box; transform-origin:right center; }
+    .fv.play .nl .dot { animation:negMove 3.4s ease-in-out infinite; } .fv.play .nl .seg { animation:segGrow 3.4s ease-in-out infinite; }
+    @keyframes negMove { 0%,10% { transform:translateX(0); } 60%,100% { transform:translateX(var(--dx)); } } @keyframes segGrow { 0%,10% { transform:scaleX(0); } 60%,100% { transform:scaleX(1); } }
+    .cxs { display:inline-flex; flex-direction:column; align-items:center; font-size:1.25em; }
+    .cxs .b { border:2px solid; border-radius:10px; padding:.05rem .6rem; background:#fff; } .cxs .b.n { border-color:#e8590c; } .cxs .b.d { border-color:#1c7ed6; }
+    .cxs .ml { height:4px; width:100%; background:#0f172a; margin:5px 0; border-radius:2px; }
+    .fv.play .cxs .b.n { animation:bpulse 3s infinite; } .fv.play .cxs .b.d { animation:bpulse 3s 1s infinite; } .fv.play .cxs .ml { animation:bpulse 3s 2s infinite; }
+    @keyframes bpulse { 0%,25%,100% { transform:none; box-shadow:none; } 10% { transform:scale(1.1); box-shadow:0 0 0 5px rgba(232,89,12,.2); } }
+    .fc-rule { background:#f8fafc; border-left:5px solid var(--c); border-radius:0 10px 10px 0; padding:.35rem .7rem; font-size:.9rem; } .fc-rule .lb { font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--c); margin-right:.5rem; }
+    .fc-list { margin:0; padding-left:1.1rem; font-size:.86rem; color:#334155; } .fc-list li { margin-bottom:.15rem; }
+    .fc-re { align-self:flex-start; margin-top:auto; font-weight:700; }
+    @media (prefers-reduced-motion:reduce) { .fv.play .fcell.on, .fv.play .chipseq, .fv.play .g100 i.on, .fv.play .bigeq, .fcell.pulse, .scan, .fv.play .nl .dot, .fv.play .nl .seg, .fv.play .cxs * { animation:none !important; opacity:1; } }
+    @media (max-width:576px) { .pie-sw { margin-left:0; } .grp-bar button { padding:.25rem .65rem; font-size:.78rem; } }
+  
+    /* ===== Probabilidad ===== */
+    .hero-header { border-bottom-color:#4c6ef5; }
+    .sec-h .num { background:linear-gradient(135deg,#4c6ef5,#7048e8); }
+    .demo { background:linear-gradient(135deg,#f3f0ff,#fff); border-color:#d0bfff; border-left-color:#7048e8; }
+    .demo-t { color:#5f3dc4; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#7048e8; color:#5f3dc4; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; } .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before { content:'^'; position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    .cx .fr.bn .nu { border-bottom:0; } .cx .fr.bn { margin:0 .05em; }
+    .tools .btn.sp-btn { background:#fff; border:2px solid #7048e8; color:#2b1f6e; font-weight:800; border-radius:999px; padding:.22rem .9rem; font-size:.88rem; }
+    .tools .btn.sp-btn:hover, .tools .btn.sp-btn.show { background:#f3f0ff; }
+    .sp-menu { min-width:300px; max-height:70vh; overflow:auto; border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.5rem; }
+    .sp-menu .dropdown-header { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
+    .sp-menu button { display:flex; align-items:center; gap:.6rem; width:100%; border:0; background:transparent; border-radius:10px; padding:.4rem .6rem; font-weight:600; text-align:left; }
+    .sp-menu button:hover { background:#f3f0ff; } .sp-menu button.on { background:#7048e8; color:#fff; } .sp-menu .ic { font-size:1.3rem; width:1.8rem; text-align:center; } .sp-menu .n { margin-left:auto; font-size:.75rem; opacity:.7; }
+    .no-anim *, .no-anim *::before, .no-anim *::after { animation:none !important; transition:none !important; }
+    .no-anim .reveal { opacity:1 !important; transform:none !important; }
+
+    /* chips de resultados */
+    .chips { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .och { --c:#7048e8; display:inline-flex; align-items:center; gap:.3rem; border:2px solid var(--c); color:#1e293b; background:#fff; border-radius:999px; padding:.15rem .7rem; font-weight:700; font-size:.88rem; transition:transform .15s, background .2s, box-shadow .2s; animation:chipPop .45s both; animation-delay:calc(var(--k,0)*22ms); }
+    .och .oi { font-size:1.1em; } .och sup { font-size:.68em; font-weight:800; color:var(--c); }
+    @keyframes chipPop { from { transform:scale(.3); opacity:0; } to { transform:scale(1); opacity:1; } }
+    button.och { cursor:pointer; } button.och:hover { transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,.15); }
+    .och.sel { background:var(--c); color:#fff; } .och.sel sup { color:#fff; }
+    .och.sA { background:#ffd8a8; border-color:#e8590c; } .och.sB { background:#a5d8ff; border-color:#1c7ed6; } .och.sAB { background:linear-gradient(90deg,#ffd8a8 50%,#a5d8ff 50%); border-color:#7048e8; } .och.s0 { background:#f1f3f5; border-color:#ced4da; color:#868e96; }
+    .och.dim { opacity:.35; }
+    .och.sm { font-size:.74rem; padding:.05rem .4rem; border-width:1.5px; }
+    .vecm { display:inline-flex; align-items:center; gap:.7rem; padding:.3rem .9rem; border-left:3px solid #334155; border-right:3px solid #334155; border-radius:12px; margin:.2rem 0; max-width:100%; overflow-x:auto; }
+    .vecm .vc { display:flex; flex-direction:column; align-items:center; min-width:34px; animation:chipPop .45s both; animation-delay:calc(var(--k,0)*40ms); }
+    .vecrow { display:flex; align-items:center; gap:.5rem; flex-wrap:nowrap; } .vecrow .vn { font-weight:800; color:#5f3dc4; white-space:nowrap; }
+    .pbar { display:flex; align-items:center; gap:.5rem; margin:.25rem 0; font-size:.85rem; } .pbar .pl { width:90px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .pbar .pt { flex:1; height:16px; background:#e9ecef; border-radius:8px; overflow:hidden; } .pbar .pt i { display:block; height:100%; width:0; background:var(--c); border-radius:8px; animation:grow 1s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:calc(var(--k,0)*40ms); }
+    @keyframes grow { to { width:var(--w); } } .pbar .pv { width:64px; text-align:right; }
+    .meter { height:34px; border-radius:12px; overflow:hidden; display:flex; background:#e9ecef; box-shadow:inset 0 2px 5px rgba(0,0,0,.12); }
+    .meter > span { display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:.85rem; width:0; animation:grow 1.1s cubic-bezier(.2,.8,.2,1) forwards; white-space:nowrap; overflow:hidden; }
+    .anim-in { animation:slideIn .5s both; animation-delay:calc(var(--k,0)*110ms); } @keyframes slideIn { from { opacity:0; transform:translateX(-14px); } to { opacity:1; transform:none; } }
+    .reveal { opacity:0; transform:translateY(16px); transition:opacity .6s, transform .6s; } .reveal.in { opacity:1; transform:none; }
+    .cc { border-radius:16px; background:#fff; border:1px solid #e2e8f0; border-top:5px solid var(--c); padding:.8rem .9rem; height:100%; box-shadow:var(--shadow-sm); transition:transform .25s, box-shadow .25s; }
+    .cc:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); } .cc .ct { font-weight:800; color:var(--c); } .cc .ci { font-size:2rem; display:inline-block; animation:floaty2 3.2s ease-in-out infinite; } @keyframes floaty2 { 50% { transform:translateY(-6px) rotate(6deg); } }
+    .cc p { font-size:.88rem; margin:.2rem 0 0; color:#475569; }
+    .big-p { font-size:1.15em; }
+    .step-pr { margin:.35rem 0; } .opc .cl b { color:#334155; }
+    .kpi { display:inline-flex; flex-direction:column; align-items:center; background:#fff; border:2px solid var(--c,#7048e8); border-radius:14px; padding:.35rem .9rem; min-width:96px; box-shadow:var(--shadow-sm); animation:chipPop .5s both; animation-delay:calc(var(--k,0)*80ms); }
+    .kpi .kl { font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; font-weight:800; color:var(--c,#7048e8); } .kpi .kv { font-size:1.2rem; font-weight:800; }
+    .badge-s { display:inline-block; padding:.12rem .7rem; border-radius:999px; font-weight:800; font-size:.78rem; color:#fff; margin:.1rem; }
+
+    /* Árbol */
+    .tree-wrap { overflow:auto; max-height:640px; background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; }
+    .tree-wrap svg { display:block; min-width:100%; }
+    .te { fill:none; stroke:#94a3b8; stroke-width:2; stroke-dasharray:1; stroke-dashoffset:1; animation:draw .7s forwards; animation-delay:var(--d,0s); transition:stroke .2s, stroke-width .2s; }
+    @keyframes draw { to { stroke-dashoffset:0; } } .no-draw .te { animation:none; stroke-dashoffset:0; }
+    .te.hl { stroke:#e8590c; stroke-width:4; }
+    .tn { transform-box:fill-box; transform-origin:center; animation:nodePop .45s both; animation-delay:var(--d,0s); } @keyframes nodePop { from { transform:scale(0); } to { transform:scale(1); } }
+    .tt { font-size:11px; font-weight:700; fill:#334155; paint-order:stroke; stroke:#fff; stroke-width:4px; opacity:0; animation:fadeIn .4s forwards; animation-delay:var(--d,0s); } @keyframes fadeIn { to { opacity:1; } }
+    .lf { cursor:pointer; } .lf:hover .tl { fill:#e8590c; } .tl { font-size:12px; font-weight:800; fill:#1e293b; }
+
+    /* Venn */
+    .venn-wrap { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; } .venn-wrap svg { width:100%; height:auto; display:block; }
+    .vhl { animation:vpulse 1.6s ease-in-out infinite; } @keyframes vpulse { 0%,100% { opacity:.55; } 50% { opacity:.95; } }
+    .vin { animation:vin .6s both; transform-box:fill-box; transform-origin:center; } @keyframes vin { from { opacity:0; transform:scale(.8); } to { opacity:1; transform:none; } }
+    .vlab { font-size:17px; font-weight:800; } .vcnt { font-size:19px; font-weight:800; }
+    .rgn-btns { display:flex; flex-wrap:wrap; gap:.4rem; } .rgn-btns .btn { font-weight:800; border-radius:999px; }
+    .tabx .nav-link { font-weight:800; }
+
+    /* Avanzado */
+    .erow { background:#fff; border:1px solid #e2e8f0; border-left:7px solid var(--c); border-radius:14px; padding:.7rem .9rem; margin-bottom:.7rem; box-shadow:var(--shadow-sm); animation:slideIn .45s both; }
+    .erow .eh { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; margin-bottom:.4rem; }
+    .erow .en { width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .erow select { width:auto; font-weight:700; } .erow .ep { margin-left:auto; }
+    .opx { font-size:1.3rem; font-weight:800; color:#7048e8; text-align:center; margin:-.2rem 0 .3rem; }
+    .funnel { display:flex; flex-direction:column; gap:.3rem; }
+    .funnel .fb { display:flex; align-items:center; gap:.5rem; } .funnel .fb .bb { height:26px; border-radius:8px; background:var(--c); width:0; animation:grow 1s forwards; animation-delay:calc(var(--k,0)*220ms); min-width:4px; display:flex; align-items:center; padding-left:.5rem; color:#fff; font-weight:800; font-size:.78rem; white-space:nowrap; }
+    .funnel .fb .fl { width:130px; font-size:.78rem; font-weight:700; text-align:right; }
+    .hyp-row { display:grid; grid-template-columns:34px 1fr 1fr; gap:.6rem; align-items:center; margin-bottom:.5rem; } .hyp-row .hn { width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .hyp-row label { font-size:.75rem; font-weight:800; color:#64748b; margin:0; }
+
+    /* Manual */
+    .mm-card { background:#fff; border-radius:18px; box-shadow:var(--shadow-md); border:1px solid #e2e8f0; overflow:hidden; }
+    .mm-top { background:linear-gradient(135deg,var(--c),#0f172a); color:#fff; padding:.8rem 1.1rem; display:flex; align-items:center; gap:.8rem; }
+    .mm-top .mi { font-size:2rem; } .mm-top .mt { font-weight:800; font-size:1.15rem; } .mm-top .mk { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; opacity:.85; font-weight:800; }
+    .mm-body { padding:1rem 1.1rem; min-height:330px; } .mm-vis { background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:.7rem; min-height:230px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; }
+    .mm-say { line-height:1.6; } .mm-say b { color:var(--c); } .mm-def { background:color-mix(in srgb,var(--c) 9%,#fff); border-left:5px solid var(--c); border-radius:0 12px 12px 0; padding:.45rem .8rem; margin:.5rem 0; font-size:.92rem; }
+    .mm-dots { display:flex; gap:.35rem; flex-wrap:wrap; justify-content:center; padding:.6rem; background:#f8fafc; border-top:1px solid #e2e8f0; }
+    .mm-dot { width:30px; height:30px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-weight:800; font-size:.78rem; color:#64748b; transition:all .2s; } .mm-dot.done { border-color:var(--c); color:var(--c); } .mm-dot.on { background:var(--c); border-color:var(--c); color:#fff; transform:scale(1.15); }
+    .coin { width:64px; height:64px; border-radius:50%; background:radial-gradient(circle at 30% 30%,#ffe066,#f59f00); display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:1.5rem; box-shadow:0 4px 10px rgba(0,0,0,.25); animation:flip 1.6s ease-in-out infinite; }
+    @keyframes flip { 0%,100% { transform:rotateY(0); } 50% { transform:rotateY(540deg); } }
+    .die { width:60px; height:60px; border-radius:14px; background:#fff; border:3px solid #1e293b; display:inline-flex; align-items:center; justify-content:center; font-size:2.6rem; animation:roll 1.8s ease-in-out infinite; } @keyframes roll { 0%,100% { transform:rotate(0); } 50% { transform:rotate(360deg) scale(1.1); } }
+    .gl { width:100%; border-collapse:separate; border-spacing:0 .35rem; font-size:.9rem; } .gl td { background:#fff; padding:.45rem .7rem; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; } .gl td:first-child { border-left:5px solid var(--c); border-radius:10px 0 0 10px; font-weight:800; } .gl td:last-child { border-right:1px solid #e2e8f0; border-radius:0 10px 10px 0; }
+
+    /* Formulario */
+    .fcat { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+    .fm { background:#fff; border-radius:16px; border:1px solid #e2e8f0; border-top:6px solid var(--c); padding:.8rem 1rem; height:100%; box-shadow:var(--shadow-sm); transition:transform .25s, box-shadow .25s; display:flex; flex-direction:column; gap:.4rem; } .fm:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+    .fm .ft { font-weight:800; color:var(--c); } .fm .ff { background:color-mix(in srgb,var(--c) 7%,#fff); border-radius:12px; padding:.4rem .6rem; text-align:center; overflow-x:auto; } .fm .fe { font-size:.84rem; color:#475569; } .fm .fx { font-size:.82rem; border-top:1px dashed #cbd5e1; padding-top:.35rem; color:#334155; }
+    .fm.hide { display:none; } .fcol[hidden] { display:none; }
+    @media (max-width:576px) { .tools .sp-btn { font-size:.8rem; } .mm-body { padding:.7rem; } }
+
+    .pl { fill:none; stroke:#7048e8; stroke-width:2.5; stroke-dasharray:1; stroke-dashoffset:1; animation:draw 1.6s forwards; }
+  </style>
+</head><body>
+  <div id="app-header"></div>
+  <main>
+    <header class="hero-header text-center mb-0">
+      <span class="sym" style="left:6%;top:18%;font-size:4.5rem">🎲</span><span class="sym" style="left:20%;bottom:6%;font-size:3.5rem;animation-delay:1s">🪙</span>
+      <span class="sym" style="right:8%;top:14%;font-size:4rem;animation-delay:2s">♠</span><span class="sym" style="right:22%;bottom:8%;font-size:3.5rem;animation-delay:3s">Ω</span>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-dice-5-fill text-info me-2"></i>Probabilidad</h1>
+        <p class="lead mb-1">Espacio muestral Ω · diagramas de árbol · Venn · eventos compuestos · Bayes</p>
+        <p class="mb-0 text-light opacity-75">Elige un experimento (dado, moneda, baraja, meses…) y mira cómo se calcula cada probabilidad, paso a paso y con animaciones</p>
+        <div class="hero-btns mt-3 d-flex gap-2 justify-content-center flex-wrap"><a class="btn btn-info rounded-pill px-4" href="#s1" data-go="b"><i class="bi bi-rocket-takeoff-fill me-1"></i>Empezar</a><a class="btn btn-outline-light rounded-pill px-4" href="#s8" data-go="m"><i class="bi bi-journal-bookmark-fill me-1"></i>Manual paso a paso</a><a class="btn btn-outline-light rounded-pill px-4" href="#s9" data-go="f"><i class="bi bi-journal-richtext me-1"></i>Formulario</a></div>
+      </div>
+    </header>
+
+    <div class="ctl" id="ctl"><div class="container">
+      <div class="ctl-row"><div class="grp-bar" id="grp-bar"></div></div>
+      <div class="ctl-row tools" style="padding-top:0">
+        <div class="dropdown"><button class="btn sp-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="sp-btn"></button><div class="dropdown-menu sp-menu" id="sp-menu"></div></div>
+        <label class="pie-sw" title="Mostrar resultados como decimales con dos cifras" style="margin-left:0"><span class="form-check form-switch m-0 p-0"><input class="form-check-input" type="checkbox" role="switch" id="dec-sw"></span><span id="dec-lb"><i class="bi bi-123 me-1" style="color:#7048e8"></i>Fracciones</span></label>
+        <label class="pie-sw" title="Activar o desactivar las animaciones" style="margin-left:0"><span class="form-check form-switch m-0 p-0"><input class="form-check-input" type="checkbox" role="switch" id="anim-sw" checked></span><span><i class="bi bi-stars me-1" style="color:#e8590c"></i>Animaciones</span></label>
+      </div>
+      <nav class="sec-nav" id="sec-nav"><a href="#s1" data-g="b">1 Ω y vectores</a><a href="#s2" data-g="b">2 Eventos</a><a href="#s3" data-g="t">3 Diagrama de árbol</a><a href="#s4" data-g="t">4 Fórmulas Ω</a><a href="#s5" data-g="v">5 Diagramas de Venn</a><a href="#s6" data-g="a">6 Eventos compuestos</a><a href="#s7" data-g="a">7 Condicional y Bayes</a><a href="#s8" data-g="m">8 Manual</a><a href="#s9" data-g="f">9 Formulario</a></nav>
+    </div></div>
+
+    <div class="container mt-4 mb-5" id="content">
+
+      <section class="sec" id="s1" data-g="b"><div class="sec-h"><span class="num">1</span><h2>Experimento, espacio muestral Ω y vectores</h2><span class="lvtag lt1">Básico</span></div>
+        <div class="row g-4 mb-3" id="s1-cards"></div>
+        <div class="demo"><div class="demo-t"><i class="bi bi-collection-fill"></i>Espacio muestral activo: <span id="s1-name"></span></div>
+          <p class="small text-muted mb-2" id="s1-desc"></p>
+          <div class="row g-4"><div class="col-lg-7"><div class="small fw-bold text-muted mb-1">Resultados posibles (ω) — cada uno es un elemento de Ω</div><div class="chips mb-3" id="s1-chips"></div>
+            <div class="small fw-bold text-muted mb-1">Vectores del experimento (de 2 hasta 15 elementos)</div><div id="s1-vec"></div></div>
+            <div class="col-lg-5"><div class="small fw-bold text-muted mb-1">Probabilidad de cada resultado</div><div id="s1-bars"></div></div></div>
+          <div id="s1-custom" class="mt-3" hidden></div></div>
+      </section>
+
+      <section class="sec" id="s2" data-g="b"><div class="sec-h"><span class="num">2</span><h2>Eventos y probabilidad clásica</h2><span class="lvtag lt1">Básico</span></div>
+        <div class="row g-4"><div class="col-lg-5"><div class="lesson"><h5>Un evento es un subconjunto de Ω</h5>
+          <p>Un <b>evento</b> A reúne los resultados que nos interesan. Su probabilidad es la proporción de casos favorables:</p>
+          <div class="text-center">$P(A) = \dfrac{n(A)}{n(\Omega)} = \dfrac{\text{casos favorables}}{\text{casos posibles}}$</div>
+          <p class="mt-2 small mb-1">Cuando los resultados no son equiprobables (urna, clima, artefactos) cada resultado tiene un <b>peso</b> w y se suma: $P(A) = \frac{\sum w(\omega)}{\sum w}$.</p>
+          <div class="tip-box s-ok small mt-2"><b>Reglas:</b> $0 \le P(A) \le 1$ · $P(\Omega) = 1$ · $P(\emptyset) = 0$ · $P(A') = 1 - P(A)$</div></div></div>
+        <div class="col-lg-7"><div class="demo"><div class="demo-t"><i class="bi bi-hand-index-thumb-fill"></i>Construye tu evento A (toca los resultados)</div>
+          <div class="d-flex flex-wrap gap-1 mb-2" id="s2-quick"></div><div class="chips mb-2" id="s2-chips"></div><div class="small" id="s2-set"></div></div></div></div>
+        <div id="s2-out"></div>
+      </section>
+
+      <section class="sec" id="s3" data-g="t"><div class="sec-h"><span class="num">3</span><h2>Diagrama de árbol</h2><span class="lvtag lt2">Intermedio</span></div>
+        <div class="demo"><div class="d-flex flex-wrap align-items-center gap-3 mb-2"><div class="demo-t m-0"><i class="bi bi-diagram-3-fill"></i>Etapas (repeticiones del experimento)</div>
+          <div class="btn-group" id="tr-k"></div><label class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="tr-p" checked><span class="form-check-label small fw-bold">Probabilidad en las ramas</span></label>
+          <button class="btn btn-sm btn-dark rounded-pill ms-auto" id="tr-play"><i class="bi bi-play-fill me-1"></i>Animar</button></div>
+          <div class="small text-muted mb-2" id="tr-note"></div><div class="tree-wrap" id="tr-svg"></div><div id="tr-sel" class="mt-2"></div></div>
+        <div class="demo"><div class="demo-t"><i class="bi bi-braces"></i>Espacio muestral Ω del árbol</div><div id="tr-omega"></div></div>
+      </section>
+
+      <section class="sec" id="s4" data-g="t"><div class="sec-h"><span class="num">4</span><h2>Fórmulas: espacio muestral Ω, población y muestra</h2><span class="lvtag lt2">Intermedio</span></div>
+        <div class="row g-4"><div class="col-12"><div id="f4-count"></div></div></div>
+        <div class="demo mt-3"><div class="demo-t"><i class="bi bi-bar-chart-steps"></i>Éxitos en k etapas (distribución binomial del árbol)</div><div id="f4-bin"></div></div>
+        <div class="demo mt-3"><div class="demo-t"><i class="bi bi-people-fill"></i>Población vs muestra</div>
+          <p class="small mb-2">La <b>población</b> es todo Ω (conocemos sus pesos). Una <b>muestra</b> son n lanzamientos reales: sus estadísticos se parecen a los parámetros de la población, y se acercan más mientras n crece.</p>
+          <div class="row g-3"><div class="col-lg-6"><div id="f4-pop"></div></div><div class="col-lg-6"><div id="f4-smp"></div></div></div>
+          <div class="d-flex flex-wrap align-items-center gap-3 my-3"><div class="d-flex align-items-center gap-2"><b class="small">Tamaño de la muestra n:</b><input type="range" id="f4-n" min="5" max="400" value="30" style="width:200px"><b id="f4-nv">30</b></div><button class="btn btn-primary rounded-pill" id="f4-go"><i class="bi bi-shuffle me-1"></i>Tomar muestra</button><span class="small text-muted">El evento usado para p̂ es el A de la sección 2.</span></div>
+          <div id="f4-res"></div></div>
+      </section>
+
+      <section class="sec" id="s5" data-g="v"><div class="sec-h"><span class="num">5</span><h2>Diagramas de Venn: conjunción y disyunción</h2><span class="lvtag lt2">Intermedio</span></div>
+        <div class="row g-4"><div class="col-lg-4"><div class="lesson"><h5>Dos eventos, cuatro zonas</h5>
+          <p><span class="badge-s" style="background:#7048e8">A ∩ B</span> <b>Conjunción</b> («A <b>y</b> B»): ocurren los dos a la vez.</p>
+          <p><span class="badge-s" style="background:#1c7ed6">A ∪ B</span> <b>Disyunción</b> («A <b>o</b> B»): ocurre al menos uno.</p>
+          <p class="small mb-1">Pulsa los resultados para cambiarlos de zona (ninguno → solo A → solo B → ambos) o elige reglas para A y B. Luego selecciona la región y mira su probabilidad.</p>
+          <div class="text-center">$P(A \cup B) = P(A) + P(B) - P(A \cap B)$</div></div></div>
+        <div class="col-lg-8"><div class="demo"><ul class="nav nav-pills tabx mb-2" id="vn-tabs"><li class="nav-item"><button class="nav-link active" data-vm="el">Con los resultados de Ω</button></li><li class="nav-item"><button class="nav-link" data-vm="pr">Con porcentajes</button></li></ul>
+          <div id="vn-el"><div class="row g-2 mb-2 align-items-center"><div class="col-sm-6"><label class="small fw-bold" style="color:#e8590c">A =</label><select class="form-select form-select-sm" id="vn-qa"></select></div><div class="col-sm-6"><label class="small fw-bold" style="color:#1c7ed6">B =</label><select class="form-select form-select-sm" id="vn-qb"></select></div></div>
+            <div class="chips mb-2" id="vn-chips"></div></div>
+          <div id="vn-pr" hidden><div class="row g-3 mb-2"><div class="col-sm-4"><label class="small fw-bold" style="color:#e8590c">P(A) = <span id="pa-v"></span> %</label><input type="range" class="form-range" id="pa" min="0" max="100" value="50"></div><div class="col-sm-4"><label class="small fw-bold" style="color:#1c7ed6">P(B) = <span id="pb-v"></span> %</label><input type="range" class="form-range" id="pb" min="0" max="100" value="40"></div><div class="col-sm-4"><label class="small fw-bold" style="color:#7048e8">P(A∩B) = <span id="pab-v"></span> %</label><input type="range" class="form-range" id="pab" min="0" max="100" value="20"></div></div></div>
+          <div class="rgn-btns mb-2" id="vn-rg"></div><div class="row g-3"><div class="col-lg-7"><div class="venn-wrap" id="vn-svg"></div></div><div class="col-lg-5"><div id="vn-out"></div></div></div></div></div></div>
+      </section>
+
+      <section class="sec" id="s6" data-g="a"><div class="sec-h"><span class="num">6</span><h2>Avanzado: eventos compuestos (hasta 5)</h2><span class="lvtag lt3">Avanzado</span></div>
+        <div class="intro-box"><b><i class="bi bi-lightbulb-fill text-warning me-1"></i>Combina hasta 5 eventos.</b> Empieza con uno solo (la moneda). Agrega más —del mismo experimento o de otros— y elige si deben ocurrir <b>todos</b> (conjunción «Y», ∩) o <b>al menos uno</b> (disyunción «O», ∪).</div>
+        <div class="row g-4"><div class="col-lg-7"><div id="ad-rows"></div><div class="d-flex flex-wrap gap-2 align-items-center mb-2"><button class="btn btn-primary rounded-pill" id="ad-add"><i class="bi bi-plus-lg me-1"></i>Agregar evento</button><span class="small text-muted" id="ad-cnt"></span></div>
+          <div class="small fw-bold text-muted mb-1">Ejemplos listos:</div><div class="d-flex flex-wrap gap-1" id="ad-pre"></div></div>
+          <div class="col-lg-5"><div class="demo"><div class="demo-t"><i class="bi bi-sliders"></i>Cómo se combinan</div>
+            <div class="btn-group w-100 mb-2" id="ad-op"><button class="btn btn-outline-dark active" data-o="and">Y · conjunción ∩</button><button class="btn btn-outline-dark" data-o="or">O · disyunción ∪</button></div>
+            <div class="btn-group w-100" id="ad-rp"><button class="btn btn-outline-dark active" data-r="1">Con reemplazo</button><button class="btn btn-outline-dark" data-r="0">Sin reemplazo</button></div>
+            <div class="small text-muted mt-2" id="ad-rn"></div></div></div></div>
+        <div id="ad-out" class="mt-3"></div>
+      </section>
+
+      <section class="sec" id="s7" data-g="a"><div class="sec-h"><span class="num">7</span><h2>Probabilidad condicional y teorema de Bayes</h2><span class="lvtag lt3">Avanzado</span></div>
+        <div class="row g-4"><div class="col-lg-5"><div class="lesson"><h5>Actualizar lo que sabemos</h5>
+          <p>$P(A \mid B) = \dfrac{P(A \cap B)}{P(B)}$ es la probabilidad de A <b>sabiendo que</b> B ya ocurrió: Ω se reduce a B.</p>
+          <p class="mb-1"><b>Probabilidad total:</b> $P(E) = \sum P(H_i)\,P(E \mid H_i)$</p>
+          <p class="mb-1"><b>Bayes:</b> $P(H_i \mid E) = \dfrac{P(H_i)\,P(E \mid H_i)}{P(E)}$</p>
+          <div class="d-flex flex-wrap gap-1 mt-2" id="by-pre"></div></div></div>
+        <div class="col-lg-7"><div class="demo"><div class="d-flex align-items-center gap-2 mb-2 flex-wrap"><div class="demo-t m-0"><i class="bi bi-diagram-2-fill"></i>Hipótesis H y evidencia E</div><div class="btn-group btn-group-sm ms-auto" id="by-n"><button class="btn btn-outline-dark" data-n="2">2</button><button class="btn btn-outline-dark active" data-n="3">3</button><button class="btn btn-outline-dark" data-n="4">4</button></div></div>
+          <div class="small mb-2" id="by-ev"></div><div id="by-rows"></div></div></div></div>
+        <div id="by-out" class="mt-3"></div>
+      </section>
+
+      <section class="sec" id="s8" data-g="m"><div class="sec-h"><span class="num">8</span><h2>Manual paso a paso</h2><span class="lvtag lt1">Guía</span></div>
+        <div class="intro-box"><b><i class="bi bi-journal-bookmark-fill text-warning me-1"></i>Un solo problema, resuelto en 10 pasos:</b> «se lanza una moneda y un dado». Usa <i>Siguiente</i>, los puntos de abajo o <i>Reproducir</i>. Aquí se explica qué es cada cosa, y la diferencia entre <b>intersección</b> y <b>conjunción</b>.</div>
+        <div class="mm-card" id="mm"><div class="mm-top" id="mm-top"></div><div class="mm-body"><div class="row g-3"><div class="col-lg-6"><div class="mm-vis" id="mm-vis"></div></div><div class="col-lg-6"><div id="mm-say"></div></div></div></div>
+          <div class="mm-dots" id="mm-dots"></div>
+          <div class="d-flex justify-content-between align-items-center p-2 bg-light flex-wrap gap-2"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" id="mm-prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" id="mm-next">Siguiente<i class="bi bi-chevron-right ms-1"></i></button></div><span class="small text-muted" id="mm-count"></span><button class="btn btn-warning rounded-pill fw-semibold" id="mm-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button></div></div>
+        <h5 class="fw-bold mt-4 mb-2"><i class="bi bi-book-half me-1 text-primary"></i>¿Qué es cada cosa?</h5><table class="gl" id="gloss"></table>
+      </section>
+
+      <section class="sec" id="s9" data-g="f"><div class="sec-h"><span class="num">9</span><h2>Formulario de probabilidad</h2><span class="lvtag lt4">Referencia</span></div>
+        <div class="intro-box"><b><i class="bi bi-journal-richtext text-warning me-1"></i>Todas las fórmulas</b> agrupadas por tema, con su ejemplo numérico. Filtra por tema.</div>
+        <div class="fcat" id="fm-cat"></div><div class="row g-3" id="fm-grid"></div>
+      </section>
+    </div>
+  </main>
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Probabilidad</small></footer>
+  <button class="to-top" id="to-top" aria-label="Subir"><i class="bi bi-arrow-up"></i></button>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" }, { label: "Fracciones", href: "fracciones.html", icon: "bi-pie-chart-fill" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" }, { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" }, { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }, { label: "Precursores de la computación", href: "precursores.html", icon: "bi-clock-history" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+        <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div></div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header'), page = location.pathname.split('/').pop() || 'probabilidad.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try { const res = await fetch('index.html', { cache: 'no-store' }); if (!res.ok) throw 0;
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html'); renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page); } catch (e) {}
+    })();
+  </script>
+
+<script>
+
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const escH = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? `<div class="cx d">${fx(m[1])}</div>` : `<span class="cx">${fx(m[2])}</span>`); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+        /*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { Omega: 'Ω', omega: 'ω', mu: 'μ', sigma: 'σ', lambda: 'λ', cap: '∩', cup: '∪', emptyset: '∅', setminus: '∖', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', land: '∧', lor: '∨', lnot: '¬', triangle: '△', mid: '∣', vee: '∨', wedge: '∧', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['cap', 'cup', 'setminus', 'in', 'notin', 'subset', 'subseteq', 'land', 'lor', 'mid', 'triangle', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'overline': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name === 'hat' ? 'hat' : 'bar'}">${x}</span>`; }
+          case 'sum': case 'prod': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">${name === 'sum' ? '∑' : '∏'}</span><span class="sl">${lo}</span></span>`; }
+          case 'binom': { const a = arg(), b = arg(); last = 'val'; return `<span class="gp tall"><span class="pg">(</span><span class="fr bn"><span class="nu">${a}</span><span class="de">${b}</span></span><span class="pg">)</span></span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? `<div class="cx d">${fx(m[1])}</div>` : `<span class="cx">${fx(m[2])}</span>`); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+    /*ENDFX*/
+
+    /* ===================== Utilidades ===================== */
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; };
+    const fred = (n, d) => { if (d === 0) return { n: 0, d: 1 }; const g = gcd(n, d) || 1; let N = n / g, D = d / g; if (D < 0) { N = -N; D = -D; } return { n: N, d: D }; };
+    const fmul = (a, b) => fred(a.n * b.n, a.d * b.d), fadd = (a, b) => fred(a.n * b.d + b.n * a.d, a.d * b.d), fsub = (a, b) => fred(a.n * b.d - b.n * a.d, a.d * b.d), fdiv = (a, b) => fred(a.n * b.d, a.d * b.n);
+    const F = (n, d = 1) => fred(n, d), F1 = F(1), F0 = F(0), fval = f => f.n / f.d;
+    const dec2 = x => (Math.round((x + Number.EPSILON) * 100) / 100).toFixed(2);
+    const MODE = { dec: false };
+    const ptex = f => { f = fred(f.n, f.d); if (MODE.dec) return dec2(f.n / f.d); return f.d === 1 ? String(f.n) : `\\frac{${f.n}}{${f.d}}`; };
+    const ptxt = f => { f = fred(f.n, f.d); return MODE.dec ? dec2(f.n / f.d) : (f.d === 1 ? String(f.n) : `${f.n}/${f.d}`); };
+    const pfx = f => fi(ptex(f)), pfd = f => fd(ptex(f)), pct = f => dec2(100 * f.n / f.d) + ' %';
+    const fnum = x => Number.isInteger(x) ? String(x) : dec2(x);
+    const fact = n => { let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; };
+    const perm = (n, r) => { let x = 1; for (let i = 0; i < r; i++) x *= (n - i); return x; };
+    const comb = (n, r) => { if (r < 0 || r > n) return 0; r = Math.min(r, n - r); let x = 1; for (let i = 1; i <= r; i++) x = x * (n - r + i) / i; return Math.round(x); };
+    const fmtN = n => Number(n).toLocaleString('es-MX', { maximumFractionDigits: 0 });
+    const tag = (t, c) => `<span class="badge-s" style="background:${c}">${t}</span>`;
+    const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { } } };
+    const stepsBox = lines => lines.map((l, k) => `<div class="opc anim-in" style="--k:${k}">${l[0] ? `<div class="cl"><b>${l[0]}</b></div>` : ''}${fd(l[1])}</div>`).join('');
+    const kpi = (l, v, c, k = 0) => `<span class="kpi" style="--c:${c};--k:${k}"><span class="kl">${l}</span><span class="kv">${v}</span></span>`;
+
+    /* ===================== Espacios muestrales (vectores) ===================== */
+    const PAL = ['#e8590c', '#1c7ed6', '#2f9e44', '#7048e8', '#e03131', '#f08c00', '#0ca678', '#d6336c', '#4263eb', '#74b816', '#c2255c', '#1098ad', '#9c36b5', '#f76707', '#364fc7'];
+    const SP = {}, SP_ORDER = [];
+    function def(id, name, icon, desc, its, opt = {}) { its.forEach((it, i) => { it.col = it.col || PAL[i % PAL.length]; if (it.val === undefined) it.val = i + 1; it.w = it.w || 1; it.ic = it.ic || ''; });
+      SP[id] = { id, name, icon, desc, items: its, quick: opt.quick || [], grp: opt.grp || 0, note: opt.note || '' }; SP_ORDER.push(id); }
+    const L = (label, extra = {}) => ({ label, ...extra });
+    def('dado', 'Dado', '🎲', 'Un dado de 6 caras: Ω = {1, 2, 3, 4, 5, 6}, todas igual de probables.', ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'].map((f, i) => L(String(i + 1), { ic: f })), { quick: [['Pares', it => it.val % 2 === 0], ['Impares', it => it.val % 2 === 1], ['Mayor que 4', it => it.val > 4], ['Primos', it => [2, 3, 5].includes(it.val)], ['Múltiplos de 3', it => it.val % 3 === 0]] });
+    def('moneda', 'Moneda', '🪙', 'Una moneda: Ω = {Cara, Sello}. Experimento de Bernoulli.', [L('Cara', { ic: '🙂', val: 1, col: '#2f9e44' }), L('Sello', { ic: '🦅', val: 0, col: '#1c7ed6' })], { quick: [['Cara', it => it.label === 'Cara'], ['Sello', it => it.label === 'Sello']] });
+    def('palos', 'Cartas (palos)', '🃏', 'Se saca una carta y solo importa su palo: 4 resultados.', [L('Picas', { ic: '♠', col: '#1e293b' }), L('Corazones', { ic: '♥', col: '#e03131' }), L('Diamantes', { ic: '♦', col: '#e03131' }), L('Tréboles', { ic: '♣', col: '#1e293b' })], { quick: [['Rojos', it => it.col === '#e03131'], ['Negros', it => it.col === '#1e293b'], ['Picas', it => it.label === 'Picas'], ['Corazones', it => it.label === 'Corazones']] });
+    const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'], SUITS = [['♠', 'Picas', '#1e293b'], ['♥', 'Corazones', '#e03131'], ['♦', 'Diamantes', '#e03131'], ['♣', 'Tréboles', '#1e293b']];
+    def('baraja', 'Baraja (52 cartas)', '🂡', 'Baraja francesa: 4 palos × 13 valores = 52 cartas distintas.', SUITS.flatMap(s => RANKS.map((r, i) => L(r + s[0], { val: i + 1, col: s[2], s: s[1], r }))), { quick: [['Corazones', it => it.s === 'Corazones'], ['Picas', it => it.s === 'Picas'], ['Diamantes', it => it.s === 'Diamantes'], ['Tréboles', it => it.s === 'Tréboles'], ['Rojas', it => it.col === '#e03131'], ['Negras', it => it.col === '#1e293b'], ['Figuras (J Q K)', it => ['J', 'Q', 'K'].includes(it.r)], ['Ases', it => it.r === 'A'], ['Menores que 5', it => it.val < 5]] });
+    def('semana', 'Días de la semana', '📅', 'Se elige un día al azar: 7 resultados.', ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map(x => L(x, { ic: '📅' })), { quick: [['Laborales', (it, i) => i < 5], ['Fin de semana', (it, i) => i >= 5], ['Empiezan con M', it => it.label[0] === 'M'], ['Lunes o viernes', (it, i) => i === 0 || i === 4]] });
+    def('meses', 'Meses del año', '🗓️', 'Se elige un mes al azar: 12 resultados.', ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'].map(x => L(x.slice(0, 3), { full: x })), { quick: [['Con 31 días', (it, i) => [0, 2, 4, 6, 7, 9, 11].includes(i)], ['Con 30 días', (it, i) => [3, 5, 8, 10].includes(i)], ['Primer semestre', (it, i) => i < 6], ['Verano (Jun–Ago)', (it, i) => i >= 5 && i <= 7], ['Invierno (Dic–Feb)', (it, i) => i === 11 || i <= 1]] });
+    def('artefacto', 'Artefacto: funcional / descompuesto', '🔧', 'Un artefacto sale de fábrica: 4 de cada 5 funcionan (pesos 4 y 1). ¡No es equiprobable!', [L('Funcional', { ic: '✅', val: 1, w: 4, col: '#2f9e44' }), L('Descompuesto', { ic: '🔧', val: 0, w: 1, col: '#e03131' })], { quick: [['Funcional', it => it.label === 'Funcional'], ['Descompuesto', it => it.label === 'Descompuesto']], note: 'Pesos de ejemplo: puedes cambiarlos en «Vector personalizado».' });
+    def('semaforo', 'Semáforo', '🚦', 'Color que encuentras al llegar a un semáforo (pesos según la duración del ciclo: 5-1-4).', [L('Rojo', { ic: '🔴', w: 5, col: '#e03131' }), L('Amarillo', { ic: '🟡', w: 1, col: '#f08c00' }), L('Verde', { ic: '🟢', w: 4, col: '#2f9e44' })], { grp: 1, quick: [['Debo parar (rojo)', it => it.label === 'Rojo'], ['Puedo avanzar (verde)', it => it.label === 'Verde'], ['No es rojo', it => it.label !== 'Rojo']] });
+    def('urna', 'Urna con bolas', '🔮', 'Una urna con 5 bolas rojas, 3 azules y 2 verdes (pesos 5-3-2).', [L('Roja', { ic: '🔴', w: 5, col: '#e03131' }), L('Azul', { ic: '🔵', w: 3, col: '#1c7ed6' }), L('Verde', { ic: '🟢', w: 2, col: '#2f9e44' })], { grp: 1, quick: [['Roja', it => it.label === 'Roja'], ['Azul', it => it.label === 'Azul'], ['No roja', it => it.label !== 'Roja']] });
+    def('ruleta', 'Ruleta de 8 sectores', '🎡', 'Ruleta numerada del 1 al 8, sectores iguales.', Array.from({ length: 8 }, (_, i) => L(String(i + 1), { ic: '🎡' })), { grp: 1, quick: [['Pares', it => it.val % 2 === 0], ['Impares', it => it.val % 2 === 1], ['Múltiplos de 3', it => it.val % 3 === 0], ['Mayor que 5', it => it.val > 5]] });
+    def('clima', 'Clima del día', '🌦️', 'Pronóstico de un día (pesos de ejemplo 4-3-2-1).', [L('Soleado', { ic: '☀️', w: 4, col: '#f08c00' }), L('Nublado', { ic: '☁️', w: 3, col: '#868e96' }), L('Lluvioso', { ic: '🌧️', w: 2, col: '#1c7ed6' }), L('Tormenta', { ic: '⛈️', w: 1, col: '#7048e8' })], { grp: 1, quick: [['Llueve (lluvia o tormenta)', it => ['Lluvioso', 'Tormenta'].includes(it.label)], ['Sin lluvia', it => ['Soleado', 'Nublado'].includes(it.label)]] });
+    const CUS = { n: 5, items: ['A', 'B', 'C', 'D', 'E'].map((x, i) => ({ label: x, w: 1 })) };
+    const ES = { id: 'dado' };
+    function getSp() { if (ES.id !== 'custom') return SP[ES.id];
+      const its = CUS.items.slice(0, CUS.n).map((it, i) => ({ label: it.label || 'ω' + (i + 1), w: Math.max(1, parseInt(it.w, 10) || 1), val: i + 1, col: PAL[i % PAL.length], ic: '' }));
+      return { id: 'custom', name: 'Vector personalizado', icon: '🧩', desc: 'Tú defines de 2 a 15 resultados y el peso de cada uno (vector Ω y vector de pesos).', items: its, quick: [['Los dos primeros', (it, i) => i < 2], ['Posiciones pares', (it, i) => i % 2 === 1], ['Posiciones impares', (it, i) => i % 2 === 0]], note: '' }; }
+    const spOf = id => id === 'custom' ? (() => { const s = ES.id; ES.id = 'custom'; const r = getSp(); ES.id = s; return r; })() : SP[id];
+    const totW = sp => sp.items.reduce((a, b) => a + b.w, 0);
+    const pOfSet = (sp, set) => { let m = 0; sp.items.forEach((it, i) => { if (set.has(i)) m += it.w; }); return F(m, totW(sp)); };
+    const itP = (sp, i) => F(sp.items[i].w, totW(sp));
+    const quickSet = (sp, q) => new Set(sp.items.map((it, i) => q[1](it, i) ? i : -1).filter(i => i >= 0));
+    const chipHTML = (it, i, cls = '', sup = true) => `<button class="och ${cls}" data-i="${i}" style="--c:${it.col};--k:${Math.min(i, 40)}" title="${escH(it.full || it.label)}">${it.ic ? `<span class="oi">${it.ic}</span>` : ''}<span>${escH(it.label)}</span>${sup && it.w > 1 ? `<sup>×${it.w}</sup>` : ''}</button>`;
+    const chipSpan = (it, i, cls = '') => chipHTML(it, i, cls).replace('<button', '<span').replace('</button>', '</span>');
+
+    /* Registro de renderizado */
+    const RENDERS = []; const renderAll = (skip) => RENDERS.forEach(f => { try { f(skip); } catch (e) { console.error(e); } });
+
+    CUS.items = 'ABCDEFGHIJKLMNO'.split('').map(x => ({ label: x, w: 1 }));
+    let EVA = new Set();
+    const defaultEvent = sp => { const q = sp.quick[0]; const s = q ? quickSet(sp, q) : new Set([0]); return s.size ? s : new Set([0]); };
+
+    /* ---------- selector de experimento ---------- */
+    function spMenuBuild() {
+      const item = id => { const s = id === 'custom' ? { icon: '🧩', name: 'Vector personalizado (2–15)', items: { length: CUS.n } } : SP[id]; return `<button data-sp="${id}" class="${ES.id === id ? 'on' : ''}"><span class="ic">${s.icon}</span><span>${s.name}</span><span class="n">${s.items.length} res.</span></button>`; };
+      $('#sp-menu').innerHTML = `<div class="dropdown-header">Predeterminados</div>${SP_ORDER.filter(i => !SP[i].grp).map(item).join('')}<div class="dropdown-header mt-1">Más experimentos</div>${SP_ORDER.filter(i => SP[i].grp).map(item).join('')}<div class="dropdown-header mt-1">Hazlo tú</div>${item('custom')}`;
+      const sp = getSp(); $('#sp-btn').innerHTML = `<span style="font-size:1.15rem">${sp.icon}</span> ${sp.name} <span class="badge text-bg-light ms-1">${sp.items.length}</span>`; }
+    function setSpace(id) { ES.id = id; const sp = getSp(); EVA = defaultEvent(sp); VN.init(); TR.sel = null; if (typeof SMP !== 'undefined') SMP.draws = null; spMenuBuild(); customBuild(); renderAll(); }
+
+    /* ---------- 1. Conceptos y Ω ---------- */
+    const CONC = [['🎲', 'Experimento aleatorio', '#e8590c', 'Un proceso cuyo resultado no se puede predecir con certeza, aunque sí se conocen los resultados posibles (lanzar un dado).'],
+      ['Ω', 'Espacio muestral', '#1c7ed6', 'El conjunto Ω de <b>todos</b> los resultados posibles. Se puede escribir como vector: Ω = (ω₁, …, ωₙ).'],
+      ['⊂', 'Evento', '#2f9e44', 'Cualquier subconjunto de Ω: «sale par», «es de corazones», «es fin de semana».'],
+      ['½', 'Probabilidad', '#7048e8', 'Un número entre 0 y 1 que mide qué tan posible es un evento. 0 = imposible, 1 = seguro.']];
+    function s1cards() { $('#s1-cards').innerHTML = CONC.map((c, i) => `<div class="col-sm-6 col-lg-3 reveal"><div class="cc" style="--c:${c[2]};transition-delay:${i * 90}ms"><span class="ci">${c[0]}</span><div class="ct">${c[1]}</div><p>${c[3]}</p></div></div>`).join(''); }
+    function customBuild() { const el = $('#s1-custom'); if (ES.id !== 'custom') { el.hidden = true; el.innerHTML = ''; return; } el.hidden = false;
+      el.innerHTML = `<div class="d-flex align-items-center gap-3 flex-wrap mb-2"><b>Número de elementos n:</b><input type="range" id="cu-n" min="2" max="15" value="${CUS.n}" style="width:220px"><b id="cu-nv">${CUS.n}</b><span class="small text-muted">Edita el nombre y el <b>peso</b> de cada resultado (peso 1 = equiprobable).</span></div><div class="row g-2" id="cu-rows">${CUS.items.slice(0, CUS.n).map((it, i) => `<div class="col-6 col-md-4 col-lg-3"><div class="input-group input-group-sm"><span class="input-group-text" style="color:${PAL[i % PAL.length]};font-weight:800">ω<sub>${i + 1}</sub></span><input class="form-control cu-l" data-i="${i}" value="${escH(it.label)}" maxlength="10" aria-label="Nombre"><input type="number" class="form-control cu-w" data-i="${i}" value="${it.w}" min="1" max="99" style="max-width:62px" aria-label="Peso"></div></div>`).join('')}</div>`; }
+    function s1r() { const sp = getSp(), N = sp.items.length, W = totW(sp), uni = sp.items.every(i => i.w === 1);
+      $('#s1-name').innerHTML = `${sp.icon} <b>${sp.name}</b>`; $('#s1-desc').innerHTML = sp.desc + (sp.note ? ` <i>${sp.note}</i>` : '');
+      $('#s1-chips').innerHTML = sp.items.map((it, i) => chipSpan(it, i)).join('');
+      const idx = N > 15 ? [0, 1, 2, 3, 4, 5, -1, N - 2, N - 1] : sp.items.map((_, i) => i);
+      const col = (i, k, mk) => i < 0 ? `<span class="vc" style="--k:${k}"><b>⋯</b><b>⋯</b></span>` : `<span class="vc" style="--k:${k}">${mk(i)}</span>`;
+      const lab = i => `<span class="och sm" style="--c:${sp.items[i].col};animation:none">${sp.items[i].ic}${escH(sp.items[i].label)}</span>`;
+      let h = `<div class="vecrow"><span class="vn">Ω =</span><span class="vecm">${idx.map((i, k) => col(i, k, i2 => lab(i2))).join('')}</span></div>`;
+      h += `<div class="vecrow"><span class="vn">p =</span><span class="vecm">${idx.map((i, k) => col(i, k, i2 => pfx(itP(sp, i2)))).join('')}</span></div>`;
+      if (!uni) h += `<div class="vecrow"><span class="vn">w =</span><span class="vecm">${idx.map((i, k) => col(i, k, i2 => `<b>${sp.items[i2].w}</b>`)).join('')}</span></div>`;
+      h += `<div class="mt-2">${kpi('|Ω| = n', N, '#1c7ed6', 0)} ${uni ? kpi('p de cada uno', pfx(F(1, N)), '#2f9e44', 1) : kpi('peso total', W, '#e8590c', 1)} ${kpi('Σ p', pfx(F1), '#7048e8', 2)}</div>`; $('#s1-vec').innerHTML = h;
+      $('#s1-bars').innerHTML = N <= 16 ? sp.items.map((it, i) => { const p = itP(sp, i); return `<div class="pbar"><span class="pl">${it.ic} ${escH(it.label)}</span><span class="pt"><i style="--c:${it.col};--w:${(100 * fval(p)).toFixed(1)}%;--k:${i}"></i></span><span class="pv">${pfx(p)}</span></div>`; }).join('') : `<div class="pbar"><span class="pl">cada uno</span><span class="pt"><i style="--c:#7048e8;--w:${(100 / N).toFixed(1)}%"></i></span><span class="pv">${pfx(F(1, N))}</span></div><div class="small text-muted">Los ${N} resultados son equiprobables.</div>`; }
+
+    /* ---------- 2. Eventos ---------- */
+    function s2setup() {
+      $('#s2-chips').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (!b) return; const i = +b.dataset.i; EVA.has(i) ? EVA.delete(i) : EVA.add(i); renderAll(); });
+      $('#s2-quick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (!b) return; const sp = getSp(), q = b.dataset.q; if (q === 'all') EVA = new Set(sp.items.map((_, i) => i)); else if (q === 'none') EVA = new Set(); else if (q === 'inv') EVA = new Set(sp.items.map((_, i) => i).filter(i => !EVA.has(i))); else EVA = quickSet(sp, sp.quick[+q]); renderAll(); }); }
+    function setText(sp, set, max = 14) { const a = [...set].sort((x, y) => x - y); if (!a.length) return '∅ (evento imposible)'; const t = a.slice(0, max).map(i => sp.items[i].label).join(', '); return `{ ${escH(t)}${a.length > max ? ', … (' + a.length + ')' : ''} }`; }
+    function s2r() { const sp = getSp(), N = sp.items.length, W = totW(sp), uni = sp.items.every(i => i.w === 1), A = EVA, a = [...A].sort((x, y) => x - y);
+      $('#s2-quick').innerHTML = sp.quick.map((q, i) => `<button class="btn btn-sm btn-outline-primary rounded-pill" data-q="${i}">${q[0]}</button>`).join('') + `<button class="btn btn-sm btn-outline-secondary rounded-pill" data-q="all">Todo Ω</button><button class="btn btn-sm btn-outline-secondary rounded-pill" data-q="none">Ninguno</button><button class="btn btn-sm btn-outline-secondary rounded-pill" data-q="inv">Invertir</button>`;
+      $('#s2-chips').innerHTML = sp.items.map((it, i) => chipHTML(it, i, A.has(i) ? 'sel' : '')).join('');
+      $('#s2-set').innerHTML = `<b style="color:#2f9e44">A</b> = ${setText(sp, A)}`;
+      const p = pOfSet(sp, A), pc = fsub(F1, p), m = a.length, wA = a.reduce((s, i) => s + sp.items[i].w, 0); let L;
+      const raw = uni ? `\\frac{${m}}{${N}}` : `\\frac{${a.map(i => sp.items[i].w).join(' + ') || 0}}{${W}}`;
+      const calc = MODE.dec ? `${raw} = ${dec2(wA / W)}` : (raw.includes('+') || fred(wA, W).d !== W || (uni && fred(m, N).d !== N) ? `${raw} = ${ptex(p)}` : raw);
+      if (uni) L = [['Casos posibles: el espacio muestral tiene N elementos', `n(\\Omega) = ${N}`], ['Casos favorables: los resultados que están en A', `n(A) = ${m}`], ['Probabilidad clásica', `P(A) = \\frac{n(A)}{n(\\Omega)} = ${calc}`]];
+      else L = [['Resultados no equiprobables: se suman los pesos. Peso total', `\\sum w = ${sp.items.map(i => i.w).join(' + ')} = ${W}`], ['Peso de los resultados de A', `\\sum_{\\omega \\in A} w = ${a.map(i => sp.items[i].w).join(' + ') || 0} = ${wA}`], ['Probabilidad de A', `P(A) = \\frac{\\sum_{A} w}{\\sum w} = ${calc}`]];
+      L.push(['Complemento: lo que NO está en A', `P(A') = 1 - P(A) = 1 - ${ptex(p)} = ${ptex(pc)}`]);
+      const pa = 100 * fval(p), pcw = 100 - pa;
+      $('#s2-out').innerHTML = `<div class="row g-4 mt-1"><div class="col-lg-7">${stepsBox(L)}</div><div class="col-lg-5"><div class="vis" style="padding:.8rem"><div class="small fw-bold mb-1">Probabilidad de A frente a su complemento</div><div class="meter"><span style="--w:${pa}%;background:#2f9e44">A · ${ptxt(p)}</span><span style="--w:${pcw}%;background:#868e96">A′ · ${ptxt(pc)}</span></div><div class="text-center mt-2">${kpi('P(A)', pfx(p), '#2f9e44', 0)} ${kpi('P(A′)', pfx(pc), '#868e96', 1)} ${kpi('%', dec2(pa) + ' %', '#7048e8', 2)}</div></div></div></div>`; }
+
+    RENDERS.push(s1r, s2r);
+
+    /* ===================== 3. Diagrama de árbol ===================== */
+    const TR = { k: 2, probs: true, sel: null };
+    function buildTree(sp, k) {
+      const n = sp.items.length, W = totW(sp), M = Math.pow(n, k) <= 100 || k === 1 ? n : Math.max(2, Math.floor(Math.pow(60, 1 / k))), show = Math.min(n, M), trunc = show < n; let id = 0, leaves = 0;
+      function node(depth, path, p, item) { const nd = { id: id++, depth, path, p, item, ch: [] };
+        if (depth < k) { for (let j = 0; j < show; j++) nd.ch.push(node(depth + 1, [...path, j], fmul(p, F(sp.items[j].w, W)), sp.items[j]));
+          if (trunc) nd.ch.push({ id: id++, depth: depth + 1, dots: true, rest: n - show, path, ch: [] }); } return nd; }
+      const root = node(0, [], F1, null), RH = 30;
+      (function lay(nd) { if (!nd.ch.length) { nd.y = leaves * RH + 28; leaves++; return; } nd.ch.forEach(lay); nd.y = (nd.ch[0].y + nd.ch[nd.ch.length - 1].y) / 2; })(root);
+      return { root, leaves, height: leaves * RH + 40, n, W, show, trunc }; }
+    function trDraw() { const sp = getSp(), k = TR.k, T = buildTree(sp, k), W = T.W, colW = 156, padX = 44, width = padX + k * colW + 270; let edges = '', nodes = '', labels = '', leafs = '';
+      const X = d => padX + d * colW;
+      (function walk(nd, pe) { nd.ch.forEach((c, j) => { const x1 = X(nd.depth), y1 = nd.y, x2 = X(c.depth), y2 = c.y, xm = (x1 + x2) / 2, delay = (nd.depth * 0.55 + Math.min(j, 12) * 0.05).toFixed(2), ids = [...pe, 'e' + c.id];
+          edges += `<path class="te" pathLength="1" id="e${c.id}" d="M${x1},${y1} C${xm},${y1} ${xm},${y2} ${x2},${y2}" style="--d:${delay}s${c.dots ? ';stroke-dasharray:.04 .03;stroke-dashoffset:0' : ''}"/>`;
+          if (c.dots) { nodes += `<g class="tn" style="--d:${(+delay + .4).toFixed(2)}s"><circle cx="${x2}" cy="${y2}" r="9" fill="#fff" stroke="#868e96" stroke-dasharray="3 2" stroke-width="2"/><text x="${x2}" y="${y2 + 4}" text-anchor="middle" font-size="12" font-weight="800" fill="#868e96">⋯</text></g><text class="tl" x="${x2 + 16}" y="${y2 + 4}" style="fill:#868e96;font-size:11px">+${c.rest} resultados más</text>`; return; }
+          nodes += `<circle class="tn" cx="${x2}" cy="${y2}" r="8" fill="${c.item.col}" stroke="#fff" stroke-width="2" style="--d:${(+delay + .45).toFixed(2)}s"/>`;
+          if (TR.probs) labels += `<text class="tt" x="${x2 - 56}" y="${y2 - 6}" text-anchor="middle" style="--d:${(+delay + .45).toFixed(2)}s">${ptxt(F(c.item.w, W))}</text>`;
+          if (!c.ch.length) { const lab = c.path.map(i => sp.items[i].label).join(' · ');
+            leafs += `<g class="lf" data-path="${ids.join(',')}" data-p="${c.path.join(',')}"><rect x="${x2 + 10}" y="${y2 - 12}" width="250" height="24" fill="transparent"/><text class="tl" x="${x2 + 16}" y="${y2 + 4}">${escH(lab)} <tspan style="fill:#7048e8">→ ${ptxt(c.p)}</tspan></text></g>`; }
+          walk(c, ids); }); })(T.root, []);
+      const root = `<circle class="tn" cx="${X(0)}" cy="${T.root.y}" r="15" fill="#0f172a"/><text x="${X(0)}" y="${T.root.y + 5}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">Ω</text>`;
+      $('#tr-svg').innerHTML = `<svg viewBox="0 0 ${width} ${T.height}" width="${width}" height="${T.height}" role="img" aria-label="Diagrama de árbol">${edges}${root}${nodes}${labels}${leafs}</svg>`;
+      const tot = Math.pow(T.n, k); $('#tr-note').innerHTML = T.trunc ? `<i class="bi bi-info-circle-fill text-primary me-1"></i>Árbol <b>resumido</b>: se dibujan ${T.show} de las ${T.n} ramas de cada nodo para que quepa en pantalla. El espacio muestral completo tiene ${fmtN(tot)} resultados.` : `<i class="bi bi-info-circle-fill text-primary me-1"></i>Cada rama lleva su probabilidad; al final de cada camino está la probabilidad del camino (producto de las ramas). Pasa el cursor o toca una hoja para resaltar su camino.`; }
+    function trSelHTML() { const sp = getSp(), k = TR.k, W = totW(sp), path = (TR.sel && TR.sel.length === k) ? TR.sel : Array(k).fill(0); let p = F1; path.forEach(i => p = fmul(p, F(sp.items[i].w, W)));
+      const fac = path.map(i => ptex(F(sp.items[i].w, W))), lab = path.map(i => sp.items[i].label).join(', ');
+      const tex = `P(${path.map(i => escH(sp.items[i].label)).map(x => `\\text{${x}}`).join(', ')}) = ${path.map((_, i) => `P(\\omega_{${i + 1}})`).join(' \\cdot ')} = ${fac.join(' \\cdot ')} = ${ptex(p)}`;
+      return `<div class="opc anim-in"><div class="cl"><b>Camino elegido: (${escH(lab)})</b> — se multiplican las probabilidades de sus ramas (etapas independientes)</div>${fd(tex)}</div>`; }
+    function trOmega() { const sp = getSp(), n = sp.items.length, k = TR.k, tot = Math.pow(n, k), lim = tot <= 216 ? tot : 48; const out = []; const idx = Array(k).fill(0);
+      for (let c = 0; c < lim; c++) { out.push(idx.map(i => sp.items[i].label).join('·')); for (let d = k - 1; d >= 0; d--) { if (++idx[d] < n) break; idx[d] = 0; } }
+      const uni = sp.items.every(i => i.w === 1);
+      $('#tr-omega').innerHTML = `<div class="small mb-2">Todos los caminos posibles del árbol forman el espacio muestral de ${k} ${k === 1 ? 'etapa' : 'etapas'}:</div>${fd(`\\Omega_{${k}} = \\Omega^{${k}} \\quad\\Rightarrow\\quad |\\Omega_{${k}}| = n^{k} = ${n}^{${k}} = ${fmtN(tot)}`)}<div class="chips" style="max-height:220px;overflow:auto">${out.map((x, i) => `<span class="och sm" style="--c:#7048e8;--k:${Math.min(i, 40)}">${escH(x)}</span>`).join('')}${tot > lim ? `<span class="och sm" style="--c:#868e96">… y ${fmtN(tot - lim)} más</span>` : ''}</div><div class="mt-2 small">${uni ? `Todos son equiprobables: ${fi(`P(\\omega) = \\frac{1}{${fmtN(tot)}}`)}` : 'Los resultados no son equiprobables: la probabilidad de cada camino es el producto de los pesos de sus ramas.'}</div>`; }
+    function trR() { trDraw(); $('#tr-sel').innerHTML = trSelHTML(); trOmega();
+      $('#tr-k').innerHTML = [1, 2, 3, 4].map(k => `<button class="btn btn-outline-dark ${TR.k === k ? 'active' : ''}" data-k="${k}">${k}</button>`).join(''); }
+    function trSetup() {
+      $('#tr-k').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (!b) return; TR.k = +b.dataset.k; TR.sel = null; renderAll(); });
+      $('#tr-p').addEventListener('change', e => { TR.probs = e.target.checked; trDraw(); });
+      $('#tr-play').addEventListener('click', trDraw);
+      const svgBox = $('#tr-svg');
+      svgBox.addEventListener('mouseover', e => { const g = e.target.closest('.lf'); if (!g) return; g.dataset.path.split(',').forEach(id => { const el = svgBox.querySelector('#' + id); if (el) el.classList.add('hl'); }); });
+      svgBox.addEventListener('mouseout', e => { svgBox.querySelectorAll('.te.hl').forEach(el => el.classList.remove('hl')); });
+      svgBox.addEventListener('click', e => { const g = e.target.closest('.lf'); if (!g) return; TR.sel = g.dataset.p.split(',').map(Number); $('#tr-sel').innerHTML = trSelHTML(); f4Count(); }); }
+
+    /* ===================== 4. Fórmulas Ω, población y muestra ===================== */
+    const SMP = { n: 30, draws: null };
+    function popStats(sp) { const W = totW(sp); let sx = 0, sxx = 0; sp.items.forEach(it => { sx += it.w * it.val; sxx += it.w * it.val * it.val; });
+      const mu = F(sx, W), s2 = F(W * sxx - sx * sx, W * W); return { mu, s2, sd: Math.sqrt(Math.max(0, fval(s2))), W }; }
+    function f4Count() { const sp = getSp(), n = sp.items.length, k = TR.k, W = totW(sp), path = (TR.sel && TR.sel.length === k) ? TR.sel : Array(k).fill(0); let p = F1; path.forEach(i => p = fmul(p, F(sp.items[i].w, W)));
+      const A = EVA, pA = pOfSet(sp, A), m = A.size, card = (c, t, f, num, note, kk) => `<div class="col-md-6 col-xl-3 reveal in"><div class="fm" style="--c:${c};animation:slideIn .5s both;animation-delay:${kk * 120}ms"><div class="ft">${t}</div><div class="ff">${fd(f)}</div><div class="ff" style="background:#fff;border:1px dashed #cbd5e1">${fd(num)}</div><div class="fe">${note}</div></div></div>`;
+      const okR = k <= n;
+      $('#f4-count').innerHTML = `<div class="row g-3">${card('#e8590c', 'Tamaño de Ω (con reemplazo)', '|\\Omega_k| = n^{k}', `${n}^{${k}} = ${fmtN(Math.pow(n, k))}`, 'Regla del producto: n opciones en cada una de las k etapas.', 0)}${card('#1c7ed6', 'Sin reemplazo (importa el orden)', 'P(n,k) = \\frac{n!}{(n-k)!}', okR ? `\\frac{${n}!}{${n - k}!} = ${fmtN(perm(n, k))}` : '\\text{k > n: no se puede}', 'Variaciones: no se repite ningún elemento.', 1)}${card('#2f9e44', 'Combinaciones (no importa el orden)', 'C(n,k) = \\frac{n!}{k!\\,(n-k)!}', okR ? `\\binom{${n}}{${k}} = ${fmtN(comb(n, k))}` : '\\text{k > n: no se puede}', 'Subconjuntos de k elementos.', 2)}${card('#7048e8', 'Probabilidad de un camino', 'P(\\omega_1,\\ldots,\\omega_k) = \\prod_{i=1}^{k} p_i', `${path.map(i => ptex(F(sp.items[i].w, W))).join(' \\cdot ')} = ${ptex(p)}`, 'Etapas independientes: se multiplican las ramas. (Toca otra hoja del árbol.)', 3)}${card('#d6336c', 'Probabilidad clásica del evento A', 'P(A) = \\frac{n(A)}{n(\\Omega)}', `P(A) = ${ptex(pA)}`, `A tiene ${m} de ${n} resultados (sección 2).`, 4)}${card('#0ca678', 'Complemento', "P(A') = 1 - P(A)", `1 - ${ptex(pA)} = ${ptex(fsub(F1, pA))}`, 'Lo que no es A.', 5)}</div>`; }
+    function f4Bin() { const sp = getSp(), k = TR.k, p = pOfSet(sp, EVA), q = fsub(F1, p); let rows = '';
+      for (let r = 0; r <= k; r++) { let pr = F(comb(k, r)); for (let i = 0; i < r; i++) pr = fmul(pr, p); for (let i = 0; i < k - r; i++) pr = fmul(pr, q); rows += `<div class="pbar"><span class="pl" style="width:70px">r = ${r}</span><span class="pt"><i style="--c:#7048e8;--w:${(100 * fval(pr)).toFixed(1)}%;--k:${r}"></i></span><span class="pv" style="width:110px">${pfx(pr)}</span></div>`; }
+      const mean = fmul(F(k), p), vr = fmul(fmul(F(k), p), q);
+      $('#f4-bin').innerHTML = `<p class="small mb-2">Si «éxito» es que ocurra A en una etapa ${fi('(p = ' + ptex(p) + ')')}, la probabilidad de exactamente <b>r</b> éxitos en <b>k = ${k}</b> etapas es:</p>${fd(`P(X = r) = \\binom{k}{r}\\, p^{r}\\,(1-p)^{k-r}`)}<div class="row g-3 align-items-center"><div class="col-lg-7">${rows}</div><div class="col-lg-5 text-center">${kpi('E[X] = k·p', pfx(mean), '#2f9e44', 0)} ${kpi('Var = k·p·q', pfx(vr), '#e8590c', 1)} ${kpi('σ = √Var', dec2(Math.sqrt(fval(vr))), '#1c7ed6', 2)}</div></div>`; }
+    function f4Pop() { const sp = getSp(), st = popStats(sp), p = pOfSet(sp, EVA), card = (t, f, v, c) => `<div class="opc anim-in" style="border-left:5px solid ${c}"><div class="cl"><b>${t}</b></div>${fd(f)}<div class="text-center fw-bold">${v}</div></div>`;
+      $('#f4-pop').innerHTML = `<div class="fw-bold mb-1" style="color:#1c7ed6"><i class="bi bi-people-fill me-1"></i>Población (todo Ω, ÷ N)</div>${card('Media', '\\mu = \\frac{\\sum w_i\\, x_i}{N}', fi('\\mu = ' + ptex(st.mu)), '#1c7ed6')}${card('Varianza', '\\sigma^{2} = \\frac{\\sum w_i\\,(x_i-\\mu)^{2}}{N}', fi('\\sigma^{2} = ' + ptex(st.s2)), '#1c7ed6')}${card('Desviación estándar', '\\sigma = \\sqrt{\\sigma^{2}}', fi('\\sigma = ' + dec2(st.sd)), '#1c7ed6')}${card('Proporción del evento A', 'p = \\frac{n(A)}{N}', fi('p = ' + ptex(p)), '#1c7ed6')}<div class="small text-muted">x<sub>i</sub> es el valor de cada resultado (cara del dado, 1/0 en moneda, 1…n en los demás). N = peso total ${st.W}.</div>`; }
+    function f4Smp() { const sp = getSp(), p = pOfSet(sp, EVA), S = SMP.draws; let st = null;
+      if (S && S.length > 1) { const x = S.map(i => sp.items[i].val), n = x.length, mean = x.reduce((a, b) => a + b, 0) / n, s2 = x.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1), f = S.filter(i => EVA.has(i)).length; st = { n, mean, s2, sd: Math.sqrt(s2), f, ph: F(f, n) }; }
+      const card = (t, f, v, c) => `<div class="opc anim-in" style="border-left:5px solid ${c}"><div class="cl"><b>${t}</b></div>${fd(f)}<div class="text-center fw-bold">${v}</div></div>`, dash = '<span class="text-muted">toma una muestra</span>';
+      $('#f4-smp').innerHTML = `<div class="fw-bold mb-1" style="color:#e8590c"><i class="bi bi-person-fill me-1"></i>Muestra (n elegidos, ÷ n − 1)</div>${card('Media muestral', '\\bar{x} = \\frac{\\sum x_i}{n}', st ? fi('\\bar{x} = ' + dec2(st.mean)) : dash, '#e8590c')}${card('Varianza muestral', 's^{2} = \\frac{\\sum (x_i-\\bar{x})^{2}}{n-1}', st ? fi('s^{2} = ' + dec2(st.s2)) : dash, '#e8590c')}${card('Desviación estándar muestral', 's = \\sqrt{s^{2}}', st ? fi('s = ' + dec2(st.sd)) : dash, '#e8590c')}${card('Proporción muestral', '\\hat{p} = \\frac{f}{n}', st ? fi('\\hat{p} = \\frac{' + st.f + '}{' + st.n + '} = ' + ptex(st.ph)) : dash, '#e8590c')}<div class="small text-muted">Se divide entre <b>n − 1</b> (corrección de Bessel) para que s² no subestime a σ².</div>`;
+      if (!st) { $('#f4-res').innerHTML = ''; return; }
+      const pop = popStats(sp), N = S.length, show = Math.min(N, 48); let cum = 0, pts = [];
+      S.forEach((i, j) => { if (EVA.has(i)) cum++; pts.push([j + 1, cum / (j + 1)]); });
+      const Wd = 600, H = 190, px = j => 40 + (j - 1) / Math.max(1, N - 1) * (Wd - 60), py = v => 160 - v * 140, pTheo = fval(p);
+      const poly = pts.map(q => `${px(q[0]).toFixed(1)},${py(q[1]).toFixed(1)}`).join(' ');
+      const grid = [0, .25, .5, .75, 1].map(v => `<line x1="40" x2="${Wd - 20}" y1="${py(v)}" y2="${py(v)}" stroke="#e2e8f0"/><text x="34" y="${py(v) + 4}" text-anchor="end" font-size="10" fill="#64748b">${v}</text>`).join('');
+      $('#f4-res').innerHTML = `<div class="row g-3"><div class="col-lg-6"><div class="small fw-bold mb-1">Muestra obtenida (${N} lanzamientos${N > show ? ', se muestran ' + show : ''})</div><div class="chips" style="max-height:130px;overflow:auto">${S.slice(0, show).map((i, j) => `<span class="och sm ${EVA.has(i) ? 'sel' : ''}" style="--c:${sp.items[i].col};--k:${j}">${sp.items[i].ic}${escH(sp.items[i].label)}</span>`).join('')}</div>
+        <table class="table table-sm bg-white mt-2 mb-0" style="font-size:.88rem"><thead><tr><th></th><th>Población</th><th>Muestra</th><th>Diferencia</th></tr></thead><tbody><tr><td>Media</td><td>${dec2(fval(pop.mu))}</td><td>${dec2(st.mean)}</td><td>${dec2(Math.abs(fval(pop.mu) - st.mean))}</td></tr><tr><td>Varianza</td><td>${dec2(fval(pop.s2))}</td><td>${dec2(st.s2)}</td><td>${dec2(Math.abs(fval(pop.s2) - st.s2))}</td></tr><tr><td>Proporción de A</td><td>${ptxt(p)}</td><td>${ptxt(st.ph)}</td><td>${dec2(Math.abs(pTheo - fval(st.ph)))}</td></tr></tbody></table></div>
+        <div class="col-lg-6"><div class="small fw-bold mb-1">Ley de los grandes números: p̂ se acerca a P(A)</div><div class="vis"><svg viewBox="0 0 ${Wd} ${H}">${grid}<line x1="40" x2="${Wd - 20}" y1="${py(pTheo)}" y2="${py(pTheo)}" stroke="#e03131" stroke-width="2" stroke-dasharray="6 4"/><text x="${Wd - 22}" y="${py(pTheo) - 5}" text-anchor="end" font-size="11" font-weight="800" fill="#e03131">P(A) = ${ptxt(p)}</text><polyline class="pl" pathLength="1" points="${poly}"/><text x="40" y="${H - 6}" font-size="10" fill="#64748b">1</text><text x="${Wd - 20}" y="${H - 6}" text-anchor="end" font-size="10" fill="#64748b">n = ${N}</text></svg></div></div></div>`; }
+    function f4Take() { const sp = getSp(), W = totW(sp), n = +$('#f4-n').value; const cum = []; let a = 0; sp.items.forEach(it => { a += it.w; cum.push(a); });
+      SMP.draws = Array.from({ length: n }, () => { const r = Math.random() * W; return cum.findIndex(c => r < c); }); f4Smp(); }
+    function f4Setup() { $('#f4-n').addEventListener('input', e => { $('#f4-nv').textContent = e.target.value; }); $('#f4-go').addEventListener('click', f4Take); }
+    RENDERS.push(trR, f4Count, f4Bin, f4Pop, f4Smp);
+
+    /* ===================== 5. Diagramas de Venn ===================== */
+    const VN = { mode: 'el', rg: 'and', st: [], qa: 0, qb: 1, pa: 50, pb: 40, pab: 20,
+      init() { const sp = getSp(); this.qa = 0; this.qb = Math.min(1, sp.quick.length - 1); const A = quickSet(sp, sp.quick[this.qa]), B = quickSet(sp, sp.quick[this.qb]); this.st = sp.items.map((_, i) => (A.has(i) ? 1 : 0) + (B.has(i) ? 2 : 0)); } };
+    const RG = [['and', 'A ∩ B', 'Conjunción · A y B', '#7048e8', (a, b) => a && b], ['or', 'A ∪ B', 'Disyunción · A o B', '#1c7ed6', (a, b) => a || b], ['aonly', 'A − B', 'Solo A', '#e8590c', (a, b) => a && !b], ['bonly', 'B − A', 'Solo B', '#1098ad', (a, b) => b && !a], ['na', "A′", 'No A', '#868e96', a => !a], ['nb', "B′", 'No B', '#868e96', (a, b) => !b], ['none', '(A ∪ B)′', 'Ninguno', '#2f9e44', (a, b) => !a && !b], ['xor', 'A △ B', 'Uno solo de los dos', '#f08c00', (a, b) => a !== b]];
+    const VP = { A: 'M320 92.4 A115 115 0 1 0 320 257.6 A115 115 0 0 1 320 92.4 Z', L: 'M320 92.4 A115 115 0 0 1 320 257.6 A115 115 0 0 1 320 92.4 Z', B: 'M320 92.4 A115 115 0 1 1 320 257.6 A115 115 0 0 0 320 92.4 Z', U: 'M320 92.4 A115 115 0 1 0 320 257.6 A115 115 0 1 0 320 92.4 Z' };
+    function vennData() { const sp = getSp(); let lists, R;
+      if (VN.mode === 'el') { const W = totW(sp), g = k => sp.items.map((it, i) => ({ it, i })).filter(x => VN.st[x.i] === k), w = a => a.reduce((s, x) => s + x.it.w, 0);
+        lists = { aonly: g(1), both: g(3), bonly: g(2), none: g(0) }; R = { aonly: F(w(lists.aonly), W), both: F(w(lists.both), W), bonly: F(w(lists.bonly), W), none: F(w(lists.none), W) };
+      } else { const pa = VN.pa, pb = VN.pb, pab = VN.pab; lists = null; R = { aonly: F(pa - pab, 100), both: F(pab, 100), bonly: F(pb - pab, 100), none: F(100 - pa - pb + pab, 100) }; }
+      return { sp, lists, R }; }
+    function vennSVG(D) { const rg = RG.find(r => r[0] === VN.rg), pred = rg[4], col = rg[3]; let hl = '';
+      const parts = [['A', 1, 0, 'aonly'], ['L', 1, 1, 'both'], ['B', 0, 1, 'bonly']]; parts.forEach(p => { if (pred(!!p[1], !!p[2])) hl += `<path class="vhl" d="${VP[p[0]]}" fill="${col}"/>`; });
+      if (pred(false, false)) hl += `<path class="vhl" d="M10 10 H630 V330 H10 Z ${VP.U}" fill-rule="evenodd" fill="${col}"/>`;
+      let lab = '';
+      const put = (arr, cx, y0, cols, dx, dy, max, key) => { const shown = arr.slice(0, max); shown.forEach((x, k) => { const c = k % cols, r = Math.floor(k / cols), x0 = cx + (c - (Math.min(cols, shown.length) - 1) / 2) * dx; lab += `<text class="vlab vin" x="${x0}" y="${y0 + r * dy}" text-anchor="middle" fill="${x.it.col}" style="animation-delay:${Math.min(k, 20) * 40}ms">${escH(x.it.ic && x.it.ic.length < 3 && x.it.label.length < 3 ? x.it.ic + x.it.label : x.it.label)}</text>`; }); if (arr.length > max) lab += `<text class="vlab" x="${cx}" y="${y0 + Math.ceil(max / cols) * dy}" text-anchor="middle" fill="#64748b">+${arr.length - max} más</text>`; };
+      const cnt = (t, x, y, c) => `<text class="vcnt" x="${x}" y="${y}" text-anchor="middle" fill="${c}">${t}</text>`;
+      if (D.lists) { put(D.lists.aonly, 205, 140, 2, 66, 17, 14, 'a'); put(D.lists.both, 320, 140, 1, 0, 17, 7, 'l'); put(D.lists.bonly, 435, 140, 2, 66, 17, 14, 'b');
+        const none = D.lists.none; const half = Math.ceil(Math.min(none.length, 28) / 2); put(none.slice(0, half), 66, 52, 2, 46, 17, 17, 'n1'); put(none.slice(half, 28), 574, 52, 2, 46, 17, 17, 'n2'); if (none.length > 28) lab += `<text class="vlab" x="574" y="322" text-anchor="middle" fill="#64748b">+${none.length - 28} más</text>`;
+        lab += cnt(D.lists.aonly.length, 205, 122, '#e8590c') + cnt(D.lists.both.length, 320, 122, '#7048e8') + cnt(D.lists.bonly.length, 435, 122, '#1098ad') + cnt('n = ' + D.lists.none.length, 66, 36, '#2f9e44');
+      } else { const t = (f, x, y, c) => `<text class="vcnt vin" x="${x}" y="${y}" text-anchor="middle" fill="${c}" style="font-size:20px">${ptxt(f)}</text>`; lab += t(D.R.aonly, 205, 180, '#e8590c') + t(D.R.both, 320, 180, '#7048e8') + t(D.R.bonly, 435, 180, '#1098ad') + t(D.R.none, 66, 60, '#2f9e44'); }
+      return `<svg viewBox="0 0 640 340"><rect x="10" y="10" width="620" height="320" rx="14" fill="#f8fafc" stroke="#334155" stroke-width="2"/><text x="26" y="30" font-size="15" font-weight="800" fill="#334155" style="display:none"></text><text x="618" y="28" text-anchor="end" font-size="18" font-weight="800" fill="#334155">Ω</text>
+        <circle cx="240" cy="175" r="115" fill="#e8590c" fill-opacity=".1" stroke="#e8590c" stroke-width="3"/><circle cx="400" cy="175" r="115" fill="#1c7ed6" fill-opacity=".1" stroke="#1c7ed6" stroke-width="3"/>${hl}
+        <circle cx="240" cy="175" r="115" fill="none" stroke="#e8590c" stroke-width="3"/><circle cx="400" cy="175" r="115" fill="none" stroke="#1c7ed6" stroke-width="3"/>
+        <text x="150" y="68" font-size="22" font-weight="800" fill="#e8590c">A</text><text x="490" y="68" font-size="22" font-weight="800" fill="#1c7ed6">B</text>${lab}</svg>`; }
+    function vennOut(D) { const R = D.R, rg = RG.find(r => r[0] === VN.rg), pa = fadd(R.aonly, R.both), pb = fadd(R.bonly, R.both), pab = R.both, pu = fadd(fadd(R.aonly, R.both), R.bonly), prod = fmul(pa, pb), indep = prod.n === pab.n && prod.d === pab.d, excl = pab.n === 0;
+      const cond = (x, y) => y.n === 0 ? '—' : ptex(fdiv(x, y)); let L;
+      const pctx = t => t;
+      switch (VN.rg) {
+        case 'and': L = [['Conjunción (A y B): ocurren los dos a la vez = la zona de traslape', `P(A \\cap B) = ${ptex(pab)}`], ['Si fueran independientes, el producto P(A)·P(B) coincidiría', `P(A)\\cdot P(B) = ${ptex(pa)} \\cdot ${ptex(pb)} = ${ptex(prod)}`]]; break;
+        case 'or': L = [['Disyunción (A o B): al menos uno ocurre', `P(A \\cup B) = P(A) + P(B) - P(A \\cap B)`], ['Se resta el traslape porque se contó dos veces', `= ${ptex(pa)} + ${ptex(pb)} - ${ptex(pab)} = ${ptex(pu)}`], ['Comprobación sumando zonas: solo A + ambos + solo B', `${ptex(R.aonly)} + ${ptex(R.both)} + ${ptex(R.bonly)} = ${ptex(pu)}`]]; break;
+        case 'aonly': L = [['Solo A: A pero no B', `P(A \\setminus B) = P(A) - P(A \\cap B) = ${ptex(pa)} - ${ptex(pab)} = ${ptex(R.aonly)}`]]; break;
+        case 'bonly': L = [['Solo B: B pero no A', `P(B \\setminus A) = P(B) - P(A \\cap B) = ${ptex(pb)} - ${ptex(pab)} = ${ptex(R.bonly)}`]]; break;
+        case 'na': L = [['Complemento de A', `P(A') = 1 - P(A) = 1 - ${ptex(pa)} = ${ptex(fsub(F1, pa))}`]]; break;
+        case 'nb': L = [['Complemento de B', `P(B') = 1 - P(B) = 1 - ${ptex(pb)} = ${ptex(fsub(F1, pb))}`]]; break;
+        case 'none': L = [['Ni A ni B (ley de De Morgan: (A ∪ B)′ = A′ ∩ B′)', `P((A \\cup B)') = 1 - P(A \\cup B) = 1 - ${ptex(pu)} = ${ptex(R.none)}`]]; break;
+        default: L = [['Exactamente uno de los dos (diferencia simétrica)', `P(A \\triangle B) = P(A) + P(B) - 2\\,P(A \\cap B) = ${ptex(pa)} + ${ptex(pb)} - 2 \\cdot ${ptex(pab)} = ${ptex(fadd(R.aonly, R.bonly))}`]]; }
+      let sel = fi(''); const selP = (() => { let s = F0; [['aonly', 1, 0], ['both', 1, 1], ['bonly', 0, 1], ['none', 0, 0]].forEach(x => { if (rg[4](!!x[1], !!x[2])) s = fadd(s, R[x[0]]); }); return s; })();
+      return `<div class="mb-2">${kpi(rg[1], pfx(selP), rg[3], 0)} <span class="small fw-bold" style="color:${rg[3]}">${rg[2]}</span></div>${stepsBox(L)}
+        <table class="table table-sm bg-white mt-2 mb-1" style="font-size:.86rem"><tbody><tr><td>P(A)</td><td>${pfx(pa)}</td><td>P(B)</td><td>${pfx(pb)}</td></tr><tr><td>P(A∩B)</td><td>${pfx(pab)}</td><td>P(A∪B)</td><td>${pfx(pu)}</td></tr><tr><td>P(A | B)</td><td>${cond(pab, pb) === '—' ? '—' : pfx(fdiv(pab, pb))}</td><td>P(B | A)</td><td>${cond(pab, pa) === '—' ? '—' : pfx(fdiv(pab, pa))}</td></tr></tbody></table>
+        ${tag(indep ? 'Independientes: P(A∩B) = P(A)·P(B)' : 'No independientes', indep ? '#2f9e44' : '#e03131')} ${tag(excl ? 'Mutuamente excluyentes (A∩B = ∅)' : 'Se traslapan', excl ? '#7048e8' : '#868e96')}`; }
+    function vnR() { const sp = getSp(), D = vennData(); const N = sp.items.length;
+      $('#vn-rg').innerHTML = RG.map(r => `<button class="btn btn-sm ${VN.rg === r[0] ? 'text-white' : ''}" style="border:2px solid ${r[3]};color:${VN.rg === r[0] ? '#fff' : r[3]};background:${VN.rg === r[0] ? r[3] : '#fff'}" data-r="${r[0]}" title="${r[2]}">${r[1]}</button>`).join('');
+      if (VN.mode === 'el') { const opts = sp.quick.map((q, i) => `<option value="${i}">${q[0]}</option>`).join('') + '<option value="c">Personalizado (tú eliges)</option>'; $('#vn-qa').innerHTML = opts; $('#vn-qb').innerHTML = opts;
+        const isQ = (bit, q) => { const S = quickSet(sp, sp.quick[q] || sp.quick[0]); return sp.items.every((_, i) => !!(VN.st[i] & bit) === S.has(i)); };
+        let qa = sp.quick.findIndex((_, q) => isQ(1, q)), qb = sp.quick.findIndex((_, q) => isQ(2, q)); $('#vn-qa').value = qa < 0 ? 'c' : qa; $('#vn-qb').value = qb < 0 ? 'c' : qb;
+        $('#vn-chips').innerHTML = sp.items.map((it, i) => chipHTML(it, i, ['s0', 'sA', 'sB', 'sAB'][VN.st[i]] + (N > 20 ? ' sm' : ''), false)).join(''); }
+      $('#vn-svg').innerHTML = vennSVG(D); $('#vn-out').innerHTML = vennOut(D); }
+    function vnSetup() {
+      $('#vn-tabs').addEventListener('click', e => { const b = e.target.closest('[data-vm]'); if (!b) return; VN.mode = b.dataset.vm; $$('#vn-tabs .nav-link').forEach(x => x.classList.toggle('active', x === b)); $('#vn-el').hidden = VN.mode !== 'el'; $('#vn-pr').hidden = VN.mode !== 'pr'; vnR(); });
+      $('#vn-rg').addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (!b) return; VN.rg = b.dataset.r; vnR(); });
+      $('#vn-chips').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (!b) return; const i = +b.dataset.i; VN.st[i] = (VN.st[i] + 1) % 4; vnR(); });
+      const setQ = bit => e => { const v = e.target.value; if (v === 'c') return; const sp = getSp(), S = quickSet(sp, sp.quick[+v]); VN.st = VN.st.map((s, i) => (s & (3 - bit)) | (S.has(i) ? bit : 0)); vnR(); };
+      $('#vn-qa').addEventListener('change', setQ(1)); $('#vn-qb').addEventListener('change', setQ(2));
+      const sl = () => { let pa = +$('#pa').value, pb = +$('#pb').value, pab = +$('#pab').value; const lo = Math.max(0, pa + pb - 100), hi = Math.min(pa, pb); pab = Math.min(hi, Math.max(lo, pab)); $('#pab').min = lo; $('#pab').max = hi; $('#pab').value = pab; VN.pa = pa; VN.pb = pb; VN.pab = pab; $('#pa-v').textContent = pa; $('#pb-v').textContent = pb; $('#pab-v').textContent = pab; vnR(); };
+      ['pa', 'pb', 'pab'].forEach(id => $('#' + id).addEventListener('input', sl)); sl(); }
+    RENDERS.push(vnR);
+
+    /* ===================== 6. Avanzado: eventos compuestos ===================== */
+    const ADV = { rows: [{ sp: 'moneda', sel: new Set([0]) }], op: 'and', repl: true, sim: null };
+    const ADV_ORDER = ['moneda', 'dado', 'baraja', 'semana', 'meses'];
+    const spOptions = sel => [...SP_ORDER, 'custom'].map(id => `<option value="${id}" ${id === sel ? 'selected' : ''}>${(id === 'custom' ? '🧩 Vector personalizado' : SP[id].icon + ' ' + SP[id].name)}</option>`).join('');
+    const defSel = sp => { const q = sp.quick[0]; const s = q ? quickSet(sp, q) : new Set([0]); return s.size ? s : new Set([0]); };
+    function noRepl(sp, sets) { const k = sets.length, N = totW(sp); if (k > N) return null; const cnt = {};
+      sp.items.forEach((it, i) => { let m = 0; sets.forEach((s, j) => { if (s.has(i)) m |= (1 << j); }); cnt[m] = (cnt[m] || 0) + it.w; }); const masks = Object.keys(cnt).map(Number);
+      const rec = j => { if (j === k) return 1; let t = 0; for (const m of masks) { if (!(m & (1 << j)) || cnt[m] <= 0) continue; const c = cnt[m]; cnt[m]--; t += c * rec(j + 1); cnt[m]++; } return t; };
+      const fav = rec(0); let den = 1; for (let j = 0; j < k; j++) den *= (N - j); return { fav, den, p: F(fav, den) }; }
+    function advCalc() { const rows = ADV.rows.map(r => { const sp = spOf(r.sp); return { r, sp, n: sp.items.length, m: r.sel.size, p: pOfSet(sp, r.sel) }; });
+      const k = rows.length, same = rows.every(x => x.r.sp === rows[0].r.sp), allowed = k > 1 && same, repl = ADV.repl || !allowed, and = ADV.op === 'and';
+      const prefix = j => { const rs = rows.slice(0, j);
+        if (repl) { if (and) return rs.reduce((a, x) => fmul(a, x.p), F1); return fsub(F1, rs.reduce((a, x) => fmul(a, fsub(F1, x.p)), F1)); }
+        const sp = rs[0].sp; if (and) { const r = noRepl(sp, rs.map(x => x.r.sel)); return r ? r.p : null; }
+        const comp = rs.map(x => new Set(sp.items.map((_, i) => i).filter(i => !x.r.sel.has(i)))); const r = noRepl(sp, comp); return r ? fsub(F1, r.p) : null; };
+      return { rows, k, same, allowed, repl, and, prefix, total: prefix(k) }; }
+    function advR() { const C = advCalc(), { rows, k } = C;
+      $('#ad-rows').innerHTML = rows.map((x, i) => { const col = PAL[i % PAL.length], sp = x.sp;
+        return `<div class="erow" data-r="${i}" style="--c:${col}"><div class="eh"><span class="en">${i + 1}</span><select class="form-select form-select-sm ad-sp" aria-label="Experimento">${spOptions(x.r.sp)}</select><span class="small text-muted">evento E<sub>${i + 1}</sub></span>${k > 1 ? `<button class="btn btn-sm btn-outline-danger rounded-pill ad-del" title="Quitar"><i class="bi bi-x-lg"></i></button>` : ''}<span class="ep">${kpi(`P(E${i + 1})`, pfx(x.p), col, 0)}</span></div>
+          <div class="d-flex flex-wrap gap-1 mb-1">${sp.quick.slice(0, 6).map((q, qi) => `<button class="btn btn-sm btn-outline-secondary rounded-pill py-0 ad-q" data-q="${qi}" style="font-size:.74rem">${q[0]}</button>`).join('')}</div>
+          <div class="chips">${sp.items.map((it, j) => chipHTML(it, j, (x.r.sel.has(j) ? 'sel' : '') + (sp.items.length > 20 ? ' sm' : ''), false)).join('')}</div></div>`; }).join('');
+      $('#ad-add').disabled = k >= 5; $('#ad-cnt').textContent = `${k} de 5 eventos`;
+      $$('#ad-op button').forEach(b => b.classList.toggle('active', b.dataset.o === ADV.op)); $$('#ad-rp button').forEach(b => { b.classList.toggle('active', (b.dataset.r === '1') === C.repl); b.disabled = !C.allowed && b.dataset.r === '0'; });
+      $('#ad-rn').innerHTML = C.allowed ? (C.repl ? 'Con reemplazo: cada intento es independiente (el resultado se «devuelve»).' : 'Sin reemplazo: el resultado ya no se devuelve, así que los eventos <b>dependen</b> unos de otros.') : (k > 1 ? 'El modo «sin reemplazo» solo existe cuando todos los eventos son del mismo experimento (por ejemplo, sacar varias cartas).' : 'Con un solo evento no hay combinación todavía: agrega otro para combinar.');
+      advOut(C); }
+    function advOut(C) { const { rows, k } = C, out = $('#ad-out'); if (C.total === null) { out.innerHTML = '<div class="alert alert-warning mb-0">No hay suficientes elementos para sacar tantos sin reemplazo.</div>'; return; }
+      const sym = C.and ? '\\cap' : '\\cup', symN = C.and ? 'conjunción (Y)' : 'disyunción (O)', names = rows.map((_, i) => `E_{${i + 1}}`), inter = names.join(` ${sym} `), L = [];
+      L.push(['Probabilidad de cada evento (casos favorables ÷ casos posibles)', rows.map((x, i) => `P(E_{${i + 1}}) = ${rowTex(x)}`).join(' \\qquad ')]);
+      if (k === 1) L.push(['Un solo evento: la probabilidad es la clásica', `P(E_1) = ${ptex(C.total)}`]);
+      else if (C.repl && C.and) { L.push([`Eventos independientes (con reemplazo): la conjunción se obtiene multiplicando`, `P(${inter}) = ${names.map(n => `P(${n})`).join(' \\cdot ')}`]);
+        L.push(['Se sustituyen los valores y se multiplica', `${rows.map(x => ptex(x.p)).join(' \\cdot ')} = ${rawProd(rows)}${MODE.dec ? '' : ' = ' + ptex(C.total)}${MODE.dec ? ' \\approx ' + ptex(C.total) : ''}`]); }
+      else if (C.repl && !C.and) { L.push(['Disyunción: «al menos uno». Es más fácil con el complemento (ninguno ocurre)', `P(${inter}) = 1 - ${names.map(n => `P(${n}')`).join(' \\cdot ')}`]);
+        L.push(['Cada complemento es 1 − P(E)', rows.map((x, i) => `P(E_{${i + 1}}') = ${ptex(fsub(F1, x.p))}`).join(' \\quad ')]); L.push(['Se multiplican los complementos y se resta a 1', `1 - ${rows.map(x => ptex(fsub(F1, x.p))).join(' \\cdot ')} = 1 - ${ptex(rows.reduce((a, x) => fmul(a, fsub(F1, x.p)), F1))} = ${ptex(C.total)}`]); }
+      else { const sp = rows[0].sp, sets = C.and ? rows.map(x => x.r.sel) : rows.map(x => new Set(sp.items.map((_, i) => i).filter(i => !x.r.sel.has(i)))), r = noRepl(sp, sets), N = totW(sp), den = Array.from({ length: k }, (_, j) => N - j);
+        L.push([`Sin reemplazo hay ${den.join(' × ')} = ${fmtN(r.den)} secuencias posibles y cada extracción depende de las anteriores`, `P(${inter}) = P(E_1)\\,P(E_2 \\mid E_1)\\cdots`]);
+        if (C.and) L.push(['Se cuentan las secuencias favorables (conteo exacto) y se divide', `\\frac{${fmtN(r.fav)}}{${fmtN(r.den)}} = ${ptex(C.total)}`]);
+        else L.push(['Disyunción sin reemplazo: 1 − P(ningún evento)', `1 - \\frac{${fmtN(r.fav)}}{${fmtN(r.den)}} = 1 - ${ptex(r.p)} = ${ptex(C.total)}`]); }
+      const sizes = rows.map(x => x.n), uni = rows.every(x => x.sp.items.every(i => i.w === 1));
+      if (k > 1 && C.repl && uni) L.push(['Visto como espacio muestral Ω combinado (casos favorables ÷ casos posibles)', C.and ? `|\\Omega| = ${sizes.join(' \\cdot ')} = ${fmtN(sizes.reduce((a, b) => a * b, 1))} \\qquad |${names.join(' \\cap ')}| = ${rows.map(x => x.m).join(' \\cdot ')} = ${fmtN(rows.reduce((a, x) => a * x.m, 1))}` : `|\\Omega| = ${sizes.join(' \\cdot ')} = ${fmtN(sizes.reduce((a, b) => a * b, 1))}`]);
+      const cum = []; for (let j = 1; j <= k; j++) cum.push(C.prefix(j));
+      const fl = j => (j === 1 ? 'E₁' : C.and ? 'E₁…E' + 'ⓘ₂₃₄₅'.charAt(j - 1 + 1 > 4 ? 4 : j - 1 + 1).replace('ⓘ', '') : 'E₁…E' + j);
+      const lbl = j => j === 1 ? 'E1' : (C.and ? 'E1' + Array.from({ length: j - 1 }, (_, t) => ' ∩ E' + (t + 2)).join('') : 'E1' + Array.from({ length: j - 1 }, (_, t) => ' ∪ E' + (t + 2)).join(''));
+      const funnel = cum.map((p, j) => `<div class="fb"><span class="fl">${lbl(j + 1)}</span><span class="bb" style="--c:${PAL[j % PAL.length]};--w:${Math.max(1.5, 100 * fval(p) * .62)}%;--k:${j}">${ptxt(p)}</span></div>`).join('');
+      const pt = fval(C.total), odds = pt > 0 && 1 / pt >= 1.5 ? Math.round(1 / pt) : null;
+      out.innerHTML = `<div class="demo"><div class="demo-t"><i class="bi bi-calculator-fill"></i>Resultado: ${C.and ? 'se cumplen todos los eventos' : 'se cumple al menos uno'} (${symN})</div>
+        <div class="row g-4"><div class="col-lg-7">${stepsBox(L)}</div><div class="col-lg-5"><div class="vis" style="padding:.8rem"><div class="small fw-bold mb-1">Cómo va cambiando la probabilidad al sumar eventos</div><div class="funnel">${funnel}</div></div>
+        <div class="text-center mt-3">${kpi('Probabilidad', pfx(C.total), '#7048e8', 0)} ${kpi('Porcentaje', dec2(pt * 100) + ' %', '#e8590c', 1)} ${odds ? kpi('Aprox.', '1 de cada ' + fmtN(odds), '#2f9e44', 2) : ''}</div>
+        <div class="meter mt-3"><span style="--w:${pt * 100}%;background:#7048e8">${pt > .08 ? dec2(pt * 100) + ' %' : ''}</span></div>
+        <div class="d-flex align-items-center gap-2 mt-3 flex-wrap"><button class="btn btn-dark rounded-pill btn-sm" id="ad-sim"><i class="bi bi-dice-3-fill me-1"></i>Simular 1000 intentos</button><span class="small" id="ad-sim-o">${ADV.sim ? simHTML(ADV.sim, C.total) : ''}</span></div></div></div></div>`; }
+    function rowTex(x) { const uni = x.sp.items.every(i => i.w === 1), W = totW(x.sp), w = [...x.r.sel].reduce((s, i) => s + x.sp.items[i].w, 0), raw = uni ? `\\frac{${x.m}}{${x.n}}` : `\\frac{${w}}{${W}}`; return MODE.dec ? `${raw} = ${ptex(x.p)}` : (fred(w, W).d !== W ? `${raw} = ${ptex(x.p)}` : raw); }
+    function rawProd(rows) { const n = rows.reduce((a, x) => a * x.p.n, 1), d = rows.reduce((a, x) => a * x.p.d, 1); return MODE.dec ? ptex(rows.reduce((a, x) => fmul(a, x.p), F1)) : `\\frac{${n}}{${d}}`; }
+    function simHTML(s, p) { return `Éxitos: <b>${s.ok}</b> de ${s.n} → p̂ = <b>${dec2(s.ok / s.n)}</b> (teórica ${dec2(fval(p))}) <span class="och sm" style="--c:#7048e8;animation:none">${dec2(Math.abs(s.ok / s.n - fval(p)))} de diferencia</span>`; }
+    function advSim() { const C = advCalc(), n = 1000; let ok = 0; const draw = (sp, W) => { let r = Math.random() * W, a = 0; for (let i = 0; i < sp.items.length; i++) { a += sp.items[i].w; if (r < a) return i; } return sp.items.length - 1; };
+      for (let t = 0; t < n; t++) { let hit;
+        if (C.repl) { const h = C.rows.map(x => x.r.sel.has(draw(x.sp, totW(x.sp)))); hit = C.and ? h.every(Boolean) : h.some(Boolean); }
+        else { const sp = C.rows[0].sp, units = []; sp.items.forEach((it, i) => { for (let q = 0; q < it.w; q++) units.push(i); }); for (let i = units.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [units[i], units[j]] = [units[j], units[i]]; } const h = C.rows.map((x, j) => x.r.sel.has(units[j])); hit = C.and ? h.every(Boolean) : h.some(Boolean); }
+        if (hit) ok++; }
+      ADV.sim = { ok, n }; $('#ad-sim-o').innerHTML = simHTML(ADV.sim, C.total); }
+    const ADV_PRE = [['🪙 Moneda: cara', () => ({ rows: [['moneda', 'Cara']], op: 'and', repl: true })], ['🪙🎲 Cara y número par', () => ({ rows: [['moneda', 'Cara'], ['dado', 'Pares']], op: 'and', repl: true })], ['🪙🪙🪙 Tres caras seguidas', () => ({ rows: [['moneda', 'Cara'], ['moneda', 'Cara'], ['moneda', 'Cara']], op: 'and', repl: true })],
+      ['🃏 Dos cartas: as y luego corazón (sin reemplazo)', () => ({ rows: [['baraja', 'Ases'], ['baraja', 'Corazones']], op: 'and', repl: false })], ['📅 Día laboral O mes de verano', () => ({ rows: [['semana', 'Laborales'], ['meses', 'Verano (Jun–Ago)']], op: 'or', repl: true })], ['✋ Los 5 a la vez', () => ({ rows: [['moneda', 'Cara'], ['dado', 'Mayor que 4'], ['baraja', 'Corazones'], ['semana', 'Fin de semana'], ['meses', 'Con 31 días']], op: 'and', repl: true })]];
+    function advSetup() { const ro = $('#ad-rows');
+      ro.addEventListener('change', e => { const s = e.target.closest('.ad-sp'); if (!s) return; const i = +s.closest('.erow').dataset.r; ADV.rows[i].sp = s.value; ADV.rows[i].sel = defSel(spOf(s.value)); ADV.sim = null; advR(); });
+      ro.addEventListener('click', e => { const row = e.target.closest('.erow'); if (!row) return; const i = +row.dataset.r, r = ADV.rows[i];
+        if (e.target.closest('.ad-del')) { ADV.rows.splice(i, 1); ADV.sim = null; advR(); return; }
+        const q = e.target.closest('.ad-q'); if (q) { r.sel = quickSet(spOf(r.sp), spOf(r.sp).quick[+q.dataset.q]); ADV.sim = null; advR(); return; }
+        const c = e.target.closest('[data-i]'); if (c) { const j = +c.dataset.i; r.sel.has(j) ? r.sel.delete(j) : r.sel.add(j); ADV.sim = null; advR(); } });
+      $('#ad-add').addEventListener('click', () => { if (ADV.rows.length >= 5) return; const id = ADV_ORDER[ADV.rows.length % ADV_ORDER.length]; ADV.rows.push({ sp: id, sel: defSel(SP[id]) }); ADV.sim = null; advR(); });
+      $('#ad-op').addEventListener('click', e => { const b = e.target.closest('[data-o]'); if (!b) return; ADV.op = b.dataset.o; ADV.sim = null; advR(); });
+      $('#ad-rp').addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (!b || b.disabled) return; ADV.repl = b.dataset.r === '1'; ADV.sim = null; advR(); });
+      $('#ad-out').addEventListener('click', e => { if (e.target.closest('#ad-sim')) advSim(); });
+      $('#ad-pre').innerHTML = ADV_PRE.map((p, i) => `<button class="btn btn-sm btn-outline-primary rounded-pill" data-p="${i}">${p[0]}</button>`).join('');
+      $('#ad-pre').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; const P = ADV_PRE[+b.dataset.p][1](); ADV.rows = P.rows.map(([id, qn]) => { const sp = SP[id], q = sp.quick.find(x => x[0] === qn); return { sp: id, sel: q ? quickSet(sp, q) : defSel(sp) }; }); ADV.op = P.op; ADV.repl = P.repl; ADV.sim = null; advR(); }); }
+    RENDERS.push(advR);
+
+    /* ===================== 7. Condicional y Bayes ===================== */
+    const BY_PRE = { maq: { n: 3, ev: 'la pieza sale defectuosa', rows: [['Máquina A', 50, 2], ['Máquina B', 30, 3], ['Máquina C', 20, 5]] }, med: { n: 2, ev: 'la prueba da positivo', rows: [['Enfermo', 1, 99], ['Sano', 99, 5]] }, art: { n: 2, ev: 'el artefacto sale descompuesto', rows: [['Línea 1', 60, 3], ['Línea 2', 40, 6]] } };
+    const BY = { n: 3, ev: BY_PRE.maq.ev, rows: BY_PRE.maq.rows.map(r => ({ name: r[0], w: r[1], l: r[2] })).concat([{ name: 'Máquina D', w: 10, l: 4 }]) };
+    function byCalc() { const rows = BY.rows.slice(0, BY.n), W = rows.reduce((s, r) => s + r.w, 0); const pri = rows.map(r => F(r.w, W)), lik = rows.map(r => F(r.l, 100)), joint = pri.map((p, i) => fmul(p, lik[i])), pE = joint.reduce((a, b) => fadd(a, b), F0); return { rows, pri, lik, joint, pE, post: joint.map(j => pE.n === 0 ? null : fdiv(j, pE)) }; }
+    function byR() { const C = byCalc(), n = BY.n, el = $('#by-rows');
+      if (!el.dataset.built || +el.dataset.n !== n) { el.dataset.built = 1; el.dataset.n = n; el.innerHTML = C.rows.map((r, i) => `<div class="hyp-row" style="--c:${PAL[i]}"><span class="hn">H<sub>${i + 1}</sub></span><div><label>Hipótesis (nombre) · peso</label><div class="input-group input-group-sm"><input class="form-control by-nm" data-i="${i}" value="${escH(r.name)}" maxlength="16"><input type="number" class="form-control by-w" data-i="${i}" value="${r.w}" min="1" max="999" style="max-width:70px"></div></div><div><label>P(E | H<sub>${i + 1}</sub>) = <b class="by-lv">${r.l}</b> %</label><input type="range" class="form-range by-l" data-i="${i}" min="0" max="100" value="${r.l}"></div></div>`).join(''); }
+      $('#by-ev').innerHTML = `Evidencia <b>E</b>: <input class="form-control form-control-sm d-inline-block" id="by-evt" style="width:260px" value="${escH(BY.ev)}" maxlength="40">`;
+      $$('#by-n button').forEach(b => b.classList.toggle('active', +b.dataset.n === n));
+      const out = $('#by-out'); if (C.pE.n === 0) { out.innerHTML = '<div class="alert alert-warning">P(E) = 0: con esos datos la evidencia es imposible y Bayes no se puede calcular.</div>'; return; }
+      const terms = C.rows.map((r, i) => `${ptex(C.pri[i])} \\cdot ${ptex(C.lik[i])}`).join(' + '), tj = C.joint.map(j => ptex(j)).join(' + ');
+      const L = [['Probabilidad total de la evidencia: se suma por cada hipótesis', `P(E) = \\sum_{i} P(H_i)\\,P(E \\mid H_i) = ${terms}`], ['Cada término es P(Hᵢ ∩ E) (rama del árbol)', `P(E) = ${tj} = ${ptex(C.pE)}`],
+        ...C.rows.map((r, i) => [i === 0 ? 'Bayes: la probabilidad de cada hipótesis ya sabiendo que ocurrió E' : '', `P(H_{${i + 1}} \\mid E) = \\frac{P(H_{${i + 1}})\\,P(E \\mid H_{${i + 1}})}{P(E)} = \\frac{${ptex(C.joint[i])}}{${ptex(C.pE)}} = ${ptex(C.post[i])}`])];
+      const best = C.post.reduce((b, p, i) => fval(p) > fval(C.post[b]) ? i : b, 0);
+      const tree = (() => { const H = 70 * n + 20, W = 560; let s = ''; C.rows.forEach((r, i) => { const y = 40 + i * 70, col = PAL[i]; s += `<path class="te" pathLength="1" d="M40,${H / 2} C110,${H / 2} 110,${y} 180,${y}" style="--d:${i * .2}s;stroke:${col}"/><text class="tt" x="110" y="${(H / 2 + y) / 2 - 6}" text-anchor="middle" style="--d:${i * .2 + .4}s">${ptxt(C.pri[i])}</text><circle class="tn" cx="180" cy="${y}" r="9" fill="${col}" style="--d:${i * .2 + .4}s"/><text class="tl" x="180" y="${y - 16}" text-anchor="middle" style="fill:${col}">${escH(r.name)}</text>`;
+          [[0, C.lik[i], 'E', '#e03131'], [1, fsub(F1, C.lik[i]), 'E′', '#adb5bd']].forEach(([k, f, nm, cc]) => { const y2 = y - 17 + k * 34; s += `<path class="te" pathLength="1" d="M180,${y} C240,${y} 250,${y2} 320,${y2}" style="--d:${i * .2 + .5}s;stroke:${cc}"/><text class="tt" x="262" y="${(y + y2) / 2 - 3}" text-anchor="middle" style="--d:${i * .2 + .9}s">${ptxt(f)}</text><circle class="tn" cx="320" cy="${y2}" r="6" fill="${cc}" style="--d:${i * .2 + .9}s"/><text class="tl" x="332" y="${y2 + 4}" style="${k ? 'fill:#868e96' : ''}">${nm}${k ? '' : ' → ' + ptxt(C.joint[i])}</text>`; }); });
+        return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px"><circle class="tn" cx="40" cy="${H / 2}" r="14" fill="#0f172a"/><text x="40" y="${H / 2 + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">Ω</text>${s}</svg>`; })();
+      const bars = C.rows.map((r, i) => `<div class="mb-2"><div class="small fw-bold" style="color:${PAL[i]}">${escH(r.name)}${i === best ? ' ★' : ''}</div><div class="pbar"><span class="pl" style="width:60px">antes</span><span class="pt"><i style="--c:#adb5bd;--w:${100 * fval(C.pri[i])}%"></i></span><span class="pv" style="width:90px">${pfx(C.pri[i])}</span></div><div class="pbar"><span class="pl" style="width:60px">después</span><span class="pt"><i style="--c:${PAL[i]};--w:${100 * fval(C.post[i])}%;--k:2"></i></span><span class="pv" style="width:90px">${pfx(C.post[i])}</span></div></div>`).join('');
+      out.innerHTML = `<div class="row g-4"><div class="col-lg-6"><div class="vis">${tree}<div class="cap">Árbol: hipótesis → evidencia. Las ramas rojas (E) suman P(E).</div></div><div class="mt-3 text-center">${kpi('P(E)', pfx(C.pE), '#e03131', 0)} ${kpi('Más probable', escH(C.rows[best].name), PAL[best], 1)} ${kpi('P(H|E)', pfx(C.post[best]), '#2f9e44', 2)}</div></div><div class="col-lg-6"><div class="vis" style="padding:.8rem"><div class="small fw-bold mb-2">Probabilidad de cada hipótesis, antes y después de saber que ${escH(BY.ev)}</div>${bars}</div></div></div><div class="mt-3">${stepsBox(L)}</div>`; }
+    function bySetup() { $('#by-pre').innerHTML = `<button class="btn btn-sm btn-outline-primary rounded-pill" data-p="maq">🏭 Máquinas</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-p="med">🩺 Prueba médica</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-p="art">🔧 Artefacto descompuesto</button>`;
+      const reset = () => { $('#by-rows').dataset.built = ''; byR(); };
+      $('#by-pre').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; const P = BY_PRE[b.dataset.p]; BY.n = P.n; BY.ev = P.ev; P.rows.forEach((r, i) => { BY.rows[i] = { name: r[0], w: r[1], l: r[2] }; }); reset(); });
+      $('#by-n').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (!b) return; BY.n = +b.dataset.n; reset(); });
+      $('#by-rows').addEventListener('input', e => { const t = e.target, i = +t.dataset.i; if (t.classList.contains('by-nm')) BY.rows[i].name = t.value || 'H' + (i + 1); else if (t.classList.contains('by-w')) BY.rows[i].w = Math.max(1, parseInt(t.value, 10) || 1); else if (t.classList.contains('by-l')) { BY.rows[i].l = +t.value; t.parentElement.querySelector('.by-lv').textContent = t.value; } byR(); });
+      $('#by-ev').addEventListener('input', e => { if (e.target.id === 'by-evt') { BY.ev = e.target.value; byR(); } }); }
+    RENDERS.push(byR);
+
+    /* ===================== 8. Manual paso a paso ===================== */
+    const MM = { i: 0, timer: null };
+    const miniVenn = mode => { const A = '#1c7ed6', B = '#e8590c', X = '#7048e8';
+      const base = `<circle cx="92" cy="65" r="52" fill="#fff" stroke="${A}" stroke-width="3"/><circle cx="148" cy="65" r="52" fill="#fff" stroke="${B}" stroke-width="3"/>`;
+      let hl = '';
+      if (mode === 'and') hl = `<clipPath id="mvc"><circle cx="92" cy="65" r="52"/></clipPath><circle cx="148" cy="65" r="52" fill="${X}" clip-path="url(#mvc)" class="vin vhl"/>`;
+      else if (mode === 'or') hl = `<circle cx="92" cy="65" r="52" fill="${X}" class="vin vhl"/><circle cx="148" cy="65" r="52" fill="${X}" class="vin vhl"/>`;
+      else if (mode === 'a') hl = `<circle cx="92" cy="65" r="52" fill="${A}" class="vin vhl"/>`;
+      const lab = `<text x="60" y="68" text-anchor="middle" font-weight="800" fill="#0f172a">2</text><text x="120" y="55" text-anchor="middle" font-weight="800" fill="#0f172a">4</text><text x="120" y="82" text-anchor="middle" font-weight="800" fill="#0f172a">6</text><text x="180" y="68" text-anchor="middle" font-weight="800" fill="#0f172a">5</text><text x="40" y="22" font-weight="800" fill="${A}">A</text><text x="198" y="22" font-weight="800" fill="${B}">B</text>`;
+      return `<svg viewBox="0 0 240 130" width="100%" style="max-width:300px">${base}${hl}${base.replace(/fill="#fff"/g, 'fill="none"')}${lab}</svg>`; };
+    const dieChips = (on, col) => [1, 2, 3, 4, 5, 6].map(i => `<span class="och sm ${on.includes(i) ? 'sel' : ''}" style="--c:${col};animation:none">${i}</span>`).join('');
+    const MSTEPS = [
+      { t: 'El experimento aleatorio', ic: '🎲', c: '#e8590c', vis: () => `<div class="d-flex gap-4 align-items-center"><span class="coin">C</span><span class="die">🎲</span></div><div class="small text-muted">Lanzamos una moneda y un dado</div>`,
+        say: () => `<p>Un <b>experimento aleatorio</b> es una acción cuyo resultado no puedes predecir, pero sí sabes <b>qué puede pasar</b>.</p><div class="mm-def">Ejemplos: lanzar una moneda, un dado, sacar una carta o elegir un artefacto al azar.</div><p>Antes de calcular, siempre pregúntate: <b>¿qué experimento estoy haciendo?</b></p>` },
+      { t: 'El espacio muestral Ω', ic: 'Ω', c: '#1c7ed6', vis: () => `<div class="vecrow"><span class="vn">Ω =</span><span class="vecm">${[1, 2, 3, 4, 5, 6].map((n, k) => `<span class="vc" style="--k:${k}"><span class="och sm" style="--c:#1c7ed6;animation:none">${n}</span></span>`).join('')}</span></div><div class="vecrow"><span class="vn">p =</span><span class="vecm">${[1, 2, 3, 4, 5, 6].map((n, k) => `<span class="vc" style="--k:${k}">${pfx(F(1, 6))}</span>`).join('')}</span></div>`,
+        say: () => `<p>El <b>espacio muestral Ω</b> es el conjunto (vector) de <b>todos</b> los resultados posibles.</p><div class="mm-def">Dado: ${fi('\\Omega = (1, 2, 3, 4, 5, 6)')} → ${fi('n(\\Omega) = 6')}</div><p>Si todos son igual de probables, cada uno vale ${fi('\\frac{1}{n}')}. La suma de todas las probabilidades siempre es <b>1</b>.</p>` },
+      { t: 'Un evento es un subconjunto', ic: '⊂', c: '#2f9e44', vis: () => `<div>${dieChips([2, 4, 6], '#2f9e44')}</div><div class="small">A = «sale par» = {2, 4, 6}</div>`,
+        say: () => `<p>Un <b>evento</b> es cualquier grupo de resultados de Ω que te interesa.</p><div class="mm-def">A = «sale par» = {2, 4, 6} ⊂ Ω</div><p>Si el evento ocurre cuando sale 2, 4 o 6, decimos que esos son los <b>casos favorables</b>.</p>` },
+      { t: 'Probabilidad clásica', ic: '½', c: '#7048e8', vis: () => `<div>${dieChips([2, 4, 6], '#7048e8')}</div><div class="meter w-100"><span style="--w:50%;background:#7048e8">${ptxt(F(1, 2))}</span><span style="--w:50%;background:#cbd5e1"></span></div>`,
+        say: () => `<p>Casos favorables entre casos posibles:</p>${fd(`P(A) = \\frac{n(A)}{n(\\Omega)} = \\frac{3}{6} = ${ptex(F(1, 2))}`)}<p>Siempre ${fi('0 \\le P(A) \\le 1')}. En <b>fracción</b> se simplifica; en <b>decimal</b> se redondea a 2 cifras.</p>` },
+      { t: 'El complemento A′', ic: '¬', c: '#868e96', vis: () => `<div>${dieChips([1, 3, 5], '#868e96')}</div><div class="small">A′ = «NO sale par» = {1, 3, 5}</div>`,
+        say: () => `<p>El <b>complemento</b> A′ son los resultados de Ω que <b>no</b> están en A.</p>${fd(`P(A') = 1 - P(A) = 1 - ${ptex(F(1, 2))} = ${ptex(F(1, 2))}`)}<div class="mm-def">Truco: «al menos uno» = 1 − «ninguno».</div>` },
+      { t: 'Intersección ∩ = conjunción «Y»', ic: '∩', c: '#7048e8', vis: () => miniVenn('and'),
+        say: () => `<p>Sea A = «par» = {2,4,6} y B = «mayor que 3» = {4,5,6}.</p><div class="mm-def"><b>Intersección</b> (${fi('A \\cap B')}) es el <i>conjunto</i> de resultados que están en A <b>y</b> en B: {4, 6}.</div><div class="mm-def"><b>Conjunción</b> es la <i>operación lógica «Y»</i>. Es lo mismo visto desde la lógica: «sale par <b>Y</b> mayor que 3».</div>${fd(`P(A \\cap B) = \\frac{2}{6} = ${ptex(F(1, 3))}`)}` },
+      { t: 'Unión ∪ = disyunción «O»', ic: '∪', c: '#e8590c', vis: () => miniVenn('or'),
+        say: () => `<p>La <b>unión</b> ${fi('A \\cup B')} junta los resultados que están en A <b>o</b> en B (o en ambos): {2, 4, 5, 6}.</p><div class="mm-def"><b>Disyunción</b> = «O» inclusivo. Los de la intersección se cuentan una sola vez:</div>${fd(`P(A \\cup B) = P(A) + P(B) - P(A \\cap B) = ${ptex(F(1, 2))} + ${ptex(F(1, 2))} - ${ptex(F(1, 3))} = ${ptex(F(2, 3))}`)}` },
+      { t: 'Independencia y regla del producto', ic: '✕', c: '#1098ad', vis: () => `<div class="d-flex gap-2 align-items-center flex-wrap justify-content-center"><span class="coin" style="width:46px;height:46px;font-size:1.1rem">C</span><span>×</span><span class="die" style="width:46px;height:46px;font-size:1.8rem">🎲</span><span>=</span><b>12 resultados</b></div><div class="small">(Cara, par) = 3 de 12 = ${pfx(F(1, 4))}</div>`,
+        say: () => `<p>Dos eventos son <b>independientes</b> si uno no cambia la probabilidad del otro (moneda y dado).</p>${fd(`P(A \\cap B) = P(A) \\cdot P(B) = ${ptex(F(1, 2))} \\cdot ${ptex(F(1, 2))} = ${ptex(F(1, 4))}`)}<div class="mm-def">Comprobación: ${fi('P(A \\cap B) = P(A)\\,P(B)')} ⇔ independientes.</div>` },
+      { t: 'Probabilidad condicional', ic: '∣', c: '#c2255c', vis: () => miniVenn('and'),
+        say: () => `<p>«¿Cuál es la probabilidad de A <b>sabiendo que</b> ya ocurrió B?» Ω se reduce a B.</p>${fd(`P(A \\mid B) = \\frac{P(A \\cap B)}{P(B)} = \\frac{${ptex(F(1, 3))}}{${ptex(F(1, 2))}} = ${ptex(F(2, 3))}`)}<p>Entre {4,5,6} hay 2 pares (4 y 6): ${fi('\\frac{2}{3}')}. Coincide.</p>` },
+      { t: 'Eventos compuestos (hasta 5)', ic: '5', c: '#2f9e44', vis: () => [1, 2, 3, 4, 5].map((k, j) => `<div class="pbar w-100"><span class="pl" style="width:74px">${k} cara${k > 1 ? 's' : ''}</span><span class="pt"><i style="--c:#2f9e44;--w:${100 * Math.pow(.5, k)}%;--k:${j}"></i></span><span class="pv" style="width:80px">${pfx(F(1, Math.pow(2, k)))}</span></div>`).join(''),
+        say: () => `<p>Puedes combinar hasta <b>5 eventos</b>. Con <b>Y</b> se multiplica (cada evento extra baja la probabilidad); con <b>O</b> se usa el complemento.</p>${fd(`P(E_1 \\cap \\dots \\cap E_5) = \\prod_{i=1}^{5} P(E_i) = \\left(${ptex(F(1, 2))}\\right)^5 = ${ptex(F(1, 32))}`)}<p>Pruébalo en la sección <b>Avanzado</b>.</p>` }
+    ];
+    function mmR() { const s = MSTEPS[MM.i], n = MSTEPS.length; $('#mm').style.setProperty('--c', s.c);
+      $('#mm-top').innerHTML = `<span class="mi">${s.ic}</span><div><div class="mk">Paso ${MM.i + 1} de ${n}</div><div class="mt">${s.t}</div></div>`;
+      $('#mm-vis').innerHTML = `<div class="anim-in w-100 d-flex flex-column align-items-center gap-2">${s.vis()}</div>`; $('#mm-say').innerHTML = `<div class="anim-in" style="--c:${s.c}">${s.say()}</div>`;
+      $('#mm-dots').innerHTML = MSTEPS.map((x, i) => `<button class="mm-dot ${i < MM.i ? 'done' : ''} ${i === MM.i ? 'on' : ''}" style="--c:${x.c}" data-i="${i}" title="${x.t}">${i + 1}</button>`).join('');
+      $('#mm-count').textContent = `${MM.i + 1} / ${n}`; $('#mm-prev').disabled = MM.i === 0; $('#mm-next').disabled = MM.i === n - 1; }
+    function mmStop() { if (MM.timer) { clearInterval(MM.timer); MM.timer = null; } $('#mm-play').innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; }
+    function mmSetup() { const go = i => { MM.i = Math.max(0, Math.min(MSTEPS.length - 1, i)); mmR(); };
+      $('#mm-prev').addEventListener('click', () => { mmStop(); go(MM.i - 1); }); $('#mm-next').addEventListener('click', () => { mmStop(); go(MM.i + 1); });
+      $('#mm-dots').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) { mmStop(); go(+b.dataset.i); } });
+      $('#mm-play').addEventListener('click', () => { if (MM.timer) { mmStop(); return; } if (MM.i >= MSTEPS.length - 1) go(0); $('#mm-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar';
+        MM.timer = setInterval(() => { if (MM.i >= MSTEPS.length - 1) { mmStop(); return; } go(MM.i + 1); }, 4500); });
+      const G = [['#7048e8', 'Intersección (∩)', 'Operación de <b>conjuntos</b>: elementos que están en A y en B a la vez.', 'Conjunción (Y, ∧)'], ['#e8590c', 'Unión (∪)', 'Operación de <b>conjuntos</b>: elementos que están en A, en B o en ambos.', 'Disyunción (O, ∨)'],
+        ['#7048e8', 'Conjunción', 'Operación <b>lógica</b> «Y». Se calcula como la intersección: P(A ∩ B).', 'Equivale a ∩'], ['#e8590c', 'Disyunción', 'Operación <b>lógica</b> «O» inclusivo. Se calcula como la unión: P(A ∪ B).', 'Equivale a ∪'],
+        ['#868e96', 'Complemento A′', 'Todo lo que <b>no</b> está en A. Es la negación (¬A).', 'P(A′) = 1 − P(A)'], ['#2f9e44', 'Evento seguro', 'Es todo Ω: siempre ocurre.', 'P = 1'], ['#e03131', 'Evento imposible', 'Es el vacío ∅: nunca ocurre.', 'P = 0'],
+        ['#1098ad', 'Excluyentes', 'No pueden ocurrir juntos: A ∩ B = ∅.', 'P(A ∩ B) = 0'], ['#1c7ed6', 'Independientes', 'Que ocurra uno no cambia al otro.', 'P(A ∩ B) = P(A)·P(B)'], ['#c2255c', 'Condicional', 'Probabilidad de A cuando ya sabes que ocurrió B.', 'P(A|B) = P(A ∩ B)/P(B)']];
+      $('#gloss').innerHTML = G.map(g => `<tr style="--c:${g[0]}"><td><b>${g[1]}</b></td><td>${g[2]}</td><td class="text-muted">${g[3]}</td></tr>`).join(''); mmR(); }
+
+    /* ===================== 9. Formulario ===================== */
+    const FCATS = [['all', 'Todas'], ['b', 'Básicas'], ['e', 'Eventos'], ['c', 'Condicional y Bayes'], ['n', 'Conteo'], ['p', 'Muestra vs población'], ['v', 'Variables']];
+    function fmCards() { const h = F(1, 2), t = F(1, 3);
+      return [
+        ['b', '#1c7ed6', 'Probabilidad clásica', 'P(A) = \\frac{n(A)}{n(\\Omega)}', 'Casos favorables ÷ casos posibles (equiprobables).', 'Dado, par: 3/6 = ' + ptxt(h)],
+        ['b', '#2f9e44', 'Espacio muestral por vectores', '\\Omega = (\\omega_1, \\omega_2, \\dots, \\omega_n) \\qquad \\sum_{i=1}^{n} p_i = 1', 'Vector de resultados y vector de probabilidades.', 'Moneda: Ω = (C, S), p = (1/2, 1/2)'],
+        ['b', '#7048e8', 'Resultados con pesos', 'P(\\omega_i) = \\frac{w_i}{\\sum w}', 'Cuando no son equiprobables.', 'Artefacto 4 : 1 → 4/5 y 1/5'],
+        ['b', '#868e96', 'Complemento', "P(A') = 1 - P(A)", 'Lo que no es A.', 'P(A′) = 1 − 1/2 = ' + ptxt(h)],
+        ['b', '#e8590c', 'Frecuencial', '\\hat{p} = \\frac{x}{n}', 'Lo observado al repetir el experimento n veces.', '48 caras en 100 lanzamientos: 0.48'],
+        ['e', '#7048e8', 'Intersección / conjunción (Y)', 'P(A \\cap B) = P(A)\\,P(B \\mid A)', 'En general; si son independientes se simplifica.', 'P = ' + ptxt(t)],
+        ['e', '#e8590c', 'Unión / disyunción (O)', 'P(A \\cup B) = P(A) + P(B) - P(A \\cap B)', 'Se resta la intersección para no contarla dos veces.', '1/2 + 1/2 − 1/3 = ' + ptxt(F(2, 3))],
+        ['e', '#e03131', 'Excluyentes', 'A \\cap B = \\emptyset \\Rightarrow P(A \\cup B) = P(A) + P(B)', 'No pueden ocurrir juntos.', 'Cara o sello: 1/2 + 1/2 = 1'],
+        ['e', '#1098ad', 'Independientes', 'P(A \\cap B) = P(A)\\,P(B)', 'Regla del producto.', 'Cara y par: 1/2 · 1/2 = ' + ptxt(F(1, 4))],
+        ['e', '#2f9e44', 'Inclusión–exclusión (3 eventos)', 'P(A \\cup B \\cup C) = \\sum P - \\sum P(\\cap_2) + P(A \\cap B \\cap C)', 'Generaliza la unión.', 'Suma individuales − pares + triple'],
+        ['e', '#c2255c', 'De Morgan', "(A \\cup B)' = A' \\cap B' \\qquad (A \\cap B)' = A' \\cup B'", 'Complemento de uniones e intersecciones.', 'Útil para «al menos uno»'],
+        ['e', '#1c7ed6', 'Al menos uno (n eventos)', 'P(\\cup E_i) = 1 - \\prod_{i=1}^{n} (1 - P(E_i))', 'Eventos independientes (hasta 5).', '3 monedas: 1 − (1/2)³ = 7/8'],
+        ['e', '#2f9e44', 'Todos a la vez (n eventos)', 'P(\\cap E_i) = \\prod_{i=1}^{n} P(E_i)', 'Eventos independientes (con reemplazo).', '5 caras: (1/2)⁵ = 1/32'],
+        ['c', '#c2255c', 'Condicional', 'P(A \\mid B) = \\frac{P(A \\cap B)}{P(B)}, \\quad P(B) > 0', 'Ω se reduce a B.', '(1/3) ÷ (1/2) = ' + ptxt(F(2, 3))],
+        ['c', '#7048e8', 'Probabilidad total', 'P(E) = \\sum_{i} P(H_i)\\,P(E \\mid H_i)', 'Las Hᵢ son una partición de Ω.', 'Máquinas A, B, C'],
+        ['c', '#e8590c', 'Teorema de Bayes', 'P(H_i \\mid E) = \\frac{P(H_i)\\,P(E \\mid H_i)}{P(E)}', 'Actualiza una probabilidad con evidencia nueva.', 'Prueba médica, artefacto'],
+        ['n', '#1c7ed6', 'Con reemplazo (n^k)', '|\\Omega| = n^k', 'k extracciones de entre n, ordenadas.', '3 monedas: 2³ = 8'],
+        ['n', '#2f9e44', 'Permutaciones P(n,k)', 'P(n,k) = \\frac{n!}{(n-k)!}', 'Sin reemplazo, importa el orden.', 'P(52,2) = 2652'],
+        ['n', '#e8590c', 'Combinaciones C(n,k)', '\\binom{n}{k} = \\frac{n!}{k!\\,(n-k)!}', 'Sin reemplazo, no importa el orden.', 'C(52,5) = 2,598,960'],
+        ['n', '#7048e8', 'Árbol: producto por rama', 'P(\\text{camino}) = p_1 \\cdot p_2 \\cdots p_k', 'Se multiplican las ramas; las hojas suman 1.', 'Cara, 5: 1/2 · 1/6 = 1/12'],
+        ['p', '#1c7ed6', 'Media', '\\mu = \\frac{\\sum_{i=1}^{N} x_i}{N}', 'POBLACIÓN: todos los N datos.', 'Parámetro: μ'],
+        ['p', '#e8590c', 'Media', '\\bar{x} = \\frac{\\sum_{i=1}^{n} x_i}{n}', 'MUESTRA: n datos tomados de la población.', 'Estadístico: x̄'],
+        ['p', '#1c7ed6', 'Varianza', '\\sigma^2 = \\frac{\\sum_{i=1}^{N} (x_i - \\mu)^2}{N}', 'POBLACIÓN: se divide entre N.', 'Desviación: σ = √σ²'],
+        ['p', '#e8590c', 'Varianza', 's^2 = \\frac{\\sum_{i=1}^{n} (x_i - \\bar{x})^2}{n - 1}', 'MUESTRA: se divide entre n − 1.', 'Desviación: s = √s²'],
+        ['p', '#1c7ed6', 'Proporción', 'p = \\frac{X}{N}', 'POBLACIÓN: parámetro (casi siempre desconocido).', 'p = verdadera proporción'],
+        ['p', '#e8590c', 'Proporción', '\\hat{p} = \\frac{x}{n}', 'MUESTRA: estimador de p.', 'p̂ = lo observado'],
+        ['v', '#2f9e44', 'Esperanza', 'E[X] = \\sum_{i} x_i\\,p_i', 'Promedio ponderado por probabilidades.', 'Dado: 3.5'],
+        ['v', '#7048e8', 'Varianza de X', 'Var(X) = E[X^2] - (E[X])^2', 'Dispersión de la variable.', 'Dado: ≈ 2.92'],
+        ['v', '#e8590c', 'Binomial', 'P(X = k) = \\binom{n}{k}\\,p^k (1-p)^{n-k}', 'k éxitos en n intentos independientes.', '2 caras en 3 monedas: 3/8']]; }
+    const FMS = { cat: 'all' };
+    function fmR() { $('#fm-cat').innerHTML = FCATS.map(c => `<button class="btn btn-sm rounded-pill ${FMS.cat === c[0] ? 'btn-dark' : 'btn-outline-dark'}" data-c="${c[0]}">${c[1]}</button>`).join('');
+      $('#fm-grid').innerHTML = fmCards().map((c, i) => `<div class="col-md-6 col-xl-4 fcol" data-c="${c[0]}" ${FMS.cat !== 'all' && FMS.cat !== c[0] ? 'hidden' : ''}><div class="fm reveal in" style="--c:${c[1]};transition-delay:${(i % 6) * 40}ms"><div class="ft">${c[2]}</div><div class="ff">${fd(c[3])}</div><div class="fe">${c[4]}</div><div class="fx"><i class="bi bi-lightbulb-fill me-1" style="color:#f59f00"></i>${c[5]}</div></div></div>`).join(''); }
+    function fmSetup() { $('#fm-cat').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (!b) return; FMS.cat = b.dataset.c; fmR(); }); fmR(); }
+    RENDERS.push(mmR, fmR);
+
+    /* ===================== Navegación, interruptores y arranque ===================== */
+    const GROUPS = [['b', 'Básico', '#2f9e44', 'bi-1-circle-fill'], ['t', 'Árbol y fórmulas', '#1c7ed6', 'bi-diagram-3-fill'], ['v', 'Venn', '#7048e8', 'bi-circle-half'], ['a', 'Avanzado', '#e03131', 'bi-3-circle-fill'], ['m', 'Manual', '#f08c00', 'bi-mortarboard-fill'], ['f', 'Formulario', '#c2255c', 'bi-journal-richtext'], ['all', 'Todo', '#0f172a', 'bi-grid-fill']];
+    let curGrp = 'b';
+    function setGroup(g, scroll) { curGrp = g; store.set('prob-grp', g);
+      $$('section.sec').forEach(s => { s.hidden = !(g === 'all' || s.dataset.g === g); }); $$('#sec-nav a').forEach(a => { a.hidden = !(g === 'all' || a.dataset.g === g); });
+      $$('#grp-bar button').forEach(b => b.classList.toggle('active', b.dataset.g === g)); const act = GROUPS.find(x => x[0] === g); $('#grp-bar').style.setProperty('--g', act ? act[2] : '#0f172a');
+      $$('section.sec:not([hidden]) .reveal').forEach(r => r.classList.add('in'));
+      if (scroll) window.scrollTo({ top: Math.max(0, $('#content').offsetTop - 70), behavior: 'smooth' }); spy(); }
+    function spy() { const links = $$('#sec-nav a:not([hidden])'), y = window.scrollY + 190; let k = -1; links.forEach((a, i) => { const s = $(a.getAttribute('href')); if (s && !s.hidden && s.offsetTop <= y) k = i; }); $$('#sec-nav a').forEach(a => a.classList.remove('active')); if (links[Math.max(k, 0)]) links[Math.max(k, 0)].classList.add('active'); $('#to-top').classList.toggle('on', window.scrollY > 700); }
+    function navInit() {
+      $('#grp-bar').innerHTML = GROUPS.map(g => `<button data-g="${g[0]}" style="--g:${g[2]}"><i class="bi ${g[3]}"></i>${g[1]}</button>`).join('');
+      $('#grp-bar').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGroup(b.dataset.g, true); });
+      const secs = $$('section.sec'); secs.forEach((s, i) => { const nx = secs[i + 1], title = nx ? nx.querySelector('h2').textContent : null;
+        const bar = document.createElement('div'); bar.className = 'nextbar'; bar.innerHTML = `<span class="small text-muted">Sección ${i + 1} de ${secs.length}</span>${nx ? `<button class="btn btn-dark rounded-pill px-3">Siguiente: ${title} <i class="bi bi-arrow-right ms-1"></i></button>` : `<button class="btn btn-outline-dark rounded-pill px-3"><i class="bi bi-arrow-up me-1"></i>Volver al inicio</button>`}`;
+        bar.querySelector('button').addEventListener('click', () => { if (!nx) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; } if (curGrp !== 'all' && nx.dataset.g !== curGrp) setGroup(nx.dataset.g, false); setTimeout(() => nx.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); }); s.appendChild(bar); });
+      let g = store.get('prob-grp'); if (!GROUPS.some(x => x[0] === g)) g = 'b'; const h = location.hash && $(location.hash); if (h && h.matches && h.matches('section.sec')) g = h.dataset.g;
+      setGroup(g, false); if (h && h.matches && h.matches('section.sec')) setTimeout(() => h.scrollIntoView(), 50);
+      window.addEventListener('scroll', spy, { passive: true }); $('#to-top').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      $$('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); setGroup(a.dataset.go, false); setTimeout(() => $(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth', block: 'start' }), 40); })); }
+
+    function switchesInit() {
+      const d = $('#dec-sw'), lb = $('#dec-lb'), a = $('#anim-sw');
+      const applyDec = () => { MODE.dec = d.checked; lb.textContent = d.checked ? 'Decimales (2)' : 'Fracciones'; store.set('prob-dec', d.checked ? '1' : '0'); renderAll(); bySetupRefresh(); };
+      d.checked = store.get('prob-dec') === '1'; MODE.dec = d.checked; lb.textContent = d.checked ? 'Decimales (2)' : 'Fracciones'; d.addEventListener('change', applyDec);
+      const applyAn = () => { document.body.classList.toggle('no-anim', !a.checked); store.set('prob-anim', a.checked ? '1' : '0'); };
+      a.checked = store.get('prob-anim') !== '0'; applyAn(); a.addEventListener('change', applyAn); }
+    function bySetupRefresh() { /* los renders ya incluyen Bayes, Avanzado, Manual y Formulario */ }
+
+    function menuInit() { const btn = $('#sp-btn'), menu = $('#sp-menu');
+      menu.addEventListener('click', e => { const b = e.target.closest('[data-sp]'); if (!b) return; setSpace(b.dataset.sp); const dd = window.bootstrap && bootstrap.Dropdown.getInstance(btn); if (dd) dd.hide(); }); }
+    function customInit() { const el = $('#s1-custom');
+      const fix = () => { EVA = new Set([...EVA].filter(i => i < CUS.n)); if (!EVA.size) EVA = new Set([0]); VN.init(); TR.sel = null; SMP.draws = null; spMenuBuild(); };
+      el.addEventListener('input', e => { const t = e.target;
+        if (t.id === 'cu-n') { CUS.n = +t.value; fix(); customBuild(); renderAll(); return; }
+        const i = +t.dataset.i; if (t.classList.contains('cu-l')) CUS.items[i].label = t.value.trim() || String.fromCharCode(65 + i); else if (t.classList.contains('cu-w')) CUS.items[i].w = Math.max(1, Math.min(99, parseInt(t.value, 10) || 1));
+        SMP.draws = null; renderAll(); }); }
+    function revealInit() { const els = $$('.reveal'); if (!('IntersectionObserver' in window)) { els.forEach(r => r.classList.add('in')); return; }
+      const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .15 }); els.forEach(r => io.observe(r)); }
+
+    (function boot() {
+      s1cards(); s2setup(); trSetup(); f4Setup(); vnSetup(); advSetup(); bySetup(); mmSetup(); fmSetup(); menuInit(); customInit(); switchesInit();
+      setSpace('dado'); navInit(); math(document.body); revealInit();
+      $$('section.sec:not([hidden]) .reveal').forEach(r => r.classList.add('in'));
+    })();
+
+</script>
+</body>
+</html>
