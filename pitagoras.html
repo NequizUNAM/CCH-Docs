@@ -73,6 +73,25 @@
     .bar2 span { display:flex; align-items:center; justify-content:center; transition:width .35s; overflow:hidden; white-space:nowrap; }
     table.t { width:100%; font-size:.9rem; text-align:center; } table.t th { background:#1e293b; color:#fff; padding:.4rem .5rem; } table.t td { padding:.35rem .5rem; border-bottom:1px solid #e2e8f0; }
     .accordion-button:not(.collapsed) { background:#e7efff; color:#0d6efd; }
+    .plot-wrap { position:relative; } .plot-tools { position:absolute; top:8px; right:8px; z-index:2; display:flex; gap:4px; }
+    .plot-tools .btn { background:rgba(255,255,255,.92); border:1px solid #cbd5e1; box-shadow:var(--shadow-sm); width:34px; height:34px; padding:0; font-weight:800; }
+    #plot { cursor:move; } .plot-wrap:fullscreen { display:flex; align-items:center; background:#fff; } .plot-wrap:fullscreen #plot { height:100vh; max-height:100vh; }
+    .intro-box { background:linear-gradient(135deg,#eef4ff,#fff); border:1px solid #cfe0ff; border-left:5px solid #1c7ed6; border-radius:14px; padding:.8rem 1rem; margin-bottom:1rem; }
+    /* Manuales */
+    .manual-bar { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:.8rem 1rem; margin-bottom:1rem; border:1px solid #f1f5f9; }
+    .manual-bar .btn { font-weight:600; }
+    .mm-dot { width:32px; height:32px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-weight:800; font-size:.8rem; color:#64748b; transition:all .2s; }
+    .mm-dot:hover { transform:translateY(-2px); } .mm-dot.done { border-color:var(--c); color:var(--c); background:color-mix(in srgb,var(--c) 14%,#fff); }
+    .mm-dot.on { background:var(--c); border-color:var(--c); color:#fff; transform:scale(1.15); box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent); }
+    .mm-card { animation:pop .4s both; } .mm-kicker { font-weight:800; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+    .mm-say { font-size:.97rem; line-height:1.6; margin-bottom:.6rem; }
+    .mm-line { opacity:0; animation:mmIn .6s forwards; background:#f8fafc; border-left:4px solid #94a3b8; border-radius:0 12px 12px 0; margin:.4rem 0; padding:.1rem .6rem; overflow-x:auto; }
+    .mm-line .katex-display { margin:.45em 0; } @keyframes mmIn { from { opacity:0; transform:translateX(-14px); } to { opacity:1; transform:none; } }
+    .mm-quiz { background:#fff4e0; border-radius:14px; padding:.9rem; margin-top:.8rem; }
+    .mm-visual { position:sticky; top:0; background:#fff; border-radius:16px; border:1px solid #e2e8f0; box-shadow:var(--shadow-sm); padding:.6rem; }
+    #mm-svg .mm-draw { stroke-dasharray:1; stroke-dashoffset:1; animation:mmDraw .9s ease forwards; } @keyframes mmDraw { to { stroke-dashoffset:0; } }
+    #mm-svg .mm-fade { animation:pop .6s both; } #mm-svg .mm-pulse { animation:mmPulse 1.2s ease-in-out infinite; transform-box:fill-box; transform-origin:center; } @keyframes mmPulse { 50% { transform:scale(1.35); opacity:.5; } }
+    @media (prefers-reduced-motion:reduce) { .mm-line,#mm-svg .mm-draw,#mm-svg .mm-fade,#mm-svg .mm-pulse{animation:none;opacity:1;stroke-dashoffset:0} }
     :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
     @media (max-width:991px){ .dash{position:static} .hero-header svg{display:none} }
     @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .tab-pane{animation:none} .hero-header svg .draw{animation:none;stroke-dashoffset:0} }
@@ -105,10 +124,11 @@
                   <select id="dec" class="form-select form-select-sm w-auto"><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
               </div>
               <div id="coords"></div>
+              <div class="d-flex align-items-center gap-2 mt-2 small"><span class="fw-semibold">Notación de ángulos:</span><div class="btn-group btn-group-sm" id="not-g"><button class="btn btn-outline-secondary active" data-not="grk">α β γ</button><button class="btn btn-outline-secondary" data-not="abc">A B C</button></div></div>
               <div class="d-flex flex-wrap gap-1 mt-2" id="presets"></div>
             </div>
 
-            <div class="plot-wrap mb-2"><svg id="plot" viewBox="0 0 600 520" role="img" aria-label="Plano cartesiano con el triángulo"></svg></div>
+            <div class="plot-wrap mb-2"><div class="plot-tools"><button class="btn btn-sm" id="z-out" title="Alejar" aria-label="Alejar"><i class="bi bi-zoom-out"></i></button><button class="btn btn-sm" id="z-in" title="Acercar" aria-label="Acercar"><i class="bi bi-zoom-in"></i></button><button class="btn btn-sm" id="z-reset" title="Restablecer vista" aria-label="Restablecer vista"><i class="bi bi-arrow-counterclockwise"></i></button><button class="btn btn-sm" id="z-full" title="Pantalla completa" aria-label="Pantalla completa"><i class="bi bi-arrows-fullscreen"></i></button></div><svg id="plot" viewBox="0 0 600 520" role="img" aria-label="Plano cartesiano con el triángulo"></svg></div>
             <div class="d-flex flex-wrap gap-3 small mb-2 px-1">
               <div class="form-check form-switch"><input class="form-check-input pl-opt" type="checkbox" id="o-snap" checked><label class="form-check-label" for="o-snap">Imán a 0.5</label></div>
               <div class="form-check form-switch"><input class="form-check-input pl-opt" type="checkbox" id="o-ang" checked><label class="form-check-label" for="o-ang">Ángulos</label></div>
@@ -117,23 +137,29 @@
               <div class="form-check form-switch"><input class="form-check-input pl-opt" type="checkbox" id="o-pts"><label class="form-check-label" for="o-pts">Puntos notables</label></div>
             </div>
             <div id="summary" class="d-flex flex-wrap gap-2"></div>
+            <div id="greek-legend" class="d-flex flex-wrap gap-2 mt-2"></div>
             <div id="warn" class="tip-box s-res mt-2 d-none"></div>
           </div>
         </div>
 
         <!-- ============ PESTAÑAS ============ -->
         <div class="col-lg-7">
+          <div class="manual-bar"><div class="d-flex flex-wrap align-items-center gap-2"><strong class="me-1"><i class="bi bi-journal-bookmark-fill text-primary me-1"></i>Manuales paso a paso:</strong>
+            <button class="btn btn-sm btn-outline-primary rounded-pill" data-man="pendiente">Pendiente</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="distancia">Distancia</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="pitagoras">Pitágoras</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="area">Perímetro y área</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="razones">Razones trigonométricas</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="identidades">Identidades y conversión</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="ls">Ley de Senos</button><button class="btn btn-sm btn-outline-primary rounded-pill" data-man="lc">Ley de Cosenos</button></div>
+            <div class="small text-muted mt-1">Cada manual explica el tema con un ejemplo fijo, sustitución y gráfica animada, y termina con un ejercicio.</div></div>
           <ul class="nav nav-pills" id="tabs" role="tablist">
-            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t-geo" data-t="geo"><i class="bi bi-rulers me-1"></i>1. Plano y Geometría Analítica</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-pit" data-t="pit"><i class="bi bi-square-half me-1"></i>2. Teorema de Pitágoras</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-tri" data-t="tri"><i class="bi bi-activity me-1"></i>3. Trigonometría e Identidades</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-law" data-t="law"><i class="bi bi-diagram-2 me-1"></i>4. Leyes de Senos y Cosenos</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-th" data-t="th"><i class="bi bi-journal-bookmark-fill me-1"></i>5. Teoría y Fórmulas</button></li>
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t-geo" data-t="geo"><i class="bi bi-rulers me-1"></i>1. Plano y Geometría</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-pit" data-t="pit"><i class="bi bi-square-half me-1"></i>2. Pitágoras</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-tri" data-t="tri"><i class="bi bi-activity me-1"></i>3. Trigonometría</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-idn" data-t="idn"><i class="bi bi-arrow-left-right me-1"></i>4. Identidades y Conversión</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-law" data-t="law"><i class="bi bi-diagram-2 me-1"></i>5. Leyes de Senos y Cosenos</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-th" data-t="th"><i class="bi bi-journal-bookmark-fill me-1"></i>6. Teoría y Fórmulas</button></li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade show active" id="t-geo"></div>
             <div class="tab-pane fade" id="t-pit"></div>
             <div class="tab-pane fade" id="t-tri"></div>
+            <div class="tab-pane fade" id="t-idn"></div>
             <div class="tab-pane fade" id="t-law"></div>
             <div class="tab-pane fade" id="t-th"></div>
           </div>
@@ -149,6 +175,26 @@
         <div class="modal-header text-white" style="background:#0f172a"><h5 class="modal-title fw-bold" id="help-title"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
         <div class="modal-body" id="help-body"></div>
         <div class="modal-footer border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Entendido</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" id="mm-head"><h5 class="modal-title fw-bold" id="mm-title"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light">
+          <div class="d-flex flex-wrap gap-2 justify-content-center mb-3" id="mm-dots"></div>
+          <div class="row g-3">
+            <div class="col-lg-5"><div class="mm-visual"><svg id="mm-svg" viewBox="0 0 420 340" class="w-100" role="img" aria-label="Ejemplo gráfico"></svg><div class="small text-muted text-center" id="mm-ex"></div></div></div>
+            <div class="col-lg-7"><div id="mm-step"></div></div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light justify-content-between">
+          <div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" id="mm-prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" id="mm-next">Siguiente<i class="bi bi-chevron-right ms-1"></i></button></div>
+          <span class="small text-muted" id="mm-count"></span>
+          <button class="btn btn-warning rounded-pill fw-semibold" id="mm-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button>
+        </div>
       </div>
     </div>
   </div>
@@ -297,9 +343,9 @@
       if (withSq && S && !S.degenerate) squares(S).forEach(sq => pts.push(...sq.c));
       const xs = pts.map(p => p.x), ys = pts.map(p => p.y); return [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
     }
-    function squares(S) {
+    function squares(S, Q = P) {
       return [[1, 2, 0], [2, 0, 1], [0, 1, 2]].map(([i, j, t], k) => {   // lado k opuesto al vértice k
-        const p = P[i], q = P[j], th = P[t], ex = q.x - p.x, ey = q.y - p.y; let nx = -ey, ny = ex;
+        const p = Q[i], q = Q[j], th = Q[t], ex = q.x - p.x, ey = q.y - p.y; let nx = -ey, ny = ex;
         if (nx * (th.x - p.x) + ny * (th.y - p.y) > 0) { nx = -nx; ny = -ny; }
         return { k, c: [p, q, { x: q.x + nx, y: q.y + ny }, { x: p.x + nx, y: p.y + ny }] };
       });
@@ -309,7 +355,7 @@
       if (!V || drag < 0) {
         const [x0, x1, y0, y1] = bounds(S, $('#o-sq').checked), rx = Math.max(x1 - x0, 1), ry = Math.max(y1 - y0, 1), pad = 0.18;
         const sc = Math.min(W / (rx * (1 + 2 * pad)), H / (ry * (1 + 2 * pad)));
-        V = { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, sc };
+        V = { cx: (x0 + x1) / 2 + PAN.x, cy: (y0 + y1) / 2 + PAN.y, sc: sc * ZOOM };
       }
       const { cx, cy, sc } = V, sx = x => W / 2 + (x - cx) * sc, sy = y => H / 2 - (y - cy) * sc, pt = p => `${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`;
       const st = niceStep(48 / sc), xm = cx - W / 2 / sc, xM = cx + W / 2 / sc, ym = cy - H / 2 / sc, yM = cy + H / 2 / sc;
@@ -338,20 +384,21 @@
           if (S.ang[v].deg > 89.99 && S.ang[v].deg < 90.01 || Math.abs(S.ang[v].deg - 90) < 0.003) h += `<polyline points="${V0[0] + e1[0] * 14},${V0[1] + e1[1] * 14} ${V0[0] + (e1[0] + e2[0]) * 14},${V0[1] + (e1[1] + e2[1]) * 14} ${V0[0] + e2[0] * 14},${V0[1] + e2[1] * 14}" fill="none" stroke="#f08c00" stroke-width="2.5"/>`;
           else { const sw = (u[0] * w[1] - u[1] * w[0]) > 0 ? 1 : 0; h += `<path d="M${V0[0] + e1[0] * r} ${V0[1] + e1[1] * r} A${r} ${r} 0 0 ${sw} ${V0[0] + e2[0] * r} ${V0[1] + e2[1] * r}" fill="${COL[v]}" fill-opacity=".2" stroke="${COL[v]}" stroke-width="2"/>`; }
           const bx = e1[0] + e2[0], by = e1[1] + e2[1], bl = Math.hypot(bx, by) || 1;
-          h += `<text x="${V0[0] + bx / bl * 44}" y="${V0[1] + by / bl * 44 + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="${COL[v]}" paint-order="stroke" stroke="#fff" stroke-width="3">${fmt(S.ang[v].deg, 2)}°</text>`; });
+          h += `<text x="${V0[0] + bx / bl * 44}" y="${V0[1] + by / bl * 44 + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="${COL[v]}" paint-order="stroke" stroke="#fff" stroke-width="3">${an(v)} ${fmt(S.ang[v].deg, 2)}°</text>`; });
       }
       P.forEach((p, i) => { const gx = S && !S.degenerate ? S.G.x : cx, gy = S && !S.degenerate ? S.G.y : cy, dx = sx(p.x) - sx(gx), dy = sy(p.y) - sy(gy), L = Math.hypot(dx, dy) || 1;
         h += `<g class="vtx" data-i="${i}"><circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="16" fill="transparent"/><circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="7" fill="${COL[i]}" stroke="#fff" stroke-width="2.5"/>
           <text x="${sx(p.x) + dx / L * 20}" y="${sy(p.y) + dy / L * 20 + 5}" text-anchor="middle" font-size="15" font-weight="800" fill="${COL[i]}" paint-order="stroke" stroke="#fff" stroke-width="3">${NAMES[i]}(${fmt(p.x, 2)}, ${fmt(p.y, 2)})</text></g>`; });
       $('#plot').innerHTML = g + h;
     }
-    $('#plot').addEventListener('pointerdown', e => { const v = e.target.closest('.vtx'); if (!v) return; drag = +v.dataset.i; e.preventDefault(); });
+    $('#plot').addEventListener('pointerdown', e => { const v = e.target.closest('.vtx'); if (!v) { panning = { p: svgPt(e), x: PAN.x, y: PAN.y }; return; } drag = +v.dataset.i; e.preventDefault(); });
     window.addEventListener('pointermove', e => {
-      if (drag < 0) return; const r = $('#plot').getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width, py = (e.clientY - r.top) * H / r.height;
+      if (panning) { const [qx, qy] = svgPt(e); PAN.x = panning.x - (qx - panning.p[0]) / V.sc; PAN.y = panning.y + (qy - panning.p[1]) / V.sc; drawPlot(); return; }
+      if (drag < 0) return; const [px, py] = svgPt(e);
       let x = V.cx + (px - W / 2) / V.sc, y = V.cy - (py - H / 2) / V.sc; const q = $('#o-snap').checked ? 0.5 : 0.01;
       P[drag].x = Math.round(x / q) * q; P[drag].y = Math.round(y / q) * q; writeInputs(); sched();
     });
-    window.addEventListener('pointerup', () => { if (drag >= 0) { drag = -1; V = null; update(); } });
+    window.addEventListener('pointerup', () => { panning = null; if (drag >= 0) { drag = -1; V = null; update(); } });
     $$('.pl-opt').forEach(el => el.addEventListener('change', () => { V = null; drawPlot(); }));
 
     /* ---------- Componentes de las pestañas ---------- */
@@ -380,7 +427,7 @@
       const hs = SIDE.map((n, k) => T`h_${n}=\frac{2K}{${n}}=${fmt(2 * S.K / S.sides[k])}`).join(',\\;\\;');
       const notable = `<table class="t"><tr><th>Centroide $G$</th><th>Circuncentro $O$</th><th>Ortocentro $H$</th><th>Incentro $I$</th></tr><tr>${[S.G, S.O, S.H, S.I].map(p => `<td>(${fmt(p.x, 3)}, ${fmt(p.y, 3)})</td>`).join('')}</tr></table>
         <div class="step mt-2" style="--c:#7048e8">$R=\\frac{abc}{4K}=\\frac{${fmt(S.a, 3)}\\cdot${fmt(S.b, 3)}\\cdot${fmt(S.c, 3)}}{4(${fmt(S.K, 3)})}=${fmt(S.R)}$ &nbsp; $r=\\frac{K}{s}=\\frac{${fmt(S.K, 3)}}{${fmt(S.s, 3)}}=${fmt(S.r)}$<br>$${hs}$</div>`;
-      return card('g-geo', 'bi-graph-up', 'Pendientes de cada segmento', 'pendiente', slopes.map(s => s.html).join('') + `<table class="t mt-2"><tr><th>Vértice</th><th>Producto de pendientes</th><th>Resultado</th></tr>${perp}</table>`) +
+      return summaryCard() + card('g-geo', 'bi-graph-up', 'Pendientes de cada segmento', 'pendiente', slopes.map(s => s.html).join('') + `<table class="t mt-2"><tr><th>Vértice</th><th>Producto de pendientes</th><th>Resultado</th></tr>${perp}</table>`) +
         card('g-geo', 'bi-arrows-expand', 'Longitudes de los lados (distancia entre puntos)', 'distancia', dists) +
         card('g-geo', 'bi-bounding-box', 'Perímetro y área', 'area', area) +
         card('g-geo', 'bi-bullseye', 'Clasificación y puntos notables', 'notables', `<div class="d-flex flex-wrap gap-2 mb-2"><span class="pill-stat">Por lados: <b>${S.bySides}</b></span><span class="pill-stat">Por ángulos: <b>${{ rect: 'Rectángulo', acut: 'Acutángulo', obt: 'Obtusángulo' }[S.kind]}</b></span><button class="btn btn-sm btn-outline-secondary rounded-pill" data-help="clasif">¿Cómo se clasifica?</button></div>` + notable);
@@ -392,7 +439,7 @@
       const cmp = S.kind === 'rect' ? '=' : S.kind === 'acut' ? '>' : '<', verdict = { rect: ['ok-badge', '¡Triángulo RECTÁNGULO!'], acut: ['ok-badge na', 'ACUTÁNGULO (a²+b² > c²)'], obt: ['ok-badge no', 'OBTUSÁNGULO (a²+b² < c²)'] }[S.kind];
       const tot = Math.max(S.lhs, S.rhs), wl = S.sq[i1] / tot * 100, wl2 = S.sq[i2] / tot * 100, wr = S.rhs / tot * 100;
       const ints = x.every(v => Math.abs(v - Math.round(v)) < 1e-6);
-      const main = step('1) Identificar el lado mayor', T`El lado mayor es $${K(COL[ih], n[ih])}=${fmt(x[ih])}$ (opuesto al ángulo $${NAMES[ih]}$): es la <strong>hipotenusa candidata</strong>. Los otros dos son los catetos: $${K(COL[i1], n[i1])}=${fmt(x[i1])}$ y $${K(COL[i2], n[i2])}=${fmt(x[i2])}$.`, COL[ih]) +
+      const main = step('1) Identificar el lado mayor', T`El lado mayor es $${K(COL[ih], n[ih])}=${fmt(x[ih])}$ (opuesto al ángulo $${al(ih)}$): es la <strong>hipotenusa candidata</strong>. Los otros dos son los catetos: $${K(COL[i1], n[i1])}=${fmt(x[i1])}$ y $${K(COL[i2], n[i2])}=${fmt(x[i2])}$.`, COL[ih]) +
         step('2) Sustituir en a² + b² y c²', T`$${K(COL[i1], n[i1] + '^2')}+${K(COL[i2], n[i2] + '^2')}=(${fmt(x[i1])})^2+(${fmt(x[i2])})^2=${fmt(S.sq[i1])}+${fmt(S.sq[i2])}=${fmt(S.lhs)}$<br>$${K(COL[ih], n[ih] + '^2')}=(${fmt(x[ih])})^2=${fmt(S.rhs)}$`, '#d97706') +
         step('3) Comparar', T`$${fmt(S.lhs)}\;${cmp}\;${fmt(S.rhs)}$ &nbsp; <span class="${verdict[0]}">${verdict[1]}</span>${S.kind === 'rect' ? T` &nbsp; El ángulo recto está en $${NAMES[ih]}$ ($${fmt(S.ang[ih].deg)}^\circ$).` : T` &nbsp; Diferencia $a^2+b^2-c^2=${fmt(S.lhs - S.rhs)}$.`}`, '#2f9e44') +
         `<div class="small fw-bold text-muted mb-1">Comparación visual de áreas</div>
@@ -420,11 +467,11 @@
     }
 
     function tabTri() {
-      const rows = S.ang.map((a, k) => step(`Ángulo ${NAMES[k]} (Ley de Cosenos)`, T`$\cos ${NAMES[k]}=\frac{${[['b', 'c', 'a'], ['a', 'c', 'b'], ['a', 'b', 'c']][k].map((n, q) => q < 2 ? n + '^2' : n + '^2').join('+').replace('+', '+').replace(/\+(\w)\^2$/, '-$1^2')}}{2\cdot\,${[['b', 'c'], ['a', 'c'], ['a', 'b']][k].join('\\,')}}=${fmt(a.cosLC, 6)}\;\Rightarrow\;${NAMES[k]}=\arccos(${fmt(a.cosLC, 6)})=${K(COL[k], fmt(a.deg) + '^\\circ')}\;(=${fmt(a.rad)}\text{ rad})$ <span class="small text-muted">Verif. con atan2: ${fmt(a.degLC)}°</span> ${badge(close(a.deg, a.degLC), close(a.deg, a.degLC) ? '✓ ambos métodos coinciden' : '✗')}`, COL[k])).join('');
+      const rows = S.ang.map((a, k) => step(`Ángulo ${an(k)} (Ley de Cosenos)`, T`$\cos ${al(k)}=\frac{${[['b', 'c', 'a'], ['a', 'c', 'b'], ['a', 'b', 'c']][k].map((n, q) => q < 2 ? n + '^2' : n + '^2').join('+').replace('+', '+').replace(/\+(\w)\^2$/, '-$1^2')}}{2\cdot\,${[['b', 'c'], ['a', 'c'], ['a', 'b']][k].join('\\,')}}=${fmt(a.cosLC, 6)}\;\Rightarrow\;${al(k)}=\arccos(${fmt(a.cosLC, 6)})=${K(COL[k], fmt(a.deg) + '^\\circ')}\;(=${fmt(a.rad)}\text{ rad})$ <span class="small text-muted">Verif. con atan2: ${fmt(a.degLC)}°</span> ${badge(close(a.deg, a.degLC), close(a.deg, a.degLC) ? '✓ ambos métodos coinciden' : '✗')}`, COL[k])).join('');
       const sum = S.ang.reduce((x, a) => x + a.deg, 0), sumOK = Math.abs(sum - 180) < 1e-9;
-      const sumBox = step('Suma de ángulos internos', T`$A+B+C=${fmt(S.ang[0].deg)}^\circ+${fmt(S.ang[1].deg)}^\circ+${fmt(S.ang[2].deg)}^\circ=${fmt(sum)}^\circ$ ${badge(sumOK, sumOK ? '✓ = 180°' : '✗ ≠ 180°')}`, '#7048e8');
-      const k = selAng, a = S.ang[k], t = trig(a.rad), nm = NAMES[k], isR = Math.abs(a.deg - 90) < 0.003, hyp = S.hyp;
-      const pills = NAMES.map((n, i) => `<button class="btn btn-sm ${i === k ? 'btn-dark' : 'btn-outline-dark'} rounded-pill" data-ang="${i}" style="${i === k ? '' : 'color:' + COL[i] + ';border-color:' + COL[i]}">Ángulo ${n}</button>`).join(' ');
+      const sumBox = step('Suma de ángulos internos', T`$${al(0)}+${al(1)}+${al(2)}=${fmt(S.ang[0].deg)}^\circ+${fmt(S.ang[1].deg)}^\circ+${fmt(S.ang[2].deg)}^\circ=${fmt(sum)}^\circ$ ${badge(sumOK, sumOK ? '✓ = 180°' : '✗ ≠ 180°')}`, '#7048e8');
+      const k = selAng, a = S.ang[k], t = trig(a.rad), nm = an(k), isR = Math.abs(a.deg - 90) < 0.003, hyp = S.hyp;
+      const pills = NAMES.map((n, i) => `<button class="btn btn-sm ${i === k ? 'btn-dark' : 'btn-outline-dark'} rounded-pill" data-ang="${i}" style="${i === k ? '' : 'color:' + COL[i] + ';border-color:' + COL[i]}">Ángulo ${an(i)}${NOT === 'grk' ? ' (' + n + ')' : ''}</button>`).join(' ');
       const [o, ad] = [k, [0, 1, 2].filter(i => i !== k && i !== hyp)[0]];
       const useSides = S.kind === 'rect' && k !== hyp, opp = k, adj = [0, 1, 2].find(i => i !== k && i !== hyp), hy = hyp;
       const f = (lbl, sym, val, sidesFrac) => `<tr><td class="fw-bold">${lbl}</td><td>$${T`\${sym}`.replace('${sym}', sym)}(${fmt(a.deg)}^\\circ)$</td><td class="mono">${fmt(val, 6)}</td><td>${useSides ? sidesFrac : '—'}</td></tr>`;
@@ -445,18 +492,18 @@
         ['1+cot^2\\theta=csc^2\\theta', t.sin === 0 || t.cot === null ? null : [1 + t.cot ** 2, t.csc ** 2], T`1+${fmt(t.cot, 4)}^2`, t.csc === null ? null : t.csc ** 2]
       ].map(([fm, pr, sub, rv]) => { const ok = pr ? Math.abs(pr[0] - pr[1]) < 1e-9 * (1 + Math.abs(pr[0])) : null;
         return `<div class="col-md-6"><div class="id-card"><div class="mb-1">$${fm.replace(/^(tan|cot|sec|csc)/, '\\$1').replace(/(\+)(tan|cot|sec|csc)/, '$1\\$2').replace(/=(sec|csc)/, '=\\$1')}$</div>${pr ? `<div class="small">$${sub}=${fmt(pr[0], 6)}$ &nbsp; vs &nbsp; $${fmt(pr[1], 6)}$</div><div class="mt-1">${badge(ok)}</div>` : '<div class="small text-muted">Indefinida para este ángulo (división entre cero).</div><span class="ok-badge na">n/a</span>'}</div></div>`; }).join('');
-      return card('g-tri', 'bi-triangle', 'Ángulos internos', 'angulos', rows + sumBox) +
+      return card('g-tri', 'bi-triangle', 'Ángulos internos (' + [0, 1, 2].map(an).join(', ') + ')', 'angulos', rows + sumBox) + ratioTable() +
         card('g-tri', 'bi-activity', 'Las 6 razones trigonométricas', 'razones', `<div class="mb-2 d-flex flex-wrap gap-1 align-items-center"><strong class="me-2">Elige un ángulo:</strong>${pills}</div>${six}`) +
         card('g-tri', 'bi-patch-check', `Identidades aplicadas al ángulo ${nm}`, 'identidades', `<div class="row g-2">${ids}</div>`);
     }
 
     function tabLaw() {
       const a = S.a, b = S.b, c = S.c, sin = S.ang.map(x => Math.sin(x.rad)), ratios = [a / sin[0], b / sin[1], c / sin[2]], ls = ratios.every(r => close(r, ratios[0]));
-      const lsHtml = [0, 1, 2].map(k => step(`${SIDE[k]} / sin ${NAMES[k]}`, T`$\frac{${K(COL[k], SIDE[k])}}{\sin ${NAMES[k]}}=\frac{${fmt(S.sides[k])}}{\sin(${fmt(S.ang[k].deg)}^\circ)}=\frac{${fmt(S.sides[k])}}{${fmt(sin[k], 6)}}=${fmt(ratios[k], 6)}$`, COL[k])).join('') +
+      const lsHtml = [0, 1, 2].map(k => step(`${SIDE[k]} / sin ${an(k)}`, T`$\frac{${K(COL[k], SIDE[k])}}{\sin ${al(k)}}=\frac{${fmt(S.sides[k])}}{\sin(${fmt(S.ang[k].deg)}^\circ)}=\frac{${fmt(S.sides[k])}}{${fmt(sin[k], 6)}}=${fmt(ratios[k], 6)}$`, COL[k])).join('') +
         step('Proporción constante = 2R', T`$${fmt(ratios[0], 5)}\approx${fmt(ratios[1], 5)}\approx${fmt(ratios[2], 5)}$ ${badge(ls, ls ? '✓ las tres razones son iguales' : '✗')} &nbsp; Diámetro circunscrito $2R=${fmt(2 * S.R, 5)}$ ${badge(close(2 * S.R, ratios[0]))}`, '#1c7ed6');
       const lcHtml = [0, 1, 2].map(k => { const [y, z] = [[b, c], [a, c], [a, b]][k], [yn, zn] = [['b', 'c'], ['a', 'c'], ['a', 'b']][k], cs = Math.cos(S.ang[k].rad), rhs = y * y + z * z - 2 * y * z * cs;
-        return step(`${SIDE[k]}² con el ángulo ${NAMES[k]}`, T`$${SIDE[k]}^2=${yn}^2+${zn}^2-2\,${yn}\,${zn}\cos ${NAMES[k]}=${fmt(y * y)}+${fmt(z * z)}-2(${fmt(y)})(${fmt(z)})\cos(${fmt(S.ang[k].deg)}^\circ)=${fmt(rhs)}$ &nbsp; vs &nbsp; $${SIDE[k]}^2=${fmt(S.sq[k])}$ ${badge(close(rhs, S.sq[k]))}`, COL[k]); }).join('');
-      const kk = laws.k, X = NAMES[kk], x = SIDE[kk], Y = NAMES[(kk + 1) % 3], y = SIDE[(kk + 1) % 3], Zl = SIDE[(kk + 2) % 3], Zi = (kk + 2) % 3;
+        return step(`${SIDE[k]}² con el ángulo ${an(k)}`, T`$${SIDE[k]}^2=${yn}^2+${zn}^2-2\,${yn}\,${zn}\cos ${al(k)}=${fmt(y * y)}+${fmt(z * z)}-2(${fmt(y)})(${fmt(z)})\cos(${fmt(S.ang[k].deg)}^\circ)=${fmt(rhs)}$ &nbsp; vs &nbsp; $${SIDE[k]}^2=${fmt(S.sq[k])}$ ${badge(close(rhs, S.sq[k]))}`, COL[k]); }).join('');
+      const kk = laws.k, X = al(kk), x = SIDE[kk], Y = al((kk + 1) % 3), y = SIDE[(kk + 1) % 3], Zl = SIDE[(kk + 2) % 3], Zi = (kk + 2) % 3;
       let sol = '', real, got;
       if (laws.m === 'lal') { const yv = S.sides[(kk + 1) % 3], zv = S.sides[Zi], ang = S.ang[kk]; got = Math.sqrt(yv * yv + zv * zv - 2 * yv * zv * Math.cos(ang.rad)); real = S.sides[kk];
         sol = step('Datos', T`Lados $${y}=${fmt(yv)}$, $${Zl}=${fmt(zv)}$ y el ángulo incluido $${X}=${fmt(ang.deg)}^\circ$. Se busca $${x}$.`, '#1c7ed6') + step('Ley de Cosenos (LAL)', T`$${x}=\sqrt{${y}^2+${Zl}^2-2\,${y}\,${Zl}\cos ${X}}=\sqrt{${fmt(yv * yv)}+${fmt(zv * zv)}-2(${fmt(yv)})(${fmt(zv)})\cos(${fmt(ang.deg)}^\circ)}=${K('#1c7ed6', fmt(got))}$`, '#1c7ed6'); }
@@ -466,7 +513,7 @@
         sol = step('Datos', T`Ángulos $${X}=${fmt(S.ang[kk].deg)}^\circ$, $${Y}=${fmt(S.ang[yi].deg)}^\circ$ y el lado $${y}=${fmt(yv)}$ (opuesto a $${Y}$). Se busca $${x}$.`, '#1c7ed6') + step('Ley de Senos (ALA)', T`$\frac{${x}}{\sin ${X}}=\frac{${y}}{\sin ${Y}}\Rightarrow ${x}=\frac{${y}\sin ${X}}{\sin ${Y}}=\frac{${fmt(yv)}\sin(${fmt(S.ang[kk].deg)}^\circ)}{\sin(${fmt(S.ang[yi].deg)}^\circ)}=${K('#1c7ed6', fmt(got))}$`, '#1c7ed6'); }
       sol += step('Comprobación', T`Valor real del triángulo: $${fmt(real)}$ ${badge(close(got, real), close(got, real) ? '✓ coincide' : '✗ no coincide')}`, '#2f9e44');
       const ctrl = `<div class="row g-2 mb-3"><div class="col-sm-7"><label class="form-label small fw-semibold" for="law-m">Método</label><select id="law-m" class="form-select form-select-sm"><option value="lal"${laws.m === 'lal' ? ' selected' : ''}>Ley de Cosenos · dos lados y ángulo incluido → lado</option><option value="lll"${laws.m === 'lll' ? ' selected' : ''}>Ley de Cosenos · tres lados → ángulo</option><option value="ala"${laws.m === 'ala' ? ' selected' : ''}>Ley de Senos · dos ángulos y un lado → lado</option></select></div>
-        <div class="col-sm-5"><label class="form-label small fw-semibold" for="law-k">Elemento a resolver</label><select id="law-k" class="form-select form-select-sm">${[0, 1, 2].map(i => `<option value="${i}"${i === kk ? ' selected' : ''}>${laws.m === 'lll' ? 'Ángulo ' + NAMES[i] : 'Lado ' + SIDE[i]}</option>`).join('')}</select></div></div>`;
+        <div class="col-sm-5"><label class="form-label small fw-semibold" for="law-k">Elemento a resolver</label><select id="law-k" class="form-select form-select-sm">${[0, 1, 2].map(i => `<option value="${i}"${i === kk ? ' selected' : ''}>${laws.m === 'lll' ? 'Ángulo ' + an(i) : 'Lado ' + SIDE[i]}</option>`).join('')}</select></div></div>`;
       return card('g-law', 'bi-diagram-2', 'Ley de Senos: la razón constante', 'ls', lsHtml) + card('g-law', 'bi-calculator', 'Ley de Cosenos en los tres lados', 'lc', lcHtml) + card('g-law', 'bi-puzzle', 'Resolutor interactivo (con tu triángulo)', 'ls', ctrl + sol);
     }
 
@@ -479,12 +526,342 @@
       return card('g-th', 'bi-journal-bookmark-fill', 'Hoja de fórmulas', null, sheet) + card('g-th', 'bi-book', 'Teoría detallada', null, `<div class="accordion" id="acc">${Object.entries(HELP).map(([k, [t, h]], i) => `<div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button ${i ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#ac-${k}">${t}</button></h2><div id="ac-${k}" class="accordion-collapse collapse ${i ? '' : 'show'}" data-bs-parent="#acc"><div class="accordion-body">${h}</div></div></div>`).join('')}</div>`);
     }
 
+    /* ============================================================
+       MANUALES PASO A PASO (ejemplo estático → visualización dinámica)
+       ============================================================ */
+    const EX = { r: [{ x: 1, y: 1 }, { x: 5, y: 1 }, { x: 1, y: 4 }], o: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 2, y: 3 }] };
+    const n4 = x => fmt(x, 4), n2 = x => fmt(x, 2), RED = '#e03131', BLU = '#1c7ed6', GRN = '#2f9e44', ORG = '#f08c00', VIO = '#7048e8';
+    const fr = (t, say, lines, hl = {}, quiz = null) => ({ t, say, lines, hl, quiz });
+    const SEG = { AB: [0, 1], BC: [1, 2], CA: [2, 0], AC: [2, 0] };
+
+    const MANUALS = {
+      pendiente: { t: 'Pendiente', ic: 'bi-graph-up', c: '#0c8599', ex: 'r', tab: 'geo', build: (E, Q) => { const [A, B, C] = Q; return [
+        fr('¿Qué es la pendiente?', T`La <strong>pendiente</strong> $m$ mide qué tan inclinada está una recta: cuántas unidades <em>sube o baja</em> ($\Delta y$) por cada unidad que <em>avanza a la derecha</em> ($\Delta x$). Si $m>0$ la recta sube, si $m<0$ baja, si $m=0$ es horizontal y si $\Delta x=0$ es vertical (pendiente <em>indefinida</em>).`, [T`m=\frac{\Delta y}{\Delta x}=\frac{y_2-y_1}{x_2-x_1}`]),
+        fr('Elegir dos puntos', T`Usaremos el lado $BC$ del triángulo de ejemplo. Llamamos <strong>punto 1</strong> a $B$ y <strong>punto 2</strong> a $C$. El orden no importa, pero debes usar el <em>mismo orden</em> arriba y abajo de la fracción.`, [T`P_1=B(${B.x},\,${B.y})\qquad P_2=C(${C.x},\,${C.y})`], { pts: ['B', 'C'], segs: [['BC', VIO]] }),
+        fr('Calcular Δy y Δx', T`Resta coordenada con coordenada: <span style="color:${BLU}"><b>Δy</b></span> con las alturas y <span style="color:${RED}"><b>Δx</b></span> con las posiciones horizontales. Los signos importan.`, [T`\Delta y=${K(BLU, 'y_2-y_1')}=${C.y}-${B.y}=${K(BLU, C.y - B.y)}`, T`\Delta x=${K(RED, 'x_2-x_1')}=${C.x}-${B.x}=${K(RED, C.x - B.x)}`], { segs: [['BC', VIO]], legs: ['BC'] }),
+        fr('Dividir', T`La pendiente es el cociente. Aquí el denominador es negativo, así que el resultado también.`, [T`m_{BC}=\frac{${K(BLU, C.y - B.y)}}{${K(RED, C.x - B.x)}}=${K(GRN, n4((C.y - B.y) / (C.x - B.x)))}`], { segs: [['BC', VIO]], legs: ['BC'] }),
+        fr('Interpretar el resultado', T`$m=${n2((C.y - B.y) / (C.x - B.x))}$ es <strong>negativa</strong>: la recta <em>baja</em> de izquierda a derecha. Por cada <strong>4</strong> unidades que avanzas a la derecha, desciende <strong>3</strong>.`, [T`m=-\frac{3}{4}\;\Rightarrow\;\text{baja }3\text{ por cada }4\text{ a la derecha}`], { segs: [['BC', VIO]] }),
+        fr('Casos especiales: horizontal y vertical', T`En $AB$ no hay cambio vertical ($m=0$). En $AC$ no hay cambio horizontal: dividir entre cero <strong>no se puede</strong>, la pendiente es <em>indefinida</em> (recta vertical). Una horizontal y una vertical son <strong>perpendiculares</strong> → hay un ángulo recto en $A$. En general, dos rectas son perpendiculares si $m_1\cdot m_2=-1$.`, [T`m_{AB}=\frac{${B.y}-${A.y}}{${B.x}-${A.x}}=\frac{0}{4}=0`, T`m_{AC}=\frac{${C.y}-${A.y}}{${C.x}-${A.x}}=\frac{3}{0}\;\Rightarrow\;\text{indefinida}`], { segs: [['AB', GRN], ['AC', RED]], ang: [[0, ORG, '90°']] }),
+        fr('Ahora tú', T`Practica con otros puntos (no son los del triángulo).`, [], {}, { q: T`Calcula la pendiente de la recta que pasa por $(2,3)$ y $(6,11)$.`, a: 2, tol: 0.001, sol: T`m=\frac{11-3}{6-2}=\frac{8}{4}=2` })]; } },
+
+      distancia: { t: 'Distancia entre puntos', ic: 'bi-arrows-expand', c: '#0c8599', ex: 'r', tab: 'geo', build: (E, Q) => { const [A, B, C] = Q; return [
+        fr('¿De dónde sale la fórmula?', T`Entre dos puntos siempre puedes dibujar un triángulo rectángulo imaginario: un <strong>cateto horizontal</strong> $|\Delta x|$ y uno <strong>vertical</strong> $|\Delta y|$. La distancia es su <strong>hipotenusa</strong>, así que sale directamente del Teorema de Pitágoras.`, [T`d^2=\Delta x^2+\Delta y^2\;\Rightarrow\;d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}`], {}),
+        fr('Dibujar los catetos', T`Medimos la distancia del lado $BC$. Las líneas punteadas son los catetos del triángulo auxiliar.`, [T`\Delta x=${C.x}-${B.x}=${K(RED, C.x - B.x)}`, T`\Delta y=${C.y}-${B.y}=${K(BLU, C.y - B.y)}`], { segs: [['BC', VIO]], legs: ['BC'], pts: ['B', 'C'] }),
+        fr('Elevar al cuadrado y sumar', T`Al elevar al cuadrado el signo desaparece: la distancia nunca es negativa.`, [T`d^2=(${K(RED, C.x - B.x)})^2+(${K(BLU, C.y - B.y)})^2`, T`d^2=${K(RED, (C.x - B.x) ** 2)}+${K(BLU, (C.y - B.y) ** 2)}=${(C.x - B.x) ** 2 + (C.y - B.y) ** 2}`], { segs: [['BC', VIO]], legs: ['BC'] }),
+        fr('Sacar la raíz', T`La raíz cuadrada positiva da la longitud del lado $a=BC$.`, [T`a=\sqrt{25}=${K(GRN, E.a)}`], { segs: [['BC', GRN]], lab: true }),
+        fr('Los otros dos lados', T`$AB$ es horizontal ($\Delta y=0$) y $AC$ es vertical ($\Delta x=0$): su distancia es simplemente el valor absoluto de la diferencia.`, [T`c=AB=\sqrt{(5-1)^2+(1-1)^2}=\sqrt{16}=${E.c}`, T`b=AC=\sqrt{(1-1)^2+(4-1)^2}=\sqrt{9}=${E.b}`], { segs: [['AB', BLU], ['AC', RED]], lab: true }),
+        fr('Ahora tú', T`Practica con otros puntos.`, [], {}, { q: T`Distancia entre $(0,0)$ y $(5,12)$.`, a: 13, tol: 0.001, sol: T`d=\sqrt{5^2+12^2}=\sqrt{169}=13` })]; } },
+
+      pitagoras: { t: 'Teorema de Pitágoras', ic: 'bi-square-half', c: '#d97706', ex: 'r', tab: 'pit', build: (E, Q) => [
+        fr('Enunciado', T`En un triángulo <strong>rectángulo</strong>, el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos. La <strong>hipotenusa</strong> es el lado <em>opuesto al ángulo recto</em> y siempre es el mayor; los <strong>catetos</strong> son los dos lados que forman el ángulo recto.`, [T`a^2+b^2=c^2`]),
+        fr('Identificar la hipotenusa', T`En el ejemplo el ángulo recto está en $A$ (marca naranja). El lado opuesto es $BC=5$: esa es la hipotenusa. Los catetos son $AC=3$ y $AB=4$.`, [T`\text{hip}=${K(RED, 'a')}=${E.a}\qquad \text{catetos: }${K(BLU, 'b')}=${E.b},\;${K(GRN, 'c')}=${E.c}`], { ang: [[0, ORG, '90°']], segs: [['BC', RED], ['CA', BLU], ['AB', GRN]], lab: true }),
+        fr('Construir los cuadrados', T`Cada cuadrado tiene como lado un lado del triángulo; su <strong>área</strong> es el lado elevado al cuadrado.`, [T`${K(BLU, 'b^2')}=${E.b}^2=${E.b ** 2}\qquad ${K(GRN, 'c^2')}=${E.c}^2=${E.c ** 2}\qquad ${K(RED, 'a^2')}=${E.a}^2=${E.a ** 2}`], { sq: true }),
+        fr('Sumar y comparar', T`Suma las áreas de los cuadrados de los catetos y compáralas con la de la hipotenusa: ¡coinciden!`, [T`${K(BLU, 'b^2')}+${K(GRN, 'c^2')}=${E.b ** 2}+${E.c ** 2}=${E.b ** 2 + E.c ** 2}`, T`${E.b ** 2 + E.c ** 2}=${K(RED, E.a ** 2)}=${K(RED, 'a^2')}\;\checkmark`], { sq: true }),
+        fr('Recíproco: clasificar un triángulo', T`Sea $c$ el lado <strong>mayor</strong>. Compara $a^2+b^2$ con $c^2$: si son iguales es rectángulo; si la suma es mayor, <strong>acutángulo</strong>; si es menor, <strong>obtusángulo</strong>.`, [T`a^2+b^2=c^2\Rightarrow\text{rectángulo}`, T`a^2+b^2>c^2\Rightarrow\text{acutángulo}`, T`a^2+b^2<c^2\Rightarrow\text{obtusángulo}`], {}),
+        fr('Despejar un lado desconocido', T`Si conoces dos lados de un triángulo rectángulo, el tercero sale despejando. <strong>Cuidado:</strong> para un cateto se <em>resta</em>.`, [T`\text{hipotenusa: } a=\sqrt{b^2+c^2}=\sqrt{${E.b ** 2}+${E.c ** 2}}=${E.a}`, T`\text{cateto: } c=\sqrt{a^2-b^2}=\sqrt{${E.a ** 2}-${E.b ** 2}}=\sqrt{${E.c ** 2}}=${E.c}`], { segs: [['BC', RED], ['AB', GRN]] }),
+        fr('Ahora tú', T`Un triángulo rectángulo tiene catetos distintos de los del ejemplo.`, [], {}, { q: T`Catetos $6$ y $8$. ¿Cuánto mide la hipotenusa?`, a: 10, tol: 0.001, sol: T`h=\sqrt{6^2+8^2}=\sqrt{100}=10` })] },
+
+      area: { t: 'Perímetro y área', ic: 'bi-bounding-box', c: '#d97706', ex: 'r', tab: 'geo', build: (E, Q) => [
+        fr('Perímetro y área: ¿qué miden?', T`El <strong>perímetro</strong> es la longitud del contorno (suma de los lados). El <strong>área</strong> es la superficie que encierra. Con coordenadas hay tres caminos: base·altura, la fórmula del zapatero y Herón.`, [T`P=a+b+c\qquad K=\frac{b\cdot h}{2}`]),
+        fr('Perímetro', T`Suma las tres longitudes calculadas con la fórmula de distancia.`, [T`P=${K(RED, 'a')}+${K(BLU, 'b')}+${K(GRN, 'c')}=${E.a}+${E.b}+${E.c}=${K(GRN, E.perim)}`], { segs: [['BC', RED], ['CA', BLU], ['AB', GRN]], lab: true }),
+        fr('Área con base y altura', T`Como el ángulo en $A$ es recto, un cateto es la <strong>base</strong> y el otro la <strong>altura</strong>.`, [T`K=\frac{\text{base}\cdot\text{altura}}{2}=\frac{${E.c}\cdot${E.b}}{2}=${K(GRN, E.K)}`], { segs: [['AB', GRN], ['AC', BLU]], ang: [[0, ORG, '90°']] }),
+        fr('Área con coordenadas (zapatero)', T`Funciona con <em>cualquier</em> triángulo y no necesita calcular lados.`, [T`K=\tfrac12\left|x_A(y_B-y_C)+x_B(y_C-y_A)+x_C(y_A-y_B)\right|`, T`K=\tfrac12\left|1(1-4)+5(4-1)+1(1-1)\right|=\tfrac12\left|-3+15+0\right|=\tfrac12(12)=${K(GRN, 6)}`], { pts: ['A', 'B', 'C'] }),
+        fr('Área con Herón', T`Usa solo los lados. Primero el semiperímetro $s=P/2$.`, [T`s=\frac{5+3+4}{2}=6`, T`K=\sqrt{s(s-a)(s-b)(s-c)}=\sqrt{6(1)(3)(2)}=\sqrt{36}=${K(GRN, 6)}`], { lab: true }),
+        fr('Ahora tú', T`Triángulo isósceles con lados $5,5,6$.`, [], {}, { q: T`Usa Herón para hallar el área (lados $5$, $5$ y $6$).`, a: 12, tol: 0.001, sol: T`s=8,\;K=\sqrt{8\cdot3\cdot3\cdot2}=\sqrt{144}=12` })] },
+
+      razones: { t: 'Razones trigonométricas', ic: 'bi-activity', c: '#7048e8', ex: 'r', tab: 'tri', build: (E, Q) => [
+        fr('SOH – CAH – TOA', T`En un triángulo rectángulo, las razones comparan lados respecto a un <strong>ángulo agudo</strong> $\theta$: el <em>cateto opuesto</em> está frente al ángulo, el <em>adyacente</em> lo forma junto a la hipotenusa. Hay 3 directas y 3 recíprocas.`, [T`\sin\theta=\frac{op}{hip}\quad\cos\theta=\frac{ady}{hip}\quad\tan\theta=\frac{op}{ady}`, T`\csc\theta=\frac{hip}{op}\quad\sec\theta=\frac{hip}{ady}\quad\cot\theta=\frac{ady}{op}`]),
+        fr('Identificar los lados para el ángulo B', T`Trabajamos con $B=${n4(E.ang[1].deg)}^\circ$. Su cateto opuesto es $AC=3$ (frente a $B$), el adyacente es $AB=4$ y la hipotenusa es $BC=5$.`, [T`op=${K(BLU, 3)}\qquad ady=${K(GRN, 4)}\qquad hip=${K(RED, 5)}`], { ang: [[1, ORG, 'β = ' + n2(E.ang[1].deg) + '°']], segs: [['AC', BLU, 'op.'], ['AB', GRN, 'ady.'], ['BC', RED, 'hip.']] }),
+        fr('Las tres razones directas', T`Solo sustituyes los lados y divides.`, [T`\sin B=\frac{op}{hip}=\frac{3}{5}=${K(VIO, 0.6)}`, T`\cos B=\frac{ady}{hip}=\frac{4}{5}=${K(VIO, 0.8)}`, T`\tan B=\frac{op}{ady}=\frac{3}{4}=${K(VIO, 0.75)}`], { ang: [[1, ORG, 'β']], segs: [['AC', BLU, 'op.'], ['AB', GRN, 'ady.'], ['BC', RED, 'hip.']] }),
+        fr('Las tres recíprocas', T`Son la fracción <strong>invertida</strong> de las anteriores: $\csc=1/\sin$, $\sec=1/\cos$, $\cot=1/\tan$.`, [T`\csc B=\frac{5}{3}=${n4(5 / 3)}\;\left(=\frac{1}{0.6}\right)`, T`\sec B=\frac{5}{4}=${n4(5 / 4)}\;\left(=\frac{1}{0.8}\right)`, T`\cot B=\frac{4}{3}=${n4(4 / 3)}\;\left(=\frac{1}{0.75}\right)`], { ang: [[1, ORG, 'β']], segs: [['AC', BLU, 'op.'], ['AB', GRN, 'ady.'], ['BC', RED, 'hip.']] }),
+        fr('El otro ángulo agudo', T`En $C$ los papeles se invierten: el cateto que era opuesto ahora es adyacente. Por eso $\sin B=\cos C$ (ángulos <strong>complementarios</strong>: $B+C=90^\circ$).`, [T`\sin C=\frac{op}{hip}=\frac{4}{5}=0.8=\cos B`, T`\cos C=\frac{3}{5}=0.6=\sin B`], { ang: [[2, ORG, 'γ = ' + n2(E.ang[2].deg) + '°']], segs: [['AB', GRN, 'op.'], ['AC', BLU, 'ady.'], ['BC', RED, 'hip.']] }),
+        fr('Ahora tú', T`Triángulo rectángulo distinto.`, [], {}, { q: T`Hipotenusa $13$ y cateto opuesto $5$. Calcula $\sin\theta$ (4 decimales).`, a: 5 / 13, tol: 0.0005, sol: T`\sin\theta=\frac{5}{13}=0.3846` })] },
+
+      identidades: { t: 'Identidades y conversión lados ↔ ángulos', ic: 'bi-arrow-left-right', c: '#7048e8', ex: 'r', tab: 'idn', build: (E, Q) => [
+        fr('Dos caminos', T`Con las razones puedes ir en <strong>ambas direcciones</strong>: de <em>lados a ángulo</em> usando las funciones <strong>inversas</strong> ($\arcsin,\arccos,\arctan$) y de <em>ángulo a lados</em> usando las razones directas. Las <strong>identidades</strong> son igualdades que siempre se cumplen y permiten cambiar de una razón a otra.`, [T`\text{lados}\xrightarrow{\;\arcsin,\arccos,\arctan\;}\theta\qquad\theta\xrightarrow{\;\sin,\cos,\tan\;}\text{lados}`]),
+        fr('De lados a ángulo', T`Conoces dos lados de $B$: $op=3$, $ady=4$, $hip=5$. Cualquiera de las tres inversas da el mismo ángulo. <strong>Calculadora en grados (DEG).</strong>`, [T`\theta=\arcsin\!\left(\frac{op}{hip}\right)=\arcsin(0.6)=${K(VIO, n4(E.ang[1].deg) + '^\\circ')}`, T`\theta=\arccos\!\left(\frac{ady}{hip}\right)=\arccos(0.8)=${n4(E.ang[1].deg)}^\circ`, T`\theta=\arctan\!\left(\frac{op}{ady}\right)=\arctan(0.75)=${n4(E.ang[1].deg)}^\circ`], { ang: [[1, ORG, 'β = ' + n2(E.ang[1].deg) + '°']], segs: [['AC', BLU, 'op.'], ['AB', GRN, 'ady.'], ['BC', RED, 'hip.']] }),
+        fr('De ángulo a lados', T`Ahora conoces $hip=5$ y $B=36.87^\circ$. Despeja el lado que busques de la razón correcta.`, [T`op=hip\cdot\sin B=5\cdot\sin(36.87^\circ)=${K(BLU, n4(5 * Math.sin(E.ang[1].rad)))}`, T`ady=hip\cdot\cos B=5\cdot\cos(36.87^\circ)=${K(GRN, n4(5 * Math.cos(E.ang[1].rad)))}`], { ang: [[1, ORG, 'β']], segs: [['AC', BLU, 'op.'], ['AB', GRN, 'ady.']] }),
+        fr('Si conoces un cateto y el ángulo', T`Despeja con la razón que une lo que sabes con lo que buscas. Por ejemplo con $op=3$ y $B$:`, [T`hip=\frac{op}{\sin B}=\frac{3}{0.6}=${K(RED, 5)}`, T`ady=\frac{op}{\tan B}=\frac{3}{0.75}=${K(GRN, 4)}`], { ang: [[1, ORG, 'β']], segs: [['AC', BLU, 'op.']] }),
+        fr('Identidades que conectan las razones', T`Cociente, recíprocas y pitagóricas: si conoces una razón, obtienes las demás. Comprobación con $B$:`, [T`\tan B=\frac{\sin B}{\cos B}=\frac{0.6}{0.8}=0.75\;\checkmark`, T`\sin^2B+\cos^2B=0.6^2+0.8^2=0.36+0.64=1\;\checkmark`, T`1+\tan^2B=\sec^2B\;\Rightarrow\;1+0.5625=1.5625=1.25^2\;\checkmark`], {}),
+        fr('Triángulos que no son rectángulos', T`Si no hay ángulo recto, usa la <strong>Ley de Cosenos</strong> (tres lados → ángulo) o la <strong>Ley de Senos</strong> (lado + ángulos → lados). Los manuales siguientes las explican.`, [T`\cos A=\frac{b^2+c^2-a^2}{2bc}\qquad\frac{a}{\sin A}=\frac{b}{\sin B}`], {}),
+        fr('Ahora tú', T`Calcula un lado a partir de un ángulo.`, [], {}, { q: T`Hipotenusa $10$ y ángulo $30^\circ$: ¿cuánto mide el cateto opuesto?`, a: 5, tol: 0.001, sol: T`op=10\sin 30^\circ=10(0.5)=5` })] },
+
+      ls: { t: 'Ley de Senos', ic: 'bi-diagram-2', c: '#1c7ed6', ex: 'o', tab: 'law', build: (E, Q) => [
+        fr('¿Cuándo usarla?', T`Cada lado es proporcional al seno de su ángulo <strong>opuesto</strong>. La usas cuando conoces <strong>un lado y su ángulo opuesto</strong> y algún otro dato (ALA, AAL). En el triángulo oblicuo de ejemplo: $A(0,0)$, $B(6,0)$, $C(2,3)$.`, [T`\frac{a}{\sin A}=\frac{b}{\sin B}=\frac{c}{\sin C}=2R`], { lab: true }),
+        fr('Datos del ejemplo', T`Con coordenadas obtuvimos lados y ángulos (distancia y Ley de Cosenos).`, [T`a=${n4(E.a)}\quad b=${n4(E.b)}\quad c=${n4(E.c)}`, T`A=${n4(E.ang[0].deg)}^\circ\quad B=${n4(E.ang[1].deg)}^\circ\quad C=${n4(E.ang[2].deg)}^\circ`], { ang: [[0, RED, 'α = ' + n2(E.ang[0].deg) + '°'], [1, BLU, 'β = ' + n2(E.ang[1].deg) + '°'], [2, GRN, 'γ = ' + n2(E.ang[2].deg) + '°']], lab: true }),
+        fr('Las tres razones', T`Divide cada lado entre el seno de su ángulo opuesto: ¡el resultado es siempre el mismo!`, [T`\frac{a}{\sin A}=\frac{${n4(E.a)}}{${n4(Math.sin(E.ang[0].rad))}}=${K(RED, n4(E.a / Math.sin(E.ang[0].rad)))}`, T`\frac{b}{\sin B}=\frac{${n4(E.b)}}{${n4(Math.sin(E.ang[1].rad))}}=${K(BLU, n4(E.b / Math.sin(E.ang[1].rad)))}`, T`\frac{c}{\sin C}=\frac{${n4(E.c)}}{${n4(Math.sin(E.ang[2].rad))}}=${K(GRN, n4(E.c / Math.sin(E.ang[2].rad)))}`], { segs: [['BC', RED], ['CA', BLU], ['AB', GRN]] }),
+        fr('La constante es el diámetro', T`Ese valor común es $2R$, el <strong>diámetro de la circunferencia circunscrita</strong>.`, [T`2R=${n4(2 * E.R)}\;\Rightarrow\;R=${n4(E.R)}`], { lab: true }),
+        fr('Usarla para hallar un lado', T`Supón que sólo conoces $a=5$, $A$ y $B$. Despeja $b$ de la proporción $\frac{a}{\sin A}=\frac{b}{\sin B}$:`, [T`b=\frac{a\,\sin B}{\sin A}=\frac{${n4(E.a)}\cdot\sin(${n4(E.ang[1].deg)}^\circ)}{\sin(${n4(E.ang[0].deg)}^\circ)}=${K(BLU, n4(E.a * Math.sin(E.ang[1].rad) / Math.sin(E.ang[0].rad)))}`], { segs: [['CA', BLU]] }),
+        fr('Caso ambiguo (LLA)', T`Si conoces dos lados y un ángulo que <em>no</em> está entre ellos, al despejar un ángulo con $\arcsin$ puedes obtener <strong>0, 1 o 2 triángulos</strong>, porque $\sin\theta=\sin(180^\circ-\theta)$. Revisa siempre si el segundo ángulo cabe (suma $<180^\circ$).`, [T`\sin\theta=\sin(180^\circ-\theta)`], {}),
+        fr('Ahora tú', T`Triángulo con datos nuevos.`, [], {}, { q: T`$A=30^\circ$, $B=45^\circ$, $a=10$. Halla $b$ (2 decimales).`, a: 14.1421, tol: 0.01, sol: T`b=\frac{10\sin45^\circ}{\sin30^\circ}=\frac{10(0.7071)}{0.5}=14.14` })] },
+
+      lc: { t: 'Ley de Cosenos', ic: 'bi-calculator', c: '#1c7ed6', ex: 'o', tab: 'law', build: (E, Q) => [
+        fr('¿Cuándo usarla?', T`Es el Teorema de Pitágoras <strong>generalizado</strong>: sirve en <em>cualquier</em> triángulo. Úsala con <strong>dos lados y el ángulo entre ellos</strong> (para hallar el tercer lado) o con <strong>tres lados</strong> (para hallar un ángulo). Si $A=90^\circ$, $\cos A=0$ y queda Pitágoras.`, [T`a^2=b^2+c^2-2bc\cos A`]),
+        fr('Hallar un lado (LAL)', T`Conocemos $b=${n4(E.b)}$, $c=6$ y el ángulo entre ellos $A=${n4(E.ang[0].deg)}^\circ$. Sustituimos:`, [T`a^2=${n4(E.b ** 2)}+${E.c ** 2}-2(${n4(E.b)})(${E.c})\cos(${n4(E.ang[0].deg)}^\circ)`, T`a^2=${n4(E.b ** 2 + E.c ** 2)}-${n4(2 * E.b * E.c * Math.cos(E.ang[0].rad))}=${K(RED, n4(E.sq[0]))}`, T`a=\sqrt{${n4(E.sq[0])}}=${K(RED, n4(E.a))}`], { ang: [[0, ORG, 'α = ' + n2(E.ang[0].deg) + '°']], segs: [['CA', BLU], ['AB', GRN], ['BC', RED]], lab: true }),
+        fr('Hallar un ángulo (LLL)', T`Con los tres lados, despeja el coseno. Luego usa $\arccos$ (calculadora en grados).`, [T`\cos A=\frac{b^2+c^2-a^2}{2bc}=\frac{${n4(E.b ** 2)}+${E.c ** 2}-${E.a ** 2}}{2(${n4(E.b)})(${E.c})}=${n4(E.ang[0].cosLC)}`, T`A=\arccos(${n4(E.ang[0].cosLC)})=${K(ORG, n4(E.ang[0].deg) + '^\\circ')}`], { ang: [[0, ORG, 'α = ' + n2(E.ang[0].deg) + '°']] }),
+        fr('Los demás ángulos', T`Repite con las otras dos versiones de la fórmula (o resta a $180^\circ$ al final).`, [T`B=\arccos\!\left(\frac{a^2+c^2-b^2}{2ac}\right)=${n4(E.ang[1].deg)}^\circ`, T`C=\arccos\!\left(\frac{a^2+b^2-c^2}{2ab}\right)=${n4(E.ang[2].deg)}^\circ`, T`A+B+C=${n4(E.ang[0].deg + E.ang[1].deg + E.ang[2].deg)}^\circ\;\checkmark`], { ang: [[0, RED, 'α = ' + n2(E.ang[0].deg) + '°'], [1, BLU, 'β = ' + n2(E.ang[1].deg) + '°'], [2, GRN, 'γ = ' + n2(E.ang[2].deg) + '°']] }),
+        fr('Relación con Pitágoras', T`El término $-2bc\cos A$ es la <strong>corrección</strong> al teorema de Pitágoras. Si $A<90^\circ$ el coseno es positivo y se resta (lado más corto); si $A>90^\circ$ es negativo y el lado crece.`, [T`A=90^\circ\Rightarrow a^2=b^2+c^2`, T`A<90^\circ\Rightarrow a^2<b^2+c^2\qquad A>90^\circ\Rightarrow a^2>b^2+c^2`], { sq: true }),
+        fr('Ahora tú', T`Dos lados y el ángulo entre ellos.`, [], {}, { q: T`$b=5$, $c=8$, $A=60^\circ$. Halla $a$.`, a: 7, tol: 0.001, sol: T`a^2=25+64-2(5)(8)\cos60^\circ=89-40=49\Rightarrow a=7` })] }
+    };
+
+    /* ---------- Visual dinámica del ejemplo ---------- */
+    function exSvg(E, Q, hl = {}) {
+      const Wv = 420, Hv = 340, pts = [...Q]; if (hl.sq) squares(E, Q).forEach(s => pts.push(...s.c));
+      const xs = pts.map(p => p.x), ys = pts.map(p => p.y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      const sc = Math.min((Wv - 100) / Math.max(x1 - x0, 1), (Hv - 90) / Math.max(y1 - y0, 1)), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const sx = x => Wv / 2 + (x - cx) * sc, sy = y => Hv / 2 - (y - cy) * sc, pt = p => `${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`, st = niceStep(40 / sc), G = E.G;
+      let h = '';
+      for (let x = Math.ceil((cx - Wv / 2 / sc) / st) * st; x <= cx + Wv / 2 / sc; x += st) h += `<line x1="${sx(x)}" y1="0" x2="${sx(x)}" y2="${Hv}" stroke="#eef2f7"/>`;
+      for (let y = Math.ceil((cy - Hv / 2 / sc) / st) * st; y <= cy + Hv / 2 / sc; y += st) h += `<line x1="0" y1="${sy(y)}" x2="${Wv}" y2="${sy(y)}" stroke="#eef2f7"/>`;
+      if (hl.sq) squares(E, Q).forEach(s => { const m = s.c.reduce((a, p) => ({ x: a.x + p.x / 4, y: a.y + p.y / 4 }), { x: 0, y: 0 });
+        h += `<polygon class="mm-fade" points="${s.c.map(pt).join(' ')}" fill="${COL[s.k]}" fill-opacity=".18" stroke="${COL[s.k]}" stroke-width="1.5"/><text class="mm-fade" x="${sx(m.x)}" y="${sy(m.y) + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="${COL[s.k]}">${SIDE[s.k]}² = ${fmt(E.sq[s.k], 2)}</text>`; });
+      h += `<polygon points="${Q.map(pt).join(' ')}" fill="#4dabf7" fill-opacity=".12" stroke="#1e293b" stroke-width="2.5" stroke-linejoin="round"/>`;
+      (hl.legs || []).forEach(n => { const [i, j] = SEG[n], p = Q[i], q = Q[j], dx = q.x - p.x, dy = q.y - p.y;
+        h += `<polyline class="mm-fade" points="${pt(p)} ${sx(q.x)},${sy(p.y)} ${pt(q)}" fill="none" stroke="#868e96" stroke-width="2" stroke-dasharray="5 4"/>
+          <text class="mm-fade" x="${(sx(p.x) + sx(q.x)) / 2}" y="${sy(p.y) + (dy > 0 ? 16 : -8)}" text-anchor="middle" font-size="12" font-weight="800" fill="${RED}">Δx = ${fmt(dx, 2)}</text>
+          <text class="mm-fade" x="${sx(q.x) + (dx > 0 ? 8 : -8)}" y="${(sy(p.y) + sy(q.y)) / 2}" text-anchor="${dx > 0 ? 'start' : 'end'}" font-size="12" font-weight="800" fill="${BLU}">Δy = ${fmt(dy, 2)}</text>`; });
+      (hl.segs || []).forEach(([n, c, lb]) => { const [i, j] = SEG[n], p = Q[i], q = Q[j], mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2, ox = sx(mx) - sx(G.x), oy = sy(my) - sy(G.y), L = Math.hypot(ox, oy) || 1;
+        h += `<line pathLength="1" class="mm-draw" x1="${sx(p.x)}" y1="${sy(p.y)}" x2="${sx(q.x)}" y2="${sy(q.y)}" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`;
+        if (lb) h += `<text class="mm-fade" x="${sx(mx) + ox / L * 20}" y="${sy(my) + oy / L * 20 + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="${c}" paint-order="stroke" stroke="#fff" stroke-width="3">${lb}</text>`; });
+      if (hl.lab) [[1, 2, 0], [2, 0, 1], [0, 1, 2]].forEach(([i, j, k]) => { const mx = (Q[i].x + Q[j].x) / 2, my = (Q[i].y + Q[j].y) / 2, ox = sx(mx) - sx(G.x), oy = sy(my) - sy(G.y), L = Math.hypot(ox, oy) || 1;
+        h += `<text class="mm-fade" x="${sx(mx) + ox / L * 18}" y="${sy(my) + oy / L * 18 + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="${COL[k]}" paint-order="stroke" stroke="#fff" stroke-width="3">${SIDE[k]}=${fmt(E.sides[k], 2)}</text>`; });
+      (hl.ang || []).forEach(([v, c, tx]) => { const [p, q] = [[1, 2], [2, 0], [0, 1]][v], V0 = [sx(Q[v].x), sy(Q[v].y)], u = [sx(Q[p].x) - V0[0], sy(Q[p].y) - V0[1]], w = [sx(Q[q].x) - V0[0], sy(Q[q].y) - V0[1]], lu = Math.hypot(...u), lw = Math.hypot(...w), e1 = [u[0] / lu, u[1] / lu], e2 = [w[0] / lw, w[1] / lw], r = 28;
+        if (Math.abs(E.ang[v].deg - 90) < 0.003) h += `<polyline class="mm-fade" points="${V0[0] + e1[0] * 16},${V0[1] + e1[1] * 16} ${V0[0] + (e1[0] + e2[0]) * 16},${V0[1] + (e1[1] + e2[1]) * 16} ${V0[0] + e2[0] * 16},${V0[1] + e2[1] * 16}" fill="none" stroke="${c}" stroke-width="3"/>`;
+        else h += `<path class="mm-fade" d="M${V0[0] + e1[0] * r} ${V0[1] + e1[1] * r} A${r} ${r} 0 0 ${(u[0] * w[1] - u[1] * w[0]) > 0 ? 1 : 0} ${V0[0] + e2[0] * r} ${V0[1] + e2[1] * r}" fill="${c}" fill-opacity=".25" stroke="${c}" stroke-width="2.5"/>`;
+        const bx = e1[0] + e2[0], by = e1[1] + e2[1], bl = Math.hypot(bx, by) || 1;
+        h += `<text class="mm-fade" x="${V0[0] + bx / bl * 50}" y="${V0[1] + by / bl * 50 + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="${c}" paint-order="stroke" stroke="#fff" stroke-width="3">${tx}</text>`; });
+      Q.forEach((p, i) => { const on = (hl.pts || []).includes(NAMES[i]), dx = sx(p.x) - sx(G.x), dy = sy(p.y) - sy(G.y), L = Math.hypot(dx, dy) || 1;
+        h += `${on ? `<circle class="mm-pulse" cx="${sx(p.x)}" cy="${sy(p.y)}" r="13" fill="none" stroke="${ORG}" stroke-width="3"/>` : ''}<circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="6" fill="${COL[i]}" stroke="#fff" stroke-width="2"/>
+          <text x="${sx(p.x) + dx / L * 22}" y="${sy(p.y) + dy / L * 22 + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="${COL[i]}" paint-order="stroke" stroke="#fff" stroke-width="3">${NAMES[i]}(${fmt(p.x, 1)}, ${fmt(p.y, 1)})</text>`; });
+      return h;
+    }
+
+    /* ---------- Motor del manual ---------- */
+    let MM = { i: 0, timer: null };
+    function openManual(key) {
+      const m = MANUALS[key], Q = EX[m.ex].map(p => ({ ...p })), E = solve(Q); mmStop();
+      MM = { key, m, Q, E, i: 0, frames: m.build(E, Q), timer: null }; mmRender(); bootstrap.Modal.getOrCreateInstance($('#manualModal')).show();
+    }
+    function mmStop() { clearInterval(MM.timer); MM.timer = null; const b = $('#mm-play'); if (b) b.innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; }
+    function mmGo(i) { MM.i = Math.max(0, Math.min(MM.frames.length - 1, i)); mmRender(); }
+    function mmRender() {
+      const { m, frames, i, E, Q } = MM, f = frames[i], N = frames.length;
+      $('#mm-head').style.background = m.c; $('#mm-title').innerHTML = `<i class="bi ${m.ic} me-2"></i>Manual · ${m.t}`;
+      $('#mm-dots').innerHTML = frames.map((fr_, k) => `<button class="mm-dot ${k === i ? 'on' : k < i ? 'done' : ''}" style="--c:${m.c}" data-mmgo="${k}" title="${fr_.t}">${k + 1}</button>`).join('');
+      $('#mm-svg').innerHTML = exSvg(E, Q, f.hl);
+      $('#mm-ex').innerHTML = `Ejemplo fijo: ${Q.map((p, k) => `<b style="color:${COL[k]}">${NAMES[k]}</b>(${p.x}, ${p.y})`).join(' · ')} &nbsp;|&nbsp; a=${n2(E.a)}, b=${n2(E.b)}, c=${n2(E.c)}`;
+      const quiz = f.quiz ? `<div class="mm-quiz"><div class="fw-bold mb-2"><i class="bi bi-pencil-fill me-1"></i>${f.quiz.q}</div><div class="d-flex gap-2"><input type="number" step="any" class="form-control" id="mm-ans" placeholder="Tu respuesta" style="max-width:180px"><button class="btn btn-dark" id="mm-chk">Comprobar</button><button class="btn btn-outline-secondary" id="mm-sol">Ver solución</button></div><div id="mm-fb" class="mt-2"></div></div>` : '';
+      const go = i === N - 1 ? `<button class="btn btn-warning rounded-pill fw-semibold mt-3" data-gotab="${m.tab}"><i class="bi bi-box-arrow-up-right me-1"></i>Practicar con mi triángulo en esta pestaña</button>` : '';
+      $('#mm-step').innerHTML = `<div class="mm-card"><div class="mm-kicker" style="color:${m.c}">Paso ${i + 1} de ${N}</div><h5 class="fw-bold mb-2">${f.t}</h5><div class="mm-say">${f.say}</div>
+        <div class="mm-lines">${f.lines.map((l, k) => `<div class="mm-line" style="animation-delay:${k * 650}ms">$$${l}$$</div>`).join('')}</div>${quiz}${go}</div>`;
+      $('#mm-prev').disabled = i === 0; $('#mm-next').disabled = i === N - 1; $('#mm-count').textContent = `${i + 1} / ${N}`;
+      math($('#mm-step'));
+    }
+    function mmCheck(show) {
+      const q = MM.frames[MM.i].quiz, fb = $('#mm-fb'), v = parseFloat($('#mm-ans').value);
+      if (show) { fb.innerHTML = `<div class="tip-box s-amp">$$${q.sol}$$</div>`; return math(fb); }
+      if (!isFinite(v)) { fb.innerHTML = '<span class="text-danger">Escribe un número.</span>'; return; }
+      const ok = Math.abs(v - q.a) <= q.tol; fb.innerHTML = ok ? `<div class="tip-box s-ok"><b>✓ ¡Correcto!</b> $${q.sol}$</div>` : `<div class="tip-box s-res"><b>✗ Todavía no.</b> Revisa el signo, el orden de la resta y que la calculadora esté en grados.</div>`;
+      if (ok && typeof confetti === 'function') confetti({ particleCount: 60, spread: 55, origin: { y: .7 } }); math(fb);
+    }
+    document.addEventListener('click', e => {
+      const mb = e.target.closest('[data-man]'); if (mb) return openManual(mb.dataset.man);
+      const g = e.target.closest('[data-mmgo]'); if (g) { mmStop(); return mmGo(+g.dataset.mmgo); }
+      if (e.target.closest('#mm-prev')) { mmStop(); mmGo(MM.i - 1); } if (e.target.closest('#mm-next')) { mmStop(); mmGo(MM.i + 1); }
+      if (e.target.closest('#mm-chk')) mmCheck(false); if (e.target.closest('#mm-sol')) mmCheck(true);
+      if (e.target.closest('#mm-play')) { if (MM.timer) return mmStop(); if (MM.i >= MM.frames.length - 1) MM.i = -1; $('#mm-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar';
+        const tick = () => { if (MM.i >= MM.frames.length - 1) return mmStop(); mmGo(MM.i + 1); $('#mm-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar'; }; tick(); MM.timer = setInterval(tick, 7500); }
+      const t = e.target.closest('[data-gotab]'); if (t) { bootstrap.Modal.getInstance($('#manualModal')).hide(); bootstrap.Tab.getOrCreateInstance($(`[data-t="${t.dataset.gotab}"]`)).show(); $('#tabs').scrollIntoView({ behavior: 'smooth' }); }
+    });
+    $('#manualModal').addEventListener('hidden.bs.modal', mmStop);
+
+    /* ============================================================
+       PESTAÑA: IDENTIDADES Y CONVERSIÓN LADOS ↔ ÁNGULOS
+       ============================================================ */
+    let ucDeg = 36.87, refK = 0;
+    const MAN_BTN = (k, t) => `<button class="btn btn-sm btn-outline-secondary rounded-pill" data-man="${k}"><i class="bi bi-journal-text me-1"></i>${t}</button>`;
+    function tabIdn() {
+      const circ = `<div class="row g-3 align-items-center"><div class="col-md-6"><svg id="uc" viewBox="0 0 360 360" class="w-100 border rounded-3 bg-white" role="img" aria-label="Círculo unitario"></svg></div>
+        <div class="col-md-6"><label class="form-label fw-semibold" for="uc-r">Ángulo $\\theta$ = <span id="uc-d" class="mono"></span>°</label><input type="range" class="form-range" id="uc-r" min="0" max="360" step="0.5" value="${ucDeg}">
+          <div class="d-flex flex-wrap gap-1 mb-2"><span class="small fw-semibold me-1">Usar ángulo del triángulo:</span>${NAMES.map((n, i) => `<button class="btn btn-sm btn-outline-dark rounded-pill" style="color:${COL[i]};border-color:${COL[i]}" data-ucang="${i}">${an(i)} = ${fmt(S.ang[i].deg, 2)}°</button>`).join('')}</div>
+          <div id="uc-vals" class="small"></div></div></div>
+        <div class="small text-muted mt-2">Cada punto del círculo de radio 1 es $(\\cos\\theta,\\sin\\theta)$. Como el radio es 1, el Teorema de Pitágoras da $\\cos^2\\theta+\\sin^2\\theta=1$. La tangente es la longitud del segmento verde sobre la recta $x=1$.</div>`;
+      const idRows = [['Cociente', '\\tan\\theta=\\frac{\\sin\\theta}{\\cos\\theta}', 'Divide op/hip entre ady/hip: la hipotenusa se cancela.'], ['Cociente', '\\cot\\theta=\\frac{\\cos\\theta}{\\sin\\theta}', 'Es la inversa de la tangente.'], ['Recíproca', '\\csc\\theta=\\frac{1}{\\sin\\theta}', 'hip/op es la fracción invertida de op/hip.'], ['Recíproca', '\\sec\\theta=\\frac{1}{\\cos\\theta}', 'hip/ady invertida de ady/hip.'], ['Recíproca', '\\cot\\theta=\\frac{1}{\\tan\\theta}', 'ady/op invertida de op/ady.'], ['Pitagórica', '\\sin^2\\theta+\\cos^2\\theta=1', 'Pitágoras con hipotenusa 1 (círculo unitario).'], ['Pitagórica', '1+\\tan^2\\theta=\\sec^2\\theta', 'Divide la anterior entre $\\cos^2\\theta$.'], ['Pitagórica', '1+\\cot^2\\theta=\\csc^2\\theta', 'Divide la primera entre $\\sin^2\\theta$.']];
+      const ids = `<table class="t"><tr><th>Tipo</th><th>Identidad</th><th>¿De dónde sale?</th><th>Con θ del círculo</th></tr>${idRows.map((r, i) => `<tr><td>${r[0]}</td><td>$${r[1]}$</td><td class="small text-start">${r[2]}</td><td class="mono small" id="uc-id${i}"></td></tr>`).join('')}</table>`;
+      // lados → ángulos con el triángulo actual (atan2 con vectores)
+      const l2a = [[0, 1, 2], [1, 2, 0], [2, 0, 1]].map(([v, p, q]) => { const ux = P[p].x - P[v].x, uy = P[p].y - P[v].y, wx = P[q].x - P[v].x, wy = P[q].y - P[v].y, cr = Math.abs(ux * wy - uy * wx), dt = ux * wx + uy * wy;
+        return step(`Ángulo ${an(v)}`, T`$\vec u=${NAMES[p]}-${NAMES[v]}=(${fmt(ux)},${fmt(uy)}),\;\vec v=${NAMES[q]}-${NAMES[v]}=(${fmt(wx)},${fmt(wy)})$ → $${al(v)}=\operatorname{atan2}(|u_xv_y-u_yv_x|,\;u_xv_x+u_yv_y)=\operatorname{atan2}(${fmt(cr)},\,${fmt(dt)})=${K(COL[v], fmt(S.ang[v].deg) + '^\\circ')}$` + (S.kind === 'rect' && v !== S.hyp ? T`<br>Como el triángulo es rectángulo: $\arcsin\frac{op}{hip}=\arcsin\frac{${fmt(S.sides[v])}}{${fmt(S.sides[S.hyp])}}=${fmt(rad2deg(Math.asin(S.sides[v] / S.sides[S.hyp])))}^\circ$ ${badge(close(rad2deg(Math.asin(S.sides[v] / S.sides[S.hyp])), S.ang[v].deg))}` : ''), COL[v]); }).join('');
+      const l2aT = `<table class="t mb-3"><tr><th>Si conozco…</th><th>Fórmula para el ángulo</th></tr>
+        <tr><td>Cateto opuesto e hipotenusa</td><td>$\\theta=\\arcsin\\left(\\frac{op}{hip}\\right)$</td></tr><tr><td>Cateto adyacente e hipotenusa</td><td>$\\theta=\\arccos\\left(\\frac{ady}{hip}\\right)$</td></tr>
+        <tr><td>Los dos catetos</td><td>$\\theta=\\arctan\\left(\\frac{op}{ady}\\right)$</td></tr><tr><td>Tres lados (cualquier triángulo)</td><td>$A=\\arccos\\left(\\frac{b^2+c^2-a^2}{2bc}\\right)$</td></tr><tr><td>Coordenadas de los puntos</td><td>$\\theta=\\operatorname{atan2}(|u\\times v|,\\,u\\cdot v)$</td></tr></table>`;
+      // ángulos → lados
+      const rk = refK, rs = S.sides[rk], a2l = [0, 1, 2].filter(i => i !== rk).map(i => step(`Lado ${SIDE[i]}`, T`$${SIDE[i]}=\frac{${SIDE[rk]}\,\sin ${al(i)}}{\sin ${al(rk)}}=\frac{${fmt(rs)}\cdot\sin(${fmt(S.ang[i].deg)}^\circ)}{\sin(${fmt(S.ang[rk].deg)}^\circ)}=${K(COL[i], fmt(rs * Math.sin(S.ang[i].rad) / Math.sin(S.ang[rk].rad)))}$ vs real $${fmt(S.sides[i])}$ ${badge(close(rs * Math.sin(S.ang[i].rad) / Math.sin(S.ang[rk].rad), S.sides[i]))}`, COL[i])).join('');
+      const a2lT = `<table class="t mb-3"><tr><th>Si conozco…</th><th>Fórmula para el lado</th></tr>
+        <tr><td>Hipotenusa y ángulo</td><td>$op=hip\\cdot\\sin\\theta\\qquad ady=hip\\cdot\\cos\\theta$</td></tr><tr><td>Cateto opuesto y ángulo</td><td>$hip=\\frac{op}{\\sin\\theta}\\qquad ady=\\frac{op}{\\tan\\theta}$</td></tr>
+        <tr><td>Cateto adyacente y ángulo</td><td>$hip=\\frac{ady}{\\cos\\theta}\\qquad op=ady\\cdot\\tan\\theta$</td></tr><tr><td>Un lado y los ángulos (oblicuo)</td><td>$b=\\frac{a\\sin B}{\\sin A}$ (Ley de Senos)</td></tr><tr><td>Dos lados y el ángulo entre ellos</td><td>$a=\\sqrt{b^2+c^2-2bc\\cos A}$ (Ley de Cosenos)</td></tr></table>`;
+      const rt = `<div class="row g-2 mb-2"><div class="col-sm-6"><label class="form-label small fw-semibold" for="rt-t">Datos que conozco</label><select id="rt-t" class="form-select form-select-sm"><option value="hipang">Hipotenusa y ángulo θ</option><option value="opang">Cateto opuesto y ángulo θ</option><option value="adang">Cateto adyacente y ángulo θ</option><option value="catcat">Los dos catetos</option><option value="hipcat">Hipotenusa y cateto opuesto</option></select></div>
+        <div class="col-sm-3"><label class="form-label small fw-semibold" id="rt-l1" for="rt-1">Hipotenusa</label><input type="number" step="any" class="form-control form-control-sm" id="rt-1" value="10"></div>
+        <div class="col-sm-3"><label class="form-label small fw-semibold" id="rt-l2" for="rt-2">Ángulo θ (°)</label><input type="number" step="any" class="form-control form-control-sm" id="rt-2" value="30"></div></div><div id="rt-out"></div>`;
+      return `<div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><strong class="me-1">Manuales:</strong>${MAN_BTN('identidades', 'Identidades y conversión')}${MAN_BTN('razones', 'Razones trigonométricas')}${MAN_BTN('ls', 'Ley de Senos')}${MAN_BTN('lc', 'Ley de Cosenos')}</div>` +
+        card('g-tri', 'bi-record-circle', 'Círculo unitario interactivo', 'identidades', circ) + card('g-tri', 'bi-patch-check', 'Identidades trigonométricas (con comprobación en vivo)', 'identidades', ids) + modeSwitch() +
+        (convMode === 'l2a' ? convCard() + card('g-pit', 'bi-arrow-left-circle', 'De LADOS a ÁNGULOS (con tu triángulo)', 'angulos', l2aT + l2a) : '') +
+        (convMode === 'a2l' ? convCard() + card('g-law', 'bi-arrow-right-circle', 'De ÁNGULOS a LADOS (con tu triángulo)', 'ls', a2lT + `<div class="mb-2 small fw-semibold">Lado conocido (referencia): <select id="ref-k" class="form-select form-select-sm d-inline-block w-auto">${[0, 1, 2].map(i => `<option value="${i}"${i === rk ? ' selected' : ''}>${SIDE[i]} = ${fmt(S.sides[i], 3)}</option>`).join('')}</select></div>` + a2l) : '') +
+        card('g-th', 'bi-calculator-fill', 'Resolutor de triángulo rectángulo', null, rt);
+    }
+    function ucUpdate() {
+      const svg = $('#uc'); if (!svg) return; const d = ucDeg, th = d * Math.PI / 180, t = trig(th), c = 180, R = 130, X = x => c + x * R, Y = y => c - y * R, tn = t.tan;
+      $('#uc-d').textContent = fmt(d, 2);
+      let h = `<line x1="10" y1="${c}" x2="350" y2="${c}" stroke="#475569"/><line x1="${c}" y1="10" x2="${c}" y2="350" stroke="#475569"/><circle cx="${c}" cy="${c}" r="${R}" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+        <line x1="${X(1)}" y1="20" x2="${X(1)}" y2="340" stroke="#cbd5e1" stroke-dasharray="4 4"/>
+        <path d="M${X(.22)} ${c} A${.22 * R} ${.22 * R} 0 ${d > 180 ? 1 : 0} 0 ${X(.22 * Math.cos(th))} ${Y(.22 * Math.sin(th))}" fill="none" stroke="${ORG}" stroke-width="3"/>`;
+      if (tn !== null && Math.abs(tn) < 2.4) h += `<line x1="${X(1)}" y1="${c}" x2="${X(1)}" y2="${Y(tn)}" stroke="${GRN}" stroke-width="4"/><line x1="${c}" y1="${c}" x2="${X(1)}" y2="${Y(tn)}" stroke="#94a3b8" stroke-dasharray="3 3"/>`;
+      h += `<line x1="${c}" y1="${c}" x2="${X(t.cos)}" y2="${Y(t.sin)}" stroke="#1e293b" stroke-width="3"/><line x1="${X(t.cos)}" y1="${Y(t.sin)}" x2="${X(t.cos)}" y2="${c}" stroke="${RED}" stroke-width="4"/><line x1="${c}" y1="${c}" x2="${X(t.cos)}" y2="${c}" stroke="${BLU}" stroke-width="4"/>
+        <circle cx="${X(t.cos)}" cy="${Y(t.sin)}" r="7" fill="${VIO}" stroke="#fff" stroke-width="2"/>
+        <text x="${X(t.cos) + 10}" y="${Y(t.sin) - 8}" font-size="12" font-weight="800" fill="${VIO}">(${fmt(t.cos, 3)}, ${fmt(t.sin, 3)})</text>
+        <text x="${X(t.cos) + (t.cos >= 0 ? 6 : -6)}" y="${(Y(t.sin) + c) / 2}" text-anchor="${t.cos >= 0 ? 'start' : 'end'}" font-size="12" font-weight="800" fill="${RED}">sen</text><text x="${X(t.cos / 2)}" y="${c + (t.sin >= 0 ? 16 : -8)}" text-anchor="middle" font-size="12" font-weight="800" fill="${BLU}">cos</text>
+        ${tn !== null && Math.abs(tn) < 2.4 ? `<text x="${X(1) + 6}" y="${Y(tn / 2)}" font-size="12" font-weight="800" fill="${GRN}">tan</text>` : ''}`;
+      svg.innerHTML = h;
+      const f = x => x === null ? 'indef.' : fmt(x, 4);
+      $('#uc-vals').innerHTML = `<div class="row g-1">${[['sen', t.sin, RED], ['cos', t.cos, BLU], ['tan', t.tan, GRN], ['cot', t.cot, '#868e96'], ['sec', t.sec, '#868e96'], ['csc', t.csc, '#868e96']].map(([n, v, c]) => `<div class="col-4"><div class="pill-stat"><span style="color:${c};font-weight:800">${n}</span> = <b>${f(v)}</b></div></div>`).join('')}</div>`;
+      const ck = (l, r) => l === null || r === null ? 'indefinida' : `${fmt(l, 4)} = ${fmt(r, 4)} ${Math.abs(l - r) < 1e-9 * (1 + Math.abs(l)) ? '✓' : '✗'}`;
+      const rows = [t.cos === 0 ? null : [t.sin / t.cos, t.tan], t.sin === 0 ? null : [t.cos / t.sin, t.cot], t.sin === 0 ? null : [1 / t.sin, t.csc], t.cos === 0 ? null : [1 / t.cos, t.sec], t.tan === null || t.tan === 0 ? null : [1 / t.tan, t.cot], [t.sin ** 2 + t.cos ** 2, 1],
+        t.cos === 0 ? null : [1 + t.tan ** 2, t.sec ** 2], t.sin === 0 ? null : [1 + t.cot ** 2, t.csc ** 2]];
+      rows.forEach((r, i) => { const el = $('#uc-id' + i); if (el) el.textContent = r ? ck(r[0], r[1]) : 'indefinida'; });
+    }
+    function rtOut() {
+      const out = $('#rt-out'); if (!out) return; const ty = $('#rt-t').value, v1 = parseFloat($('#rt-1').value), v2 = parseFloat($('#rt-2').value), rd = d => d * Math.PI / 180;
+      const lab = { hipang: ['Hipotenusa', 'Ángulo θ (°)'], opang: ['Cateto opuesto', 'Ángulo θ (°)'], adang: ['Cateto adyacente', 'Ángulo θ (°)'], catcat: ['Cateto opuesto', 'Cateto adyacente'], hipcat: ['Hipotenusa', 'Cateto opuesto'] }[ty];
+      $('#rt-l1').textContent = lab[0]; $('#rt-l2').textContent = lab[1];
+      const bad = m => { out.innerHTML = `<div class="tip-box s-res">${m}</div>`; };
+      if (!(v1 > 0) || !(v2 > 0)) return bad('Escribe valores positivos.'); const hasAng = ['hipang', 'opang', 'adang'].includes(ty);
+      if (hasAng && v2 >= 90) return bad('El ángulo agudo debe estar entre 0° y 90°.'); if (ty === 'hipcat' && v2 >= v1) return bad('El cateto debe ser menor que la hipotenusa.');
+      let op, ad, hy, th, st = '';
+      if (ty === 'hipang') { hy = v1; th = v2; op = hy * Math.sin(rd(th)); ad = hy * Math.cos(rd(th)); st = step('Cateto opuesto', T`$op=hip\cdot\sin\theta=${fmt(hy)}\cdot\sin(${fmt(th)}^\circ)=${fmt(op)}$`, VIO) + step('Cateto adyacente', T`$ady=hip\cdot\cos\theta=${fmt(hy)}\cdot\cos(${fmt(th)}^\circ)=${fmt(ad)}$`, VIO); }
+      else if (ty === 'opang') { op = v1; th = v2; hy = op / Math.sin(rd(th)); ad = op / Math.tan(rd(th)); st = step('Hipotenusa', T`$hip=\frac{op}{\sin\theta}=\frac{${fmt(op)}}{\sin(${fmt(th)}^\circ)}=${fmt(hy)}$`, VIO) + step('Cateto adyacente', T`$ady=\frac{op}{\tan\theta}=\frac{${fmt(op)}}{\tan(${fmt(th)}^\circ)}=${fmt(ad)}$`, VIO); }
+      else if (ty === 'adang') { ad = v1; th = v2; hy = ad / Math.cos(rd(th)); op = ad * Math.tan(rd(th)); st = step('Hipotenusa', T`$hip=\frac{ady}{\cos\theta}=\frac{${fmt(ad)}}{\cos(${fmt(th)}^\circ)}=${fmt(hy)}$`, VIO) + step('Cateto opuesto', T`$op=ady\cdot\tan\theta=${fmt(ad)}\cdot\tan(${fmt(th)}^\circ)=${fmt(op)}$`, VIO); }
+      else if (ty === 'catcat') { op = v1; ad = v2; hy = Math.hypot(op, ad); th = rad2deg(Math.atan2(op, ad)); st = step('Hipotenusa (Pitágoras)', T`$hip=\sqrt{op^2+ady^2}=\sqrt{${fmt(op)}^2+${fmt(ad)}^2}=${fmt(hy)}$`, VIO) + step('Ángulo θ', T`$\theta=\arctan\frac{op}{ady}=\arctan\frac{${fmt(op)}}{${fmt(ad)}}=${fmt(th)}^\circ$`, VIO); }
+      else { hy = v1; op = v2; ad = Math.sqrt(hy * hy - op * op); th = rad2deg(Math.asin(op / hy)); st = step('Cateto adyacente (Pitágoras)', T`$ady=\sqrt{hip^2-op^2}=\sqrt{${fmt(hy)}^2-${fmt(op)}^2}=${fmt(ad)}$`, VIO) + step('Ángulo θ', T`$\theta=\arcsin\frac{op}{hip}=\arcsin\frac{${fmt(op)}}{${fmt(hy)}}=${fmt(th)}^\circ$`, VIO); }
+      st += step('Resultado completo', T`$op=${fmt(op)},\; ady=${fmt(ad)},\; hip=${fmt(hy)},\; \theta=${fmt(th)}^\circ,\; \text{otro ángulo}=90^\circ-\theta=${fmt(90 - th)}^\circ$ &nbsp; Verificación: $op^2+ady^2=${fmt(op * op + ad * ad)}\;\approx\;hip^2=${fmt(hy * hy)}$ ${badge(close(op * op + ad * ad, hy * hy))}`, GRN);
+      out.innerHTML = st; math(out);
+    }
+    document.addEventListener('input', e => { if (e.target.id === 'uc-r') { ucDeg = +e.target.value; ucUpdate(); } if (/^rt-/.test(e.target.id)) rtOut(); });
+    document.addEventListener('change', e => { if (e.target.id === 'rt-t') rtOut(); if (e.target.id === 'ref-k') { refK = +e.target.value; renderTab('idn'); } });
+    document.addEventListener('click', e => { const b = e.target.closest('[data-ucang]'); if (b) { ucDeg = Math.round(S.ang[+b.dataset.ucang].deg * 100) / 100; $('#uc-r').value = ucDeg; ucUpdate(); } });
+
+    /* ============================================================
+       NOTACIÓN GRIEGA, ZOOM/PAN, RESUMENES Y TABLAS DE CONVERSIÓN
+       ============================================================ */
+    let NOT = 'grk';                                   // notación de ángulos: 'grk' (α β γ) o 'abc' (A B C)
+    const GK = ['α', 'β', 'γ'], GL = ['\\alpha', '\\beta', '\\gamma'], GN = ['alfa', 'beta', 'gamma'];
+    const an = k => NOT === 'grk' ? GK[k] : NAMES[k];  // texto
+    const al = k => NOT === 'grk' ? GL[k] : NAMES[k];  // LaTeX
+
+    let ZOOM = 1, PAN = { x: 0, y: 0 }, panning = null;
+    const svgPt = e => { const s = $('#plot'), p = s.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(s.getScreenCTM().inverse()); return [q.x, q.y]; };
+    const viewRedraw = () => { V = null; drawPlot(); };
+    $('#plot').addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); ZOOM = Math.max(.3, Math.min(8, ZOOM * (e.deltaY < 0 ? 1.12 : 1 / 1.12))); viewRedraw(); }, { passive: false });
+
+    /* ---------- Introducciones didácticas por pestaña ---------- */
+    const INTRO = {
+      geo: ['Geometría analítica: de coordenadas a medidas', ['<b>Pendiente</b>: inclinación de cada lado (¡cuidado con las verticales!).', '<b>Distancia</b>: longitud de cada lado = Pitágoras con Δx y Δy.', '<b>Perímetro y área</b>: se calculan de dos formas y deben coincidir.'], ['pendiente', 'distancia', 'area']],
+      pit: ['Teorema de Pitágoras y su recíproco', ['Compara <b>a² + b²</b> con <b>c²</b> (c = lado mayor) para saber si es rectángulo, acutángulo u obtusángulo.', 'Activa «Cuadrados de los lados» en la gráfica para <em>ver</em> las áreas.', 'Abajo, el laboratorio muestra cómo la Ley de Cosenos generaliza a Pitágoras.'], ['pitagoras']],
+      tri: ['Ángulos y razones trigonométricas', ['Los ángulos internos son <b>α</b> (alfa, en A), <b>β</b> (beta, en B) y <b>γ</b> (gamma, en C); siempre suman 180°.', 'Elige un ángulo para ver sus 6 razones evaluadas y las identidades comprobadas.', 'La tabla comparativa muestra las 6 razones de los tres ángulos a la vez.'], ['razones']],
+      idn: ['Identidades y conversión entre lados y ángulos', ['Usa el <b>círculo unitario</b> para entender de dónde salen las identidades.', 'Elige <b>«De lados a ángulos»</b> o <b>«De ángulos a lados»</b>: se muestra una tabla con la razón y la fórmula que debes usar según los datos que conozcas.', 'Al final puedes resolver cualquier triángulo rectángulo con el resolutor.'], ['identidades', 'razones']],
+      law: ['Leyes de Senos y Cosenos (cualquier triángulo)', ['<b>Senos</b>: lado ÷ seno de su ángulo opuesto es constante (= 2R).', '<b>Cosenos</b>: Pitágoras con una corrección −2bc·cos α.', 'Usa el resolutor para ver qué ley aplicar según los datos que tengas.'], ['ls', 'lc']],
+      th: ['Teoría y fórmulas', ['Hoja de fórmulas y teoría en acordeón.', 'Cada tarjeta de las otras pestañas tiene un botón «?» con la explicación.'], []]
+    };
+    const introBox = id => { const [t, b, m] = INTRO[id]; return `<div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i>${t}</div><ul class="small mb-2">${b.map(x => `<li>${x}</li>`).join('')}</ul>${m.length ? `<div class="d-flex flex-wrap gap-1 align-items-center"><span class="small fw-semibold me-1">Manuales:</span>${m.map(k => MAN_BTN(k, MANUALS[k].t)).join('')}</div>` : ''}</div>`; };
+
+    /* ---------- Tablas de resumen ---------- */
+    function summaryCard() {
+      const r = (a, b, c) => `<tr><td class="text-start">${a}</td><td class="fw-bold">${b}</td><td class="small text-muted text-start">${c}</td></tr>`;
+      const rows = [r('Vértices', P.map((p, i) => `<span style="color:${COL[i]}">${NAMES[i]}</span>(${fmt(p.x, 2)}, ${fmt(p.y, 2)})`).join(' '), 'datos de entrada'),
+        ...[0, 1, 2].map(k => r(`<span style="color:${COL[k]}">${SIDE[k]}</span> = ${['BC', 'CA', 'AB'][k]}`, fmt(S.sides[k]), 'distancia entre dos puntos')),
+        ...[0, 1, 2].map(k => r(`<span style="color:${COL[k]}">${GK[k]}</span> (${GN[k]}, en ${NAMES[k]})`, `${fmt(S.ang[k].deg)}° = ${fmt(S.ang[k].rad)} rad`, 'Ley de Cosenos / atan2')),
+        r('Suma de ángulos', `${fmt(S.ang.reduce((x, a) => x + a.deg, 0))}°`, 'debe ser 180°'), r('Perímetro', fmt(S.perim), 'a + b + c'), r('Área', fmt(S.K), 'coordenadas = Herón'),
+        r('Clasificación', `${S.bySides} · ${{ rect: 'Rectángulo', acut: 'Acutángulo', obt: 'Obtusángulo' }[S.kind]}`, 'por lados y por ángulos (recíproco de Pitágoras)')].join('');
+      return card('g-geo', 'bi-table', 'Resumen de resultados (todo en una vista)', null, `<div class="table-responsive"><table class="t"><tr><th>Elemento</th><th>Valor</th><th>Cómo se obtiene</th></tr>${rows}</table></div>`);
+    }
+    function ratioTable() {
+      const nm = { sin: 'seno', cos: 'coseno', tan: 'tangente', cot: 'cotangente', sec: 'secante', csc: 'cosecante' }, tt = S.ang.map(a => trig(a.rad));
+      return card('g-tri', 'bi-grid-3x3', 'Tabla comparativa: las 6 razones de α, β y γ', 'razones', `<table class="t"><tr><th>Razón</th>${[0, 1, 2].map(k => `<th style="background:${COL[k]}">${an(k)} = ${fmt(S.ang[k].deg, 2)}°</th>`).join('')}</tr>
+        ${Object.keys(nm).map(f => `<tr><td class="fw-bold">${nm[f]} (${f === 'sin' ? 'sen' : f})</td>${tt.map(t => `<td>${t[f] === null ? '<span class="text-muted">indefinida</span>' : fmt(t[f], 4)}</td>`).join('')}</tr>`).join('')}</table>
+        <div class="small text-muted mt-2">Si el triángulo es rectángulo, los dos ángulos agudos son complementarios: el seno de uno es el coseno del otro.</div>`);
+    }
+
+    /* ---------- Conversión: lados ↔ ángulos con razones trigonométricas ---------- */
+    let convMode = 'l2a', convAng = 0;
+    function rtData() {
+      if (S.kind === 'rect') { const hy = S.hyp, ks = [0, 1, 2].filter(i => i !== hy); if (!ks.includes(convAng)) convAng = ks[0]; const k = convAng, ak = [0, 1, 2].find(i => i !== k && i !== hy);
+        return { real: true, k, ks, op: S.sides[k], ad: S.sides[ak], hip: S.sides[hy], th: S.ang[k].deg, opS: SIDE[k], adS: SIDE[ak], hipS: SIDE[hy] }; }
+      return { real: false, k: 0, ks: [], op: 3, ad: 4, hip: 5, th: rad2deg(Math.atan2(3, 4)), opS: '', adS: '', hipS: '' };
+    }
+    function rtDiagram(d) {
+      const Wd = 320, Hd = 210, pad = 34, sc = Math.min((Wd - 2 * pad) / d.ad, (Hd - 2 * pad) / d.op), x0 = pad, y0 = Hd - pad, x1 = x0 + d.ad * sc, yt = y0 - d.op * sc, L = Math.hypot(x0 - x1, yt - y0), ux = (x0 - x1) / L, uy = (yt - y0) / L, f = x => fmt(x, 3);
+      return `<svg viewBox="0 0 ${Wd} ${Hd}" class="w-100 border rounded-3 bg-white" role="img" aria-label="Triángulo rectángulo con catetos e hipotenusa">
+        <polygon points="${x0},${y0} ${x1},${y0} ${x0},${yt}" fill="#4dabf7" fill-opacity=".12" stroke="#1e293b" stroke-width="2"/>
+        <line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}" stroke="${GRN}" stroke-width="5"/><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${yt}" stroke="${BLU}" stroke-width="5"/><line x1="${x1}" y1="${y0}" x2="${x0}" y2="${yt}" stroke="${RED}" stroke-width="5"/>
+        <polyline points="${x0 + 14},${y0} ${x0 + 14},${y0 - 14} ${x0},${y0 - 14}" fill="none" stroke="${ORG}" stroke-width="2.5"/>
+        <path d="M${x1 - 30} ${y0} A30 30 0 0 1 ${x1 + ux * 30} ${y0 + uy * 30}" fill="${VIO}" fill-opacity=".25" stroke="${VIO}" stroke-width="2.5"/>
+        <text x="${x1 - 46}" y="${y0 - 8}" font-size="14" font-weight="800" fill="${VIO}">${d.real ? an(d.k) : 'θ'}</text>
+        <text x="${(x0 + x1) / 2}" y="${y0 + 22}" text-anchor="middle" font-size="12" font-weight="800" fill="${GRN}">ady${d.adS ? ' (' + d.adS + ')' : ''} = ${f(d.ad)}</text>
+        <text x="${x0 - 6}" y="${(y0 + yt) / 2}" text-anchor="end" font-size="12" font-weight="800" fill="${BLU}">op${d.opS ? ' (' + d.opS + ')' : ''}</text><text x="${x0 - 6}" y="${(y0 + yt) / 2 + 14}" text-anchor="end" font-size="12" font-weight="800" fill="${BLU}">= ${f(d.op)}</text>
+        <text x="${(x0 + x1) / 2 + 10}" y="${(y0 + yt) / 2 - 8}" font-size="12" font-weight="800" fill="${RED}" paint-order="stroke" stroke="#fff" stroke-width="3">hip${d.hipS ? ' (' + d.hipS + ')' : ''} = ${f(d.hip)}</text></svg>`;
+    }
+    function convCard() {
+      const d = rtData(), f = x => fmt(x, 4), rd = d.th * Math.PI / 180, ang = (v, real) => [v, real, '°'], len = (v, real) => [v, real, ''];
+      let rows;
+      if (convMode === 'l2a') rows = [
+        ['Cateto opuesto e hipotenusa', T`\sin\theta=\frac{op}{hip}`, T`\theta=\arcsin\!\left(\frac{op}{hip}\right)`, T`\arcsin\!\left(\frac{${f(d.op)}}{${f(d.hip)}}\right)`, ang(rad2deg(Math.asin(d.op / d.hip)), d.th)],
+        ['Cateto adyacente e hipotenusa', T`\cos\theta=\frac{ady}{hip}`, T`\theta=\arccos\!\left(\frac{ady}{hip}\right)`, T`\arccos\!\left(\frac{${f(d.ad)}}{${f(d.hip)}}\right)`, ang(rad2deg(Math.acos(d.ad / d.hip)), d.th)],
+        ['Los dos catetos', T`\tan\theta=\frac{op}{ady}`, T`\theta=\arctan\!\left(\frac{op}{ady}\right)`, T`\arctan\!\left(\frac{${f(d.op)}}{${f(d.ad)}}\right)`, ang(rad2deg(Math.atan2(d.op, d.ad)), d.th)],
+        ['Hipotenusa y cateto opuesto', T`\csc\theta=\frac{hip}{op}`, T`\theta=\arcsin\!\left(\frac{1}{\csc\theta}\right)`, T`\arcsin\!\left(\frac{1}{${f(d.hip / d.op)}}\right)`, ang(rad2deg(Math.asin(d.op / d.hip)), d.th)],
+        ['Hipotenusa y cateto adyacente', T`\sec\theta=\frac{hip}{ady}`, T`\theta=\arccos\!\left(\frac{1}{\sec\theta}\right)`, T`\arccos\!\left(\frac{1}{${f(d.hip / d.ad)}}\right)`, ang(rad2deg(Math.acos(d.ad / d.hip)), d.th)],
+        ['Cateto adyacente y cateto opuesto', T`\cot\theta=\frac{ady}{op}`, T`\theta=\arctan\!\left(\frac{1}{\cot\theta}\right)`, T`\arctan\!\left(\frac{1}{${f(d.ad / d.op)}}\right)`, ang(rad2deg(Math.atan(d.op / d.ad)), d.th)]];
+      else rows = [
+        ['Hipotenusa y ángulo → cateto opuesto', T`\sin\theta=\frac{op}{hip}`, T`op=hip\cdot\sin\theta`, T`${f(d.hip)}\cdot\sin(${f(d.th)}^\circ)`, len(d.hip * Math.sin(rd), d.op)],
+        ['Hipotenusa y ángulo → cateto adyacente', T`\cos\theta=\frac{ady}{hip}`, T`ady=hip\cdot\cos\theta`, T`${f(d.hip)}\cdot\cos(${f(d.th)}^\circ)`, len(d.hip * Math.cos(rd), d.ad)],
+        ['Cateto opuesto y ángulo → hipotenusa', T`\csc\theta=\frac{hip}{op}`, T`hip=\frac{op}{\sin\theta}=op\cdot\csc\theta`, T`\frac{${f(d.op)}}{\sin(${f(d.th)}^\circ)}`, len(d.op / Math.sin(rd), d.hip)],
+        ['Cateto opuesto y ángulo → cateto adyacente', T`\cot\theta=\frac{ady}{op}`, T`ady=\frac{op}{\tan\theta}=op\cdot\cot\theta`, T`\frac{${f(d.op)}}{\tan(${f(d.th)}^\circ)}`, len(d.op / Math.tan(rd), d.ad)],
+        ['Cateto adyacente y ángulo → hipotenusa', T`\sec\theta=\frac{hip}{ady}`, T`hip=\frac{ady}{\cos\theta}=ady\cdot\sec\theta`, T`\frac{${f(d.ad)}}{\cos(${f(d.th)}^\circ)}`, len(d.ad / Math.cos(rd), d.hip)],
+        ['Cateto adyacente y ángulo → cateto opuesto', T`\tan\theta=\frac{op}{ady}`, T`op=ady\cdot\tan\theta`, T`${f(d.ad)}\cdot\tan(${f(d.th)}^\circ)`, len(d.ad * Math.tan(rd), d.op)]];
+      // filas para cualquier triángulo (con TU triángulo)
+      const kk = d.real ? d.k : 0, xv = S.sides[kk], yv = S.sides[(kk + 1) % 3], zv = S.sides[(kk + 2) % 3], xs = SIDE[kk], ys = SIDE[(kk + 1) % 3], zs = SIDE[(kk + 2) % 3];
+      if (convMode === 'l2a') rows.push(['Tres lados (cualquier triángulo) ★', T`${xs}^2=${ys}^2+${zs}^2-2\,${ys}\,${zs}\cos ${al(kk)}`, T`${al(kk)}=\arccos\!\left(\frac{${ys}^2+${zs}^2-${xs}^2}{2\,${ys}\,${zs}}\right)`, T`\arccos\!\left(\frac{${f(yv * yv)}+${f(zv * zv)}-${f(xv * xv)}}{2(${f(yv)})(${f(zv)})}\right)`, ang(rad2deg(Math.acos(Math.max(-1, Math.min(1, (yv * yv + zv * zv - xv * xv) / (2 * yv * zv))))), S.ang[kk].deg)]);
+      else { const j = (kk + 1) % 3;
+        rows.push(['Lado conocido y dos ángulos (Ley de Senos) ★', T`\frac{${xs}}{\sin ${al(kk)}}=\frac{${ys}}{\sin ${al(j)}}`, T`${ys}=\frac{${xs}\,\sin ${al(j)}}{\sin ${al(kk)}}`, T`\frac{${f(xv)}\sin(${f(S.ang[j].deg)}^\circ)}{\sin(${f(S.ang[kk].deg)}^\circ)}`, len(xv * Math.sin(S.ang[j].rad) / Math.sin(S.ang[kk].rad), yv)]);
+        rows.push(['Dos lados y el ángulo entre ellos (Ley de Cosenos) ★', T`${xs}^2=${ys}^2+${zs}^2-2\,${ys}\,${zs}\cos ${al(kk)}`, T`${xs}=\sqrt{${ys}^2+${zs}^2-2\,${ys}\,${zs}\cos ${al(kk)}}`, T`\sqrt{${f(yv * yv)}+${f(zv * zv)}-2(${f(yv)})(${f(zv)})\cos(${f(S.ang[kk].deg)}^\circ)}`, len(Math.sqrt(yv * yv + zv * zv - 2 * yv * zv * Math.cos(S.ang[kk].rad)), xv)]); }
+      const body = rows.map(r => { const [v, real, u] = r[4]; return `<tr><td class="text-start small">${r[0]}</td><td>$${r[1]}$</td><td>$${r[2]}$</td><td>$${r[3]}$</td><td class="fw-bold">${fmt(v)}${u}</td><td>${badge(close(v, real), close(v, real) ? '✓' : '✗')}</td></tr>`; }).join('');
+      const pills = d.real ? `<div class="mb-2 d-flex flex-wrap gap-1 align-items-center"><span class="small fw-semibold me-1">Ángulo agudo a usar:</span>${d.ks.map(i => `<button class="btn btn-sm ${i === d.k ? 'btn-dark' : 'btn-outline-dark'} rounded-pill" data-convang="${i}" style="${i === d.k ? '' : 'color:' + COL[i] + ';border-color:' + COL[i]}">${an(i)} = ${fmt(S.ang[i].deg, 2)}°</button>`).join('')}</div>` : `<div class="tip-box s-volt small mb-2"><i class="bi bi-info-circle-fill me-1"></i>Tu triángulo no es rectángulo: las 6 primeras filas usan el triángulo de ejemplo 3-4-5. Las filas con ★ sí usan <b>tu</b> triángulo.</div>`;
+      const title = convMode === 'l2a' ? 'Tabla: pasar de LADOS a ÁNGULOS con las razones trigonométricas' : 'Tabla: pasar de ÁNGULOS a LADOS con las razones trigonométricas';
+      return card(convMode === 'l2a' ? 'g-pit' : 'g-law', 'bi-table', title, 'razones', `<div class="row g-3"><div class="col-md-5">${rtDiagram(d)}<div class="small text-muted mt-1">Con respecto a θ: <b style="color:${BLU}">op</b> está frente al ángulo, <b style="color:${GRN}">ady</b> lo toca y <b style="color:${RED}">hip</b> es el lado mayor.</div></div>
+        <div class="col-md-7">${pills}<div class="tip-box s-amp small"><b>Regla práctica:</b> ${convMode === 'l2a' ? 'identifica los <b>dos lados que conoces</b>, elige la razón que los relaciona y aplica la función <b>inversa</b> (arcsen, arccos, arctan) para obtener θ.' : 'identifica el <b>lado y el ángulo que conoces</b>, elige la razón que relaciona el lado que buscas y <b>despeja</b> multiplicando o dividiendo.'}</div></div></div>
+        <div class="table-responsive mt-3"><table class="t"><tr><th>Conozco</th><th>Razón</th><th>Fórmula a usar</th><th>Sustitución</th><th>Resultado</th><th>¿Coincide?</th></tr>${body}</table></div>
+        <div class="small text-muted mt-2">Calculadora en <b>grados</b> (DEG). Con ${d.real ? `tu triángulo rectángulo y θ = ${an(d.k)} = ${fmt(d.th, 4)}°` : 'el ejemplo 3-4-5 y θ = 36.8699°'}.</div>`);
+    }
+    function modeSwitch() {
+      return `<div class="panel mb-3"><div class="fw-bold mb-2"><i class="bi bi-signpost-split-fill me-1 text-primary"></i>¿Qué quieres hacer?</div><div class="btn-group flex-wrap" role="group" aria-label="Dirección de la conversión">
+        <button class="btn ${convMode === 'l2a' ? 'btn-dark' : 'btn-outline-dark'}" data-conv="l2a"><i class="bi bi-arrow-left-circle me-1"></i>De LADOS a ÁNGULOS</button>
+        <button class="btn ${convMode === 'a2l' ? 'btn-dark' : 'btn-outline-dark'}" data-conv="a2l"><i class="bi bi-arrow-right-circle me-1"></i>De ÁNGULOS a LADOS</button></div>
+        <div class="small text-muted mt-2">${convMode === 'l2a' ? 'Tienes medidas de lados y quieres el ángulo → funciones <b>inversas</b>.' : 'Tienes un ángulo y un lado y quieres otro lado → razones <b>directas</b> despejadas.'}</div></div>`;
+    }
+
+    /* ---------- Eventos nuevos ---------- */
+    document.addEventListener('click', e => {
+      const c = e.target.closest('[data-conv]'); if (c) { convMode = c.dataset.conv; renderTab('idn'); }
+      const ca = e.target.closest('[data-convang]'); if (ca) { convAng = +ca.dataset.convang; renderTab('idn'); }
+      const nb = e.target.closest('[data-not]'); if (nb) { NOT = nb.dataset.not; $$('#not-g button').forEach(b => b.classList.toggle('active', b.dataset.not === NOT)); update(); }
+      if (e.target.closest('#z-in')) { ZOOM = Math.min(8, ZOOM * 1.25); viewRedraw(); } if (e.target.closest('#z-out')) { ZOOM = Math.max(.3, ZOOM / 1.25); viewRedraw(); }
+      if (e.target.closest('#z-reset')) { ZOOM = 1; PAN = { x: 0, y: 0 }; viewRedraw(); }
+      if (e.target.closest('#z-full')) { const w = $('.plot-wrap'); if (document.fullscreenElement) document.exitFullscreen(); else if (w.requestFullscreen) w.requestFullscreen(); }
+    });
+
     /* ---------- Orquestación ---------- */
-    const renderers = { geo: tabGeo, pit: tabPit, tri: tabTri, law: tabLaw, th: tabTh };
+    const renderers = { idn: tabIdn, geo: tabGeo, pit: tabPit, tri: tabTri, law: tabLaw, th: tabTh };
     function renderTab(id) {
       const el = $('#t-' + id);
       if (id !== 'th' && S.degenerate) { el.innerHTML = '<div class="tip-box s-res"><i class="bi bi-exclamation-triangle-fill me-1"></i>Los tres puntos son colineales (área = 0): no forman un triángulo. Mueve algún vértice.</div>'; return; }
-      el.innerHTML = renderers[id](); math(el); if (id === 'pit') { $('#pit-ang') && pitLab(); }
+      el.innerHTML = introBox(id) + renderers[id](); math(el); if (id === 'pit') { $('#pit-ang') && pitLab(); } if (id === 'idn') { ucUpdate(); rtOut(); }
     }
     function update() {
       DEC = +$('#dec').value;
@@ -492,6 +869,7 @@
       S = solve(P); const w = $('#warn');
       if (S.degenerate) { w.classList.remove('d-none'); w.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i>Puntos colineales: el área es 0 y no hay triángulo.'; $('#summary').innerHTML = ''; }
       else { w.classList.add('d-none'); $('#summary').innerHTML = [['Perímetro', fmt(S.perim, 2)], ['Área', fmt(S.K, 2)], ['Lados', S.bySides], ['Ángulos', { rect: 'Rectángulo', acut: 'Acutángulo', obt: 'Obtusángulo' }[S.kind]]].map(([a, b]) => `<span class="pill-stat">${a}: <b>${b}</b></span>`).join(''); }
+      $('#greek-legend').innerHTML = S.degenerate ? '' : S.ang.map((a, k) => `<span class="pill-stat" style="border-color:${COL[k]}"><b style="color:${COL[k]};font-size:1.05rem">${GK[k]}</b> ${GN[k]} (vértice ${NAMES[k]}) = <b>${fmt(a.deg, 2)}°</b></span>`).join('');
       drawPlot(); renderTab(curTab);
     }
     let raf = 0; const sched = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; if (readInputs()) { S = solve(P); drawPlot(); if (drag >= 0) { if (!S.degenerate) $('#summary').innerHTML = `<span class="pill-stat">Arrastrando… suelta para recalcular todo</span>`; } else renderTab(curTab); } }); };
