@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precursores de la Computación y la Cibernética</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, Leaflet (mapa de lugares), canvas-confetti, SweetAlert2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --c-lovelace:#d6336c; --c-wiener:#1c7ed6; --c-rosenblueth:#2f9e44; --c-turing:#e8590c; --c-shannon:#7048e8; --c-booth:#0c8599; --c-bartik:#e03131;
+      --ink:#1e293b; --muted:#64748b; --paper:#fffdf8;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:var(--ink); }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con constelación */
+    .hero-header { position:relative; overflow:hidden; background:radial-gradient(circle at 20% 20%,#1e3a5f 0,#0f172a 55%,#0b1020 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #e8590c; box-shadow:var(--shadow-md); }
+    #hero-net { position:absolute; inset:0; width:100%; height:100%; opacity:.55; pointer-events:none; }
+    .hero-header .container { position:relative; z-index:1; }
+    .hero-stat { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(4px); border-radius:16px; padding:.7rem 1.1rem; min-width:130px; }
+    .hero-stat b { display:block; font-size:1.9rem; font-weight:800; line-height:1.1; font-family:'Courier New',monospace; }
+    .hero-stat span { font-size:.78rem; opacity:.85; }
+    .face-row { display:flex; justify-content:center; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem; }
+    .face { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; border:3px solid rgba(255,255,255,.7); box-shadow:0 4px 12px rgba(0,0,0,.4); cursor:pointer; transition:transform .2s; animation:pop .5s both; }
+    .face:hover { transform:translateY(-5px) scale(1.12); }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#e8590c; color:#e8590c; }
+
+    /* Tarjetas de sección */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head h2 { color:#fff; }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#e8590c,#b34000)} .h-2{background:linear-gradient(135deg,#1c7ed6,#1864ab)} .h-3{background:linear-gradient(135deg,#7048e8,#5130b9)}
+    .h-4{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)} .h-6{background:linear-gradient(135deg,#d6336c,#a61e4d)} .h-7{background:linear-gradient(135deg,#f08c00,#b45309)} .h-8{background:linear-gradient(135deg,#475569,#1e293b)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+    /* Chips de personas */
+    .pchip { display:inline-flex; align-items:center; gap:.4rem; border:2px solid var(--c); color:var(--c); background:#fff; border-radius:999px; padding:.2rem .8rem .2rem .3rem; font-weight:700; font-size:.85rem; cursor:pointer; transition:all .2s; user-select:none; }
+    .pchip i.dot { width:22px; height:22px; border-radius:50%; background:var(--c); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-style:normal; font-size:.72rem; }
+    .pchip.off { opacity:.4; filter:grayscale(.8); }
+    .pchip:hover { transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+    .tchip { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; font-size:.78rem; font-weight:700; padding:.12rem .65rem; background:color-mix(in srgb,var(--c) 14%,#fff); color:var(--c); border:1.5px solid var(--c); }
+
+    /* ===== Línea del tiempo ===== */
+    .tl-wrap { position:relative; overflow-x:auto; border-radius:16px; border:1px solid #e2e8f0; background:linear-gradient(#fff,#f8fafc); }
+    .tl-wrap svg { display:block; }
+    .tl-year { font:600 11px 'Segoe UI',sans-serif; fill:#94a3b8; }
+    .tl-year.big { fill:#475569; font-weight:800; font-size:12px; }
+    .tl-lane-label { font:800 12px 'Segoe UI',sans-serif; }
+    .tl-bar { transition:opacity .25s; }
+    .ev { cursor:pointer; } .ev circle, .ev rect, .ev path { transition:transform .15s; transform-box:fill-box; transform-origin:center; }
+    .ev:hover circle, .ev:hover rect, .ev:hover path, .ev.sel circle, .ev.sel rect, .ev.sel path { transform:scale(1.5); }
+    .ev.sel .ring { opacity:1; } .ring { opacity:0; fill:none; stroke-width:2.5; }
+    .ev.dim { opacity:.25; } .ev.rel { opacity:1; }
+    .relpath { fill:none; stroke-width:2.5; stroke-dasharray:6 5; animation:dash 1.2s linear infinite; opacity:.85; }
+    @keyframes dash { to { stroke-dashoffset:-22; } }
+    #scrub-line { stroke:#0f172a; stroke-width:2; stroke-dasharray:4 4; } #scrub-lab { font:800 12px 'Courier New',monospace; fill:#fff; }
+    .tl-tip { position:absolute; pointer-events:none; background:#0f172a; color:#fff; border-radius:10px; padding:.35rem .7rem; font-size:.8rem; box-shadow:var(--shadow-md); z-index:5; max-width:260px; opacity:0; transition:opacity .15s; }
+    .tl-tip.on { opacity:1; }
+    .detail-card { border-radius:16px; border-left:8px solid var(--c,#475569); background:#fff; box-shadow:var(--shadow-md); padding:1rem 1.2rem; animation:pop .3s both; }
+    .detail-card h5 { color:var(--c); font-weight:800; }
+    .status-bar { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.7rem 1rem; font-size:.92rem; }
+    .status-bar .year { font:800 1.8rem 'Courier New',monospace; color:#ffd43b; line-height:1; }
+    .alive { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; padding:.1rem .6rem; font-size:.8rem; font-weight:700; background:color-mix(in srgb,var(--c) 85%,#000); color:#fff; margin:.15rem .2rem .15rem 0; }
+    .ev-chip { display:inline-block; border-radius:8px; padding:.05rem .5rem; font-size:.78rem; margin:.1rem .2rem .1rem 0; background:#1e293b; color:#fff; cursor:pointer; border-left:4px solid var(--c); } .ev-chip:hover { background:#334155; }
+    input[type=range].yr { accent-color:#e8590c; }
+
+    /* ===== Tarjetas de personas ===== */
+    .pcard { border:0; border-radius:20px; overflow:hidden; background:#fff; box-shadow:var(--shadow-md); height:100%; display:flex; flex-direction:column; transition:transform .25s, box-shadow .25s; animation:pop .5s both; }
+    .pcard:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+    .pcard-head { background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 55%,#000)); color:#fff; padding:1rem 1.1rem; display:flex; gap:.8rem; align-items:center; position:relative; overflow:hidden; }
+    .pcard-head::after { content:attr(data-years); position:absolute; right:-6px; bottom:-14px; font:800 3.4rem 'Courier New',monospace; opacity:.13; letter-spacing:-.05em; }
+    .avatar { width:58px; height:58px; border-radius:50%; background:rgba(255,255,255,.22); border:3px solid rgba(255,255,255,.8); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.4rem; flex:0 0 auto; }
+    .pcard-body { padding:1rem 1.1rem; flex:1; display:flex; flex-direction:column; gap:.55rem; font-size:.92rem; }
+    .era-badge { font-size:.72rem; font-weight:700; background:rgba(255,255,255,.2); border-radius:999px; padding:.05rem .6rem; }
+    .main-ap { background:color-mix(in srgb,var(--c) 10%,#fff); border-left:5px solid var(--c); border-radius:0 12px 12px 0; padding:.5rem .8rem; }
+    .mini-lbl { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+    .lnk-chip { display:inline-block; font-size:.76rem; font-weight:700; border-radius:999px; padding:.05rem .6rem; margin:.1rem .15rem .1rem 0; border:1.5px solid #cbd5e1; background:#fff; cursor:pointer; color:#334155; } .lnk-chip:hover { background:#fff3bf; border-color:#f59f00; }
+
+    /* ===== Grafo de conexiones ===== */
+    .graph-box { position:relative; border-radius:16px; border:1px solid #e2e8f0; background:radial-gradient(circle at 50% 45%,#ffffff,#eef2f7); overflow:hidden; touch-action:none; }
+    #graph { width:100%; height:auto; display:block; cursor:grab; user-select:none; }
+    #graph .node { cursor:pointer; transition:opacity .25s; } #graph .node text { pointer-events:none; font:700 13px 'Segoe UI',sans-serif; paint-order:stroke; stroke:#fff; stroke-width:3.5px; }
+    #graph .node.main text { font-size:16px; font-weight:800; }
+    #graph .edge { transition:opacity .25s; } #graph .edge.dim, #graph .node.dim { opacity:.12; }
+    #graph .edge-hit { stroke:transparent; stroke-width:14; cursor:pointer; }
+    #graph .node.sel circle { stroke:#0f172a; stroke-width:4; }
+    .legend-edge { display:inline-flex; align-items:center; gap:.35rem; font-size:.78rem; font-weight:700; padding:.15rem .6rem; border-radius:999px; border:1.5px solid var(--c); color:var(--c); background:#fff; cursor:pointer; }
+    .legend-edge.off { opacity:.35; text-decoration:line-through; }
+    .legend-edge i.sw { width:18px; height:0; border-top:4px solid var(--c); display:inline-block; }
+    .meet-card { border-radius:14px; background:#fff; border:1px solid #e2e8f0; border-top:5px solid var(--c); padding:.8rem 1rem; box-shadow:var(--shadow-sm); height:100%; cursor:pointer; transition:transform .2s; }
+    .meet-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .cmp-out { border-radius:16px; background:#0f172a; color:#e0f2fe; padding:1rem 1.2rem; }
+    .cmp-out .big { font:800 2.2rem 'Courier New',monospace; color:#ffd43b; line-height:1; }
+    .overlap-bar { position:relative; height:34px; background:#1e293b; border-radius:10px; overflow:hidden; margin:.3rem 0; }
+    .overlap-bar span { position:absolute; top:0; bottom:0; display:flex; align-items:center; padding:0 .4rem; font-size:.72rem; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; }
+
+    /* ===== Mapa ===== */
+    #map { height:520px; border-radius:16px; border:1px solid #e2e8f0; box-shadow:var(--shadow-sm); z-index:1; }
+    .map-fallback { height:520px; display:flex; align-items:center; justify-content:center; background:#e2e8f0; border-radius:16px; color:#475569; text-align:center; padding:1rem; }
+    .pin { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:3px solid #fff; box-shadow:0 3px 10px rgba(0,0,0,.4); color:#fff; font-weight:800; font-size:.8rem; }
+    .pin span { transform:rotate(45deg); }
+    .leaflet-popup-content { font-family:'Segoe UI',sans-serif; font-size:.88rem; min-width:210px; }
+    .pop-row { display:flex; gap:.4rem; align-items:flex-start; margin:.25rem 0; } .pop-row b { flex:0 0 auto; border-radius:6px; padding:0 .4rem; color:#fff; font-size:.75rem; }
+
+    /* ===== Literatura ===== */
+    .lit-card { border-radius:16px; background:#fff; padding:1rem 1.1rem; box-shadow:var(--shadow-sm); border:1px solid #e2e8f0; border-left:7px solid var(--c); height:100%; transition:transform .2s; animation:pop .4s both; }
+    .lit-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .lit-card .who { font-size:.75rem; font-weight:800; color:var(--c); text-transform:uppercase; letter-spacing:.04em; }
+    .lit-card h6 { font-weight:800; margin:.15rem 0; }
+    .src-pill { font-size:.7rem; background:#f1f5f9; border-radius:999px; padding:.05rem .55rem; color:#475569; border:1px solid #e2e8f0; }
+
+    /* ===== Quiz ===== */
+    .qopt { display:block; width:100%; text-align:left; border:2px solid #e2e8f0; background:#fff; border-radius:14px; padding:.65rem 1rem; margin-bottom:.5rem; font-weight:600; transition:all .2s; }
+    .qopt:hover:not(:disabled) { border-color:#e8590c; background:#fff4e0; transform:translateX(4px); }
+    .qopt.ok { background:#d3f9d8; border-color:#2f9e44; } .qopt.bad { background:#ffe3e3; border-color:#e03131; }
+    .qbar { height:10px; border-radius:999px; background:#e2e8f0; overflow:hidden; } .qbar > div { height:100%; background:linear-gradient(90deg,#e8590c,#f08c00); transition:width .4s; }
+
+    .check-item { display:flex; gap:.6rem; align-items:flex-start; padding:.6rem .9rem; border-radius:12px; background:#fff; border:1.5px dashed #cbd5e1; margin-bottom:.5rem; cursor:pointer; transition:all .2s; }
+    .check-item.done { background:#e6f6ea; border-style:solid; border-color:#2f9e44; text-decoration:line-through; color:#64748b; }
+    .src-list a { color:#1864ab; } .src-list li { margin-bottom:.25rem; font-size:.9rem; }
+    .tl-bar.flash rect { animation:flashbar .6s 6; }
+    @keyframes flashbar { 50% { opacity:.1; } }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .face,.pcard,.detail-card,.relpath,.lit-card{animation:none} }
+  </style>
+</head>
+<body>
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s1">1. Línea del tiempo</a><a href="#s2">2. Personas</a><a href="#s3">3. Conexiones</a><a href="#s4">4. Lugares</a><a href="#s5">5. Letras e historia</a><a href="#s6">6. Reto</a><a href="#s7">7. Pendientes y fuentes</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <svg id="hero-net" aria-hidden="true"></svg>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-diagram-3-fill text-warning me-2"></i>Precursores de la computación y la cibernética</h1>
+        <p class="lead mb-1">Siete personas, dos épocas y una red de encuentros que llevó a las primeras computadoras</p>
+        <p class="mb-3 text-light opacity-75">Recorre su línea del tiempo, descubre con quién convivieron y dónde estuvieron</p>
+        <div class="d-flex flex-wrap justify-content-center gap-2 mt-3" id="hero-stats"></div>
+        <div class="face-row" id="faces"></div>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+
+      <!-- RESUMEN -->
+      <div class="row g-3 mb-5">
+        <div class="col-lg-7"><div class="panel h-100"><h5 class="fw-bold"><i class="bi bi-journal-richtext text-warning me-1"></i>La historia en breve</h5>
+          <p class="mb-2">Los siete se reparten en <strong>dos épocas</strong>: <strong>Lovelace (1815–1852)</strong> vivió un siglo antes que los demás, y los otros seis coincidieron entre <strong>1924 y 1954</strong>, el periodo de la Segunda Guerra Mundial y las primeras computadoras.</p>
+          <p class="mb-0">Hay <strong>cuatro contactos directos documentados</strong>: Wiener–Rosenblueth, Turing–Shannon, Wiener–Shannon (Conferencias Macy) y Booth–von Neumann. Los demás se conectan por instituciones o por influencia intelectual, como Turing respondiendo a Lovelace en 1950.</p></div></div>
+        <div class="col-lg-5"><div class="panel h-100"><h5 class="fw-bold"><i class="bi bi-signpost-split-fill text-primary me-1"></i>Cómo usar esta página</h5>
+          <ul class="small mb-0 lh-lg"><li><strong>Línea del tiempo:</strong> toca un punto para ver el hecho y sus eventos ligados; mueve el año o dale «Recorrer».</li><li><strong>Personas:</strong> tarjetas con aporte, lugares y contactos; abre el perfil completo.</li><li><strong>Conexiones:</strong> red que puedes arrastrar; compara a dos personas.</li><li><strong>Lugares:</strong> mapa que se llena según el año.</li><li><strong>Reto:</strong> pon a prueba lo que aprendiste.</li></ul></div></div>
+      </div>
+
+      <!-- 1. LÍNEA DEL TIEMPO -->
+      <section class="lesson mb-5" id="s1">
+        <div class="card lesson-card">
+          <div class="lesson-head h-1"><div class="num">1</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Línea del tiempo</h2><small>Vidas (barras), hechos (puntos) y contexto mundial (carril superior)</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-3" id="tl-filter"></div>
+            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Zoom">
+                <button class="btn btn-outline-dark" id="z-out" aria-label="Alejar"><i class="bi bi-zoom-out"></i></button><button class="btn btn-outline-dark" id="z-in" aria-label="Acercar"><i class="bi bi-zoom-in"></i></button></div>
+              <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-primary" data-zoom="all">Todo (1815–2022)</button><button class="btn btn-outline-primary" data-zoom="lovelace">Era Lovelace</button><button class="btn btn-outline-primary" data-zoom="modern">Era moderna 1924–1954</button><button class="btn btn-outline-primary" data-zoom="after">Después de 1954</button></div>
+              <div class="ms-auto d-flex gap-3 small text-muted flex-wrap">
+                <span><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#475569"/></svg> aporte</span><span><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#fff" stroke="#475569" stroke-width="2"/></svg> vida</span><span><svg width="14" height="14"><rect x="2" y="2" width="10" height="10" transform="rotate(45 7 7)" fill="#475569"/></svg> encuentro</span><span><svg width="14" height="14"><path d="M7 1l6 11H1z" fill="#475569"/></svg> reconocimiento / legado</span></div>
+            </div>
+            <div class="tl-wrap" id="tl-wrap"><div class="tl-tip" id="tl-tip"></div><svg id="tl-svg" role="img" aria-label="Línea del tiempo de los siete precursores"></svg></div>
+            <div class="row g-3 mt-1 align-items-stretch">
+              <div class="col-lg-5"><div class="status-bar h-100">
+                <div class="d-flex align-items-center gap-3 flex-wrap"><div class="year" id="st-year">1946</div>
+                  <div class="flex-grow-1"><input type="range" class="form-range yr" id="yr" min="1815" max="2022" value="1946" aria-label="Año"></div>
+                  <button class="btn btn-sm btn-warning rounded-pill fw-semibold" id="play"><i class="bi bi-play-fill"></i> Recorrer</button></div>
+                <div class="mt-2 small" id="st-alive"></div><div class="mt-1 small" id="st-events"></div></div></div>
+              <div class="col-lg-7"><div id="ev-detail" class="detail-card"><div class="text-muted"><i class="bi bi-hand-index-thumb-fill me-1"></i>Toca un punto de la línea del tiempo para ver el hecho, su lugar y los eventos con los que se liga.</div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PERSONAS -->
+      <section class="lesson mb-5" id="s2">
+        <div class="card lesson-card">
+          <div class="lesson-head h-2"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Perfiles y aporte principal</h2><small>Quién fue, qué aportó, dónde estuvo y con quién se cruzó</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 align-items-center mb-3"><strong class="small">Mostrar:</strong>
+              <div class="btn-group btn-group-sm" id="era-filter"><button class="btn btn-outline-dark active" data-era="all">Todos</button><button class="btn btn-outline-dark" data-era="xix">Siglo XIX</button><button class="btn btn-outline-dark" data-era="xx">Siglo XX</button></div>
+              <div class="btn-group btn-group-sm ms-2" id="sort-filter"><button class="btn btn-outline-secondary active" data-sort="born">Por nacimiento</button><button class="btn btn-outline-secondary" data-sort="age">Por duración de vida</button></div></div>
+            <div class="row g-4" id="pcards"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CONEXIONES -->
+      <section class="lesson mb-5" id="s3">
+        <div class="card lesson-card">
+          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Red de conexiones</h2><small>Arrastra los nodos, toca una persona o una línea para ver qué los unió</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-2" id="edge-legend"></div>
+            <div class="row g-3">
+              <div class="col-xl-8"><div class="graph-box"><svg id="graph" viewBox="0 0 1000 640" role="img" aria-label="Red de conexiones entre los precursores"></svg>
+                <div class="position-absolute top-0 end-0 m-2"><button class="btn btn-sm btn-light shadow-sm rounded-pill" id="g-reset"><i class="bi bi-arrow-repeat me-1"></i>Reordenar</button></div></div></div>
+              <div class="col-xl-4"><div class="panel h-100" id="g-detail"><div class="text-muted small"><i class="bi bi-hand-index-thumb-fill me-1"></i>Los <strong>círculos grandes</strong> son los siete precursores; los pequeños, personas con las que convivieron. El color de la línea indica el tipo de relación.</div></div></div>
+            </div>
+
+            <h5 class="fw-bold mt-4"><i class="bi bi-people-fill me-1 text-primary"></i>¿Coincidieron? Compara a dos personas</h5>
+            <div class="row g-3 align-items-start">
+              <div class="col-lg-4"><label class="form-label small fw-semibold" for="cmp-a">Persona A</label><select id="cmp-a" class="form-select"></select><label class="form-label small fw-semibold mt-2" for="cmp-b">Persona B</label><select id="cmp-b" class="form-select"></select></div>
+              <div class="col-lg-8"><div class="cmp-out" id="cmp-out"></div></div>
+            </div>
+
+            <h5 class="fw-bold mt-4"><i class="bi bi-chat-heart-fill me-1 text-danger"></i>Colaboraciones y encuentros documentados</h5>
+            <div class="row g-3" id="meets"></div>
+            <div class="tip-box s-volt mt-3 small"><i class="bi bi-exclamation-circle-fill text-warning me-1"></i>No hay registro de contacto directo entre Bartik y Booth, aunque ambas trabajaron en el entorno de von Neumann al mismo tiempo (1946–1947).</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. LUGARES -->
+      <section class="lesson mb-5" id="s4">
+        <div class="card lesson-card">
+          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Mapa de lugares</h2><small>Dónde nacieron, estudiaron, trabajaron y se encontraron</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-2" id="map-filter"></div>
+            <div class="row g-3 align-items-center mb-2"><div class="col-lg-8 d-flex align-items-center gap-3"><span class="small fw-bold text-nowrap">Hasta el año:</span><input type="range" class="form-range yr" id="yr2" min="1815" max="2022" value="2022" aria-label="Año del mapa"><span class="mono fs-5" id="yr2-out">2022</span></div>
+              <div class="col-lg-4 d-flex gap-2 justify-content-lg-end"><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" id="m-route" checked><label class="form-check-label small" for="m-route">Trayectorias</label></div><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" id="m-sync" checked><label class="form-check-label small" for="m-sync">Sincronizar con la línea del tiempo</label></div></div></div>
+            <div id="map"></div>
+            <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Toca un marcador para ver quién estuvo ahí y qué pasó. Los lugares aparecen conforme avanza el año. Las estancias sin fecha precisa (por ejemplo Wiener en México) se muestran siempre.</div>
+            <div class="row g-3 mt-2" id="shared-places"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. LETRAS -->
+      <section class="lesson mb-5" id="s5">
+        <div class="card lesson-card">
+          <div class="lesson-head h-6"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Convivencia con poetas, escritores e historiadores</h2><small>Cinco de los siete tuvieron un vínculo verificable con el mundo literario o histórico</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-3" id="lit-filter"></div>
+            <div class="row g-3" id="lit-grid"></div>
+            <div class="tip-box s-watt mt-3 small"><i class="bi bi-info-circle-fill me-1 text-primary"></i>Booth no tiene un vínculo literario conocido, aunque dirigió desde 1965 un proyecto nacional de traducción automática de idiomas en Canadá.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. RETO -->
+      <section class="lesson mb-5" id="s6">
+        <div class="card lesson-card">
+          <div class="lesson-head h-5"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Reto: ¿cuánto recuerdas?</h2><small>Diez preguntas con pistas del contexto histórico</small></div><button class="btn btn-sm btn-light rounded-pill" id="q-restart"><i class="bi bi-arrow-repeat me-1"></i>Reiniciar</button></div>
+          <div class="card-body"><div class="row justify-content-center"><div class="col-lg-9"><div class="qbar mb-3"><div id="q-bar" style="width:0"></div></div><div id="q-box"></div></div></div></div>
+        </div>
+      </section>
+
+      <!-- 7. PENDIENTES Y FUENTES -->
+      <section class="lesson mb-4" id="s7">
+        <div class="card lesson-card">
+          <div class="lesson-head h-8"><div class="num">7</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Pendiente de verificar y fuentes</h2><small>Lo que las fuentes no permiten afirmar todavía</small></div></div>
+          <div class="card-body"><div class="row g-4"><div class="col-lg-6"><h6 class="fw-bold"><i class="bi bi-question-octagon-fill text-warning me-1"></i>Pendiente de verificar <span class="small text-muted fw-normal">(márcalos al investigarlos)</span></h6><div id="pend"></div></div>
+            <div class="col-lg-6"><h6 class="fw-bold"><i class="bi bi-book-fill text-primary me-1"></i>Fuentes</h6><ul class="src-list ps-3" id="sources"></ul></div></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL: PERFIL -->
+  <div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"><div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="modal-header text-white border-0" id="pm-head"><h5 class="modal-title fw-bold" id="pm-title"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+      <div class="modal-body bg-light" id="pm-body"></div>
+    </div></div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Cibernética • Precursores</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" }, { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" }, { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" },
+          { label: "Precursores de la computación", href: "precursores.html", icon: "bi-clock-history" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+        <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div></div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header'), page = location.pathname.split('/').pop() || 'precursores.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- ===================== DATOS ===================== -->
+  <script>
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    /* ---------- Personas ---------- */
+    const PEOPLE = [
+      { id: 'lovelace', name: 'Ada Lovelace', ini: 'AL', color: '#d6336c', born: 1815, died: 1852, era: 'xix', place: 'Inglaterra', tag: 'Primer algoritmo para una máquina',
+        main: 'Notas de 1843 sobre la Máquina Analítica de Babbage, consideradas el primer algoritmo para una máquina.',
+        others: ['Llamó a su enfoque «ciencia poética»', 'Planteó que la máquina solo hace lo que se le ordena', 'Ejemplo con números de Bernoulli (1843)'],
+        fun: 'Pidió ser enterrada junto a su padre, Lord Byron, a quien nunca conoció: se separó de la familia al mes de nacer ella.', places: ['londres', 'hucknall'] },
+      { id: 'wiener', name: 'Norbert Wiener', ini: 'NW', color: '#1c7ed6', born: 1894, died: 1964, era: 'xx', place: 'EE. UU.', tag: 'Fundó la cibernética',
+        main: 'Fundó la cibernética con su libro Cybernetics (1948) y acuñó el término.',
+        others: ['Proceso de Wiener y filtro de Wiener', 'Predictor antiaéreo con Julian Bigelow', 'Advirtió sobre los riesgos de la automatización', 'Premio Bôcher (1933)'],
+        fun: 'Entró a Tufts a los 11 años, se graduó a los 14 y se doctoró en Harvard a los 18; su padre fue historiador y traductor de Tolstói.', places: ['columbia', 'cambridgema', 'cambridgeuk', 'gottingen', 'cdmx', 'estocolmo'] },
+      { id: 'rosenblueth', name: 'Arturo Rosenblueth', ini: 'AR', color: '#2f9e44', born: 1900, died: 1970, era: 'xx', place: 'México (n. en Chihuahua)', tag: 'Cibernética y fisiología',
+        main: 'Coautor de «Behavior, Purpose and Teleology» (1943), artículo base de la cibernética.',
+        others: ['Jefe de Fisiología del Instituto Nacional de Cardiología (1944)', 'Primer director del Cinvestav (1961)', 'Candidato al Nobel en 1952', 'Mente y cerebro (1970)'],
+        fun: 'Wiener le dedicó Cybernetics. Compartió El Colegio Nacional con Alfonso Reyes durante 12 años.', places: ['cdguerrero', 'berlin', 'paris', 'cdmx', 'boston', 'cdmx'] },
+      { id: 'turing', name: 'Alan Turing', ini: 'AT', color: '#e8590c', born: 1912, died: 1954, era: 'xx', place: 'Inglaterra', tag: 'Computadora universal',
+        main: 'Máquina de Turing (1936) y la idea de computadora universal.',
+        others: ['Descifrado de Enigma en Bletchley Park', 'El «juego de la imitación» (1950)', 'Diseño del ACE en el NPL', 'Morfogénesis (1952)'],
+        fun: 'En 1950 discutió y rebatió la «objeción de Lady Lovelace»: dialogó con Ada un siglo después.', places: ['maidavale', 'sherborne', 'cambridgeuk', 'princeton', 'bletchley', 'nyc', 'teddington', 'manchester', 'wilmslow'] },
+      { id: 'shannon', name: 'Claude Shannon', ini: 'CS', color: '#7048e8', born: 1916, died: 2001, era: 'xx', place: 'EE. UU.', tag: 'Teoría de la información',
+        main: 'Teoría de la información (1948): «A Mathematical Theory of Communication».',
+        others: ['Tesis de 1937 que une circuitos y álgebra de Boole', 'Criptografía (1949)', 'Ratón Theseus que aprende un laberinto (1950)', 'Taller de Dartmouth (1956)'],
+        fun: 'Escribió el poema «A Rubric on Rubik Cubics» (1981), con notas al pie imitando a T. S. Eliot.', places: ['petoskey', 'annarbor', 'cambridgema', 'princeton', 'nyc', 'hanover', 'medford'] },
+      { id: 'booth', name: 'Kathleen Booth', ini: 'KB', color: '#0c8599', born: 1922, died: 2022, era: 'xx', place: 'Inglaterra y Canadá', tag: 'Primer lenguaje ensamblador',
+        main: 'Primer lenguaje ensamblador y su ensamblador, para la computadora ARC.',
+        others: ['Diseñó ARC, SEC y APE(X)C (1947–1953)', 'Redes neuronales en Birkbeck (1958)', 'Traducción automática en Canadá (1965)', 'Programming for an Automatic Digital Calculator (1958)'],
+        fun: 'Vivió 100 años: nació en 1922 y murió en 2022 en Sooke, Columbia Británica.', places: ['stourbridge', 'farnborough', 'londres', 'princeton', 'saskatoon', 'thunderbay', 'sooke'] },
+      { id: 'bartik', name: 'Jean Jennings Bartik', ini: 'JB', color: '#e03131', born: 1924, died: 2011, era: 'xx', place: 'EE. UU.', tag: 'Programadora de la ENIAC',
+        main: 'Una de las seis primeras programadoras de la ENIAC, presentada el 15 de febrero de 1946.',
+        others: ['Convirtió la ENIAC en máquina de programa almacenado (1947–48)', 'Trabajó en BINAC y UNIVAC I', 'SORT/MERGE con Betty Holberton', 'IEEE Computer Pioneer (2008)'],
+        fun: 'Su trabajo de guerra fue calcular trayectorias balísticas para el Ejército, no la bomba atómica. Obtuvo una maestría en inglés en 1967.', places: ['maryville', 'filadelfia', 'poughkeepsie'] }
+    ];
+    const P = Object.fromEntries(PEOPLE.map(p => [p.id, p]));
+    const yrs = p => `${p.born}–${p.died}`;
+
+    /* ---------- Eventos de la línea del tiempo ---------- */
+    // t: a=aporte, v=vida, e=encuentro, r=reconocimiento/legado, c=contexto
+    const EV = [
+      // Lovelace
+      { id: 'l1', y: 1815.95, who: 'lovelace', t: 'v', title: 'Nace Ada Byron', pl: 'Londres', d: 'Nace el 10 de diciembre en 13 Piccadilly Terrace, hija del poeta Lord Byron y de Anne Isabella Milbanke. Su madre la hizo educar en matemáticas y ciencias.', rel: ['l2'] },
+      { id: 'l2', y: 1816.1, who: 'lovelace', t: 'v', title: 'Byron se separa de la familia', pl: 'Londres', d: 'A solo un mes de nacer ella, su padre se separa de la familia. Nunca lo conocerá: Byron muere en Grecia en 1824, cuando Ada tenía 8 años.', rel: ['l1', 'l9'] },
+      { id: 'l4', y: 1833, who: 'lovelace', t: 'e', title: 'Conoce a Babbage', pl: 'Londres', d: 'A los 17 años conoce a Charles Babbage, probablemente a través de Mary Somerville, y él le muestra su máquina diferencial.', rel: ['c1', 'l5'] },
+      { id: 'l5', y: 1834.9, who: 'lovelace', t: 'e', title: 'Babbage le cuenta de la Máquina Analítica', pl: 'Londres', d: 'En noviembre de 1834 Babbage le comparte por primera vez su idea de la Máquina Analítica, un calculador programable.', rel: ['l4', 'l7'] },
+      { id: 'l6', y: 1835.5, who: 'lovelace', t: 'v', title: 'Se casa con William King', pl: 'Inglaterra', d: 'El 8 de julio de 1835 se casa con William King, quien en 1838 sería nombrado conde de Lovelace: así Ada se convierte en la condesa de Lovelace.', rel: [] },
+      { id: 'l7', y: 1843, who: 'lovelace', t: 'a', title: 'Las Notas sobre la Máquina Analítica', pl: 'Londres', d: 'Traduce una memoria del italiano Menabrea y le añade notas más largas que el propio texto (Scientific Memoirs, vol. 3). Incluye un método para calcular números de Bernoulli: se considera el primer algoritmo pensado para una máquina.', rel: ['l5', 'l9', 't10', 'l10'] },
+      { id: 'l8', y: 1852.9, who: 'lovelace', t: 'v', title: 'Muere a los 36 años', pl: 'Londres', d: 'Muere de cáncer el 27 de noviembre. Dickens la visitó en su lecho de muerte. Pidió ser enterrada junto a Lord Byron, en Hucknall.', rel: ['l2'] },
+      { id: 'l9', y: 1824.5, who: 'lovelace', t: 'v', title: 'Muere Lord Byron en Grecia', pl: 'Grecia', d: 'El poeta muere cuando Ada tiene 8 años. Ella pedirá ser enterrada a su lado.', rel: ['l2', 'l8'] },
+      { id: 'l10', y: 1979, who: 'lovelace', t: 'r', title: 'Un lenguaje lleva su nombre', pl: '', d: 'En 1979 se nombra «Ada» a un lenguaje de programación en su honor. En 1993 se colocó una placa azul en 12 St James’s Square, Londres.', rel: ['l7'] },
+      // Wiener
+      { id: 'w1', y: 1894.9, who: 'wiener', t: 'v', title: 'Nace Norbert Wiener', pl: 'Columbia, Misuri', d: 'Su padre, Leo Wiener, historiador y lingüista, lo educa en casa.', rel: ['w2'] },
+      { id: 'w2', y: 1913, who: 'wiener', t: 'v', title: 'Doctor a los 18 años', pl: 'Harvard', d: 'Entró a Tufts a los 11 años, se graduó a los 14 y obtuvo el doctorado en Harvard a los 18. Estudió después con Russell y Hardy en Cambridge y con Hilbert en Gotinga.', rel: ['w3'] },
+      { id: 'w3', ap: 1, y: 1919, who: 'wiener', t: 'v', title: 'Profesor en el MIT', pl: 'Cambridge, Massachusetts', d: 'Tras la Primera Guerra Mundial se vuelve instructor de matemáticas en el MIT, donde las preguntas de sus colegas ingenieros orientan su trabajo.', rel: [] },
+      { id: 'w4', y: 1933, who: 'wiener', t: 'r', title: 'Premio Bôcher', pl: '', d: 'Reconocido por sus trabajos sobre teoremas tauberianos.', rel: [] },
+      { id: 'w5', y: 1935, ap: 1, who: 'wiener', t: 'e', title: 'Conoce a Rosenblueth (años treinta)', pl: 'Boston', d: 'Se conocieron en el seminario de metodología científica de Harvard (años treinta). La amistad y colaboración duró hasta la muerte de Wiener.', rel: ['r3', 'w6'] },
+      { id: 'w6', y: 1943, who: 'wiener', t: 'a', title: 'Behavior, Purpose and Teleology', pl: 'Boston', d: 'Con Rosenblueth y Julian Bigelow publica el artículo que Wiener considera la base de la cibernética. En paralelo trabajaba en el predictor antiaéreo con Bigelow.', rel: ['r6', 'w5', 'w8', 'c3'] },
+      { id: 'w7', y: 1946, who: 'wiener', t: 'e', title: 'Conferencias Macy', pl: 'EE. UU.', d: 'Participa en las Conferencias Macy sobre cibernética (1946–1953), junto con von Neumann, Margaret Mead, Gregory Bateson, Shannon y Rosenblueth.', rel: ['c4', 's7', 'r7'] },
+      { id: 'w8', y: 1948, who: 'wiener', t: 'a', title: 'Se publica Cybernetics', pl: 'EE. UU.', d: 'Funda la cibernética: control y comunicación en animales y máquinas. Dedica el libro a Rosenblueth.', rel: ['s8', 'w6', 'r3'] },
+      { id: 'w9', y: 1959, who: 'wiener', t: 'a', title: 'Novela The Tempter', pl: '', d: 'Wiener también escribió ficción.', rel: [] },
+      { id: 'w10', y: 1964.2, who: 'wiener', t: 'v', title: 'Muere en Estocolmo', pl: 'Estocolmo', d: 'Fallece a los 69 años, con Rosenblueth como colaborador de toda una vida.', rel: ['w5'] },
+      // Rosenblueth
+      { id: 'r1', y: 1900.8, who: 'rosenblueth', t: 'v', title: 'Nace Arturo Rosenblueth', pl: 'Ciudad Guerrero, Chihuahua', d: 'Nace el 2 de octubre de 1900 en Chihuahua, México.', rel: [] },
+      { id: 'r2', y: 1927, who: 'rosenblueth', t: 'v', title: 'Regresa a la Ciudad de México', pl: 'Ciudad de México', d: 'Tras obtener su título de médico en Berlín y París, vuelve a enseñar e investigar fisiología.', rel: ['r3'] },
+      { id: 'r3', y: 1930, who: 'rosenblueth', t: 'e', title: 'Harvard con Walter Cannon', pl: 'Boston', d: 'Con una beca Guggenheim llega al departamento de fisiología de Harvard, dirigido por Walter Cannon. Allí conocerá a Wiener.', rel: ['w5', 'r4'] },
+      { id: 'r4', y: 1937, who: 'rosenblueth', t: 'a', title: 'Physiology of the Autonomic Nervous System', pl: 'Harvard', d: 'Libro escrito con Cannon.', rel: ['r3'] },
+      { id: 'r5', y: 1942, who: 'rosenblueth', t: 'e', title: 'Reunión sobre inhibición cerebral', pl: 'EE. UU.', d: 'Invitado a la Cerebral Inhibition Meeting (1942), antecedente de las Conferencias Macy.', rel: ['w7', 'r7'] },
+      { id: 'r6', y: 1943.1, who: 'rosenblueth', t: 'a', title: 'Behavior, Purpose and Teleology', pl: 'Harvard', d: 'Primer autor del artículo con Wiener y Bigelow en Philosophy of Science: base conceptual de la cibernética.', rel: ['w6'] },
+      { id: 'r8', y: 1944, who: 'rosenblueth', t: 'a', title: 'Jefe de Fisiología en Cardiología', pl: 'Ciudad de México', d: 'Dirige el laboratorio de fisiología del Instituto Nacional de Cardiología (y fue profesor de fisiología en la UNAM). Wiener viajaría a México a trabajar con él.', rel: ['w5'] },
+      { id: 'r7', y: 1947, who: 'rosenblueth', t: 'e', title: 'Ingresa a El Colegio Nacional', pl: 'Ciudad de México', d: 'Coincide ahí con Alfonso Reyes (miembro hasta 1959). Entre 1947–1949 y 1951–1952 vuelve a Harvard con becas Rockefeller para trabajar con Wiener. Participa en las Conferencias Macy.', rel: ['w7', 'ref'] },
+      { id: 'r9', y: 1952, who: 'rosenblueth', t: 'r', title: 'Candidato al Nobel', pl: '', d: 'Propuesto al Premio Nobel en 1952.', rel: [] },
+      { id: 'r10', y: 1961, who: 'rosenblueth', t: 'a', title: 'Primer director del Cinvestav', pl: 'Ciudad de México', d: 'Dirige el Centro de Investigación y de Estudios Avanzados del IPN.', rel: [] },
+      { id: 'r11', y: 1970.7, who: 'rosenblueth', t: 'v', title: 'Mente y cerebro; muere en la Ciudad de México', pl: 'Ciudad de México', d: 'MIT Press publica Mind and Brain: A Philosophy of Science, y fallece el 20 de septiembre de 1970.', rel: ['w10'] },
+      // Turing
+      { id: 't1', y: 1912.5, who: 'turing', t: 'v', title: 'Nace Alan Turing', pl: 'Maida Vale, Londres', d: 'Nace el 23 de junio de 1912.', rel: ['t2'] },
+      { id: 't2', y: 1930, who: 'turing', t: 'v', title: 'Muere su amigo Christopher Morcom', pl: 'Sherborne', d: 'Amigo cercano de Sherborne School; su pérdida marcó a Turing.', rel: ['t1'] },
+      { id: 't3', y: 1931, who: 'turing', t: 'v', title: 'King’s College, Cambridge', pl: 'Cambridge', d: 'Estudia matemáticas (1931–1934) con honores de primera clase.', rel: ['t4'] },
+      { id: 't4', y: 1936.8, who: 'turing', t: 'a', title: 'On Computable Numbers: la máquina de Turing', pl: 'Princeton', d: 'Introduce la máquina de Turing y la idea de computadora universal. En octubre de 1936 llega a Princeton para estudiar con Alonzo Church.', rel: ['t5', 's4', 'c2'] },
+      { id: 't5', y: 1938.4, who: 'turing', t: 'e', title: 'Doctorado en Princeton; oferta de von Neumann', pl: 'Princeton', d: 'Defiende en mayo de 1938 «Systems of Logic Based on Ordinals». Von Neumann intentó retenerlo como asistente por 1 500 dólares al año; Turing regresó a Inglaterra ante la guerra. Kurt Gödel también estaba en Princeton.', rel: ['t4', 'b4', 't6'] },
+      { id: 't6', y: 1939.7, who: 'turing', t: 'a', title: 'Bletchley Park: Enigma', pl: 'Bletchley Park', d: 'Lidera el trabajo sobre Enigma y desarrolla la bombe, con Gordon Welchman y Dilly Knox. Coincide con el novelista Angus Wilson (1942).', rel: ['c3', 't7', 'lit_wilson'] },
+      { id: 't7', y: 1942.95, who: 'turing', t: 'e', title: 'Visita Bell Labs y conoce a Shannon', pl: 'Nueva York', d: 'Entre noviembre de 1942 y marzo de 1943 trabaja con criptoanalistas de la Marina de EE. UU. y visita Bell Labs, donde conversa con Shannon en la cafetería; el tema clasificado (SIGSALY) quedó fuera de la charla.', rel: ['s7', 't6', 'c3'] },
+      { id: 't8', y: 1945.5, who: 'turing', t: 'a', title: 'Diseña el ACE', pl: 'Teddington', d: 'En el National Physical Laboratory (1945–1947) diseña el Automatic Computing Engine, un computador de programa almacenado.', rel: ['b3', 'j3'] },
+      { id: 't9', y: 1948.5, who: 'turing', t: 'a', title: 'Manchester Mark 1', pl: 'Manchester', d: 'Trabaja con Max Newman en la Universidad de Manchester (1948–1954).', rel: ['t10'] },
+      { id: 't10', y: 1950.8, who: 'turing', t: 'a', title: 'Computing Machinery and Intelligence', pl: 'Manchester', d: 'Propone el «juego de la imitación» (prueba de Turing) y discute la «objeción de Lady Lovelace»: que la máquina no origina nada, solo hace lo que sabemos ordenarle.', rel: ['l7', 't9', 's10'] },
+      { id: 't11', y: 1952.3, who: 'turing', t: 'v', title: 'Morfogénesis y condena', pl: 'Manchester', d: 'Publica «The Chemical Basis of Morphogenesis». Ese año es condenado por «indecencia grave».', rel: ['t12'] },
+      { id: 't12', y: 1954.45, who: 'turing', t: 'v', title: 'Muere en Wilmslow', pl: 'Wilmslow, Cheshire', d: 'Fallece el 7 de junio de 1954, el primero de los seis modernos en morir.', rel: ['t11'] },
+      // Shannon
+      { id: 's1', y: 1916.3, who: 'shannon', t: 'v', title: 'Nace Claude Shannon', pl: 'Petoskey, Michigan', d: 'Nace el 30 de abril de 1916 y crece en Gaylord.', rel: ['s2'] },
+      { id: 's2', y: 1932, who: 'shannon', t: 'v', title: 'Universidad de Michigan; conoce a Boole', pl: 'Ann Arbor', d: 'Ahí se topa con la obra de George Boole, que cambiará su carrera.', rel: ['c2', 's4'] },
+      { id: 's3', y: 1936, who: 'shannon', t: 'e', title: 'MIT con Vannevar Bush', pl: 'Cambridge, Massachusetts', d: 'Empieza su posgrado trabajando con el analizador diferencial de Vannevar Bush.', rel: ['s4'] },
+      { id: 's4', y: 1937, who: 'shannon', t: 'a', title: 'Tesis: circuitos + álgebra de Boole', pl: 'MIT', d: '«A Symbolic Analysis of Relay and Switching Circuits» aplica el álgebra de Boole a circuitos de conmutación. Es la base del diseño de circuitos digitales.', rel: ['c2', 's2', 't4'] },
+      { id: 's5', y: 1940, who: 'shannon', t: 'e', title: 'Instituto de Estudios Avanzados', pl: 'Princeton', d: 'Se doctora en el MIT y es becario en el IAS de Princeton, donde habla con Hermann Weyl y John von Neumann.', rel: ['t5'] },
+      { id: 's6', ap: 1, y: 1941, who: 'shannon', t: 'v', title: 'Bell Labs en tiempos de guerra', pl: 'Nueva York', d: 'Regresa a Bell Labs durante la Segunda Guerra Mundial y trabaja en criptografía.', rel: ['c3', 's7'] },
+      { id: 's7', y: 1943, who: 'shannon', t: 'e', title: 'Encuentro con Turing', pl: 'Nueva York', d: 'Unos dos meses de contacto, con charlas informales en Bell Labs.', rel: ['t7'] },
+      { id: 's8', y: 1948, who: 'shannon', t: 'a', title: 'Teoría de la información', pl: 'Bell Labs', d: '«A Mathematical Theory of Communication» funda la teoría de la información. Es el mismo año que Cybernetics de Wiener.', rel: ['w8', 's9'] },
+      { id: 's9', y: 1949, who: 'shannon', t: 'a', title: 'Teoría de la comunicación del secreto', pl: '', d: 'Publica «Communication Theory of Secrecy Systems» y se casa con Betty Shannon (Mary Elizabeth Moore).', rel: ['s8'] },
+      { id: 's10', y: 1950, who: 'shannon', t: 'a', title: 'Theseus y el ajedrez', pl: '', d: 'Construye un ratón mecánico que aprende un laberinto y publica su artículo sobre programar una computadora para jugar ajedrez.', rel: ['t10'] },
+      { id: 's11', y: 1956, who: 'shannon', t: 'e', title: 'Taller de Dartmouth', pl: 'Hanover, New Hampshire', d: 'Coorganiza con McCarthy, Minsky y Rochester el taller considerado fundacional de la inteligencia artificial. Ese año entra a la facultad del MIT (hasta 1978).', rel: ['c5', 't10'] },
+      { id: 's12', y: 1981, who: 'shannon', t: 'a', title: 'Poema sobre el cubo de Rubik', pl: '', d: '«A Rubric on Rubik Cubics», con notas al pie que imitan a T. S. Eliot.', rel: [] },
+      { id: 's13', y: 2001.15, who: 'shannon', t: 'v', title: 'Muere en Medford', pl: 'Medford, Massachusetts', d: 'Fallece el 24 de febrero de 2001, a los 84 años.', rel: [] },
+      // Booth
+      { id: 'b1', y: 1922.5, who: 'booth', t: 'v', title: 'Nace Hylda Valerie Britten', pl: 'Stourbridge', d: 'Nace el 9 de julio de 1922; de niña adopta el nombre Kathleen. Estudia en Birmingham.', rel: ['b2'] },
+      { id: 'b2', y: 1944, who: 'booth', t: 'v', title: 'Matemáticas y Royal Aircraft Establishment', pl: 'Farnborough', d: 'Se gradúa en matemáticas en Royal Holloway y entra como oficial científica junior al RAE en Farnborough.', rel: ['c3', 'b3'] },
+      { id: 'b3', y: 1946, who: 'booth', t: 'e', title: 'Llega a Birkbeck College', pl: 'Londres', d: 'Comienza a trabajar en Birkbeck, donde su equipo construirá las primeras máquinas.', rel: ['b4', 'b5'] },
+      { id: 'b4', y: 1947, who: 'booth', t: 'e', title: 'Visita Princeton y a von Neumann', pl: 'Princeton', d: 'Viaja a EE. UU. como asistente de Andrew Booth; con von Neumann rediseñan la ARC con su arquitectura (ARC2) y escriben sobre el diseño de un computador digital de propósito general.', rel: ['t5', 'b5', 'j4'] },
+      { id: 'b5', ap: 1, y: 1948, who: 'booth', t: 'a', title: 'ARC, SEC y APE(X)C; primer ensamblador', pl: 'Londres', d: 'Entre 1947 y 1953 el equipo de Birkbeck construye tres máquinas (la ARC con Xenia Sweeting). Booth crea el primer lenguaje ensamblador y su ensamblador.', rel: ['b4', 'b7'] },
+      { id: 'b6', y: 1950, who: 'booth', t: 'v', title: 'Doctorado y boda', pl: 'Londres', d: 'Obtiene su doctorado en matemáticas aplicadas en King’s College London y se casa con Andrew Booth.', rel: [] },
+      { id: 'b7', y: 1953, who: 'booth', t: 'a', title: 'Automatic Digital Calculators', pl: '', d: 'Libro coescrito con Andrew Booth.', rel: ['b5', 'b8'] },
+      { id: 'b8', y: 1955.85, who: 'booth', t: 'a', title: 'Traducción automática francés–inglés', pl: 'Birkbeck, Londres', d: 'El 11 de noviembre de 1955 el grupo demuestra un prototipo de traducción automática.', rel: ['b9', 'b10'] },
+      { id: 'b9', y: 1958, who: 'booth', t: 'a', title: 'Programming for an Automatic Digital Calculator', pl: 'Londres', d: 'Uno de los primeros libros de programación; también trabaja en redes neuronales en Birkbeck. En 1957 cofunda el Departamento de Automatización Numérica.', rel: ['b8'] },
+      { id: 'b10', y: 1962, who: 'booth', t: 'v', title: 'Se muda a Canadá', pl: 'Saskatoon', d: 'Renuncia a Birkbeck junto con Andrew; trabaja en la Universidad de Saskatchewan hasta 1972. En 1965 dirige un proyecto nacional de traducción automática; luego es profesora en Lakehead (1972–1978).', rel: ['b8'] },
+      { id: 'b11', y: 2022.75, who: 'booth', t: 'v', title: 'Muere a los 100 años', pl: 'Sooke, Columbia Británica', d: 'Fallece el 29 de septiembre de 2022.', rel: ['b1'] },
+      // Bartik
+      { id: 'j1', y: 1924.6, who: 'bartik', t: 'v', title: 'Nace Betty Jean Jennings', pl: 'Misuri', d: 'Nace en Misuri en 1924.', rel: ['j2'] },
+      { id: 'j2', y: 1945, who: 'bartik', t: 'e', title: 'Moore School de la Universidad de Pensilvania', pl: 'Filadelfia', d: 'Tras graduarse en matemáticas, empieza calculando a mano trayectorias balísticas para el Ejército. Herman y Adele Goldstine entrenaron a las operadoras; Adele escribió el manual.', rel: ['j3', 'c3'] },
+      { id: 'j3', y: 1946.12, who: 'bartik', t: 'a', title: 'La ENIAC: una de las seis programadoras', pl: 'Filadelfia', d: 'La ENIAC, diseñada por Mauchly y Eckert, se presenta el 15 de febrero de 1946. Las seis: Kay McNulty, Betty Jennings (Bartik), Betty Snyder (Holberton), Marlyn Wescoff, Fran Bilas y Ruth Lichterman.', rel: ['c6', 'j4', 'b4'] },
+      { id: 'j4', ap: 1, y: 1947.5, who: 'bartik', t: 'a', title: 'ENIAC con programa almacenado', pl: 'Filadelfia', d: 'Convierte la ENIAC en una máquina de programa almacenado (1947–1948). Coincide en tiempo con Booth en el entorno de von Neumann, sin contacto documentado.', rel: ['b4', 'j3', 'j5'] },
+      { id: 'j5', y: 1949, who: 'bartik', t: 'a', title: 'BINAC y UNIVAC I', pl: 'Filadelfia', d: 'Trabaja con Eckert y Mauchly; con Betty Holberton crea un generador SORT/MERGE.', rel: ['j4'] },
+      { id: 'j6', y: 1967, who: 'bartik', t: 'v', title: 'Maestría en inglés', pl: 'Filadelfia', d: 'Obtiene una maestría en inglés por la Universidad de Pensilvania.', rel: ['lit_bartik'] },
+      { id: 'j7', y: 2008, who: 'bartik', t: 'r', title: 'Reconocimientos tardíos', pl: '', d: 'Su trabajo fue poco reconocido hasta los años noventa: WITI Hall of Fame (1997), Fellow del Computer History Museum (2008) e IEEE Computer Pioneer (2008).', rel: [] },
+      { id: 'j8', y: 2011.0, who: 'bartik', t: 'v', title: 'Muere en Poughkeepsie', pl: 'Poughkeepsie, NY', d: 'Fallece a los 86 años.', rel: [] },
+      // Contexto
+      { id: 'c1', y: 1833, who: 'ctx', t: 'c', title: 'La máquina diferencial de Babbage', pl: 'Londres', d: 'Babbage muestra su máquina diferencial a la joven Ada: de ahí nace su colaboración.', rel: ['l4'] },
+      { id: 'c2', y: 1854, who: 'ctx', t: 'c', title: 'Boole: Las leyes del pensamiento', pl: '', d: 'George Boole publica An Investigation of the Laws of Thought: su álgebra será la base de la tesis de Shannon (1937).', rel: ['s4', 's2'] },
+      { id: 'c3', y: 1942, who: 'ctx', t: 'c', title: 'Segunda Guerra Mundial (1939–1945)', pl: 'Mundial', d: 'Enigma y criptografía (Turing, Shannon), predictor antiaéreo (Wiener, Bigelow), tablas balísticas y ENIAC (Bartik). La guerra concentró el avance.', rel: ['t6', 't7', 'w6', 'j2'], span: [1939, 1945] },
+      { id: 'c4', y: 1949.5, who: 'ctx', t: 'c', title: 'Conferencias Macy (1946–1953)', pl: 'EE. UU.', d: 'Foro interdisciplinario de cibernética con Wiener, Shannon, Rosenblueth, von Neumann, Margaret Mead y Gregory Bateson.', rel: ['w7', 'r7'], span: [1946, 1953] },
+      { id: 'c5', y: 1956, who: 'ctx', t: 'c', title: 'Taller de Dartmouth', pl: 'Hanover, NH', d: 'Considerado el evento fundacional de la inteligencia artificial.', rel: ['s11'] },
+      { id: 'c6', y: 1946.12, who: 'ctx', t: 'c', title: 'Se presenta la ENIAC (15 feb 1946)', pl: 'Filadelfia', d: 'Computadora electrónica del Ejército de EE. UU.', rel: ['j3'] }
+    ];
+    // Limpieza de referencias que apuntan a ids no definidos en la línea del tiempo
+    const EVID = new Set(EV.map(e => e.id)); EV.forEach(e => e.rel = e.rel.filter(r => EVID.has(r)));
+    const EVM = Object.fromEntries(EV.map(e => [e.id, e]));
+    const CTX = { color: '#475569', name: 'Contexto' };
+    const TYPE = { a: ['Aporte', 'bi-lightbulb-fill'], v: ['Vida', 'bi-person-fill'], e: ['Encuentro', 'bi-people-fill'], r: ['Reconocimiento', 'bi-award-fill'], c: ['Contexto', 'bi-globe2'] };
+
+    /* ---------- Lugares ---------- */
+    const PLACES = {
+      londres: { n: 'Londres, Inglaterra', ll: [51.51, -0.13], notes: [['lovelace', 1815, 'Nace y vive; Babbage le muestra la máquina diferencial (1833); muere en 1852'], ['booth', 1946, 'Birkbeck College: construye la ARC, la SEC y la APE(X)C (1946–1962)']] },
+      hucknall: { n: 'Hucknall, Inglaterra', ll: [53.03, -1.2], notes: [['lovelace', 1852, 'Enterrada junto a Lord Byron en St Mary Magdalene']] },
+      columbia: { n: 'Columbia, Misuri', ll: [38.95, -92.33], notes: [['wiener', 1894, 'Nace Norbert Wiener']] },
+      cambridgema: { n: 'Cambridge, Massachusetts (Harvard y MIT)', ll: [42.37, -71.11], notes: [['wiener', 1919, 'Profesor del MIT; inicia allí la cibernética'], ['shannon', 1936, 'MIT: analizador diferencial de Bush y tesis de 1937']] },
+      cambridgeuk: { n: 'Cambridge, Inglaterra', ll: [52.2, 0.12], notes: [['wiener', 1914, 'Estudia con Russell y Hardy (fecha aprox.)'], ['turing', 1931, 'King’s College (1931–1934)']] },
+      gottingen: { n: 'Gotinga, Alemania', ll: [51.53, 9.94], notes: [['wiener', 1914, 'Estudia con David Hilbert (fecha aprox.)']] },
+      cdmx: { n: 'Ciudad de México', ll: [19.43, -99.13], notes: [['rosenblueth', 1927, 'Fisiología en la UNAM, Cardiología (1944), El Colegio Nacional (1947) y Cinvestav (1961)'], ['wiener', null, 'Estancia de trabajo con Rosenblueth en Cardiología (fechas sin precisar)']] },
+      estocolmo: { n: 'Estocolmo, Suecia', ll: [59.33, 18.07], notes: [['wiener', 1964, 'Muere en 1964']] },
+      cdguerrero: { n: 'Ciudad Guerrero, Chihuahua', ll: [28.55, -107.47], notes: [['rosenblueth', 1900, 'Nace Arturo Rosenblueth']] },
+      berlin: { n: 'Berlín, Alemania', ll: [52.52, 13.4], notes: [['rosenblueth', null, 'Estudios de medicina (sin fecha precisa)']] },
+      paris: { n: 'París, Francia', ll: [48.86, 2.35], notes: [['rosenblueth', null, 'Estudios de medicina (sin fecha precisa)']] },
+      boston: { n: 'Boston / Harvard', ll: [42.36, -71.06], notes: [['rosenblueth', 1930, 'Harvard con Walter Cannon; seminarios donde conoce a Wiener; vuelve en 1947–49 y 1951–52']] },
+      maidavale: { n: 'Maida Vale, Londres', ll: [51.53, -0.19], notes: [['turing', 1912, 'Nace Alan Turing']] },
+      sherborne: { n: 'Sherborne, Dorset', ll: [50.95, -2.51], notes: [['turing', 1926, 'Sherborne School; amistad con Christopher Morcom']] },
+      princeton: { n: 'Princeton, Nueva Jersey', ll: [40.35, -74.66], notes: [['turing', 1936, 'Doctorado con Alonzo Church; von Neumann le ofrece un puesto (1938)'], ['shannon', 1940, 'Instituto de Estudios Avanzados: charla con Weyl y von Neumann'], ['booth', 1947, 'Trabaja con von Neumann y rediseña la ARC']] },
+      bletchley: { n: 'Bletchley Park, Inglaterra', ll: [51.998, -0.74], notes: [['turing', 1939, 'Enigma, bombe, Hut 8; coincide con el novelista Angus Wilson (1942)']] },
+      nyc: { n: 'Nueva York (Bell Labs)', ll: [40.73, -74.01], notes: [['turing', 1942, 'Visita Bell Labs (nov. 1942–mar. 1943)'], ['shannon', 1941, 'Bell Labs: criptografía; conversa con Turing (1943) y publica en 1948']] },
+      teddington: { n: 'Teddington (National Physical Laboratory)', ll: [51.43, -0.34], notes: [['turing', 1945, 'Diseña el ACE (1945–1947)']] },
+      manchester: { n: 'Manchester, Inglaterra', ll: [53.48, -2.24], notes: [['turing', 1948, 'Manchester Mark 1 con Max Newman; «Computing Machinery and Intelligence» (1950)']] },
+      wilmslow: { n: 'Wilmslow, Cheshire', ll: [53.33, -2.23], notes: [['turing', 1954, 'Muere el 7 de junio']] },
+      petoskey: { n: 'Petoskey / Gaylord, Michigan', ll: [45.37, -84.96], notes: [['shannon', 1916, 'Nace y crece en Gaylord']] },
+      annarbor: { n: 'Ann Arbor, Michigan', ll: [42.28, -83.74], notes: [['shannon', 1932, 'Universidad de Michigan: conoce a Boole']] },
+      hanover: { n: 'Hanover, New Hampshire (Dartmouth)', ll: [43.7, -72.29], notes: [['shannon', 1956, 'Taller de Dartmouth, nacimiento de la IA']] },
+      medford: { n: 'Medford, Massachusetts', ll: [42.42, -71.11], notes: [['shannon', 2001, 'Muere en 2001']] },
+      stourbridge: { n: 'Stourbridge, Inglaterra', ll: [52.46, -2.15], notes: [['booth', 1922, 'Nace Kathleen Booth']] },
+      farnborough: { n: 'Farnborough (Royal Aircraft Establishment)', ll: [51.29, -0.75], notes: [['booth', 1944, 'Oficial científica junior en el RAE']] },
+      saskatoon: { n: 'Saskatoon, Canadá', ll: [52.13, -106.67], notes: [['booth', 1962, 'Universidad de Saskatchewan (hasta 1972); proyecto de traducción automática (1965)']] },
+      thunderbay: { n: 'Thunder Bay (Lakehead), Canadá', ll: [48.38, -89.25], notes: [['booth', 1972, 'Profesora de matemáticas en Lakehead (1972–1978)']] },
+      sooke: { n: 'Sooke, Columbia Británica', ll: [48.37, -123.73], notes: [['booth', 1978, 'Se instala en Sooke; muere ahí en 2022']] },
+      maryville: { n: 'Maryville, Misuri', ll: [40.34, -94.87], notes: [['bartik', 1924, 'Nace en Misuri; se gradúa en Northwest Missouri State (1945)']] },
+      filadelfia: { n: 'Filadelfia (Moore School, Universidad de Pensilvania)', ll: [39.95, -75.19], notes: [['bartik', 1945, 'ENIAC (1946), BINAC y UNIVAC; maestría en 1967']] },
+      poughkeepsie: { n: 'Poughkeepsie, Nueva York', ll: [41.7, -73.92], notes: [['bartik', 2011, 'Muere en 2011']] }
+    };
+
+    /* ---------- Red de conexiones ---------- */
+    const ETYPE = {
+      coautoria: { n: 'Coautoría / trabajo en equipo', c: '#2f9e44' }, maestro: { n: 'Maestro o mentor', c: '#1c7ed6' }, encuentro: { n: 'Encuentro directo', c: '#e8590c' },
+      foro: { n: 'Mismo foro', c: '#7048e8' }, influencia: { n: 'Influencia intelectual', c: '#868e96', dash: '6 5' }, institucion: { n: 'Misma institución', c: '#0c8599' }, familia: { n: 'Familia', c: '#d6336c' }
+    };
+    const SEC = {
+      babbage: ['Charles Babbage (1791–1871)', 'Matemático inglés, autor de la Máquina Diferencial y la Analítica.'], byron: ['Lord Byron (1788–1824)', 'Poeta romántico; padre de Ada.'], dickens: ['Charles Dickens (1812–1870)', 'Novelista inglés.'],
+      somerville: ['Mary Somerville (1780–1872)', 'Divulgadora científica; mentora de Ada.'], demorgan: ['Augustus De Morgan (1806–1871)', 'Matemático; fue tutor de Ada.'], bigelow: ['Julian Bigelow', 'Ingeniero; con Wiener y Rosenblueth firmó el artículo de 1943.'],
+      russell: ['Bertrand Russell (1872–1970)', 'Filósofo; maestro de Wiener en Cambridge.'], hilbert: ['David Hilbert (1862–1943)', 'Matemático; Wiener estudió con él en Gotinga.'], leowiener: ['Leo Wiener', 'Historiador y lingüista; primer profesor de lenguas eslavas en Harvard.'],
+      cannon: ['Walter Cannon (1871–1945)', 'Fisiólogo de Harvard; mentor de Rosenblueth.'], reyes: ['Alfonso Reyes (1889–1959)', 'Poeta, ensayista e historiador mexicano; miembro de El Colegio Nacional.'],
+      church: ['Alonzo Church (1903–1995)', 'Lógico de Princeton; director de Turing.'], vonneumann: ['John von Neumann (1903–1957)', 'Matemático; arquitectura de programa almacenado. Presente en Princeton, Macy y en la visita de los Booth.'],
+      newman: ['Max Newman', 'Matemático; colega de Turing en Manchester.'], wilson: ['Angus Wilson', 'Novelista; coincidió con Turing en Bletchley (1942).'], forster: ['E. M. Forster (1879–1970)', 'Novelista de King’s College.'],
+      bush: ['Vannevar Bush (1890–1974)', 'Ingeniero del MIT; analizador diferencial.'], dartmouth: ['McCarthy, Minsky y Rochester', 'Coorganizadores del taller de Dartmouth (1956).'],
+      abooth: ['Andrew Booth', 'Esposo y coautor de Kathleen; murió en 2009.'], eckmau: ['Eckert y Mauchly', 'Diseñadores de la ENIAC; luego de BINAC y UNIVAC.'], holberton: ['Betty Holberton (1917–2001)', 'Otra de las seis programadoras de la ENIAC.'], goldstine: ['Herman y Adele Goldstine', 'Instructores del Moore School; Adele escribió el manual de la ENIAC.']
+    };
+    const EDGES = [
+      ['lovelace', 'babbage', 'coautoria', '1833–1843', 'Babbage le muestra su máquina diferencial (1833) y le cuenta de la Analítica (1834); ella traduce y amplía la memoria de Menabrea (1843).'],
+      ['lovelace', 'byron', 'familia', '1815–1824', 'Su padre, el poeta Lord Byron. Se separó de la familia al mes de nacer ella y murió en Grecia cuando tenía 8 años; ella pidió ser enterrada junto a él.'],
+      ['lovelace', 'dickens', 'encuentro', 'c. 1840–1852', 'Trato personal; Dickens la visitó en su lecho de muerte.'],
+      ['lovelace', 'somerville', 'maestro', '1833', 'Divulgadora científica; la presentó con Babbage en 1833.'],
+      ['lovelace', 'demorgan', 'maestro', 'juventud', 'Augustus De Morgan figura entre sus tutores de matemáticas.'],
+      ['lovelace', 'turing', 'influencia', '1950', 'En «Computing Machinery and Intelligence», Turing discute y rebate la «objeción de Lady Lovelace».'],
+      ['wiener', 'rosenblueth', 'coautoria', '1930s–1964', 'Se conocieron en Boston, en el seminario de metodología científica de Harvard. Escribieron con Bigelow el artículo de 1943; Wiener le dedicó Cybernetics y viajó a México a trabajar con él.'],
+      ['wiener', 'bigelow', 'coautoria', '1940–1943', 'Predictor antiaéreo y artículo de 1943.'], ['rosenblueth', 'bigelow', 'coautoria', '1943', 'Coautores de «Behavior, Purpose and Teleology».'],
+      ['wiener', 'russell', 'maestro', 'c. 1913–1914', 'Su maestro en Cambridge.'], ['wiener', 'hilbert', 'maestro', 'c. 1913–1914', 'Estudió con Hilbert en Gotinga.'],
+      ['wiener', 'leowiener', 'familia', '1894–', 'Su padre, historiador y traductor de 24 volúmenes de Tolstói.'],
+      ['wiener', 'shannon', 'foro', '1946–1953', 'Conferencias Macy sobre cibernética.'], ['rosenblueth', 'shannon', 'foro', '1946–1953', 'Conferencias Macy sobre cibernética.'],
+      ['wiener', 'vonneumann', 'foro', '1946–1953', 'Conferencias Macy, junto a Margaret Mead y Gregory Bateson.'],
+      ['rosenblueth', 'cannon', 'coautoria', '1930–1945', 'Harvard; escribieron Physiology of the Autonomic Nervous System (1937).'],
+      ['rosenblueth', 'reyes', 'institucion', '1947–1959', 'Colegas en El Colegio Nacional durante 12 años. No hay pruebas de amistad personal.'],
+      ['turing', 'church', 'maestro', '1936–1938', 'Fue a Princeton para estudiar con él; Church popularizó el término «máquina de Turing».'],
+      ['turing', 'vonneumann', 'encuentro', '1938', 'Von Neumann intentó retenerlo como asistente; Turing se negó para volver a Inglaterra. Nunca fueron amigos cercanos.'],
+      ['turing', 'shannon', 'encuentro', '1943', 'Turing visitó Bell Labs en secreto y conversaban en la cafetería; el tema clasificado (SIGSALY) quedó fuera de la charla.'],
+      ['turing', 'newman', 'institucion', '1948–1954', 'Trabajaron juntos en el Manchester Mark 1.'], ['turing', 'wilson', 'encuentro', '1942', 'Coincidieron en Bletchley Park y se trataron en King’s College; Wilson inspiró el cuento inédito «Pryce’s Buoy».'],
+      ['turing', 'forster', 'institucion', 'King’s College', 'Mismo college; P. N. Furbank fue amigo de ambos. No hay prueba de que se conocieran en persona.'],
+      ['shannon', 'bush', 'maestro', '1936–1940', 'Trabajó en su analizador diferencial; Bush sugirió su tesis doctoral.'], ['shannon', 'vonneumann', 'encuentro', '1940', 'Charlas en el Instituto de Estudios Avanzados de Princeton.'],
+      ['shannon', 'dartmouth', 'foro', '1956', 'Coorganizó el taller de Dartmouth.'],
+      ['booth', 'vonneumann', 'encuentro', '1947', 'Los Booth visitaron Princeton y rediseñaron la ARC con la arquitectura de von Neumann (ARC2).'], ['booth', 'abooth', 'coautoria', '1947–1962', 'Esposo y coautor; construyeron juntos las máquinas de Birkbeck.'],
+      ['bartik', 'eckmau', 'coautoria', '1946–1950s', 'Después de la ENIAC trabajó con sus diseñadores en BINAC y UNIVAC.'], ['bartik', 'holberton', 'coautoria', '1946–1950s', 'Compañera de las seis de la ENIAC; juntas crearon SORT/MERGE.'],
+      ['bartik', 'goldstine', 'maestro', '1945', 'Herman y Adele Goldstine entrenaron a las operadoras; Adele escribió el manual de la ENIAC.']
+    ];
+    const MEET = [
+      { ids: ['wiener', 'rosenblueth'], t: 'coautoria', when: '1930s–1964', txt: 'Se conocieron en Boston, en el seminario de metodología científica de Harvard. Escribieron con Bigelow el artículo de 1943. Wiener le dedicó Cybernetics y viajó a México a trabajar con él en el Instituto Nacional de Cardiología. Es la colaboración más larga y mejor documentada.' },
+      { ids: ['turing', 'shannon'], t: 'encuentro', when: '1943', txt: 'Turing visitó Bell Labs en secreto y conversaban en la cafetería; el tema clasificado (SIGSALY) quedó fuera de la charla.' },
+      { ids: ['wiener', 'shannon', 'rosenblueth'], t: 'foro', when: '1946–1953', txt: 'Conferencias Macy sobre cibernética, junto con von Neumann, Margaret Mead y Gregory Bateson.', edge: ['wiener', 'shannon'] },
+      { ids: ['turing', 'lovelace'], t: 'influencia', when: '1950', txt: 'Diálogo intelectual a un siglo: en «Computing Machinery and Intelligence», Turing discute la «objeción de Lady Lovelace» (que la máquina no origina nada) y la rebate.' },
+      { ids: ['booth', 'vonneumann'], t: 'encuentro', when: '1947', txt: 'Los Booth visitaron Princeton y rediseñaron la ARC con la arquitectura de von Neumann (ARC2).' },
+      { ids: ['bartik', 'eckmau'], t: 'coautoria', when: '1946–1950s', txt: 'Después de la ENIAC, Bartik trabajó con sus diseñadores en BINAC y UNIVAC.' }
+    ];
+
+    /* ---------- Literatura ---------- */
+    const LIT = [
+      ['lovelace', 'Lord Byron', 'Poeta romántico', 'familia', 'Su padre; se separó de la familia al mes de nacer ella y murió en Grecia cuando tenía 8 años. Ella pidió ser enterrada junto a él.', 'Wikipedia'],
+      ['lovelace', 'Charles Dickens', 'Novelista', 'trato', 'Trato personal; Dickens la visitó en su lecho de muerte.', 'THOCP'],
+      ['lovelace', 'Mary Somerville', 'Divulgadora científica', 'mentora', 'Mentora; la presentó con Babbage en 1833.', 'Wikipedia / Oxford DNB'],
+      ['wiener', 'Leo Wiener', 'Historiador y lingüista', 'familia', 'Su padre; primer profesor de lenguas eslavas en Harvard y traductor de 24 volúmenes de Tolstói.', 'Wikipedia'],
+      ['wiener', 'Bertrand Russell', 'Filósofo', 'maestro', 'Su maestro en Cambridge.', 'MacTutor'],
+      ['wiener', 'Su propia obra literaria', 'Novelista', 'obra propia', 'Escribió la novela The Tempter (1959).', 'Goodreads'],
+      ['rosenblueth', 'Alfonso Reyes', 'Poeta, ensayista e historiador', 'institución', 'Colegas en El Colegio Nacional: Rosenblueth ingresó en 1947 y Reyes fue miembro hasta su muerte en 1959. Coincidieron 12 años; no hay pruebas de amistad personal.', 'Archivo IIE-UNAM / Biografías y Vidas'],
+      ['turing', 'Angus Wilson', 'Novelista', 'trato', 'Coincidieron en Bletchley Park en 1942 y se trataron después en King’s College; Wilson inspiró el cuento inédito de Turing «Pryce’s Buoy».', 'Univ. de Cambridge'],
+      ['turing', 'E. M. Forster', 'Novelista', 'círculo común', 'Ambos de King’s College; P. N. Furbank fue amigo de los dos, biógrafo de Forster y albacea de Turing.', 'King’s College'],
+      ['shannon', 'Su propia poesía', 'Poeta ocasional', 'obra propia', 'Escribió «A Rubric on Rubik Cubics» (1981), con notas al pie imitando a T. S. Eliot.', 'Scientific American'],
+      ['bartik', 'Estudios de literatura', 'Maestría en inglés', 'formación', 'Obtuvo una maestría en inglés por la Universidad de Pensilvania en 1967.', 'Computer History Museum']
+    ];
+
+    /* ---------- Pendientes, fuentes y reto ---------- */
+    const PEND = ['¿Rosenblueth y Alfonso Reyes tuvieron trato personal, más allá de El Colegio Nacional?', '¿Turing y Forster llegaron a conocerse en persona? Las fuentes solo prueban el círculo común.', '¿Bartik tuvo contacto con Booth, Turing o Shannon? No hay ningún registro.', 'Fechas exactas de las estancias de Wiener en México (las fuentes hablan de un año sabático, sin precisar).', 'Fechas exactas de los estudios de Wiener con Russell, Hardy y Hilbert (aquí aparecen como c. 1913–1914).', '¿Hubo contacto directo entre Wiener y Turing? Las fuentes consultadas no lo documentan.'];
+    const SRC = [
+      ['Ada Lovelace — Oxford DNB (MacTutor)', 'https://mathshistory.st-andrews.ac.uk/DNB/Lovelace.html'], ['Norbert Wiener — MacTutor, St Andrews', 'https://mathshistory.st-andrews.ac.uk/Biographies/Wiener_Norbert/'],
+      ['Arturo Rosenblueth — Wikipedia', 'https://en.wikipedia.org/wiki/Arturo_Rosenblueth'], ['Alan Turing — Wikipedia', 'https://en.wikipedia.org/wiki/Alan_Turing'], ['Turing en Princeton — Princeton Alumni Weekly', 'https://paw.princeton.edu/article/daybreak-digital-age'],
+      ['Claude Shannon — Wikipedia', 'https://en.wikipedia.org/wiki/Claude_Shannon'], ['Conferencias Macy — Wikipedia', 'https://en.wikipedia.org/wiki/Macy_conferences'], ['Kathleen Booth — Wikipedia', 'https://en.wikipedia.org/wiki/Kathleen_Booth'],
+      ['Jean Bartik — Wikipedia', 'https://en.wikipedia.org/wiki/Jean_Bartik'], ['The Goldstines and “ENIAC Six” — American Philosophical Society', 'https://www.amphilsoc.org/blog/goldstines-and-eniac-six'],
+      ['Del informe base: Ada Lovelace (THOCP, Wikipedia), Leo Wiener, The Tempter (Goodreads), Medigraphic, Revista de la Universidad de México (1971), Universidad de Sonora, Archivo IIE-UNAM, Biografías y Vidas, Universidad de Cambridge, King’s College, SFU (Lovelace’s objection), IEEE Spectrum, Scientific American, GMU, Computer History Museum', null]
+    ];
+    const QUIZ = [
+      ['¿Quién publicó en 1843 las notas con el que se considera el primer algoritmo para una máquina?', ['Ada Lovelace', 'Kathleen Booth', 'Jean Bartik', 'Claude Shannon'], 0, 'Lovelace tradujo la memoria de Menabrea y le añadió notas con un método para números de Bernoulli.'],
+      ['¿Qué libro de 1948 funda la cibernética y fue dedicado a Rosenblueth?', ['Mente y cerebro', 'Cybernetics', 'The Tempter', 'Computing Machinery and Intelligence'], 1, 'Wiener publicó Cybernetics en 1948.'],
+      ['¿Dónde conoció Shannon a Turing en 1943?', ['En el MIT', 'En Bletchley Park', 'En Bell Labs', 'En Dartmouth'], 2, 'Turing visitó Bell Labs y conversaban en la cafetería; lo clasificado quedó fuera.'],
+      ['¿Quién fue el primer director del Cinvestav (1961)?', ['Alfonso Reyes', 'Arturo Rosenblueth', 'Norbert Wiener', 'Walter Cannon'], 1, 'Rosenblueth, también candidato al Nobel en 1952.'],
+      ['¿Qué tesis de 1937 unió circuitos y álgebra de Boole?', ['La de Turing', 'La de Wiener', 'La de Shannon', 'La de Booth'], 2, '«A Symbolic Analysis of Relay and Switching Circuits», en el MIT.'],
+      ['¿A quién rebatió Turing con la «objeción de Lady Lovelace» en 1950?', ['A Von Neumann', 'A la idea de que la máquina no origina nada', 'A Wiener', 'A Babbage'], 1, 'En «Computing Machinery and Intelligence».'],
+      ['¿Qué logró Kathleen Booth para la computadora ARC?', ['Primer lenguaje ensamblador', 'La tarjeta perforada', 'El transistor', 'Internet'], 0, 'Creó el primer lenguaje ensamblador y su ensamblador.'],
+      ['¿Qué día se presentó la ENIAC, en la que Bartik fue programadora?', ['15 de febrero de 1946', '7 de junio de 1954', '10 de diciembre de 1815', '24 de febrero de 2001'], 0, 'Presentación el 15 de febrero de 1946 en Filadelfia.'],
+      ['¿Qué foro (1946–1953) reunió a Wiener, Shannon, Rosenblueth y von Neumann?', ['Dartmouth', 'Las Conferencias Macy', 'El Colegio Nacional', 'Bletchley Park'], 1, 'Las Conferencias Macy sobre cibernética, con Margaret Mead y Gregory Bateson.'],
+      ['¿Con qué poeta romántico tenía parentesco Ada Lovelace?', ['Con Tolstói', 'Con T. S. Eliot', 'Con Lord Byron', 'Con Alfonso Reyes'], 2, 'Lord Byron fue su padre; pidió ser enterrada junto a él.']
+    ];
+  </script>
+
+  <!-- ===================== LÓGICA ===================== -->
+  <script>
+    const nameOf = id => P[id] ? P[id].name : (SEC[id] ? SEC[id][0] : id);
+    const colorOf = id => P[id] ? P[id].color : (id === 'ctx' ? CTX.color : '#64748b');
+    const ymd = e => e.span ? `${e.span[0]}–${e.span[1]}` : `${e.ap ? 'c. ' : ''}${Math.floor(e.y + 1e-9)}`;
+    let YEAR = 1946, MAPY = 2022;
+    const Y0 = 1808, Y1 = 2026, LEFT = 30;
+    let PXY = 12, SELP = new Set(PEOPLE.map(p => p.id)), SELEV = null, POS = {};
+
+    /* ======================= HERO ======================= */
+    function buildHero() {
+      const stats = [[7, 'personas'], [2, 'épocas'], [4, 'contactos directos'], [207, 'años de historia (1815–2022)']];
+      $('#hero-stats').innerHTML = stats.map(([n, t]) => `<div class="hero-stat"><b data-n="${n}">0</b><span>${t}</span></div>`).join('');
+      $$('#hero-stats b').forEach(b => { const n = +b.dataset.n; let i = 0; const st = setInterval(() => { i += Math.ceil(n / 30); if (i >= n) { i = n; clearInterval(st); } b.textContent = i; }, 35); });
+      $('#faces').innerHTML = PEOPLE.map((p, i) => `<div class="face" style="background:${p.color};animation-delay:${i * 80}ms" title="${p.name}" data-prof="${p.id}" tabindex="0" role="button">${p.ini}</div>`).join('');
+      // red decorativa
+      const W = 1200, H = 420, pos = { lovelace: [120, 300], wiener: [420, 110], rosenblueth: [300, 320], turing: [700, 130], shannon: [560, 300], booth: [900, 300], bartik: [1050, 140] };
+      const pairs = [['wiener', 'rosenblueth'], ['turing', 'shannon'], ['wiener', 'shannon'], ['booth', 'bartik'], ['lovelace', 'turing'], ['shannon', 'booth']];
+      $('#hero-net').setAttribute('viewBox', `0 0 ${W} ${H}`); $('#hero-net').setAttribute('preserveAspectRatio', 'xMidYMid slice');
+      $('#hero-net').innerHTML = pairs.map(([a, b]) => `<line x1="${pos[a][0]}" y1="${pos[a][1]}" x2="${pos[b][0]}" y2="${pos[b][1]}" stroke="#7dd3fc" stroke-width="1.5" stroke-dasharray="4 6" opacity=".6"/>`).join('') +
+        PEOPLE.map((p, i) => `<circle cx="${pos[p.id][0]}" cy="${pos[p.id][1]}" r="14" fill="${p.color}" opacity=".9"><animate attributeName="r" values="12;18;12" dur="${3 + i * .4}s" repeatCount="indefinite"/></circle>`).join('');
+    }
+
+    /* ======================= LÍNEA DEL TIEMPO ======================= */
+    const X = y => LEFT + (y - Y0) * PXY;
+    function rowsFor(list) {
+      const ends = []; [...list].sort((a, b) => a.y - b.y).forEach(e => { let r = 0; while (ends[r] !== undefined && X(e.y) - ends[r] < 18) r++; ends[r] = X(e.y); e._row = r % 3; });
+    }
+    const ROWOFF = [0, -19, 19];
+    function shapeFor(e, col) {
+      if (e.t === 'a') return `<circle r="7" fill="${col}"/>`;
+      if (e.t === 'v') return `<circle r="6" fill="#fff" stroke="${col}" stroke-width="3"/>`;
+      if (e.t === 'e') return `<rect x="-6" y="-6" width="12" height="12" transform="rotate(45)" fill="${col}"/>`;
+      if (e.t === 'r') return `<path d="M0 -8L8 6H-8Z" fill="${col}"/>`;
+      return `<circle r="7" fill="#fff" stroke="${col}" stroke-width="3" stroke-dasharray="3 2"/>`;
+    }
+    function renderTL() {
+      const vis = PEOPLE.filter(p => SELP.has(p.id)), laneH = 76, top = 96, H = top + vis.length * laneH + 34, W = LEFT * 2 + (Y1 - Y0) * PXY;
+      POS = {};
+      let s = `<svg id="tl-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Línea del tiempo de los siete precursores">`;
+      // bandas de contexto
+      EV.filter(e => e.span).forEach((e, i) => { s += `<rect x="${X(e.span[0])}" y="30" width="${(e.span[1] - e.span[0] + 1) * PXY}" height="${H - 60}" fill="${i ? '#7048e8' : '#e03131'}" opacity=".07"/>`; });
+      // eje de años
+      for (let y = 1810; y <= 2020; y += 10) { const big = y % 50 === 0; s += `<line x1="${X(y)}" x2="${X(y)}" y1="${big ? 22 : 28}" y2="${H - 28}" stroke="${big ? '#cbd5e1' : '#e8edf3'}" stroke-width="${big ? 1.5 : 1}"/><text class="tl-year ${big ? 'big' : ''}" x="${X(y)}" y="16" text-anchor="middle">${y}</text><text class="tl-year ${big ? 'big' : ''}" x="${X(y)}" y="${H - 10}" text-anchor="middle">${y}</text>`; }
+      // carril de contexto
+      const ctx = EV.filter(e => e.who === 'ctx'); rowsFor(ctx.filter(e => !e.span));
+      s += `<text class="tl-lane-label" x="${LEFT}" y="48" fill="#475569"><tspan>🌍 Contexto mundial</tspan></text>`;
+      ctx.forEach(e => {
+        if (e.span) { const x0 = X(e.span[0]), w = (e.span[1] - e.span[0] + 1) * PXY, yy = e.id === 'c3' ? 68 : 86; POS[e.id] = { x: x0 + w / 2, y: yy + 8 };
+          s += `<g class="ev" data-id="${e.id}" tabindex="0" role="button" aria-label="${esc(e.title)}"><rect x="${x0}" y="${yy}" width="${w}" height="16" rx="8" fill="${e.id === 'c3' ? '#e03131' : '#7048e8'}" opacity=".85"/>${w > 130 ? `<text x="${x0 + w / 2}" y="${yy + 12}" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700" style="pointer-events:none">${e.id === 'c3' ? 'Segunda Guerra Mundial' : 'Conferencias Macy'}</text>` : ''}<rect class="ring" x="${x0 - 3}" y="${yy - 3}" width="${w + 6}" height="22" rx="11" stroke="#0f172a"/></g>`; }
+        else { const yy = 50 + 13 * e._row; POS[e.id] = { x: X(e.y), y: yy }; s += `<g class="ev" data-id="${e.id}" tabindex="0" role="button" aria-label="${esc(e.title)}" transform="translate(${X(e.y)},${yy})">${shapeFor(e, '#475569')}<circle class="ring" r="12" stroke="#0f172a"/></g>`; }
+      });
+      // carriles de personas
+      vis.forEach((p, i) => {
+        const ly = top + i * laneH, cy = ly + 44, x0 = X(p.born), w = (p.died - p.born) * PXY;
+        s += `<rect x="${LEFT - 10}" y="${ly + 4}" width="${W - 2 * LEFT + 20}" height="${laneH - 8}" rx="12" fill="${p.color}" opacity="${i % 2 ? .035 : .07}"/>`;
+        s += `<g class="tl-bar" data-b="${p.born}" data-d="${p.died}" data-p="${p.id}"><rect x="${x0}" y="${cy - 8}" width="${w}" height="16" rx="8" fill="${p.color}" opacity=".22" stroke="${p.color}" stroke-width="1.5"/></g>`;
+        s += `<text class="tl-lane-label" x="${x0}" y="${ly + 17}" fill="${p.color}">${p.name} · ${yrs(p)}</text>`;
+        const evs = EV.filter(e => e.who === p.id); rowsFor(evs);
+        evs.forEach(e => { const yy = cy + ROWOFF[e._row]; POS[e.id] = { x: X(e.y), y: yy };
+          s += `<g class="ev" data-id="${e.id}" tabindex="0" role="button" aria-label="${esc(e.title)} (${ymd(e)})" transform="translate(${X(e.y)},${yy})">${shapeFor(e, p.color)}<circle class="ring" r="12" stroke="${p.color}"/></g>`; });
+      });
+      s += `<g id="rel-layer"></g><g id="scrub"><line id="scrub-line" x1="0" x2="0" y1="24" y2="${H - 26}"/><rect id="scrub-bg" x="-26" y="${H - 26}" width="52" height="18" rx="9" fill="#0f172a"/><text id="scrub-lab" x="0" y="${H - 13}" text-anchor="middle">${YEAR}</text></g></svg>`;
+      $('#tl-svg').outerHTML = s; setScrub(); drawRel();
+      $$('#tl-svg .ev').forEach(g => {
+        g.addEventListener('click', () => selectEv(g.dataset.id)); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectEv(g.dataset.id); } });
+        g.addEventListener('mouseenter', e => showTip(g)); g.addEventListener('mouseleave', () => $('#tl-tip').classList.remove('on')); g.addEventListener('focus', () => showTip(g)); g.addEventListener('blur', () => $('#tl-tip').classList.remove('on'));
+      });
+      markSel();
+    }
+    function showTip(g) {
+      const e = EVM[g.dataset.id], tip = $('#tl-tip'), wrap = $('#tl-wrap'), r = g.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+      tip.innerHTML = `<b>${esc(e.title)}</b><br><span style="opacity:.8">${ymd(e)}${e.pl ? ' · ' + esc(e.pl) : ''}</span>`;
+      tip.style.left = Math.max(4, r.left - wr.left + wrap.scrollLeft + 12) + 'px'; tip.style.top = Math.max(2, r.top - wr.top - 48) + 'px'; tip.classList.add('on');
+    }
+    function setScrub() {
+      const x = X(YEAR + .5); const l = $('#scrub-line'); if (!l) return;
+      l.setAttribute('x1', x); l.setAttribute('x2', x); $('#scrub-bg').setAttribute('x', x - 26); $('#scrub-lab').setAttribute('x', x); $('#scrub-lab').textContent = YEAR;
+      $$('#tl-svg .tl-bar').forEach(b => { const alive = YEAR + .5 >= +b.dataset.b && YEAR <= +b.dataset.d; b.style.opacity = alive ? 1 : .55; b.querySelector('rect').setAttribute('opacity', alive ? .55 : .2); });
+    }
+    function drawRel() {
+      const L = $('#rel-layer'); if (!L) return; L.innerHTML = '';
+      if (!SELEV) return; const e = EVM[SELEV], a = POS[e.id]; if (!a) return;
+      L.innerHTML = e.rel.map(r => { const b = POS[r]; if (!b) return ''; const re = EVM[r], col = colorOf(re.who === 'ctx' ? e.who : re.who), my = (a.y + b.y) / 2 - (Math.abs(a.y - b.y) < 30 ? 36 : 0);
+        return `<path class="relpath" d="M${a.x} ${a.y} C ${a.x} ${my}, ${b.x} ${my}, ${b.x} ${b.y}" stroke="${col}"/>`; }).join('');
+    }
+    function markSel() {
+      const rel = SELEV ? new Set([SELEV, ...EVM[SELEV].rel]) : null;
+      $$('#tl-svg .ev').forEach(g => { g.classList.toggle('sel', g.dataset.id === SELEV); g.classList.toggle('dim', !!rel && !rel.has(g.dataset.id)); g.classList.toggle('rel', !!rel && rel.has(g.dataset.id)); });
+    }
+    function scrollToYear(y, smooth = true) { const w = $('#tl-wrap'); w.scrollTo({ left: Math.max(0, X(y) - w.clientWidth / 2), behavior: smooth ? 'smooth' : 'auto' }); }
+    function selectEv(id, jump) {
+      SELEV = id; const e = EVM[id], p = P[e.who], col = colorOf(e.who);
+      const ty = TYPE[e.t], rel = e.rel.map(r => EVM[r]);
+      $('#ev-detail').style.setProperty('--c', col);
+      $('#ev-detail').innerHTML = `<div class="d-flex flex-wrap align-items-center gap-2 mb-1"><span class="tchip" style="--c:${col}"><i class="bi ${ty[1]}"></i>${ty[0]}</span><span class="mono" style="color:${col}">${ymd(e)}</span>${e.pl ? `<span class="small text-muted"><i class="bi bi-geo-alt-fill me-1"></i>${esc(e.pl)}</span>` : ''}</div>
+        <h5 class="mb-1">${esc(e.title)}</h5><div class="small mb-2"><strong>${p ? p.name : 'Contexto mundial'}</strong></div><p class="mb-2">${esc(e.d)}</p>
+        ${rel.length ? `<div class="mini-lbl mb-1">Se liga con</div>${rel.map(r => `<span class="ev-chip" style="--c:${colorOf(r.who)}" data-ev="${r.id}">${ymd(r)} · ${esc(r.title)}</span>`).join('')}` : '<div class="small text-muted">Evento aislado en esta línea.</div>'}
+        ${p ? `<div class="mt-2"><button class="btn btn-sm rounded-pill text-white" style="background:${col}" data-prof="${p.id}"><i class="bi bi-person-lines-fill me-1"></i>Ver perfil de ${p.name.split(' ')[0]}</button></div>` : ''}`;
+      markSel(); drawRel(); if (jump) { scrollToYear(e.y); } setYear(Math.round(e.y), 'ev');
+    }
+    function setYear(y, from) {
+      YEAR = Math.max(1815, Math.min(2022, Math.round(y))); $('#yr').value = YEAR; $('#st-year').textContent = YEAR; setScrub();
+      const alive = PEOPLE.filter(p => YEAR + .5 >= p.born && YEAR <= p.died);
+      $('#st-alive').innerHTML = alive.length ? `<span class="opacity-75">Vivían:</span> ` + alive.map(p => `<span class="alive" style="--c:${p.color}">${p.ini} · ${YEAR - p.born}</span>`).join('') : '<span class="opacity-75">Nadie de los siete había nacido aún.</span>';
+      const evs = EV.filter(e => Math.floor(e.y + 1e-9) === YEAR || (e.span && YEAR >= e.span[0] && YEAR <= e.span[1]));
+      $('#st-events').innerHTML = evs.length ? evs.slice(0, 8).map(e => `<span class="ev-chip" style="--c:${colorOf(e.who)}" data-ev="${e.id}">${esc(e.title)}</span>`).join('') : '<span class="opacity-50">Sin hechos registrados este año.</span>';
+      if ($('#m-sync').checked && from !== 'map') { MAPY = YEAR; $('#yr2').value = YEAR; $('#yr2-out').textContent = YEAR; if (typeof updateMap === 'function') updateMap(); }
+    }
+    let playT = null;
+    function togglePlay() {
+      const b = $('#play'); if (playT) { clearInterval(playT); playT = null; b.innerHTML = '<i class="bi bi-play-fill"></i> Recorrer'; return; }
+      if (YEAR >= 2022) setYear(1815); b.innerHTML = '<i class="bi bi-pause-fill"></i> Pausa';
+      playT = setInterval(() => { if (YEAR >= 2022) { togglePlay(); return; } setYear(YEAR + 1); const w = $('#tl-wrap'), x = X(YEAR + .5); if (x > w.scrollLeft + w.clientWidth - 80 || x < w.scrollLeft + 40) scrollToYear(YEAR, false); }, 140);
+    }
+    function setZoom(px, center) {
+      const w = $('#tl-wrap'), cy = center ?? ((w.scrollLeft + w.clientWidth / 2 - LEFT) / PXY + Y0); PXY = Math.max(2.5, Math.min(34, px)); renderTL(); w.scrollLeft = X(cy) - w.clientWidth / 2;
+    }
+    function presetZoom(k) {
+      const w = $('#tl-wrap').clientWidth - 40, R = { all: [1815, 2022], lovelace: [1812, 1856], modern: [1920, 1960], after: [1950, 2024] }[k];
+      PXY = Math.max(2.5, Math.min(34, w / (R[1] - R[0]))); renderTL(); $('#tl-wrap').scrollTo({ left: X(R[0]) - 20, behavior: 'smooth' });
+    }
+    function buildTLControls() {
+      $('#tl-filter').innerHTML = PEOPLE.map(p => `<span class="pchip ${SELP.has(p.id) ? '' : 'off'}" style="--c:${p.color}" data-fp="${p.id}" role="button" tabindex="0"><i class="dot">${p.ini}</i>${p.name}</span>`).join('') +
+        `<span class="pchip" style="--c:#475569" data-fp="all" role="button" tabindex="0"><i class="dot"><i class="bi bi-eye-fill"></i></i>Todos</span>`;
+    }
+    document.addEventListener('click', e => {
+      const f = e.target.closest('[data-fp]'); if (f) { const id = f.dataset.fp; if (id === 'all') SELP = new Set(PEOPLE.map(p => p.id)); else { SELP.has(id) ? SELP.delete(id) : SELP.add(id); if (!SELP.size) SELP = new Set(PEOPLE.map(p => p.id)); } buildTLControls(); renderTL(); }
+      const z = e.target.closest('[data-zoom]'); if (z) presetZoom(z.dataset.zoom);
+      const c = e.target.closest('[data-ev]'); if (c) { selectEv(c.dataset.ev, true); }
+      const pr = e.target.closest('[data-prof]'); if (pr) openProfile(pr.dataset.prof);
+    });
+    document.addEventListener('keydown', e => { const t = e.target.closest && e.target.closest('[data-prof],[data-fp]'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
+
+    /* ======================= PERSONAS ======================= */
+    let ERA = 'all', SORT = 'born';
+    const linksOf = id => EDGES.filter(e => e[0] === id || e[1] === id).map(e => ({ other: e[0] === id ? e[1] : e[0], type: e[2], when: e[3], txt: e[4] }));
+    function renderPeople() {
+      let list = PEOPLE.filter(p => ERA === 'all' || p.era === ERA);
+      list = [...list].sort((a, b) => SORT === 'born' ? a.born - b.born : (b.died - b.born) - (a.died - a.born));
+      $('#pcards').innerHTML = list.map((p, i) => { const ln = linksOf(p.id), age = p.died - p.born;
+        return `<div class="col-md-6 col-xl-4"><div class="pcard" style="--c:${p.color};animation-delay:${i * 70}ms">
+          <div class="pcard-head" data-years="${p.born}"><div class="avatar">${p.ini}</div><div><div class="h5 fw-bold mb-0">${p.name}</div><div class="small opacity-90">${yrs(p)} · ${p.place}</div><span class="era-badge">${p.era === 'xix' ? 'Siglo XIX' : 'Siglo XX'} · ${age} años</span></div></div>
+          <div class="pcard-body">
+            <div class="main-ap"><div class="mini-lbl">Aporte principal</div>${esc(p.main)}</div>
+            <div><div class="mini-lbl">Otros aportes</div><ul class="mb-0 ps-3 small">${p.others.map(o => `<li>${esc(o)}</li>`).join('')}</ul></div>
+            <div><div class="mini-lbl">Convivió con</div>${ln.slice(0, 7).map(l => `<span class="lnk-chip" data-node="${l.other}" title="${esc(ETYPE[l.type].n)}">${esc(nameOf(l.other).replace(/ \(.*\)/, ''))}</span>`).join('')}</div>
+            <div class="small text-muted"><i class="bi bi-stars me-1" style="color:${p.color}"></i>${esc(p.fun)}</div>
+            <div class="mt-auto d-flex gap-2 flex-wrap pt-1"><button class="btn btn-sm text-white rounded-pill" style="background:${p.color}" data-prof="${p.id}"><i class="bi bi-person-lines-fill me-1"></i>Perfil completo</button>
+              <button class="btn btn-sm btn-outline-dark rounded-pill" data-tl="${p.id}"><i class="bi bi-clock-history me-1"></i>En la línea</button></div>
+          </div></div></div>`; }).join('');
+    }
+    document.addEventListener('click', e => {
+      const eb = e.target.closest('[data-era]'); if (eb) { ERA = eb.dataset.era; $$('#era-filter .btn').forEach(b => b.classList.toggle('active', b === eb)); renderPeople(); }
+      const sb = e.target.closest('[data-sort]'); if (sb) { SORT = sb.dataset.sort; $$('#sort-filter .btn').forEach(b => b.classList.toggle('active', b === sb)); renderPeople(); }
+      const t = e.target.closest('[data-tl]'); if (t) { const p = P[t.dataset.tl]; if (!SELP.has(p.id)) { SELP.add(p.id); buildTLControls(); renderTL(); } $('#s1').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { scrollToYear(p.born + 6); setYear(p.born + 1); const b = $(`#tl-svg .tl-bar[data-p="${p.id}"]`); if (b) { b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 3600); } }, 500); }
+      const n = e.target.closest('[data-node]'); if (n) { bootstrap.Modal.getInstance($('#profileModal'))?.hide(); $('#s3').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => selectNode(n.dataset.node), 450); }
+    });
+
+    function openProfile(id) {
+      const p = P[id]; if (!p) return; $('#pm-head').style.background = `linear-gradient(135deg,${p.color},#0f172a)`; $('#pm-title').innerHTML = `<span class="me-2">${p.ini}</span>${p.name} <small class="opacity-75 ms-2">${yrs(p)}</small>`;
+      const evs = EV.filter(e => e.who === id).sort((a, b) => a.y - b.y), ln = linksOf(id), lit = LIT.filter(l => l[0] === id);
+      const pl = Object.values(PLACES).filter(x => x.notes.some(n => n[0] === id));
+      $('#pm-body').innerHTML = `<div class="row g-3"><div class="col-lg-5">
+        <div class="panel mb-3" style="border-top:5px solid ${p.color}"><div class="main-ap" style="--c:${p.color}"><div class="mini-lbl">Aporte principal</div>${esc(p.main)}</div>
+          <div class="mini-lbl mt-3">Otros aportes</div><ul class="small ps-3">${p.others.map(o => `<li>${esc(o)}</li>`).join('')}</ul><div class="small text-muted"><i class="bi bi-stars me-1" style="color:${p.color}"></i>${esc(p.fun)}</div></div>
+        <div class="panel"><div class="mini-lbl mb-2">Lugares</div>${pl.map(x => `<div class="small mb-1"><i class="bi bi-geo-alt-fill me-1" style="color:${p.color}"></i><strong>${esc(x.n)}</strong> — ${esc(x.notes.filter(n => n[0] === id).map(n => (n[1] ? n[1] + ': ' : '') + n[2]).join(' · '))}</div>`).join('')}</div></div>
+        <div class="col-lg-7"><div class="panel mb-3"><div class="mini-lbl mb-2">Su vida, año por año <span class="text-muted fw-normal">(toca un hecho para verlo en la línea)</span></div>
+          <div style="border-left:3px solid ${p.color};margin-left:.4rem">${evs.map(e => `<div class="ps-3 pb-2 position-relative" style="cursor:pointer" data-evgo="${e.id}"><span style="position:absolute;left:-9px;top:3px;width:15px;height:15px;border-radius:50%;background:${e.t === 'v' ? '#fff' : p.color};border:3px solid ${p.color}"></span><span class="mono small" style="color:${p.color}">${ymd(e)}</span> <strong class="small">${esc(e.title)}</strong>${e.pl ? `<div class="small text-muted"><i class="bi bi-geo-alt me-1"></i>${esc(e.pl)}</div>` : ''}</div>`).join('')}</div></div>
+          <div class="panel mb-3"><div class="mini-lbl mb-2">Con quién se cruzó</div>${ln.map(l => `<div class="small mb-2"><span class="tchip" style="--c:${ETYPE[l.type].c}">${ETYPE[l.type].n}</span> <strong>${esc(nameOf(l.other))}</strong> <span class="text-muted">(${esc(l.when)})</span><br>${esc(l.txt)}</div>`).join('') || '<div class="small text-muted">Sin contactos registrados.</div>'}</div>
+          ${lit.length ? `<div class="panel"><div class="mini-lbl mb-2">Letras e historia</div>${lit.map(l => `<div class="small mb-1"><i class="bi bi-book-half me-1" style="color:${p.color}"></i><strong>${esc(l[1])}</strong> (${esc(l[2])}) — ${esc(l[4])}</div>`).join('')}</div>` : ''}</div></div>`;
+      bootstrap.Modal.getOrCreateInstance($('#profileModal')).show();
+    }
+    document.addEventListener('click', e => { const g = e.target.closest('[data-evgo]'); if (g) { bootstrap.Modal.getInstance($('#profileModal'))?.hide(); $('#s1').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => selectEv(g.dataset.evgo, true), 450); } });
+
+    /* ======================= GRAFO ======================= */
+    const NODES = [...PEOPLE.map(p => ({ id: p.id, main: true, r: 30, c: p.color, label: p.name.split(' ').slice(-1)[0] === 'Bartik' ? 'Bartik' : p.name.split(' ').slice(-1)[0] })), ...Object.keys(SEC).map(id => ({ id, main: false, r: 11, c: '#94a3b8', label: SEC[id][0].replace(/ \(.*\)/, '').split(' ').slice(-1)[0] }))];
+    NODES.find(n => n.id === 'wiener').label = 'Wiener'; NODES.find(n => n.id === 'lovelace').label = 'Lovelace';
+    NODES.find(n => n.id === 'dartmouth').label = 'Dartmouth'; NODES.find(n => n.id === 'eckmau').label = 'Eckert/Mauchly'; NODES.find(n => n.id === 'goldstine').label = 'Goldstine'; NODES.find(n => n.id === 'leowiener').label = 'Leo Wiener'; NODES.find(n => n.id === 'abooth').label = 'A. Booth'; NODES.find(n => n.id === 'vonneumann').label = 'von Neumann'; NODES.find(n => n.id === 'demorgan').label = 'De Morgan';
+    const NM = Object.fromEntries(NODES.map(n => [n.id, n]));
+    const GE = EDGES.map((e, i) => ({ i, a: NM[e[0]], b: NM[e[1]], t: e[2], when: e[3], txt: e[4] }));
+    const NS = 'http://www.w3.org/2000/svg'; let GW = 1000, GH = 640, galpha = 1, gdrag = null, gSelN = null, gSelE = null, gHover = null; const HIDE = new Set();
+    function seedLayout() {
+      let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      PEOPLE.forEach((p, i) => { const a = (i / PEOPLE.length) * Math.PI * 2 - Math.PI / 2; const n = NM[p.id]; n.x = 500 + 330 * Math.cos(a); n.y = 320 + 240 * Math.sin(a); n.vx = n.vy = 0; });
+      NODES.filter(n => !n.main).forEach(n => { const e = GE.find(g => g.a === n || g.b === n), o = e.a === n ? e.b : e.a; n.x = (o.x || 500) + (rnd() - .5) * 120; n.y = (o.y || 320) + (rnd() - .5) * 120; n.vx = n.vy = 0; });
+    }
+    function tickG() {
+      const N = NODES;
+      for (let i = 0; i < N.length; i++) for (let j = i + 1; j < N.length; j++) { const a = N[i], b = N[j]; let dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + 30; const d = Math.sqrt(d2), f = (a.main && b.main ? 24000 : a.main || b.main ? 14000 : 8000) / d2 * galpha; dx /= d; dy /= d; a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f; }
+      GE.forEach(e => { const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y, d = Math.sqrt(dx * dx + dy * dy) + .01, L = e.a.main && e.b.main ? 250 : 120, f = (d - L) * .03 * galpha; e.a.vx += dx / d * f; e.a.vy += dy / d * f; e.b.vx -= dx / d * f; e.b.vy -= dy / d * f; });
+      N.forEach(n => { n.vx += (GW / 2 - n.x) * .0025 * galpha; n.vy += (GH / 2 - n.y) * .004 * galpha; if (n !== gdrag) { n.x += n.vx; n.y += n.vy; } n.vx *= .8; n.vy *= .8; n.x = Math.max(40, Math.min(GW - 40, n.x)); n.y = Math.max(34, Math.min(GH - 34, n.y)); });
+      galpha *= .994;
+    }
+    function buildGraph() {
+      const svg = $('#graph'); svg.innerHTML = '';
+      const mk = (t, a, p) => { const el = document.createElementNS(NS, t); for (const k in a) el.setAttribute(k, a[k]); (p || svg).appendChild(el); return el; };
+      GE.forEach(e => { const g = mk('g', { class: 'edge' }); e.line = mk('line', { stroke: ETYPE[e.t].c, 'stroke-width': e.a.main && e.b.main ? 4 : 2.6, 'stroke-dasharray': ETYPE[e.t].dash || '', 'stroke-linecap': 'round' }, g); e.hit = mk('line', { class: 'edge-hit' }, g); e.g = g; e.hit.addEventListener('click', ev => { ev.stopPropagation(); selectEdge(e.i); }); });
+      NODES.forEach(n => { const g = mk('g', { class: 'node' + (n.main ? ' main' : ''), tabindex: 0 }); mk('circle', { r: n.r, fill: n.c, stroke: '#fff', 'stroke-width': 3 }, g); if (n.main) { const t = mk('text', { 'text-anchor': 'middle', y: 5, fill: '#fff', style: 'stroke:none;font-size:15px' }, g); t.textContent = P[n.id].ini; }
+        n.lab = mk('text', { 'text-anchor': 'middle', y: n.r + 15, fill: n.main ? n.c : '#475569' }, g); n.lab.textContent = n.label; n.g = g;
+        g.addEventListener('pointerdown', ev => { gdrag = n; n.moved = false; n.px = ev.clientX; n.py = ev.clientY; g.setPointerCapture(ev.pointerId); galpha = Math.max(galpha, .35); loopG(); });
+        g.addEventListener('pointermove', ev => { if (gdrag !== n) return; if (Math.abs(ev.clientX - n.px) + Math.abs(ev.clientY - n.py) > 5) n.moved = true; const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; const q = pt.matrixTransform(svg.getScreenCTM().inverse()); n.x = Math.max(30, Math.min(GW - 30, q.x)); n.y = Math.max(30, Math.min(GH - 30, q.y)); });
+        g.addEventListener('pointerup', ev => { if (gdrag === n) { gdrag = null; if (!n.moved) selectNode(n.id); } });
+        g.addEventListener('mouseenter', () => { gHover = n.id; dimG(); }); g.addEventListener('mouseleave', () => { gHover = null; dimG(); });
+        g.addEventListener('keydown', ev => { if (ev.key === 'Enter') selectNode(n.id); });
+      });
+      svg.addEventListener('click', ev => { if (ev.target === svg) { gSelN = gSelE = null; dimG(); $('#g-detail').innerHTML = '<div class="text-muted small"><i class="bi bi-hand-index-thumb-fill me-1"></i>Toca una persona o una línea.</div>'; } });
+      drawG();
+    }
+    function drawG() {
+      GE.forEach(e => { for (const l of [e.line, e.hit]) { l.setAttribute('x1', e.a.x); l.setAttribute('y1', e.a.y); l.setAttribute('x2', e.b.x); l.setAttribute('y2', e.b.y); } });
+      NODES.forEach(n => n.g.setAttribute('transform', `translate(${n.x},${n.y})`));
+    }
+    let gRaf = null; function loopG() { if (gRaf) return; const step = () => { tickG(); drawG(); if (galpha > .02 || gdrag) gRaf = requestAnimationFrame(step); else gRaf = null; }; gRaf = requestAnimationFrame(step); }
+    function dimG() {
+      const focus = gHover || gSelN, fe = gSelE !== null ? GE[gSelE] : null;
+      GE.forEach(e => { const hid = HIDE.has(e.t); e.g.style.display = hid ? 'none' : ''; const on = focus ? (e.a.id === focus || e.b.id === focus) : fe ? e === fe : true; e.g.classList.toggle('dim', !on); });
+      const nb = new Set(); if (focus) { nb.add(focus); GE.forEach(e => { if (!HIDE.has(e.t) && (e.a.id === focus || e.b.id === focus)) { nb.add(e.a.id); nb.add(e.b.id); } }); } else if (fe) { nb.add(fe.a.id); nb.add(fe.b.id); }
+      NODES.forEach(n => { n.g.classList.toggle('dim', (focus || fe) ? !nb.has(n.id) : false); n.g.classList.toggle('sel', n.id === gSelN); });
+    }
+    const relHTML = l => `<div class="small mb-2" style="border-left:4px solid ${ETYPE[l.type].c};padding-left:.55rem"><span class="tchip" style="--c:${ETYPE[l.type].c}">${ETYPE[l.type].n}</span> <strong>${esc(nameOf(l.other))}</strong> <span class="text-muted">(${esc(l.when)})</span><br>${esc(l.txt)}</div>`;
+    function selectNode(id) {
+      gSelN = id; gSelE = null; dimG(); const n = NM[id], p = P[id], ln = linksOf(id).filter(l => !HIDE.has(l.type));
+      $('#g-detail').innerHTML = `<div class="d-flex align-items-center gap-2 mb-2"><div class="avatar" style="width:46px;height:46px;font-size:1.1rem;background:${n.c};color:#fff;border:0">${p ? p.ini : '•'}</div><div><div class="fw-bold" style="color:${n.c}">${esc(nameOf(id))}</div><div class="small text-muted">${p ? `${yrs(p)} · ${esc(p.tag)}` : esc(SEC[id][1])}</div></div></div>
+        ${p ? `<p class="small">${esc(p.main)}</p>` : ''}<div class="mini-lbl mb-1">Relaciones (${ln.length})</div>${ln.map(relHTML).join('') || '<div class="small text-muted">Ninguna visible con los filtros.</div>'}${p ? `<button class="btn btn-sm text-white rounded-pill mt-1" style="background:${p.color}" data-prof="${id}"><i class="bi bi-person-lines-fill me-1"></i>Perfil completo</button>` : ''}`;
+    }
+    function selectEdge(i) {
+      gSelE = i; gSelN = null; dimG(); const e = GE[i];
+      $('#g-detail').innerHTML = `<span class="tchip" style="--c:${ETYPE[e.t].c}">${ETYPE[e.t].n}</span><h6 class="fw-bold mt-2"><span style="color:${e.a.c}">${esc(nameOf(e.a.id))}</span> ↔ <span style="color:${e.b.c}">${esc(nameOf(e.b.id))}</span></h6><div class="mono small mb-2">${esc(e.when)}</div><p class="small">${esc(e.txt)}</p>
+        <div class="d-flex gap-1 flex-wrap">${[e.a, e.b].filter(n => n.main).map(n => `<button class="btn btn-sm text-white rounded-pill" style="background:${n.c}" data-prof="${n.id}">Perfil de ${esc(P[n.id].name.split(' ')[0])}</button>`).join('')}</div>`;
+    }
+    function buildGraphUI() {
+      $('#edge-legend').innerHTML = Object.entries(ETYPE).map(([k, v]) => `<span class="legend-edge" style="--c:${v.c}" data-et="${k}" role="button" tabindex="0"><i class="sw" style="${v.dash ? 'border-top-style:dashed' : ''}"></i>${v.n}</span>`).join('');
+      $('#edge-legend').addEventListener('click', e => { const l = e.target.closest('[data-et]'); if (!l) return; const k = l.dataset.et; HIDE.has(k) ? HIDE.delete(k) : HIDE.add(k); l.classList.toggle('off', HIDE.has(k)); dimG(); if (gSelN) selectNode(gSelN); });
+      $('#g-reset').onclick = () => { seedLayout(); galpha = 1; for (let i = 0; i < 120; i++) tickG(); drawG(); gSelN = gSelE = null; dimG(); };
+      seedLayout(); for (let i = 0; i < 400; i++) tickG(); buildGraph(); dimG();
+      // Encuentros
+      const nodeFor = (a, b) => GE.find(e => (e.a.id === a && e.b.id === b) || (e.a.id === b && e.b.id === a));
+      $('#meets').innerHTML = MEET.map((m, i) => { const col = ETYPE[m.t].c, ed = m.edge ? nodeFor(...m.edge) : nodeFor(m.ids[0], m.ids[1]);
+        return `<div class="col-md-6 col-xl-4"><div class="meet-card" style="--c:${col}" data-edge="${ed ? ed.i : ''}"><div class="d-flex align-items-center gap-2 mb-1 flex-wrap"><span class="tchip" style="--c:${col}">${ETYPE[m.t].n}</span><span class="mono small">${m.when}</span></div>
+          <div class="fw-bold mb-1">${m.ids.map(id => `<span style="color:${colorOf(id)}">${esc(nameOf(id).replace(/ \(.*\)/, ''))}</span>`).join(' · ')}</div><div class="small">${esc(m.txt)}</div><div class="small text-muted mt-1"><i class="bi bi-diagram-3 me-1"></i>Ver en la red</div></div></div>`; }).join('');
+      $('#meets').addEventListener('click', e => { const c = e.target.closest('[data-edge]'); if (c && c.dataset.edge !== '') { $('#graph').scrollIntoView({ behavior: 'smooth', block: 'center' }); selectEdge(+c.dataset.edge); } });
+      // Comparador
+      const opts = PEOPLE.map(p => `<option value="${p.id}">${p.name}</option>`).join(''); $('#cmp-a').innerHTML = opts; $('#cmp-b').innerHTML = opts; $('#cmp-a').value = 'turing'; $('#cmp-b').value = 'wiener';
+      $('#cmp-a').onchange = $('#cmp-b').onchange = compare; compare();
+    }
+    function compare() {
+      const A = P[$('#cmp-a').value], B = P[$('#cmp-b').value], out = $('#cmp-out');
+      if (A === B) { out.innerHTML = '<div class="opacity-75">Elige a dos personas distintas.</div>'; return; }
+      const s = Math.max(A.born, B.born), e = Math.min(A.died, B.died), span = 207, pc = y => ((y - 1815) / span * 100).toFixed(2);
+      const direct = EDGES.filter(x => (x[0] === A.id && x[1] === B.id) || (x[0] === B.id && x[1] === A.id));
+      const nb = id => new Set(linksOf(id).map(l => l.other)); const na = nb(A.id), nbb = nb(B.id), common = [...na].filter(x => nbb.has(x) && x !== A.id && x !== B.id);
+      const shared = Object.values(PLACES).filter(x => x.notes.some(n => n[0] === A.id) && x.notes.some(n => n[0] === B.id));
+      const viaMeet = MEET.find(m => m.ids.includes(A.id) && m.ids.includes(B.id));
+      out.innerHTML = `<div class="row g-3 align-items-center"><div class="col-sm-4 text-center"><div class="big">${e > s ? e - s : 0}</div><div class="small opacity-75">${e > s ? `años en que ambos vivieron (${s}–${e})` : `años de separación (${Math.abs(s - e)}): no coincidieron en vida`}</div></div>
+        <div class="col-sm-8"><div class="overlap-bar"><span style="left:${pc(A.born)}%;width:${(A.died - A.born) / span * 100}%;background:${A.color};opacity:.9;top:0;bottom:50%">${A.ini}</span><span style="left:${pc(B.born)}%;width:${(B.died - B.born) / span * 100}%;background:${B.color};opacity:.9;top:50%;bottom:0">${B.ini}</span>${e > s ? `<span style="left:${pc(s)}%;width:${(e - s) / span * 100}%;background:rgba(255,212,59,.35);border-left:2px solid #ffd43b;border-right:2px solid #ffd43b"></span>` : ''}</div><div class="d-flex justify-content-between small opacity-75"><span>1815</span><span>1900</span><span>2022</span></div></div></div>
+        <hr class="my-2 border-secondary">
+        <div class="small mb-1"><i class="bi bi-link-45deg me-1 text-warning"></i><strong>Contacto directo:</strong> ${direct.length ? direct.map(d => `${ETYPE[d[2]].n} (${esc(d[3])}): ${esc(d[4])}`).join('<br>') : viaMeet ? `${ETYPE[viaMeet.t].n} (${viaMeet.when}): ${esc(viaMeet.txt)}` : 'Ninguno documentado.'}</div>
+        <div class="small mb-1"><i class="bi bi-people me-1 text-warning"></i><strong>Contactos en común:</strong> ${common.length ? common.map(c => `<span class="lnk-chip" data-node="${c}">${esc(nameOf(c).replace(/ \(.*\)/, ''))}</span>`).join('') : 'ninguno registrado'}</div>
+        <div class="small"><i class="bi bi-geo-alt me-1 text-warning"></i><strong>Lugares compartidos:</strong> ${shared.length ? shared.map(x => esc(x.n)).join(' · ') : 'ninguno'}</div>`;
+    }
+
+    /* ======================= MAPA ======================= */
+    let MAP = null, MLAYER = null, MSEL = new Set(PEOPLE.map(p => p.id)), MARK = {};
+    function buildMap() {
+      $('#map-filter').innerHTML = PEOPLE.map(p => `<span class="pchip ${MSEL.has(p.id) ? '' : 'off'}" style="--c:${p.color}" data-mp="${p.id}" role="button" tabindex="0"><i class="dot">${p.ini}</i>${p.name}</span>`).join('');
+      if (!window.L) { $('#map').outerHTML = '<div class="map-fallback" id="map"><div><i class="bi bi-wifi-off fs-1"></i><div class="fw-bold">No se pudo cargar el mapa (Leaflet).</div><div class="small">La lista de lugares compartidos de abajo sigue disponible.</div></div></div>'; }
+      else if (!MAP) { MAP = L.map('map', { worldCopyJump: true, minZoom: 2 }).setView([42, -30], 3); L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(MAP); MLAYER = L.layerGroup().addTo(MAP); }
+      updateMap(); buildShared();
+    }
+    function visNotes(pl) { return pl.notes.filter(n => MSEL.has(n[0]) && (n[1] === null || n[1] <= MAPY)); }
+    function updateMap() {
+      if (!MAP) return; MLAYER.clearLayers(); MARK = {};
+      Object.entries(PLACES).forEach(([id, pl]) => {
+        const ns = visNotes(pl); if (!ns.length) return; const who = [...new Set(ns.map(n => n[0]))], col = who.length === 1 ? P[who[0]].color : '#334155';
+        const icon = L.divIcon({ className: '', html: `<div class="pin" style="background:${col}"><span>${who.length > 1 ? who.length : P[who[0]].ini[0]}</span></div>`, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28] });
+        const html = `<div class="fw-bold mb-1">${esc(pl.n)}</div>` + ns.map(n => `<div class="pop-row"><b style="background:${P[n[0]].color}">${P[n[0]].ini}</b><span>${n[1] ? `<strong>${n[1]}</strong>: ` : '<em>sin fecha</em>: '}${esc(n[2])}</span></div>`).join('');
+        MARK[id] = L.marker(pl.ll, { icon }).bindPopup(html).addTo(MLAYER);
+      });
+      if ($('#m-route').checked) PEOPLE.filter(p => MSEL.has(p.id)).forEach(p => {
+        const pts = []; Object.values(PLACES).forEach(pl => pl.notes.forEach(n => { if (n[0] === p.id && n[1] !== null && n[1] <= MAPY) pts.push([n[1], pl.ll]); })); pts.sort((a, b) => a[0] - b[0]);
+        if (pts.length > 1) L.polyline(pts.map(x => x[1]), { color: p.color, weight: 3, opacity: .75, dashArray: '8 7' }).addTo(MLAYER);
+      });
+    }
+    function buildShared() {
+      const sh = Object.entries(PLACES).map(([id, pl]) => [id, pl, [...new Set(pl.notes.map(n => n[0]))]]).filter(x => x[2].length > 1);
+      $('#shared-places').innerHTML = `<div class="col-12"><h6 class="fw-bold mb-0"><i class="bi bi-pin-map-fill text-danger me-1"></i>Lugares donde se cruzaron sus caminos</h6></div>` + sh.map(([id, pl, who]) => `<div class="col-md-6 col-xl-4"><div class="meet-card" style="--c:#334155" data-place="${id}"><div class="fw-bold mb-1">${esc(pl.n)}</div><div class="mb-1">${who.map(w => `<span class="tchip" style="--c:${P[w].color}">${P[w].name.split(' ').slice(-1)[0]}</span>`).join(' ')}</div><div class="small text-muted">${who.length} de los siete pasaron por aquí. <i class="bi bi-geo-alt ms-1"></i>Ver en el mapa</div></div></div>`).join('');
+    }
+    document.addEventListener('click', e => {
+      const f = e.target.closest('[data-mp]'); if (f) { const id = f.dataset.mp; MSEL.has(id) ? MSEL.delete(id) : MSEL.add(id); if (!MSEL.size) MSEL = new Set(PEOPLE.map(p => p.id)); $$('#map-filter .pchip').forEach(c => c.classList.toggle('off', !MSEL.has(c.dataset.mp))); updateMap(); }
+      const pl = e.target.closest('[data-place]'); if (pl && MAP) { $('#map').scrollIntoView({ behavior: 'smooth', block: 'center' }); const id = pl.dataset.place; MAPY = 2022; $('#yr2').value = 2022; $('#yr2-out').textContent = 2022; MSEL = new Set(PEOPLE.map(p => p.id)); $$('#map-filter .pchip').forEach(c => c.classList.remove('off')); updateMap(); setTimeout(() => { MAP.flyTo(PLACES[id].ll, 6, { duration: 1 }); MARK[id] && MARK[id].openPopup(); }, 400); }
+    });
+
+    /* ======================= LETRAS ======================= */
+    let LF = 'all';
+    function renderLit() {
+      $('#lit-filter').innerHTML = `<span class="pchip ${LF === 'all' ? '' : 'off'}" style="--c:#475569" data-lf="all" role="button" tabindex="0"><i class="dot"><i class="bi bi-collection"></i></i>Todos</span>` + PEOPLE.filter(p => LIT.some(l => l[0] === p.id)).map(p => `<span class="pchip ${LF === p.id ? '' : 'off'}" style="--c:${p.color}" data-lf="${p.id}" role="button" tabindex="0"><i class="dot">${p.ini}</i>${p.name}</span>`).join('');
+      $('#lit-grid').innerHTML = LIT.filter(l => LF === 'all' || l[0] === LF).map((l, i) => { const p = P[l[0]];
+        return `<div class="col-md-6 col-xl-4"><div class="lit-card" style="--c:${p.color};animation-delay:${i * 50}ms"><div class="who">${p.name}</div><h6>${esc(l[1])}</h6><div class="d-flex flex-wrap gap-1 mb-2"><span class="tchip" style="--c:${p.color}">${esc(l[2])}</span><span class="tchip" style="--c:#475569">${esc(l[3])}</span></div><p class="small mb-2">${esc(l[4])}</p><span class="src-pill"><i class="bi bi-link-45deg"></i> ${esc(l[5])}</span></div></div>`; }).join('');
+    }
+    document.addEventListener('click', e => { const f = e.target.closest('[data-lf]'); if (f) { LF = f.dataset.lf; renderLit(); } });
+
+    /* ======================= RETO ======================= */
+    let QI = 0, QS = 0, QW = [];
+    function renderQuiz() {
+      const box = $('#q-box'); $('#q-bar').style.width = (QI / QUIZ.length * 100) + '%';
+      if (QI >= QUIZ.length) {
+        const pct = Math.round(QS / QUIZ.length * 100), msg = pct >= 80 ? '¡Excelente! Ya eres especialista en los precursores.' : pct >= 50 ? 'Buen avance. Repasa la línea del tiempo para afianzar.' : 'Vuelve a recorrer las secciones y vuelve a intentarlo.';
+        box.innerHTML = `<div class="text-center py-3"><div class="display-3 fw-bold" style="color:#e8590c">${QS}/${QUIZ.length}</div><p class="lead">${msg}</p>${QW.length ? `<div class="text-start small"><strong>Repasa:</strong><ul>${QW.map(i => `<li>${esc(QUIZ[i][0])} <span class="text-muted">→ ${esc(QUIZ[i][1][QUIZ[i][2]])}</span></li>`).join('')}</ul></div>` : ''}<button class="btn btn-warning rounded-pill fw-semibold" id="q-again"><i class="bi bi-arrow-repeat me-1"></i>Intentar de nuevo</button></div>`;
+        if (pct >= 70 && window.confetti) confetti({ particleCount: 140, spread: 80, origin: { y: .7 } }); return;
+      }
+      const q = QUIZ[QI];
+      box.innerHTML = `<div class="small text-muted mb-1">Pregunta ${QI + 1} de ${QUIZ.length} · aciertos: ${QS}</div><h5 class="fw-bold mb-3">${esc(q[0])}</h5>${q[1].map((o, i) => `<button class="qopt" data-q="${i}">${esc(o)}</button>`).join('')}<div id="q-fb" class="mt-2"></div>`;
+    }
+    document.addEventListener('click', e => {
+      const o = e.target.closest('.qopt'); if (o && !o.disabled) { const i = +o.dataset.q, q = QUIZ[QI], ok = i === q[2]; $$('.qopt').forEach((b, k) => { b.disabled = true; if (k === q[2]) b.classList.add('ok'); }); if (!ok) { o.classList.add('bad'); QW.push(QI); } else QS++;
+        $('#q-fb').innerHTML = `<div class="tip-box ${ok ? 's-ok' : 's-res'}"><strong>${ok ? '¡Correcto!' : 'No exactamente.'}</strong> ${esc(q[3])}</div><button class="btn btn-dark rounded-pill mt-2" id="q-next">${QI + 1 < QUIZ.length ? 'Siguiente' : 'Ver resultado'} <i class="bi bi-arrow-right"></i></button>`; }
+      if (e.target.closest('#q-next')) { QI++; renderQuiz(); }
+      if (e.target.closest('#q-again') || e.target.closest('#q-restart')) { QI = 0; QS = 0; QW = []; renderQuiz(); }
+    });
+
+    /* ======================= PENDIENTES Y FUENTES ======================= */
+    function buildPend() {
+      let done = []; try { done = JSON.parse(localStorage.getItem('prec_pend') || '[]'); } catch (e) {}
+      $('#pend').innerHTML = PEND.map((t, i) => `<div class="check-item ${done.includes(i) ? 'done' : ''}" data-pi="${i}" role="checkbox" aria-checked="${done.includes(i)}" tabindex="0"><i class="bi ${done.includes(i) ? 'bi-check-square-fill text-success' : 'bi-square'} fs-5"></i><span class="small">${esc(t)}</span></div>`).join('');
+      $('#sources').innerHTML = SRC.map(([t, u]) => u ? `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>` : `<li class="text-muted">${esc(t)}</li>`).join('');
+    }
+    document.addEventListener('click', e => { const c = e.target.closest('[data-pi]'); if (!c) return; const i = +c.dataset.pi; let done = []; try { done = JSON.parse(localStorage.getItem('prec_pend') || '[]'); } catch (x) {} done = done.includes(i) ? done.filter(k => k !== i) : [...done, i]; try { localStorage.setItem('prec_pend', JSON.stringify(done)); } catch (x) {} buildPend(); });
+
+    /* ======================= ARRANQUE ======================= */
+    function init() {
+      buildHero(); buildTLControls();
+      const w = $('#tl-wrap').clientWidth - 40; PXY = Math.max(10, Math.min(18, w / 60)); renderTL();
+      $('#z-in').onclick = () => setZoom(PXY * 1.35); $('#z-out').onclick = () => setZoom(PXY / 1.35);
+      $('#yr').oninput = e => { setYear(+e.target.value); const wr = $('#tl-wrap'), x = X(YEAR + .5); if (x < wr.scrollLeft + 30 || x > wr.scrollLeft + wr.clientWidth - 30) scrollToYear(YEAR, false); };
+      $('#play').onclick = togglePlay;
+      $('#yr2').oninput = e => { MAPY = +e.target.value; $('#yr2-out').textContent = MAPY; if ($('#m-sync').checked) setYear(MAPY, 'map'); updateMap(); };
+      $('#m-route').onchange = updateMap;
+      setYear(1946); scrollToYear(1925, false); selectEv('j3'); SELEV = 'j3'; markSel(); drawRel();
+      renderPeople(); buildGraphUI(); buildMap(); renderLit(); renderQuiz(); buildPend();
+      // navegación activa
+      const links = $$('#sec-nav a'), secs = links.map(a => $(a.getAttribute('href')));
+      const onScroll = () => { let k = 0; secs.forEach((s, i) => { if (s.getBoundingClientRect().top < 160) k = i; }); links.forEach((a, i) => a.classList.toggle('active', i === k)); }; document.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+      setTimeout(() => { if (MAP) MAP.invalidateSize(); }, 400);
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
