@@ -125,6 +125,24 @@
     footer small { font-size:.85rem; }
     :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
     @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-header .sym,.tk,.ln,.tab-pane,.stepcard{animation:none;opacity:1} }
+
+    .av-ln { display:flex; align-items:center; gap:.6rem; cursor:help; position:relative; padding:.15rem .6rem .15rem .4rem; flex-wrap:wrap; transition:background .2s, border-color .2s; }
+    .av-ln:hover, .av-ln:focus-visible { background:#f5f3ff; border-left-color:#7048e8; }
+    .av-ln .av-n { flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:#7048e8; color:#fff; font-size:.72rem; font-weight:800; display:flex; align-items:center; justify-content:center; animation:avPop .5s both; animation-delay:inherit; }
+    .av-ln.av-orig { border-left-color:#0f172a; cursor:default; } .av-ln.av-orig .av-n { background:#0f172a; }
+    .av-ln .av-eq { flex:1 1 auto; min-width:0; overflow-x:auto; } .av-ln .av-eq .cx.d { margin:0; text-align:left; }
+    .av-ln .av-badges { flex:0 0 auto; display:flex; align-items:center; gap:.15rem; flex-wrap:wrap; } .av-ln .chip-law { cursor:help; }
+    .av-i { color:#7048e8; font-size:1.05rem; }
+    .av-ln:not(.av-orig) { animation:lnIn .5s forwards, avPulse 1.4s ease-out 1; animation-delay:inherit; }
+    @keyframes avPop { from { transform:scale(0) rotate(-90deg); } to { transform:none; } }
+    @keyframes avPulse { 0% { box-shadow:0 0 0 0 rgba(112,72,232,.45); } 100% { box-shadow:0 0 0 12px rgba(112,72,232,0); } }
+    .av-res { opacity:0; animation:lnIn .6s forwards; }
+    .av-tag { background:#7048e8; color:#fff; border-radius:999px; font-size:.68rem; font-weight:700; padding:.05rem .5rem; margin-left:.3rem; }
+    .av-pop { --bs-popover-max-width:380px; --bs-popover-border-color:#7048e8; --bs-popover-header-bg:#7048e8; --bs-popover-header-color:#fff; }
+    .av-pop { background:#fff; border:1px solid #7048e8; border-radius:12px; box-shadow:0 12px 32px rgba(15,23,42,.28); max-width:380px; z-index:1090; opacity:1; } .av-pop .popover-arrow { display:none; } .av-pop .popover-header { margin:0; padding:.4rem .8rem; background:#7048e8; color:#fff; border-radius:11px 11px 0 0; } .av-pop .popover-body { padding:.6rem .8rem; color:#1e293b; }
+    .av-pop .popover-header { font-size:.85rem; font-weight:700; } .av-pop .popover-body { font-size:.86rem; }
+    .av-pop .pop-law { margin-bottom:.4rem; } .av-pop .pop-t { font-weight:700; color:#5130b9; } .av-pop .pop-note { border-top:1px dashed #94a3b8; margin-top:.3rem; padding-top:.3rem; }
+    @media (prefers-reduced-motion:reduce) { .av-ln, .av-res, .av-ln .av-n { animation:none !important; opacity:1 !important; } }
   </style>
 </head>
 <body>
@@ -136,7 +154,7 @@
       <span class="sym" style="right:8%;top:14%;font-size:4rem;animation-delay:2s">a<sup>-1</sup></span><span class="sym" style="right:22%;bottom:8%;font-size:3.5rem;animation-delay:3s">∛</span>
       <div class="container">
         <h1 class="display-5 fw-bold"><i class="bi bi-superscript text-info me-2"></i>Exponentes y Radicales</h1>
-        <p class="lead mb-1">Formulario completo de leyes · resolutor paso a paso · +30 ejercicios graduados · manuales</p>
+        <p class="lead mb-1">Formulario completo de leyes · resolutor paso a paso · +50 ejercicios graduados · manuales</p>
         <p class="mb-0 text-light opacity-75">Cambia los números de cada ejemplo y mira cómo se resuelve, con jerarquía de operaciones</p>
       </div>
     </header>
@@ -185,7 +203,7 @@
           <div id="s-out"></div>
         </div>
         <div class="tab-pane fade" id="t-x">
-          <div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i>37 ejercicios graduados</div><div class="small">De una sola ley hasta fracciones de <b>2×2</b> y <b>3×3</b> factores con potencias, radicales y jerarquía de operaciones. Escribe tu respuesta (por ejemplo <code>3/4</code> o <code>8</code>), compárala y revisa el paso a paso.</div></div>
+          <div class="intro-box"><div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i>52 ejercicios graduados</div><div class="small">De una sola ley hasta fracciones de <b>2×2</b> y <b>3×3</b> factores con potencias, radicales y jerarquía de operaciones. Escribe tu respuesta (por ejemplo <code>3/4</code> o <code>8</code>), compárala y revisa el paso a paso. Los <b>avanzados 38–52</b> (potencias con variable, productos y cocientes de varias bases, exponentes fraccionarios) traen un <b>procedimiento animado</b> con popovers que muestran la fórmula de cada paso.</div></div>
           <div class="d-flex flex-wrap gap-2 align-items-center mb-3"><div class="btn-group" id="x-filter"><button class="btn btn-outline-dark active" data-lv="0">Todos</button><button class="btn btn-outline-success" data-lv="1">Básico</button><button class="btn btn-outline-warning" data-lv="2">Intermedio</button><button class="btn btn-outline-danger" data-lv="3">Avanzado</button></div><span class="ms-auto pill"><b id="x-score">0</b> / <span id="x-total"></span> resueltos</span></div>
           <div class="row g-3" id="x-grid"></div>
         </div>
@@ -586,22 +604,133 @@
       [3, '(sqrt(2))^4 + (root(3, 3))^3 - 2^0', T`2^2+3-1=6`, ['r5', 'e6']], [3, '(2^-1 + 3^-1)^2 / (1/6)^-1', T`\frac{(5/6)^2}{6}=\frac{25}{216}`, ['e8', 'e9', 'e5']], [3, 'root(3, 2^6 * 5^3) / sqrt(100)', T`\frac{2^2\cdot5}{10}=\frac{20}{10}=2`, ['r6', 'r3']],
       [3, '((sqrt(3))^2 * 2^3 - 4^2 / 2) / (root(3, 8) + 1)', T`\frac{3\cdot8-8}{2+1}=\frac{16}{3}`, ['r5']], [3, '(sqrt(12) * sqrt(27) * root(3, 8)) / (sqrt(3) * sqrt(3) * 2)', T`\frac{18\cdot2}{6}=6`, ['r2', 'r8']], [3, '(2^3 * 3^2 * 5) / (2 * 3 * 5^2)', T`2^{2}\cdot3^{1}\cdot5^{-1}=\frac{12}{5}`, ['e2', 'e8']]
     ].map(([lv, q, ley, ids], i) => ({ n: i + 1, lv, q, ley, ids }));
+
+    /* ===================== Avanzado: procedimiento animado con popovers ===================== */
+    /* Cada paso: [expresión TeX, [leyes aplicadas], nota de lo que se hizo en ese paso] */
+    const AV = [
+      { alg: 1, want: ['x^20'], tex: T`\dfrac{x^{-6}\cdot x^{8}\cdot x^{12}}{x^{-2}\cdot x^{3}\cdot x^{-7}}`, res: T`x^{20}`, ids: ['e1', 'e2'], st: [
+        [T`=\dfrac{x^{-6+8+12}}{x^{-2+3-7}}`, ['e1'], 'Misma base x: arriba y abajo se <b>suman</b> los exponentes.'],
+        [T`=\dfrac{x^{14}}{x^{-6}}`, [], 'Arriba: −6 + 8 + 12 = 14. Abajo: −2 + 3 − 7 = −6.'],
+        [T`=x^{14-(-6)}`, ['e2'], 'Cociente de la misma base: se <b>resta</b> (numerador − denominador). Cuidado: restar un negativo suma.'],
+        [T`=x^{14+6}=x^{20}`, [], '14 − (−6) = 14 + 6 = 20.']] },
+      { alg: 1, want: ['(x-3)^20'], tex: T`\dfrac{(x-3)^{-6}\cdot(x-3)^{8}\cdot(x-3)^{12}}{(x-3)^{-2}\cdot(x-3)^{3}\cdot(x-3)^{-7}}`, res: T`(x-3)^{20}`, ids: ['e1', 'e2'], st: [
+        [T`a=(x-3)\quad\Rightarrow\quad\dfrac{a^{-6}\cdot a^{8}\cdot a^{12}}{a^{-2}\cdot a^{3}\cdot a^{-7}}`, [], 'Todo el paréntesis (x − 3) es <b>una sola base</b>: no se abre ni se distribuye.'],
+        [T`=\dfrac{a^{-6+8+12}}{a^{-2+3-7}}`, ['e1'], 'Producto de la misma base: se suman los exponentes.'],
+        [T`=\dfrac{a^{14}}{a^{-6}}`, [], '−6 + 8 + 12 = 14 y −2 + 3 − 7 = −6.'],
+        [T`=a^{14-(-6)}=a^{20}`, ['e2'], 'Cociente: se restan los exponentes, 14 − (−6) = 20.'],
+        [T`=(x-3)^{20}`, [], 'Se regresa a la base original. (x − 3)²⁰ <b>no</b> es x²⁰ − 3²⁰.']] },
+      { alg: 1, want: ['(x+3)^20'], tex: T`\dfrac{(x+3)^{-6}\cdot(x+3)^{8}\cdot(x+3)^{12}}{(x+3)^{-2}\cdot(x+3)^{3}\cdot(x+3)^{-7}}`, res: T`(x+3)^{20}`, ids: ['e1', 'e2'], st: [
+        [T`a=(x+3)\quad\Rightarrow\quad\dfrac{a^{-6}\cdot a^{8}\cdot a^{12}}{a^{-2}\cdot a^{3}\cdot a^{-7}}`, [], 'El paréntesis (x + 3) se trata como <b>una sola base</b>.'],
+        [T`=\dfrac{a^{-6+8+12}}{a^{-2+3-7}}`, ['e1'], 'Misma base multiplicándose: se suman los exponentes.'],
+        [T`=\dfrac{a^{14}}{a^{-6}}`, [], 'Arriba 14; abajo −6.'],
+        [T`=a^{14-(-6)}=a^{20}`, ['e2'], 'Misma base dividiéndose: se restan los exponentes.'],
+        [T`=(x+3)^{20}`, [], 'Se sustituye a = (x + 3).']] },
+      { want: ['1/4'], q: '16^-2 * 4^3', tex: T`16^{-2}\cdot4^{3}`, res: T`\dfrac{1}{4}`, ids: ['e3', 'e1', 'e8'], st: [
+        [T`=(4^{2})^{-2}\cdot4^{3}`, [], 'Las bases son distintas, pero 16 = 4². Se escribe todo con base 4.'],
+        [T`=4^{2\cdot(-2)}\cdot4^{3}=4^{-4}\cdot4^{3}`, ['e3'], 'Potencia de potencia: se <b>multiplican</b> los exponentes, 2 · (−2) = −4.'],
+        [T`=4^{-4+3}=4^{-1}`, ['e1'], 'Misma base: se suman los exponentes, −4 + 3 = −1.'],
+        [T`=\dfrac{1}{4^{1}}=\dfrac{1}{4}`, ['e8'], 'Exponente negativo: se invierte la potencia.']] },
+      { want: ['1/343'], q: '(7^2)^-3 * 7^3', tex: T`(7^{2})^{-3}\cdot7^{3}`, res: T`\dfrac{1}{343}`, ids: ['e3', 'e1', 'e8'], st: [
+        [T`=7^{2\cdot(-3)}\cdot7^{3}=7^{-6}\cdot7^{3}`, ['e3'], 'Potencia de potencia: 2 · (−3) = −6.'],
+        [T`=7^{-6+3}=7^{-3}`, ['e1'], 'Misma base multiplicándose: −6 + 3 = −3.'],
+        [T`=\dfrac{1}{7^{3}}=\dfrac{1}{343}`, ['e8'], 'Exponente negativo: se invierte; 7³ = 343.']] },
+      { want: ['1/2187'], q: '(3^-2 / 3^3) * 3^-2', tex: T`\left(3^{-2}:3^{3}\right)\cdot3^{-2}`, res: T`\dfrac{1}{2187}`, ids: ['e2', 'e1', 'e8'], st: [
+        [T`=3^{-2-3}\cdot3^{-2}=3^{-5}\cdot3^{-2}`, ['e2'], 'Primero el paréntesis. La división de la misma base <b>resta</b> exponentes: −2 − 3 = −5.'],
+        [T`=3^{-5+(-2)}=3^{-7}`, ['e1'], 'Ahora el producto: se suman, −5 + (−2) = −7.'],
+        [T`=\dfrac{1}{3^{7}}=\dfrac{1}{2187}`, ['e8'], 'Exponente negativo: se invierte; 3⁷ = 2187.']] },
+      { want: ['400/81'], q: '(4^2 * 12^3 * 15^2) / (9^3 * 8^2 * 3^3)', tex: T`\dfrac{4^{2}\cdot12^{3}\cdot15^{2}}{9^{3}\cdot8^{2}\cdot3^{3}}`, res: T`\dfrac{400}{81}`, ids: ['e3', 'e4', 'e1', 'e2', 'e8'], st: [
+        [T`4=2^{2},\quad12=2^{2}\cdot3,\quad15=3\cdot5,\quad9=3^{2},\quad8=2^{3}`, [], 'Se descompone cada base en <b>factores primos</b> (2, 3 y 5).'],
+        [T`=\dfrac{(2^{2})^{2}\cdot(2^{2}\cdot3)^{3}\cdot(3\cdot5)^{2}}{(3^{2})^{3}\cdot(2^{3})^{2}\cdot3^{3}}`, [], 'Se sustituye cada número por su descomposición.'],
+        [T`=\dfrac{2^{4}\cdot2^{6}\cdot3^{3}\cdot3^{2}\cdot5^{2}}{3^{6}\cdot2^{6}\cdot3^{3}}`, ['e3', 'e4'], 'Potencia de potencia (se multiplican exponentes) y potencia de un producto (el exponente afecta a cada factor).'],
+        [T`=\dfrac{2^{10}\cdot3^{5}\cdot5^{2}}{2^{6}\cdot3^{9}}`, ['e1'], 'Se agrupan las bases iguales y se suman: 2: 4+6 = 10; 3: 3+2 = 5 arriba y 6+3 = 9 abajo.'],
+        [T`=2^{10-6}\cdot3^{5-9}\cdot5^{2}=2^{4}\cdot3^{-4}\cdot5^{2}`, ['e2'], 'Misma base arriba y abajo: se restan los exponentes.'],
+        [T`=\dfrac{2^{4}\cdot5^{2}}{3^{4}}=\dfrac{16\cdot25}{81}=\dfrac{400}{81}`, ['e8'], 'El 3⁻⁴ pasa al denominador como 3⁴ = 81.']] },
+      { want: ['12'], q: '(8^4 * 15^3 * 18^2 * 12^-3) / (20^3 * 27^2 * 3^-3)', tex: T`\dfrac{8^{4}\cdot15^{3}\cdot18^{2}\cdot12^{-3}}{20^{3}\cdot27^{2}\cdot3^{-3}}`, res: T`12`, ids: ['e3', 'e4', 'e1', 'e2', 'e6'], st: [
+        [T`8=2^{3},\;15=3\cdot5,\;18=2\cdot3^{2},\;12=2^{2}\cdot3,\;20=2^{2}\cdot5,\;27=3^{3}`, [], 'Descomposición en factores primos de cada base.'],
+        [T`=\dfrac{(2^{3})^{4}\cdot(3\cdot5)^{3}\cdot(2\cdot3^{2})^{2}\cdot(2^{2}\cdot3)^{-3}}{(2^{2}\cdot5)^{3}\cdot(3^{3})^{2}\cdot3^{-3}}`, [], 'Se sustituye cada número.'],
+        [T`=\dfrac{2^{12}\cdot3^{3}\cdot5^{3}\cdot2^{2}\cdot3^{4}\cdot2^{-6}\cdot3^{-3}}{2^{6}\cdot5^{3}\cdot3^{6}\cdot3^{-3}}`, ['e3', 'e4'], 'Se reparte cada exponente: potencia de potencia (×) y potencia de un producto.'],
+        [T`=\dfrac{2^{12+2-6}\cdot3^{3+4-3}\cdot5^{3}}{2^{6}\cdot3^{6-3}\cdot5^{3}}=\dfrac{2^{8}\cdot3^{4}\cdot5^{3}}{2^{6}\cdot3^{3}\cdot5^{3}}`, ['e1'], 'Se juntan las bases iguales y se suman sus exponentes.'],
+        [T`=2^{8-6}\cdot3^{4-3}\cdot5^{3-3}=2^{2}\cdot3^{1}\cdot5^{0}`, ['e2'], 'Cociente de la misma base: se restan los exponentes.'],
+        [T`=4\cdot3\cdot1=12`, ['e6'], 'Cualquier número (≠ 0) elevado a la 0 vale 1.']] },
+      { want: ['-64'], q: null, tex: T`-16^{3/2}`, res: T`-64`, ids: ['e10'], st: [
+        [T`=-\left(16^{3/2}\right)`, [], 'El signo menos <b>no</b> es parte de la base: el exponente solo afecta al 16.'],
+        [T`=-\left(\sqrt{16}\right)^{3}`, ['e10'], 'Exponente fraccionario: el denominador 2 es el índice de la raíz y el numerador 3 es la potencia.'],
+        [T`=-(4)^{3}=-64`, [], '√16 = 4 y 4³ = 64; el signo menos se conserva.']] },
+      { want: ['-4'], q: null, tex: T`-8^{2/3}`, res: T`-4`, ids: ['e10'], st: [
+        [T`=-\left(8^{2/3}\right)`, [], 'El signo menos queda fuera: solo el 8 lleva el exponente.'],
+        [T`=-\left(\sqrt[3]{8}\right)^{2}`, ['e10'], 'Exponente fraccionario: el 3 del denominador es el índice de la raíz y el 2 del numerador es la potencia.'],
+        [T`=-(2)^{2}=-4`, [], '∛8 = 2 y 2² = 4; el signo menos se conserva.']] },
+      /* ---- 5 ejercicios más, mismo patrón de complejidad ---- */
+      { alg: 1, want: ['(x-2)^15'], tex: T`\dfrac{(x-2)^{-5}\cdot(x-2)^{9}\cdot(x-2)^{3}}{(x-2)^{-4}\cdot(x-2)^{2}\cdot(x-2)^{-6}}`, res: T`(x-2)^{15}`, ids: ['e1', 'e2'], st: [
+        [T`a=(x-2)\quad\Rightarrow\quad\dfrac{a^{-5}\cdot a^{9}\cdot a^{3}}{a^{-4}\cdot a^{2}\cdot a^{-6}}`, [], 'El paréntesis (x − 2) es una sola base.'],
+        [T`=\dfrac{a^{-5+9+3}}{a^{-4+2-6}}=\dfrac{a^{7}}{a^{-8}}`, ['e1'], 'Se suman los exponentes de arriba (−5 + 9 + 3 = 7) y de abajo (−4 + 2 − 6 = −8).'],
+        [T`=a^{7-(-8)}=a^{15}`, ['e2'], 'Cociente: se restan, 7 − (−8) = 15.'],
+        [T`=(x-2)^{15}`, [], 'Se sustituye a = (x − 2).']] },
+      { want: ['81'], q: '(27^-2 * 9^3) / 3^-4', tex: T`\left(27^{-2}\cdot9^{3}\right):3^{-4}`, res: T`81`, ids: ['e3', 'e1', 'e2'], st: [
+        [T`=\left((3^{3})^{-2}\cdot(3^{2})^{3}\right):3^{-4}`, [], '27 = 3³ y 9 = 3²: todo se escribe con base 3.'],
+        [T`=\left(3^{-6}\cdot3^{6}\right):3^{-4}`, ['e3'], 'Potencia de potencia: 3 · (−2) = −6 y 2 · 3 = 6.'],
+        [T`=3^{-6+6}:3^{-4}=3^{0}:3^{-4}`, ['e1'], 'Producto de la misma base: −6 + 6 = 0.'],
+        [T`=3^{0-(-4)}=3^{4}`, ['e2'], 'Cociente: se resta, 0 − (−4) = 4.'],
+        [T`=81`, [], '3⁴ = 3 · 3 · 3 · 3 = 81.']] },
+      { want: ['150'], q: '(6^3 * 10^2 * 15^2) / (4^2 * 9^2 * 25)', tex: T`\dfrac{6^{3}\cdot10^{2}\cdot15^{2}}{4^{2}\cdot9^{2}\cdot25}`, res: T`150`, ids: ['e3', 'e4', 'e1', 'e2'], st: [
+        [T`6=2\cdot3,\;10=2\cdot5,\;15=3\cdot5,\;4=2^{2},\;9=3^{2},\;25=5^{2}`, [], 'Factores primos de cada base.'],
+        [T`=\dfrac{(2\cdot3)^{3}\cdot(2\cdot5)^{2}\cdot(3\cdot5)^{2}}{(2^{2})^{2}\cdot(3^{2})^{2}\cdot5^{2}}`, [], 'Se sustituye cada número.'],
+        [T`=\dfrac{2^{3}\cdot3^{3}\cdot2^{2}\cdot5^{2}\cdot3^{2}\cdot5^{2}}{2^{4}\cdot3^{4}\cdot5^{2}}`, ['e3', 'e4'], 'Potencia de un producto: el exponente afecta a cada factor; potencia de potencia: se multiplican.'],
+        [T`=\dfrac{2^{5}\cdot3^{5}\cdot5^{4}}{2^{4}\cdot3^{4}\cdot5^{2}}`, ['e1'], 'Bases iguales: 2: 3+2 = 5; 3: 3+2 = 5; 5: 2+2 = 4.'],
+        [T`=2^{1}\cdot3^{1}\cdot5^{2}`, ['e2'], 'Se restan: 5−4 = 1, 5−4 = 1 y 4−2 = 2.'],
+        [T`=2\cdot3\cdot25=150`, [], '2 · 3 = 6 y 6 · 25 = 150.']] },
+      { want: ['-8/27'], q: null, tex: T`-\left(\dfrac{9}{4}\right)^{-3/2}`, res: T`-\dfrac{8}{27}`, ids: ['e9', 'e10', 'e5'], st: [
+        [T`=-\left[\left(\dfrac{9}{4}\right)^{-3/2}\right]`, [], 'El signo menos queda fuera del paréntesis del exponente.'],
+        [T`=-\left(\dfrac{4}{9}\right)^{3/2}`, ['e9'], 'Fracción con exponente negativo: se <b>invierte la fracción</b> y el exponente pasa a positivo.'],
+        [T`=-\left(\sqrt{\dfrac{4}{9}}\right)^{3}`, ['e10'], 'Exponente 3/2: índice 2 (raíz cuadrada) y potencia 3.'],
+        [T`=-\left(\dfrac{2}{3}\right)^{3}`, [], '√(4/9) = 2/3.'],
+        [T`=-\dfrac{2^{3}}{3^{3}}=-\dfrac{8}{27}`, ['e5'], 'Potencia de un cociente: se eleva numerador y denominador.']] },
+      { want: ['27'], q: '(4^3 * 9^-2 * 18^2) / (8^2 * 3^-4 * 12)', tex: T`\dfrac{4^{3}\cdot9^{-2}\cdot18^{2}}{8^{2}\cdot3^{-4}\cdot12}`, res: T`27`, ids: ['e3', 'e4', 'e1', 'e2', 'e6'], st: [
+        [T`4=2^{2},\;9=3^{2},\;18=2\cdot3^{2},\;8=2^{3},\;12=2^{2}\cdot3`, [], 'Factores primos de cada base.'],
+        [T`=\dfrac{(2^{2})^{3}\cdot(3^{2})^{-2}\cdot(2\cdot3^{2})^{2}}{(2^{3})^{2}\cdot3^{-4}\cdot(2^{2}\cdot3)}`, [], 'Se sustituye cada número.'],
+        [T`=\dfrac{2^{6}\cdot3^{-4}\cdot2^{2}\cdot3^{4}}{2^{6}\cdot3^{-4}\cdot2^{2}\cdot3}`, ['e3', 'e4'], 'Se multiplican exponentes y se reparte el exponente en cada factor.'],
+        [T`=\dfrac{2^{6+2}\cdot3^{-4+4}}{2^{6+2}\cdot3^{-4+1}}=\dfrac{2^{8}\cdot3^{0}}{2^{8}\cdot3^{-3}}`, ['e1'], 'Se suman los exponentes de bases iguales.'],
+        [T`=2^{8-8}\cdot3^{0-(-3)}=2^{0}\cdot3^{3}`, ['e2'], 'Se restan los exponentes de arriba menos los de abajo.'],
+        [T`=1\cdot27=27`, ['e6'], '2⁰ = 1 y 3³ = 27.']] }
+    ];
+    const AV0 = EXS.length;
+    EXS.push(...AV.map((a, i) => ({ n: AV0 + i + 1, lv: 3, adv: true, alg: !!a.alg, q: a.q || null, tex: a.tex, ley: '', ids: a.ids, st: a.st, res: a.res, want: a.want })));
+    const popHTML = (ids, note) => ids.map(id => { const L = LAWS.find(l => l.id === id); return L ? `<div class="pop-law"><div class="pop-t">${L.title}</div><div class="cx d">${fx(L.f)}</div><div class="small">${L.say}</div></div>` : ''; }).join('') + (note ? `<div class="pop-note"><b>En este paso:</b> ${note}</div>` : '');
+    const popTitle = ids => ids.length ? 'Ley: ' + ids.map(id => (LAWS.find(l => l.id === id) || {}).title).join(' + ') : 'Idea clave';
+    function advSolution(e) {
+      const rows = e.st.map((s, k) => `<div class="ln av-ln" tabindex="0" role="button" data-laws="${s[1].join(',')}" data-note="${escH(s[2])}" style="animation-delay:${(k + 1) * 750}ms"><div class="av-n">${k + 1}</div><div class="av-eq">$$${s[0]}$$</div><div class="av-badges">${s[1].map(id => `<span class="chip-law">${LN[id]}</span>`).join('')}<i class="bi bi-info-circle av-i"></i></div></div>`).join('');
+      return `<div class="d-flex align-items-center gap-2 mb-1"><span class="small fw-bold"><i class="bi bi-play-circle-fill text-primary me-1"></i>Procedimiento animado</span><button class="btn btn-sm btn-outline-secondary rounded-pill ms-auto py-0" data-rep="${e.n}"><i class="bi bi-arrow-repeat me-1"></i>Repetir</button></div>
+        <div class="small text-muted mb-1">Pasa el cursor o toca cada paso: el <b>popover</b> muestra la fórmula que se aplicó.</div>
+        <div class="ln av-ln av-orig" style="animation-delay:0ms"><div class="av-n">0</div><div class="av-eq">$$${e.tex}$$</div></div>${rows}
+        <div class="res-box av-res" style="animation-delay:${(e.st.length + 1) * 750}ms">$${e.res}$ <span class="small opacity-75">resultado</span></div>`; }
+    function advDispose(box) { box.querySelectorAll('.av-ln').forEach(el => { const p = bootstrap.Popover.getInstance(el); if (p) p.dispose(); }); }
+    function advPops(box) { box.querySelectorAll('.av-ln[data-laws]').forEach(el => { const ids = el.dataset.laws ? el.dataset.laws.split(',') : [], note = el.dataset.note;
+      new bootstrap.Popover(el, { trigger: 'hover focus', html: true, sanitize: false, container: 'body', placement: 'top', customClass: 'av-pop', title: popTitle(ids), content: popHTML(ids, note) }); }); }
+    function advCheck(ex, inp, fb, n) {
+      let ok = false;
+      if (!inp.trim()) { fb.innerHTML = '<div class="small text-danger">Escribe tu respuesta.</div>'; return; }
+      if (ex.alg) { const nm = s => s.toLowerCase().replace(/\s+/g, '').replace(/\*\*/g, '^').replace(/[{}]/g, ''); const g = nm(inp); ok = ex.want.some(w => nm(w) === g); }
+      else { const got = solveSteps(inp), want = solveSteps(ex.want[0]); if (got.error || !got.result) { fb.innerHTML = '<div class="small text-danger">Escribe un número o fracción válida.</div>'; return; } ok = Math.abs(toNum(got.result) - toNum(want.result)) < 1e-6 * (1 + Math.abs(toNum(want.result))); }
+      fb.innerHTML = ok ? '<div class="small text-success fw-bold">✓ ¡Correcto!</div>' : '<div class="small text-danger fw-bold">✗ Aún no. Revisa las leyes sugeridas o mira el procedimiento animado.</div>';
+      if (ok && !doneEx.has(n)) { doneEx.add(n); $('#ex-' + n).classList.add('done'); $('#x-score').textContent = doneEx.size; if (typeof confetti === 'function') confetti({ particleCount: doneEx.size === EXS.length ? 200 : 40, spread: 60, origin: { y: .7 } }); } }
+
     const LVN = ['', 'Básico', 'Intermedio', 'Avanzado'], doneEx = new Set();
     $('#x-total').textContent = EXS.length;
     function exTex(q) { try { return tex(parse(q)); } catch (e) { return q; } }
     function renderEx(lv = 0) {
       $('#x-grid').innerHTML = EXS.filter(e => !lv || e.lv === lv).map(e => `<div class="col-md-6 col-xl-4"><div class="ex-card lv${e.lv} ${doneEx.has(e.n) ? 'done' : ''}" id="ex-${e.n}">
-        <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Ejercicio ${e.n}</span><span class="lvb">${LVN[e.lv]}</span></div><div class="big-expr">$${exTex(e.q)}$</div>
+        <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Ejercicio ${e.n}</span><span><span class="lvb">${LVN[e.lv]}</span>${e.adv ? '<span class="av-tag">▶ animado</span>' : ''}</span></div><div class="big-expr">$${e.adv ? e.tex : exTex(e.q)}$</div>
         <div class="mb-2">${e.ids.map(id => `<span class="chip-law" data-chip="${id}" title="Ir a la ley">${LN[id]}</span>`).join('')}</div>
-        <div class="input-group input-group-sm mb-2"><input class="form-control" placeholder="Tu respuesta (ej. 3/4)" data-ans="${e.n}"><button class="btn btn-dark" data-chk="${e.n}">Comprobar</button></div><div id="fb-${e.n}"></div>
-        <button class="btn btn-sm btn-outline-primary rounded-pill" data-sol="${e.n}"><i class="bi bi-eye me-1"></i>Ver solución paso a paso</button> <button class="btn btn-sm btn-outline-secondary rounded-pill" data-try="${e.n}">Resolutor</button><div id="sl-${e.n}" class="mt-2"></div></div></div>`).join(''); math($('#x-grid')); $('#x-score').textContent = doneEx.size; }
+        <div class="input-group input-group-sm mb-2"><input class="form-control" placeholder="${e.alg ? 'Tu respuesta (ej. (x-1)^5)' : 'Tu respuesta (ej. 3/4)'}" data-ans="${e.n}"><button class="btn btn-dark" data-chk="${e.n}">Comprobar</button></div><div id="fb-${e.n}"></div>
+        <button class="btn btn-sm btn-outline-primary rounded-pill" data-sol="${e.n}"><i class="bi bi-eye me-1"></i>${e.adv ? 'Ver procedimiento animado' : 'Ver solución paso a paso'}</button> ${e.q ? `<button class="btn btn-sm btn-outline-secondary rounded-pill" data-try="${e.n}">Resolutor</button>` : ''}<div id="sl-${e.n}" class="mt-2"></div></div></div>`).join(''); math($('#x-grid')); $('#x-score').textContent = doneEx.size; }
     function solutionHTML(e) { const r = solveSteps(e.q), lines = r.steps.map((s, k) => `<div class="small mt-1">${k ? '' : '<b>Original</b>'}</div><div class="ln" style="animation-delay:${k * 350}ms">$$${k ? '=\\;' : ''}${s.tex}$$</div>`).join('');
       return `<div class="tip-box s-watt small mb-2"><b>Con las leyes:</b> $$${e.ley}$$</div><div class="small fw-bold mb-1">Por jerarquía de operaciones:</div>${lines}${r.result ? `<div class="res-box">$${vtex(r.result)}$${r.result.t !== 'fr' || r.result.f.d !== 1n ? ` <span class="small opacity-75">≈ ${+toNum(r.result).toFixed(5)}</span>` : ''}</div>` : ''}`; }
     document.addEventListener('click', e => {
       const f = e.target.closest('#x-filter [data-lv]'); if (f) { $$('#x-filter button').forEach(b => b.classList.toggle('active', b === f)); renderEx(+f.dataset.lv); }
-      const s = e.target.closest('[data-sol]'); if (s) { const ex = EXS[+s.dataset.sol - 1], box = $('#sl-' + ex.n); if (box.innerHTML) box.innerHTML = ''; else { box.innerHTML = solutionHTML(ex); math(box); } }
+      const s = e.target.closest('[data-sol]'); if (s) { const ex = EXS[+s.dataset.sol - 1], box = $('#sl-' + ex.n); if (box.innerHTML) { advDispose(box); box.innerHTML = ''; } else { box.innerHTML = ex.adv ? advSolution(ex) : solutionHTML(ex); math(box); if (ex.adv) advPops(box); } }
+      const rp = e.target.closest('[data-rep]'); if (rp) { const ex = EXS[+rp.dataset.rep - 1], box = $('#sl-' + ex.n); advDispose(box); box.innerHTML = advSolution(ex); math(box); advPops(box); }
       const t = e.target.closest('[data-try]'); if (t) { $('#s-in').value = EXS[+t.dataset.try - 1].q; bootstrap.Tab.getOrCreateInstance($('[data-bs-target="#t-s"]')).show(); solverRun(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-      const c = e.target.closest('[data-chk]'); if (c) { const n = +c.dataset.chk, ex = EXS[n - 1], inp = $(`[data-ans="${n}"]`).value, fb = $('#fb-' + n), want = solveSteps(ex.q).result, got = solveSteps(inp);
+      const c = e.target.closest('[data-chk]'); if (c) { const n = +c.dataset.chk, ex = EXS[n - 1], inp = $(`[data-ans="${n}"]`).value, fb = $('#fb-' + n); if (ex.adv) { advCheck(ex, inp, fb, n); return; } const want = solveSteps(ex.q).result, got = solveSteps(inp);
         if (!inp.trim() || got.error || !got.result) { fb.innerHTML = '<div class="small text-danger">Escribe un número o fracción válida.</div>'; return; }
         const ok = Math.abs(toNum(got.result) - toNum(want)) < 1e-6 * (1 + Math.abs(toNum(want)));
         fb.innerHTML = ok ? '<div class="small text-success fw-bold">✓ ¡Correcto!</div>' : '<div class="small text-danger fw-bold">✗ Aún no. Revisa las leyes sugeridas o mira la solución.</div>';
@@ -612,7 +741,7 @@
     const fr = (t, say, lines = [], vis = '') => ({ t, say, lines, vis });
     const big = q => `<div class="big-expr">$${exTex(q)}$</div>`;
     const levelBar = n => `<div class="mb-2 small fw-bold">Jerarquía de operaciones</div>${[['l1', '① Paréntesis, fracciones, radicales'], ['l2', '② Potencias y raíces'], ['l3', '③ × y ÷'], ['l4', '④ + y −']].map(([c, t], i) => `<div><span class="lvl ${c}" style="${n === i + 1 ? 'transform:scale(1.12);box-shadow:0 0 0 3px #fde68a' : n ? 'opacity:.4' : ''}">${t}</span></div>`).join('')}`;
-    const exFrames = lv => EXS.filter(e => e.lv === lv).map(e => { const r = solveSteps(e.q), lines = [T`\text{Con las leyes: }${e.ley}`, ...r.steps.map((s, k) => (k ? '=\\;' : '') + s.tex)];
+    const exFrames = lv => EXS.filter(e => e.lv === lv).map(e => { if (e.adv) return fr(`Ejercicio ${e.n}`, `Leyes: ${e.ids.map(id => `<span class="chip-law" data-chip="${id}">${LN[id]}</span>`).join(' ')} Cada línea aplica una ley; en la sección Ejercicios puedes tocar cada paso para ver su fórmula.`, [e.tex, ...e.st.map(s => s[0])], `<div class="big-expr">$${e.tex}$</div><div class="mt-2">${levelBar(0)}</div>`); const r = solveSteps(e.q), lines = [T`\text{Con las leyes: }${e.ley}`, ...r.steps.map((s, k) => (k ? '=\\;' : '') + s.tex)];
       return fr(`Ejercicio ${e.n}`, `Identifica las leyes: ${e.ids.map(id => `<span class="chip-law" data-chip="${id}">${LN[id]}</span>`).join(' ')} Primero el camino corto con las leyes; después, la comprobación operación por operación.`, lines, big(e.q) + `<div class="mt-2">${levelBar(0)}</div>`); });
     const MANUALS = {
       exp: ['Exponentes desde cero', 'bi-superscript', '#7048e8', () => [
