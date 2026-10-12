@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadística - Medidas de Dispersión</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, gráficas SVG propias -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --mean:#1864ab; --med:#c26e00; --mode:#5130b9; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con barras de histograma */
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
+    .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
+    .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+
+    /* Tarjetas */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .stat-pill { background:#f1f5f9; border-radius:12px; padding:.45rem .8rem; font-size:.88rem; border:1px solid #e2e8f0; }
+    .stat-pill b { font-family:'Courier New',monospace; }
+    #data { font-family:'Courier New',monospace; font-size:.9rem; }
+
+    /* Instructivo: pasos vivos */
+    .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
+    .istep h6 { color:var(--c); font-weight:800; }
+    .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
+    .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
+
+    /* Fórmulas y leyendas */
+    .fx { overflow-x:auto; padding:.4rem 0; }
+    .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
+    .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
+    .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
+    .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
+
+    /* Tablas de frecuencias */
+    .freq-table { font-size:.95rem; text-align:center; margin:0; }
+    .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
+    .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
+    .freq-table tbody tr { transition:background .2s; cursor:default; }
+    .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
+    .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
+    .hl-legend { font-size:.85rem; min-height:1.4rem; }
+    /* Resaltados por medida */
+    [data-hl="mean"] td.c-use { background:rgba(24,100,171,.2); font-weight:800; }
+    [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
+    [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
+    [data-hl="mode"] tr.r-mode td { background:rgba(112,72,232,.3); font-weight:800; }
+    [data-hl="mode"] tr.r-near td { background:rgba(12,133,153,.2); }
+    .hl-btn.active[data-hl="mean"] { background:var(--mean); color:#fff; border-color:var(--mean); }
+    .hl-btn.active[data-hl="med"] { background:var(--med); color:#fff; border-color:var(--med); }
+    .hl-btn.active[data-hl="mode"] { background:var(--mode); color:#fff; border-color:var(--mode); }
+    .hl-btn.active[data-hl="none"] { background:#334155; color:#fff; border-color:#334155; }
+
+    .measure-head { color:#fff; padding:.9rem 1.2rem; border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .measure { border-radius:14px; box-shadow:var(--shadow-md); background:#fff; overflow:hidden; border:1px solid #e2e8f0; }
+    .result-big { font-size:1.6rem; font-weight:800; font-family:'Courier New',monospace; border-radius:14px; padding:.6rem 1rem; text-align:center; color:#fff; }
+    .real-card { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1.2rem; animation:pop .4s both; }
+    .cmp th { background:#f1f5f9; } .cmp td, .cmp th { padding:.45rem .7rem; text-align:center; }
+    .chart-box { position:relative; height:420px; }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    /* ===== Fórmulas estilo calculadora ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; } .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; } .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; } .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; } .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; } .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; }
+    .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before, .cx .ac.tilde::before { position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    /* Operaciones con popover */
+    .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
+    .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
+    td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
+    th.pp .bi { font-size:.7rem; opacity:.7; }
+    .popover.calc-pop { --bs-popover-max-width:430px; --bs-popover-border-radius:16px; border:0; box-shadow:var(--shadow-lg); font-family:'Segoe UI',sans-serif; }
+    .calc-pop .popover-header { background:linear-gradient(90deg,#0f172a,#1e293b); color:#fff; font-weight:700; font-size:.92rem; border-radius:16px 16px 0 0; }
+    .calc-pop .popover-body { padding:.7rem .9rem; max-height:60vh; overflow:auto; color:#1e293b; }
+    .pcap { font-size:.78rem; font-weight:700; color:#64748b; margin-top:.45rem; text-transform:uppercase; letter-spacing:.02em; } .pcap:first-child { margin-top:0; }
+    .pf { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:.25rem .6rem; overflow-x:auto; } .pf.res { background:#0f172a; color:#e0f2fe; border-color:#0f172a; }
+    .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
+    .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
+    .pm { font-size:.88rem; }
+    /* Pantalla de resultado */
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
+    .cmp-chips { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.5rem; }
+    .cmp-chip { font-size:.8rem; border-radius:999px; padding:.15rem .7rem; background:#f1f5f9; border:1.5px solid #e2e8f0; color:#475569; } .cmp-chip b { font-family:'Courier New',monospace; color:#0f172a; } .cmp-chip.on { background:#fff4e0; border-color:#f08c00; }
+    /* Tabla unificada */
+    .tbl-bar { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 1.2rem; margin-bottom:.8rem; }
+    .real-switch { display:flex; align-items:center; gap:.5rem; background:#fff4e0; border:2px solid #f08c00; border-radius:999px; padding:.35rem 1rem .35rem .6rem; box-shadow:var(--shadow-sm); transition:background .25s, border-color .25s, color .25s; }
+    .real-switch .form-check-input { width:2.6em; height:1.4em; cursor:pointer; margin:0; } .real-switch .form-check-input:checked { background-color:#f08c00; border-color:#f08c00; }
+    .real-switch label { font-weight:800; cursor:pointer; }
+    .real-switch.on { background:#0f172a; border-color:#0f172a; color:#fff; }
+    .freq-table td .old { display:block; font-size:.7rem; color:#94a3b8; text-decoration:line-through; line-height:1; font-weight:500; }
+    .freq-table td.chg { background:#fff4e0; }
+    .freq-table.anim td.chg { animation:flash 1s both; }
+    @keyframes flash { 0% { background:#ffd8a8; transform:scale(1.08); } 100% { background:#fff4e0; transform:none; } }
+    .freq-table th small { display:block; font-weight:500; opacity:.75; font-size:.7rem; }
+    .real-banner { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1rem 1.2rem; animation:pop .4s both; }
+    .imp { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; font-size:.8rem; font-weight:700; padding:.15rem .7rem; margin:.15rem .2rem .15rem 0; }
+    .imp.yes { background:#fff4e0; color:#b45309; border:1.5px solid #f08c00; } .imp.no { background:#f1f5f9; color:#64748b; border:1.5px solid #e2e8f0; }
+    .formula-card { border-radius:14px; padding:.8rem; background:#fff; border:1px solid #e2e8f0; height:100%; }
+
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep,.freq-table.anim td.chg,.real-banner{animation:none} }
+  
+    /* ===== Medidas de dispersión: colores por medida ===== */
+    :root { --m-mean:#1864ab; --m-dm:#0c8599; --m-var:#e8590c; --m-sd:#7048e8; }
+    .h-6 { background:linear-gradient(135deg,#c2255c,#8f1a43); }
+    .hero-bars span { background:#74c0fc; }
+    /* Interruptores */
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.88rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    /* Tabla: columnas coloreadas por medida */
+    #tbl-wrap { --mc:var(--m-mean); }
+    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
+    .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
+    .freq-table th.cb-fi { background:#d6336c; } .freq-table th.cb-x { background:#2f9e44; }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table.anim td.cb-fi, .freq-table.anim td.cb-x { animation:baseWave .7s both; animation-delay:calc(var(--ri,0) * 40ms); }
+    @keyframes baseWave { 0% { filter:brightness(.8); transform:scale(1.06); } 100% { filter:none; transform:none; } }
+    .fi-in { width:72px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #d6336c; border-radius:10px; padding:.15rem .2rem; background:#fff; color:#9c1d4a; }
+    .fi-in:focus { outline:3px solid #fbc2d5; }
+    .col-legend { display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.82rem; margin:.6rem 0 0; }
+    .col-legend span { display:inline-flex; align-items:center; gap:.35rem; } .col-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
+    /* Tarjetas de resultado */
+    .tile { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; transition:transform .25s, box-shadow .25s, background .25s; height:100%; position:relative; overflow:hidden; }
+    .tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .tile.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 10px 26px color-mix(in srgb,var(--c) 45%,transparent); }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; opacity:.85; }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; }
+    .tile .ts { font-size:.78rem; opacity:.8; }
+    .tile .cx { font-size:1em; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } .tile.on::after { background:rgba(255,255,255,.5); }
+    @keyframes tileBar { to { transform:scaleX(1); } }
+    /* Formulario estilo hoja */
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; }
+    .form-tbl td.fl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; }
+    .form-tbl td.fr2 { line-height:1.75; }
+    .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    /* Gráfica SVG */
+    .chart-svg { width:100%; height:auto; display:block; background:#fff; border-radius:14px; border:1px solid #e2e8f0; }
+    .chart-svg text { font-family:'Segoe UI',sans-serif; }
+    .bar-r { transform-box:fill-box; transform-origin:bottom; animation:barUp .8s cubic-bezier(.2,.9,.3,1.1) both; animation-delay:calc(var(--i) * 70ms); cursor:pointer; transition:fill .2s; }
+    .bar-r:hover { fill:#ffd43b; }
+    @keyframes barUp { from { transform:scaleY(0); } }
+    .poly-l { fill:none; stroke:#e03131; stroke-width:3; stroke-dasharray:1; stroke-dashoffset:1; animation:drawL 1.4s .6s forwards; } @keyframes drawL { to { stroke-dashoffset:0; } }
+    .band-r { animation:fadeB .8s 1s both; } @keyframes fadeB { from { opacity:0; } }
+    .vline { stroke-dasharray:7 5; animation:fadeB .8s 1s both; }
+    .chart-tip { position:fixed; z-index:1080; pointer-events:none; background:#0f172a; color:#fff; border-radius:10px; padding:.35rem .7rem; font-size:.82rem; box-shadow:var(--shadow-lg); display:none; }
+    .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
+    @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
+
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla de cálculo</a><a href="#s4">4. Resultados</a><a href="#s5">5. Formulario</a><a href="#s6">6. Gráfica</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bars" id="hero-bars"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-arrows-expand text-info me-2"></i>Medidas de Dispersión</h1>
+        <p class="lead mb-1">Media • desviación media • varianza • desviación estándar — para <strong>muestra</strong> y para <strong>población</strong></p>
+        <p class="mb-3 text-light opacity-75">Pon los límites, elige el número de clases y mira cómo se calcula cada columna de la tabla</p>
+        <button class="btn btn-warning rounded-pill px-4 fw-semibold me-1" data-manual="mean"><i class="bi bi-journal-bookmark-fill me-1"></i>Abrir manual de fórmulas</button>
+        <a class="btn btn-outline-light rounded-pill px-4 fw-semibold" href="#s5"><i class="bi bi-journal-richtext me-1"></i>Ir al formulario</a>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+
+      <!-- 1. DATOS -->
+      <section class="lesson mb-5" id="s1">
+        <div class="card lesson-card">
+          <div class="lesson-head h-1"><div class="num">1</div><div><h2 class="h4 fw-bold mb-0">Límites y número de clases</h2><small>Ya no hace falta escribir los datos: solo el límite inferior, el superior y cuántas clases quieres</small></div></div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-lg-7">
+                <div class="panel h-100">
+                  <h6 class="fw-bold mb-3"><i class="bi bi-arrows-collapse-vertical me-1"></i>Límites de los datos</h6>
+                  <div class="row g-3">
+                    <div class="col-sm-6"><label class="form-label small fw-semibold" for="lo"><span class="vchip" style="--c:#1c7ed6">$X_{inf}$</span> Límite inferior (dato menor)</label><input type="number" class="form-control form-control-lg" id="lo" step="any" value="55"></div>
+                    <div class="col-sm-6"><label class="form-label small fw-semibold" for="hi"><span class="vchip" style="--c:#e03131">$X_{sup}$</span> Límite superior (dato mayor)</label><input type="number" class="form-control form-control-lg" id="hi" step="any" value="100"></div>
+                    <div class="col-sm-6"><label class="form-label small fw-semibold" for="nn"><span class="vchip" style="--c:#343a40">$n$</span> Tamaño de la muestra</label><input type="number" class="form-control" id="nn" min="2" max="5000" step="1" value="60"></div>
+                    <div class="col-sm-6"><label class="form-label small fw-semibold" for="dec">Decimales de tus datos (precisión)</label>
+                      <select id="dec" class="form-select"><option value="0" selected>0 (números enteros)</option><option value="1">1 decimal</option><option value="2">2 decimales</option></select></div>
+                  </div>
+                  <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>$n$ sirve para la regla de Sturges y para generar frecuencias de ejemplo. Después <strong>puedes escribir tus propias frecuencias</strong> en la tabla (la columna rosa) y $n$ se actualiza solo.</div>
+                  <div class="d-flex flex-wrap gap-2 mt-3" id="data-stats"></div>
+                </div>
+              </div>
+              <div class="col-lg-5">
+                <div class="panel h-100">
+                  <h6 class="fw-bold mb-3"><i class="bi bi-sliders me-1"></i>Número de clases</h6>
+                  <label class="form-label small fw-semibold" for="k">Clases que quiero ($k$): <span id="k-out" class="mono">9</span></label>
+                  <input type="range" class="form-range" id="k" min="2" max="20" step="1" value="9">
+                  <div class="usebox mt-3" style="--c:#0c8599">
+                    <div class="d-flex flex-wrap align-items-center gap-2"><button class="btn btn-sm btn-info text-white rounded-pill fw-semibold" id="b-sturges"><i class="bi bi-magic me-1"></i>Aplicar Sturges</button><a href="#" class="small" data-manual="sturges" onclick="return false">ver manual</a></div>
+                    <div class="small text-muted mt-2">Opcional: Sturges calcula $k$ a partir de $n$:</div>
+                    <div class="fx" data-f="sturges"></div><div class="small" id="sturges-live"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="err" class="tip-box s-res mt-3 d-none"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="results">
+
+      <!-- 2. INSTRUCTIVO TAMAÑO DEL INTERVALO -->
+      <section class="lesson mb-5" id="s2">
+        <div class="card lesson-card">
+          <div class="lesson-head h-2"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Tamaño del intervalo (instructivo)</h2><small>Rango entre número de clases, con su comprobación</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-manual="size"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+          <div class="card-body">
+            <div class="row g-3 align-items-center mb-3">
+              <div class="col-lg-6"><div class="fx" data-f="range"></div><div class="fx" data-f="size"></div></div>
+              <div class="col-lg-6"><div class="tip-box s-volt"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Regla de la comprobación:</strong> multiplica el tamaño obtenido por el número de clases. Si el resultado <strong>es igual al rango</strong>, la fracción es <span class="verdict pure">pura</span>. Si <strong>no</strong>, es <span class="verdict impure">impura</span>: se <strong>redondea el decimal</strong> (hacia arriba, para que las clases cubran todo).</div></div>
+            </div>
+            <div class="row g-3" id="steps"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. TABLA -->
+      <section class="lesson mb-5" id="s3">
+        <div class="card lesson-card">
+          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Tabla de cálculo por columnas</h2><small>Elige la medida: la tabla muestra y colorea solo las columnas que esa fórmula necesita</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-manual="mean"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+          <div class="card-body">
+            <div class="tbl-bar">
+              <div><div class="small fw-bold text-muted mb-1"><i class="bi bi-people-fill me-1"></i>Se calcula para…</div>
+                <div class="seg-sw" id="pop-sw" role="group"><button data-pop-mode="muestra" class="on">Muestra</button><button data-pop-mode="poblacion">Población</button></div></div>
+              <div><div class="small fw-bold text-muted mb-1">&nbsp;</div>
+                <div class="real-switch" id="real-switch"><div class="form-check form-switch m-0 p-0 d-flex align-items-center gap-2"><input class="form-check-input m-0" type="checkbox" role="switch" id="sw-real"><label for="sw-real"><i class="bi bi-rulers me-1"></i>Fronteras reales</label></div></div></div>
+              <div class="flex-grow-1"><div class="small fw-bold text-muted mb-1"><i class="bi bi-palette-fill me-1"></i>Medida (colorea las columnas):</div>
+                <div class="d-flex flex-wrap gap-2" id="m-group"></div></div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><strong class="small"><i class="bi bi-table me-1"></i>Frecuencias:</strong>
+              <button class="btn btn-sm btn-outline-primary rounded-pill" id="b-bell"><i class="bi bi-graph-up me-1"></i>Campana</button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="b-rand"><i class="bi bi-shuffle me-1"></i>Aleatorias</button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="b-flat"><i class="bi bi-distribute-vertical me-1"></i>Iguales</button>
+              <span class="small text-muted">…o escribe la tuya en cada clase.</span></div>
+            <div id="real-info" class="mb-3 d-none"></div>
+            <div class="table-responsive rounded-3 border" id="tbl-wrap" data-m="mean">
+              <table class="table table-bordered freq-table mb-0" id="tbl"><thead></thead><tbody></tbody><tfoot></tfoot></table>
+            </div>
+            <div class="col-legend" id="col-legend"></div>
+            <div class="tip-box s-volt mt-3 small"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i><strong>Toca cualquier número o encabezado</strong> (subrayado punteado): se abre un popover con la operación paso a paso. Cada dato cae en <strong>[Li, Ls)</strong>; el último intervalo incluye su límite superior. Los cálculos usan precisión completa y se muestran a <strong>2 decimales</strong>.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. RESULTADOS -->
+      <section class="lesson mb-5" id="s4">
+        <div class="card lesson-card">
+          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Resultados: media, desviación media, varianza y desviación estándar</h2><small>Fórmula → qué usamos de la tabla → sustitución → resultado (2 decimales)</small></div></div>
+          <div class="card-body">
+            <div class="row g-3 mb-3" id="tiles"></div>
+            <div class="measure" id="m-detail"></div>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <!-- 5. FORMULARIO -->
+      <section class="lesson mb-5" id="s5">
+        <div class="card lesson-card">
+          <div class="lesson-head h-5"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Formulario</h2><small>Cada fórmula para muestra y para población, con la explicación de cada elemento</small></div></div>
+          <div class="card-body">
+            <div class="tip-box s-amp small mb-2"><i class="bi bi-info-circle-fill me-1"></i><strong>¿$n - 1$ o $N$?</strong> Si tus datos son <strong>toda la población</strong>, se divide entre $N$. Si son una <strong>muestra</strong> (una parte que representa a la población), la varianza se divide entre $n - 1$ (corrección de Bessel) para no subestimar la dispersión. Con datos agrupados, $x_i$ es la <strong>marca de clase</strong> y cada una se cuenta $f_i$ veces; con datos sin agrupar, $f_i = 1$ y $x_i$ es el dato.</div>
+            <div id="form-wrap"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. GRÁFICA -->
+      <section class="lesson mb-5" id="s6">
+        <div class="card lesson-card">
+          <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Gráfica</h2><small>Oculta por defecto: presiona el botón y se genera la más adecuada para datos agrupados</small></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><button class="btn btn-danger rounded-pill px-4 fw-semibold" id="b-chart"><i class="bi bi-graph-up-arrow me-1"></i>Generar gráfica</button><span class="small text-muted" id="chart-hint">Histograma con polígono de frecuencias, con la media y la dispersión de la medida elegida.</span></div>
+            <div id="no-chart" class="no-chart"><i class="bi bi-bar-chart-line fs-1"></i><div class="fw-semibold">La gráfica está oculta</div><div class="small">Presiona «Generar gráfica» para verla.</div></div>
+            <div id="chart-wrap" class="d-none">
+              <div class="d-flex flex-wrap gap-3 align-items-center mb-2">
+                <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-poly" checked><label class="form-check-label" for="g-poly">Polígono</label></div>
+                <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-mean"><label class="form-check-label" style="color:var(--m-mean)" for="g-mean">Media</label></div>
+                <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-dm"><label class="form-check-label" style="color:var(--m-dm)" for="g-dm">Banda ± desviación media</label></div>
+                <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-sd"><label class="form-check-label" style="color:var(--m-sd)" for="g-sd">Banda ± desviación estándar</label></div>
+              </div>
+              <div id="chart-box"></div>
+              <div class="tip-box s-amp mt-3 small" id="chart-note"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="chart-tip" id="chart-tip"></div>
+
+  <!-- MODAL: MANUAL DE FÓRMULAS -->
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#0f172a"><h5 class="modal-title fw-bold"><i class="bi bi-journal-bookmark-fill me-2"></i>Manual de fórmulas · Medidas de dispersión</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light">
+          <ul class="nav nav-pills mb-3 flex-wrap gap-1" id="man-tabs"></ul>
+          <div id="man-body" class="panel"></div>
+        </div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Entendido</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Medidas de Dispersión</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" },
+          { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }
+        ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" }, { label: "Medidas de dispersión", href: "medidas_dispersion.html", icon: "bi-arrows-expand" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+          <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div>
+        </div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'medidas_dispersion.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+
+  <script>
+/*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { lceil: '⌈', rceil: '⌉', Delta: 'Δ', ne: '≠', rightarrow: '→', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['ne', 'rightarrow', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'tilde': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name}">${x}</span>`; }
+          case 'mathbf': { const h = arg(); last = 'val'; return `<b>${h}</b>`; }
+          case 'log': last = 'val'; return '<span class="tx">log</span>';
+          case 'sum': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">∑</span><span class="sl">${lo}</span></span>`; }
+          case 'pop': { const id = raw().replace(/[^\w-]/g, ''), h = arg(); last = 'val'; return `<span class="pp" data-pop="${id}" tabindex="0" role="button">${h}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    /*ENDFX*/
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const fmt = (x, d = 4) => isFinite(x) ? String(+x.toFixed(d)) : '—';
+    const r10 = x => Math.round(x * 1e10) / 1e10;
+    const f2 = x => { if (!isFinite(x)) return '—'; const v = x.toFixed(2); return v === '-0.00' ? '0.00' : v; };
+    const ng = v => v < 0 ? `(${f2(v)})` : f2(v), ngx = v => v < 0 ? `(${fmt(v)})` : fmt(v);
+    const sturgesK = n => 1 + 3.322 * Math.log10(n);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+    /* ---------- Colores y fórmulas (una sola definición, muestra y población) ---------- */
+    const CL = { n: '#343a40', xi: '#2f9e44', fi: '#d6336c', c: '#0ca678', sup: '#e03131', inf: '#1c7ed6', mean: '#1864ab', dm: '#0c8599', var: '#e8590c', sd: '#7048e8' };
+    const MC = { mean: CL.mean, dm: CL.dm, var: CL.var, sd: CL.sd };
+    const K = (c, s) => T`\textcolor{${c}}{${s}}`;
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const SY = pop => ({ mu: pop ? 'μ' : '\\bar{x}', muH: pop ? 'μ' : 'x̄', N: pop ? 'N' : 'n', v: pop ? 'σ^2' : 's^2', vH: pop ? 'σ²' : 's²', sd: pop ? 'σ' : 's' });
+    const SUM = T`\sum_{i=1}^{k}`;
+    function FF(pop) {
+      const y = SY(pop), x = K(CL.xi, 'x_i'), f = K(CL.fi, 'f_i'), mu = K(CL.mean, y.mu), N = K(CL.n, y.N), den = pop ? N : T`${K(CL.n, 'n')} - 1`;
+      return {
+        mean: T`${K(CL.mean, y.mu)} = \frac{${SUM} ${f} \cdot ${x}}{${N}}`,
+        dm:   T`${K(CL.dm, 'DM')} = \frac{${SUM} ${f} \, |${x} - ${mu}|}{${N}}`,
+        var:  T`${K(CL.var, y.v)} = \frac{${SUM} ${f} (${x} - ${mu})^2}{${den}}`,
+        sd:   T`${K(CL.sd, y.sd)} = \sqrt{\frac{${SUM} ${f} (${x} - ${mu})^2}{${den}}}`,
+        alt:  T`${K(CL.var, y.v)} = \frac{${SUM} ${f} ${x}^2 - ${N} \, ${mu}^2}{${den}}`
+      };
+    }
+    const F0 = {
+      range: T`R \;=\; ${K(CL.sup, 'X_{sup}')} \;-\; ${K(CL.inf, 'X_{inf}')}`,
+      size: T`${K(CL.c, 'c')} \;=\; \frac{\text{Rango}}{\text{N.º de clases deseadas}} \;=\; \frac{R}{k}`,
+      check: T`c \cdot k = R \;\Rightarrow\; \text{fracción pura} \qquad c \cdot k \neq R \;\Rightarrow\; \text{impura (se redondea)}`,
+      sturges: T`${K('#0c8599', 'k')} \;=\; 1 + 3.322 \, \log_{10}(${K(CL.n, 'n')})`,
+      xi: T`${K(CL.xi, 'x_i')} \;=\; \frac{L_i + L_s}{2}`,
+      front: T`F_{inf} = L_i - \frac{u}{2} \qquad F_{sup} = L_s - \frac{u}{2} \qquad u = 10^{-d}`
+    };
+    /* Descripción de cada elemento (muestra / población) */
+    function LEGD(m, pop) {
+      const y = SY(pop);
+      const B = {
+        xi: ['x_i', 'Marca de clase (valor de cada observación)', CL.xi],
+        fi: ['f_i', 'Frecuencia de clase (número de observaciones de esa clase)', CL.fi],
+        n: [y.N, pop ? 'Tamaño de la población (número total de observaciones)' : 'Tamaño de la muestra (número de observaciones)', CL.n],
+        mu: [y.mu, pop ? 'Media aritmética de la población' : 'Media aritmética de la muestra', CL.mean],
+        sum: ['\\sum', 'Suma de los valores de todas las clases (de i = 1 hasta k)', '#495057'],
+        n1: ['n - 1', 'Grados de libertad: corrección de Bessel para muestras (evita subestimar la dispersión)', CL.n],
+        abs: ['|\\,|', 'Valor absoluto (se ignora el signo de la desviación)', '#495057'],
+        dev2: [`(x_i - ${y.mu})^2`, 'Desviación de la marca de clase respecto a la media, elevada al cuadrado (así no se cancelan positivos y negativos)', CL.var]
+      };
+      const den = pop ? B.n : B.n1;
+      const L = {
+        mean: [[y.mu, pop ? 'Media poblacional' : 'Media aritmética (de la muestra)', CL.mean], B.sum, B.fi, B.xi, B.n],
+        dm: [['DM', 'Desviación media', CL.dm], B.sum, B.fi, B.xi, B.mu, B.abs, B.n],
+        var: [[y.v, pop ? 'Varianza poblacional' : 'Varianza muestral', CL.var], B.sum, B.fi, B.xi, B.mu, B.dev2, den],
+        sd: [[y.sd, pop ? 'Desviación estándar poblacional' : 'Desviación estándar muestral', CL.sd], ['\\sqrt{\\;}', 'Raíz cuadrada: regresa la varianza a las unidades de los datos', '#495057'], B.sum, B.fi, B.xi, B.mu, den],
+        alt: [[y.v, pop ? 'Varianza poblacional' : 'Varianza muestral', CL.var], B.sum, ['f_i x_i^2', 'Frecuencia por la marca de clase al cuadrado', CL.xi], B.n, B.mu, den]
+      };
+      return L[m];
+    }
+    const legRows = arr => arr.map(([s, t, c]) => `<div class="legend-row"><span class="vchip" style="--c:${c}">${fi(s)}</span><span>${t}</span></div>`).join('');
+
+    /* ---------- Math inline: convierte $...$ y $$...$$ al formato calculadora ---------- */
+    const escH = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? fd(m[1]) : fi(m[2])); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+
+    /* ---------- Popovers con el paso a paso de cada operación ---------- */
+    let POPS = {}, PID = 0;
+    // lines: [caption, tex, 'res'?] | [caption, html, 'html'] | 'texto'
+    function reg(title, lines, color) {
+      const id = 'p' + (++PID);
+      POPS[id] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
+        : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('') };
+      return id;
+    }
+    const pp = (id, tex) => T`\pop{${id}}{${tex}}`;
+    function initPops(root) {
+      (root || document).querySelectorAll('[data-pop]').forEach(el => {
+        const d = POPS[el.dataset.pop]; if (!d || bootstrap.Popover.getInstance(el)) return;
+        new bootstrap.Popover(el, { trigger: 'click', html: true, sanitize: false, placement: 'auto', container: 'body', customClass: 'calc-pop', title: d.t, content: d.h, fallbackPlacements: ['top', 'bottom', 'right', 'left'] });
+      });
+    }
+    const hideAllPops = () => $$('[data-pop]').forEach(el => { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); });
+    document.addEventListener('show.bs.popover', e => $$('[data-pop]').forEach(el => { if (el !== e.target) { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); } }));
+    document.addEventListener('click', e => { if (!e.target.closest('[data-pop],.popover')) hideAllPops(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideAllPops(); if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-pop]')) { e.preventDefault(); e.target.click(); } });
+
+    /* ---------- Estado ---------- */
+    const S = { lo: 55, hi: 100, d: 0, n: 60, k: 9, fi: [], dist: 'bell', real: false, pop: false, m: 'mean', chart: false };
+    let ST = null, RP = [], HP = {}, TOT = {}, ANIM = false;
+    const lab = r => `${fmt(r.Li)}-${fmt(r.Ls)}`, labF = r => `${fmt(r.lb)}-${fmt(r.ub)}`;
+    const sumList = (a, f = x => x) => a.length > 6 ? [...a.slice(0, 3).map(f), '\\cdots', f(a[a.length - 1])].join(' + ') : a.map(f).join(' + ');
+
+    /* Frecuencias de ejemplo con el método del resto mayor (suman exactamente n) */
+    function alloc(w, n) {
+      const t = w.reduce((a, b) => a + b, 0), q = w.map(x => x / t * n), fl = q.map(Math.floor);
+      let rest = n - fl.reduce((a, b) => a + b, 0);
+      q.map((v, i) => [v - Math.floor(v), i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rest > 0) { fl[i]++; rest--; } });
+      return fl;
+    }
+    function genFi(kind) {
+      const k = S.k, n = S.n; let w;
+      if (kind === 'flat') w = Array(k).fill(1);
+      else if (kind === 'rand') { const ctr = (.2 + Math.random() * .6) * (k - 1), sg = Math.max(.9, k * (.12 + Math.random() * .2)); w = Array.from({ length: k }, (_, j) => Math.exp(-.5 * ((j - ctr) / sg) ** 2) * (.55 + Math.random() * .9) + .02); }
+      else { const ctr = (k - 1) / 2, sg = Math.max(.9, k / 4.2); w = Array.from({ length: k }, (_, j) => Math.exp(-.5 * ((j - ctr) / sg) ** 2) + .01); }
+      return alloc(w, n);
+    }
+
+    /* ---------- Núcleo de cálculo (sin DOM) ---------- */
+    function calc() {
+      const lo = S.lo, hi = S.hi, k = S.k, d = S.d;
+      if (!isFinite(lo) || !isFinite(hi)) return { err: 'Escribe el límite inferior y el límite superior (números).' };
+      if (hi <= lo) return { err: 'El límite superior debe ser mayor que el límite inferior.' };
+      const R = r10(hi - lo), p = Math.pow(10, d), u = 1 / p;
+      const raw = R / k, trunc = Math.floor(raw * p + 1e-9) / p, prod = r10(trunc * k), pure = Math.abs(prod - R) < 1e-9;
+      const c = pure ? trunc : Math.ceil(raw * p - 1e-9) / p;
+      if (!(c > 0)) return { err: 'El tamaño de clase resulta 0: aumenta los decimales o amplía el rango.' };
+      const lastLs = r10(lo + k * c), closedEnd = Math.abs(hi - lastLs) < 1e-9, real = S.real;
+      const rows = Array.from({ length: k }, (_, j) => {
+        const Li = r10(lo + j * c), Ls = r10(lo + (j + 1) * c), xi = r10((Li + Ls) / 2);
+        let L = Li, w = c, x = xi, lb = null, ub = null;
+        if (real) { lb = r10(Li - u / 2); ub = r10(Ls - u / 2); if (j === k - 1 && closedEnd) ub = r10(Ls + u / 2); L = lb; w = r10(ub - lb); x = r10((lb + ub) / 2); }
+        return { j, Li, Ls, xi, lb, ub, L, w, x, fi: S.fi[j] | 0 };
+      });
+      const n = rows.reduce((a, r) => a + r.fi, 0);
+      rows.forEach(r => { r.fx = r.x * r.fi; });
+      const sfx = rows.reduce((a, r) => a + r.fx, 0), mean = n ? sfx / n : NaN;
+      rows.forEach(r => { r.d = r.x - mean; r.ad = Math.abs(r.d); r.sq = r.d * r.d; r.fad = r.fi * r.ad; r.fsq = r.fi * r.sq; });
+      const sad = rows.reduce((a, r) => a + r.fad, 0), ss = rows.reduce((a, r) => a + r.fsq, 0);
+      const dm = n ? sad / n : NaN, varS = n > 1 ? ss / (n - 1) : NaN, varP = n ? ss / n : NaN;
+      const s = { lo, hi, R, k, c, u, step: { raw, trunc, prod, pure }, rows, n, sfx, mean, sad, ss, dm, varS, varP, sdS: Math.sqrt(varS), sdP: Math.sqrt(varP), real, closedEnd,
+        fine: [lo, hi].some(v => Math.abs(v * p - Math.round(v * p)) > 1e-7) };
+      s.v = S.pop ? varP : varS; s.sd = S.pop ? s.sdP : s.sdS;
+      s.val = { mean, dm, var: s.v, sd: s.sd };
+      return s;
+    }
+
+    /* ---------- Manual ---------- */
+    const MS = [
+      { k: 'mean', name: 'Media', ic: 'bi-graph-up' },
+      { k: 'dm', name: 'Desviación media', ic: 'bi-arrows-expand' },
+      { k: 'var', name: 'Varianza', ic: 'bi-bounding-box-circles' },
+      { k: 'sd', name: 'Desviación estándar', ic: 'bi-distribute-horizontal' }
+    ];
+    const MAN = {
+      sturges: { t: 'Regla de Sturges', ic: 'bi-magic', f: () => [F0.sturges], leg: () => [[['k', 'Número de clases sugerido (se redondea al entero más cercano)', '#0c8599'], ['n', 'Tamaño de la muestra', CL.n]]],
+        how: ['Toma el tamaño de la muestra $n$.', 'Calcula $\\log_{10}(n)$ y multiplícalo por 3.322.', 'Suma 1 al resultado.', 'Redondea al entero más cercano: ese es el número de clases $k$.', 'Con ese $k$ se calcula el tamaño de clase $c = R / k$.'] },
+      size: { t: 'Rango y tamaño de clase', ic: 'bi-rulers', f: () => [F0.range, F0.size, F0.check], leg: () => [[['X_{sup}', 'Límite superior (dato mayor)', CL.sup], ['X_{inf}', 'Límite inferior (dato menor)', CL.inf], ['R', 'Rango o recorrido', '#495057']], [['c', 'Tamaño de clase (ancho del intervalo)', CL.c], ['k', 'Número de clases', '#495057']]],
+        how: ['Resta el límite inferior al superior: es el rango $R$.', 'Divide el rango entre el número de clases $k$: ese es el tamaño $c$.', '<strong>Comprueba:</strong> si $c \\cdot k = R$ la fracción es <strong>pura</strong>; si no, es <strong>impura</strong>.', 'En una fracción impura se redondea el decimal hacia arriba, a la precisión de los datos.', 'Los intervalos nacen en el límite inferior y crecen de $c$ en $c$: <code>55-60</code>, <code>60-65</code>…'] },
+      front: { t: 'Fronteras reales', ic: 'bi-rulers', f: () => [F0.front], leg: () => [[['F_{inf}', 'Frontera real inferior', CL.inf], ['F_{sup}', 'Frontera real superior', CL.sup], ['u', 'Unidad de medida de los datos (1 si son enteros, 0.1 con un decimal…)', '#495057'], ['d', 'Decimales de los datos', '#495057']]],
+        how: ['Determina la unidad $u$ de tus datos.', 'Resta $u/2$ a cada límite de la clase.', 'Si el último intervalo es cerrado (incluye el límite superior), su frontera superior es $L_s + u/2$.', 'La marca de clase se recalcula como el punto medio de las fronteras.', 'Cambian $x_i$, $x_i \\cdot f_i$ y todas las medidas que dependen de ellas; $f_i$ y $n$ no cambian.'] },
+      mean: { t: 'Media', ic: 'bi-graph-up', both: 'mean', how: ['Multiplica cada marca de clase $x_i$ por su frecuencia $f_i$ (columna $x_i \\cdot f_i$).', 'Suma todos los productos.', 'Divide entre el total de observaciones ($n$ en muestra, $N$ en población).', 'La fórmula es la misma; solo cambian el símbolo ($\\bar{x}$ o $\\mu$) y la letra del tamaño.'] },
+      dm: { t: 'Desviación media', ic: 'bi-arrows-expand', both: 'dm', how: ['Calcula primero la media (columna $x_i \\cdot f_i$).', 'Resta la media a cada marca de clase y toma el <strong>valor absoluto</strong>: $|x_i - \\bar{x}|$.', 'Multiplica por la frecuencia: $f_i \\cdot |x_i - \\bar{x}|$.', 'Suma esa columna y divide entre $n$ (o $N$).', 'Interpretación: es la distancia promedio de los datos a su media.'] },
+      var: { t: 'Varianza', ic: 'bi-bounding-box-circles', both: 'var', alt: true, how: ['Calcula la media.', 'Resta la media a cada marca de clase: $x_i - \\bar{x}$.', 'Eleva al cuadrado esa desviación y multiplícala por $f_i$.', 'Suma la columna $f_i (x_i - \\bar{x})^2$.', 'Divide entre <strong>$n - 1$</strong> si trabajas con una muestra, o entre <strong>$N$</strong> si es la población completa.', 'La varianza queda en unidades al cuadrado.'] },
+      sd: { t: 'Desviación estándar', ic: 'bi-distribute-horizontal', both: 'sd', how: ['Calcula la varianza (muestral o poblacional).', 'Obtén su raíz cuadrada.', 'Así la dispersión vuelve a las unidades originales de los datos.', 'Regla práctica: la mayoría de los datos cae a menos de 2 desviaciones estándar de la media.'] }
+    };
+    function showManual(key) {
+      hideAllPops();
+      $('#man-tabs').innerHTML = Object.entries(MAN).map(([k, m]) => `<li class="nav-item"><button class="nav-link ${k === key ? 'active' : ''}" data-man="${k}"><i class="bi ${m.ic} me-1"></i>${m.t}</button></li>`).join('');
+      const m = MAN[key]; let body;
+      if (m.both) {
+        const one = pop => `<div class="mb-3"><span class="badge ${pop ? 'bg-success' : 'bg-warning text-dark'} mb-1">${pop ? 'Población' : 'Muestra'}</span>${fd(FF(pop)[m.both])}${m.alt ? fd(FF(pop).alt) : ''}<div class="small fw-bold mt-1">Donde:</div>${legRows(LEGD(m.both, pop))}${m.alt ? `<div class="small text-muted mt-1">La segunda fórmula es equivalente (forma abreviada): no necesita calcular cada desviación.</div>` : ''}</div>`;
+        body = one(false) + one(true);
+      } else body = m.f().map(fd).join('') + `<h6 class="fw-bold mt-3">Donde:</h6>` + m.leg().map(legRows).join('');
+      $('#man-body').innerHTML = `<h5 class="fw-bold mb-2"><i class="bi ${m.ic} me-1"></i>${m.t}</h5>${body}<h6 class="fw-bold mt-3">Cómo se usa</h6><ol class="small lh-lg mb-0">${m.how.map(h => `<li>${h}</li>`).join('')}</ol>`;
+      math($('#man-body')); bootstrap.Modal.getOrCreateInstance($('#manualModal')).show();
+    }
+    document.addEventListener('click', e => {
+      const b = e.target.closest('[data-manual]'); if (b) { e.preventDefault(); showManual(b.dataset.manual); }
+      const t = e.target.closest('[data-man]'); if (t) showManual(t.dataset.man);
+    });
+
+    /* ---------- Instructivo del tamaño del intervalo ---------- */
+    function renderSteps(s) {
+      const a = '#e03131', b = '#1c7ed6', cc = '#f08c00', d = '#2f9e44', st = s.step, f = fmt;
+      const pmax = reg('Límite superior', [['Es el dato mayor que escribiste', T`X_{sup} = ${f(s.hi)}`, 'res']], a);
+      const pmin = reg('Límite inferior', [['Es el dato menor que escribiste', T`X_{inf} = ${f(s.lo)}`, 'res']], b);
+      const pR = reg('Rango', [['Límite superior − límite inferior', T`R = ${f(s.hi)} - ${f(s.lo)} = ${f(s.R)}`, 'res']], a);
+      const pk = reg('Número de clases', [['Lo elegiste con el control (o con Sturges)', T`k = ${s.k}`, 'res'], 'Puedes cambiarlo con el deslizador o con «Aplicar Sturges».'], b);
+      const pc = reg('Comprobación', [['Tamaño a la precisión de tus datos', T`c = ${f(st.trunc)}`], ['Multiplica por k', T`${f(st.trunc)} \cdot ${s.k} = ${f(st.prod)}`], ['Compara con el rango', T`${f(st.prod)} ${st.pure ? '=' : '\\neq'} ${f(s.R)}`, 'res'], st.pure ? 'Son iguales: fracción pura.' : 'Son distintos: fracción impura → se redondea el decimal.'], cc);
+      const s3 = `$${pp(pc, `${f(st.trunc)} \\times ${s.k} = ${f(st.prod)}`)}$ y el rango es $${f(s.R)}$ → ${st.pure ? `<span class="verdict pure">son iguales: fracción PURA</span>` : `<span class="verdict impure">son distintos: fracción IMPURA</span>`}`;
+      const pr = reg('Redondeo hacia arriba', [['Tamaño exacto', T`R / k = ${f(st.raw, 6)}`], ['Se sube a la precisión de los datos', T`${f(st.raw, 6)} \rightarrow ${f(s.c)}`, 'res'], ['Ahora cubre todos los datos', T`c \cdot k = ${f(s.c * s.k)} \ge ${f(s.R)}`]], d);
+      const s4 = st.pure ? `Se usa el tamaño tal cual: $c = ${f(s.c)}$. Los intervalos llegan justo a <strong>${f(s.hi)}</strong>.` : `Redondeo hacia arriba: $${pp(pr, `${f(st.raw)} \\rightarrow ${f(s.c)}`)}$. Ahora $c \\cdot k = ${f(s.c * s.k)} \\ge R$ y los intervalos cubren hasta <strong>${f(s.lo + s.c * s.k)}</strong>.`;
+      $('#steps').innerHTML = [
+        [a, 'Hallar el rango', `$R = ${pp(pmax, f(s.hi))} - ${pp(pmin, f(s.lo))} = ${pp(pR, f(s.R))}$`],
+        [b, 'Dividir entre $k$', `$c = \\frac{${pp(pR, f(s.R))}}{${pp(pk, s.k)}} = ${f(st.raw, 6)}$`],
+        [cc, 'Comprobar multiplicando', s3],
+        [d, st.pure ? 'Tamaño final' : 'Redondear el decimal', s4]
+      ].map(([c, t, body], i) => `<div class="col-md-6 col-xl-3"><div class="istep" style="--c:${c};animation-delay:${i * 90}ms"><h6><span class="badge-n">${i + 1}</span>${t}</h6><div class="small">${body}</div></div></div>`).join('');
+    }
+
+    /* ---------- Popovers de la tabla ---------- */
+    function buildPops(s) {
+      const f = fmt, R = s.real, y = SY(S.pop), h = f(s.u / 2), mu = ng(s.mean), nm = y.N;
+      RP = s.rows.map(r => {
+        const j = r.j, last = j === s.k - 1 && s.closedEnd, t = `Clase ${j + 1}`;
+        const ivl = [[j ? 'Límite inferior' : 'Límite inferior = el que escribiste', j ? T`L_i = X_{inf} + ${j} \cdot c = ${f(s.lo)} + ${j} \cdot ${f(s.c)} = ${f(r.Li)}` : T`L_i = X_{inf} = ${f(s.lo)}`],
+          ['Límite superior (= inferior de la siguiente)', T`L_s = L_i + c = ${f(r.Li)} + ${f(s.c)} = ${f(r.Ls)}`, R ? '' : 'res']];
+        if (R) ivl.push(['Frontera real inferior', T`F_{inf} = L_i - \frac{u}{2} = ${f(r.Li)} - ${h} = ${f(r.lb)}`],
+          ['Frontera real superior' + (last ? ' (último intervalo cerrado)' : ''), last ? T`F_{sup} = L_s + \frac{u}{2} = ${f(r.Ls)} + ${h} = ${f(r.ub)}` : T`F_{sup} = L_s - \frac{u}{2} = ${f(r.Ls)} - ${h} = ${f(r.ub)}`, 'res']);
+        const mid = R ? [['Punto medio de las fronteras', T`x_i = \frac{F_{inf} + F_{sup}}{2} = \frac{${f(r.lb)} + ${f(r.ub)}}{2} = ${f(r.x)}`, 'res'], 'Sin fronteras valdría ' + f(r.xi) + '.']
+          : [['Punto medio del intervalo', T`x_i = \frac{L_i + L_s}{2} = \frac{${f(r.Li)} + ${f(r.Ls)}}{2} = ${f(r.x)}`, 'res']];
+        return {
+          ivl: reg(`${t}: intervalo`, ivl, '#fcc419'),
+          xi: reg(`${t}: marca de clase`, mid, CL.xi),
+          fx: reg(`${t}: xi · fi`, [['Marca de clase por frecuencia', T`x_i \cdot f_i = ${ngx(r.x)} \cdot ${r.fi} = ${f2(r.fx)}`, 'res']], CL.mean),
+          d: reg(`${t}: desviación`, [['Marca de clase menos la media', T`x_i - ${y.mu} = ${ngx(r.x)} - ${mu} = ${f2(r.d)}`, 'res'], r.d < 0 ? 'Es negativa: la clase está a la izquierda de la media.' : 'Es positiva: la clase está a la derecha de la media.'], CL.var),
+          ad: reg(`${t}: valor absoluto`, [['Se quita el signo de la desviación', T`|x_i - ${y.mu}| = |{${f2(r.d)}}| = ${f2(r.ad)}`, 'res']], CL.dm),
+          fad: reg(`${t}: fi · |xi − media|`, [['Frecuencia por la distancia a la media', T`f_i \cdot |x_i - ${y.mu}| = ${r.fi} \cdot ${f2(r.ad)} = ${f2(r.fad)}`, 'res'], 'Se usa la precisión completa; el resultado se redondea a 2 decimales.'], CL.dm),
+          sq: reg(`${t}: desviación al cuadrado`, [['Se eleva al cuadrado', T`(x_i - ${y.mu})^2 = (${f2(r.d)})^2 = ${f2(r.sq)}`, 'res'], 'Al elevar al cuadrado desaparece el signo.'], CL.var),
+          fsq: reg(`${t}: fi · (xi − media)²`, [['Frecuencia por la desviación al cuadrado', T`f_i (x_i - ${y.mu})^2 = ${r.fi} \cdot ${f2(r.sq)} = ${f2(r.fsq)}`, 'res'], 'Se usa la precisión completa; el resultado se redondea a 2 decimales.'], CL.var)
+        };
+      });
+      const rs = s.rows, all = g => sumList(rs, g);
+      TOT = {
+        fi: reg('Suma de frecuencias', [['Todas las clases', T`\sum f_i = ${all(r => r.fi)} = ${s.n}`, 'res'], `Es el tamaño ${S.pop ? 'de la población N' : 'de la muestra n'}.`], CL.fi),
+        fx: reg('Suma de xi · fi', [['Se suman todos los productos', T`\sum x_i f_i = ${all(r => f2(r.fx))} = ${f2(s.sfx)}`, 'res'], `Dividida entre ${y.N} da la media: ${f2(s.sfx)} / ${s.n} = ${f2(s.mean)}.`], CL.mean),
+        fad: reg('Suma de fi · |xi − media|', [['Numerador de la desviación media', T`\sum f_i |x_i - ${y.mu}| = ${all(r => f2(r.fad))} = ${f2(s.sad)}`, 'res']], CL.dm),
+        fsq: reg('Suma de fi · (xi − media)²', [['Numerador de la varianza', T`\sum f_i (x_i - ${y.mu})^2 = ${all(r => f2(r.fsq))} = ${f2(s.ss)}`, 'res']], CL.var)
+      };
+      const M = y.muH, mm = S.pop ? 'poblacional' : 'muestral';
+      HP = {
+        ivl: reg(R ? 'Fronteras reales' : 'Intervalos', [['Límite inferior de cada clase', T`L_i = X_{inf} + (j-1) \cdot c`], ['Límite superior = inferior + c', T`L_s = L_i + c`], ...(R ? [['Fronteras reales', T`F_{inf} = L_i - \frac{u}{2}`, 'res'], ['', T`F_{sup} = L_s - \frac{u}{2}`, 'res'], `Aquí u = ${f(s.u)}.`] : [])], '#fcc419'),
+        fi: reg('Frecuencia fi', [['Número de observaciones de la clase', T`f_i`], 'Escríbela en la columna rosa: la suma de todas es el tamaño n.'], CL.fi),
+        xi: reg(R ? 'Marca de clase real' : 'Marca de clase', [['Punto medio de la clase', R ? T`x_i = \frac{F_{inf} + F_{sup}}{2}` : T`x_i = \frac{L_i + L_s}{2}`, 'res']], CL.xi),
+        fx: reg('Columna xi · fi', [['Marca de clase por frecuencia', T`x_i \cdot f_i`], ['Su suma es el numerador de la media', T`${y.mu} = \frac{\sum x_i f_i}{${y.N}}`, 'res']], CL.mean),
+        d: reg('Columna xi − media', [['Cuánto se aleja cada clase de la media', T`x_i - ${y.mu}`, 'res'], 'Usa la media de la columna anterior.'], CL.var),
+        ad: reg('Columna |xi − media|', [['Distancia sin signo', T`|x_i - ${y.mu}|`, 'res']], CL.dm),
+        fad: reg('Columna fi · |xi − media|', [['Distancia por frecuencia', T`f_i \cdot |x_i - ${y.mu}|`], ['Su suma es el numerador de DM', T`DM = \frac{\sum f_i |x_i - ${y.mu}|}{${y.N}}`, 'res']], CL.dm),
+        sq: reg('Columna (xi − media)²', [['Desviación al cuadrado', T`(x_i - ${y.mu})^2`, 'res']], CL.var),
+        fsq: reg('Columna fi · (xi − media)²', [['Cuadrado por frecuencia', T`f_i (x_i - ${y.mu})^2`], [`Su suma es el numerador de la varianza ${mm}`, T`${y.v} = \frac{\sum f_i (x_i - ${y.mu})^2}{${S.pop ? 'N' : 'n - 1'}}`, 'res']], CL.var)
+      };
+    }
+
+    /* ---------- Tabla por columnas ---------- */
+    const COLS = { mean: ['fx'], dm: ['fx', 'ad', 'fad'], var: ['fx', 'd', 'sq', 'fsq'], sd: ['fx', 'd', 'sq', 'fsq'] };
+    function renderTable(s) {
+      const R = s.real, f = fmt, y = SY(S.pop), M = y.muH, cols = COLS[S.m], lastC = cols[cols.length - 1];
+      const TH = { fx: 'x<sub>i</sub> · f<sub>i</sub>', d: `x<sub>i</sub> − ${M}`, ad: `|x<sub>i</sub> − ${M}|`, fad: `f<sub>i</sub> · |x<sub>i</sub> − ${M}|`, sq: `(x<sub>i</sub> − ${M})²`, fsq: `f<sub>i</sub> · (x<sub>i</sub> − ${M})²` };
+      const TT = { fx: s.sfx, fad: s.sad, fsq: s.ss }, TK = { fx: 'fx', fad: 'fad', fsq: 'fsq' };
+      $('#tbl-wrap').dataset.m = S.m;
+      $('#tbl thead').innerHTML = `<tr><th>Clase</th><th class="pp" data-pop="${HP.ivl}" tabindex="0" role="button">${R ? 'Fronteras reales<small>Li − u/2 , Ls − u/2</small>' : 'Intervalos<small>Li – Ls</small>'} <i class="bi bi-question-circle"></i></th>`
+        + `<th class="cb-fi pp" data-pop="${HP.fi}" tabindex="0" role="button">Frecuencia<small>f<sub>i</sub> (editable)</small></th><th class="cb-x pp" data-pop="${HP.xi}" tabindex="0" role="button">${R ? 'Marca real' : 'Marca de clase'}<small>x<sub>i</sub></small></th>`
+        + cols.map((c, ci) => `<th class="mc pp${c === lastC ? ' last' : ''}" style="--ci:${ci}" data-pop="${HP[c]}" tabindex="0" role="button">${TH[c]} <i class="bi bi-question-circle"></i></th>`).join('') + '</tr>';
+      const td = (id, inner, c = '', st = '') => `<td class="pp ${c}" ${st ? `style="${st}"` : ''} data-pop="${id}" tabindex="0" role="button">${inner}</td>`;
+      $('#tbl tbody').innerHTML = s.rows.map((r, j) => `<tr data-j="${j}"><td>${j + 1}</td>
+        ${td(RP[j].ivl, `<span class="mono">${R ? labF(r) : lab(r)}</span>`)}
+        <td class="cb-fi"><input class="fi-in" type="text" inputmode="numeric" autocomplete="off" data-j="${j}" value="${r.fi}" aria-label="Frecuencia de la clase ${j + 1}"></td>
+        ${td(RP[j].xi, f(r.x), 'cb-x')}
+        ${cols.map((c, ci) => td(RP[j][c], f2(r[c]), 'mc' + (c === lastC ? ' last' : ''), `--ci:${ci};--ri:${j}`)).join('')}</tr>`).join('');
+      $('#tbl tfoot').innerHTML = `<tr><td colspan="2">Total</td>${td(TOT.fi, s.n, 'cb-fi')}<td class="cb-x">—</td>${cols.map((c, ci) => TT[c] !== undefined ? td(TOT[TK[c]], f2(TT[c]), 'mc', `--ci:${ci};--ri:${s.k}`) : `<td class="mc" style="--ci:${ci}">—</td>`).join('')}</tr>`;
+      const names = cols.map(c => TH[c]);
+      $('#col-legend').innerHTML = `<span><i style="background:${CL.fi}"></i>f<sub>i</sub> (la escribes tú)</span><span><i style="background:${CL.xi}"></i>x<sub>i</sub> (marca de clase)</span>`
+        + names.map((t, i) => `<span><i style="background:${MC[S.m]}"></i>${i + 1 + 0 ? t : t}</span>`).join('')
+        + (cols.length > 1 ? `<span class="fw-bold" style="color:${CL.mean}">${M} = ${f2(s.mean)} (sale de Σ x<sub>i</sub>·f<sub>i</sub> / ${y.N})</span>` : '');
+      const t = $('#tbl'); t.classList.remove('anim'); if (ANIM) { void t.offsetWidth; t.classList.add('anim'); }
+    }
+
+    /* ---------- Aviso de fronteras reales ---------- */
+    function renderReal(s) {
+      const box = $('#real-info'); $('#real-switch').classList.toggle('on', s.real);
+      if (!s.real) { box.classList.add('d-none'); box.innerHTML = ''; return; }
+      box.classList.remove('d-none'); const f = fmt, r0 = s.rows[0];
+      const yes = ['Intervalos', 'Marca de clase xi', 'xi · fi', 'Media', 'Desviaciones', 'Varianza y desv. estándar'], no = ['Frecuencias fi', 'Tamaño n', 'Número de clases k', 'Tamaño c'];
+      box.innerHTML = `<div class="real-banner"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><h5 class="fw-bold mb-0 me-auto"><i class="bi bi-rulers text-warning me-1"></i>Fronteras reales activas: la tabla se ajustó en su lugar</h5><button class="btn btn-sm btn-outline-dark rounded-pill" data-manual="front"><i class="bi bi-journal-text me-1"></i>Manual</button><button class="btn btn-sm btn-dark rounded-pill" id="b-unreal"><i class="bi bi-arrow-counterclockwise me-1"></i>Volver a los intervalos originales</button></div>
+        ${s.fine ? '<div class="tip-box s-res small mb-2"><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>Tus límites tienen más decimales que la precisión elegida. Ajusta «Decimales de tus datos» para que las fronteras sean correctas.</div>' : ''}
+        <div class="row g-3"><div class="col-lg-7"><p class="small mb-2"><strong>¿Qué son?</strong> Los datos se miden con una precisión limitada (aquí la unidad es <strong>$u = ${f(s.u)}$</strong>). En la clase <span class="mono">${lab(r0)}</span> el dato más grande posible es <strong>${f(r0.Ls - s.u)}</strong>; el ${f(r0.Ls)} pertenece a la siguiente. La <strong>frontera real</strong> es el punto medio de ese hueco, así las clases se tocan sin vacíos.${s.closedEnd ? ' El último intervalo es <strong>cerrado</strong>: su frontera superior es $L_s + u/2$.' : ''}</p>
+          <div class="small fw-bold text-muted">¿Qué se recalcula?</div><div>${yes.map(t => `<span class="imp yes"><i class="bi bi-arrow-repeat"></i>${t}</span>`).join('')}</div><div class="small fw-bold text-muted mt-1">¿Qué se queda igual?</div><div>${no.map(t => `<span class="imp no"><i class="bi bi-lock-fill"></i>${t}</span>`).join('')}</div></div>
+          <div class="col-lg-5"><div class="formula-card"><div class="small fw-bold text-muted">Fórmula</div>${fd(F0.front)}</div></div></div></div>`;
+    }
+
+    /* ---------- Resultados ---------- */
+    const use = (c, h) => `<div class="usebox" style="--c:${c}">${h}</div>`;
+    const chip = (c, s) => `<span class="vchip" style="--c:${c}">${s}</span>`;
+    function renderTiles(s) {
+      const y = SY(S.pop), sym = { mean: y.muH, dm: 'DM', var: y.vH, sd: y.sd };
+      $('#tiles').innerHTML = MS.map(m => `<div class="col-6 col-lg-3"><div class="tile ${S.m === m.k ? 'on' : ''}" data-mm="${m.k}" style="--c:${MC[m.k]}" tabindex="0" role="button" title="Ver el procedimiento de ${m.name.toLowerCase()}"><div class="tl"><i class="bi ${m.ic} me-1"></i>${m.name}</div><div class="tv">${f2(s.val[m.k])}</div><div class="ts">${sym[m.k]} · ${S.pop ? 'población' : 'muestra'}</div></div></div>`).join('');
+    }
+    function renderDetail(s) {
+      const m = S.m, c = MC[m], y = SY(S.pop), F = FF(S.pop), f = fmt, meta = MS.find(q => q.k === m);
+      const nV = s.n, dv = S.pop ? s.n : s.n - 1, mu = ng(s.mean);
+      const nId = reg(S.pop ? 'Tamaño de la población' : 'Tamaño de la muestra', [['Suma de todas las frecuencias', T`${y.N} = \sum f_i = ${nV}`, 'res']], CL.n);
+      const dId = reg('Denominador', S.pop ? [['Población: se divide entre N', T`N = ${nV}`, 'res']] : [['Muestra: se resta 1 (corrección de Bessel)', T`n - 1 = ${nV} - 1 = ${nV - 1}`, 'res'], 'Con una muestra se divide entre n − 1 para no subestimar la dispersión de la población.'], CL.n);
+      const mId = reg(S.pop ? 'Media poblacional' : 'Media', [['Suma de xi · fi entre el tamaño', T`${y.mu} = \frac{${f2(s.sfx)}}{${nV}} = ${f(s.mean, 6)}`], ['A 2 decimales', T`${y.mu} = ${f2(s.mean)}`, 'res']], CL.mean);
+      const sfxId = reg('Suma de xi · fi', [['Se suman todos los productos', T`\sum x_i f_i = ${sumList(s.rows, r => f2(r.fx))} = ${f2(s.sfx)}`, 'res']], CL.mean);
+      const sadId = reg('Suma de fi · |xi − media|', [['Se suman los productos', T`\sum f_i |x_i - ${y.mu}| = ${sumList(s.rows, r => f2(r.fad))} = ${f2(s.sad)}`, 'res']], CL.dm);
+      const ssId = reg('Suma de fi · (xi − media)²', [['Se suman los productos', T`\sum f_i (x_i - ${y.mu})^2 = ${sumList(s.rows, r => f2(r.fsq))} = ${f2(s.ss)}`, 'res']], CL.var);
+      const nn = pp(nId, K(CL.n, nV)), dd = S.pop ? pp(nId, K(CL.n, nV)) : pp(dId, K(CL.n, `${nV} - 1`)), ddv = S.pop ? pp(nId, nV) : pp(dId, dv);
+      const terms = g => { const t = s.rows.map((r, j) => g(r, j)); return t.length > 6 ? [...t.slice(0, 3), '\\cdots', t[t.length - 1]] : t; };
+      const tMean = terms((r, j) => pp(RP[j].fx, T`(${K(CL.xi, ngx(r.x))})(${K(CL.fi, r.fi)})`)).join(' + ');
+      const tDm = terms((r, j) => pp(RP[j].fad, T`${K(CL.fi, r.fi)} |${K(CL.xi, fmt(r.x))} - ${mu}|`)).join(' + ');
+      const tSq = terms((r, j) => pp(RP[j].fsq, T`${K(CL.fi, r.fi)} (${K(CL.xi, fmt(r.x))} - ${mu})^2`)).join(' + ');
+      let sub, res, tab, resTex, ttl;
+      if (m === 'mean') {
+        ttl = S.pop ? 'Media poblacional (μ)' : 'Media (x̄)';
+        tab = `${chip(CL.xi, 'marca de clase $x_i$')}, ${chip(CL.fi, 'frecuencia $f_i$')} (columna $x_i \\cdot f_i$) y ${chip(CL.n, `$${y.N} = ${nV}$`)}.`;
+        sub = [T`${y.mu} = \frac{${tMean}}{${nn}}`, T`${y.mu} = \frac{${pp(sfxId, f2(s.sfx))}}{${ddv}}`];
+        res = reg('Resultado', [['Suma entre ' + y.N, T`${y.mu} = \frac{${f2(s.sfx)}}{${nV}} = ${f(s.mean, 6)}`], ['A 2 decimales', T`${y.mu} = ${f2(s.mean)}`, 'res']], CL.mean);
+        resTex = T`${y.mu} = ${pp(res, f2(s.mean))}`;
+      } else if (m === 'dm') {
+        ttl = 'Desviación media (DM)';
+        tab = `${chip(CL.mean, `la media $${y.mu} = ${f2(s.mean)}$`)}, ${chip(CL.dm, 'columna $f_i \\cdot |x_i - ' + y.mu + '|$')} y ${chip(CL.n, `$${y.N} = ${nV}$`)}.`;
+        sub = [T`DM = \frac{${tDm}}{${nn}}`, T`DM = \frac{${pp(sadId, f2(s.sad))}}{${ddv}}`];
+        res = reg('Resultado', [['Suma entre ' + y.N, T`DM = \frac{${f2(s.sad)}}{${nV}} = ${f(s.dm, 6)}`], ['A 2 decimales', T`DM = ${f2(s.dm)}`, 'res'], 'La desviación media usa el mismo denominador en muestra y población.'], CL.dm);
+        resTex = T`DM = ${pp(res, f2(s.dm))}`;
+      } else if (m === 'var') {
+        ttl = S.pop ? 'Varianza poblacional (σ²)' : 'Varianza muestral (s²)';
+        tab = `${chip(CL.mean, `la media $${y.mu} = ${f2(s.mean)}$`)}, ${chip(CL.var, 'columna $f_i (x_i - ' + y.mu + ')^2$')} y ${chip(CL.n, S.pop ? `$N = ${nV}$` : `$n - 1 = ${dv}$`)}.`;
+        sub = [T`${y.v} = \frac{${tSq}}{${dd}}`, T`${y.v} = \frac{${pp(ssId, f2(s.ss))}}{${ddv}}`];
+        res = reg('Resultado', [['Suma entre ' + (S.pop ? 'N' : 'n − 1'), T`${y.v} = \frac{${f2(s.ss)}}{${dv}} = ${f(s.v, 6)}`], ['A 2 decimales', T`${y.v} = ${f2(s.v)}`, 'res'], 'Está en unidades al cuadrado.'], CL.var);
+        resTex = T`${y.v} = ${pp(res, f2(s.v))}`;
+      } else {
+        ttl = S.pop ? 'Desviación estándar poblacional (σ)' : 'Desviación estándar muestral (s)';
+        const vId = reg('Varianza', [['Suma entre ' + (S.pop ? 'N' : 'n − 1'), T`${y.v} = \frac{${f2(s.ss)}}{${dv}} = ${f(s.v, 6)}`, 'res']], CL.var);
+        tab = `${chip(CL.var, `la varianza $${y.v} = ${f2(s.v)}$`)} (de la columna $f_i (x_i - ${y.mu})^2$) y su raíz cuadrada.`;
+        sub = [T`${y.sd} = \sqrt{\frac{${tSq}}{${dd}}}`, T`${y.sd} = \sqrt{\frac{${pp(ssId, f2(s.ss))}}{${ddv}}} = \sqrt{${pp(vId, f2(s.v))}}`];
+        res = reg('Resultado', [['Raíz de la varianza', T`${y.sd} = \sqrt{${f(s.v, 6)}} = ${f(s.sd, 6)}`], ['A 2 decimales', T`${y.sd} = ${f2(s.sd)}`, 'res'], 'Está en las mismas unidades que los datos.'], CL.sd);
+        resTex = T`${y.sd} = ${pp(res, f2(s.sd))}`;
+      }
+      const diff = m === 'var' || m === 'sd', other = m === 'var' ? [s.varS, s.varP] : m === 'sd' ? [s.sdS, s.sdP] : [s.val[m], s.val[m]];
+      const cmp = diff ? [['Muestra (÷ n − 1)', f2(other[0]), !S.pop], ['Población (÷ N)', f2(other[1]), S.pop]] : [['Muestra', f2(other[0]), !S.pop], ['Población', f2(other[1]), S.pop]];
+      $('#m-detail').innerHTML = `<div class="measure-head" style="background:${c}"><i class="bi ${meta.ic} fs-4"></i><h5 class="fw-bold mb-0 me-auto">${ttl}</h5>
+        <a class="btn btn-sm btn-light rounded-pill" href="#s3"><i class="bi bi-table me-1"></i>Ver columnas</a>
+        <button class="btn btn-sm btn-outline-light rounded-pill" data-manual="${m}"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="p-3"><div class="row g-3"><div class="col-lg-5"><div class="small fw-bold text-muted">Fórmula</div>${fd(F[m])}<div class="small fw-bold text-muted mt-2">Dónde</div>${legRows(LEGD(m, S.pop))}</div>
+        <div class="col-lg-7">${use(c, `<strong>De la tabla usamos:</strong> ${tab}`)}
+        <div class="small fw-bold text-muted">Sustitución <span class="fw-normal">(toca cualquier número)</span></div>${sub.map(fd).join('')}
+        <div class="calc-screen mt-2" style="--c:${c}">${fi(resTex)}</div>
+        <div class="cmp-chips">${cmp.map(([t, v, on]) => `<span class="cmp-chip ${on ? 'on' : ''}">${t}: <b>${v}</b></span>`).join('')}</div>
+        <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Se calcula con precisión completa y se muestra a <strong>2 decimales</strong>${diff ? '' : '.'}${diff ? `. ${S.pop ? 'Con la población completa se divide entre $N$.' : 'Con una muestra se divide entre $n - 1$.'}` : ''}</div></div></div></div>`;
+    }
+
+    /* ---------- Formulario (hoja de referencia) ---------- */
+    function renderForm() {
+      const T2 = { mean: 'Media', dm: 'Desviación media', var: 'Varianza', sd: 'Desviación estándar' };
+      const row = (pop, key, leg, tag) => `<tr class="${pop ? 'vp' : 'vm'}"><td class="fl"><span class="badge-v">${tag || (pop ? 'Población' : 'Muestra')}</span><div class="pt-3">${fd(FF(pop)[key])}</div></td>
+        <td class="fr2"><div class="fw-bold">Donde:</div>${leg.map(([t, d, c]) => `<div class="dw"><span class="vchip" style="--c:${c}">${fi(t)}</span> = ${d}</div>`).join('')}</td></tr>`;
+      $('#form-wrap').innerHTML = MS.map((m, i) => `<div class="sheet-title" style="color:${MC[m.k]}"><i class="bi ${m.ic} me-1"></i>${T2[m.k]}</div>
+        <div class="table-responsive"><table class="form-tbl" style="animation-delay:${i * 80}ms">${row(false, m.k, LEGD(m.k, false))}${row(true, m.k, LEGD(m.k, true))}
+        ${m.k === 'var' ? row(false, 'alt', LEGD('alt', false), 'Muestra · abreviada') + row(true, 'alt', LEGD('alt', true), 'Población · abreviada') : ''}</table></div>`).join('')
+        + `<div class="tip-box s-volt small"><i class="bi bi-diagram-3-fill text-warning me-1"></i><strong>Relaciones:</strong> $s = \\sqrt{s^2}$ y $\\sigma = \\sqrt{\\sigma^2}$; $s^2 = \\sigma^2 \\cdot \\frac{N}{n-1}$ cuando se usan los mismos datos; la media y la desviación media se calculan igual en muestra y población. Todos los resultados se muestran a <strong>2 decimales</strong>.</div>`;
+    }
+
+    /* ---------- Gráfica (SVG propio) ---------- */
+    function niceStep(max) { const raw = max / 5, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p; }
+    function drawChart() {
+      const box = $('#chart-box'), s = ST;
+      $('#chart-wrap').classList.toggle('d-none', !S.chart); $('#no-chart').classList.toggle('d-none', S.chart);
+      $('#b-chart').innerHTML = S.chart ? '<i class="bi bi-eye-slash me-1"></i>Ocultar gráfica' : '<i class="bi bi-graph-up-arrow me-1"></i>Generar gráfica';
+      if (!S.chart || !s) { box.innerHTML = ''; return; }
+      const W = 920, H = 470, ml = 64, mr = 26, mt = 34, mb = s.k > 11 ? 92 : 74, pw = W - ml - mr, ph = H - mt - mb;
+      const r0 = s.rows[0], rl = s.rows[s.k - 1], d0 = r0.L - r0.w, d1 = rl.L + rl.w + rl.w;
+      const X = v => ml + (v - d0) / (d1 - d0) * pw, maxF = Math.max(1, ...s.rows.map(r => r.fi)), st = niceStep(maxF * 1.1), ymax = Math.ceil(maxF * 1.1 / st) * st, Y = v => mt + ph - v / ymax * ph;
+      let g = '';
+      for (let v = 0; v <= ymax + 1e-9; v += st) g += `<line x1="${ml}" x2="${W - mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e2e8f0"/><text x="${ml - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="#64748b">${fmt(v)}</text>`;
+      const rot = s.k > 11, edges = [...s.rows.map(r => r.L), rl.L + rl.w];
+      edges.forEach(v => { g += `<line x1="${X(v)}" x2="${X(v)}" y1="${Y(0)}" y2="${Y(0) + 5}" stroke="#64748b"/><text x="${X(v)}" y="${Y(0) + 20}" font-size="12" fill="#334155" text-anchor="${rot ? 'end' : 'middle'}" ${rot ? `transform="rotate(-40 ${X(v)} ${Y(0) + 20})"` : ''}>${fmt(v)}</text>`; });
+      g += `<text x="${ml + pw / 2}" y="${H - 8}" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">${s.real ? 'Fronteras reales de clase' : 'Intervalos de clase'}</text><text transform="translate(16 ${mt + ph / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Frecuencia (f_i)</text>`;
+      const bw = (X(r0.L + r0.w) - X(r0.L));
+      const bands = [];
+      if ($('#g-dm').checked && isFinite(s.dm)) bands.push([s.mean - s.dm, s.mean + s.dm, CL.dm, `± DM = ${f2(s.dm)}`]);
+      if ($('#g-sd').checked && isFinite(s.sd)) bands.push([s.mean - s.sd, s.mean + s.sd, CL.sd, `± ${S.pop ? 'σ' : 's'} = ${f2(s.sd)}`]);
+      bands.forEach(([a, b, c, t], i) => { const xa = Math.max(ml, X(a)), xb = Math.min(W - mr, X(b)); g += `<g class="band-r"><rect x="${xa}" y="${mt}" width="${xb - xa}" height="${ph}" fill="${c}" opacity=".13"/><line x1="${xa}" x2="${xa}" y1="${mt}" y2="${mt + ph}" stroke="${c}" stroke-width="1.5" stroke-dasharray="4 3"/><line x1="${xb}" x2="${xb}" y1="${mt}" y2="${mt + ph}" stroke="${c}" stroke-width="1.5" stroke-dasharray="4 3"/><text x="${(xa + xb) / 2}" y="${mt + 14 + i * 15}" text-anchor="middle" font-size="12" font-weight="700" fill="${c}">${t}</text></g>`; });
+      g += s.rows.map(r => `<rect class="bar-r" style="--i:${r.j}" x="${X(r.L)}" y="${Y(r.fi)}" width="${Math.max(1, X(r.L + r.w) - X(r.L))}" height="${Y(0) - Y(r.fi)}" fill="rgba(28,126,214,.55)" stroke="#1864ab" stroke-width="1.5" data-j="${r.j}"/>`).join('');
+      if (bw > 22) g += s.rows.map(r => `<text x="${X(r.L + r.w / 2)}" y="${Y(r.fi) - 6}" text-anchor="middle" font-size="12" font-weight="700" fill="#1864ab" pointer-events="none">${r.fi}</text>`).join('');
+      if ($('#g-poly').checked) {
+        const pts = [[r0.L - r0.w / 2, 0], ...s.rows.map(r => [r.L + r.w / 2, r.fi]), [rl.L + rl.w + rl.w / 2, 0]];
+        g += `<path class="poly-l" pathLength="1" d="M${pts.map(([x, v]) => `${X(x)} ${Y(v)}`).join(' L')}"/>` + pts.slice(1, -1).map(([x, v]) => `<circle cx="${X(x)}" cy="${Y(v)}" r="4.5" fill="#e03131" class="band-r"/>`).join('');
+      }
+      if ($('#g-mean').checked && isFinite(s.mean)) g += `<g class="band-r"><line class="vline" x1="${X(s.mean)}" x2="${X(s.mean)}" y1="${mt}" y2="${mt + ph}" stroke="${CL.mean}" stroke-width="2.8"/><text x="${X(s.mean)}" y="${mt - 8}" text-anchor="middle" font-size="13" font-weight="800" fill="${CL.mean}">${SY(S.pop).muH} = ${f2(s.mean)}</text></g>`;
+      box.innerHTML = `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Histograma con polígono de frecuencias">${g}</svg>`;
+      const note = { mean: 'La línea azul marca la media: el punto de equilibrio del histograma.', dm: 'La banda verde-azulada muestra la media ± la desviación media: la distancia promedio de los datos a la media.', var: 'La varianza está en unidades al cuadrado, por eso se dibuja su raíz: la banda morada es la media ± la desviación estándar.', sd: 'La banda morada abarca la media ± la desviación estándar; en una distribución en forma de campana contiene cerca del 68 % de los datos.' }[S.m];
+      $('#chart-note').innerHTML = `<i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>¿Por qué esta gráfica?</strong> Los datos están agrupados en clases (cuantitativos continuos): lo más adecuado es un <strong>histograma</strong> (barras pegadas) con su <strong>polígono de frecuencias</strong>. ${note} Pasa el cursor sobre una barra para ver sus datos.`;
+    }
+    const tip = $('#chart-tip');
+    document.addEventListener('mouseover', e => { const b = e.target.closest('.bar-r'); if (!b || !ST) return; const r = ST.rows[+b.dataset.j]; tip.innerHTML = `<strong>Clase ${r.j + 1}</strong>: ${ST.real ? labF(r) : lab(r)}<br>f<sub>i</sub> = ${r.fi} · x<sub>i</sub> = ${fmt(r.x)}<br>f<sub>i</sub>·x<sub>i</sub> = ${f2(r.fx)}`; tip.style.display = 'block'; });
+    document.addEventListener('mousemove', e => { if (tip.style.display === 'block') { tip.style.left = Math.min(innerWidth - 190, e.clientX + 14) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; } });
+    document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('.bar-r')) tip.style.display = 'none'; });
+    const syncBands = () => { $('#g-mean').checked = true; $('#g-dm').checked = S.m === 'dm'; $('#g-sd').checked = S.m === 'var' || S.m === 'sd'; };
+
+    /* ---------- Orquestador ---------- */
+    function update() {
+      hideAllPops(); $$('.popover').forEach(p => p.remove()); POPS = {}; PID = 0;
+      S.lo = parseFloat($('#lo').value); S.hi = parseFloat($('#hi').value); S.d = +$('#dec').value;
+      if (S.fi.length !== S.k) S.fi = genFi(S.dist);
+      S.n = S.fi.reduce((a, b) => a + b, 0);
+      $('#k').value = S.k; $('#k-out').textContent = S.k; if (document.activeElement !== $('#nn')) $('#nn').value = S.n;
+      $$('#pop-sw button').forEach(b => b.classList.toggle('on', (b.dataset.popMode === 'poblacion') === S.pop));
+      $('#m-group').innerHTML = MS.map(m => `<button class="mbtn ${S.m === m.k ? 'on' : ''}" data-mm="${m.k}" style="--c:${MC[m.k]}"><i class="bi ${m.ic} me-1"></i>${m.name}</button>`).join('');
+      $('#sw-real').checked = S.real;
+      const ae = document.activeElement, keep = ae && ae.classList && ae.classList.contains('fi-in') ? { j: +ae.dataset.j, a: ae.selectionStart, b: ae.selectionEnd } : null;
+      const n = S.n;
+      if (n >= 2) {
+        const kS = sturgesK(n), lg = Math.log10(n), kr = clamp(Math.round(kS), 2, 20), f = fmt;
+        const id = reg('Regla de Sturges', [['Logaritmo base 10 de n', T`\log_{10}(${n}) = ${f(lg, 4)}`], ['Se multiplica por 3.322', T`3.322 \cdot ${f(lg, 4)} = ${f(3.322 * lg, 4)}`], ['Se suma 1', T`1 + ${f(3.322 * lg, 4)} = ${f(kS, 4)}`], ['Se redondea al entero más cercano', T`k \approx ${Math.round(kS)}`, 'res'], kr !== Math.round(kS) ? `El deslizador admite de 2 a 20 clases: se usará ${kr}.` : ''].filter(Boolean), '#0c8599');
+        $('#sturges-live').innerHTML = fi(T`k = 1 + 3.322 \, \log_{10}(${n}) = ${pp(id, f(kS, 2))} \approx \mathbf{${Math.round(kS)}}`);
+      } else $('#sturges-live').textContent = 'Necesitas n ≥ 2 para aplicar Sturges.';
+      const s = calc(), err = $('#err');
+      if (s.err) { err.classList.remove('d-none'); err.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>${s.err}`; $('#results').classList.add('d-none'); ST = null; $('#data-stats').innerHTML = ''; drawChart(); math($('#s1')); initPops(); return; }
+      ST = s;
+      if (n < 2) { err.classList.remove('d-none'); err.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>La suma de frecuencias es ${n}: necesitas al menos 2 observaciones para calcular la dispersión.`; } else err.classList.add('d-none');
+      $('#results').classList.remove('d-none');
+      $('#data-stats').innerHTML = [['Rango R', fmt(s.R)], ['Clases k', s.k], ['Tamaño c', fmt(s.c)], ['n (suma de fi)', n]].map(([a, b]) => `<span class="stat-pill">${a}: <b>${b}</b></span>`).join('');
+      buildPops(s); renderSteps(s); renderTable(s); renderReal(s); renderTiles(s); renderDetail(s); drawChart(); math(); initPops();
+      ANIM = false;
+      if (keep) { const el = $(`.fi-in[data-j="${keep.j}"]`); if (el) { el.focus(); try { el.setSelectionRange(keep.a, keep.b); } catch (e) {} } }
+    }
+
+    /* ---------- Eventos ---------- */
+    let tm; const later = (ms = 200) => { clearTimeout(tm); tm = setTimeout(update, ms); };
+    ['#lo', '#hi'].forEach(q => $(q).addEventListener('input', () => later()));
+    $('#dec').addEventListener('change', () => { ANIM = true; update(); });
+    $('#k').addEventListener('input', e => { S.k = +e.target.value; S.fi = genFi(S.dist); $('#k-out').textContent = S.k; later(120); });
+    $('#nn').addEventListener('input', e => { const v = Math.floor(+e.target.value); if (!(v >= 2)) return; S.n = Math.min(5000, v); S.fi = genFi(S.dist); later(250); });
+    $('#nn').addEventListener('blur', () => update());
+    $('#b-sturges').onclick = () => {
+      const n = S.n; if (n < 2) return; S.k = clamp(Math.round(sturgesK(n)), 2, 20); S.fi = genFi(S.dist); ANIM = true; update();
+    };
+    [['#b-bell', 'bell'], ['#b-rand', 'rand'], ['#b-flat', 'flat']].forEach(([q, kd]) => $(q).onclick = () => { S.dist = kd; if (S.n < 2) S.n = 2; S.fi = genFi(kd); ANIM = true; update(); });
+    $('#tbl').addEventListener('input', e => {
+      const el = e.target.closest('.fi-in'); if (!el) return;
+      const v = parseInt(el.value.replace(/\D/g, ''), 10) || 0; S.fi[+el.dataset.j] = Math.min(v, 9999); later(160);
+    });
+    $('#tbl').addEventListener('focusin', e => { if (e.target.classList.contains('fi-in')) e.target.select(); });
+    $('#sw-real').onchange = e => { S.real = e.target.checked; ANIM = true; update(); };
+    document.addEventListener('click', e => {
+      if (e.target.closest('#b-unreal')) { S.real = false; ANIM = true; update(); return; }
+      const pm = e.target.closest('[data-pop-mode]'); if (pm) { S.pop = pm.dataset.popMode === 'poblacion'; ANIM = true; syncBands(); update(); return; }
+      const mm = e.target.closest('[data-mm]'); if (mm) { S.m = mm.dataset.mm; ANIM = true; syncBands(); update(); return; }
+    });
+    document.addEventListener('keydown', e => { const t = e.target.closest && e.target.closest('.tile'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
+    $('#b-chart').onclick = () => { S.chart = !S.chart; if (S.chart) syncBands(); drawChart(); if (S.chart) $('#s6').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    $$('.g-opt').forEach(el => el.addEventListener('change', drawChart));
+
+    /* ---------- Arranque ---------- */
+    $$('[data-f]').forEach(el => el.innerHTML = fd(F0[el.dataset.f]));
+    $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    renderForm();
+    S.fi = genFi('bell');
+    update();
+  </script>
+</body>
+</html>
