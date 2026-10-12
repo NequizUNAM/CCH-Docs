@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadística - Correlación lineal</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, gráficas SVG propias -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --mean:#1864ab; --med:#c26e00; --mode:#5130b9; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con barras de histograma */
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
+    .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
+    .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+
+    /* Tarjetas */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .stat-pill { background:#f1f5f9; border-radius:12px; padding:.45rem .8rem; font-size:.88rem; border:1px solid #e2e8f0; }
+    .stat-pill b { font-family:'Courier New',monospace; }
+    #data { font-family:'Courier New',monospace; font-size:.9rem; }
+
+    /* Instructivo: pasos vivos */
+    .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
+    .istep h6 { color:var(--c); font-weight:800; }
+    .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
+    .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
+
+    /* Fórmulas y leyendas */
+    .fx { overflow-x:auto; padding:.4rem 0; }
+    .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
+    .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
+    .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
+    .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
+
+    /* Tablas de frecuencias */
+    .freq-table { font-size:.95rem; text-align:center; margin:0; }
+    .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
+    .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
+    .freq-table tbody tr { transition:background .2s; cursor:default; }
+    .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
+    .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
+    .hl-legend { font-size:.85rem; min-height:1.4rem; }
+    /* Resaltados por medida */
+    [data-hl="mean"] td.c-use { background:rgba(24,100,171,.2); font-weight:800; }
+    [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
+    [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
+    [data-hl="mode"] tr.r-mode td { background:rgba(112,72,232,.3); font-weight:800; }
+    [data-hl="mode"] tr.r-near td { background:rgba(12,133,153,.2); }
+    .hl-btn.active[data-hl="mean"] { background:var(--mean); color:#fff; border-color:var(--mean); }
+    .hl-btn.active[data-hl="med"] { background:var(--med); color:#fff; border-color:var(--med); }
+    .hl-btn.active[data-hl="mode"] { background:var(--mode); color:#fff; border-color:var(--mode); }
+    .hl-btn.active[data-hl="none"] { background:#334155; color:#fff; border-color:#334155; }
+
+    .measure-head { color:#fff; padding:.9rem 1.2rem; border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .measure { border-radius:14px; box-shadow:var(--shadow-md); background:#fff; overflow:hidden; border:1px solid #e2e8f0; }
+    .result-big { font-size:1.6rem; font-weight:800; font-family:'Courier New',monospace; border-radius:14px; padding:.6rem 1rem; text-align:center; color:#fff; }
+    .real-card { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1.2rem; animation:pop .4s both; }
+    .cmp th { background:#f1f5f9; } .cmp td, .cmp th { padding:.45rem .7rem; text-align:center; }
+    .chart-box { position:relative; height:420px; }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    /* ===== Fórmulas estilo calculadora ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; } .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; } .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; } .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; } .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; } .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; }
+    .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before, .cx .ac.tilde::before { position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    /* Operaciones con popover */
+    .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
+    .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
+    td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
+    th.pp .bi { font-size:.7rem; opacity:.7; }
+    .popover.calc-pop { --bs-popover-max-width:430px; --bs-popover-border-radius:16px; border:0; box-shadow:var(--shadow-lg); font-family:'Segoe UI',sans-serif; }
+    .calc-pop .popover-header { background:linear-gradient(90deg,#0f172a,#1e293b); color:#fff; font-weight:700; font-size:.92rem; border-radius:16px 16px 0 0; }
+    .calc-pop .popover-body { padding:.7rem .9rem; max-height:60vh; overflow:auto; color:#1e293b; }
+    .pcap { font-size:.78rem; font-weight:700; color:#64748b; margin-top:.45rem; text-transform:uppercase; letter-spacing:.02em; } .pcap:first-child { margin-top:0; }
+    .pf { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:.25rem .6rem; overflow-x:auto; } .pf.res { background:#0f172a; color:#e0f2fe; border-color:#0f172a; }
+    .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
+    .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
+    .pm { font-size:.88rem; }
+    /* Pantalla de resultado */
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
+    .cmp-chips { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.5rem; }
+    .cmp-chip { font-size:.8rem; border-radius:999px; padding:.15rem .7rem; background:#f1f5f9; border:1.5px solid #e2e8f0; color:#475569; } .cmp-chip b { font-family:'Courier New',monospace; color:#0f172a; } .cmp-chip.on { background:#fff4e0; border-color:#f08c00; }
+    /* Tabla unificada */
+    .tbl-bar { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 1.2rem; margin-bottom:.8rem; }
+    .real-switch { display:flex; align-items:center; gap:.5rem; background:#fff4e0; border:2px solid #f08c00; border-radius:999px; padding:.35rem 1rem .35rem .6rem; box-shadow:var(--shadow-sm); transition:background .25s, border-color .25s, color .25s; }
+    .real-switch .form-check-input { width:2.6em; height:1.4em; cursor:pointer; margin:0; } .real-switch .form-check-input:checked { background-color:#f08c00; border-color:#f08c00; }
+    .real-switch label { font-weight:800; cursor:pointer; }
+    .real-switch.on { background:#0f172a; border-color:#0f172a; color:#fff; }
+    .freq-table td .old { display:block; font-size:.7rem; color:#94a3b8; text-decoration:line-through; line-height:1; font-weight:500; }
+    .freq-table td.chg { background:#fff4e0; }
+    .freq-table.anim td.chg { animation:flash 1s both; }
+    @keyframes flash { 0% { background:#ffd8a8; transform:scale(1.08); } 100% { background:#fff4e0; transform:none; } }
+    .freq-table th small { display:block; font-weight:500; opacity:.75; font-size:.7rem; }
+    .real-banner { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1rem 1.2rem; animation:pop .4s both; }
+    .imp { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; font-size:.8rem; font-weight:700; padding:.15rem .7rem; margin:.15rem .2rem .15rem 0; }
+    .imp.yes { background:#fff4e0; color:#b45309; border:1.5px solid #f08c00; } .imp.no { background:#f1f5f9; color:#64748b; border:1.5px solid #e2e8f0; }
+    .formula-card { border-radius:14px; padding:.8rem; background:#fff; border:1px solid #e2e8f0; height:100%; }
+
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep,.freq-table.anim td.chg,.real-banner{animation:none} }
+  
+    /* ===== Medidas de dispersión: colores por medida ===== */
+    :root { --m-mean:#1864ab; --m-dm:#0c8599; --m-var:#e8590c; --m-sd:#7048e8; }
+    .h-6 { background:linear-gradient(135deg,#c2255c,#8f1a43); }
+    .hero-bars span { background:#74c0fc; }
+    /* Interruptores */
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.88rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    /* Tabla: columnas coloreadas por medida */
+    #tbl-wrap { --mc:var(--m-mean); }
+    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
+    .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
+    .freq-table th.cb-fi { background:#d6336c; } .freq-table th.cb-x { background:#2f9e44; }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table.anim td.cb-fi, .freq-table.anim td.cb-x { animation:baseWave .7s both; animation-delay:calc(var(--ri,0) * 40ms); }
+    @keyframes baseWave { 0% { filter:brightness(.8); transform:scale(1.06); } 100% { filter:none; transform:none; } }
+    .fi-in { width:72px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #d6336c; border-radius:10px; padding:.15rem .2rem; background:#fff; color:#9c1d4a; }
+    .fi-in:focus { outline:3px solid #fbc2d5; }
+    .col-legend { display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.82rem; margin:.6rem 0 0; }
+    .col-legend span { display:inline-flex; align-items:center; gap:.35rem; } .col-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
+    /* Tarjetas de resultado */
+    .tile { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; transition:transform .25s, box-shadow .25s, background .25s; height:100%; position:relative; overflow:hidden; }
+    .tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .tile.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 10px 26px color-mix(in srgb,var(--c) 45%,transparent); }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; opacity:.85; }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; }
+    .tile .ts { font-size:.78rem; opacity:.8; }
+    .tile .cx { font-size:1em; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } .tile.on::after { background:rgba(255,255,255,.5); }
+    @keyframes tileBar { to { transform:scaleX(1); } }
+    /* Formulario estilo hoja */
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; }
+    .form-tbl td.fl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; }
+    .form-tbl td.fr2 { line-height:1.75; }
+    .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    /* Gráfica SVG */
+    .chart-svg { width:100%; height:auto; display:block; background:#fff; border-radius:14px; border:1px solid #e2e8f0; }
+    .chart-svg text { font-family:'Segoe UI',sans-serif; }
+    .bar-r { transform-box:fill-box; transform-origin:bottom; animation:barUp .8s cubic-bezier(.2,.9,.3,1.1) both; animation-delay:calc(var(--i) * 70ms); cursor:pointer; transition:fill .2s; }
+    .bar-r:hover { fill:#ffd43b; }
+    @keyframes barUp { from { transform:scaleY(0); } }
+    .poly-l { fill:none; stroke:#e03131; stroke-width:3; stroke-dasharray:1; stroke-dashoffset:1; animation:drawL 1.4s .6s forwards; } @keyframes drawL { to { stroke-dashoffset:0; } }
+    .band-r { animation:fadeB .8s 1s both; } @keyframes fadeB { from { opacity:0; } }
+    .vline { stroke-dasharray:7 5; animation:fadeB .8s 1s both; }
+    .chart-tip { position:fixed; z-index:1080; pointer-events:none; background:#0f172a; color:#fff; border-radius:10px; padding:.35rem .7rem; font-size:.82rem; box-shadow:var(--shadow-lg); display:none; }
+    .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
+    @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
+
+    /* ===== Correlación lineal ===== */
+    :root { --c-x:#1c7ed6; --c-y:#e8590c; --c-m:#e03131; --c-b:#2f9e44; --c-r:#7048e8; --c-cov:#0c8599; }
+    .h-6 { background:linear-gradient(135deg,#1864ab,#0b3d6e); }
+    .hero-bars span { background:#74c0fc; }
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.86rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; text-align:left; }
+    .mbtn small { font-weight:600; opacity:.8; margin-left:.3rem; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table td.cb-x { background:rgba(28,126,214,.10); } .freq-table th.cb-x { background:#1c7ed6; }
+    .freq-table td.cb-y { background:rgba(232,89,12,.10); } .freq-table th.cb-y { background:#e8590c; }
+    .freq-table tfoot td.cb-x, .freq-table tfoot td.cb-y { color:#fff; } .freq-table tfoot td.cb-x { background:#1c7ed6; } .freq-table tfoot td.cb-y { background:#e8590c; }
+    .freq-table tfoot tr.mean-r td { background:#f1f5f9; color:#334155; font-weight:700; }
+    .freq-table tfoot tr.mean-r td.cb-x { background:rgba(28,126,214,.18); color:#1864ab; } .freq-table tfoot tr.mean-r td.cb-y { background:rgba(232,89,12,.18); color:#b34000; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table td input { width:84px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #94a3b8; border-radius:10px; padding:.15rem .2rem; background:#fff; }
+    .freq-table td input:focus { outline:3px solid #bac8ff; }
+    .freq-table td.pos { color:#2b8a3e; } .freq-table td.neg { color:#c92a2a; }
+    .tile { cursor:default; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; height:100%; position:relative; overflow:hidden; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--c); }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; color:#0f172a; } .tile .ts { font-size:.78rem; color:#64748b; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } @keyframes tileBar { to { transform:scaleX(1); } }
+    .eq-big { text-align:center; background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:18px; padding:1rem; font-size:1.5rem; box-shadow:var(--shadow-md); }
+    .eq-big .cx { font-size:1.15em; }
+    .viz-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; overflow:hidden; } .viz-card svg { width:100%; height:auto; display:block; } .viz-card text { font-family:'Segoe UI',sans-serif; }
+    .sc-pt { transform-box:fill-box; transform-origin:center; transform:scale(0); animation:scPop .5s var(--d,0s) cubic-bezier(.3,1.6,.5,1) forwards; cursor:pointer; } @keyframes scPop { to { transform:scale(1); } }
+    .sc-fade { opacity:0; animation:scFade .7s var(--d,0s) forwards; } @keyframes scFade { to { opacity:1; } }
+    .sc-line { stroke-dasharray:1; stroke-dashoffset:1; animation:scDraw 1.3s var(--d,.8s) ease forwards; fill:none; } @keyframes scDraw { to { stroke-dashoffset:0; } }
+    .sc-res { transform-box:fill-box; transform-origin:center top; transform:scaleY(0); animation:scRes .5s var(--d,0s) forwards; } @keyframes scRes { to { transform:scaleY(1); } }
+    .sstep { display:flex; gap:.8rem; padding:.7rem .8rem; border-left:5px solid var(--sc,#5f3dc4); background:color-mix(in srgb,var(--sc,#5f3dc4) 6%,#fff); border-radius:0 14px 14px 0; margin:.6rem 0; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 450ms); }
+    @keyframes sIn { from { opacity:0; transform:translateX(-22px); } to { opacity:1; transform:none; } }
+    .sstep .sn { flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:var(--sc,#5f3dc4); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sstep .sb { min-width:0; flex:1 1 auto; } .sstep .st { font-weight:800; color:var(--sc,#3b2a8c); margin-bottom:.15rem; } .sstep .sx { font-size:.85rem; color:#475569; }
+    .sstep .cx.d { text-align:left; margin:.15rem 0; }
+    .rv { display:inline-block; padding:.2rem .8rem; border-radius:999px; font-weight:800; color:#fff; }
+    .theo-card { background:#fff; border:1px solid #e2e8f0; border-left:6px solid var(--c); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .theo-card h6 { color:var(--c); font-weight:800; } .theo-card .box { background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:12px; padding:.6rem .9rem; margin:.5rem 0; }
+    .theo-card ol, .theo-card ul { font-size:.93rem; line-height:1.7; } .theo-card .pf { font-size:.9rem; }
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; } .form-tbl td.fr2 { line-height:1.75; } .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; background:#868e96; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    .strength { display:flex; gap:2px; margin:.4rem 0; } .strength span { flex:1; text-align:center; font-size:.7rem; font-weight:700; color:#fff; padding:.15rem 0; border-radius:4px; opacity:.35; } .strength span.on { opacity:1; transform:scaleY(1.15); box-shadow:var(--shadow-sm); }
+    @media (prefers-reduced-motion:reduce) { .sc-pt,.sc-fade,.sc-line,.sc-res,.sstep,.tile,.tile::after { animation:none !important; opacity:1 !important; transform:none !important; stroke-dashoffset:0 !important; } .tile::after { transform:scaleX(1) !important; } }
+    .noanim .sc-pt, .noanim .sc-fade, .noanim .sc-line, .noanim .sc-res { animation:none !important; opacity:1; transform:none; stroke-dashoffset:0; }
+    .noanim .sc-res { transform:scaleY(1); }
+    .lesson-head h2, .lesson-head small { color:#fff !important; }
+    .lesson-head.h-2 { background:linear-gradient(135deg,#0c8599,#0a5f6d); } .lesson-head.h-3 { background:linear-gradient(135deg,#7048e8,#4c2fb0); }
+    .lesson-head.h-4 { background:linear-gradient(135deg,#e03131,#a61e1e); } .lesson-head.h-5 { background:linear-gradient(135deg,#2f9e44,#1f6e2f); }
+    .tile .tl { text-transform:none; font-size:.85rem; }
+    .modal-header .modal-title { color:#fff !important; }
+
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s1">1. Datos</a><a href="#s2">2. Covarianza</a><a href="#s3">3. Pearson (r)</a><a href="#s4">4. Pendiente (m)</a><a href="#s5">5. Ordenada (b)</a><a href="#s6">6. Recta y gráfica</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bars" id="hero-bars"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-graph-up-arrow text-info me-2"></i>Correlación lineal</h1>
+        <p class="lead mb-1">Covarianza • coeficiente de Pearson ($r$) • recta de regresión $Y = mx + b$</p>
+        <p class="mb-3 text-light opacity-75">Escribe tus pares $(x, y)$, elige la fórmula y mira cómo se calcula cada columna</p>
+        <button class="btn btn-warning rounded-pill px-4 fw-semibold me-1" data-theo="1"><i class="bi bi-mortarboard-fill me-1"></i>Teoremas y fundamentos</button>
+        <button class="btn btn-outline-light rounded-pill px-4 fw-semibold" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+
+      <!-- 1. DATOS -->
+      <section class="lesson mb-5" id="s1">
+        <div class="card lesson-card">
+          <div class="lesson-head h-1"><div class="num">1</div><div><h2 class="h4 fw-bold mb-0">Tus datos: pares (x, y)</h2><small>$X$ es la variable independiente y $Y$ la dependiente</small></div></div>
+          <div class="card-body">
+            <div class="tbl-bar">
+              <div><div class="small fw-bold text-muted mb-1"><i class="bi bi-people-fill me-1"></i>Se calcula para…</div>
+                <div class="seg-sw" role="group"><button data-pop-mode="muestra" class="on">Muestra</button><button data-pop-mode="poblacion">Población</button></div></div>
+              <div class="small text-muted align-self-end"><i class="bi bi-info-circle me-1"></i>Afecta a la covarianza y a las desviaciones estándar ($n-1$ en muestra, $N$ en población). $r$, $m$ y $b$ no cambian.</div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><strong class="small"><i class="bi bi-table me-1"></i>Pares:</strong>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="g-ex"><i class="bi bi-bookmark-star me-1"></i>Ejemplo</button>
+              <button class="btn btn-sm btn-outline-success rounded-pill" id="g-pos"><i class="bi bi-graph-up-arrow me-1"></i>Positiva</button>
+              <button class="btn btn-sm btn-outline-danger rounded-pill" id="g-neg"><i class="bi bi-graph-down-arrow me-1"></i>Negativa</button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="g-none"><i class="bi bi-dash-circle me-1"></i>Sin relación</button>
+              <button class="btn btn-sm btn-outline-primary rounded-pill" id="g-add"><i class="bi bi-plus-lg me-1"></i>Agregar par</button>
+              <button class="btn btn-sm btn-outline-primary rounded-pill" id="g-del"><i class="bi bi-dash-lg me-1"></i>Quitar último</button>
+              <span class="small text-muted">…o escribe tus propios valores.</span></div>
+            <div class="row g-3 align-items-start">
+              <div class="col-lg-6"><div class="table-responsive rounded-3 border"><table class="table table-bordered freq-table mb-0" id="d-tbl"><thead></thead><tbody></tbody><tfoot></tfoot></table></div></div>
+              <div class="col-lg-6"><div class="viz-card"><div id="sc1"></div></div><div class="small text-muted mt-1">Cada punto es un par $(x, y)$. Las líneas punteadas son las medias $\bar{x}$ y $\bar{y}$.</div></div>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mt-3" id="sums"></div>
+            <div id="err" class="tip-box s-res mt-3 d-none"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="results">
+
+      <!-- 2. COVARIANZA -->
+      <section class="lesson mb-5" id="s2">
+        <div class="card lesson-card">
+          <div class="lesson-head h-2"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Covarianza</h2><small>Cómo varían juntas $X$ y $Y$ · elige la fórmula</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-theo="cov"><i class="bi bi-mortarboard me-1"></i>Teorema</button></div>
+          <div class="card-body"><div class="d-flex flex-wrap gap-2 mb-3" id="v-cov"></div><div id="x-cov"></div></div>
+        </div>
+      </section>
+
+      <!-- 3. PEARSON -->
+      <section class="lesson mb-5" id="s3">
+        <div class="card lesson-card">
+          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Coeficiente de correlación de Pearson ($r$)</h2><small>Qué tan fuerte y en qué sentido es la relación lineal · elige la fórmula</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-theo="r"><i class="bi bi-mortarboard me-1"></i>Teorema</button></div>
+          <div class="card-body"><div class="d-flex flex-wrap gap-2 mb-3" id="v-r"></div><div id="x-r"></div></div>
+        </div>
+      </section>
+
+      <!-- 4. PENDIENTE -->
+      <section class="lesson mb-5" id="s4">
+        <div class="card lesson-card">
+          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Pendiente ($m$)</h2><small>«Qué tan inclinada está la recta» · elige la fórmula</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-theo="ls"><i class="bi bi-mortarboard me-1"></i>Teorema</button></div>
+          <div class="card-body"><div class="d-flex flex-wrap gap-2 mb-3" id="v-m"></div><div id="x-m"></div></div>
+        </div>
+      </section>
+
+      <!-- 5. ORDENADA -->
+      <section class="lesson mb-5" id="s5">
+        <div class="card lesson-card">
+          <div class="lesson-head h-5"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ordenada al origen ($b$)</h2><small>«Dónde cruza la recta el eje y» · elige la fórmula</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-theo="ls"><i class="bi bi-mortarboard me-1"></i>Teorema</button></div>
+          <div class="card-body"><div class="d-flex flex-wrap gap-2 mb-3" id="v-b"></div><div id="x-b"></div></div>
+        </div>
+      </section>
+
+      <!-- 6. RECTA Y GRÁFICA -->
+      <section class="lesson mb-5" id="s6">
+        <div class="card lesson-card">
+          <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Recta de regresión y gráfica</h2><small>$Y = mx + b$ con tus resultados, predicción y residuos</small></div></div>
+          <div class="card-body">
+            <div class="row g-3 mb-3" id="tiles"></div>
+            <div class="eq-big" id="eq"></div>
+            <div class="row g-3 mt-1">
+              <div class="col-lg-7">
+                <div class="d-flex flex-wrap gap-3 align-items-center mb-2">
+                  <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-line" checked><label class="form-check-label" for="g-line">Recta</label></div>
+                  <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-res"><label class="form-check-label" for="g-res">Residuos</label></div>
+                  <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-mean" checked><label class="form-check-label" for="g-mean">Medias</label></div>
+                  <button class="btn btn-sm btn-outline-dark rounded-pill ms-auto" id="g-play"><i class="bi bi-arrow-repeat me-1"></i>Repetir animación</button>
+                </div>
+                <div class="viz-card"><div id="sc2"></div></div>
+              </div>
+              <div class="col-lg-5">
+                <div class="panel mb-3"><h6 class="fw-bold mb-2"><i class="bi bi-crosshair me-1"></i>Predicción</h6>
+                  <label class="form-label small fw-semibold" for="px">Valor de $x$ para predecir $\hat{y}$</label>
+                  <input type="number" class="form-control" id="px" step="any" placeholder="p. ej. 11">
+                  <div id="pred" class="mt-2"></div></div>
+                <div class="tip-box s-volt small" id="interp"></div>
+              </div>
+            </div>
+            <h6 class="fw-bold mt-4 mb-2"><i class="bi bi-table me-1"></i>Valores predichos y residuos</h6>
+            <div class="table-responsive rounded-3 border" id="w-reg"><table class="table table-bordered freq-table mb-0" id="t-reg"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
+            <div class="small text-muted mt-2">$\hat{y} = mx + b$ es el valor que predice la recta; el residuo $e = y - \hat{y}$ es lo que la recta no explica. La suma de los residuos es 0.</div>
+          </div>
+        </div>
+      </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: FORMULARIO -->
+  <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#862e9c"><h5 class="modal-title fw-bold"><i class="bi bi-journal-richtext me-2"></i>Formulario · Covarianza, Pearson y recta de regresión</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light"><div id="form-wrap"></div></div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TEOREMAS -->
+  <div class="modal fade" id="theoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#0b7285"><h5 class="modal-title fw-bold"><i class="bi bi-mortarboard-fill me-2"></i>Fundamentos y teoremas de la correlación lineal</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light"><ul class="nav nav-pills mb-3 flex-wrap gap-1" id="theo-tabs"></ul><div id="theo-body"></div></div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Entendido</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Correlación lineal</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" },
+          { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }
+        ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" }, { label: "Medidas de dispersión", href: "medidas_dispersion.html", icon: "bi-arrows-expand" }, { label: "Amplitudes", href: "amplitudes.html", icon: "bi-distribute-horizontal" }, { label: "Correlación lineal", href: "correlacion_lineal.html", icon: "bi-graph-up-arrow" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+          <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div>
+        </div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'correlacion_lineal.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+<script>
+/*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { lceil: '⌈', rceil: '⌉', Delta: 'Δ', ne: '≠', rightarrow: '→', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['ne', 'rightarrow', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'tilde': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name}">${x}</span>`; }
+          case 'mathbf': { const h = arg(); last = 'val'; return `<b>${h}</b>`; }
+          case 'log': last = 'val'; return '<span class="tx">log</span>';
+          case 'sum': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">∑</span><span class="sl">${lo}</span></span>`; }
+          case 'pop': { const id = raw().replace(/[^\w-]/g, ''), h = arg(); last = 'val'; return `<span class="pp" data-pop="${id}" tabindex="0" role="button">${h}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    /*ENDFX*/
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const fmt = (x, d = 4) => isFinite(x) ? String(+x.toFixed(d)) : '—';
+    const f2 = x => { if (!isFinite(x)) return '—'; const v = x.toFixed(2); return v === '-0.00' ? '0.00' : v; };
+    const f4 = x => { if (!isFinite(x)) return '—'; const v = x.toFixed(4); return v === '-0.0000' ? '0.0000' : v; };
+    const ng = v => v < 0 ? `(${f2(v)})` : f2(v), ngx = v => v < 0 ? `(${fmt(v)})` : fmt(v);
+    const num = v => { const q = parseFloat(String(v).replace(',', '.')); return isFinite(q) ? q : 0; };
+    const sumList = (a, f = x => x) => a.length > 5 ? [...a.slice(0, 2).map(f), '\\cdots', f(a[a.length - 1])].join(' + ') : a.map(f).join(' + ');
+
+    /* ---------- Colores y fórmulas ---------- */
+    const CX = '#1c7ed6', CY = '#e8590c', CM = '#e03131', CB = '#2f9e44', CR = '#7048e8', CC = '#0c8599', CN = '#343a40', CZ = '#d6336c';
+    const SC = { cov: CC, r: CR, m: CM, b: CB };
+    const K = (c, s) => T`\textcolor{${c}}{${s}}`;
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const escH = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? fd(m[1]) : fi(m[2])); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+
+    /* ---------- Popovers con el paso a paso de cada operación ---------- */
+    let POPS = {}, PID = 0;
+    // lines: [caption, tex, 'res'?] | [caption, html, 'html'] | 'texto'
+    function reg(title, lines, color) {
+      const id = 'p' + (++PID);
+      POPS[id] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
+        : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('') };
+      return id;
+    }
+    const pp = (id, tex) => T`\pop{${id}}{${tex}}`;
+    function initPops(root) {
+      (root || document).querySelectorAll('[data-pop]').forEach(el => {
+        const d = POPS[el.dataset.pop]; if (!d || bootstrap.Popover.getInstance(el)) return;
+        new bootstrap.Popover(el, { trigger: 'click', html: true, sanitize: false, placement: 'auto', container: 'body', customClass: 'calc-pop', title: d.t, content: d.h, fallbackPlacements: ['top', 'bottom', 'right', 'left'] });
+      });
+    }
+    const hideAllPops = () => $$('[data-pop]').forEach(el => { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); });
+    document.addEventListener('show.bs.popover', e => $$('[data-pop]').forEach(el => { if (el !== e.target) { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); } }));
+    document.addEventListener('click', e => { if (!e.target.closest('[data-pop],.popover')) hideAllPops(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideAllPops(); if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-pop]')) { e.preventDefault(); e.target.click(); } });
+
+    const SYP = pop => pop ? { mx: 'μ_x', my: 'μ_y', N: 'N', cov: 'σ_{xy}', sx: 'σ_x', sy: 'σ_y', vx: 'σ_x^2', den: 'N' } : { mx: '\\bar{x}', my: '\\bar{y}', N: 'n', cov: 's_{xy}', sx: 's_x', sy: 's_y', vx: 's_x^2', den: 'n - 1' };
+    const X = K(CX, 'x_i'), Y = K(CY, 'y_i'), BX = K(CX, '\\bar{x}'), BY = K(CY, '\\bar{y}'), NN = K(CN, 'n');
+    const SUMN = T`\sum_{i=1}^{n}`;
+    /* Fórmulas: FT[sección][variante](pop) → arreglo de líneas TeX */
+    const FT = {
+      cov: {
+        std: pop => { const y = SYP(pop); return [T`${K(CC, y.cov)} = \frac{\sum_{i=1}^{${y.N}} (${X} - ${K(CX, y.mx)})(${Y} - ${K(CY, y.my)})}{${K(CN, y.den)}}`]; },
+        ari: pop => { const y = SYP(pop); return [pop ? T`${K(CC, y.cov)} = \frac{\sum_{i=1}^{N} ${X} ${Y}}{${K(CN, 'N')}} - ${K(CX, y.mx)} \, ${K(CY, y.my)}` : T`${K(CC, y.cov)} = \frac{\sum_{i=1}^{n} ${X} ${Y} - ${NN} \, ${BX} \, ${BY}}{${K(CN, 'n - 1')}}`]; },
+        sums: pop => { const y = SYP(pop); return [pop ? T`${K(CC, y.cov)} = \frac{\sum ${K(CX, 'x')}${K(CY, 'y')}}{${K(CN, 'N')}} - \frac{(\sum ${K(CX, 'x')})(\sum ${K(CY, 'y')})}{${K(CN, 'N')}^2}` : T`${K(CC, y.cov)} = \frac{\sum ${K(CX, 'x')}${K(CY, 'y')} - \frac{(\sum ${K(CX, 'x')})(\sum ${K(CY, 'y')})}{${NN}}}{${K(CN, 'n - 1')}}`]; }
+      },
+      r: {
+        sums: () => [T`${K(CR, 'r')} = \frac{${NN} \sum ${K(CX, 'x')}${K(CY, 'y')} - (\sum ${K(CX, 'x')})(\sum ${K(CY, 'y')})}{\sqrt{[${NN} \sum ${K(CX, 'x^2')} - (\sum ${K(CX, 'x')})^2][${NN} \sum ${K(CY, 'y^2')} - (\sum ${K(CY, 'y')})^2]}}`],
+        dev: () => [T`${K(CR, 'r')} = \frac{\sum (${X} - ${BX})(${Y} - ${BY})}{\sqrt{\sum (${X} - ${BX})^2 \; \sum (${Y} - ${BY})^2}}`],
+        cov: pop => { const y = SYP(pop); return [T`${K(CR, 'r')} = \frac{${K(CC, y.cov)}}{${K(CX, y.sx)} \, ${K(CY, y.sy)}}`, T`${K(CX, y.sx)} = \sqrt{\frac{\sum (x_i - \bar{x})^2}{${y.den}}} \qquad ${K(CY, y.sy)} = \sqrt{\frac{\sum (y_i - \bar{y})^2}{${y.den}}}`]; },
+        z: pop => { const y = SYP(pop); return [T`${K(CR, 'r')} = \frac{\sum ${K(CZ, 'z_x')} \, ${K(CZ, 'z_y')}}{${K(CN, y.den)}}`, T`${K(CZ, 'z_x')} = \frac{x_i - \bar{x}}{${y.sx}} \qquad ${K(CZ, 'z_y')} = \frac{y_i - \bar{y}}{${y.sy}}`]; }
+      },
+      m: {
+        sums: () => [T`${K(CM, 'm')} = \frac{${NN} \sum ${K(CX, 'x')}${K(CY, 'y')} - (\sum ${K(CX, 'x')})(\sum ${K(CY, 'y')})}{${NN} \sum ${K(CX, 'x^2')} - (\sum ${K(CX, 'x')})^2}`],
+        dev: () => [T`${K(CM, 'm')} = \frac{\sum (${X} - ${BX})(${Y} - ${BY})}{\sum (${X} - ${BX})^2}`],
+        cov: pop => { const y = SYP(pop); return [T`${K(CM, 'm')} = \frac{${K(CC, y.cov)}}{${K(CX, y.vx)}}`]; },
+        r: pop => { const y = SYP(pop); return [T`${K(CM, 'm')} = ${K(CR, 'r')} \, \frac{${K(CY, y.sy)}}{${K(CX, y.sx)}}`]; }
+      },
+      b: {
+        sums: () => [T`${K(CB, 'b')} = \frac{\sum ${K(CY, 'y')} - ${K(CM, 'm')} \sum ${K(CX, 'x')}}{${NN}}`],
+        means: () => [T`${K(CB, 'b')} = ${BY} - ${K(CM, 'm')} \, ${BX}`]
+      }
+    };
+    const VN = {
+      cov: { std: ['Estándar (definición)', 'bi-bullseye'], ari: ['Aritmética (de cálculo)', 'bi-calculator'], sums: ['Con sumas Σ', 'bi-plus-slash-minus'] },
+      r: { sums: ['Con sumas (tu fórmula)', 'bi-plus-slash-minus'], dev: ['Con desviaciones', 'bi-arrows-expand'], cov: ['Con la covarianza', 'bi-bounding-box'], z: ['Con puntajes z', 'bi-distribute-horizontal'] },
+      m: { sums: ['Con sumas (tu fórmula)', 'bi-plus-slash-minus'], dev: ['Con desviaciones', 'bi-arrows-expand'], cov: ['Covarianza / varianza', 'bi-bounding-box'], r: ['Con r y desv. estándar', 'bi-link-45deg'] },
+      b: { sums: ['Con sumas (tu fórmula)', 'bi-plus-slash-minus'], means: ['Con las medias', 'bi-graph-up'] }
+    };
+    const SECN = { cov: 'Covarianza', r: 'Coeficiente de Pearson', m: 'Pendiente', b: 'Ordenada al origen' };
+
+    /* Descripción de cada símbolo (para el formulario) */
+    const SYM = {
+      n: ['n', 'Número de pares de datos (tamaño de la muestra)', CN], N: ['N', 'Número total de pares (tamaño de la población)', CN], n1: ['n - 1', 'Grados de libertad: corrección de Bessel para muestras', CN],
+      sum: ['\\sum', 'Suma de todos los pares (de i = 1 hasta n)', '#495057'], x: ['x_i', 'Valor de la variable X (independiente) en el par i', CX], y: ['y_i', 'Valor de la variable Y (dependiente) en el par i', CY],
+      xb: ['\\bar{x}', 'Media de X', CX], yb: ['\\bar{y}', 'Media de Y', CY], mx: ['μ_x', 'Media poblacional de X', CX], my: ['μ_y', 'Media poblacional de Y', CY],
+      sxy: ['\\sum xy', 'Suma de los productos x · y de cada par', CR], sx: ['\\sum x', 'Suma de todos los valores de x', CX], sy: ['\\sum y', 'Suma de todos los valores de y', CY],
+      sx2: ['\\sum x^2', 'Suma de los cuadrados de x (primero se eleva cada x, luego se suma)', CX], sy2: ['\\sum y^2', 'Suma de los cuadrados de y', CY],
+      sxsq: ['(\\sum x)^2', 'Cuadrado de la suma de x (primero se suma, luego se eleva)', CX], sysq: ['(\\sum y)^2', 'Cuadrado de la suma de y', CY],
+      cov: ['s_{xy}', 'Covarianza muestral', CC], covp: ['σ_{xy}', 'Covarianza poblacional', CC],
+      sdx: ['s_x', 'Desviación estándar muestral de X', CX], sdy: ['s_y', 'Desviación estándar muestral de Y', CY], sdxp: ['σ_x', 'Desviación estándar poblacional de X', CX], sdyp: ['σ_y', 'Desviación estándar poblacional de Y', CY],
+      vx: ['s_x^2', 'Varianza muestral de X', CX], vxp: ['σ_x^2', 'Varianza poblacional de X', CX],
+      zx: ['z_x', 'Puntaje estándar de x: a cuántas desviaciones de su media está', CZ], zy: ['z_y', 'Puntaje estándar de y', CZ],
+      r: ['r', 'Coeficiente de correlación de Pearson (−1 ≤ r ≤ 1)', CR], m: ['m', 'Pendiente de la recta: cuánto cambia Y por cada unidad que aumenta X', CM], b: ['b', 'Ordenada al origen: valor de Y cuando X = 0 (donde la recta cruza el eje y)', CB],
+      yh: ['\\hat{y}', 'Valor de Y que predice la recta', CB], e: ['e_i', 'Residuo: valor real menos valor predicho', CY], r2: ['r^2', 'Coeficiente de determinación: proporción de la variabilidad de Y explicada por X', CR]
+    };
+    const legRows = keys => keys.map(k => { const [s, t, c] = SYM[k]; return `<div class="legend-row"><span class="vchip" style="--c:${c}">${fi(s)}</span><span>${t}</span></div>`; }).join('');
+    const LK = {
+      cov: { std: pop => pop ? ['covp', 'sum', 'x', 'y', 'mx', 'my', 'N'] : ['cov', 'sum', 'x', 'y', 'xb', 'yb', 'n', 'n1'], ari: pop => pop ? ['covp', 'sum', 'x', 'y', 'mx', 'my', 'N'] : ['cov', 'sum', 'x', 'y', 'xb', 'yb', 'n', 'n1'], sums: pop => pop ? ['covp', 'sxy', 'sx', 'sy', 'N'] : ['cov', 'sxy', 'sx', 'sy', 'n', 'n1'] },
+      r: { sums: () => ['r', 'n', 'sxy', 'sx', 'sy', 'sx2', 'sy2', 'sxsq', 'sysq'], dev: () => ['r', 'sum', 'x', 'y', 'xb', 'yb'], cov: pop => pop ? ['r', 'covp', 'sdxp', 'sdyp', 'N'] : ['r', 'cov', 'sdx', 'sdy', 'n1'], z: pop => pop ? ['r', 'zx', 'zy', 'sdxp', 'sdyp', 'N'] : ['r', 'zx', 'zy', 'sdx', 'sdy', 'n1'] },
+      m: { sums: () => ['m', 'n', 'sxy', 'sx', 'sy', 'sx2', 'sxsq'], dev: () => ['m', 'sum', 'x', 'y', 'xb', 'yb'], cov: pop => pop ? ['m', 'covp', 'vxp'] : ['m', 'cov', 'vx'], r: pop => pop ? ['m', 'r', 'sdyp', 'sdxp'] : ['m', 'r', 'sdy', 'sdx'] },
+      b: { sums: () => ['b', 'm', 'sy', 'sx', 'n'], means: () => ['b', 'm', 'yb', 'xb'] }
+    };
+
+    /* ---------- Estado y cálculo ---------- */
+    const S = { xs: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], ys: ['52', '55', '61', '60', '68', '72', '75', '80', '79', '88'], pop: false, v: { cov: 'std', r: 'sums', m: 'sums', b: 'sums' }, px: '' };
+    let ST = null, ANIM = new Set(), P = {};
+    function stats() {
+      const x = S.xs.map(num), y = S.ys.map(num), n = x.length, sx = x.reduce((a, b) => a + b, 0), sy = y.reduce((a, b) => a + b, 0), mx = sx / n, my = sy / n;
+      const rows = x.map((xi, i) => ({ i, x: xi, y: y[i], xy: xi * y[i], x2: xi * xi, y2: y[i] * y[i], dx: xi - mx, dy: y[i] - my }));
+      rows.forEach(r => { r.dxy = r.dx * r.dy; r.dx2 = r.dx * r.dx; r.dy2 = r.dy * r.dy; });
+      const sum = k => rows.reduce((a, r) => a + r[k], 0), den = S.pop ? n : n - 1;
+      const st = { n, x, y, sx, sy, mx, my, rows, sxy: sum('xy'), sx2: sum('x2'), sy2: sum('y2'), Sxy: sum('dxy'), Sxx: sum('dx2'), Syy: sum('dy2'), den, pop: S.pop };
+      st.cov = n > 1 || S.pop ? st.Sxy / den : NaN; st.vx = st.Sxx / den; st.vy = st.Syy / den; st.sdx = Math.sqrt(st.vx); st.sdy = Math.sqrt(st.vy);
+      st.num = n * st.sxy - sx * sy; st.Dx = n * st.sx2 - sx * sx; st.Dy = n * st.sy2 - sy * sy;
+      st.r = st.Sxx > 0 && st.Syy > 0 ? st.Sxy / Math.sqrt(st.Sxx * st.Syy) : NaN; st.r2 = st.r * st.r;
+      st.m = st.Sxx > 0 ? st.Sxy / st.Sxx : NaN; st.b = my - st.m * mx;
+      rows.forEach(r => { r.zx = r.dx / st.sdx; r.zy = r.dy / st.sdy; r.zxy = r.zx * r.zy; r.mxc = st.m * r.x; r.ymx = r.y - r.mxc; r.yh = r.mxc + st.b; r.e = r.y - r.yh; r.e2 = r.e * r.e; });
+      st.SSE = sum('e2'); st.sumE = sum('e');
+      return st;
+    }
+    const interp = r => { const a = Math.abs(r); return !isFinite(r) ? ['Sin datos suficientes', '#868e96', -1] : a >= .9 ? ['Muy fuerte', '#1864ab', 4] : a >= .7 ? ['Fuerte', '#2f9e44', 3] : a >= .4 ? ['Moderada', '#f08c00', 2] : a >= .2 ? ['Débil', '#e8590c', 1] : ['Muy débil o nula', '#868e96', 0]; };
+
+
+    /* ---------- Popovers de totales y columnas ---------- */
+    let CPM = {};
+    function buildP(st) {
+      const f = fmt, rs = st.rows, y = SYP(st.pop), L = g => sumList(rs, g); CPM = {};
+      P = {
+        n: reg('Número de pares', [['Cantidad de datos', T`n = ${st.n}`, 'res']], CN),
+        sx: reg('Suma de x', [['Se suman todos los x', T`\sum x = ${L(r => ngx(r.x))} = ${f2(st.sx)}`, 'res']], CX),
+        sy: reg('Suma de y', [['Se suman todos los y', T`\sum y = ${L(r => ngx(r.y))} = ${f2(st.sy)}`, 'res']], CY),
+        sxy: reg('Suma de x · y', [['Se suman los productos', T`\sum xy = ${L(r => f2(r.xy))} = ${f2(st.sxy)}`, 'res']], CR),
+        sx2: reg('Suma de x²', [['Se suman los cuadrados', T`\sum x^2 = ${L(r => f2(r.x2))} = ${f2(st.sx2)}`, 'res']], CX),
+        sy2: reg('Suma de y²', [['Se suman los cuadrados', T`\sum y^2 = ${L(r => f2(r.y2))} = ${f2(st.sy2)}`, 'res']], CY),
+        mx: reg('Media de x', [['Suma de x entre n', T`\bar{x} = \frac{${f2(st.sx)}}{${st.n}} = ${f(st.mx, 6)}`, 'res']], CX),
+        my: reg('Media de y', [['Suma de y entre n', T`\bar{y} = \frac{${f2(st.sy)}}{${st.n}} = ${f(st.my, 6)}`, 'res']], CY),
+        Sxy: reg('Σ(x − x̄)(y − ȳ)', [['Suma de productos de desviaciones', T`\sum (x_i - \bar{x})(y_i - \bar{y}) = ${L(r => ng(r.dxy))} = ${f2(st.Sxy)}`, 'res']], CC),
+        Sxx: reg('Σ(x − x̄)²', [['Suma de desviaciones al cuadrado', T`\sum (x_i - \bar{x})^2 = ${L(r => f2(r.dx2))} = ${f2(st.Sxx)}`, 'res']], CX),
+        Syy: reg('Σ(y − ȳ)²', [['Suma de desviaciones al cuadrado', T`\sum (y_i - \bar{y})^2 = ${L(r => f2(r.dy2))} = ${f2(st.Syy)}`, 'res']], CY),
+        den: reg(st.pop ? 'Denominador N' : 'Denominador n − 1', st.pop ? [['Población: se divide entre N', T`N = ${st.n}`, 'res']] : [['Muestra: n − 1 (corrección de Bessel)', T`n - 1 = ${st.n} - 1 = ${st.n - 1}`, 'res']], CN),
+        cov: reg('Covarianza', [['Suma de productos entre el denominador', T`${y.cov} = \frac{${f2(st.Sxy)}}{${st.den}} = ${f(st.cov, 6)}`, 'res']], CC),
+        vx: reg('Varianza de x', [['Σ(x − x̄)² entre el denominador', T`${y.vx} = \frac{${f2(st.Sxx)}}{${st.den}} = ${f(st.vx, 6)}`, 'res']], CX),
+        sdx: reg('Desviación estándar de x', [['Raíz de la varianza', T`${y.sx} = \sqrt{${f(st.vx, 6)}} = ${f(st.sdx, 6)}`, 'res']], CX),
+        sdy: reg('Desviación estándar de y', [['Raíz de la varianza', T`${y.sy} = \sqrt{${f(st.vy, 6)}} = ${f(st.sdy, 6)}`, 'res']], CY),
+        num: reg('Numerador: nΣxy − ΣxΣy', [['Se sustituyen las sumas', T`n\sum xy - \sum x \sum y = ${st.n}(${f2(st.sxy)}) - (${f2(st.sx)})(${f2(st.sy)}) = ${f2(st.num)}`, 'res']], CR),
+        Dx: reg('nΣx² − (Σx)²', [['Se sustituyen las sumas', T`n\sum x^2 - (\sum x)^2 = ${st.n}(${f2(st.sx2)}) - (${f2(st.sx)})^2 = ${f2(st.Dx)}`, 'res']], CX),
+        Dy: reg('nΣy² − (Σy)²', [['Se sustituyen las sumas', T`n\sum y^2 - (\sum y)^2 = ${st.n}(${f2(st.sy2)}) - (${f2(st.sy)})^2 = ${f2(st.Dy)}`, 'res']], CY),
+        r: reg('Coeficiente r', [['Valor sin redondear', T`r = ${f(st.r, 6)}`], ['A 2 decimales', T`r = ${f2(st.r)}`, 'res']], CR),
+        m: reg('Pendiente m', [['Valor sin redondear', T`m = ${f(st.m, 6)}`], ['A 2 decimales', T`m = ${f2(st.m)}`, 'res']], CM)
+      };
+    }
+    /* Columnas: encabezado, popover de celda y de total */
+    function colMeta(k, st) {
+      const y = SYP(st.pop), mxH = st.pop ? 'μ<sub>x</sub>' : 'x̄', myH = st.pop ? 'μ<sub>y</sub>' : 'ȳ', mx = ng(st.mx), my = ng(st.my);
+      const M = {
+        xy: ['x<sub>i</sub> · y<sub>i</sub>', 'Producto de x por y', T`x_i \cdot y_i`, r => T`x_i y_i = ${ngx(r.x)} \cdot ${ngx(r.y)} = ${f2(r.xy)}`, CR],
+        x2: ['x<sub>i</sub>²', 'x al cuadrado', T`x_i^2`, r => T`x_i^2 = (${ngx(r.x)})^2 = ${f2(r.x2)}`, CX],
+        y2: ['y<sub>i</sub>²', 'y al cuadrado', T`y_i^2`, r => T`y_i^2 = (${ngx(r.y)})^2 = ${f2(r.y2)}`, CY],
+        dx: [`x<sub>i</sub> − ${mxH}`, 'Desviación de x respecto a su media', T`x_i - ${y.mx}`, r => T`x_i - ${y.mx} = ${ngx(r.x)} - ${mx} = ${f2(r.dx)}`, CX],
+        dy: [`y<sub>i</sub> − ${myH}`, 'Desviación de y respecto a su media', T`y_i - ${y.my}`, r => T`y_i - ${y.my} = ${ngx(r.y)} - ${my} = ${f2(r.dy)}`, CY],
+        dxy: [`(x<sub>i</sub> − ${mxH})(y<sub>i</sub> − ${myH})`, 'Producto de las dos desviaciones', T`(x_i - ${y.mx})(y_i - ${y.my})`, r => T`(${f2(r.dx)})(${f2(r.dy)}) = ${f2(r.dxy)}`, CC],
+        dx2: [`(x<sub>i</sub> − ${mxH})²`, 'Desviación de x al cuadrado', T`(x_i - ${y.mx})^2`, r => T`(x_i - ${y.mx})^2 = (${f2(r.dx)})^2 = ${f2(r.dx2)}`, CX],
+        dy2: [`(y<sub>i</sub> − ${myH})²`, 'Desviación de y al cuadrado', T`(y_i - ${y.my})^2`, r => T`(y_i - ${y.my})^2 = (${f2(r.dy)})^2 = ${f2(r.dy2)}`, CY],
+        zx: ['z<sub>x</sub>', 'Puntaje estándar de x', T`z_x = \frac{x_i - ${y.mx}}{${y.sx}}`, r => T`z_x = \frac{${f2(r.dx)}}{${f2(st.sdx)}} = ${f2(r.zx)}`, CZ],
+        zy: ['z<sub>y</sub>', 'Puntaje estándar de y', T`z_y = \frac{y_i - ${y.my}}{${y.sy}}`, r => T`z_y = \frac{${f2(r.dy)}}{${f2(st.sdy)}} = ${f2(r.zy)}`, CZ],
+        zxy: ['z<sub>x</sub> · z<sub>y</sub>', 'Producto de los puntajes', T`z_x \cdot z_y`, r => T`z_x z_y = (${f2(r.zx)})(${f2(r.zy)}) = ${f2(r.zxy)}`, CZ],
+        mxc: ['m · x<sub>i</sub>', 'Pendiente por x', T`m \cdot x_i`, r => T`m x_i = ${ng(st.m)}(${ngx(r.x)}) = ${f2(r.mxc)}`, CM],
+        ymx: ['y<sub>i</sub> − m · x<sub>i</sub>', 'y menos pendiente por x', T`y_i - m x_i`, r => T`y_i - m x_i = ${ngx(r.y)} - ${ng(r.mxc)} = ${f2(r.ymx)}`, CB],
+        yh: ['ŷ = m·x + b', 'Valor predicho por la recta', T`\hat{y} = m x_i + b`, r => T`\hat{y} = ${ng(st.m)}(${ngx(r.x)}) + ${ng(st.b)} = ${f2(r.yh)}`, CB],
+        e: ['e = y − ŷ', 'Residuo: real menos predicho', T`e_i = y_i - \hat{y}_i`, r => T`e = ${ngx(r.y)} - ${ng(r.yh)} = ${f2(r.e)}`, CY],
+        e2: ['e²', 'Residuo al cuadrado', T`e_i^2`, r => T`e^2 = (${f2(r.e)})^2 = ${f2(r.e2)}`, CY]
+      };
+      return M[k];
+    }
+    const hpId = (k, st) => { const m = colMeta(k, st); return reg('Columna ' + m[0].replace(/<\/?sub>/g, ''), [[m[1], m[2], 'res']], m[4]); };
+    const cp = (k, i) => { const key = k + i; if (!CPM[key]) { const st = ST, m = colMeta(k, st); CPM[key] = reg(`Par ${i + 1}: ${m[1].toLowerCase()}`, [[m[1], m[3](st.rows[i]), 'res'], k === 'dxy' ? (st.rows[i].dxy >= 0 ? 'Producto positivo: este par aporta a una relación directa.' : 'Producto negativo: este par aporta a una relación inversa.') : ''].filter(Boolean), m[4]); } return CPM[key]; };
+    const totPop = (k, st) => { const m = colMeta(k, st), tot = st.rows.reduce((a, r) => a + r[k], 0); return reg('Suma de ' + m[0].replace(/<\/?sub>/g, ''), [['Se suman todos los valores', T`\sum = ${sumList(st.rows, r => ng(r[k]))} = ${f2(tot)}`, 'res'], ['dx', 'dy', 'e'].includes(k) ? 'La suma de las desviaciones respecto a la media siempre es 0 (salvo redondeo).' : ''].filter(Boolean), m[4]); };
+
+    /* Tabla de cálculo por columnas */
+    function fillTbl(tbl, cols, st, o = {}) {
+      const lastC = cols[cols.length - 1], tot = k => st.rows.reduce((a, r) => a + r[k], 0), td = (id, inner, c = '', s = '') => `<td class="pp ${c}" ${s ? `style="${s}"` : ''} data-pop="${id}" tabindex="0" role="button">${inner}</td>`;
+      tbl.querySelector('thead').innerHTML = `<tr><th>#</th><th class="cb-x">x<sub>i</sub></th><th class="cb-y">y<sub>i</sub></th>${cols.map((k, ci) => `<th class="mc pp${k === lastC ? ' last' : ''}" style="--ci:${ci}" data-pop="${hpId(k, st)}" tabindex="0" role="button">${colMeta(k, st)[0]} <i class="bi bi-question-circle"></i></th>`).join('')}</tr>`;
+      tbl.querySelector('tbody').innerHTML = st.rows.map((r, i) => `<tr><td>${i + 1}</td><td class="cb-x">${fmt(r.x)}</td><td class="cb-y">${fmt(r.y)}</td>${cols.map((k, ci) => td(cp(k, i), f2(r[k]), 'mc' + (k === lastC ? ' last' : '') + (k === 'dxy' || k === 'zxy' ? (r[k] >= 0 ? ' pos' : ' neg') : ''), `--ci:${ci};--ri:${i}`)).join('')}</tr>`).join('');
+      tbl.querySelector('tfoot').innerHTML = `<tr><td>Σ</td>${td(P.sx, f2(st.sx), 'cb-x')}${td(P.sy, f2(st.sy), 'cb-y')}${cols.map((k, ci) => td(totPop(k, st), f2(tot(k)), 'mc', `--ci:${ci};--ri:${st.n}`)).join('')}</tr><tr class="mean-r"><td>Media</td>${td(P.mx, f2(st.mx), 'cb-x')}${td(P.my, f2(st.my), 'cb-y')}${cols.map(() => '<td>—</td>').join('')}</tr>`;
+      tbl.classList.remove('anim'); if (o.anim) { void tbl.offsetWidth; tbl.classList.add('anim'); }
+    }
+
+    /* ---------- Especificaciones de cada fórmula (valores, pasos) ---------- */
+    const VALS = {
+      cov: st => ({ std: st.Sxy / st.den, ari: st.pop ? st.sxy / st.n - st.mx * st.my : (st.sxy - st.n * st.mx * st.my) / (st.n - 1), sums: st.pop ? st.sxy / st.n - st.sx * st.sy / (st.n * st.n) : (st.sxy - st.sx * st.sy / st.n) / (st.n - 1) }),
+      r: st => ({ sums: st.num / Math.sqrt(st.Dx * st.Dy), dev: st.Sxy / Math.sqrt(st.Sxx * st.Syy), cov: st.cov / (st.sdx * st.sdy), z: st.rows.reduce((a, r) => a + r.zxy, 0) / st.den }),
+      m: st => ({ sums: st.num / st.Dx, dev: st.Sxy / st.Sxx, cov: st.cov / st.vx, r: st.r * st.sdy / st.sdx }),
+      b: st => ({ sums: (st.sy - st.m * st.sx) / st.n, means: st.my - st.m * st.mx })
+    };
+    const stp = (t, h) => [t, h];
+    function SPEC(sec, v, st) {
+      const y = SYP(st.pop), f = fmt, n = st.n, pn = pp(P.n, n), den = st.pop ? pp(P.n, n) : pp(P.den, `${n} - 1`), denV = st.den;
+      const mm = T`${y.mx} = \frac{${pp(P.sx, f2(st.sx))}}{${pn}} = ${pp(P.mx, f2(st.mx))} \qquad ${y.my} = \frac{${pp(P.sy, f2(st.sy))}}{${pn}} = ${pp(P.my, f2(st.my))}`;
+      const tr = (k, g) => { const t = st.rows.map((r, i) => pp(cp(k, i), g(r))); return (t.length > 5 ? [...t.slice(0, 2), '\\cdots', t[t.length - 1]] : t).join(' + '); };
+      const F = FT[sec][v](st.pop), val = VALS[sec](st)[v];
+      let cols, steps, sym, valId, resLines;
+      const res = (title, lines) => reg(title, lines, SC[sec]);
+      if (sec === 'cov') {
+        sym = y.cov;
+        if (v === 'std') {
+          cols = ['dx', 'dy', 'dxy'];
+          steps = [stp('Hallar las medias', fd(mm)), stp('Restar la media y multiplicar (columnas de la tabla)', fd(T`\sum (x_i - ${y.mx})(y_i - ${y.my}) = ${tr('dxy', r => T`(${f2(r.dx)})(${f2(r.dy)})`)}`)), stp('Sumar los productos', fd(T`\sum = ${pp(P.Sxy, f2(st.Sxy))}`)), stp(st.pop ? 'Dividir entre N' : 'Dividir entre n − 1', fd(T`${y.cov} = \frac{${pp(P.Sxy, f2(st.Sxy))}}{${den}} = ${f(val, 4)}`))];
+        } else if (v === 'ari') {
+          cols = ['xy'];
+          steps = [stp('Hallar las medias', fd(mm)), stp('Multiplicar x por y en cada par y sumar', fd(T`\sum x_i y_i = ${tr('xy', r => T`(${ngx(r.x)})(${ngx(r.y)})`)} = ${pp(P.sxy, f2(st.sxy))}`)),
+            st.pop ? stp('Promedio de los productos y producto de medias', fd(T`\frac{\sum xy}{N} = \frac{${f2(st.sxy)}}{${n}} = ${f2(st.sxy / n)} \qquad ${y.mx} \, ${y.my} = (${f2(st.mx)})(${f2(st.my)}) = ${f2(st.mx * st.my)}`)) : stp('Restar n · x̄ · ȳ', fd(T`n \bar{x} \bar{y} = ${n}(${f2(st.mx)})(${f2(st.my)}) = ${f2(n * st.mx * st.my)}`) + fd(T`\sum xy - n\bar{x}\bar{y} = ${f2(st.sxy)} - ${f2(n * st.mx * st.my)} = ${f2(st.sxy - n * st.mx * st.my)}`)),
+            stp(st.pop ? 'Restar' : 'Dividir entre n − 1', fd(st.pop ? T`${y.cov} = ${f2(st.sxy / n)} - ${f2(st.mx * st.my)} = ${f(val, 4)}` : T`${y.cov} = \frac{${f2(st.sxy - n * st.mx * st.my)}}{${den}} = ${f(val, 4)}`))];
+        } else {
+          cols = ['xy'];
+          steps = [stp('Sumas necesarias', fd(T`\sum x = ${pp(P.sx, f2(st.sx))} \quad \sum y = ${pp(P.sy, f2(st.sy))} \quad \sum xy = ${pp(P.sxy, f2(st.sxy))}`)),
+            stp(st.pop ? 'Producto de sumas entre N²' : 'Producto de sumas entre n', fd(st.pop ? T`\frac{(\sum x)(\sum y)}{N^2} = \frac{(${f2(st.sx)})(${f2(st.sy)})}{${n * n}} = ${f2(st.sx * st.sy / (n * n))}` : T`\frac{(\sum x)(\sum y)}{n} = \frac{(${f2(st.sx)})(${f2(st.sy)})}{${n}} = ${f2(st.sx * st.sy / n)}`)),
+            stp(st.pop ? 'Promedio de productos menos lo anterior' : 'Restar y dividir entre n − 1', fd(st.pop ? T`${y.cov} = ${f2(st.sxy / n)} - ${f2(st.sx * st.sy / (n * n))} = ${f(val, 4)}` : T`${y.cov} = \frac{${f2(st.sxy)} - ${f2(st.sx * st.sy / n)}}{${den}} = ${f(val, 4)}`))];
+        }
+        valId = res('Resultado de la covarianza', [['Valor sin redondear', T`${y.cov} = ${f(val, 6)}`], ['A 2 decimales', T`${y.cov} = ${f2(val)}`, 'res']]);
+      } else if (sec === 'r') {
+        sym = 'r';
+        if (v === 'sums') {
+          cols = ['xy', 'x2', 'y2'];
+          steps = [stp('Numerador: nΣxy − ΣxΣy', fd(T`${pn}(${pp(P.sxy, f2(st.sxy))}) - (${pp(P.sx, f2(st.sx))})(${pp(P.sy, f2(st.sy))}) = ${pp(P.num, f2(st.num))}`)), stp('Primer radicando (x)', fd(T`${pn}(${pp(P.sx2, f2(st.sx2))}) - (${pp(P.sx, f2(st.sx))})^2 = ${pp(P.Dx, f2(st.Dx))}`)), stp('Segundo radicando (y)', fd(T`${pn}(${pp(P.sy2, f2(st.sy2))}) - (${pp(P.sy, f2(st.sy))})^2 = ${pp(P.Dy, f2(st.Dy))}`)),
+            stp('Multiplicar, sacar la raíz y dividir', fd(T`r = \frac{${f2(st.num)}}{\sqrt{(${f2(st.Dx)})(${f2(st.Dy)})}} = \frac{${f2(st.num)}}{\sqrt{${f2(st.Dx * st.Dy)}}} = \frac{${f2(st.num)}}{${f2(Math.sqrt(st.Dx * st.Dy))}} = ${f(val, 4)}`))];
+        } else if (v === 'dev') {
+          cols = ['dx', 'dy', 'dxy', 'dx2', 'dy2'];
+          steps = [stp('Hallar las medias', fd(mm)), stp('Sumar las columnas de la tabla', fd(T`\sum (x-\bar{x})(y-\bar{y}) = ${pp(P.Sxy, f2(st.Sxy))} \quad \sum (x-\bar{x})^2 = ${pp(P.Sxx, f2(st.Sxx))} \quad \sum (y-\bar{y})^2 = ${pp(P.Syy, f2(st.Syy))}`)),
+            stp('Multiplicar las dos sumas y sacar la raíz', fd(T`\sqrt{(${f2(st.Sxx)})(${f2(st.Syy)})} = \sqrt{${f2(st.Sxx * st.Syy)}} = ${f2(Math.sqrt(st.Sxx * st.Syy))}`)), stp('Dividir', fd(T`r = \frac{${f2(st.Sxy)}}{${f2(Math.sqrt(st.Sxx * st.Syy))}} = ${f(val, 4)}`))];
+        } else if (v === 'cov') {
+          cols = ['dx2', 'dy2', 'dxy'];
+          steps = [stp('Covarianza', fd(T`${y.cov} = \frac{${pp(P.Sxy, f2(st.Sxy))}}{${den}} = ${pp(P.cov, f2(st.cov))}`)), stp('Desviaciones estándar', fd(T`${y.sx} = \sqrt{\frac{${pp(P.Sxx, f2(st.Sxx))}}{${denV}}} = ${pp(P.sdx, f2(st.sdx))} \qquad ${y.sy} = \sqrt{\frac{${pp(P.Syy, f2(st.Syy))}}{${denV}}} = ${pp(P.sdy, f2(st.sdy))}`)),
+            stp('Dividir la covarianza entre el producto', fd(T`r = \frac{${f2(st.cov)}}{(${f2(st.sdx)})(${f2(st.sdy)})} = \frac{${f2(st.cov)}}{${f2(st.sdx * st.sdy)}} = ${f(val, 4)}`))];
+        } else {
+          cols = ['dx', 'dy', 'zx', 'zy', 'zxy'];
+          steps = [stp('Desviaciones estándar', fd(T`${y.sx} = ${pp(P.sdx, f2(st.sdx))} \qquad ${y.sy} = ${pp(P.sdy, f2(st.sdy))}`)), stp('Estandarizar cada dato (columnas z)', fd(T`z_x = \frac{x_i - \bar{x}}{${y.sx}} \qquad z_y = \frac{y_i - \bar{y}}{${y.sy}}`)), stp('Multiplicar z_x · z_y y sumar', fd(T`\sum z_x z_y = ${tr('zxy', r => f2(r.zxy))} = ${f2(st.rows.reduce((a, r) => a + r.zxy, 0))}`)), stp(st.pop ? 'Dividir entre N' : 'Dividir entre n − 1', fd(T`r = \frac{${f2(st.rows.reduce((a, r) => a + r.zxy, 0))}}{${den}} = ${f(val, 4)}`))];
+        }
+        valId = res('Resultado de r', [['Valor sin redondear', T`r = ${f(val, 6)}`], ['A 2 decimales', T`r = ${f2(val)}`, 'res']]);
+      } else if (sec === 'm') {
+        sym = 'm';
+        if (v === 'sums') {
+          cols = ['xy', 'x2'];
+          steps = [stp('Numerador: nΣxy − ΣxΣy', fd(T`${pn}(${pp(P.sxy, f2(st.sxy))}) - (${pp(P.sx, f2(st.sx))})(${pp(P.sy, f2(st.sy))}) = ${pp(P.num, f2(st.num))}`)), stp('Denominador: nΣx² − (Σx)²', fd(T`${pn}(${pp(P.sx2, f2(st.sx2))}) - (${pp(P.sx, f2(st.sx))})^2 = ${pp(P.Dx, f2(st.Dx))}`)), stp('Dividir', fd(T`m = \frac{${f2(st.num)}}{${f2(st.Dx)}} = ${f(val, 4)}`))];
+        } else if (v === 'dev') {
+          cols = ['dx', 'dy', 'dxy', 'dx2'];
+          steps = [stp('Hallar las medias', fd(mm)), stp('Sumar las columnas', fd(T`\sum (x-\bar{x})(y-\bar{y}) = ${pp(P.Sxy, f2(st.Sxy))} \qquad \sum (x-\bar{x})^2 = ${pp(P.Sxx, f2(st.Sxx))}`)), stp('Dividir', fd(T`m = \frac{${f2(st.Sxy)}}{${f2(st.Sxx)}} = ${f(val, 4)}`))];
+        } else if (v === 'cov') {
+          cols = ['dx', 'dy', 'dxy', 'dx2'];
+          steps = [stp('Covarianza', fd(T`${y.cov} = \frac{${pp(P.Sxy, f2(st.Sxy))}}{${den}} = ${pp(P.cov, f2(st.cov))}`)), stp('Varianza de x', fd(T`${y.vx} = \frac{${pp(P.Sxx, f2(st.Sxx))}}{${den}} = ${pp(P.vx, f2(st.vx))}`)), stp('Dividir covarianza entre varianza', fd(T`m = \frac{${f2(st.cov)}}{${f2(st.vx)}} = ${f(val, 4)}`))];
+        } else {
+          cols = ['dx2', 'dy2', 'dxy'];
+          steps = [stp('Coeficiente r', fd(T`r = ${pp(P.r, f2(st.r))}`)), stp('Desviaciones estándar', fd(T`${y.sx} = ${pp(P.sdx, f2(st.sdx))} \qquad ${y.sy} = ${pp(P.sdy, f2(st.sdy))}`)), stp('Sustituir', fd(T`m = r \, \frac{${y.sy}}{${y.sx}} = (${f4(st.r)}) \frac{${f2(st.sdy)}}{${f2(st.sdx)}} = ${f(val, 4)}`))];
+        }
+        valId = res('Resultado de m', [['Valor sin redondear', T`m = ${f(val, 6)}`], ['A 2 decimales', T`m = ${f2(val)}`, 'res'], val >= 0 ? 'Pendiente positiva: la recta sube.' : 'Pendiente negativa: la recta baja.']);
+      } else {
+        sym = 'b';
+        const mId = P.m;
+        if (v === 'sums') {
+          cols = ['mxc', 'ymx'];
+          steps = [stp('Necesitamos la pendiente', fd(T`m = ${pp(mId, f2(st.m))}`)), stp('Restar a Σy la pendiente por Σx', fd(T`\sum y - m \sum x = ${pp(P.sy, f2(st.sy))} - (${pp(mId, f2(st.m))})(${pp(P.sx, f2(st.sx))}) = ${f2(st.sy - st.m * st.sx)}`), 'Es lo mismo que sumar la columna y − m·x de la tabla.'), stp('Dividir entre n', fd(T`b = \frac{${f2(st.sy - st.m * st.sx)}}{${pn}} = ${f(val, 4)}`))];
+        } else {
+          cols = ['mxc'];
+          steps = [stp('Hallar las medias', fd(mm)), stp('Pendiente por la media de x', fd(T`m \, \bar{x} = (${pp(mId, f2(st.m))})(${pp(P.mx, f2(st.mx))}) = ${f2(st.m * st.mx)}`)), stp('Restar a la media de y', fd(T`b = ${f2(st.my)} - ${ng(st.m * st.mx)} = ${f(val, 4)}`))];
+        }
+        valId = res('Resultado de b', [['Valor sin redondear', T`b = ${f(val, 6)}`], ['A 2 decimales', T`b = ${f2(val)}`, 'res'], 'Es el valor de Y cuando X = 0.']);
+      }
+      const uses = { cov: { std: 'las columnas $x_i-\\bar{x}$, $y_i-\\bar{y}$ y su producto', ari: 'la columna $x_i\\cdot y_i$ y las medias', sums: 'la columna $x_i\\cdot y_i$ y las sumas $\\sum x$, $\\sum y$' }, r: { sums: 'las sumas $\\sum x, \\sum y, \\sum xy, \\sum x^2, \\sum y^2$', dev: 'las desviaciones, sus productos y cuadrados', cov: 'la covarianza y las dos desviaciones estándar', z: 'los puntajes $z_x$, $z_y$ y su producto' }, m: { sums: 'las sumas $\\sum x, \\sum y, \\sum xy, \\sum x^2$', dev: 'las desviaciones de x y el producto con las de y', cov: 'la covarianza y la varianza de x', r: 'el coeficiente $r$ y las desviaciones estándar' }, b: { sums: 'la pendiente $m$ y las sumas $\\sum x$, $\\sum y$', means: 'la pendiente $m$ y las medias' } }[sec][v];
+      return { cols, F, steps, sym, val, valId, uses, vals: VALS[sec](st) };
+    }
+    function renderSec(sec) {
+      const st = ST, v = S.v[sec], sp = SPEC(sec, v, st), col = SC[sec], dec = sec === 'r' ? f4 : f2;
+      $('#v-' + sec).innerHTML = Object.entries(VN[sec]).map(([k, [t, ic]]) => `<button class="mbtn ${k === v ? 'on' : ''}" data-sec="${sec}" data-v="${k}" style="--c:${col}"><i class="bi ${ic} me-1"></i>${t}</button>`).join('');
+      const agree = Object.values(sp.vals).every(q => Math.abs(q - sp.val) < 1e-7);
+      $('#x-' + sec).innerHTML = `<div class="table-responsive rounded-3 border mb-3" id="w-${sec}" style="--mc:${col}"><table class="table table-bordered freq-table mb-0" id="t-${sec}"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
+        <div class="row g-3"><div class="col-lg-5"><div class="small fw-bold text-muted">Fórmula</div><div class="formula-card" style="border-color:${col}">${sp.F.map(fd).join('')}</div>
+          <div class="usebox mt-2" style="--c:${col}"><strong>De la tabla usamos:</strong> ${sp.uses}.</div>
+          <div class="calc-screen mt-3" style="--c:${col}">${fi(T`${sp.sym} = ${pp(sp.valId, dec(sp.val))}`)}</div>
+          <div class="cmp-chips">${Object.entries(sp.vals).map(([k, q]) => `<span class="cmp-chip ${k === v ? 'on' : ''}">${VN[sec][k][0]}: <b>${dec(q)}</b></span>`).join('')}<span class="cmp-chip">${agree ? '✓ Todas las fórmulas coinciden' : '≠'}</span></div>
+          ${sec === 'r' ? `<div class="strength mt-2">${['Muy débil', 'Débil', 'Moderada', 'Fuerte', 'Muy fuerte'].map((t, i) => `<span class="${interp(st.r)[2] === i ? 'on' : ''}" style="background:${['#868e96', '#e8590c', '#f08c00', '#2f9e44', '#1864ab'][i]}">${t}</span>`).join('')}</div><div class="small">${isFinite(st.r) ? `Correlación <strong>${st.r >= 0 ? 'positiva' : 'negativa'}</strong> ${interp(st.r)[0].toLowerCase()}.` : ''}</div>` : ''}</div>
+        <div class="col-lg-7"><div class="small fw-bold text-muted">Paso a paso <span class="fw-normal">(toca cualquier número)</span></div>${sp.steps.map(([t, h, nt], i) => `<div class="sstep" style="--i:${i};--sc:${col}"><div class="sn">${i + 1}</div><div class="sb"><div class="st">${t}</div>${h}${nt ? `<div class="sx">${nt}</div>` : ''}</div></div>`).join('')}</div></div>`;
+      fillTbl($('#t-' + sec), sp.cols, st, { anim: ANIM.has(sec) }); ANIM.delete(sec);
+    }
+
+
+    /* ---------- Gráficas de dispersión (SVG animado) ---------- */
+    function niceTicks(lo, hi, cnt = 6) {
+      const span = (hi - lo) || 1, raw = span / cnt, p = Math.pow(10, Math.floor(Math.log10(raw))), q = raw / p, step = (q <= 1 ? 1 : q <= 2 ? 2 : q <= 5 ? 5 : 10) * p;
+      const a = Math.floor(lo / step + 1e-9) * step, out = [];
+      for (let v = a; v <= hi + step * 1e-9; v += step) out.push(+v.toFixed(10));
+      if (out[out.length - 1] < hi) out.push(+(out[out.length - 1] + step).toFixed(10));
+      return { ticks: out, lo: out[0], hi: out[out.length - 1] };
+    }
+    function scatter(id, o = {}) {
+      const st = ST, W = 560, H = 380, ml = 54, mr = 18, mt = 16, mb = 46, el = $('#' + id);
+      const pv = o.px != null && isFinite(o.px) ? o.px : null, yhp = pv != null ? st.m * pv + st.b : null;
+      const pad = a => { const lo = Math.min(...a), hi = Math.max(...a), s = (hi - lo) || 1; return [lo - s * .06, hi + s * .06]; };
+      const [xl, xh] = pad(st.x.concat(pv != null ? [pv] : [])), [yl, yh] = pad(st.y.concat(yhp != null ? [yhp] : []));
+      const NX = niceTicks(xl, xh), NY = niceTicks(yl, yh);
+      const sx = v => ml + (v - NX.lo) / (NX.hi - NX.lo) * (W - ml - mr), sy = v => H - mb - (v - NY.lo) / (NY.hi - NY.lo) * (H - mt - mb);
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="${o.anim ? '' : 'noanim'}" role="img" aria-label="Diagrama de dispersión"><defs><clipPath id="clip-${id}"><rect x="${ml}" y="${mt}" width="${W - ml - mr}" height="${H - mt - mb}"/></clipPath></defs>`;
+      NY.ticks.forEach(t => { s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(t)}" y2="${sy(t)}" stroke="#e9ecef"/><text x="${ml - 8}" y="${sy(t) + 4}" text-anchor="end" font-size="11" fill="#64748b">${fmt(t, 2)}</text>`; });
+      NX.ticks.forEach(t => { s += `<line y1="${mt}" y2="${H - mb}" x1="${sx(t)}" x2="${sx(t)}" stroke="#f1f3f5"/><text x="${sx(t)}" y="${H - mb + 16}" text-anchor="middle" font-size="11" fill="#64748b">${fmt(t, 2)}</text>`; });
+      s += `<line x1="${ml}" x2="${W - mr}" y1="${H - mb}" y2="${H - mb}" stroke="#334155" stroke-width="1.6"/><line x1="${ml}" x2="${ml}" y1="${mt}" y2="${H - mb}" stroke="#334155" stroke-width="1.6"/>`;
+      s += `<text x="${(ml + W - mr) / 2}" y="${H - 8}" text-anchor="middle" font-size="13" font-weight="700" fill="${CX}">X</text><text transform="translate(14 ${(mt + H - mb) / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="700" fill="${CY}">Y</text>`;
+      const n = st.n, d0 = n * .07 + .3;
+      if (o.means) s += `<g clip-path="url(#clip-${id})" class="sc-fade" style="--d:.2s"><line x1="${sx(st.mx)}" x2="${sx(st.mx)}" y1="${mt}" y2="${H - mb}" stroke="${CX}" stroke-width="1.6" stroke-dasharray="6 5"/><line x1="${ml}" x2="${W - mr}" y1="${sy(st.my)}" y2="${sy(st.my)}" stroke="${CY}" stroke-width="1.6" stroke-dasharray="6 5"/></g><text class="sc-fade" style="--d:.3s" x="${sx(st.mx) + 4}" y="${mt + 11}" font-size="11" font-weight="700" fill="${CX}">x̄ = ${fmt(st.mx, 2)}</text><text class="sc-fade" style="--d:.3s" x="${W - mr - 4}" y="${sy(st.my) - 5}" text-anchor="end" font-size="11" font-weight="700" fill="${CY}">ȳ = ${fmt(st.my, 2)}</text>`;
+      if (o.res) st.rows.forEach((r, i) => { s += `<line class="sc-res" style="--d:${d0 + 1.2 + i * .05}s" x1="${sx(r.x)}" x2="${sx(r.x)}" y1="${sy(r.y)}" y2="${sy(r.yh)}" stroke="${r.e >= 0 ? CB : CM}" stroke-width="2.4"><title>e = ${f2(r.e)}</title></line>`; });
+      if (o.line && isFinite(st.m)) s += `<g clip-path="url(#clip-${id})"><path class="sc-line" pathLength="1" style="--d:${d0}s" d="M${sx(NX.lo)} ${sy(st.m * NX.lo + st.b)} L${sx(NX.hi)} ${sy(st.m * NX.hi + st.b)}" stroke="${CM}" stroke-width="3" stroke-linecap="round"/></g>`;
+      st.rows.forEach((r, i) => { s += `<circle class="sc-pt" style="--d:${.1 + i * .07}s" cx="${sx(r.x)}" cy="${sy(r.y)}" r="6.5" fill="${CX}" stroke="#fff" stroke-width="2"><title>(${fmt(r.x)}, ${fmt(r.y)})</title></circle>`; });
+      if (pv != null) { const inR = pv >= Math.min(...st.x) && pv <= Math.max(...st.x), c = inR ? CB : '#f08c00'; s += `<g class="sc-fade" style="--d:.3s"><line x1="${sx(pv)}" x2="${sx(pv)}" y1="${H - mb}" y2="${sy(yhp)}" stroke="${c}" stroke-dasharray="4 4" stroke-width="1.8"/><line x1="${ml}" x2="${sx(pv)}" y1="${sy(yhp)}" y2="${sy(yhp)}" stroke="${c}" stroke-dasharray="4 4" stroke-width="1.8"/><path d="M${sx(pv)} ${sy(yhp) - 9} l9 9 l-9 9 l-9 -9z" fill="${c}" stroke="#fff" stroke-width="2"><title>ŷ = ${f2(yhp)}</title></path></g>`; }
+      el.innerHTML = s + '</svg>';
+    }
+    const drawSc2 = anim => scatter('sc2', { means: $('#g-mean').checked, line: $('#g-line').checked, res: $('#g-res').checked, px: S.px !== '' && isFinite(parseFloat(S.px)) ? parseFloat(S.px) : null, anim: anim !== false });
+
+    /* ---------- Tabla de datos y sumas ---------- */
+    const escA = t => String(t).replace(/"/g, '&quot;');
+    function renderDataBody() {
+      const t = $('#d-tbl');
+      t.querySelector('thead').innerHTML = '<tr><th>#</th><th class="cb-x">x<sub>i</sub></th><th class="cb-y">y<sub>i</sub></th></tr>';
+      t.querySelector('tbody').innerHTML = S.xs.map((x, i) => `<tr><td>${i + 1}</td><td class="cb-x"><input class="d-in" data-ax="x" data-i="${i}" inputmode="decimal" value="${escA(x)}" aria-label="x ${i + 1}"></td><td class="cb-y"><input class="d-in" data-ax="y" data-i="${i}" inputmode="decimal" value="${escA(S.ys[i])}" aria-label="y ${i + 1}"></td></tr>`).join('');
+    }
+    function renderDataFoot() {
+      const st = ST, td = (id, v, c) => `<td class="pp ${c}" data-pop="${id}" tabindex="0" role="button">${v}</td>`;
+      $('#d-tbl').querySelector('tfoot').innerHTML = `<tr><td>Σ</td>${td(P.sx, f2(st.sx), 'cb-x')}${td(P.sy, f2(st.sy), 'cb-y')}</tr><tr class="mean-r"><td>Media</td>${td(P.mx, f2(st.mx), 'cb-x')}${td(P.my, f2(st.my), 'cb-y')}</tr>`;
+    }
+    function renderSums() {
+      const st = ST, c = (id, tex, col) => `<span class="vchip pp" style="--c:${col}" data-pop="${id}" tabindex="0" role="button">${fi(tex)}</span>`;
+      $('#sums').innerHTML = [c(P.n, T`n = ${st.n}`, CN), c(P.sx, T`\sum x = ${f2(st.sx)}`, CX), c(P.sy, T`\sum y = ${f2(st.sy)}`, CY), c(P.sxy, T`\sum xy = ${f2(st.sxy)}`, CR), c(P.sx2, T`\sum x^2 = ${f2(st.sx2)}`, CX), c(P.sy2, T`\sum y^2 = ${f2(st.sy2)}`, CY), c(P.mx, T`\bar{x} = ${f2(st.mx)}`, CX), c(P.my, T`\bar{y} = ${f2(st.my)}`, CY)].join('');
+    }
+
+    /* ---------- Sección 6: recta, tarjetas, predicción ---------- */
+    function renderPred() {
+      const st = ST, v = parseFloat(String(S.px).replace(',', '.')), box = $('#pred');
+      if (S.px === '' || !isFinite(v)) { box.innerHTML = '<div class="small text-muted">Escribe un valor de $x$ para ver el punto en la gráfica.</div>'; math(box); return; }
+      const yh = st.m * v + st.b, inR = v >= Math.min(...st.x) && v <= Math.max(...st.x);
+      const id = reg('Valor predicho ŷ', [['Se sustituye x en la recta', T`\hat{y} = m x + b = ${ng(st.m)}(${ngx(v)}) + ${ng(st.b)} = ${f2(yh)}`, 'res']], CB);
+      box.innerHTML = `<div class="calc-screen" style="--c:${CB}">${fi(T`\hat{y} = ${f2(st.m)}(${ngx(v)}) + ${ng(st.b)} = ${pp(id, f2(yh))}`)}</div>${inR ? '<div class="small text-success mt-1"><i class="bi bi-check-circle-fill me-1"></i>x está dentro del rango de tus datos (interpolación).</div>' : '<div class="small text-warning-emphasis mt-1"><i class="bi bi-exclamation-triangle-fill me-1"></i>x está fuera del rango de tus datos: es una extrapolación y puede ser poco confiable.</div>'}`;
+      initPops(box);
+    }
+    function renderS6(anim) {
+      const st = ST, it = interp(st.r), c = (id, l, v, sub, col) => `<div class="col-6 col-md"><div class="tile pp" style="--c:${col}" data-pop="${id}" tabindex="0" role="button"><div class="tl">${l}</div><div class="tv">${v}</div><div class="ts">${sub}</div></div></div>`;
+      const r2id = reg('Coeficiente de determinación', [['Se eleva r al cuadrado', T`r^2 = (${ng(st.r)})^2 = ${f4(st.r2)}`, 'res'], `Aproximadamente el ${fmt(st.r2 * 100, 1)} % de la variación de Y se explica por X.`], CR);
+      const bid = reg('Ordenada al origen b', [['Valor sin redondear', T`b = ${fmt(st.b, 6)}`], ['A 2 decimales', T`b = ${f2(st.b)}`, 'res']], CB);
+      $('#tiles').innerHTML = c(P.r, 'r de Pearson', f4(st.r), it[0], CR) + c(r2id, 'r²', f4(st.r2), `${fmt(st.r2 * 100, 1)} % explicado`, '#845ef7') + c(P.m, 'Pendiente m', f2(st.m), st.m >= 0 ? 'la recta sube' : 'la recta baja', CM) + c(bid, 'Ordenada b', f2(st.b), 'Y cuando X = 0', CB) + c(P.cov, st.pop ? 'σxy' : 'sxy', f2(st.cov), st.cov >= 0 ? 'relación directa' : 'relación inversa', CC);
+      $('#eq').innerHTML = fd(T`Y = \textcolor{#ff8787}{m}\,x + \textcolor{#69db7c}{b}`) + fd(T`Y = \textcolor{#ff8787}{${f2(st.m)}}\,x ${st.b >= 0 ? '+' : '-'} \textcolor{#69db7c}{${f2(Math.abs(st.b))}}`);
+      $('#interp').innerHTML = `<strong style="color:${it[1]}"><i class="bi bi-lightbulb-fill me-1"></i>Interpretación</strong><br>Hay una correlación <strong>${st.r >= 0 ? 'positiva' : 'negativa'}</strong> <strong style="color:${it[1]}">${it[0].toLowerCase()}</strong> ($r = ${f2(st.r)}$). Por cada unidad que aumenta $x$, la recta predice que $y$ ${st.m >= 0 ? 'aumenta' : 'disminuye'} ${f2(Math.abs(st.m))}. El modelo explica ${fmt(st.r2 * 100, 1)} % de la variación de $y$. <span class="text-muted">Correlación no implica causalidad.</span>`;
+      drawSc2(anim);
+      renderPred();
+      const w = $('#w-reg'); w.style.setProperty('--mc', CB); fillTbl($('#t-reg'), ['yh', 'e', 'e2'], st, { anim: !!anim });
+    }
+
+    /* ---------- Formulario (modal) ---------- */
+    function renderForm() {
+      const popDep = (sec, v) => sec === 'cov' || (sec === 'r' && (v === 'cov' || v === 'z')) || (sec === 'm' && (v === 'cov' || v === 'r'));
+      let h = '<p class="small text-muted">Cada fórmula se calcula con las mismas columnas de la página; «Muestra» divide entre $n-1$ y «Población» entre $N$. Las fórmulas marcadas con <i class="bi bi-star-fill text-warning"></i> son las de tu hoja.</p>';
+      ['cov', 'r', 'm', 'b'].forEach((sec, k) => {
+        h += `<div class="sheet-title" style="color:${SC[sec]}">${k + 1}. ${SECN[sec]}</div>`;
+        Object.keys(VN[sec]).forEach(v => {
+          const modes = popDep(sec, v) ? [false, true] : [null], mine = VN[sec][v][0].includes('tu fórmula');
+          h += `<div class="small fw-bold mt-2" style="color:${SC[sec]}"><i class="bi ${VN[sec][v][1]} me-1"></i>${VN[sec][v][0]} ${mine ? '<i class="bi bi-star-fill text-warning"></i>' : ''}</div><table class="form-tbl">` + modes.map(p => `<tr class="${p === true ? 'vp' : p === false ? 'vm' : ''}"><td class="fl"><span class="badge-v">${p === null ? 'General' : p ? 'Población' : 'Muestra'}</span><div class="mt-3">${FT[sec][v](!!p).map(fd).join('')}</div></td><td class="fr2"><div class="dw">Donde:</div>${legRows(LK[sec][v](!!p))}</td></tr>`).join('') + '</table>';
+        });
+      });
+      const aux = [
+        ['Media', T`\bar{x} = \frac{\sum x}{n} \qquad \bar{y} = \frac{\sum y}{n}`, ['xb', 'yb', 'sx', 'sy', 'n']],
+        ['Desviación estándar muestral', T`s_x = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n - 1}} \qquad s_y = \sqrt{\frac{\sum (y_i - \bar{y})^2}{n - 1}}`, ['sdx', 'sdy', 'x', 'y', 'xb', 'yb', 'n1']],
+        ['Puntaje z', T`z_x = \frac{x_i - \bar{x}}{s_x} \qquad z_y = \frac{y_i - \bar{y}}{s_y}`, ['zx', 'zy', 'x', 'y', 'xb', 'yb', 'sdx', 'sdy']],
+        ['Coeficiente de determinación', T`r^2 = (r)^2`, ['r2', 'r']],
+        ['Valor predicho y residuo', T`\hat{y} = m x + b \qquad e_i = y_i - \hat{y}_i`, ['yh', 'e', 'm', 'b', 'y']]
+      ];
+      h += '<div class="sheet-title" style="color:#495057">Fórmulas auxiliares</div><table class="form-tbl">' + aux.map(([t, f, ks]) => `<tr><td class="fl"><span class="badge-v">${t}</span><div class="mt-3">${fd(f)}</div></td><td class="fr2"><div class="dw">Donde:</div>${legRows(ks)}</td></tr>`).join('') + '</table>';
+      $('#form-wrap').innerHTML = h; math($('#form-wrap'));
+    }
+
+    /* ---------- Teoremas y fundamentos (modal) ---------- */
+    const TABS = [['fund', 'Fundamentos', 'bi-book', '#0b7285'], ['cov', 'Covarianza', 'bi-bullseye', CC], ['r', 'Pearson', 'bi-link-45deg', CR], ['ls', 'Mínimos cuadrados', 'bi-graph-up', CM], ['int', 'Interpretación y cuidados', 'bi-lightbulb', '#f08c00']];
+    const card = (c, title, body) => `<div class="theo-card" style="--c:${c}"><h6>${title}</h6>${body}</div>`;
+    function theoHtml(tab) {
+      const st = ST && isFinite(ST.r) ? ST : null, live = (c, t) => st ? `<div class="box" style="--c:${c}"><strong><i class="bi bi-pc-display me-1"></i>Con tus datos:</strong> ${t}</div>` : '';
+      if (tab === 'fund') return card('#0b7285', '¿Qué estudia la correlación?', String.raw`<p>La <strong>correlación lineal</strong> mide qué tan bien se parece la nube de puntos $(x_i, y_i)$ a una <em>recta</em> y en qué sentido va: hacia arriba (directa) o hacia abajo (inversa). El <strong>diagrama de dispersión</strong> es siempre el primer paso.</p><ul><li><strong>Variable independiente $X$:</strong> la que se usa para explicar o predecir.</li><li><strong>Variable dependiente $Y$:</strong> la que se quiere explicar o predecir.</li><li><strong>Muestra o población:</strong> los estadísticos (letras latinas: $r$, $s_{xy}$, $s_x$) se calculan con una muestra; los parámetros (letras griegas: ρ, σ<sub>xy</sub>, σ<sub>x</sub>) con toda la población.</li></ul>`)
+        + card('#1c7ed6', 'Ruta de cálculo que sigue esta página', String.raw`<ol><li><strong>Covarianza</strong> $s_{xy}$: mide cómo varían juntas $X$ y $Y$ (depende de las unidades).</li><li><strong>Coeficiente de Pearson</strong> $r$: covarianza sin unidades, siempre entre $-1$ y $1$.</li><li><strong>Pendiente</strong> $m$: cuánto cambia $Y$ por cada unidad de $X$.</li><li><strong>Ordenada</strong> $b$: valor de $Y$ cuando $X = 0$.</li><li><strong>Recta</strong> $Y = mx + b$ para predecir y analizar residuos.</li></ol>`)
+        + card('#e8590c', 'Supuestos del modelo lineal', String.raw`<ul><li>La relación entre $X$ y $Y$ es aproximadamente <em>lineal</em>.</li><li>Los datos son <em>pares</em> $(x_i, y_i)$ medidos en la misma unidad de observación.</li><li>Hay variación en ambas variables ($\sum (x-\bar{x})^2 > 0$ y $\sum (y-\bar{y})^2 > 0$); si todos los $x$ son iguales no se puede trazar la recta.</li><li>Sin valores atípicos extremos que dominen el resultado.</li></ul>`);
+      if (tab === 'cov') return card(CC, 'Definición de covarianza', String.raw`<p>La covarianza es el promedio del producto de las desviaciones de cada variable respecto a su media:</p><div class="box">$$s_{xy} = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{n - 1} \qquad σ_{xy} = \frac{\sum_{i=1}^{N} (x_i - μ_x)(y_i - μ_y)}{N}$$</div><p>Se divide entre $n-1$ en muestras (corrección de Bessel: se usaron $\bar{x}$ y $\bar{y}$ estimadas con los mismos datos) y entre $N$ en poblaciones.</p><ul><li><strong>$s_{xy} > 0$:</strong> cuando $x$ está sobre su media, $y$ tiende a estar sobre la suya: relación <em>directa</em>.</li><li><strong>$s_{xy} < 0$:</strong> relación <em>inversa</em>.</li><li><strong>$s_{xy} \approx 0$:</strong> no hay relación <em>lineal</em>.</li><li>Sus unidades son (unidades de $X$) × (unidades de $Y$), por eso su tamaño no dice si la relación es fuerte: de ahí nace $r$.</li></ul>`)
+        + card('#7048e8', 'Teorema (fórmula aritmética o de cálculo)', String.raw`<div class="box">$$\sum (x_i - \bar{x})(y_i - \bar{y}) = \sum x_i y_i - n\,\bar{x}\,\bar{y} = \sum xy - \frac{(\sum x)(\sum y)}{n}$$</div><p class="pf"><strong>Demostración.</strong> Se desarrolla el producto y se suma término a término:</p><div class="box pf">$$\sum (x_i y_i - x_i \bar{y} - \bar{x} y_i + \bar{x}\bar{y}) = \sum x_i y_i - \bar{y} \sum x_i - \bar{x} \sum y_i + n\bar{x}\bar{y}$$</div><p class="pf">Como $\sum x_i = n\bar{x}$ y $\sum y_i = n\bar{y}$, queda $\sum xy - n\bar{x}\bar{y} - n\bar{x}\bar{y} + n\bar{x}\bar{y} = \sum xy - n\bar{x}\bar{y}$. Y como $n\bar{x}\bar{y} = \frac{(\sum x)(\sum y)}{n}$ se obtiene la tercera forma. ∎</p><p class="pf">En población equivale a $σ_{xy} = \dfrac{\sum xy}{N} - μ_x μ_y$, que es $E[XY] - E[X]E[Y]$.</p>`) + live(CC, st ? `$\\sum (x-\\bar{x})(y-\\bar{y}) = ${f2(st.Sxy)}$ y $\\sum xy - \\frac{(\\sum x)(\\sum y)}{n} = ${f2(st.sxy - st.sx * st.sy / st.n)}$: son iguales.` : '')
+        + card('#0c8599', 'Propiedades', String.raw`<ul><li><strong>Simétrica:</strong> $\text{Cov}(X,Y) = \text{Cov}(Y,X)$.</li><li><strong>Con ella misma:</strong> $\text{Cov}(X,X) = \text{Var}(X)$.</li><li><strong>Cambio lineal:</strong> $\text{Cov}(aX+b,\ cY+d) = ac\ \text{Cov}(X,Y)$. Sumar constantes no la cambia; multiplicar la escala sí.</li><li><strong>Suma de variables:</strong> $\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y) + 2\,\text{Cov}(X,Y)$.</li><li><strong>Independencia:</strong> si $X$ y $Y$ son independientes, $\text{Cov} = 0$. El recíproco es falso: con $Y = X^2$ y $X$ simétrica alrededor de 0, la covarianza es 0 y aun así $Y$ depende de $X$.</li></ul>`);
+      if (tab === 'r') return card(CR, 'Definición del coeficiente de Pearson', String.raw`<p>Es la covarianza «estandarizada», es decir, dividida entre las desviaciones estándar para quitar las unidades:</p><div class="box">$$r = \frac{s_{xy}}{s_x\, s_y} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \; \sum (y_i - \bar{y})^2}} = \frac{\sum z_x z_y}{n - 1}$$</div><p class="pf">Los factores $n-1$ del numerador y de las dos desviaciones estándar se cancelan: por eso $r$ vale lo mismo en muestra y en población.</p>`)
+        + card('#7048e8', 'De la forma con desviaciones a la forma con sumas (tu fórmula)', String.raw`<p class="pf">Se sustituyen $\sum (x-\bar{x})(y-\bar{y}) = \sum xy - \frac{\sum x \sum y}{n}$ y $\sum (x-\bar{x})^2 = \sum x^2 - \frac{(\sum x)^2}{n}$ (igual para $y$). Al multiplicar numerador y denominador por $n$:</p><div class="box">$$r = \frac{n\sum xy - (\sum x)(\sum y)}{\sqrt{\left[n\sum x^2 - (\sum x)^2\right]\left[n\sum y^2 - (\sum y)^2\right]}}$$</div><p class="pf">Dentro de la raíz, el producto de los dos corchetes queda multiplicado por $n^2$; al extraer la raíz sale $n$, que es justo el factor con el que se multiplicó el numerador. ∎</p>`)
+        + card('#e03131', 'Teorema: −1 ≤ r ≤ 1', String.raw`<p class="pf"><strong>Demostración.</strong> Con los puntajes z, $\sum z_x^2 = n-1$ y $\sum z_y^2 = n-1$ (cada variable estandarizada tiene varianza 1). Como un cuadrado nunca es negativo:</p><div class="box">$$0 \le \sum (z_x \pm z_y)^2 = \sum z_x^2 \pm 2\sum z_x z_y + \sum z_y^2 = 2(n-1) \pm 2(n-1)\,r = 2(n-1)(1 \pm r)$$</div><p class="pf">Entonces $1 + r \ge 0$ y $1 - r \ge 0$, es decir, $-1 \le r \le 1$. ∎ (Es la desigualdad de Cauchy–Schwarz.) La igualdad ocurre solo si $z_x = \mp z_y$ en todos los pares, o sea, si <em>todos los puntos están exactamente sobre una recta</em>.</p>`) + live(CR, st ? `$\\sum z_x^2 = ${f2(st.rows.reduce((a, q) => a + q.zx * q.zx, 0))}$ y $n - 1 = ${st.n - 1}$ (o $N = ${st.n}$ si es población).` : '')
+        + card('#2f9e44', 'Otras propiedades', String.raw`<ul><li><strong>Sin unidades:</strong> no cambia si se pasa de metros a centímetros.</li><li><strong>Invariancia lineal:</strong> $r(aX+b,\ cY+d) = \text{signo}(ac)\cdot r(X,Y)$.</li><li><strong>Simétrica:</strong> $r(X,Y) = r(Y,X)$.</li><li><strong>$r = 1$:</strong> recta perfecta creciente; <strong>$r = -1$:</strong> recta perfecta decreciente; <strong>$r = 0$:</strong> sin relación lineal.</li><li><strong>Prueba de significancia (opcional):</strong> para $H_0\!: ρ = 0$ se usa $t = r\sqrt{\dfrac{n-2}{1-r^2}}$ con $n-2$ grados de libertad.</li></ul>`);
+      if (tab === 'ls') return card(CM, 'Método de mínimos cuadrados', String.raw`<p>Entre todas las rectas $\hat{y} = mx + b$ se elige la que hace mínima la suma de los residuos al cuadrado:</p><div class="box">$$SSE = \sum e_i^2 = \sum (y_i - m x_i - b)^2$$</div><p class="pf">Se derivan respecto a $b$ y a $m$ y se iguala a 0 (<em>ecuaciones normales</em>):</p><div class="box">$$\sum y = m \sum x + n\,b \qquad\qquad \sum xy = m \sum x^2 + b \sum x$$</div>`)
+        + card(CB, 'Despeje de b (ordenada)', String.raw`<p class="pf">De la primera ecuación normal:</p><div class="box">$$b = \frac{\sum y - m \sum x}{n} = \bar{y} - m\,\bar{x}$$</div><p class="pf">Esto significa que <strong>la recta siempre pasa por el punto de las medias $(\bar{x}, \bar{y})$</strong>.</p>`)
+        + card(CM, 'Despeje de m (pendiente)', String.raw`<p class="pf">Se sustituye $b$ en la segunda ecuación: $\sum xy = m\sum x^2 + \dfrac{(\sum y - m\sum x)\sum x}{n}$. Al multiplicar por $n$:</p><div class="box">$$n\sum xy = m\,n\sum x^2 + \sum x \sum y - m (\sum x)^2 \;\Rightarrow\; m = \frac{n\sum xy - (\sum x)(\sum y)}{n\sum x^2 - (\sum x)^2}$$</div><p class="pf">Formas equivalentes: $m = \dfrac{\sum (x-\bar{x})(y-\bar{y})}{\sum (x-\bar{x})^2} = \dfrac{s_{xy}}{s_x^2} = r\,\dfrac{s_y}{s_x}$. Es un mínimo porque el denominador $\sum (x-\bar{x})^2$ es positivo. ∎</p>`) + live(CM, st ? `$m = ${f4(st.m)}$ y $r\\,\\frac{s_y}{s_x} = ${f4(st.r * st.sdy / st.sdx)}$: coinciden.` : '')
+        + card('#7048e8', 'Coeficiente de determinación r²', String.raw`<p class="pf">La variación total $SST = \sum (y-\bar{y})^2$ se reparte en la explicada por la recta $SSR$ y la que queda en los residuos $SSE$:</p><div class="box">$$SST = SSR + SSE \qquad r^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}$$</div><p class="pf">En regresión lineal simple, $r^2$ es exactamente el cuadrado de $r$ y dice qué porcentaje de la variación de $Y$ explica $X$.</p>`) + live('#7048e8', st ? `$SST = ${f2(st.Syy)}$, $SSE = ${f2(st.SSE)}$, $1 - SSE/SST = ${f4(1 - st.SSE / st.Syy)} = r^2$.` : '')
+        + card('#e8590c', 'Propiedades de los residuos', String.raw`<ul><li>$\sum e_i = 0$ (los errores positivos y negativos se compensan).</li><li>$\sum x_i e_i = 0$ (los residuos no tienen relación lineal con $x$).</li><li>Residuos grandes señalan puntos mal explicados o atípicos.</li></ul>`) + live('#e8590c', st ? `$\\sum e = ${f2(st.sumE)}$.` : '');
+      return card('#f08c00', 'Fuerza de la correlación (criterio usado en esta página)', String.raw`<table class="table table-sm table-bordered text-center bg-white"><thead class="table-light"><tr><th>|r|</th><th>Interpretación</th></tr></thead><tbody><tr><td>0.00 – 0.19</td><td>Muy débil o nula</td></tr><tr><td>0.20 – 0.39</td><td>Débil</td></tr><tr><td>0.40 – 0.69</td><td>Moderada</td></tr><tr><td>0.70 – 0.89</td><td>Fuerte</td></tr><tr><td>0.90 – 1.00</td><td>Muy fuerte</td></tr></tbody></table><div class="small text-muted">Los límites cambian según el área (ciencias sociales, ingeniería, medicina); úsalos como guía, no como regla fija.</div>`)
+        + card('#e03131', 'Precauciones', String.raw`<ul><li><strong>Correlación no es causalidad:</strong> dos variables pueden moverse juntas por una tercera (variable de confusión) o por casualidad.</li><li><strong>Solo mide relaciones lineales:</strong> una parábola perfecta puede tener $r \approx 0$. Siempre mira el diagrama de dispersión.</li><li><strong>Valores atípicos:</strong> un solo punto extremo puede crear o destruir una correlación.</li><li><strong>Cuarteto de Anscombe:</strong> cuatro conjuntos muy distintos con casi los mismos $r$, $m$ y $b$.</li><li><strong>Extrapolar:</strong> predecir fuera del rango de $x$ observado no está respaldado por los datos.</li><li><strong>Rango restringido:</strong> si solo se observa una parte de $X$, $r$ suele verse más pequeño.</li></ul>`)
+        + card('#2f9e44', '¿Qué fórmula conviene usar?', String.raw`<ul><li><strong>Con sumas:</strong> la más directa con calculadora; evita calcular medias (pero cuidado con restar números grandes).</li><li><strong>Con desviaciones:</strong> más estable numéricamente y más clara conceptualmente.</li><li><strong>Con covarianza / desviaciones estándar:</strong> útil cuando ya tienes esos valores de otros cálculos.</li><li><strong>Con puntajes z:</strong> muestra que $r$ es el promedio del producto de valores estandarizados.</li></ul><p class="pf">Todas dan el mismo resultado; la página lo comprueba en cada sección.</p>`);
+    }
+    function showTheo(tab) {
+      tab = tab === '1' || !TABS.some(t => t[0] === tab) ? 'fund' : tab;
+      $('#theo-tabs').innerHTML = TABS.map(([k, t, ic, c]) => `<li class="nav-item"><button class="nav-link ${k === tab ? 'active' : ''}" data-tab="${k}" style="${k === tab ? `background:${c}` : `color:${c}`}"><i class="bi ${ic} me-1"></i>${t}</button></li>`).join('');
+      $('#theo-body').innerHTML = theoHtml(tab); math($('#theo-body'));
+    }
+
+    /* ---------- Actualización general ---------- */
+    const validNum = v => isFinite(parseFloat(String(v).replace(',', '.')));
+    function update(o = {}) {
+      POPS = {}; PID = 0; hideAllPops();
+      ST = stats(); buildP(ST);
+      const st = ST, numsOk = S.xs.concat(S.ys).every(validNum), ok = numsOk && st.n >= 3 && st.Sxx > 0 && st.Syy > 0;
+      if (o.anim) ['cov', 'r', 'm', 'b'].forEach(s => ANIM.add(s));
+      $$('.seg-sw button').forEach(b => b.classList.toggle('on', (b.dataset.popMode === 'poblacion') === S.pop));
+      if (o.full !== false) renderDataBody();
+      renderDataFoot(); renderSums();
+      scatter('sc1', { means: numsOk && st.n >= 1, anim: !!o.anim });
+      $('#err').classList.toggle('d-none', ok); $('#results').classList.toggle('d-none', !ok);
+      if (!ok) $('#err').innerHTML = `<i class="bi bi-exclamation-triangle-fill me-1"></i>${!numsOk ? 'Hay campos vacíos o con texto: escribe un número en cada $x$ y cada $y$.' : st.n < 3 ? 'Se necesitan al menos 3 pares de datos.' : st.Sxx <= 0 ? 'Todos los valores de $x$ son iguales: no se puede calcular la recta (hace falta variación en $x$).' : 'Todos los valores de $y$ son iguales: $r$ no está definido (hace falta variación en $y$).'}`;
+      if (ok) { ['cov', 'r', 'm', 'b'].forEach(renderSec); renderS6(o.anim); }
+      math(document.body); initPops();
+    }
+
+    /* ---------- Eventos ---------- */
+    const EX = { xs: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], ys: ['52', '55', '61', '60', '68', '72', '75', '80', '79', '88'] };
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    function gen(kind) {
+      const xs = [...Array(10)].map((_, i) => i + 1);
+      const ys = xs.map(x => Math.round(kind === 'pos' ? 30 + 5 * x + rnd(-6, 6) : kind === 'neg' ? 95 - 6 * x + rnd(-6, 6) : rnd(30, 80)));
+      S.xs = xs.map(String); S.ys = ys.map(String);
+    }
+    let tmr = null;
+    document.addEventListener('input', e => {
+      const t = e.target;
+      if (t.classList && t.classList.contains('d-in')) { (t.dataset.ax === 'x' ? S.xs : S.ys)[+t.dataset.i] = t.value; clearTimeout(tmr); tmr = setTimeout(() => update({ full: false }), 220); }
+      if (t.id === 'px') { S.px = t.value; if (ST) { renderPred(); drawSc2(false); } }
+    });
+    document.addEventListener('focusin', e => { if (e.target.classList && e.target.classList.contains('d-in')) e.target.select(); });
+    document.addEventListener('click', e => {
+      const t = e.target, vb = t.closest('[data-sec][data-v]');
+      if (vb) { const sec = vb.dataset.sec; S.v[sec] = vb.dataset.v; ANIM.add(sec); hideAllPops(); renderSec(sec); math($('#x-' + sec)); initPops($('#x-' + sec)); return; }
+      const pm = t.closest('[data-pop-mode]'); if (pm) { S.pop = pm.dataset.popMode === 'poblacion'; update({ anim: true }); return; }
+      const fb = t.closest('[data-form]'); if (fb) { hideAllPops(); bootstrap.Modal.getOrCreateInstance($('#formModal')).show(); return; }
+      const tb = t.closest('[data-theo]'); if (tb) { hideAllPops(); showTheo(tb.dataset.theo); bootstrap.Modal.getOrCreateInstance($('#theoModal')).show(); return; }
+      const tt = t.closest('[data-tab]'); if (tt) { showTheo(tt.dataset.tab); return; }
+      const g = t.closest('#g-ex,#g-pos,#g-neg,#g-none,#g-add,#g-del,#g-play'); if (!g) return;
+      if (g.id === 'g-ex') { S.xs = EX.xs.slice(); S.ys = EX.ys.slice(); }
+      else if (g.id === 'g-pos') gen('pos'); else if (g.id === 'g-neg') gen('neg'); else if (g.id === 'g-none') gen('none');
+      else if (g.id === 'g-add') { if (S.xs.length >= 15) return; const lx = num(S.xs[S.xs.length - 1]) + 1, ok = ST && isFinite(ST.m); S.xs.push(String(lx)); S.ys.push(String(ok ? Math.round(ST.m * lx + ST.b + rnd(-4, 4)) : S.ys[S.ys.length - 1])); }
+      else if (g.id === 'g-del') { if (S.xs.length <= 3) return; S.xs.pop(); S.ys.pop(); }
+      else if (g.id === 'g-play') { ['cov', 'r', 'm', 'b'].forEach(s => ANIM.add(s)); update({ anim: true }); return; }
+      update({ anim: true });
+    });
+    $$('.g-opt').forEach(el => el.addEventListener('change', () => ST && drawSc2(true)));
+    document.addEventListener('keydown', e => { const t = e.target.closest && e.target.closest('.tile'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
+    const navLinks = $$('#sec-nav a'), io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+    $$('section.lesson').forEach(s => io.observe(s));
+
+    /* ---------- Arranque ---------- */
+    $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    renderForm();
+    update({ anim: true });
+
+</script>
+</body>
+</html>
