@@ -221,7 +221,7 @@
 
   <div id="app-header"></div>
   <nav class="sec-nav" id="sec-nav">
-    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla de cálculo</a><a href="#s4">4. Resultados</a><a href="#s5">5. Formulario</a><a href="#s6">6. Gráfica</a>
+    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla de cálculo</a><a href="#s4">4. Resultados</a><a href="#s5">5. Gráfica</a><a href="#" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</a>
   </nav>
 
   <main>
@@ -232,7 +232,7 @@
         <p class="lead mb-1">Media • desviación media • varianza • desviación estándar — para <strong>muestra</strong> y para <strong>población</strong></p>
         <p class="mb-3 text-light opacity-75">Pon los límites, elige el número de clases y mira cómo se calcula cada columna de la tabla</p>
         <button class="btn btn-warning rounded-pill px-4 fw-semibold me-1" data-manual="mean"><i class="bi bi-journal-bookmark-fill me-1"></i>Abrir manual de fórmulas</button>
-        <a class="btn btn-outline-light rounded-pill px-4 fw-semibold" href="#s5"><i class="bi bi-journal-richtext me-1"></i>Ir al formulario</a>
+        <button class="btn btn-outline-light rounded-pill px-4 fw-semibold" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Ver el formulario</button>
       </div>
     </header>
 
@@ -325,7 +325,7 @@
       <!-- 4. RESULTADOS -->
       <section class="lesson mb-5" id="s4">
         <div class="card lesson-card">
-          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Resultados: media, desviación media, varianza y desviación estándar</h2><small>Fórmula → qué usamos de la tabla → sustitución → resultado (2 decimales)</small></div></div>
+          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Resultados: media, desviación media, varianza y desviación estándar</h2><small>Fórmula → qué usamos de la tabla → sustitución → resultado (2 decimales)</small></div><button class="btn btn-sm btn-light rounded-pill" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button></div>
           <div class="card-body">
             <div class="row g-3 mb-3" id="tiles"></div>
             <div class="measure" id="m-detail"></div>
@@ -334,21 +334,10 @@
       </section>
       </div>
 
-      <!-- 5. FORMULARIO -->
+      <!-- 5. GRÁFICA -->
       <section class="lesson mb-5" id="s5">
         <div class="card lesson-card">
-          <div class="lesson-head h-5"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Formulario</h2><small>Cada fórmula para muestra y para población, con la explicación de cada elemento</small></div></div>
-          <div class="card-body">
-            <div class="tip-box s-amp small mb-2"><i class="bi bi-info-circle-fill me-1"></i><strong>¿$n - 1$ o $N$?</strong> Si tus datos son <strong>toda la población</strong>, se divide entre $N$. Si son una <strong>muestra</strong> (una parte que representa a la población), la varianza se divide entre $n - 1$ (corrección de Bessel) para no subestimar la dispersión. Con datos agrupados, $x_i$ es la <strong>marca de clase</strong> y cada una se cuenta $f_i$ veces; con datos sin agrupar, $f_i = 1$ y $x_i$ es el dato.</div>
-            <div id="form-wrap"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 6. GRÁFICA -->
-      <section class="lesson mb-5" id="s6">
-        <div class="card lesson-card">
-          <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Gráfica</h2><small>Oculta por defecto: presiona el botón y se genera la más adecuada para datos agrupados</small></div></div>
+          <div class="lesson-head h-6"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Gráfica</h2><small>Oculta por defecto: presiona el botón y se genera la más adecuada para datos agrupados</small></div></div>
           <div class="card-body">
             <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><button class="btn btn-danger rounded-pill px-4 fw-semibold" id="b-chart"><i class="bi bi-graph-up-arrow me-1"></i>Generar gráfica</button><span class="small text-muted" id="chart-hint">Histograma con polígono de frecuencias, con la media y la dispersión de la medida elegida.</span></div>
             <div id="no-chart" class="no-chart"><i class="bi bi-bar-chart-line fs-1"></i><div class="fw-semibold">La gráfica está oculta</div><div class="small">Presiona «Generar gráfica» para verla.</div></div>
@@ -368,6 +357,20 @@
     </div>
   </main>
   <div class="chart-tip" id="chart-tip"></div>
+
+  <!-- MODAL: FORMULARIO -->
+  <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#862e9c"><h5 class="modal-title fw-bold"><i class="bi bi-journal-richtext me-2"></i>Formulario · Media, desviación media, varianza y desviación estándar</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light">
+          <div class="tip-box s-amp small mb-2"><i class="bi bi-info-circle-fill me-1"></i><strong>¿$n - 1$ o $N$?</strong> Si tus datos son <strong>toda la población</strong>, se divide entre $N$. Si son una <strong>muestra</strong> (una parte que representa a la población), la varianza se divide entre $n - 1$ (corrección de Bessel) para no subestimar la dispersión. Con datos agrupados, $x_i$ es la <strong>marca de clase</strong> y cada una se cuenta $f_i$ veces; con datos sin agrupar, $f_i = 1$ y $x_i$ es el dato.</div>
+          <div id="form-wrap"></div>
+        </div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button></div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: MANUAL DE FÓRMULAS -->
   <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true">
@@ -664,6 +667,7 @@
       math($('#man-body')); bootstrap.Modal.getOrCreateInstance($('#manualModal')).show();
     }
     document.addEventListener('click', e => {
+      const fb = e.target.closest('[data-form]'); if (fb) { e.preventDefault(); hideAllPops(); bootstrap.Modal.getOrCreateInstance($('#formModal')).show(); return; }
       const b = e.target.closest('[data-manual]'); if (b) { e.preventDefault(); showManual(b.dataset.manual); }
       const t = e.target.closest('[data-man]'); if (t) showManual(t.dataset.man);
     });
@@ -927,7 +931,7 @@
       const mm = e.target.closest('[data-mm]'); if (mm) { S.m = mm.dataset.mm; ANIM = true; syncBands(); update(); return; }
     });
     document.addEventListener('keydown', e => { const t = e.target.closest && e.target.closest('.tile'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
-    $('#b-chart').onclick = () => { S.chart = !S.chart; if (S.chart) syncBands(); drawChart(); if (S.chart) $('#s6').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    $('#b-chart').onclick = () => { S.chart = !S.chart; if (S.chart) syncBands(); drawChart(); if (S.chart) $('#s5').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
     $$('.g-opt').forEach(el => el.addEventListener('change', drawChart));
 
     /* ---------- Arranque ---------- */
