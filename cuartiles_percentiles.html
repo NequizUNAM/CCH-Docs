@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matemáticas - Cuartiles y percentiles</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, gráficas SVG propias -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --mean:#1864ab; --med:#c26e00; --mode:#5130b9; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con barras de histograma */
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
+    .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
+    .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+
+    /* Tarjetas */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .stat-pill { background:#f1f5f9; border-radius:12px; padding:.45rem .8rem; font-size:.88rem; border:1px solid #e2e8f0; }
+    .stat-pill b { font-family:'Courier New',monospace; }
+    #data { font-family:'Courier New',monospace; font-size:.9rem; }
+
+    /* Instructivo: pasos vivos */
+    .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
+    .istep h6 { color:var(--c); font-weight:800; }
+    .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
+    .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
+
+    /* Fórmulas y leyendas */
+    .fx { overflow-x:auto; padding:.4rem 0; }
+    .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
+    .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
+    .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
+    .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
+
+    /* Tablas de frecuencias */
+    .freq-table { font-size:.95rem; text-align:center; margin:0; }
+    .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
+    .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
+    .freq-table tbody tr { transition:background .2s; cursor:default; }
+    .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
+    .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
+    .hl-legend { font-size:.85rem; min-height:1.4rem; }
+    /* Resaltados por medida */
+    [data-hl="mean"] td.c-use { background:rgba(24,100,171,.2); font-weight:800; }
+    [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
+    [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
+    [data-hl="mode"] tr.r-mode td { background:rgba(112,72,232,.3); font-weight:800; }
+    [data-hl="mode"] tr.r-near td { background:rgba(12,133,153,.2); }
+    .hl-btn.active[data-hl="mean"] { background:var(--mean); color:#fff; border-color:var(--mean); }
+    .hl-btn.active[data-hl="med"] { background:var(--med); color:#fff; border-color:var(--med); }
+    .hl-btn.active[data-hl="mode"] { background:var(--mode); color:#fff; border-color:var(--mode); }
+    .hl-btn.active[data-hl="none"] { background:#334155; color:#fff; border-color:#334155; }
+
+    .measure-head { color:#fff; padding:.9rem 1.2rem; border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .measure { border-radius:14px; box-shadow:var(--shadow-md); background:#fff; overflow:hidden; border:1px solid #e2e8f0; }
+    .result-big { font-size:1.6rem; font-weight:800; font-family:'Courier New',monospace; border-radius:14px; padding:.6rem 1rem; text-align:center; color:#fff; }
+    .real-card { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1.2rem; animation:pop .4s both; }
+    .cmp th { background:#f1f5f9; } .cmp td, .cmp th { padding:.45rem .7rem; text-align:center; }
+    .chart-box { position:relative; height:420px; }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    /* ===== Fórmulas estilo calculadora ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; } .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; } .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; } .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; } .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; } .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; }
+    .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before, .cx .ac.tilde::before { position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    /* Operaciones con popover */
+    .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
+    .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
+    td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
+    th.pp .bi { font-size:.7rem; opacity:.7; }
+    .popover.calc-pop { --bs-popover-max-width:430px; --bs-popover-border-radius:16px; border:0; box-shadow:var(--shadow-lg); font-family:'Segoe UI',sans-serif; }
+    .calc-pop .popover-header { background:linear-gradient(90deg,#0f172a,#1e293b); color:#fff; font-weight:700; font-size:.92rem; border-radius:16px 16px 0 0; }
+    .calc-pop .popover-body { padding:.7rem .9rem; max-height:60vh; overflow:auto; color:#1e293b; }
+    .pcap { font-size:.78rem; font-weight:700; color:#64748b; margin-top:.45rem; text-transform:uppercase; letter-spacing:.02em; } .pcap:first-child { margin-top:0; }
+    .pf { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:.25rem .6rem; overflow-x:auto; } .pf.res { background:#0f172a; color:#e0f2fe; border-color:#0f172a; }
+    .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
+    .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
+    .pm { font-size:.88rem; }
+    /* Pantalla de resultado */
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
+    .cmp-chips { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.5rem; }
+    .cmp-chip { font-size:.8rem; border-radius:999px; padding:.15rem .7rem; background:#f1f5f9; border:1.5px solid #e2e8f0; color:#475569; } .cmp-chip b { font-family:'Courier New',monospace; color:#0f172a; } .cmp-chip.on { background:#fff4e0; border-color:#f08c00; }
+    /* Tabla unificada */
+    .tbl-bar { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 1.2rem; margin-bottom:.8rem; }
+    .real-switch { display:flex; align-items:center; gap:.5rem; background:#fff4e0; border:2px solid #f08c00; border-radius:999px; padding:.35rem 1rem .35rem .6rem; box-shadow:var(--shadow-sm); transition:background .25s, border-color .25s, color .25s; }
+    .real-switch .form-check-input { width:2.6em; height:1.4em; cursor:pointer; margin:0; } .real-switch .form-check-input:checked { background-color:#f08c00; border-color:#f08c00; }
+    .real-switch label { font-weight:800; cursor:pointer; }
+    .real-switch.on { background:#0f172a; border-color:#0f172a; color:#fff; }
+    .freq-table td .old { display:block; font-size:.7rem; color:#94a3b8; text-decoration:line-through; line-height:1; font-weight:500; }
+    .freq-table td.chg { background:#fff4e0; }
+    .freq-table.anim td.chg { animation:flash 1s both; }
+    @keyframes flash { 0% { background:#ffd8a8; transform:scale(1.08); } 100% { background:#fff4e0; transform:none; } }
+    .freq-table th small { display:block; font-weight:500; opacity:.75; font-size:.7rem; }
+    .real-banner { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1rem 1.2rem; animation:pop .4s both; }
+    .imp { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; font-size:.8rem; font-weight:700; padding:.15rem .7rem; margin:.15rem .2rem .15rem 0; }
+    .imp.yes { background:#fff4e0; color:#b45309; border:1.5px solid #f08c00; } .imp.no { background:#f1f5f9; color:#64748b; border:1.5px solid #e2e8f0; }
+    .formula-card { border-radius:14px; padding:.8rem; background:#fff; border:1px solid #e2e8f0; height:100%; }
+
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep,.freq-table.anim td.chg,.real-banner{animation:none} }
+  
+    /* ===== Medidas de dispersión: colores por medida ===== */
+    :root { --m-mean:#1864ab; --m-dm:#0c8599; --m-var:#e8590c; --m-sd:#7048e8; }
+    .h-6 { background:linear-gradient(135deg,#c2255c,#8f1a43); }
+    .hero-bars span { background:#74c0fc; }
+    /* Interruptores */
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.88rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    /* Tabla: columnas coloreadas por medida */
+    #tbl-wrap { --mc:var(--m-mean); }
+    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
+    .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
+    .freq-table th.cb-fi { background:#d6336c; } .freq-table th.cb-x { background:#2f9e44; }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table.anim td.cb-fi, .freq-table.anim td.cb-x { animation:baseWave .7s both; animation-delay:calc(var(--ri,0) * 40ms); }
+    @keyframes baseWave { 0% { filter:brightness(.8); transform:scale(1.06); } 100% { filter:none; transform:none; } }
+    .fi-in { width:72px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #d6336c; border-radius:10px; padding:.15rem .2rem; background:#fff; color:#9c1d4a; }
+    .fi-in:focus { outline:3px solid #fbc2d5; }
+    .col-legend { display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.82rem; margin:.6rem 0 0; }
+    .col-legend span { display:inline-flex; align-items:center; gap:.35rem; } .col-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
+    /* Tarjetas de resultado */
+    .tile { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; transition:transform .25s, box-shadow .25s, background .25s; height:100%; position:relative; overflow:hidden; }
+    .tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .tile.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 10px 26px color-mix(in srgb,var(--c) 45%,transparent); }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; opacity:.85; }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; }
+    .tile .ts { font-size:.78rem; opacity:.8; }
+    .tile .cx { font-size:1em; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } .tile.on::after { background:rgba(255,255,255,.5); }
+    @keyframes tileBar { to { transform:scaleX(1); } }
+    /* Formulario estilo hoja */
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; }
+    .form-tbl td.fl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; }
+    .form-tbl td.fr2 { line-height:1.75; }
+    .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    /* Gráfica SVG */
+    .chart-svg { width:100%; height:auto; display:block; background:#fff; border-radius:14px; border:1px solid #e2e8f0; }
+    .chart-svg text { font-family:'Segoe UI',sans-serif; }
+    .bar-r { transform-box:fill-box; transform-origin:bottom; animation:barUp .8s cubic-bezier(.2,.9,.3,1.1) both; animation-delay:calc(var(--i) * 70ms); cursor:pointer; transition:fill .2s; }
+    .bar-r:hover { fill:#ffd43b; }
+    @keyframes barUp { from { transform:scaleY(0); } }
+    .poly-l { fill:none; stroke:#e03131; stroke-width:3; stroke-dasharray:1; stroke-dashoffset:1; animation:drawL 1.4s .6s forwards; } @keyframes drawL { to { stroke-dashoffset:0; } }
+    .band-r { animation:fadeB .8s 1s both; } @keyframes fadeB { from { opacity:0; } }
+    .vline { stroke-dasharray:7 5; animation:fadeB .8s 1s both; }
+    .chart-tip { position:fixed; z-index:1080; pointer-events:none; background:#0f172a; color:#fff; border-radius:10px; padding:.35rem .7rem; font-size:.82rem; box-shadow:var(--shadow-lg); display:none; }
+    .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
+    @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
+
+    /* ===== Correlación lineal ===== */
+    :root { --c-x:#1c7ed6; --c-y:#e8590c; --c-m:#e03131; --c-b:#2f9e44; --c-r:#7048e8; --c-cov:#0c8599; }
+    .h-6 { background:linear-gradient(135deg,#1864ab,#0b3d6e); }
+    .hero-bars span { background:#74c0fc; }
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.86rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; text-align:left; }
+    .mbtn small { font-weight:600; opacity:.8; margin-left:.3rem; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table td.cb-x { background:rgba(28,126,214,.10); } .freq-table th.cb-x { background:#1c7ed6; }
+    .freq-table td.cb-y { background:rgba(232,89,12,.10); } .freq-table th.cb-y { background:#e8590c; }
+    .freq-table tfoot td.cb-x, .freq-table tfoot td.cb-y { color:#fff; } .freq-table tfoot td.cb-x { background:#1c7ed6; } .freq-table tfoot td.cb-y { background:#e8590c; }
+    .freq-table tfoot tr.mean-r td { background:#f1f5f9; color:#334155; font-weight:700; }
+    .freq-table tfoot tr.mean-r td.cb-x { background:rgba(28,126,214,.18); color:#1864ab; } .freq-table tfoot tr.mean-r td.cb-y { background:rgba(232,89,12,.18); color:#b34000; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table td input { width:84px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #94a3b8; border-radius:10px; padding:.15rem .2rem; background:#fff; }
+    .freq-table td input:focus { outline:3px solid #bac8ff; }
+    .freq-table td.pos { color:#2b8a3e; } .freq-table td.neg { color:#c92a2a; }
+    .tile { cursor:default; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; height:100%; position:relative; overflow:hidden; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--c); }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; color:#0f172a; } .tile .ts { font-size:.78rem; color:#64748b; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } @keyframes tileBar { to { transform:scaleX(1); } }
+    .eq-big { text-align:center; background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:18px; padding:1rem; font-size:1.5rem; box-shadow:var(--shadow-md); }
+    .eq-big .cx { font-size:1.15em; }
+    .viz-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; overflow:hidden; } .viz-card svg { width:100%; height:auto; display:block; } .viz-card text { font-family:'Segoe UI',sans-serif; }
+    .sc-pt { transform-box:fill-box; transform-origin:center; transform:scale(0); animation:scPop .5s var(--d,0s) cubic-bezier(.3,1.6,.5,1) forwards; cursor:pointer; } @keyframes scPop { to { transform:scale(1); } }
+    .sc-fade { opacity:0; animation:scFade .7s var(--d,0s) forwards; } @keyframes scFade { to { opacity:1; } }
+    .sc-line { stroke-dasharray:1; stroke-dashoffset:1; animation:scDraw 1.3s var(--d,.8s) ease forwards; fill:none; } @keyframes scDraw { to { stroke-dashoffset:0; } }
+    .sc-res { transform-box:fill-box; transform-origin:center top; transform:scaleY(0); animation:scRes .5s var(--d,0s) forwards; } @keyframes scRes { to { transform:scaleY(1); } }
+    .sstep { display:flex; gap:.8rem; padding:.7rem .8rem; border-left:5px solid var(--sc,#5f3dc4); background:color-mix(in srgb,var(--sc,#5f3dc4) 6%,#fff); border-radius:0 14px 14px 0; margin:.6rem 0; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 450ms); }
+    @keyframes sIn { from { opacity:0; transform:translateX(-22px); } to { opacity:1; transform:none; } }
+    .sstep .sn { flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:var(--sc,#5f3dc4); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sstep .sb { min-width:0; flex:1 1 auto; } .sstep .st { font-weight:800; color:var(--sc,#3b2a8c); margin-bottom:.15rem; } .sstep .sx { font-size:.85rem; color:#475569; }
+    .sstep .cx.d { text-align:left; margin:.15rem 0; }
+    .rv { display:inline-block; padding:.2rem .8rem; border-radius:999px; font-weight:800; color:#fff; }
+    .theo-card { background:#fff; border:1px solid #e2e8f0; border-left:6px solid var(--c); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .theo-card h6 { color:var(--c); font-weight:800; } .theo-card .box { background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:12px; padding:.6rem .9rem; margin:.5rem 0; }
+    .theo-card ol, .theo-card ul { font-size:.93rem; line-height:1.7; } .theo-card .pf { font-size:.9rem; }
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; } .form-tbl td.fr2 { line-height:1.75; } .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; background:#868e96; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    .strength { display:flex; gap:2px; margin:.4rem 0; } .strength span { flex:1; text-align:center; font-size:.7rem; font-weight:700; color:#fff; padding:.15rem 0; border-radius:4px; opacity:.35; } .strength span.on { opacity:1; transform:scaleY(1.15); box-shadow:var(--shadow-sm); }
+    @media (prefers-reduced-motion:reduce) { .sc-pt,.sc-fade,.sc-line,.sc-res,.sstep,.tile,.tile::after { animation:none !important; opacity:1 !important; transform:none !important; stroke-dashoffset:0 !important; } .tile::after { transform:scaleX(1) !important; } }
+    .noanim .sc-pt, .noanim .sc-fade, .noanim .sc-line, .noanim .sc-res { animation:none !important; opacity:1; transform:none; stroke-dashoffset:0; }
+    .noanim .sc-res { transform:scaleY(1); }
+    .lesson-head h2, .lesson-head small { color:#fff !important; }
+    .lesson-head.h-2 { background:linear-gradient(135deg,#0c8599,#0a5f6d); } .lesson-head.h-3 { background:linear-gradient(135deg,#7048e8,#4c2fb0); }
+    .lesson-head.h-4 { background:linear-gradient(135deg,#e03131,#a61e1e); } .lesson-head.h-5 { background:linear-gradient(135deg,#2f9e44,#1f6e2f); }
+    .tile .tl { text-transform:none; font-size:.85rem; }
+    .modal-header .modal-title { color:#fff !important; }
+
+    /* ===== Los números ===== */
+    .lesson-head.hc { background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 62%,#000)); }
+    .hero-bars span { background:#74c0fc; }
+    .setdef { font-size:1.45rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; background:color-mix(in srgb,var(--c) 10%,#fff); border:2px solid var(--c); color:#0f172a; border-radius:14px; padding:.6rem 1rem; text-align:center; margin-bottom:.6rem; animation:pop .5s both; }
+    .setdef small { display:block; font-size:.8rem; font-weight:600; color:#475569; font-family:'Segoe UI',sans-serif; }
+    .bigsym { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:3.2rem; font-weight:800; line-height:1; color:var(--c); }
+    .chipx { display:inline-block; margin:.15rem; padding:.15rem .7rem; border-radius:999px; font-weight:700; font-size:.9rem; background:#e6f6ea; border:1.5px solid #2f9e44; color:#1b6b2f; font-family:'Cambria Math','Segoe UI Symbol',serif; animation:pop .4s both; }
+    .chipx.no { background:#fdeaea; border-color:#e03131; color:#a61e1e; }
+    .chipx.dep { background:#fff4e0; border-color:#f08c00; color:#a45d00; }
+    button.chipx { cursor:pointer; } button.chipx:hover { transform:translateY(-2px); }
+    .tline { position:relative; margin:.2rem 0 .2rem .6rem; padding-left:1.2rem; border-left:3px solid color-mix(in srgb,var(--c) 40%,#fff); }
+    .tline .ev { position:relative; margin-bottom:.7rem; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 250ms); }
+    .tline .ev::before { content:''; position:absolute; left:-1.65rem; top:.25rem; width:14px; height:14px; border-radius:50%; background:var(--c); border:3px solid #fff; box-shadow:0 0 0 2px var(--c); }
+    .tline .yr { font-weight:800; color:var(--c); font-size:.85rem; } .tline .tx { font-size:.9rem; }
+    .nsvg { width:100%; height:auto; } .nsvg text { font-family:'Cambria Math','Segoe UI Symbol','Segoe UI',serif; pointer-events:none; }
+    .nsvg .reg { cursor:pointer; transform-box:fill-box; transform-origin:center; animation:regIn .7s var(--d,0s) both cubic-bezier(.3,1.4,.5,1); }
+    @keyframes regIn { from { transform:scale(.2); opacity:0; } to { transform:none; opacity:1; } }
+    .nsvg .reg shape, .nsvg .reg .shp { fill:var(--c); fill-opacity:.16; stroke:var(--c); stroke-width:2.5; transition:fill-opacity .3s, stroke-width .3s; }
+    .nsvg .reg:hover .shp { fill-opacity:.28; }
+    .nsvg .reg.sel .shp { fill-opacity:.38; stroke-width:5; }
+    .nsvg .reg.dim .shp { fill-opacity:.07; }
+    .nsel { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin:.6rem 0; }
+    .cl-in { font-size:1.3rem; font-weight:800; text-align:center; font-family:'Courier New',monospace; }
+    .cl-res { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; margin:.8rem 0; }
+    .cl-box { min-width:96px; text-align:center; border-radius:14px; border:2px solid var(--c); padding:.4rem .6rem; background:#fff; animation:pop .5s both; animation-delay:calc(var(--i) * 90ms); }
+    .cl-box .s { font-size:1.5rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; color:var(--c); } .cl-box .t { font-size:1.2rem; font-weight:800; }
+    .cl-box.yes { background:color-mix(in srgb,var(--c) 14%,#fff); } .cl-box.yes .t { color:#2b8a3e; } .cl-box.no { opacity:.55; } .cl-box.no .t { color:#c92a2a; } .cl-box.dep .t { color:#f08c00; }
+    .ctbl td, .ctbl th { text-align:center; vertical-align:middle; } .ctbl td.ok { background:#e6f6ea; color:#2b8a3e; font-weight:800; cursor:pointer; } .ctbl td.bad { background:#fdeaea; color:#c92a2a; font-weight:800; cursor:pointer; } .ctbl td.part { background:#fff4e0; color:#e67700; font-weight:800; cursor:pointer; }
+    .ctbl td:hover { filter:brightness(.95); } .ctbl th.rh { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:1.2rem; }
+    .nline { width:100%; height:auto; } .nline text { font-family:'Segoe UI',sans-serif; }
+    .ngrid { display:grid; grid-template-columns:repeat(10,1fr); gap:5px; max-width:560px; margin:auto; }
+    .nc { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-weight:800; border-radius:10px; background:#f1f5f9; border:2px solid #e2e8f0; cursor:pointer; font-size:clamp(.7rem,1.6vw,1rem); transition:background .4s var(--dl,0s), color .4s var(--dl,0s), transform .2s, opacity .4s; user-select:none; }
+    .nc:hover { transform:scale(1.12); z-index:2; box-shadow:var(--shadow-sm); }
+    .nc.sel { outline:3px solid #0f172a; transform:scale(1.15); }
+    .nc.hl { background:var(--hc); color:#fff; border-color:var(--hc); }
+    .nc.struck { background:#e9ecef; color:#adb5bd; text-decoration:line-through; border-color:#dee2e6; }
+    .nc.cur { background:#fcc419; color:#000; border-color:#f08c00; transform:scale(1.18); }
+    .nc.pr { background:#e03131; color:#fff; border-color:#e03131; }
+    .cardc { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.7rem .5rem; text-align:center; height:100%; transition:transform .25s, box-shadow .25s, background .25s; animation:pop .5s both; animation-delay:calc(var(--i) * 70ms); }
+    .cardc:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); } .cardc.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 8px 22px color-mix(in srgb,var(--c) 45%,transparent); }
+    .cardc .cs { font-size:2rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; line-height:1.1; } .cardc .cn { font-size:.78rem; font-weight:700; } .cardc .cv { font-family:'Courier New',monospace; font-size:.75rem; opacity:.85; }
+    .digits { font-family:'Courier New',monospace; font-size:1.25rem; font-weight:700; word-break:break-all; line-height:1.9; }
+    .digits span { display:inline-block; opacity:0; animation:dIn .35s forwards; animation-delay:calc(var(--i) * 35ms); } .digits .g5 { margin-right:.35rem; }
+    @keyframes dIn { from { opacity:0; transform:translateY(-10px) scale(1.3); color:var(--c); } to { opacity:1; transform:none; } }
+    .demo-box { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:1rem; box-shadow:var(--shadow-sm); }
+    .symtbl td, .symtbl th { vertical-align:middle; } .symtbl td.sy { font-size:1.5rem; font-weight:800; text-align:center; font-family:'Cambria Math','Segoe UI Symbol',serif; color:#2b3a7a; width:90px; }
+    .symtbl tr { animation:pop .4s both; }
+    .catc { border:2px solid var(--c); border-radius:14px; padding:.7rem .9rem; background:#fff; height:100%; animation:pop .4s both; } .catc .cs { font-size:1.6rem; font-weight:800; color:var(--c); font-family:'Cambria Math','Segoe UI Symbol',serif; } .catc .cat { font-size:.72rem; font-weight:800; color:#fff; background:var(--c); border-radius:999px; padding:.05rem .6rem; }
+    .iv-out { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:1.15rem; }
+    .roll-wheel { transform-box:fill-box; transform-origin:center; }
+    details.err { background:#fff; border:1px solid #e2e8f0; border-left:5px solid #e03131; border-radius:12px; padding:.6rem .9rem; margin-bottom:.6rem; } details.err summary { font-weight:800; cursor:pointer; color:#a61e1e; }
+    .nrow { display:flex; flex-wrap:wrap; gap:6px; align-items:flex-end; } .nrow .cube { width:26px; height:26px; border-radius:6px; background:var(--c); color:#fff; font-size:.7rem; font-weight:800; display:flex; align-items:center; justify-content:center; animation:cubeIn .4s both; animation-delay:calc(var(--i) * 40ms); } @keyframes cubeIn { from { transform:translateY(-30px) scale(.3); opacity:0; } to { transform:none; opacity:1; } }
+    tr.per td { background:#fff4e0 !important; font-weight:800; }
+    .overl { text-decoration:overline; text-decoration-thickness:2px; }
+    @media (prefers-reduced-motion:reduce) { .nsvg .reg,.tline .ev,.digits span,.cardc,.cl-box,.nc,.symtbl tr,.catc,.nrow .cube { animation:none !important; opacity:1 !important; transform:none !important; } }
+    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; }
+    .flow-i { display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .8rem; border-radius:999px; background:var(--c); color:#fff; font-weight:700; font-size:.88rem; text-decoration:none; animation:pop .45s calc(var(--i)*.09s) both; transition:transform .2s; }
+    .flow-i:hover { transform:translateY(-3px); color:#fff; }
+    .flow-ar { color:#adb5bd; animation:pop .4s calc(var(--i)*.09s) both; }
+    .apc { display:flex; gap:.7rem; align-items:center; padding:.7rem .8rem; background:#fff; border:2px solid var(--c); border-radius:14px; text-decoration:none; color:#212529; height:100%; animation:pop .45s calc(var(--i)*.07s) both; transition:transform .2s, box-shadow .2s; }
+    a.apc:hover { transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.12); color:#212529; }
+    .apn { flex:none; width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+    .vcard { background:#fff; border:3px solid var(--c); border-radius:16px; padding:1rem; text-align:center; height:100%; animation:pop .45s both; }
+    .vt { font-size:.75rem; font-weight:800; color:var(--c); text-transform:uppercase; letter-spacing:.04em; }
+    .vn { font-size:1.4rem; font-weight:800; color:var(--c); }
+    .vu { font-size:.85rem; color:#6c757d; }
+    .dep-arrow { font-size:2.4rem; color:#495057; animation:nudge 1.2s ease-in-out infinite; }
+    .dep-arrow.rev { transform:scaleX(-1); animation:none; color:#e8590c; }
+    @keyframes nudge { 50% { transform:translateX(8px); } }
+    .ok-c { background:#d3f9d8; color:#2b8a3e; } .bad-c { background:#ffe3e3; color:#c92a2a; }
+    .mulrow { display:flex; align-items:center; gap:.6rem; margin-bottom:.5rem; flex-wrap:wrap; }
+    .mc1 { padding:.4rem .8rem; border-radius:10px; border:2px solid var(--c); color:var(--c); font-weight:800; background:#fff; }
+    .mar { font-weight:800; color:#e03131; animation:nudge 1.2s infinite; }
+    .repc { background:#fff; border:2px solid var(--c); border-radius:14px; padding:.7rem; height:100%; animation:pop .45s calc(var(--i)*.1s) both; }
+    .rh { font-weight:800; color:var(--c); margin-bottom:.4rem; }
+    .inic { display:flex; gap:.7rem; align-items:flex-start; background:#fff; border-left:5px solid var(--c); border-radius:10px; padding:.6rem .8rem; height:100%; box-shadow:0 1px 4px rgba(0,0,0,.08); animation:pop .4s calc(var(--i)*.06s) both; }
+    .inic > i { font-size:1.5rem; color:var(--c); }
+    .mach { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.6rem; padding:.5rem; }
+    .mtok { background:#fff; border:3px solid var(--c); color:var(--c); border-radius:14px; padding:.5rem .9rem; font-weight:800; text-align:center; animation:pop .5s calc(var(--i)*.35s) both; }
+    .mtok small { display:block; font-size:.7rem; opacity:.8; }
+    .mar2 { font-size:1.8rem; color:#495057; animation:pop .4s calc(var(--i)*.35s) both; }
+    .mbox { background:#f3f0ff; border:3px solid var(--c); border-radius:16px; padding:.6rem; display:flex; flex-direction:column; gap:.4rem; animation:pop .5s calc(var(--i)*.35s) both; }
+    .mb-t { text-align:center; font-weight:800; color:var(--c); }
+    .gear { background:var(--c); color:#fff; border-radius:10px; padding:.35rem .8rem; font-weight:800; text-align:center; animation:pop .5s calc(var(--i)*.35s) both; }
+    .gear small { display:block; font-size:.72rem; font-weight:600; }
+    #dt-tbl table { min-width:200px; }
+    .dstrip { display:flex; flex-wrap:wrap; gap:4px; margin-top:.3rem; }
+    .dcell { min-width:38px; text-align:center; border:1.5px solid #adb5bd; border-radius:8px; background:#fff; padding:.1rem .3rem; animation:pop .35s both; }
+    .dcell b { display:block; font-size:.85rem; } .dcell small { display:block; font-size:.62rem; color:#868e96; border-top:1px solid #dee2e6; }
+    tr.tr-sel td { background:#fff3bf !important; font-weight:700; }
+    .pbar { position:relative; height:22px; border-radius:11px; background:#e9ecef; margin:2.2rem 0 .3rem; }
+    .pfill { height:100%; border-radius:11px; transition:width .5s; }
+    .pmark { position:absolute; top:-30px; transform:translateX(-50%); background:var(--c); color:#fff; font-weight:800; border-radius:8px; padding:.05rem .5rem; font-size:.85rem; transition:left .5s; }
+    .pmark::after { content:''; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:var(--c); border-bottom:0; }
+    .decbars { display:flex; align-items:flex-end; gap:6px; height:150px; padding-top:1.2rem; }
+    .dcol { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; cursor:pointer; position:relative; }
+    .dcol i { display:block; width:100%; height:calc(8% + var(--h)*.7); background:#b197fc; border-radius:6px 6px 0 0; transform-origin:bottom; animation:grow .6s calc(var(--i)*.06s) both; transition:background .2s; }
+    .dcol.on i, .dcol:hover i { background:#7048e8; }
+    .dcol span { font-size:.68rem; color:#495057; } .dcol b { font-size:.72rem; color:#7048e8; }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .fex { margin-top:.4rem; background:#fff9db; border-radius:8px; padding:.25rem .55rem; font-size:.82rem; font-weight:600; }
+    #formModal .nav-link { font-weight:700; font-size:.85rem; border:2px solid #0c8599; color:#0c8599; border-radius:999px; background:#fff; }
+    #formModal .nav-link.active { background:#0c8599; color:#fff; }
+    #formModal .box { background:#f1f3f5; border-radius:10px; padding:.4rem .7rem; font-size:.9rem; }
+
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s0">0. Ruta</a><a href="#s1">1. Posición</a><a href="#s2">2. Cuartiles</a><a href="#s3">3. Deciles y percentiles</a><a href="#s4">4. Agrupados</a><a href="#s5">5. Caja</a><a href="#s6">6. Regla empírica</a><a href="#s7">7. Inferencias</a><a href="#s8">8. Comparar</a><a href="#s9">9. Docencia</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bars" id="hero-bars"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-bar-chart-steps text-info me-2"></i>Cuartiles, percentiles y regla empírica</h1>
+        <p class="lead mb-1">Q₁ · Q₂ · Q₃ · deciles · percentiles · diagrama de caja · μ ± kσ</p>
+        <p class="mb-3 text-light opacity-75">Medidas de posición, regla empírica, inferencias informales y comparación de colecciones de datos</p>
+        <a class="btn btn-warning rounded-pill px-4 fw-semibold me-1" href="#s5"><i class="bi bi-box me-1"></i>Diagrama de caja</a>
+        <a class="btn btn-outline-light rounded-pill px-4 fw-semibold me-1" href="#s6"><i class="bi bi-bell me-1"></i>Regla empírica</a>
+        <button class="btn btn-outline-light rounded-pill px-4 fw-semibold" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button>
+      </div>
+    </header>
+    <div class="container mb-5" id="secs">
+      <section class="lesson mb-5" id="s0"></section><section class="lesson mb-5" id="s1"></section><section class="lesson mb-5" id="s2"></section><section class="lesson mb-5" id="s3"></section><section class="lesson mb-5" id="s4"></section><section class="lesson mb-5" id="s5"></section><section class="lesson mb-5" id="s6"></section><section class="lesson mb-5" id="s7"></section><section class="lesson mb-5" id="s8"></section><section class="lesson mb-5" id="s9"></section>
+    </div>
+  </main>
+
+  
+  <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#0c8599"><h5 class="modal-title fw-bold"><i class="bi bi-journal-richtext me-2"></i>Formulario interactivo · Posición y regla empírica</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light"><div id="form-wrap"></div></div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Matemáticas • Cuartiles y percentiles</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" }, { label: "Los números", href: "los_numero.html", icon: "bi-123" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" },
+          { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }
+        ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" }, { label: "Medidas de dispersión", href: "medidas_dispersion.html", icon: "bi-arrows-expand" }, { label: "Amplitudes", href: "amplitudes.html", icon: "bi-distribute-horizontal" }, { label: "Correlación lineal", href: "correlacion_lineal.html", icon: "bi-graph-up-arrow" }, { label: "Cuartiles y percentiles", href: "cuartiles_percentiles.html", icon: "bi-bar-chart-steps" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+          <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div>
+        </div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'cuartiles_percentiles.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+<script>
+/*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { lceil: '⌈', rceil: '⌉', Delta: 'Δ', ne: '≠', rightarrow: '→', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['ne', 'rightarrow', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'tilde': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name}">${x}</span>`; }
+          case 'mathbf': { const h = arg(); last = 'val'; return `<b>${h}</b>`; }
+          case 'log': last = 'val'; return '<span class="tx">log</span>';
+          case 'sum': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">∑</span><span class="sl">${lo}</span></span>`; }
+          case 'pop': { const id = raw().replace(/[^\w-]/g, ''), h = arg(); last = 'val'; return `<span class="pp" data-pop="${id}" tabindex="0" role="button">${h}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    /*ENDFX*/
+
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const escH = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$(?!\d)([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? fd(m[1]) : fi(m[2])); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+    /* ---------- Popovers con el paso a paso de cada operación ---------- */
+    let POPS = {}, PID = 0;
+    // lines: [caption, tex, 'res'?] | [caption, html, 'html'] | 'texto'
+    function reg(title, lines, color) {
+      const id = 'p' + (++PID);
+      POPS[id] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
+        : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('') };
+      return id;
+    }
+    const pp = (id, tex) => T`\pop{${id}}{${tex}}`;
+    function initPops(root) {
+      (root || document).querySelectorAll('[data-pop]').forEach(el => {
+        const d = POPS[el.dataset.pop]; if (!d || bootstrap.Popover.getInstance(el)) return;
+        new bootstrap.Popover(el, { trigger: 'click', html: true, sanitize: false, placement: 'auto', container: 'body', customClass: 'calc-pop', title: d.t, content: d.h, fallbackPlacements: ['top', 'bottom', 'right', 'left'] });
+      });
+    }
+    const hideAllPops = () => $$('[data-pop]').forEach(el => { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); });
+    document.addEventListener('show.bs.popover', e => $$('[data-pop]').forEach(el => { if (el !== e.target) { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); } }));
+    document.addEventListener('click', e => { if (!e.target.closest('[data-pop],.popover')) hideAllPops(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideAllPops(); if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-pop]')) { e.preventDefault(); e.target.click(); } });
+
+    const lesson = (n, title, sub, c, body) => `<div class="card lesson-card"><div class="lesson-head hc" style="--c:${c}"><div class="num">${n}</div><div><h2 class="h4 fw-bold mb-0">${title}</h2><small>${sub}</small></div></div><div class="card-body">${body}</div></div>`;
+    const timeline = (h, c) => `<div class="tline" style="--c:${c}">${h.map(([y, t], i) => `<div class="ev" style="--i:${i}"><div class="yr">${y}</div><div class="tx">${t}</div></div>`).join('')}</div>`;
+    const chips = (a, cls = '') => a.map((x, i) => `<span class="chipx ${cls}" style="animation-delay:${i * 60}ms">${x}</span>`).join('');
+    const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+    const isPrime = n => { if (n < 2 || !Number.isInteger(n)) return false; if (n < 4) return true; if (n % 2 === 0) return false; for (let d = 3; d * d <= n; d += 2) if (n % d === 0) return false; return true; };
+    const factor = n => { const f = []; for (let d = 2; d * d <= n; d++) { let k = 0; while (n % d === 0) { n /= d; k++; } if (k) f.push([d, k]); } if (n > 1) f.push([n, 1]); return f; };
+    const sup = k => String(k).replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+    const ft = (v, d = 3) => isFinite(v) ? String(+v.toFixed(d)) : '—';
+    const fz = (v, d = 3) => ft(v, d).replace('-', '−');
+    const pn = v => v < 0 ? `(${ft(v)})` : ft(v);
+    const eqTex = (a, b) => { let r = 'y = '; if (a === 0) return r + ft(b); r += a === 1 ? 'x' : a === -1 ? '-x' : ft(a) + 'x'; if (b > 0) r += ' + ' + ft(b); else if (b < 0) r += ' - ' + ft(-b); return r; };
+    const money = (u, v) => u === '$' ? '$' + fz(v, 2) : fz(v, 2) + ' ' + u;
+    function niceTicks(lo, hi, cnt = 6) {
+      const span = (hi - lo) || 1, raw = span / cnt, p = Math.pow(10, Math.floor(Math.log10(raw))), q = raw / p, step = (q <= 1 ? 1 : q <= 2 ? 2 : q <= 5 ? 5 : 10) * p;
+      const a = Math.floor(lo / step + 1e-9) * step, out = [];
+      for (let v = a; v <= hi + step * 1e-9; v += step) out.push(+v.toFixed(10));
+      return { ticks: out, lo: out[0], hi: out[out.length - 1] };
+    }
+    /* Gráfica genérica: o = {xr, yr, lines:[{f,c,w,dash}], pts:[{x,y,c,r,l}], segs:[{x1,y1,x2,y2,c,w,dash,l}], xl, yl, anim, from0} */
+    function plot(el, o) {
+      const W = o.W || 560, H = o.H || 360, ml = 54, mr = 16, mt = 16, mb = 44;
+      let [xl, xh] = o.xr, ys = [];
+      (o.lines || []).forEach(l => { ys.push(l.f(xl), l.f(xh)); }); (o.pts || []).forEach(p => ys.push(p.y)); (o.segs || []).forEach(s => ys.push(s.y1, s.y2));
+      if (o.yr) ys = [...o.yr]; else if (o.zero !== false) ys.push(0);
+      let yl = Math.min(...ys), yh = Math.max(...ys); if (yl === yh) { yl -= 1; yh += 1; } const pd = (yh - yl) * .06; if (!o.yr) { yl -= pd; yh += pd; }
+      const NX = niceTicks(xl, xh), NY = niceTicks(yl, yh), sx = v => ml + (v - NX.lo) / (NX.hi - NX.lo) * (W - ml - mr), sy = v => H - mb - (v - NY.lo) / (NY.hi - NY.lo) * (H - mt - mb);
+      const ax0 = Math.min(Math.max(0, NX.lo), NX.hi), ay0 = Math.min(Math.max(0, NY.lo), NY.hi);
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="${o.anim ? '' : 'noanim'}" role="img"><defs><clipPath id="cl-${el.id}"><rect x="${ml}" y="${mt}" width="${W - ml - mr}" height="${H - mt - mb}"/></clipPath></defs>`;
+      NY.ticks.forEach(t => { s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(t)}" y2="${sy(t)}" stroke="#e9ecef"/><text x="${ml - 7}" y="${sy(t) + 4}" text-anchor="end" font-size="11" fill="#64748b">${fz(t, 2)}</text>`; });
+      NX.ticks.forEach(t => { s += `<line y1="${mt}" y2="${H - mb}" x1="${sx(t)}" x2="${sx(t)}" stroke="#f1f3f5"/><text x="${sx(t)}" y="${H - mb + 16}" text-anchor="middle" font-size="11" fill="#64748b">${fz(t, 2)}</text>`; });
+      s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(ay0)}" y2="${sy(ay0)}" stroke="#334155" stroke-width="1.8"/><line x1="${sx(ax0)}" x2="${sx(ax0)}" y1="${mt}" y2="${H - mb}" stroke="#334155" stroke-width="1.8"/>`;
+      s += `<text x="${W - mr - 4}" y="${sy(ay0) - 6}" text-anchor="end" font-size="13" font-weight="800" fill="${COL.X}">${o.xl || 'x'}</text><text x="${sx(ax0) + 8}" y="${mt + 12}" font-size="13" font-weight="800" fill="${COL.Y}">${o.yl || 'y'}</text>`;
+      let d = 0.1;
+      (o.lines || []).forEach(l => { s += `<g clip-path="url(#cl-${el.id})"><path class="sc-line" pathLength="1" style="--d:${d}s" d="M${sx(NX.lo)} ${sy(l.f(NX.lo))} L${sx(NX.hi)} ${sy(l.f(NX.hi))}" stroke="${l.c}" stroke-width="${l.w || 3.2}" ${l.dash ? 'stroke-dasharray="6 5"' : ''} stroke-linecap="round"/></g>`; });
+      (o.curves || []).forEach(l => { let p = '', n = 120; for (let i = 0; i <= n; i++) { const x = NX.lo + (NX.hi - NX.lo) * i / n, y = l.f(x); if (!isFinite(y)) continue; p += (p ? 'L' : 'M') + sx(x) + ' ' + sy(y); } s += `<g clip-path="url(#cl-${el.id})"><path class="sc-line" pathLength="1" style="--d:${d}s" d="${p}" stroke="${l.c}" stroke-width="3.2" fill="none"/></g>`; });
+      (o.segs || []).forEach(g => { s += `<line class="sc-fade" style="--d:.8s" x1="${sx(g.x1)}" y1="${sy(g.y1)}" x2="${sx(g.x2)}" y2="${sy(g.y2)}" stroke="${g.c}" stroke-width="${g.w || 3}" ${g.dash ? 'stroke-dasharray="5 4"' : ''}/>${g.l ? `<text class="sc-fade" style="--d:1s" x="${(sx(g.x1) + sx(g.x2)) / 2 + (g.dx || 0)}" y="${(sy(g.y1) + sy(g.y2)) / 2 + (g.dy || 0)}" font-size="13" font-weight="800" fill="${g.c}" text-anchor="middle">${g.l}</text>` : ''}`; });
+      (o.pts || []).forEach((p, i) => { s += `<circle class="sc-pt" style="--d:${.3 + i * .08}s" cx="${sx(p.x)}" cy="${sy(p.y)}" r="${p.r || 6.5}" fill="${p.c || COL.X}" stroke="#fff" stroke-width="2"><title>(${fz(p.x)}, ${fz(p.y)})</title></circle>${p.l ? `<text class="sc-fade" style="--d:${.6 + i * .08}s" x="${sx(p.x) + (p.dx === undefined ? 9 : p.dx)}" y="${sy(p.y) + (p.dy === undefined ? -9 : p.dy)}" font-size="12" font-weight="800" fill="${p.c || COL.X}">${p.l}</text>` : ''}`; });
+      el.innerHTML = s + '</svg>'; return { sx, sy };
+    }
+
+    const COL = { Q1: '#1c7ed6', Q2: '#e8590c', Q3: '#2f9e44', D: '#7048e8', P: '#d6336c', R: '#e03131', F: '#0c8599', G: '#868e96', Y: '#f08c00', X: '#1c7ed6', L: '#7048e8' };
+    /* ---------- Estadística básica ---------- */
+    const nums = s => String(s).split(/[\s,;]+/).map(parseFloat).filter(isFinite);
+    const srt = a => [...a].sort((x, y) => x - y);
+    const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+    const sdp = a => { const m = mean(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / a.length); };
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const MN = { n1: 'Posición (n+1)·p', inc: 'Excel INC: 1+(n−1)·p', mid: 'Mediana de mitades' };
+    let QM = 'n1';
+    /* cuantil de datos ordenados x, p en [0,1]; devuelve {pos,i,f,a,b,val,clamp} */
+    function quant(x, p, m) {
+      const n = x.length; m = m || QM;
+      if (m === 'mid' && [.25, .5, .75].includes(p)) {
+        const med = h => { const k = h.length, mi = Math.floor(k / 2); return k % 2 ? h[mi] : (h[mi - 1] + h[mi]) / 2; };
+        const lo = x.slice(0, Math.floor(n / 2)), hi = x.slice(Math.ceil(n / 2));
+        const v = p === .5 ? med(x) : p === .25 ? med(lo) : med(hi);
+        return { val: v, mid: true, lo, hi, pos: null };
+      }
+      let pos = m === 'inc' ? 1 + (n - 1) * p : p * (n + 1), clamp = false;
+      if (pos < 1) { pos = 1; clamp = true; } if (pos > n) { pos = n; clamp = true; }
+      const i = Math.floor(pos + 1e-9), f = +(pos - i).toFixed(10), a = x[i - 1], b = x[Math.min(i, n - 1)];
+      return { pos: +pos.toFixed(10), i, f, a, b, val: f === 0 ? a : a + f * (b - a), clamp };
+    }
+    const five = (x, m) => { const q1 = quant(x, .25, m).val, q2 = quant(x, .5, m).val, q3 = quant(x, .75, m).val, iqr = q3 - q1, lf = q1 - 1.5 * iqr, uf = q3 + 1.5 * iqr, ins = x.filter(v => v >= lf && v <= uf); return { min: x[0], q1, q2, q3, max: x[x.length - 1], iqr, lf, uf, wl: Math.min(...ins), wh: Math.max(...ins), out: x.filter(v => v < lf || v > uf) }; };
+    function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    const gauss = r => { let u = 0, v = 0; while (!u) u = r(); v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    const ord = n => n + '.º';
+
+    /* ---------- Datos compartidos ---------- */
+    const PRE = {
+      base: ['Ejemplo base (n = 12)', '4, 6, 7, 9, 10, 12, 13, 15, 16, 18, 21, 25'],
+      tras: ['Traslado a la escuela (min)', '12, 15, 18, 20, 22, 25, 25, 28, 30, 32, 35, 38, 40, 45, 70'],
+      cal: ['Calificaciones de un grupo', '5.5, 6, 6, 6.5, 7, 7, 7.5, 7.5, 8, 8, 8, 8.5, 9, 9, 9.5, 10'],
+      atip: ['Con un valor atípico', '14, 15, 15, 16, 17, 17, 18, 18, 19, 20, 21, 22, 60']
+    };
+    let DS = PRE.base[1], DS_K = 'base';
+    const dsData = () => srt(nums(DS));
+    const presetBtns = () => Object.entries(PRE).map(([k, [n]]) => `<button class="mbtn ${DS_K === k ? 'on' : ''}" data-ds="${k}" style="--c:${COL.D}">${n}</button>`).join('');
+    const methodBtns = () => Object.entries(MN).map(([k, n]) => `<button class="mbtn ${QM === k ? 'on' : ''}" data-qm="${k}" style="--c:${COL.F}">${n}</button>`).join('');
+    const dataBox = id => `<div class="row g-2 align-items-start mb-2"><div class="col-lg-8"><label class="small fw-bold">Datos (separados por coma o espacio; se ordenan solos)</label><textarea class="form-control ds-in" rows="2" id="${id}"></textarea></div><div class="col-lg-4"><label class="small fw-bold">Método de cálculo</label><div class="d-flex flex-wrap gap-1" data-methods>${methodBtns()}</div></div></div><div class="d-flex flex-wrap gap-2 mb-2" data-presets>${presetBtns()}</div>`;
+
+    /* ---------- Gráfica: recta numérica con puntos ---------- */
+    function dotLine(el, x, marks, o = {}) {
+      const W = 680, H = o.H || 150, ml = 24, mr = 24, base = H - 38, lo = Math.min(...x, ...marks.map(m => m.v)), hi = Math.max(...x, ...marks.map(m => m.v)), NT = niceTicks(lo, hi, 8), sx = v => ml + (v - NT.lo) / (NT.hi - NT.lo) * (W - ml - mr);
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="nline ${o.anim === false ? 'noanim' : ''}">`;
+      if (o.bands && marks.length >= 3) { const e = [NT.lo, ...marks.map(m => m.v), NT.hi], cs = [COL.Q1, COL.Q2, COL.Q3, COL.R]; for (let i = 0; i < 4; i++) s += `<rect class="sc-fade" style="--d:${i * .15}s" x="${sx(e[i])}" y="14" width="${Math.max(0, sx(e[i + 1]) - sx(e[i]))}" height="${base - 14}" fill="${['#e7f5ff', '#fff4e6', '#ebfbee', '#fff0f6'][i]}"/><text x="${(sx(e[i]) + sx(e[i + 1])) / 2}" y="26" text-anchor="middle" font-size="11" font-weight="800" fill="${['#1c7ed6', '#e8590c', '#2f9e44', '#d6336c'][i]}">25%</text>`; }
+      s += `<line x1="${ml}" x2="${W - mr}" y1="${base}" y2="${base}" stroke="#334155" stroke-width="2"/>`;
+      NT.ticks.forEach(t => { s += `<line x1="${sx(t)}" x2="${sx(t)}" y1="${base}" y2="${base + 5}" stroke="#334155"/><text x="${sx(t)}" y="${base + 18}" text-anchor="middle" font-size="11" fill="#64748b">${fz(t, 2)}</text>`; });
+      const cnt = {}; x.forEach((v, i) => { const k = v; cnt[k] = (cnt[k] || 0) + 1; s += `<circle class="sc-pt" style="--d:${.1 + i * .04}s" cx="${sx(v)}" cy="${base - 8 - (cnt[k] - 1) * 14}" r="6" fill="${o.dc || '#495057'}" fill-opacity=".8" stroke="#fff" stroke-width="1.5"><title>${v}</title></circle>`; });
+      marks.forEach((m, i) => { s += `<g class="sc-fade" style="--d:${.6 + i * .15}s"><line x1="${sx(m.v)}" x2="${sx(m.v)}" y1="${m.top || 30}" y2="${base}" stroke="${m.c}" stroke-width="2.6" stroke-dasharray="${m.dash ? '5 4' : ''}"/><text x="${sx(m.v)}" y="${(m.top || 30) - 5}" text-anchor="${sx(m.v) < 110 ? 'start' : sx(m.v) > W - 110 ? 'end' : 'middle'}" font-size="12" font-weight="800" fill="${m.c}">${m.l}</text></g>`; });
+      el.innerHTML = s + '</svg>';
+    }
+    const strip = x => `<div class="dstrip">${x.map((v, i) => `<div class="dcell" style="animation-delay:${i * 40}ms"><b>${ft(v)}</b><small>${i + 1}</small></div>`).join('')}</div>`;
+
+    /* ---------- 0. Ruta ---------- */
+    function renderS0() {
+      const FLOW = [['Posición', 'bi-rulers', COL.Q1, '#s1'], ['Cuartiles', 'bi-layout-three-columns', COL.Q2, '#s2'], ['Deciles y percentiles', 'bi-percent', COL.D, '#s3'], ['Datos agrupados', 'bi-table', COL.F, '#s4'], ['Diagrama de caja', 'bi-box', COL.Q3, '#s5'], ['Regla empírica', 'bi-bell', COL.R, '#s6'], ['Inferencias y sesgos', 'bi-search', COL.Y, '#s7'], ['Comparar y decidir', 'bi-arrow-left-right', COL.P, '#s8']];
+      const AP = [['Medidas de posición', 'Dividir los datos ordenados en partes iguales: Q, D y P.', '#s1', COL.Q1], ['Cuartiles y caja', 'Cálculo paso a paso y lectura del diagrama de caja.', '#s5', COL.Q3], ['Regla empírica', 'Qué porcentaje cae a 1, 2 y 3 desviaciones de la media (17).', '#s6', COL.R], ['Inferencias informales', 'Argumentar con medidas y señalar sesgos y límites (aprendizaje previo).', '#s7', COL.Y], ['Comparar colecciones', 'Distribución, tendencia y dispersión para decidir (18).', '#s8', COL.P], ['Manual docente', 'Mapa de aprendizajes, errores, actividades y rúbrica.', '#s9', '#2f9e44']];
+      $('#s0').innerHTML = lesson(0, 'Ruta de aprendizaje', 'Qué se aprende, en qué orden y dónde practicarlo', '#364fc7', `
+        <div class="flow mb-3">${FLOW.map(([t, ic, c, h], i) => `<a href="${h}" class="flow-i" style="--c:${c};--i:${i}"><i class="bi ${ic}"></i><span>${t}</span></a>${i < FLOW.length - 1 ? `<i class="bi bi-chevron-right flow-ar" style="--i:${i}"></i>` : ''}`).join('')}</div>
+        <div class="row g-3">${AP.map(([t, s, h, c], i) => `<div class="col-md-6 col-lg-4"><a href="${h}" class="apc" style="--c:${c};--i:${i}"><div class="apn">${i + 1}</div><div><div class="fw-bold">${t}</div><div class="small text-muted">${s}</div></div></a></div>`).join('')}</div>
+        <div class="tip-box s-ok mt-3"><strong>Idea central:</strong> la <em>media</em> y la <em>desviación estándar</em> resumen un conjunto con dos números, pero no siempre alcanzan. Las <strong>medidas de posición</strong> (cuartiles, deciles, percentiles) dicen <u>dónde</u> queda un dato dentro de todos; el <strong>diagrama de caja</strong> las dibuja; y la <strong>regla empírica</strong> relaciona media y desviación en distribuciones simétricas y de una sola cima.</div>`);
+    }
+
+    /* ---------- 1. Medidas de posición ---------- */
+    let POS1 = 'Q';
+    function renderS1() {
+      const bar = () => {
+        const cuts = POS1 === 'Q' ? [25, 50, 75] : POS1 === 'D' ? [10, 20, 30, 40, 50, 60, 70, 80, 90] : [10, 25, 50, 75, 90], nm = v => POS1 === 'Q' ? 'Q' + v / 25 : POS1 === 'D' ? 'D' + v / 10 : 'P' + v, c = POS1 === 'Q' ? COL.Q2 : POS1 === 'D' ? COL.D : COL.P;
+        const e = [0, ...cuts, 100], N = 40, x = Array.from({ length: N }, (_, i) => +(5 + i * 1.5 + (i * i) / 30).toFixed(1));
+        let s = `<svg viewBox="0 0 700 170" class="nline">`;
+        for (let i = 0; i < N; i++) { const pc = (i + .5) / N * 100, g = e.findIndex((v, j) => pc >= v && pc < e[j + 1]), hue = (g * 360 / (e.length - 1)) % 360; s += `<rect class="sc-fade" style="--d:${i * .015}s" x="${20 + i * 16.4}" y="${110 - (8 + i * 1.9)}" width="14" height="${8 + i * 1.9}" rx="3" fill="hsl(${hue + 200},70%,${g % 2 ? 60 : 50}%)"/>`; }
+        s += `<line x1="20" x2="680" y1="124" y2="124" stroke="#334155" stroke-width="2"/>`;
+        [0, ...cuts, 100].forEach(v => { const xx = 20 + v / 100 * 656; const cut = v > 0 && v < 100; s += `<g class="sc-fade" style="--d:.5s"><line x1="${xx}" x2="${xx}" y1="${cut ? 8 : 118}" y2="130" stroke="${cut ? c : '#334155'}" stroke-width="${cut ? 2.6 : 1.6}" ${cut ? 'stroke-dasharray="5 4"' : ''}/><text x="${xx}" y="145" text-anchor="middle" font-size="11" fill="#64748b">${v}%</text>${cut ? `<text x="${xx}" y="14" text-anchor="middle" font-size="12" font-weight="800" fill="${c}" paint-order="stroke" stroke="#fff" stroke-width="4">${nm(v)}</text>` : ''}</g>`; });
+        return s + `<text x="350" y="166" text-anchor="middle" font-size="12" fill="#64748b">datos ordenados de menor a mayor →</text></svg>`;
+      };
+      $('#s1').innerHTML = lesson(1, 'Medidas de posición', 'Dividir los datos ordenados en partes con el mismo número de datos', COL.Q1, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.Q1}">Cuantiles<small>valores que dividen a los datos ordenados en partes iguales</small></div>
+          <ul class="small" style="line-height:1.8"><li>Primero se <strong>ordenan</strong> los datos de menor a mayor.</li><li><strong>Cuartiles</strong> (Q₁, Q₂, Q₃): 4 partes de ≈25 % cada una.</li><li><strong>Deciles</strong> (D₁ … D₉): 10 partes de ≈10 %.</li><li><strong>Percentiles</strong> (P₁ … P₉₉): 100 partes de ≈1 %.</li><li><strong>Pₖ</strong> es el valor bajo el cual queda ≈ k % de los datos.</li></ul></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:${COL.Q2};margin:0"><h6>Equivalencias que conviene memorizar</h6><div class="table-responsive"><table class="table table-sm table-bordered text-center mb-0 small"><thead class="table-light"><tr><th>Cuartil</th><th>Decil</th><th>Percentil</th><th>Significado</th></tr></thead><tbody>
+            <tr><td>Q₁</td><td>D₂.₅</td><td><b>P₂₅</b></td><td>25 % por debajo</td></tr><tr><td><b>Q₂</b></td><td><b>D₅</b></td><td><b>P₅₀</b></td><td>La <b>mediana</b></td></tr><tr><td>Q₃</td><td>D₇.₅</td><td><b>P₇₅</b></td><td>75 % por debajo</td></tr><tr><td>—</td><td>D₁</td><td>P₁₀</td><td>10 % por debajo</td></tr><tr><td>—</td><td>D₉</td><td>P₉₀</td><td>90 % por debajo</td></tr></tbody></table></div></div></div></div>
+        <h5 class="fw-bold" style="color:${COL.Q1}"><i class="bi bi-play-circle me-1"></i>Mira cómo se reparten los datos</h5>
+        <div class="d-flex flex-wrap gap-2 mb-2">${[['Q', 'Cuartiles'], ['D', 'Deciles'], ['P', 'Percentiles (10, 25, 50, 75, 90)']].map(([k, n]) => `<button class="mbtn ${POS1 === k ? 'on' : ''}" data-pos1="${k}" style="--c:${COL.Q1}">${n}</button>`).join('')}</div>
+        <div class="viz-card">${bar()}</div>
+        <div class="tip-box s-amp small mt-2"><i class="bi bi-lightbulb-fill me-1"></i><strong>Ojo:</strong> los cuantiles dividen <em>por cantidad de datos</em>, no por la distancia entre valores. Pueden quedar muy juntos (zona con muchos datos) o muy separados (zona con pocos).</div>`);
+    }
+
+    /* ---------- 2. Cuartiles ---------- */
+    let K2 = 1;
+    function stepsQ(x, p, label, tex, kTxt, den, m) {
+      const n = x.length, q = quant(x, p, m), k = kTxt;
+      let h = `<div class="sstep" style="--i:0;--sc:${COL.X}"><div class="sn">1</div><div class="sb"><div class="st">Ordenar los datos (n = ${n})</div>${strip(x)}</div></div>`;
+      if (q.mid) {
+        h += `<div class="sstep" style="--i:1;--sc:${COL.Q2}"><div class="sn">2</div><div class="sb"><div class="st">Separar en mitades</div><div class="sx">${p === .5 ? 'Q₂ es la mediana de todos los datos.' : `Mitad ${p === .25 ? 'inferior' : 'superior'} (${n % 2 ? 'sin incluir la mediana' : 'n par: se parte por la mitad'}): <strong>${(p === .25 ? q.lo : q.hi).map(v => ft(v)).join(', ')}</strong>. ${label} es la mediana de esa mitad.`}</div></div></div>`;
+        h += `<div class="sstep" style="--i:2;--sc:${COL.Q3}"><div class="sn">3</div><div class="sb"><div class="st">Resultado</div>${fd(T`${label} = ${ft(q.val, 4)}`)}</div></div>`;
+        return h;
+      }
+      const pf = m === 'inc' ? T`${label}\text{: posición} = 1 + \frac{${den}\,(n-1)}{${den === 4 ? 4 : den}}` : null;
+      const posTex = m === 'inc' ? T`pos = 1 + p\,(n-1) = 1 + ${ft(p, 4)}\,(${n - 1}) = ${ft(q.clamp ? q.pos : 1 + (n - 1) * p, 4)}` : T`pos = p\,(n+1) = ${ft(p, 4)}\,(${n + 1}) = ${ft(p * (n + 1), 4)}`;
+      h += `<div class="sstep" style="--i:1;--sc:${COL.Q2}"><div class="sn">2</div><div class="sb"><div class="st">Calcular la posición</div><div class="sx">p = ${k} (la fracción de datos a la izquierda).</div>${fd(posTex)}<div class="sx">${q.clamp ? 'La posición se acota entre 1 y n: ' : ''}queda entre el dato <strong>${ord(q.i)}</strong> y el <strong>${ord(Math.min(q.i + 1, n))}</strong>.</div></div></div>`;
+      h += `<div class="sstep" style="--i:2;--sc:${COL.Q3}"><div class="sn">3</div><div class="sb"><div class="st">${q.f === 0 ? 'La posición es entera: se lee el dato' : 'Interpolar entre los dos datos vecinos'}</div>${q.f === 0 ? fd(T`${label} = x_{${q.i}} = ${ft(q.a, 4)}`) : fd(T`${label} = x_{${q.i}} + ${ft(q.f, 4)}\,(x_{${q.i + 1}} - x_{${q.i}}) = ${ft(q.a)} + ${ft(q.f, 4)}\,(${ft(q.b)} - ${ft(q.a)}) = ${ft(q.val, 4)}`)}<div class="sx">La parte decimal (${ft(q.f, 4)}) indica qué fracción del camino hay que recorrer entre los dos datos.</div></div></div>`;
+      h += `<div class="sstep" style="--i:3;--sc:${COL.R}"><div class="sn">4</div><div class="sb"><div class="st">Interpretación</div><div class="sx"><strong>${label.replace(/[{}]/g, '').replace('_', '')} = ${ft(q.val, 3)}</strong>: aproximadamente el <strong>${ft(p * 100, 3)} %</strong> de los datos es menor o igual que ${ft(q.val, 3)}.</div></div></div>`;
+      return h;
+    }
+    function renderQ2() {
+      const x = dsData(), n = x.length, el = $('#q2-out'); if (n < 2) { el.innerHTML = '<div class="tip-box s-res">Escribe al menos 2 datos.</div>'; return; }
+      const p = K2 / 4, five3 = [1, 2, 3].map(k => quant(x, k / 4).val);
+      const tbl = `<div class="table-responsive"><table class="table table-sm table-bordered text-center align-middle mb-0 small"><thead class="table-light"><tr><th>Método</th><th style="color:${COL.Q1}">Q₁</th><th style="color:${COL.Q2}">Q₂</th><th style="color:${COL.Q3}">Q₃</th></tr></thead><tbody>${Object.entries(MN).map(([m, nm]) => `<tr class="${m === QM ? 'tr-sel' : ''}"><td class="text-start fw-bold">${nm}</td>${[1, 2, 3].map(k => `<td>${ft(quant(x, k / 4, m).val, 3)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+      el.innerHTML = `<div class="d-flex gap-2 mb-2">${[1, 2, 3].map(k => `<button class="mbtn ${K2 === k ? 'on' : ''}" data-k2="${k}" style="--c:${[COL.Q1, COL.Q2, COL.Q3][k - 1]}">Q${'₁₂₃'[k - 1]}</button>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-7">${stepsQ(x, p, 'Q_' + K2, '', `${K2}/4 = ${ft(p, 3)}`, K2, QM)}</div>
+        <div class="col-lg-5"><div class="viz-card"><div id="q2-line"></div></div><div class="small text-muted mt-1">Cada cuarto de la recta contiene ≈ 25 % de los datos.</div><h6 class="fw-bold mt-3" style="color:${COL.F}">¿Por qué salen resultados distintos?</h6>${tbl}<div class="small text-muted mt-1">Con pocos datos los métodos difieren un poco; con muchos datos casi coinciden. Lo importante: <strong>declarar el método</strong>. En esta página: «${MN[QM]}».</div></div></div>`;
+      dotLine($('#q2-line'), x, [1, 2, 3].map((k, i) => ({ v: five3[i], l: 'Q' + '₁₂₃'[i], c: [COL.Q1, COL.Q2, COL.Q3][i] })), { bands: true });
+    }
+    function renderS2() {
+      $('#s2').innerHTML = lesson(2, 'Cuartiles (datos no agrupados)', 'Q₁, Q₂ y Q₃: posición, interpolación e interpretación', COL.Q2, `
+        <div class="setdef mb-2" style="--c:${COL.Q2}">posición = p·(n + 1) &nbsp;→&nbsp; Qₖ con p = k/4<small>Si la posición no es entera, se interpola entre el dato anterior y el siguiente</small></div>
+        <div class="row g-2 mb-3"><div class="col-md-4"><div class="theo-card" style="--c:${COL.Q1};margin:0"><h6>Q₁ · primer cuartil</h6><p class="small mb-0">Deja ≈ 25 % de los datos por debajo y ≈ 75 % por encima.</p></div></div><div class="col-md-4"><div class="theo-card" style="--c:${COL.Q2};margin:0"><h6>Q₂ · segundo cuartil</h6><p class="small mb-0">Es la <strong>mediana</strong>: 50 % por debajo y 50 % por encima.</p></div></div><div class="col-md-4"><div class="theo-card" style="--c:${COL.Q3};margin:0"><h6>Q₃ · tercer cuartil</h6><p class="small mb-0">Deja ≈ 75 % por debajo y ≈ 25 % por encima.</p></div></div></div>
+        <div id="q2-top">${dataBox('ds-2')}</div><div id="q2-out"></div>`);
+    }
+
+    /* ---------- 3. Deciles y percentiles ---------- */
+    let T3 = 'P', K3 = 90, V3 = 20;
+    function renderQ3() {
+      const x = dsData(), n = x.length, el = $('#q3-out'); if (n < 2) { el.innerHTML = '<div class="tip-box s-res">Escribe al menos 2 datos.</div>'; return; }
+      const den = T3 === 'P' ? 100 : 10, p = K3 / den, lab = T3 + '_{' + K3 + '}', m = QM === 'mid' ? 'n1' : QM, q = quant(x, p, m), c = T3 === 'P' ? COL.P : COL.D;
+      const below = x.filter(v => v < V3).length, eq = x.filter(v => v === V3).length, pr = (below + .5 * eq) / n * 100, le = x.filter(v => v <= V3).length / n * 100;
+      const decs = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => quant(x, k / 10, m).val), mx = Math.max(...x), mnv = Math.min(...x);
+      el.innerHTML = `<div class="row g-3"><div class="col-lg-7">${QM === 'mid' ? '<div class="tip-box s-amp small mb-2">El método de mitades solo existe para cuartiles; aquí se usa Posición (n+1)·p.</div>' : ''}${stepsQ(x, p, lab, '', `${K3}/${den} = ${ft(p, 4)}`, K3, m)}</div>
+        <div class="col-lg-5"><div class="viz-card"><div class="pbar"><div class="pfill" style="width:${K3 / den * 100}%;background:${c}"></div><div class="pmark" style="left:${K3 / den * 100}%;--c:${c}">${T3}${K3}</div></div><div class="small text-center mt-3">≈ <strong>${ft(K3 / den * 100, 3)} %</strong> de los datos son ≤ <strong style="color:${c}">${ft(q.val, 3)}</strong></div></div>
+          <h6 class="fw-bold mt-3" style="color:${COL.D}">Los nueve deciles</h6><div class="decbars">${decs.map((v, i) => `<div class="dcol ${T3 === 'D' && K3 === i + 1 ? 'on' : ''}" data-dec="${i + 1}" style="--h:${(v - mnv) / ((mx - mnv) || 1) * 100}%;--i:${i}"><span>${ft(v, 2)}</span><i></i><b>D${'₁₂₃₄₅₆₇₈₉'[i]}</b></div>`).join('')}</div></div></div>
+        <hr><h5 class="fw-bold" style="color:${COL.P}"><i class="bi bi-arrow-left-right me-1"></i>Al revés: ¿en qué percentil está un valor?</h5>
+        <div class="row g-2 align-items-end mb-2"><div class="col-6 col-md-3"><label class="small fw-bold">Valor v</label><input id="v3" type="number" step="any" class="form-control" value="${V3}"></div></div>
+        <div class="row g-3"><div class="col-lg-7">${fd(T`PR(v) = \frac{c_{<} + 0.5\,c_{=}}{n}\cdot 100 = \frac{${below} + 0.5(${eq})}{${n}}\cdot 100 = ${ft(pr, 2)}`)}<div class="small"><span class="chipx">c&lt; = ${below} datos menores</span> <span class="chipx">c= = ${eq} iguales</span> <span class="chipx">${ft(le, 1)} % de los datos ≤ ${ft(V3)}</span></div></div>
+        <div class="col-lg-5"><div class="tip-box s-ok small mb-0">Un dato con <strong>rango percentil ≈ ${ft(pr, 0)}</strong> supera a cerca del ${ft(pr, 0)} % del grupo. Hay variantes (solo «menores» o «menores o iguales»); lo que importa es decir cuál se usó.</div></div></div>
+        <div class="row g-2 mt-2">${[['Salud', 'Talla de un bebé en el percentil 25: 25 % de bebés de su edad miden igual o menos. No es «malo»: es una posición.'], ['Examen de ingreso', 'Puntaje en el percentil 90: superó a ≈ 90 % de quienes presentaron.'], ['Ingresos', 'El P₉₀ del ingreso familiar marca desde dónde está el 10 % con más ingreso.']].map(([t, d], i) => `<div class="col-md-4"><div class="inic" style="--c:${COL.P};--i:${i}"><i class="bi bi-lightbulb"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>`;
+    }
+    function renderS3() {
+      $('#s3').innerHTML = lesson(3, 'Deciles y percentiles', 'Dk con p = k/10 · Pk con p = k/100 · rango percentil', COL.D, `
+        <div class="setdef mb-2" style="--c:${COL.D}">posición = p·(n + 1) &nbsp; con &nbsp; p = k/10 (decil) &nbsp; o &nbsp; p = k/100 (percentil)<small>Es la misma idea que los cuartiles, solo cambia la fracción p</small></div>
+        <div id="q3-top">${dataBox('ds-3')}</div>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="d-flex gap-2">${[['D', 'Deciles'], ['P', 'Percentiles']].map(([k, n]) => `<button class="mbtn" data-t3="${k}" data-on="${T3 === k}" style="--c:${COL.D}">${n}</button>`).join('')}</div>
+          <label class="small fw-bold ms-2" id="k3-lab"></label><input type="range" class="form-range" id="k3" style="max-width:340px;flex:1"><div class="d-flex gap-1 flex-wrap" id="k3-chips"></div></div>
+        <div id="q3-out"></div>`);
+      syncK3();
+    }
+    function syncK3() {
+      const mx = T3 === 'P' ? 99 : 9; K3 = Math.min(Math.max(K3, 1), mx);
+      const r = $('#k3'); r.min = 1; r.max = mx; r.value = K3; $('#k3-lab').innerHTML = `${T3 === 'P' ? 'Percentil' : 'Decil'} k = <span style="color:${T3 === 'P' ? COL.P : COL.D}">${K3}</span>`;
+      $$('[data-t3]').forEach(b => b.classList.toggle('on', b.dataset.t3 === T3));
+      $('#k3-chips').innerHTML = (T3 === 'P' ? [10, 25, 50, 75, 90, 95] : [1, 3, 5, 7, 9]).map(v => `<button class="mbtn" data-k3="${v}" style="--c:${COL.D};padding:.1rem .6rem">${T3}${v}</button>`).join('');
+      renderQ3();
+    }
+    function renderAllData() { ['ds-2', 'ds-3', 'ds-5'].forEach(id => { const e = $('#' + id); if (e && e !== document.activeElement) e.value = DS; });['[data-presets]'].forEach(s => $$(s).forEach(e => e.innerHTML = presetBtns())); $$('[data-methods]').forEach(e => e.innerHTML = methodBtns()); renderQ2(); renderQ3(); renderB5(); }
+
+    /* ---------- 4. Datos agrupados ---------- */
+    const GR = {
+      est: { n: 'Estaturas (cm)', u: 'cm', L: 150, c: 5, f: [4, 8, 14, 13, 7, 4] },
+      red: { n: 'Horas en redes por semana', u: 'h', L: 0, c: 5, f: [6, 12, 18, 9, 5] },
+      sal: { n: 'Pago semanal (cientos de pesos)', u: '', L: 2, c: 2, f: [10, 22, 18, 7, 3] }
+    };
+    let G4 = 'est', T4 = 'Q', K4 = 1;
+    function renderS4() {
+      $('#s4').innerHTML = lesson(4, 'Datos agrupados en clases', 'Qₖ, Dₖ y Pₖ a partir de una tabla de frecuencias', COL.F, `
+        <div class="setdef mb-2" style="--c:${COL.F}">Medida = L + ( (posición − F<sub>ant</sub>) / f ) · c<small>posición = k·N/4 (cuartil) · k·N/10 (decil) · k·N/100 (percentil)</small></div>
+        <ul class="small" style="line-height:1.75"><li><strong>L</strong>: límite inferior de la <u>clase que contiene la posición</u> · <strong>F<sub>ant</sub></strong>: frecuencia acumulada de la clase anterior · <strong>f</strong>: frecuencia de esa clase · <strong>c</strong>: ancho de clase · <strong>N</strong>: total de datos.</li><li>Aquí <em>no</em> se usa (n+1): con clases se supone que los datos se reparten parejo dentro de cada clase (interpolación lineal) y por eso se usa <strong>k·N/…</strong>.</li></ul>
+        <div class="d-flex flex-wrap gap-2 mb-2">${Object.entries(GR).map(([k, g]) => `<button class="mbtn ${G4 === k ? 'on' : ''}" data-g4="${k}" style="--c:${COL.F}">${g.n}</button>`).join('')}</div>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="d-flex gap-2">${[['Q', 'Cuartil'], ['D', 'Decil'], ['P', 'Percentil']].map(([k, n]) => `<button class="mbtn" data-t4="${k}" style="--c:${COL.F}">${n}</button>`).join('')}</div><label class="small fw-bold ms-2" id="k4-lab"></label><input type="range" class="form-range" id="k4" style="max-width:340px;flex:1"></div>
+        <div id="g4-out"></div>`);
+      syncK4();
+    }
+    function syncK4() {
+      const mx = T4 === 'P' ? 99 : T4 === 'D' ? 9 : 3; K4 = Math.min(Math.max(K4, 1), mx); const r = $('#k4'); r.min = 1; r.max = mx; r.value = K4;
+      $('#k4-lab').innerHTML = `k = <span style="color:${COL.F}">${K4}</span>`; $$('[data-t4]').forEach(b => b.classList.toggle('on', b.dataset.t4 === T4)); renderG4();
+    }
+    function renderG4() {
+      const g = GR[G4], N = g.f.reduce((a, b) => a + b, 0), den = T4 === 'P' ? 100 : T4 === 'D' ? 10 : 4, pos = K4 * N / den, F = []; g.f.reduce((a, v, i) => (F[i] = a + v), 0);
+      let i = F.findIndex(v => v >= pos); if (i < 0) i = g.f.length - 1; const Fa = i ? F[i - 1] : 0, Lc = g.L + i * g.c, val = Lc + (pos - Fa) / g.f[i] * g.c, lab = T4 + '_{' + K4 + '}', c = T4 === 'Q' ? COL.Q2 : T4 === 'D' ? COL.D : COL.P;
+      const tbl = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr><th style="background:#364fc7">Clase</th><th style="background:${COL.X}">f</th><th style="background:${COL.F}">F</th><th style="background:#868e96">% acum.</th></tr></thead><tbody>${g.f.map((f, j) => `<tr class="${j === i ? 'tr-sel' : ''}" style="animation:pop .35s ${j * .06}s both"><td>${ft(g.L + j * g.c)} – ${ft(g.L + (j + 1) * g.c)}</td><td>${f}</td><td>${F[j]}</td><td>${ft(F[j] / N * 100, 1)}</td></tr>`).join('')}<tr class="fw-bold"><td>Total</td><td>${N}</td><td></td><td></td></tr></tbody></table>`;
+      $('#g4-out').innerHTML = `<div class="row g-3"><div class="col-lg-4"><div class="table-responsive rounded-3 border">${tbl}</div></div>
+        <div class="col-lg-8"><div class="sstep" style="--i:0;--sc:${COL.X}"><div class="sn">1</div><div class="sb"><div class="st">Posición</div>${fd(T`pos = \frac{k\,N}{${den}} = \frac{${K4}\cdot ${N}}{${den}} = ${ft(pos, 4)}`)}</div></div>
+          <div class="sstep" style="--i:1;--sc:${COL.F}"><div class="sn">2</div><div class="sb"><div class="st">Clase que contiene la posición</div><div class="sx">La primera F que es ≥ ${ft(pos, 3)} es <strong>${F[i]}</strong> → clase <strong>${ft(Lc)} – ${ft(Lc + g.c)}</strong>. Entonces L = ${ft(Lc)}, F<sub>ant</sub> = ${Fa}, f = ${g.f[i]}, c = ${g.c}.</div></div></div>
+          <div class="sstep" style="--i:2;--sc:${c}"><div class="sn">3</div><div class="sb"><div class="st">Sustituir en la fórmula</div>${fd(T`${lab} = L + \frac{pos - F_{ant}}{f}\cdot c = ${ft(Lc)} + \frac{${ft(pos, 4)} - ${Fa}}{${g.f[i]}}\cdot ${g.c} = ${ft(val, 3)}`)}</div></div>
+          <div class="sstep" style="--i:3;--sc:${COL.R}"><div class="sn">4</div><div class="sb"><div class="st">Interpretación</div><div class="sx"><strong>${T4}${K4} ≈ ${ft(val, 2)} ${g.u}</strong>: alrededor del ${ft(K4 / den * 100, 3)} % de los datos es menor o igual a ese valor.</div></div></div></div></div>
+        <div class="viz-card mt-3"><div id="g4-plot"></div></div><div class="small text-muted">Ojiva: frecuencia acumulada contra límite superior de cada clase. La medida se lee donde la altura <em>pos</em> corta a la poligonal.</div>`;
+      const segs = [], pts = [{ x: g.L, y: 0, c: '#495057', r: 4 }]; let prev = [g.L, 0];
+      g.f.forEach((f, j) => { const nx = g.L + (j + 1) * g.c; segs.push({ x1: prev[0], y1: prev[1], x2: nx, y2: F[j], c: COL.X, w: 3 }); pts.push({ x: nx, y: F[j], c: COL.X, r: 5 }); prev = [nx, F[j]]; });
+      segs.push({ x1: g.L, y1: pos, x2: val, y2: pos, c, dash: true, w: 2.4 }, { x1: val, y1: pos, x2: val, y2: 0, c, dash: true, w: 2.4 }); pts.push({ x: val, y: pos, c, r: 8, l: T4 + K4 + ' ≈ ' + ft(val, 1), dy: -12 });
+      plot($('#g4-plot'), { xr: [g.L, g.L + g.f.length * g.c], yr: [0, N * 1.05], segs, pts, xl: g.u || 'x', yl: 'F', H: 300, anim: true });
+    }
+
+    /* ---------- 5. Diagrama de caja ---------- */
+    let FEN = true;
+    function boxSvg(groups, o = {}) {
+      const all = groups.flatMap(g => g.x), NT = niceTicks(Math.min(...all), Math.max(...all), 8), W = 700, ml = groups.length > 1 ? 96 : 24, mr = 24, sx = v => ml + (v - NT.lo) / (NT.hi - NT.lo) * (W - ml - mr), rowH = 84, hh = o.hist ? 120 : 0, H = hh + groups.length * rowH + 40;
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="nline ${o.anim === false ? 'noanim' : ''}">`;
+      NT.ticks.forEach(t => { s += `<line x1="${sx(t)}" x2="${sx(t)}" y1="8" y2="${H - 30}" stroke="#f1f3f5"/><text x="${sx(t)}" y="${H - 14}" text-anchor="middle" font-size="11" fill="#64748b">${fz(t, 2)}</text>`; });
+      s += `<line x1="${ml}" x2="${W - mr}" y1="${H - 30}" y2="${H - 30}" stroke="#334155" stroke-width="2"/>`;
+      if (o.hist) { const x = groups[0].x, k = Math.max(4, Math.ceil(1 + Math.log2(x.length))), bw = (NT.hi - NT.lo) / k, bins = Array(k).fill(0); x.forEach(v => { bins[Math.min(k - 1, Math.floor((v - NT.lo) / bw))]++; }); const mb = Math.max(...bins); bins.forEach((b, i) => { const h = b / mb * (hh - 24); s += `<rect class="sc-fade" style="--d:${i * .06}s" x="${sx(NT.lo + i * bw) + 1}" y="${hh - 8 - h}" width="${sx(NT.lo + bw) - sx(NT.lo) - 2}" height="${h}" rx="3" fill="#a5d8ff" stroke="#74c0fc"/><text x="${sx(NT.lo + (i + .5) * bw)}" y="${hh - 11 - h}" text-anchor="middle" font-size="10" fill="#1c7ed6">${b || ''}</text>`; }); }
+      groups.forEach((g, gi) => {
+        const f = five(g.x, QM), cy = hh + gi * rowH + 46, bh = 34, c = g.c || COL.X, wl = f.wl, wh = f.wh;
+        if (groups.length > 1) s += `<text x="${ml - 10}" y="${cy + 4}" text-anchor="end" font-size="13" font-weight="800" fill="${c}">${g.name}</text>`;
+        if (o.fences !== false) s += `<g class="sc-fade" style="--d:1s"><line x1="${sx(f.lf)}" x2="${sx(f.lf)}" y1="${cy - 22}" y2="${cy + 22}" stroke="#adb5bd" stroke-dasharray="4 4"/><line x1="${sx(f.uf)}" x2="${sx(f.uf)}" y1="${cy - 22}" y2="${cy + 22}" stroke="#adb5bd" stroke-dasharray="4 4"/></g>`;
+        s += `<line class="sc-line" pathLength="1" x1="${sx(wl)}" x2="${sx(f.q1)}" y1="${cy}" y2="${cy}" stroke="#495057" stroke-width="2.4" style="--d:.3s"/><line class="sc-line" pathLength="1" x1="${sx(f.q3)}" x2="${sx(wh)}" y1="${cy}" y2="${cy}" stroke="#495057" stroke-width="2.4" style="--d:.3s"/>`;
+        s += `<line x1="${sx(wl)}" x2="${sx(wl)}" y1="${cy - 10}" y2="${cy + 10}" stroke="#495057" stroke-width="2.4"/><line x1="${sx(wh)}" x2="${sx(wh)}" y1="${cy - 10}" y2="${cy + 10}" stroke="#495057" stroke-width="2.4"/>`;
+        s += `<rect class="sc-fade" style="--d:.5s" x="${sx(f.q1)}" y="${cy - bh / 2}" width="${Math.max(1, sx(f.q2) - sx(f.q1))}" height="${bh}" fill="${c}" fill-opacity=".28" stroke="${c}" stroke-width="2.4"/><rect class="sc-fade" style="--d:.65s" x="${sx(f.q2)}" y="${cy - bh / 2}" width="${Math.max(1, sx(f.q3) - sx(f.q2))}" height="${bh}" fill="${COL.Q3}" fill-opacity=".28" stroke="${COL.Q3}" stroke-width="2.4"/>`;
+        s += `<line x1="${sx(f.q2)}" x2="${sx(f.q2)}" y1="${cy - bh / 2 - 3}" y2="${cy + bh / 2 + 3}" stroke="${COL.Q2}" stroke-width="4.5" stroke-linecap="round"/>`;
+        if (o.labels !== false) [[f.q1, 'Q₁', COL.Q1], [f.q2, 'Q₂', COL.Q2], [f.q3, 'Q₃', COL.Q3]].forEach(([v, l, cc]) => { s += `<text x="${sx(v)}" y="${cy - bh / 2 - 8}" text-anchor="middle" font-size="11.5" font-weight="800" fill="${cc}" paint-order="stroke" stroke="#fff" stroke-width="3">${l}=${ft(v, 2)}</text>`; });
+        const many = f.out.length > 6; f.out.forEach((v, i) => { s += `<circle class="sc-pt" style="--d:${.9 + i * .1}s" cx="${sx(v)}" cy="${cy}" r="${many ? 3 : 6}" fill="#fff" stroke="${COL.R}" stroke-width="${many ? 1.6 : 2.6}"><title>Atípico: ${v}</title></circle>${many ? '' : `<text x="${sx(v)}" y="${cy + 24}" text-anchor="middle" font-size="11" font-weight="800" fill="${COL.R}">${ft(v, 2)}</text>`}`; });
+      });
+      return s + '</svg>';
+    }
+    function renderB5() {
+      const el = $('#b5-out'); if (!el) return; const x = dsData(), n = x.length; if (n < 4) { el.innerHTML = '<div class="tip-box s-res">Escribe al menos 4 datos.</div>'; return; }
+      const f = five(x, QM), d1 = f.q2 - f.q1, d2 = f.q3 - f.q2, lw = f.q1 - f.wl, uw = f.wh - f.q3;
+      let forma = 'La caja y los bigotes son bastante parecidos a ambos lados: forma <strong>aproximadamente simétrica</strong>.';
+      if (d2 - d1 > .25 * f.iqr || uw - lw > .5 * f.iqr) forma = 'La mediana está pegada a Q₁ y/o el bigote derecho es más largo: <strong>sesgo a la derecha</strong> (cola de valores altos); la media tiende a ser mayor que la mediana.';
+      else if (d1 - d2 > .25 * f.iqr || lw - uw > .5 * f.iqr) forma = 'La mediana está pegada a Q₃ y/o el bigote izquierdo es más largo: <strong>sesgo a la izquierda</strong> (cola de valores bajos); la media tiende a ser menor que la mediana.';
+      const tiles = [['Mínimo', f.min, COL.G], ['Q₁', f.q1, COL.Q1], ['Q₂', f.q2, COL.Q2], ['Q₃', f.q3, COL.Q3], ['Máximo', f.max, COL.G]];
+      el.innerHTML = `<div class="viz-card mb-2"><div class="d-flex flex-wrap gap-2 mb-1"><button class="mbtn ${FEN ? 'on' : ''}" id="b5-fen" style="--c:#868e96">Mostrar cercas (1.5·RIC)</button><div class="input-group input-group-sm" style="max-width:260px"><input id="b5-add" type="number" step="any" class="form-control" placeholder="Agregar un dato"><button class="btn btn-outline-dark" id="b5-addb"><i class="bi bi-plus-lg"></i></button></div><button class="btn btn-sm btn-outline-danger rounded-pill" id="b5-addout"><i class="bi bi-exclamation-triangle me-1"></i>Agregar un atípico</button></div><div id="b5-plot"></div></div>
+        <div class="row g-2 mb-3">${tiles.map(([t, v, c], i) => `<div class="col"><div class="tile" style="--c:${c};--i:${i}"><div class="tl">${t}</div><div class="fw-bold fs-5" style="color:${c}">${ft(v, 3)}</div></div></div>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-6"><div class="sstep" style="--i:0;--sc:${COL.X}"><div class="sn">1</div><div class="sb"><div class="st">Resumen de cinco números</div><div class="sx">Mín = ${ft(f.min)} · Q₁ = ${ft(f.q1, 3)} · Q₂ = ${ft(f.q2, 3)} · Q₃ = ${ft(f.q3, 3)} · Máx = ${ft(f.max)} (método: ${MN[QM]}).</div></div></div>
+          <div class="sstep" style="--i:1;--sc:${COL.F}"><div class="sn">2</div><div class="sb"><div class="st">Rango intercuartílico</div>${fd(T`RIC = Q_3 - Q_1 = ${ft(f.q3, 3)} - ${ft(f.q1, 3)} = ${ft(f.iqr, 3)}`)}<div class="sx">Es el ancho de la caja: contiene al ≈ 50 % central de los datos.</div></div></div>
+          <div class="sstep" style="--i:2;--sc:${COL.Y}"><div class="sn">3</div><div class="sb"><div class="st">Cercas (criterio de Tukey)</div>${fd(T`LI = Q_1 - 1.5\,RIC = ${ft(f.lf, 3)} \qquad LS = Q_3 + 1.5\,RIC = ${ft(f.uf, 3)}`)}</div></div></div>
+          <div class="col-lg-6"><div class="sstep" style="--i:3;--sc:${COL.R}"><div class="sn">4</div><div class="sb"><div class="st">Valores atípicos</div><div class="sx">${f.out.length ? `Fuera de [${ft(f.lf, 2)}, ${ft(f.uf, 2)}]: <strong style="color:${COL.R}">${f.out.map(v => ft(v)).join(', ')}</strong>. Se dibujan como círculos; <u>no se borran sin investigar</u>: pueden ser errores… o los datos más interesantes.` : 'Ningún dato queda fuera de las cercas.'}</div></div></div>
+          <div class="sstep" style="--i:4;--sc:#495057"><div class="sn">5</div><div class="sb"><div class="st">Bigotes</div><div class="sx">Llegan al dato más pequeño y al más grande <u>dentro</u> de las cercas: <strong>${ft(f.wl)}</strong> y <strong>${ft(f.wh)}</strong>.</div></div></div>
+          <div class="sstep" style="--i:5;--sc:${COL.Q3}"><div class="sn">6</div><div class="sb"><div class="st">Lectura de la forma</div><div class="sx">${forma}</div></div></div></div></div>
+        <h6 class="fw-bold mt-3" style="color:${COL.Q3}">Galería: formas típicas (muestras simuladas)</h6><div class="row g-2" id="b5-gal"></div>`;
+      $('#b5-plot').innerHTML = boxSvg([{ x, c: COL.Q1 }], { hist: true, fences: FEN });
+      const r = mulberry(7), A = Array.from({ length: 60 }, () => 50 + 9 * gauss(r)), B = Array.from({ length: 60 }, () => 20 - 12 * Math.log(1 - r())), C = Array.from({ length: 60 }, () => 80 + 12 * Math.log(1 - r()));
+      $('#b5-gal').innerHTML = [['Simétrica', A], ['Sesgo a la derecha', B], ['Sesgo a la izquierda', C]].map(([t, d]) => `<div class="col-md-4"><div class="viz-card"><div class="small fw-bold text-center">${t}</div>${boxSvg([{ x: srt(d), c: COL.Q1 }], { hist: true, labels: false, fences: false, anim: false })}</div></div>`).join('');
+    }
+    function renderS5() {
+      $('#s5').innerHTML = lesson(5, 'Diagrama de caja y bigotes', 'Cinco números, rango intercuartílico, cercas y valores atípicos', COL.Q3, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.Q3}">mín · Q₁ · Q₂ · Q₃ · máx<small>La caja encierra el 50 % central; la línea es la mediana</small></div></div>
+          <div class="col-lg-6"><ul class="small mb-0" style="line-height:1.7"><li><strong>Caja:</strong> de Q₁ a Q₃ (ancho = RIC).</li><li><strong>Bigotes:</strong> hasta los datos más lejanos que <u>no</u> son atípicos.</li><li><strong>Atípico:</strong> dato &lt; Q₁ − 1.5·RIC o &gt; Q₃ + 1.5·RIC.</li></ul></div></div>
+        ${dataBox('ds-5')}<div id="b5-out"></div>`);
+    }
+
+    /* ---------- 6. Regla empírica ---------- */
+    let MU = 70, SD = 10, BAND = 0, SIMD = 'normal', SIMN = 500, SIMX = null;
+    const SIMS = { normal: ['Campana (normal)', COL.Q3], sesgo: ['Sesgada a la derecha', COL.Y], bimodal: ['Bimodal (dos cimas)', COL.R], unif: ['Uniforme', COL.G] };
+    function normCurve() {
+      const W = 700, H = 280, ml = 30, mr = 30, mt = 30, mb = 46, lo = MU - 4 * SD, hi = MU + 4 * SD, sx = v => ml + (v - lo) / (hi - lo) * (W - ml - mr), pdf = z => Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI), sy = z => H - mb - pdf(z) / pdf(0) * (H - mt - mb - 10);
+      const area = (k) => { let d = `M${sx(MU - k * SD)} ${H - mb}`; for (let i = 0; i <= 60; i++) { const z = -k + 2 * k * i / 60; d += `L${sx(MU + z * SD)} ${sy(z)}`; } return d + `L${sx(MU + k * SD)} ${H - mb}Z`; };
+      const cols = [['#d0ebff', '#1c7ed6', 68.27], ['#d3f9d8', '#2f9e44', 95.45], ['#ffe8cc', '#e8590c', 99.73]];
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="nline">`;
+      [3, 2, 1].forEach(k => { const on = BAND === 0 || BAND === k; s += `<path class="sc-fade" style="--d:${(3 - k) * .2}s" d="${area(k)}" fill="${cols[k - 1][0]}" fill-opacity="${on ? 1 : .25}" stroke="${cols[k - 1][1]}" stroke-width="${on ? 1.6 : .6}"/>`; });
+      let cv = ''; for (let i = 0; i <= 160; i++) { const z = -4 + 8 * i / 160; cv += (i ? 'L' : 'M') + sx(MU + z * SD) + ' ' + sy(z); } s += `<path class="sc-line" pathLength="1" d="${cv}" fill="none" stroke="#334155" stroke-width="3"/>`;
+      s += `<line x1="${ml}" x2="${W - mr}" y1="${H - mb}" y2="${H - mb}" stroke="#334155" stroke-width="2"/>`;
+      for (let z = -3; z <= 3; z++) { s += `<line x1="${sx(MU + z * SD)}" x2="${sx(MU + z * SD)}" y1="${z ? sy(z) : sy(0)}" y2="${H - mb + 6}" stroke="${z ? '#868e96' : COL.R}" stroke-dasharray="${z ? '4 4' : ''}" stroke-width="${z ? 1.2 : 2.4}"/><text x="${sx(MU + z * SD)}" y="${H - mb + 20}" text-anchor="middle" font-size="12" font-weight="800" fill="${z ? '#495057' : COL.R}">${z === 0 ? 'μ' : (z > 0 ? 'μ+' : 'μ−') + (Math.abs(z) > 1 ? Math.abs(z) : '') + 'σ'}</text><text x="${sx(MU + z * SD)}" y="${H - mb + 36}" text-anchor="middle" font-size="11" fill="#64748b">${ft(MU + z * SD, 2)}</text>`; }
+      [[0, 1, '68 %', 'y1'], [1.5, 2, '', ''], ['', '', '', '']].length;
+      s += `<text x="${sx(MU)}" y="${H - mb - 50}" text-anchor="middle" font-size="22" font-weight="800" fill="#1c7ed6">≈ 68 %</text><text x="${sx(MU - 1.5 * SD)}" y="${sy(1.5) - 24}" text-anchor="middle" font-size="12" font-weight="800" fill="#2f9e44">≈ 95 %</text><text x="${sx(MU - 2.5 * SD)}" y="${sy(2.5) - 24}" text-anchor="middle" font-size="12" font-weight="800" fill="#e8590c">≈ 99.7 %</text>`;
+      return s + '</svg>';
+    }
+    function genSim(d, n) {
+      const r = Math.random; const out = [];
+      for (let i = 0; i < n; i++) { let v; if (d === 'normal') v = gauss(r); else if (d === 'sesgo') v = Math.exp(.85 * gauss(r)); else if (d === 'bimodal') v = (r() < .5 ? -2.2 : 2.2) + .6 * gauss(r); else v = r(); out.push(v); } return out;
+    }
+    function renderSim() {
+      const el = $('#sim-out'); if (!SIMX) SIMX = genSim(SIMD, SIMN); const x = SIMX, m = mean(x), s = sdp(x), n = x.length;
+      const pc = k => x.filter(v => Math.abs(v - m) <= k * s).length / n * 100, p = [pc(1), pc(2), pc(3)], ex = [68.27, 95.45, 99.73], good = Math.abs(p[0] - 68.27) < 6 && Math.abs(p[1] - 95.45) < 3.5;
+      const lo = m - 4 * s, hi = m + 4 * s, k = 28, bw = (Math.max(...x, hi) - Math.min(...x, lo)) / k, a0 = Math.min(...x, lo), bins = Array(k).fill(0); x.forEach(v => bins[Math.min(k - 1, Math.floor((v - a0) / bw))]++);
+      const W = 700, H = 210, ml = 20, mr = 20, sx = v => ml + (v - a0) / (k * bw) * (W - ml - mr), mb = Math.max(...bins); let sv = `<svg viewBox="0 0 ${W} ${H}" class="nline noanim">`;
+      bins.forEach((b, i) => { const h = b / mb * 140; const mid = a0 + (i + .5) * bw, z = Math.abs(mid - m) / s; sv += `<rect x="${sx(a0 + i * bw) + 1}" y="${160 - h}" width="${(W - ml - mr) / k - 2}" height="${h}" rx="2" fill="${z <= 1 ? '#74c0fc' : z <= 2 ? '#8ce99a' : z <= 3 ? '#ffc078' : '#ffa8a8'}"/>`; });
+      sv += `<line x1="${ml}" x2="${W - mr}" y1="160" y2="160" stroke="#334155" stroke-width="2"/>`;
+      for (let z = -3; z <= 3; z++) sv += `<line x1="${sx(m + z * s)}" x2="${sx(m + z * s)}" y1="${z ? 30 : 14}" y2="160" stroke="${z ? '#868e96' : COL.R}" stroke-width="${z ? 1.2 : 2.4}" stroke-dasharray="${z ? '4 4' : ''}"/><text x="${sx(m + z * s)}" y="${z ? 26 : 10}" text-anchor="middle" font-size="11" font-weight="800" fill="${z ? '#495057' : COL.R}">${z === 0 ? 'x̄' : (z > 0 ? '+' : '−') + Math.abs(z) + 's'}</text>`;
+      el.innerHTML = `<div class="row g-3"><div class="col-lg-8"><div class="viz-card">${sv}</svg></div></div><div class="col-lg-4"><table class="table table-sm table-bordered text-center align-middle small mb-2"><thead class="table-light"><tr><th>Intervalo</th><th>Observado</th><th>Regla</th></tr></thead><tbody>${[1, 2, 3].map((k, i) => `<tr><td>x̄ ± ${k}s</td><td class="fw-bold ${Math.abs(p[i] - ex[i]) < [6, 3.5, 1.5][i] ? 'ok-c' : 'bad-c'}">${ft(p[i], 1)} %</td><td>${[68, 95, 99.7][i]} %</td></tr>`).join('')}</tbody></table>
+        <div class="tip-box ${good ? 's-ok' : 's-res'} small mb-0">${good ? '<strong>La regla funciona bien:</strong> la distribución es simétrica y de una sola cima.' : '<strong>La regla no describe bien estos datos:</strong> ' + (SIMD === 'sesgo' ? 'la cola larga a la derecha rompe la simetría.' : SIMD === 'bimodal' ? 'hay dos cimas; el centro (x̄) queda donde casi no hay datos.' : 'los datos no se concentran en el centro (no hay forma de campana).')}</div><div class="small text-muted mt-1">x̄ = ${ft(m, 3)} · s = ${ft(s, 3)} · n = ${n}</div></div></div>`;
+    }
+    function renderS6() {
+      const cheb = [1.5, 2, 3].map(k => `<tr><td>${k}</td><td>${ft((1 - 1 / (k * k)) * 100, 1)} %</td><td>${k === 1.5 ? '—' : k === 2 ? '≈ 95 %' : '≈ 99.7 %'}</td></tr>`).join('');
+      $('#s6').innerHTML = lesson(6, 'Regla empírica (68 – 95 – 99.7)', 'Relación entre tendencia (media) y dispersión (desviación estándar)', COL.R, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.R}">μ ± 1σ → ≈ 68 % &nbsp;·&nbsp; μ ± 2σ → ≈ 95 % &nbsp;·&nbsp; μ ± 3σ → ≈ 99.7 %<small>Solo para distribuciones aproximadamente simétricas y unimodales (forma de campana)</small></div></div>
+          <div class="col-lg-6"><ul class="small mb-0" style="line-height:1.75"><li><strong>Tendencia</strong> (μ): dónde se centra el grupo. <strong>Dispersión</strong> (σ): qué tan abierto está.</li><li>La regla <em>une</em> ambas: «a 2σ de la media está casi todo» solo tiene sentido si se conoce σ.</li><li>Con σ grande los mismos porcentajes caen en intervalos <u>más anchos</u>.</li></ul></div></div>
+        <div class="row g-2 align-items-end mb-2"><div class="col-6 col-md-4"><label class="small fw-bold" style="color:${COL.R}">Media μ = <span id="mu-v"></span></label><input type="range" class="form-range" id="mu6" min="30" max="120" step="1"></div><div class="col-6 col-md-4"><label class="small fw-bold" style="color:${COL.X}">Desviación σ = <span id="sd-v"></span></label><input type="range" class="form-range" id="sd6" min="2" max="25" step="1"></div><div class="col-md-4 d-flex gap-1 flex-wrap">${[[0, 'Todas'], [1, '±1σ'], [2, '±2σ'], [3, '±3σ']].map(([k, n]) => `<button class="mbtn" data-band="${k}" style="--c:${COL.R}">${n}</button>`).join('')}</div></div>
+        <div class="viz-card"><div id="nc-plot"></div></div><div class="row g-2 mt-1" id="nc-tiles"></div><div id="nc-ex" class="mt-3"></div>
+        <hr><h5 class="fw-bold" style="color:${COL.R}"><i class="bi bi-dice-5 me-1"></i>Laboratorio: ¿cuándo sí y cuándo no funciona?</h5>
+        <div class="d-flex flex-wrap gap-2 mb-2">${Object.entries(SIMS).map(([k, [n, c]]) => `<button class="mbtn" data-simd="${k}" style="--c:${c}">${n}</button>`).join('')}<button class="btn btn-sm btn-dark rounded-pill" id="sim-new"><i class="bi bi-arrow-repeat me-1"></i>Nueva muestra</button><select id="sim-n" class="form-select form-select-sm" style="width:auto"><option>100</option><option selected>500</option><option>2000</option></select></div>
+        <div id="sim-out"></div>
+        <div class="row g-3 mt-2"><div class="col-lg-6"><div class="theo-card" style="--c:${COL.F};margin:0"><h6>Desigualdad de Chebyshev (sirve para cualquier distribución)</h6>${fd(T`\text{al menos } \left(1 - \frac{1}{k^2}\right)\cdot 100\,\% \text{ de los datos está en } \bar{x} ± k\,s \quad (k > 1)`)}<div class="table-responsive"><table class="table table-sm table-bordered text-center small mb-0"><thead class="table-light"><tr><th>k</th><th>Mínimo garantizado</th><th>Regla empírica</th></tr></thead><tbody>${cheb}</tbody></table></div></div></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:${COL.Y};margin:0"><h6>Condiciones y precauciones</h6><ul class="small mb-0" style="line-height:1.7"><li>Revisa primero un histograma o caja: ¿simétrico? ¿una sola cima? ¿sin atípicos extremos?</li><li>Los porcentajes 68-95-99.7 son <strong>aproximados</strong>; con pocos datos varían.</li><li>Si hay sesgo o dos grupos mezclados, usa cuartiles y caja, o Chebyshev.</li><li>Valores atípicos inflan σ y vuelven engañosa la regla.</li></ul></div></div></div>`);
+      syncNC(); renderSim();
+    }
+    function syncNC() {
+      $('#mu6').value = MU; $('#sd6').value = SD; $('#mu-v').textContent = MU; $('#sd-v').textContent = SD; $('#nc-plot').innerHTML = normCurve(); $$('[data-band]').forEach(b => b.classList.toggle('on', +b.dataset.band === BAND));
+      $('#nc-tiles').innerHTML = [[1, '68 %', COL.X], [2, '95 %', COL.D2 || '#2f9e44'], [3, '99.7 %', COL.Y]].map(([k, p, c], i) => `<div class="col-md-4"><div class="tile" style="--c:${c};--i:${i}"><div class="tl">μ ± ${k}σ</div><div class="fw-bold fs-5" style="color:${c}">[${ft(MU - k * SD, 2)} , ${ft(MU + k * SD, 2)}]</div><small>≈ ${p} de los datos</small></div></div>`).join('');
+      const ab = k => ft((100 - [68.27, 95.45, 99.73][k - 1]) / 2, 2);
+      $('#nc-ex').innerHTML = `<div class="small fw-bold mb-1" style="color:${COL.R}">Pregúntate (con μ = ${MU}, σ = ${SD}):</div>` + [[`¿Entre qué valores está ≈ 95 % de los datos?`, `μ ± 2σ = ${MU} ± ${2 * SD} → entre ${MU - 2 * SD} y ${MU + 2 * SD}.`], [`¿Qué porcentaje es mayor que ${MU + 2 * SD}?`, `Queda fuera de μ ± 2σ ≈ 5 %, mitad en cada cola → ≈ 2.5 %.`], [`¿Qué porcentaje está entre ${MU - SD} y ${MU + SD}? ¿y mayor que ${MU + SD}?`, `≈ 68 % entre ellos; en cada cola ≈ 16 % (32 % / 2).`], [`Un dato de ${MU + 3 * SD + SD}: ¿es raro?`, `Está a 4σ de la media: fuera de μ ± 3σ (≈ 0.3 % de los datos). Muy raro: revisa si es un error o un caso especial.`]].map(([q, a]) => `<details class="err" style="border-left-color:${COL.R}"><summary style="color:#a61e1e">${q}</summary><div class="small mt-2 text-success fw-semibold">${a}</div></details>`).join('');
+    }
+
+    /* ---------- 7. Inferencias informales y sesgos ---------- */
+    const POP = (() => { const r = mulberry(11); return srt(Array.from({ length: 800 }, () => Math.round(30 + 120 * Math.exp(.45 * gauss(r))))); })();
+    let S7n = 30, S7m = 'rand', S7s = null, S7meds = null;
+    function drawSample() {
+      const pm = quant(POP, .5, 'n1').val, pool = S7m === 'rand' ? [...POP] : POP.filter(v => v >= pm), s = [];
+      for (let i = 0; i < Math.min(S7n, pool.length); i++) { const j = i + Math.floor(Math.random() * (pool.length - i)); [pool[i], pool[j]] = [pool[j], pool[i]]; s.push(pool[i]); }
+      S7s = srt(s); S7meds = Array.from({ length: 40 }, () => { const q = S7m === 'rand' ? POP : POP.filter(v => v >= pm), a = []; for (let i = 0; i < S7n; i++) a.push(q[Math.floor(Math.random() * q.length)]); return quant(srt(a), .5, 'n1').val; });
+    }
+    function renderI7() {
+      if (!S7s) drawSample(); const el = $('#i7-out'), fp = five(POP, 'n1'), fs = five(S7s, 'n1'), pm = fp.q2, sm = S7meds, lo = Math.min(...sm), hi = Math.max(...sm);
+      el.innerHTML = `<div class="row g-3"><div class="col-lg-8"><div class="viz-card"><div id="i7-box"></div></div></div><div class="col-lg-4"><table class="table table-sm table-bordered text-center small mb-2"><thead class="table-light"><tr><th></th><th>Población</th><th>Muestra</th></tr></thead><tbody><tr><td>n</td><td>${POP.length}</td><td>${S7s.length}</td></tr><tr><td>Q₁</td><td>${ft(fp.q1, 1)}</td><td>${ft(fs.q1, 1)}</td></tr><tr><td><b>Mediana</b></td><td><b>${ft(fp.q2, 1)}</b></td><td><b>${ft(fs.q2, 1)}</b></td></tr><tr><td>Q₃</td><td>${ft(fp.q3, 1)}</td><td>${ft(fs.q3, 1)}</td></tr><tr><td>Media</td><td>${ft(mean(POP), 1)}</td><td>${ft(mean(S7s), 1)}</td></tr></tbody></table>
+        <div class="tip-box ${S7m === 'rand' ? 's-ok' : 's-res'} small mb-0">${S7m === 'rand' ? `<strong>Muestra aleatoria:</strong> cada persona tuvo la misma oportunidad. La mediana de la muestra (${ft(fs.q2, 1)}) se acerca a la de la población (${ft(pm, 1)}).` : `<strong>Muestra sesgada:</strong> solo se encuestó a quienes gastan más que la mediana. Aunque n sea grande, la mediana de la muestra queda lejos de ${ft(pm, 1)}.`}</div></div></div>
+        <h6 class="fw-bold mt-3" style="color:${COL.Y}">40 muestras distintas del mismo tamaño (n = ${S7n}): ¿cuánto cambia la mediana?</h6><div class="viz-card"><div id="i7-meds"></div></div><div class="small mt-1">Las medianas muestrales van de <strong>${ft(lo, 1)}</strong> a <strong>${ft(hi, 1)}</strong> (amplitud ${ft(hi - lo, 1)}). ${S7m === 'rand' ? 'Con <strong>más datos</strong> la variación entre muestras <u>disminuye</u>: la muestra es más confiable.' : 'Aquí las medianas se agrupan lejos de la línea roja: <strong>más datos no corrigen un sesgo</strong>, solo lo hacen parecer más seguro.'}</div>`;
+      $('#i7-box').innerHTML = boxSvg([{ name: 'Población', x: POP, c: '#868e96' }, { name: 'Muestra', x: S7s, c: COL.Y }], { fences: false, anim: false });
+      dotLine($('#i7-meds'), sm, [{ v: pm, l: 'mediana poblacional', c: COL.R, dash: true }], { dc: COL.Y, H: 130, anim: false });
+    }
+    function renderS7() {
+      const STM = [['Muestra de 12 alumnos de un solo grupo tiene mediana 8; «toda la escuela tiene mediana 8».', 'No válida', 'Muestra pequeña y no representativa de toda la escuela (otro grupo, otro grado). Solo describe a ese grupo.', COL.R], ['Dos rutas tienen medianas similares, pero la ruta B tiene un RIC mucho mayor.', 'Válida (informal)', 'Se compara tendencia y dispersión: B es menos predecible aunque «en medio» tarde lo mismo. Conviene aclarar que es para los datos observados.', COL.D], ['Al quitar un dato atípico el promedio sube de 70 a 78, y se reporta solo 78.', 'Con reservas', 'Hay que investigar el atípico (¿error de captura o caso real?), reportar con y sin él, y decir el criterio usado.', COL.Y], ['Una encuesta voluntaria en redes: 90 % usa redes más de 3 h; «así son los jóvenes del país».', 'No válida', 'Autoselección y cobertura: solo responde quien está en redes. Se generaliza a una población que la muestra no representa.', COL.R]];
+      $('#s7').innerHTML = lesson(7, 'Inferencias informales, sesgos y límites', 'Usar medidas estadísticas para argumentar… sabiendo hasta dónde llegan', COL.Y, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.Y}">Inferencia informal<small>Una conclusión razonable sobre una población a partir de una muestra, sin pruebas formales</small></div></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:${COL.F};margin:0"><h6>Plantilla para argumentar</h6><p class="small mb-0">«Con base en <b>[medida: mediana, Q₁–Q₃, RIC, σ]</b> de <b>[datos]</b>, es plausible que <b>[conclusión]</b>; sin embargo, <b>[limitación o posible sesgo]</b>.»</p></div></div></div>
+        <h5 class="fw-bold" style="color:${COL.Y}"><i class="bi bi-people me-1"></i>Laboratorio: muestra vs población (gasto semanal en transporte, pesos)</h5>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><button class="mbtn" data-s7m="rand" style="--c:${COL.D}">Muestra aleatoria</button><button class="mbtn" data-s7m="bias" style="--c:${COL.R}">Solo quienes gastan más (sesgada)</button><label class="small fw-bold ms-2">n = <span id="s7n-v"></span></label><input type="range" class="form-range" id="s7n" min="5" max="200" step="5" style="max-width:240px"><button class="btn btn-sm btn-dark rounded-pill" id="s7-new"><i class="bi bi-arrow-repeat me-1"></i>Nueva muestra</button></div>
+        <div id="i7-out"></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.Y}"><i class="bi bi-exclamation-diamond me-1"></i>Sesgos y limitaciones frecuentes</h5><div class="row g-2">${[['Muestra no representativa', 'Selección por conveniencia o voluntaria (autoselección): solo responde quien quiere o quien está cerca.'], ['Tamaño de muestra pequeño', 'Cuantiles y medias cambian mucho de muestra a muestra: hay que hablar con cautela.'], ['Valores atípicos', 'La media y σ son sensibles; mediana y RIC son más resistentes.'], ['Escala o pregunta confusa', 'Redondeos, categorías abiertas o preguntas sugestivas alteran los datos.'], ['Ignorar la forma de la distribución', 'Usar la regla empírica con datos sesgados o bimodales da porcentajes erróneos.'], ['Confundir asociación con causa', 'Que dos medidas se parezcan no prueba que una cause la otra.']].map(([t, d], i) => `<div class="col-md-6"><div class="inic" style="--c:${COL.Y};--i:${i}"><i class="bi bi-flag"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>
+        <h5 class="fw-bold mt-4" style="color:${COL.Y}"><i class="bi bi-chat-square-text me-1"></i>¿Es válida la inferencia? (toca para argumentar)</h5>${STM.map(([q, v, a, c]) => `<details class="err" style="border-left-color:${c}"><summary>${q}</summary><div class="small mt-2"><span class="chipx" style="background:${c};color:#fff">${v}</span> ${a}</div></details>`).join('')}`);
+      $('#s7n').value = S7n; $('#s7n-v').textContent = S7n; $$('[data-s7m]').forEach(b => b.classList.toggle('on', b.dataset.s7m === S7m)); renderI7();
+    }
+
+    /* ---------- 8. Comparar y decidir ---------- */
+    const SC8 = {
+      ruta: { n: 'Dos rutas al trabajo', nA: 'Ruta A', nB: 'Ruta B', u: 'min', A: [32, 35, 36, 38, 39, 40, 41, 42, 43, 45, 46, 48], B: [20, 22, 25, 28, 31, 34, 38, 42, 48, 55, 62, 85], q: 'Debes llegar a una cita a tiempo. ¿Qué ruta eliges?', o: [['Ruta A', 'Buena decisión: tarda parecido a B «en promedio» pero casi siempre entre ≈ 36 y 45 min: es predecible, y hay menos riesgo de llegar tarde.'], ['Ruta B', 'B puede ser más rápida algunos días (mín. 20), pero su dispersión es enorme y hay un día de 85 min. Para llegar a tiempo, el riesgo es alto.'], ['Depende', 'Correcto: si importa llegar lo más pronto posible en un día normal, B a veces gana; si importa la puntualidad, A. La decisión depende del criterio y se argumenta con centro Y dispersión.']] },
+      gru: { n: 'Calificaciones de dos grupos', nA: 'Grupo A', nB: 'Grupo B', u: 'pts', A: [6, 6.5, 7, 7, 7.5, 7.5, 8, 8, 8.5, 8.5, 9, 9.5], B: [4, 5, 5.5, 6, 7, 8, 8.5, 9, 9.5, 10, 10, 10], q: 'Se dará una tutoría de apoyo a un solo grupo. ¿A cuál?', o: [['Grupo A', 'A es parejo: casi nadie está muy bajo ni muy alto. Su mínimo (6) está mejor que el de B.'], ['Grupo B', 'Aunque la mediana de B es parecida o mayor, su dispersión es mayor: hay estudiantes con 4–5.5 que necesitan apoyo y otros con 10. La tutoría puede enfocarse en la cola inferior.'], ['Depende', 'Correcto: A necesita refuerzo general leve; B necesita atención dirigida a la parte baja. El análisis por cuartiles ayuda a decidir.']] },
+      pila: { n: 'Dos marcas de pilas', nA: 'Marca A', nB: 'Marca B', u: 'h', A: [42, 45, 47, 48, 49, 50, 50, 51, 52, 53, 55, 58], B: [30, 38, 44, 48, 50, 52, 53, 54, 55, 56, 57, 59], q: 'Necesitas pilas confiables para un equipo médico. ¿Cuál compras?', o: [['Marca A', 'Su duración es consistente (menor dispersión): para equipo crítico importa evitar duraciones muy bajas.'], ['Marca B', 'B dura un poco más en la parte alta, pero tiene piezas con 30 y 38 h: la cola inferior es peligrosa en un uso crítico.'], ['Depende', 'Correcto: para uso crítico, A; para uso cotidiano barato, quizá B. Se decide combinando centro, dispersión y consecuencias.']] }
+    };
+    let K8 = 'ruta', C8A = '10, 12, 13, 15, 16, 18, 20', C8B = '8, 14, 15, 19, 24, 30, 35', S8pick = null;
+    function statsOf(x) { const f = five(x, QM), m = mean(x), s = sdp(x); return { n: x.length, m, s, cv: s / m * 100, ...f }; }
+    function renderC8() {
+      const custom = K8 === 'cus', S = custom ? { n: 'Tus datos', nA: 'A', nB: 'B', u: '', A: srt(nums(C8A)), B: srt(nums(C8B)) } : { ...SC8[K8], A: srt(SC8[K8].A), B: srt(SC8[K8].B) }, el = $('#c8-out');
+      if (S.A.length < 4 || S.B.length < 4) { el.innerHTML = '<div class="tip-box s-res">Cada grupo necesita al menos 4 datos.</div>'; return; }
+      const a = statsOf(S.A), b = statsOf(S.B), row = (t, k, d = 2) => `<tr><td class="text-start fw-bold">${t}</td><td style="color:${COL.X}">${ft(a[k], d)}</td><td style="color:${COL.Y}">${ft(b[k], d)}</td></tr>`;
+      const cmp = (va, vb, nm, hi, lo) => Math.abs(va - vb) < 1e-9 ? `${nm} es igual en ambos` : `${nm} es mayor en <strong>${va > vb ? S.nA : S.nB}</strong> (${ft(Math.max(va, vb), 2)} frente a ${ft(Math.min(va, vb), 2)})`;
+      const lect = [`<strong>Tendencia:</strong> ${cmp(a.q2, b.q2, 'la mediana')}; ${cmp(a.m, b.m, 'la media')}.`, `<strong>Dispersión:</strong> ${cmp(a.iqr, b.iqr, 'el RIC')}; ${cmp(a.s, b.s, 'la desviación estándar')}; coef. de variación ${ft(a.cv, 1)} % (${S.nA}) y ${ft(b.cv, 1)} % (${S.nB}).`, `<strong>Distribución:</strong> ${[[S.nA, a], [S.nB, b]].map(([nm, s]) => `en ${nm} la media está ${s.m > s.q2 + .05 * s.iqr ? 'por encima' : s.m < s.q2 - .05 * s.iqr ? 'por debajo' : 'cerca'} de la mediana`).join('; ')}.`, `<strong>Atípicos:</strong> ${S.nA}: ${a.out.length ? a.out.join(', ') : 'ninguno'}; ${S.nB}: ${b.out.length ? b.out.join(', ') : 'ninguno'}.`];
+      el.innerHTML = `${custom ? `<div class="row g-2 mb-2"><div class="col-md-6"><label class="small fw-bold" style="color:${COL.X}">Datos del grupo A</label><textarea class="form-control c8-in" data-w="A" rows="2">${C8A}</textarea></div><div class="col-md-6"><label class="small fw-bold" style="color:${COL.Y}">Datos del grupo B</label><textarea class="form-control c8-in" data-w="B" rows="2">${C8B}</textarea></div></div>` : `<div class="tip-box s-amp mb-2"><i class="bi bi-question-circle me-1"></i><strong>${S.q}</strong></div>`}
+        <div class="viz-card"><div id="c8-box"></div></div>
+        <div class="row g-3 mt-1"><div class="col-lg-5"><div class="table-responsive"><table class="table table-sm table-bordered text-center align-middle small mb-0"><thead class="table-light"><tr><th></th><th style="color:${COL.X}">${S.nA}</th><th style="color:${COL.Y}">${S.nB}</th></tr></thead><tbody>${row('n', 'n', 0)}${row('Mínimo', 'min')}${row('Q₁', 'q1')}${row('Mediana', 'q2')}${row('Q₃', 'q3')}${row('Máximo', 'max')}${row('RIC', 'iqr')}${row('Media', 'm')}${row('Desv. est. σ', 's')}${row('CV (%)', 'cv', 1)}</tbody></table></div></div>
+        <div class="col-lg-7"><h6 class="fw-bold" style="color:${COL.P}">Lectura guiada</h6><ul class="small" style="line-height:1.8">${lect.map(l => `<li>${l}</li>`).join('')}</ul>
+          ${custom ? '<div class="tip-box s-ok small">Redacta tu decisión con la plantilla: «Elijo ___ porque su ___ es ___ y su ___ es ___; aun así, hay que considerar ___».</div>' : `<h6 class="fw-bold mt-2" style="color:${COL.P}">Tu decisión</h6><div class="d-flex gap-2 flex-wrap mb-2">${S.o.map((o, i) => `<button class="mbtn ${S8pick === i ? 'on' : ''}" data-d8="${i}" style="--c:${COL.P}">${o[0]}</button>`).join('')}</div>${S8pick !== null ? `<div class="tip-box s-ok small" style="animation:pop .4s both">${S.o[S8pick][1]}</div>` : '<div class="small text-muted">Elige una opción y justifícala con las medidas de la tabla.</div>'}`}</div></div>`;
+      $('#c8-box').innerHTML = boxSvg([{ name: S.nA, x: S.A, c: COL.X }, { name: S.nB, x: S.B, c: COL.Y }], { anim: false });
+    }
+    function renderS8() {
+      $('#s8').innerHTML = lesson(8, 'Comparar colecciones y tomar decisiones', 'Distribución + tendencia + dispersión = argumento', COL.P, `
+        <p class="small mb-2">Para comparar dos conjuntos: <strong>1)</strong> dibuja las cajas en la <u>misma escala</u>; <strong>2)</strong> compara el centro (mediana, media); <strong>3)</strong> compara la dispersión (RIC, σ, CV); <strong>4)</strong> revisa forma y atípicos; <strong>5)</strong> decide <em>según el criterio del problema</em> y menciona limitaciones.</p>
+        <div class="d-flex flex-wrap gap-2 mb-2">${Object.entries(SC8).map(([k, s]) => `<button class="mbtn" data-k8="${k}" style="--c:${COL.P}">${s.n}</button>`).join('')}<button class="mbtn" data-k8="cus" style="--c:${COL.G}"><i class="bi bi-pencil me-1"></i>Mis datos</button></div><div id="c8-out"></div>`);
+      $$('[data-k8]').forEach(b => b.classList.toggle('on', b.dataset.k8 === K8)); renderC8();
+    }
+
+    /* ---------- 9. Docencia ---------- */
+    function renderS9() {
+      const MAP = [['Formula inferencias informales con base en medidas estadísticas de datos reales o realistas, argumentando su validez y señalando sesgos o limitaciones.', 'Cuartiles y diagrama de caja, deciles y percentiles', 'Pedir conclusiones con la plantilla «con base en… es plausible que… sin embargo…» y revisar sesgos de muestreo y atípicos.', '#s7', 'Sección 7'], ['17. Discute la Regla empírica en distribuciones aproximadamente simétricas y unimodales en términos de la relación entre tendencia y dispersión.', 'Regla empírica', 'Variar μ y σ, simular muestras y contrastar con distribuciones sesgadas y bimodales; hablar de condiciones de uso.', '#s6', 'Sección 6'], ['18. Analiza el comportamiento de diversas colecciones de datos a partir de su distribución, tendencia y dispersión para compararlas y tomar decisiones.', 'Medidas de posición y diagrama de caja · regla empírica', 'Comparar cajas en una misma escala con datos reales de la comunidad; tomar y justificar una decisión.', '#s8', 'Secciones 2, 3, 5 y 8']];
+      const ERR = [['Confundir percentil con porcentaje', 'Una calificación de 80 es un <em>porcentaje de aciertos</em>; estar en el percentil 80 es <em>superar a ≈ 80 % del grupo</em>. Son ideas distintas.'], ['No ordenar los datos antes de calcular', 'Todas las medidas de posición exigen datos ordenados de menor a mayor.'], ['Confundir posición con valor', 'La posición 6.5 indica «entre el 6.º y 7.º dato», no que el cuartil valga 6.5.'], ['Pensar que los cuartiles dividen el <em>rango</em> en cuatro partes iguales', 'Dividen la <em>cantidad de datos</em>; los intervalos pueden medir distinto.'], ['Creer que una caja más larga tiene más datos', 'Cada tramo (mín–Q₁, caja izq., caja der., Q₃–máx) tiene ≈ 25 %; lo largo mide dispersión, no cantidad.'], ['Eliminar los atípicos sin investigarlos', 'Primero se verifica si es error de captura o un caso real; se reporta con y sin él.'], ['Aplicar la regla empírica a cualquier distribución', 'Solo vale con simetría y una cima. Para otras formas, usar cuartiles o Chebyshev.'], ['Comparar cajas con escalas distintas', 'Siempre se dibujan sobre el mismo eje.'], ['Mezclar métodos de cálculo', 'La calculadora, la hoja de cálculo y el libro pueden usar métodos distintos: hay que declarar cuál se usa.']];
+      const ACT = [['Tiempo de traslado', 'Cada estudiante registra cuánto tarda en llegar a la escuela; se calculan cuartiles, se dibuja la caja del grupo y se comenta qué rutas son más variables (ciudadanía, sustentabilidad).'], ['Horas de sueño', 'Recolectar datos anónimos, calcular P₂₅ y P₇₅, y discutir qué implica dormir menos que el cuartil inferior (salud).'], ['Estaturas y percentiles', 'Interpretar tablas de crecimiento infantil y por qué estar en P₂₅ o P₇₅ es normal (otras disciplinas).'], ['Pago por hora y brecha', 'Con datos realistas de salarios por género, comparar cajas y discutir dispersión, atípicos y posibles sesgos (perspectiva de género).'], ['¿Quién tiene la muestra buena?', 'Equipos diseñan una encuesta (aleatoria vs conveniencia) y comparan sus resultados con los de toda la escuela (sesgos).'], ['Hoja de cálculo', 'Usar CUARTIL.INC / CUARTIL.EXC / PERCENTIL en hoja de cálculo y comparar con el cálculo manual (tecnología).']];
+      const EVAL = [['Datos: 3, 5, 7, 8, 9, 11, 13. Calcula Q₁, Q₂, Q₃ (posición n+1), el RIC y di si hay atípicos.', 'n = 7: Q₁ en la posición 2 → 5; Q₂ en la 4 → 8; Q₃ en la 6 → 11. RIC = 6. Cercas: 5 − 9 = −4 y 11 + 9 = 20: no hay atípicos.'], ['Con 20 datos ordenados, ¿en qué posición queda el percentil 80?', 'pos = 0.80 · 21 = 16.8: entre el 16.º y el 17.º dato (se interpola con f = 0.8).'], ['Tabla de estaturas (4, 8, 14, 13, 7, 4 datos; clases de 5 cm desde 150). Calcula Q₁.', 'N = 50; pos = 12.5; F: 4, 12, 26… la clase es 160–165 (F_ant = 12, f = 14). Q₁ = 160 + (0.5/14)·5 ≈ 160.18 cm.'], ['Una calificación tiene μ = 70 y σ = 10 en una distribución en forma de campana. ¿Qué % sacó entre 60 y 80? ¿Y más de 90?', '≈ 68 % entre 60 y 80 (μ ± σ). Más de 90 (μ + 2σ): ≈ 2.5 %.'], ['En una caja la mediana está pegada a Q₁ y el bigote derecho es largo. ¿Qué forma tiene?', 'Sesgo a la derecha (cola de valores altos); la media suele ser mayor que la mediana.'], ['¿Por qué no conviene la regla empírica para ingresos familiares?', 'Los ingresos son muy sesgados a la derecha (pocos ingresos muy altos): la distribución no es simétrica; conviene usar cuartiles y la caja.'], ['Dos rutas: misma mediana, pero la ruta B tiene RIC el doble. ¿Qué concluyes?', 'Que B es menos predecible; si importa la puntualidad se prefiere A. Se argumenta con tendencia y dispersión.']];
+      const RUB = [['Calcula medidas de posición', 'Calcula con ayuda o con errores de posición', 'Calcula e interpola correctamente', 'Además compara métodos y explica diferencias'], ['Lee el diagrama de caja', 'Identifica caja y mediana', 'Identifica RIC, cercas, atípicos y forma', 'Argumenta sobre la distribución con lenguaje preciso'], ['Usa la regla empírica', 'Repite 68-95-99.7', 'La aplica con μ y σ en distribuciones adecuadas', 'Justifica cuándo no aplica y propone alternativa'], ['Infiere y señala sesgos', 'Generaliza sin cuidar la muestra', 'Argumenta y menciona limitaciones', 'Propone cómo mejorar el muestreo o los datos'], ['Compara y decide', 'Compara solo medias', 'Compara centro, dispersión y forma', 'Decide según el criterio del problema y cuestiona los datos']];
+      const SEQ = [['Sesión 1', 'Posición y cuartiles (s. 1-2)'], ['Sesión 2', 'Deciles, percentiles y agrupados (s. 3-4)'], ['Sesión 3', 'Diagrama de caja (s. 5)'], ['Sesión 4', 'Regla empírica y Chebyshev (s. 6)'], ['Sesión 5', 'Inferencias, sesgos y decisiones (s. 7-8)']];
+      const PRIN = [['Resolución de problemas', 'bi-puzzle', '#7048e8', 'Partir de datos de la comunidad escolar y dejar que el alumnado formule preguntas antes de calcular.'], ['Otras disciplinas', 'bi-diagram-3', '#2f9e44', 'Salud (percentiles de crecimiento), economía (ingresos), física (mediciones), biología.'], ['Perspectiva de género', 'bi-gender-ambiguous', '#862e9c', 'Analizar datos de salarios o uso del tiempo y discutir sesgos con respeto.'], ['Ciudadanía y sustentabilidad', 'bi-tree', '#2b8a3e', 'Datos de consumo de agua, transporte o residuos; decisiones basadas en evidencia.'], ['Tecnología', 'bi-laptop', '#0c8599', 'Hojas de cálculo, graficadores y esta página para simular y explorar.'], ['Respeto y equidad', 'bi-heart', '#e03131', 'Datos personales siempre anónimos y trato respetuoso de los resultados.']];
+      $('#s9').innerHTML = lesson(9, 'Manual para la docencia', 'Del aprendizaje a la clase: errores, actividades, evaluación y rúbrica', '#2f9e44', `
+        <h5 class="fw-bold" style="color:#2f9e44"><i class="bi bi-diagram-3 me-1"></i>Aprendizajes y temática</h5>
+        <div class="table-responsive"><table class="table table-bordered align-middle bg-white small mb-3"><thead class="table-light"><tr><th>Aprendizaje</th><th>Temática</th><th>Cómo trabajarlo</th><th>En esta página</th></tr></thead><tbody>${MAP.map(([a, t, e, h, l], i) => `<tr style="animation:pop .4s ${i * .1}s both"><td class="fw-bold">${a}</td><td>${t}</td><td>${e}</td><td><a href="${h}" class="btn btn-sm btn-outline-success rounded-pill">${l}</a></td></tr>`).join('')}</tbody></table></div>
+        <div class="tip-box s-ok small mb-3"><i class="bi bi-info-circle me-1"></i><strong>Nota de método:</strong> hay varios métodos válidos para calcular cuartiles y percentiles. Esta página usa por defecto <em>posición p·(n+1) con interpolación</em> (como CUARTIL.EXC) y permite comparar con CUARTIL.INC y con mediana de mitades. <strong>Lo esencial es declarar el método</strong> y mantenerlo en todo el análisis.</div>
+        <h5 class="fw-bold" style="color:#2f9e44"><i class="bi bi-stars me-1"></i>Transversalidad</h5><div class="row g-3 mb-3">${PRIN.map(([t, ic, c, d], i) => `<div class="col-md-6 col-lg-4"><div class="inic" style="--c:${c};--i:${i}"><i class="bi ${ic}"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>
+        <h5 class="fw-bold" style="color:#2f9e44"><i class="bi bi-calendar-week me-1"></i>Secuencia sugerida (5 sesiones)</h5><div class="flow mb-3">${SEQ.map(([a, b], i) => `<div class="flow-i" style="--c:${[COL.Q1, COL.Q2, COL.Q3, COL.R, COL.P][i]};--i:${i};flex-direction:column;align-items:flex-start;max-width:230px"><strong>${a}</strong><span style="font-size:.78rem;font-weight:500">${b}</span></div>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-6"><h5 class="fw-bold" style="color:#a61e1e"><i class="bi bi-exclamation-octagon me-1"></i>Errores frecuentes</h5>${ERR.map(([t, d]) => `<details class="err"><summary>${t}</summary><div class="small mt-2">${d}</div></details>`).join('')}</div>
+          <div class="col-lg-6"><h5 class="fw-bold" style="color:#e8590c"><i class="bi bi-people me-1"></i>Actividades de aula</h5>${ACT.map(([t, d], i) => `<div class="inic" style="--c:#e8590c;--i:${i}"><div class="apn" style="background:#e8590c">${i + 1}</div><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div>`).join('')}</div></div>
+        <h5 class="fw-bold mt-4" style="color:#7048e8"><i class="bi bi-patch-question me-1"></i>Preguntas de evaluación (toca para ver la respuesta)</h5>${EVAL.map(([q, a]) => `<details class="err" style="border-left-color:#7048e8"><summary style="color:#4c2fb0">${q}</summary><div class="small mt-2 text-success fw-semibold">${a}</div></details>`).join('')}
+        <h5 class="fw-bold mt-4" style="color:#7048e8"><i class="bi bi-ui-checks me-1"></i>Rúbrica sugerida</h5><div class="table-responsive"><table class="table table-bordered bg-white small mb-0"><thead class="table-light"><tr><th>Criterio</th><th>En desarrollo</th><th>Logrado</th><th>Destacado</th></tr></thead><tbody>${RUB.map(r => `<tr><td class="fw-bold">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>`);
+    }
+
+    /* ---------- Formulario (modal) ---------- */
+    let FTAB = 0, FP = 'P', FK = 75, FZ = { x: 85, mu: 70, sd: 10 };
+    const FT = ['Cuartiles', 'Deciles y percentiles', 'Datos agrupados', 'Diagrama de caja', 'Regla empírica', 'Comparar'];
+    function frow(t, f, d, c, ex) { return `<tr><td class="fl"><span class="badge-v" style="background:${c}">${t}</span><div class="mt-3">${fd(f)}</div></td><td class="fr2">${d}${ex ? `<div class="fex">${ex}</div>` : ''}</td></tr>`; }
+    function renderForm() {
+      const x = dsData(), n = x.length, tabs = FT.map((t, i) => `<li class="nav-item"><button class="nav-link ${FTAB === i ? 'active' : ''}" data-ftab="${i}">${t}</button></li>`).join('');
+      let body = '';
+      if (FTAB === 0) {
+        const q = k => quant(x, k / 4, 'n1'), qi = k => quant(x, k / 4, 'inc'), qm = k => quant(x, k / 4, 'mid');
+        body = `<table class="form-tbl">${frow('Posición (n+1)', T`pos = p\,(n+1) \qquad p = \frac{k}{4}`, 'n = cantidad de datos; p = fracción acumulada (¼, ½, ¾). <b>Hay que ordenar primero.</b> Este es el método por defecto de la página (equivale a CUARTIL.EXC).', COL.Q1, `Con tus datos (n = ${n}): pos Q₁ = ${ft(.25 * (n + 1), 3)}; Q₂ = ${ft(.5 * (n + 1), 3)}; Q₃ = ${ft(.75 * (n + 1), 3)}`)}
+          ${frow('Interpolación', T`Q = x_{i} + f\,(x_{i+1} - x_{i})`, 'i = parte entera de la posición, f = parte decimal. Si f = 0 se toma directamente x<sub>i</sub>.', COL.Q2, `Q₁ = ${ft(q(1).val, 3)} · Q₂ = ${ft(q(2).val, 3)} · Q₃ = ${ft(q(3).val, 3)}`)}
+          ${frow('Método INC', T`pos = 1 + p\,(n-1)`, 'Usado por CUARTIL.INC / PERCENTIL.INC y por muchas calculadoras. Con pocos datos da valores un poco distintos.', COL.F, `Q₁ = ${ft(qi(1).val, 3)} · Q₂ = ${ft(qi(2).val, 3)} · Q₃ = ${ft(qi(3).val, 3)}`)}
+          ${frow('Mediana de mitades', T`Q_1 = \text{med}(\text{mitad inferior}) \quad Q_3 = \text{med}(\text{mitad superior})`, 'Se divide el conjunto en dos mitades (si n es impar, la mediana no se incluye) y se calcula la mediana de cada una.', COL.D, `Q₁ = ${ft(qm(1).val, 3)} · Q₂ = ${ft(qm(2).val, 3)} · Q₃ = ${ft(qm(3).val, 3)}`)}
+          ${frow('Mediana', T`\text{si } n \text{ impar: } x_{(n+1)/2} \qquad \text{si } n \text{ par: } \frac{x_{n/2} + x_{n/2+1}}{2}`, 'Es Q₂ = D₅ = P₅₀. Coincide en todos los métodos.', COL.R)}</table>`;
+      } else if (FTAB === 1) {
+        const p = FP === 'P' ? FK / 100 : FK / 10, q = quant(x, p, 'n1'), below = x.filter(v => v < FZ.x).length, eq = x.filter(v => v === FZ.x).length;
+        body = `<table class="form-tbl">${frow('Decil', T`D_k:\; p = \frac{k}{10},\quad pos = \frac{k}{10}(n+1)`, 'k = 1, 2, …, 9. D₅ = mediana; D₂.₅ = Q₁.', COL.D)}${frow('Percentil', T`P_k:\; p = \frac{k}{100},\quad pos = \frac{k}{100}(n+1)`, 'k = 1, 2, …, 99. P₂₅ = Q₁, P₅₀ = Q₂, P₇₅ = Q₃.', COL.P)}${frow('Rango percentil', T`PR(v) = \frac{c_{<} + 0.5\,c_{=}}{n}\cdot 100`, 'Inverso: de un valor a su percentil. c&lt; = datos menores que v; c= = datos iguales a v. Otras versiones usan solo «menores o iguales».', COL.F)}</table>
+          <div class="theo-card" style="--c:${COL.D}"><h6><i class="bi bi-calculator me-1"></i>Calculadora con tus datos (${DS_K ? PRE[DS_K][0] : 'datos propios'}, n = ${n})</h6><div class="row g-2 align-items-end"><div class="col-6 col-md-3"><label class="small fw-bold">Tipo</label><select class="form-select form-select-sm" id="f-tp"><option value="P" ${FP === 'P' ? 'selected' : ''}>Percentil</option><option value="D" ${FP === 'D' ? 'selected' : ''}>Decil</option></select></div><div class="col-6 col-md-3"><label class="small fw-bold">k</label><input type="number" id="f-k" class="form-control form-control-sm" min="1" max="${FP === 'P' ? 99 : 9}" value="${FK}"></div><div class="col-12 col-md-6"><div class="box">${FP}<sub>${FK}</sub>: posición = ${ft(p * (n + 1), 3)} → <strong style="color:${COL.D}">${ft(q.val, 4)}</strong></div></div></div>
+          <div class="row g-2 align-items-end mt-1"><div class="col-6 col-md-3"><label class="small fw-bold">Valor v</label><input type="number" step="any" id="f-v" class="form-control form-control-sm" value="${FZ.x}"></div><div class="col-12 col-md-9"><div class="box">PR(${FZ.x}) = (${below} + 0.5·${eq}) / ${n} · 100 = <strong style="color:${COL.P}">${ft((below + .5 * eq) / n * 100, 2)}</strong></div></div></div></div>`;
+      } else if (FTAB === 2) {
+        const g = GR[G4], N = g.f.reduce((a, b) => a + b, 0), F = []; g.f.reduce((a, v, i) => (F[i] = a + v), 0);
+        const val = (den, k) => { const pos = k * N / den; let i = F.findIndex(v => v >= pos); if (i < 0) i = g.f.length - 1; return g.L + i * g.c + (pos - (i ? F[i - 1] : 0)) / g.f[i] * g.c; };
+        body = `<table class="form-tbl">${frow('Medida de posición', T`M = L + \frac{pos - F_{ant}}{f}\cdot c`, 'L: límite inferior de la clase que contiene la posición; F<sub>ant</sub>: frecuencia acumulada anterior; f: frecuencia de la clase; c: ancho de clase.', COL.F)}${frow('Posición', T`pos = \frac{k\,N}{4} \;\; \text{(cuartil)} \qquad \frac{k\,N}{10} \;\; \text{(decil)} \qquad \frac{k\,N}{100} \;\; \text{(percentil)}`, 'N = suma de las frecuencias. La clase es la primera cuya frecuencia acumulada F es ≥ pos.', COL.Q2)}${frow('Ejemplo con «' + g.n + '»', T`Q_1 = ${ft(val(4, 1), 2)} \quad Q_2 = ${ft(val(4, 2), 2)} \quad Q_3 = ${ft(val(4, 3), 2)}`, `N = ${N}. Cambia la distribución en la sección 4 para ver otros ejemplos.`, COL.D)}</table>
+          <div class="tip-box s-amp small"><strong>Supuesto:</strong> dentro de cada clase los datos se reparten de manera uniforme; por eso el resultado es una <em>aproximación</em>.</div>`;
+      } else if (FTAB === 3) {
+        const f = five(x, QM);
+        body = `<table class="form-tbl">${frow('Resumen de 5 números', T`\text{mín},\; Q_1,\; Q_2,\; Q_3,\; \text{máx}`, `Con tus datos: ${ft(f.min)}, ${ft(f.q1, 2)}, ${ft(f.q2, 2)}, ${ft(f.q3, 2)}, ${ft(f.max)}`, COL.Q3)}${frow('Rango intercuartílico', T`RIC = Q_3 - Q_1`, `Mide la dispersión del 50 % central. Con tus datos: ${ft(f.iqr, 3)}.`, COL.F)}${frow('Cercas de Tukey', T`LI = Q_1 - 1.5\,RIC \qquad LS = Q_3 + 1.5\,RIC`, `Atípico: dato &lt; LI o &gt; LS. Con tus datos: [${ft(f.lf, 2)}, ${ft(f.uf, 2)}]; atípicos: ${f.out.length ? f.out.join(', ') : 'ninguno'}.`, COL.Y)}${frow('Bigotes', T`\text{bigote inf.} = \min\{x \ge LI\} \quad \text{bigote sup.} = \max\{x \le LS\}`, `Llegan al dato más extremo <u>dentro</u> de las cercas. Con tus datos: ${ft(f.wl)} y ${ft(f.wh)}.`, COL.G)}${frow('Atípicos más extremos', T`LI_{ext} = Q_1 - 3\,RIC \qquad LS_{ext} = Q_3 + 3\,RIC`, 'Algunos textos llaman «extremos» a los datos fuera de 3·RIC.', COL.R)}</table>
+          <div class="theo-card" style="--c:${COL.Q3}"><h6>Cómo leer la forma</h6><ul class="small mb-0"><li>Mediana centrada y bigotes parecidos → simétrica.</li><li>Mediana cerca de Q₁ y bigote derecho largo → sesgo a la derecha (media &gt; mediana).</li><li>Mediana cerca de Q₃ y bigote izquierdo largo → sesgo a la izquierda (media &lt; mediana).</li></ul></div>`;
+      } else if (FTAB === 4) {
+        const z = (FZ.x - FZ.mu) / FZ.sd;
+        body = `<table class="form-tbl">${frow('Regla empírica', T`μ ± 1σ \approx 68\,\% \quad μ ± 2σ \approx 95\,\% \quad μ ± 3σ \approx 99.7\,\%`, 'Valores más exactos: 68.27 %, 95.45 % y 99.73 %. Solo en distribuciones aproximadamente simétricas y unimodales.', COL.R)}${frow('Puntaje z', T`z = \frac{x - μ}{σ}`, 'Dice a cuántas desviaciones estándar de la media está un dato.', COL.F)}${frow('Chebyshev', T`P(|X - μ| \le k\,σ) \ge 1 - \frac{1}{k^2}`, 'Vale para cualquier distribución (k &gt; 1): k = 2 → al menos 75 %; k = 3 → al menos 88.9 %.', COL.Y)}${frow('Colas', T`P(X > μ + σ) \approx 16\,\% \quad P(X > μ + 2σ) \approx 2.5\,\% \quad P(X > μ + 3σ) \approx 0.15\,\%`, 'En una campana, la mitad del porcentaje fuera de cada intervalo queda en cada cola.', COL.Q2)}</table>
+          <div class="theo-card" style="--c:${COL.R}"><h6><i class="bi bi-calculator me-1"></i>Calcula z</h6><div class="row g-2 align-items-end"><div class="col-4"><label class="small fw-bold">x</label><input type="number" step="any" class="form-control form-control-sm" id="z-x" value="${FZ.x}"></div><div class="col-4"><label class="small fw-bold">μ</label><input type="number" step="any" class="form-control form-control-sm" id="z-mu" value="${FZ.mu}"></div><div class="col-4"><label class="small fw-bold">σ</label><input type="number" step="any" min="0.0001" class="form-control form-control-sm" id="z-sd" value="${FZ.sd}"></div></div><div class="box mt-2">z = (${FZ.x} − ${FZ.mu}) / ${FZ.sd} = <strong style="color:${COL.R}">${ft(z, 3)}</strong> → ${Math.abs(z) <= 1 ? 'dentro de μ ± σ (zona del 68 %)' : Math.abs(z) <= 2 ? 'entre 1σ y 2σ: dato menos frecuente' : Math.abs(z) <= 3 ? 'entre 2σ y 3σ: dato poco frecuente' : 'fuera de 3σ: dato muy raro; revisar'}</div></div>`;
+      } else {
+        body = `<table class="form-tbl">${frow('Media', T`\bar{x} = \frac{\sum x_i}{n}`, 'Centro de equilibrio; sensible a atípicos.', COL.Q1)}${frow('Desviación estándar', T`σ = \sqrt{\frac{\sum (x_i - μ)^2}{N}} \qquad s = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n-1}}`, 'σ para toda la población; s para una muestra. Esta página usa σ (÷ N) en descriptivas.', COL.Q2)}${frow('Coeficiente de variación', T`CV = \frac{σ}{\bar{x}}\cdot 100\,\%`, 'Dispersión relativa: permite comparar colecciones con unidades o magnitudes distintas.', COL.D)}${frow('Rango intercuartílico', T`RIC = Q_3 - Q_1`, 'Dispersión resistente a atípicos; acompaña a la mediana.', COL.Q3)}</table>
+          <div class="theo-card" style="--c:${COL.P}"><h6>Guía para decidir</h6><ol class="small mb-0"><li>Mismas escalas y mismo método de cálculo.</li><li>Distribución simétrica → media y σ; sesgada o con atípicos → mediana y RIC.</li><li>Compara <b>centro</b>, <b>dispersión</b>, <b>forma</b> y <b>atípicos</b>.</li><li>Decide según el criterio del problema (rapidez, puntualidad, seguridad, equidad…).</li><li>Menciona limitaciones: tamaño de muestra, sesgos, datos faltantes.</li></ol></div>`;
+      }
+      $('#form-wrap').innerHTML = `<ul class="nav nav-pills mb-3 flex-wrap gap-1">${tabs}</ul>${body}`; math($('#form-wrap'));
+    }
+
+    /* ---------- Eventos ---------- */
+    const on = (sel, ev, fn) => document.addEventListener(ev, e => { const t = e.target.closest ? e.target.closest(sel) : null; if (t) fn(t, e); });
+    const keep = fn => { const a = document.activeElement, id = a && a.id, pos = a && a.selectionStart; fn(); if (id) { const e = $('#' + id); if (e) { e.focus(); try { e.setSelectionRange(pos, pos); } catch (_) { } } } };
+    on('[data-ds]', 'click', t => { DS_K = t.dataset.ds; DS = PRE[DS_K][1]; renderAllData(); });
+    on('[data-qm]', 'click', t => { QM = t.dataset.qm; renderAllData(); renderForm(); });
+    on('[data-k2]', 'click', t => { K2 = +t.dataset.k2; renderQ2(); });
+    on('[data-pos1]', 'click', t => { POS1 = t.dataset.pos1; renderS1(); math($('#s1')); });
+    on('[data-t3]', 'click', t => { T3 = t.dataset.t3; K3 = T3 === 'P' ? 90 : 9; syncK3(); });
+    on('[data-k3]', 'click', t => { K3 = +t.dataset.k3; syncK3(); });
+    on('[data-dec]', 'click', t => { T3 = 'D'; K3 = +t.dataset.dec; syncK3(); });
+    on('[data-g4]', 'click', t => { G4 = t.dataset.g4; $$('[data-g4]').forEach(b => b.classList.toggle('on', b === t)); renderG4(); });
+    on('[data-t4]', 'click', t => { T4 = t.dataset.t4; K4 = 1; syncK4(); });
+    on('[data-band]', 'click', t => { BAND = +t.dataset.band; syncNC(); });
+    on('[data-simd]', 'click', t => { SIMD = t.dataset.simd; SIMX = null; $$('[data-simd]').forEach(b => b.classList.toggle('on', b === t)); renderSim(); });
+    on('#sim-new', 'click', () => { SIMX = null; renderSim(); });
+    on('#b5-fen', 'click', () => { FEN = !FEN; renderB5(); });
+    on('#b5-addb', 'click', () => { const v = parseFloat($('#b5-add').value); if (isFinite(v)) { DS += ', ' + v; DS_K = null; renderAllData(); } });
+    on('#b5-addout', 'click', () => { const f = five(dsData(), QM); DS += ', ' + Math.round(f.q3 + 3.2 * Math.max(f.iqr, 1)); DS_K = null; renderAllData(); });
+    on('[data-s7m]', 'click', t => { S7m = t.dataset.s7m; S7s = null; $$('[data-s7m]').forEach(b => b.classList.toggle('on', b === t)); renderI7(); });
+    on('#s7-new', 'click', () => { S7s = null; renderI7(); });
+    on('[data-k8]', 'click', t => { K8 = t.dataset.k8; S8pick = null; $$('[data-k8]').forEach(b => b.classList.toggle('on', b === t)); renderC8(); });
+    on('[data-d8]', 'click', t => { S8pick = +t.dataset.d8; renderC8(); });
+    on('[data-ftab]', 'click', t => { FTAB = +t.dataset.ftab; renderForm(); });
+    on('[data-form]', 'click', () => { hideAllPops(); renderForm(); bootstrap.Modal.getOrCreateInstance($('#formModal')).show(); });
+    document.addEventListener('change', e => { const t = e.target; if (t.id === 'sim-n') { SIMN = +t.value; SIMX = genSim(SIMD, SIMN); renderSim(); } else if (t.id === 'f-tp') { FP = t.value; FK = FP === 'P' ? 75 : 7; keep(renderForm); } });
+    document.addEventListener('input', e => {
+      const t = e.target, id = t.id;
+      if (t.classList.contains('ds-in')) { DS = t.value; DS_K = null; renderAllData(); }
+      else if (id === 'v3') { const v = parseFloat(t.value); if (isFinite(v)) { V3 = v; keep(renderQ3); } }
+      else if (id === 'k3') { K3 = +t.value; syncK3(); } else if (id === 'k4') { K4 = +t.value; syncK4(); }
+      else if (id === 'mu6') { MU = +t.value; syncNC(); } else if (id === 'sd6') { SD = +t.value; syncNC(); }
+      else if (id === 's7n') { S7n = +t.value; $('#s7n-v').textContent = S7n; S7s = null; renderI7(); }
+      else if (t.classList.contains('c8-in')) { if (t.dataset.w === 'A') C8A = t.value; else C8B = t.value; keep(renderC8); }
+      else if (id === 'f-k') { const v = parseFloat(t.value); if (isFinite(v)) { FK = Math.min(Math.max(v, 1), FP === 'P' ? 99 : 9); keep(renderForm); } }
+      else if (id === 'f-v') { const v = parseFloat(t.value); if (isFinite(v)) { FZ.x = v; keep(renderForm); } }
+      else if (id === 'z-x' || id === 'z-mu' || id === 'z-sd') { const v = parseFloat(t.value); if (isFinite(v) && (id !== 'z-sd' || v > 0)) { FZ[id === 'z-x' ? 'x' : id === 'z-mu' ? 'mu' : 'sd'] = v; keep(renderForm); } }
+    });
+    const navLinks = $$('#sec-nav a'), io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+
+    /* ---------- Arranque ---------- */
+    $('#hero-bars').innerHTML = [30, 55, 80, 100, 80, 55, 30].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    renderS0(); renderS1(); renderS2(); renderS3(); renderS4(); renderS5(); renderS6(); renderS7(); renderS8(); renderS9();
+    renderAllData(); $$('[data-g4]').length; renderForm();
+    math(document.body); $$('section.lesson').forEach(s => io.observe(s));
+
+</script>
+</body>
+</html>
