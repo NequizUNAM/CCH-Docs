@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matemáticas - Variación proporcional</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, gráficas SVG propias -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --mean:#1864ab; --med:#c26e00; --mode:#5130b9; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con barras de histograma */
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
+    .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
+    .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+
+    /* Tarjetas */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .stat-pill { background:#f1f5f9; border-radius:12px; padding:.45rem .8rem; font-size:.88rem; border:1px solid #e2e8f0; }
+    .stat-pill b { font-family:'Courier New',monospace; }
+    #data { font-family:'Courier New',monospace; font-size:.9rem; }
+
+    /* Instructivo: pasos vivos */
+    .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
+    .istep h6 { color:var(--c); font-weight:800; }
+    .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
+    .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
+
+    /* Fórmulas y leyendas */
+    .fx { overflow-x:auto; padding:.4rem 0; }
+    .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
+    .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
+    .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
+    .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
+
+    /* Tablas de frecuencias */
+    .freq-table { font-size:.95rem; text-align:center; margin:0; }
+    .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
+    .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
+    .freq-table tbody tr { transition:background .2s; cursor:default; }
+    .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
+    .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
+    .hl-legend { font-size:.85rem; min-height:1.4rem; }
+    /* Resaltados por medida */
+    [data-hl="mean"] td.c-use { background:rgba(24,100,171,.2); font-weight:800; }
+    [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
+    [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
+    [data-hl="mode"] tr.r-mode td { background:rgba(112,72,232,.3); font-weight:800; }
+    [data-hl="mode"] tr.r-near td { background:rgba(12,133,153,.2); }
+    .hl-btn.active[data-hl="mean"] { background:var(--mean); color:#fff; border-color:var(--mean); }
+    .hl-btn.active[data-hl="med"] { background:var(--med); color:#fff; border-color:var(--med); }
+    .hl-btn.active[data-hl="mode"] { background:var(--mode); color:#fff; border-color:var(--mode); }
+    .hl-btn.active[data-hl="none"] { background:#334155; color:#fff; border-color:#334155; }
+
+    .measure-head { color:#fff; padding:.9rem 1.2rem; border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .measure { border-radius:14px; box-shadow:var(--shadow-md); background:#fff; overflow:hidden; border:1px solid #e2e8f0; }
+    .result-big { font-size:1.6rem; font-weight:800; font-family:'Courier New',monospace; border-radius:14px; padding:.6rem 1rem; text-align:center; color:#fff; }
+    .real-card { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1.2rem; animation:pop .4s both; }
+    .cmp th { background:#f1f5f9; } .cmp td, .cmp th { padding:.45rem .7rem; text-align:center; }
+    .chart-box { position:relative; height:420px; }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    /* ===== Fórmulas estilo calculadora ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; } .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; } .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; } .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; } .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; } .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; }
+    .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before, .cx .ac.tilde::before { position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    /* Operaciones con popover */
+    .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
+    .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
+    td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
+    th.pp .bi { font-size:.7rem; opacity:.7; }
+    .popover.calc-pop { --bs-popover-max-width:430px; --bs-popover-border-radius:16px; border:0; box-shadow:var(--shadow-lg); font-family:'Segoe UI',sans-serif; }
+    .calc-pop .popover-header { background:linear-gradient(90deg,#0f172a,#1e293b); color:#fff; font-weight:700; font-size:.92rem; border-radius:16px 16px 0 0; }
+    .calc-pop .popover-body { padding:.7rem .9rem; max-height:60vh; overflow:auto; color:#1e293b; }
+    .pcap { font-size:.78rem; font-weight:700; color:#64748b; margin-top:.45rem; text-transform:uppercase; letter-spacing:.02em; } .pcap:first-child { margin-top:0; }
+    .pf { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:.25rem .6rem; overflow-x:auto; } .pf.res { background:#0f172a; color:#e0f2fe; border-color:#0f172a; }
+    .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
+    .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
+    .pm { font-size:.88rem; }
+    /* Pantalla de resultado */
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
+    .cmp-chips { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.5rem; }
+    .cmp-chip { font-size:.8rem; border-radius:999px; padding:.15rem .7rem; background:#f1f5f9; border:1.5px solid #e2e8f0; color:#475569; } .cmp-chip b { font-family:'Courier New',monospace; color:#0f172a; } .cmp-chip.on { background:#fff4e0; border-color:#f08c00; }
+    /* Tabla unificada */
+    .tbl-bar { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 1.2rem; margin-bottom:.8rem; }
+    .real-switch { display:flex; align-items:center; gap:.5rem; background:#fff4e0; border:2px solid #f08c00; border-radius:999px; padding:.35rem 1rem .35rem .6rem; box-shadow:var(--shadow-sm); transition:background .25s, border-color .25s, color .25s; }
+    .real-switch .form-check-input { width:2.6em; height:1.4em; cursor:pointer; margin:0; } .real-switch .form-check-input:checked { background-color:#f08c00; border-color:#f08c00; }
+    .real-switch label { font-weight:800; cursor:pointer; }
+    .real-switch.on { background:#0f172a; border-color:#0f172a; color:#fff; }
+    .freq-table td .old { display:block; font-size:.7rem; color:#94a3b8; text-decoration:line-through; line-height:1; font-weight:500; }
+    .freq-table td.chg { background:#fff4e0; }
+    .freq-table.anim td.chg { animation:flash 1s both; }
+    @keyframes flash { 0% { background:#ffd8a8; transform:scale(1.08); } 100% { background:#fff4e0; transform:none; } }
+    .freq-table th small { display:block; font-weight:500; opacity:.75; font-size:.7rem; }
+    .real-banner { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1rem 1.2rem; animation:pop .4s both; }
+    .imp { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; font-size:.8rem; font-weight:700; padding:.15rem .7rem; margin:.15rem .2rem .15rem 0; }
+    .imp.yes { background:#fff4e0; color:#b45309; border:1.5px solid #f08c00; } .imp.no { background:#f1f5f9; color:#64748b; border:1.5px solid #e2e8f0; }
+    .formula-card { border-radius:14px; padding:.8rem; background:#fff; border:1px solid #e2e8f0; height:100%; }
+
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep,.freq-table.anim td.chg,.real-banner{animation:none} }
+  
+    /* ===== Medidas de dispersión: colores por medida ===== */
+    :root { --m-mean:#1864ab; --m-dm:#0c8599; --m-var:#e8590c; --m-sd:#7048e8; }
+    .h-6 { background:linear-gradient(135deg,#c2255c,#8f1a43); }
+    .hero-bars span { background:#74c0fc; }
+    /* Interruptores */
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.88rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    /* Tabla: columnas coloreadas por medida */
+    #tbl-wrap { --mc:var(--m-mean); }
+    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
+    .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
+    .freq-table th.cb-fi { background:#d6336c; } .freq-table th.cb-x { background:#2f9e44; }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table.anim td.cb-fi, .freq-table.anim td.cb-x { animation:baseWave .7s both; animation-delay:calc(var(--ri,0) * 40ms); }
+    @keyframes baseWave { 0% { filter:brightness(.8); transform:scale(1.06); } 100% { filter:none; transform:none; } }
+    .fi-in { width:72px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #d6336c; border-radius:10px; padding:.15rem .2rem; background:#fff; color:#9c1d4a; }
+    .fi-in:focus { outline:3px solid #fbc2d5; }
+    .col-legend { display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.82rem; margin:.6rem 0 0; }
+    .col-legend span { display:inline-flex; align-items:center; gap:.35rem; } .col-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
+    /* Tarjetas de resultado */
+    .tile { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; transition:transform .25s, box-shadow .25s, background .25s; height:100%; position:relative; overflow:hidden; }
+    .tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .tile.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 10px 26px color-mix(in srgb,var(--c) 45%,transparent); }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; opacity:.85; }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; }
+    .tile .ts { font-size:.78rem; opacity:.8; }
+    .tile .cx { font-size:1em; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } .tile.on::after { background:rgba(255,255,255,.5); }
+    @keyframes tileBar { to { transform:scaleX(1); } }
+    /* Formulario estilo hoja */
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; }
+    .form-tbl td.fl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; }
+    .form-tbl td.fr2 { line-height:1.75; }
+    .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    /* Gráfica SVG */
+    .chart-svg { width:100%; height:auto; display:block; background:#fff; border-radius:14px; border:1px solid #e2e8f0; }
+    .chart-svg text { font-family:'Segoe UI',sans-serif; }
+    .bar-r { transform-box:fill-box; transform-origin:bottom; animation:barUp .8s cubic-bezier(.2,.9,.3,1.1) both; animation-delay:calc(var(--i) * 70ms); cursor:pointer; transition:fill .2s; }
+    .bar-r:hover { fill:#ffd43b; }
+    @keyframes barUp { from { transform:scaleY(0); } }
+    .poly-l { fill:none; stroke:#e03131; stroke-width:3; stroke-dasharray:1; stroke-dashoffset:1; animation:drawL 1.4s .6s forwards; } @keyframes drawL { to { stroke-dashoffset:0; } }
+    .band-r { animation:fadeB .8s 1s both; } @keyframes fadeB { from { opacity:0; } }
+    .vline { stroke-dasharray:7 5; animation:fadeB .8s 1s both; }
+    .chart-tip { position:fixed; z-index:1080; pointer-events:none; background:#0f172a; color:#fff; border-radius:10px; padding:.35rem .7rem; font-size:.82rem; box-shadow:var(--shadow-lg); display:none; }
+    .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
+    @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
+
+    /* ===== Correlación lineal ===== */
+    :root { --c-x:#1c7ed6; --c-y:#e8590c; --c-m:#e03131; --c-b:#2f9e44; --c-r:#7048e8; --c-cov:#0c8599; }
+    .h-6 { background:linear-gradient(135deg,#1864ab,#0b3d6e); }
+    .hero-bars span { background:#74c0fc; }
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.86rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; text-align:left; }
+    .mbtn small { font-weight:600; opacity:.8; margin-left:.3rem; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table td.cb-x { background:rgba(28,126,214,.10); } .freq-table th.cb-x { background:#1c7ed6; }
+    .freq-table td.cb-y { background:rgba(232,89,12,.10); } .freq-table th.cb-y { background:#e8590c; }
+    .freq-table tfoot td.cb-x, .freq-table tfoot td.cb-y { color:#fff; } .freq-table tfoot td.cb-x { background:#1c7ed6; } .freq-table tfoot td.cb-y { background:#e8590c; }
+    .freq-table tfoot tr.mean-r td { background:#f1f5f9; color:#334155; font-weight:700; }
+    .freq-table tfoot tr.mean-r td.cb-x { background:rgba(28,126,214,.18); color:#1864ab; } .freq-table tfoot tr.mean-r td.cb-y { background:rgba(232,89,12,.18); color:#b34000; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table td input { width:84px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #94a3b8; border-radius:10px; padding:.15rem .2rem; background:#fff; }
+    .freq-table td input:focus { outline:3px solid #bac8ff; }
+    .freq-table td.pos { color:#2b8a3e; } .freq-table td.neg { color:#c92a2a; }
+    .tile { cursor:default; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; height:100%; position:relative; overflow:hidden; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--c); }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; color:#0f172a; } .tile .ts { font-size:.78rem; color:#64748b; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } @keyframes tileBar { to { transform:scaleX(1); } }
+    .eq-big { text-align:center; background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:18px; padding:1rem; font-size:1.5rem; box-shadow:var(--shadow-md); }
+    .eq-big .cx { font-size:1.15em; }
+    .viz-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; overflow:hidden; } .viz-card svg { width:100%; height:auto; display:block; } .viz-card text { font-family:'Segoe UI',sans-serif; }
+    .sc-pt { transform-box:fill-box; transform-origin:center; transform:scale(0); animation:scPop .5s var(--d,0s) cubic-bezier(.3,1.6,.5,1) forwards; cursor:pointer; } @keyframes scPop { to { transform:scale(1); } }
+    .sc-fade { opacity:0; animation:scFade .7s var(--d,0s) forwards; } @keyframes scFade { to { opacity:1; } }
+    .sc-line { stroke-dasharray:1; stroke-dashoffset:1; animation:scDraw 1.3s var(--d,.8s) ease forwards; fill:none; } @keyframes scDraw { to { stroke-dashoffset:0; } }
+    .sc-res { transform-box:fill-box; transform-origin:center top; transform:scaleY(0); animation:scRes .5s var(--d,0s) forwards; } @keyframes scRes { to { transform:scaleY(1); } }
+    .sstep { display:flex; gap:.8rem; padding:.7rem .8rem; border-left:5px solid var(--sc,#5f3dc4); background:color-mix(in srgb,var(--sc,#5f3dc4) 6%,#fff); border-radius:0 14px 14px 0; margin:.6rem 0; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 450ms); }
+    @keyframes sIn { from { opacity:0; transform:translateX(-22px); } to { opacity:1; transform:none; } }
+    .sstep .sn { flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:var(--sc,#5f3dc4); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sstep .sb { min-width:0; flex:1 1 auto; } .sstep .st { font-weight:800; color:var(--sc,#3b2a8c); margin-bottom:.15rem; } .sstep .sx { font-size:.85rem; color:#475569; }
+    .sstep .cx.d { text-align:left; margin:.15rem 0; }
+    .rv { display:inline-block; padding:.2rem .8rem; border-radius:999px; font-weight:800; color:#fff; }
+    .theo-card { background:#fff; border:1px solid #e2e8f0; border-left:6px solid var(--c); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .theo-card h6 { color:var(--c); font-weight:800; } .theo-card .box { background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:12px; padding:.6rem .9rem; margin:.5rem 0; }
+    .theo-card ol, .theo-card ul { font-size:.93rem; line-height:1.7; } .theo-card .pf { font-size:.9rem; }
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; } .form-tbl td.fr2 { line-height:1.75; } .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; background:#868e96; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    .strength { display:flex; gap:2px; margin:.4rem 0; } .strength span { flex:1; text-align:center; font-size:.7rem; font-weight:700; color:#fff; padding:.15rem 0; border-radius:4px; opacity:.35; } .strength span.on { opacity:1; transform:scaleY(1.15); box-shadow:var(--shadow-sm); }
+    @media (prefers-reduced-motion:reduce) { .sc-pt,.sc-fade,.sc-line,.sc-res,.sstep,.tile,.tile::after { animation:none !important; opacity:1 !important; transform:none !important; stroke-dashoffset:0 !important; } .tile::after { transform:scaleX(1) !important; } }
+    .noanim .sc-pt, .noanim .sc-fade, .noanim .sc-line, .noanim .sc-res { animation:none !important; opacity:1; transform:none; stroke-dashoffset:0; }
+    .noanim .sc-res { transform:scaleY(1); }
+    .lesson-head h2, .lesson-head small { color:#fff !important; }
+    .lesson-head.h-2 { background:linear-gradient(135deg,#0c8599,#0a5f6d); } .lesson-head.h-3 { background:linear-gradient(135deg,#7048e8,#4c2fb0); }
+    .lesson-head.h-4 { background:linear-gradient(135deg,#e03131,#a61e1e); } .lesson-head.h-5 { background:linear-gradient(135deg,#2f9e44,#1f6e2f); }
+    .tile .tl { text-transform:none; font-size:.85rem; }
+    .modal-header .modal-title { color:#fff !important; }
+
+    /* ===== Los números ===== */
+    .lesson-head.hc { background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 62%,#000)); }
+    .hero-bars span { background:#74c0fc; }
+    .setdef { font-size:1.45rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; background:color-mix(in srgb,var(--c) 10%,#fff); border:2px solid var(--c); color:#0f172a; border-radius:14px; padding:.6rem 1rem; text-align:center; margin-bottom:.6rem; animation:pop .5s both; }
+    .setdef small { display:block; font-size:.8rem; font-weight:600; color:#475569; font-family:'Segoe UI',sans-serif; }
+    .bigsym { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:3.2rem; font-weight:800; line-height:1; color:var(--c); }
+    .chipx { display:inline-block; margin:.15rem; padding:.15rem .7rem; border-radius:999px; font-weight:700; font-size:.9rem; background:#e6f6ea; border:1.5px solid #2f9e44; color:#1b6b2f; font-family:'Cambria Math','Segoe UI Symbol',serif; animation:pop .4s both; }
+    .chipx.no { background:#fdeaea; border-color:#e03131; color:#a61e1e; }
+    .chipx.dep { background:#fff4e0; border-color:#f08c00; color:#a45d00; }
+    button.chipx { cursor:pointer; } button.chipx:hover { transform:translateY(-2px); }
+    .tline { position:relative; margin:.2rem 0 .2rem .6rem; padding-left:1.2rem; border-left:3px solid color-mix(in srgb,var(--c) 40%,#fff); }
+    .tline .ev { position:relative; margin-bottom:.7rem; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 250ms); }
+    .tline .ev::before { content:''; position:absolute; left:-1.65rem; top:.25rem; width:14px; height:14px; border-radius:50%; background:var(--c); border:3px solid #fff; box-shadow:0 0 0 2px var(--c); }
+    .tline .yr { font-weight:800; color:var(--c); font-size:.85rem; } .tline .tx { font-size:.9rem; }
+    .nsvg { width:100%; height:auto; } .nsvg text { font-family:'Cambria Math','Segoe UI Symbol','Segoe UI',serif; pointer-events:none; }
+    .nsvg .reg { cursor:pointer; transform-box:fill-box; transform-origin:center; animation:regIn .7s var(--d,0s) both cubic-bezier(.3,1.4,.5,1); }
+    @keyframes regIn { from { transform:scale(.2); opacity:0; } to { transform:none; opacity:1; } }
+    .nsvg .reg shape, .nsvg .reg .shp { fill:var(--c); fill-opacity:.16; stroke:var(--c); stroke-width:2.5; transition:fill-opacity .3s, stroke-width .3s; }
+    .nsvg .reg:hover .shp { fill-opacity:.28; }
+    .nsvg .reg.sel .shp { fill-opacity:.38; stroke-width:5; }
+    .nsvg .reg.dim .shp { fill-opacity:.07; }
+    .nsel { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin:.6rem 0; }
+    .cl-in { font-size:1.3rem; font-weight:800; text-align:center; font-family:'Courier New',monospace; }
+    .cl-res { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; margin:.8rem 0; }
+    .cl-box { min-width:96px; text-align:center; border-radius:14px; border:2px solid var(--c); padding:.4rem .6rem; background:#fff; animation:pop .5s both; animation-delay:calc(var(--i) * 90ms); }
+    .cl-box .s { font-size:1.5rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; color:var(--c); } .cl-box .t { font-size:1.2rem; font-weight:800; }
+    .cl-box.yes { background:color-mix(in srgb,var(--c) 14%,#fff); } .cl-box.yes .t { color:#2b8a3e; } .cl-box.no { opacity:.55; } .cl-box.no .t { color:#c92a2a; } .cl-box.dep .t { color:#f08c00; }
+    .ctbl td, .ctbl th { text-align:center; vertical-align:middle; } .ctbl td.ok { background:#e6f6ea; color:#2b8a3e; font-weight:800; cursor:pointer; } .ctbl td.bad { background:#fdeaea; color:#c92a2a; font-weight:800; cursor:pointer; } .ctbl td.part { background:#fff4e0; color:#e67700; font-weight:800; cursor:pointer; }
+    .ctbl td:hover { filter:brightness(.95); } .ctbl th.rh { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:1.2rem; }
+    .nline { width:100%; height:auto; } .nline text { font-family:'Segoe UI',sans-serif; }
+    .ngrid { display:grid; grid-template-columns:repeat(10,1fr); gap:5px; max-width:560px; margin:auto; }
+    .nc { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-weight:800; border-radius:10px; background:#f1f5f9; border:2px solid #e2e8f0; cursor:pointer; font-size:clamp(.7rem,1.6vw,1rem); transition:background .4s var(--dl,0s), color .4s var(--dl,0s), transform .2s, opacity .4s; user-select:none; }
+    .nc:hover { transform:scale(1.12); z-index:2; box-shadow:var(--shadow-sm); }
+    .nc.sel { outline:3px solid #0f172a; transform:scale(1.15); }
+    .nc.hl { background:var(--hc); color:#fff; border-color:var(--hc); }
+    .nc.struck { background:#e9ecef; color:#adb5bd; text-decoration:line-through; border-color:#dee2e6; }
+    .nc.cur { background:#fcc419; color:#000; border-color:#f08c00; transform:scale(1.18); }
+    .nc.pr { background:#e03131; color:#fff; border-color:#e03131; }
+    .cardc { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.7rem .5rem; text-align:center; height:100%; transition:transform .25s, box-shadow .25s, background .25s; animation:pop .5s both; animation-delay:calc(var(--i) * 70ms); }
+    .cardc:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); } .cardc.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 8px 22px color-mix(in srgb,var(--c) 45%,transparent); }
+    .cardc .cs { font-size:2rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; line-height:1.1; } .cardc .cn { font-size:.78rem; font-weight:700; } .cardc .cv { font-family:'Courier New',monospace; font-size:.75rem; opacity:.85; }
+    .digits { font-family:'Courier New',monospace; font-size:1.25rem; font-weight:700; word-break:break-all; line-height:1.9; }
+    .digits span { display:inline-block; opacity:0; animation:dIn .35s forwards; animation-delay:calc(var(--i) * 35ms); } .digits .g5 { margin-right:.35rem; }
+    @keyframes dIn { from { opacity:0; transform:translateY(-10px) scale(1.3); color:var(--c); } to { opacity:1; transform:none; } }
+    .demo-box { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:1rem; box-shadow:var(--shadow-sm); }
+    .symtbl td, .symtbl th { vertical-align:middle; } .symtbl td.sy { font-size:1.5rem; font-weight:800; text-align:center; font-family:'Cambria Math','Segoe UI Symbol',serif; color:#2b3a7a; width:90px; }
+    .symtbl tr { animation:pop .4s both; }
+    .catc { border:2px solid var(--c); border-radius:14px; padding:.7rem .9rem; background:#fff; height:100%; animation:pop .4s both; } .catc .cs { font-size:1.6rem; font-weight:800; color:var(--c); font-family:'Cambria Math','Segoe UI Symbol',serif; } .catc .cat { font-size:.72rem; font-weight:800; color:#fff; background:var(--c); border-radius:999px; padding:.05rem .6rem; }
+    .iv-out { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:1.15rem; }
+    .roll-wheel { transform-box:fill-box; transform-origin:center; }
+    details.err { background:#fff; border:1px solid #e2e8f0; border-left:5px solid #e03131; border-radius:12px; padding:.6rem .9rem; margin-bottom:.6rem; } details.err summary { font-weight:800; cursor:pointer; color:#a61e1e; }
+    .nrow { display:flex; flex-wrap:wrap; gap:6px; align-items:flex-end; } .nrow .cube { width:26px; height:26px; border-radius:6px; background:var(--c); color:#fff; font-size:.7rem; font-weight:800; display:flex; align-items:center; justify-content:center; animation:cubeIn .4s both; animation-delay:calc(var(--i) * 40ms); } @keyframes cubeIn { from { transform:translateY(-30px) scale(.3); opacity:0; } to { transform:none; opacity:1; } }
+    tr.per td { background:#fff4e0 !important; font-weight:800; }
+    .overl { text-decoration:overline; text-decoration-thickness:2px; }
+    @media (prefers-reduced-motion:reduce) { .nsvg .reg,.tline .ev,.digits span,.cardc,.cl-box,.nc,.symtbl tr,.catc,.nrow .cube { animation:none !important; opacity:1 !important; transform:none !important; } }
+    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; }
+    .flow-i { display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .8rem; border-radius:999px; background:var(--c); color:#fff; font-weight:700; font-size:.88rem; text-decoration:none; animation:pop .45s calc(var(--i)*.09s) both; transition:transform .2s; }
+    .flow-i:hover { transform:translateY(-3px); color:#fff; }
+    .flow-ar { color:#adb5bd; animation:pop .4s calc(var(--i)*.09s) both; }
+    .apc { display:flex; gap:.7rem; align-items:center; padding:.7rem .8rem; background:#fff; border:2px solid var(--c); border-radius:14px; text-decoration:none; color:#212529; height:100%; animation:pop .45s calc(var(--i)*.07s) both; transition:transform .2s, box-shadow .2s; }
+    a.apc:hover { transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.12); color:#212529; }
+    .apn { flex:none; width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+    .vcard { background:#fff; border:3px solid var(--c); border-radius:16px; padding:1rem; text-align:center; height:100%; animation:pop .45s both; }
+    .vt { font-size:.75rem; font-weight:800; color:var(--c); text-transform:uppercase; letter-spacing:.04em; }
+    .vn { font-size:1.4rem; font-weight:800; color:var(--c); }
+    .vu { font-size:.85rem; color:#6c757d; }
+    .dep-arrow { font-size:2.4rem; color:#495057; animation:nudge 1.2s ease-in-out infinite; }
+    .dep-arrow.rev { transform:scaleX(-1); animation:none; color:#e8590c; }
+    @keyframes nudge { 50% { transform:translateX(8px); } }
+    .ok-c { background:#d3f9d8; color:#2b8a3e; } .bad-c { background:#ffe3e3; color:#c92a2a; }
+    .mulrow { display:flex; align-items:center; gap:.6rem; margin-bottom:.5rem; flex-wrap:wrap; }
+    .mc1 { padding:.4rem .8rem; border-radius:10px; border:2px solid var(--c); color:var(--c); font-weight:800; background:#fff; }
+    .mar { font-weight:800; color:#e03131; animation:nudge 1.2s infinite; }
+    .repc { background:#fff; border:2px solid var(--c); border-radius:14px; padding:.7rem; height:100%; animation:pop .45s calc(var(--i)*.1s) both; }
+    .rh { font-weight:800; color:var(--c); margin-bottom:.4rem; }
+    .inic { display:flex; gap:.7rem; align-items:flex-start; background:#fff; border-left:5px solid var(--c); border-radius:10px; padding:.6rem .8rem; height:100%; box-shadow:0 1px 4px rgba(0,0,0,.08); animation:pop .4s calc(var(--i)*.06s) both; }
+    .inic > i { font-size:1.5rem; color:var(--c); }
+    .mach { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.6rem; padding:.5rem; }
+    .mtok { background:#fff; border:3px solid var(--c); color:var(--c); border-radius:14px; padding:.5rem .9rem; font-weight:800; text-align:center; animation:pop .5s calc(var(--i)*.35s) both; }
+    .mtok small { display:block; font-size:.7rem; opacity:.8; }
+    .mar2 { font-size:1.8rem; color:#495057; animation:pop .4s calc(var(--i)*.35s) both; }
+    .mbox { background:#f3f0ff; border:3px solid var(--c); border-radius:16px; padding:.6rem; display:flex; flex-direction:column; gap:.4rem; animation:pop .5s calc(var(--i)*.35s) both; }
+    .mb-t { text-align:center; font-weight:800; color:var(--c); }
+    .gear { background:var(--c); color:#fff; border-radius:10px; padding:.35rem .8rem; font-weight:800; text-align:center; animation:pop .5s calc(var(--i)*.35s) both; }
+    .gear small { display:block; font-size:.72rem; font-weight:600; }
+    #dt-tbl table { min-width:200px; }
+
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s0">0. Ruta</a><a href="#s1">1. Variables</a><a href="#s2">2. Razón de cambio</a><a href="#s3">3. Proporcional</a><a href="#s4">4. Lineal</a><a href="#s5">5. Representaciones</a><a href="#s6">6. Función lineal</a><a href="#s7">7. Modelación</a><a href="#s8">8. Detective</a><a href="#s9">9. Docencia</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bars" id="hero-bars"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-graph-up-arrow text-info me-2"></i>Variación proporcional</h1>
+        <p class="lead mb-1">y = kx · y = ax + b · razón de cambio · condición inicial</p>
+        <p class="mb-3 text-light opacity-75">Cómo cambian dos magnitudes: variables, proporcionalidad, función lineal y modelación de situaciones cotidianas</p>
+        <a class="btn btn-warning rounded-pill px-4 fw-semibold me-1" href="#s3"><i class="bi bi-percent me-1"></i>Proporcionalidad</a>
+        <a class="btn btn-outline-light rounded-pill px-4 fw-semibold me-1" href="#s7"><i class="bi bi-lightbulb me-1"></i>Modelación</a>
+        <button class="btn btn-outline-light rounded-pill px-4 fw-semibold" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button>
+      </div>
+    </header>
+    <div class="container mb-5" id="secs">
+      <section class="lesson mb-5" id="s0"></section><section class="lesson mb-5" id="s1"></section><section class="lesson mb-5" id="s2"></section><section class="lesson mb-5" id="s3"></section><section class="lesson mb-5" id="s4"></section><section class="lesson mb-5" id="s5"></section><section class="lesson mb-5" id="s6"></section><section class="lesson mb-5" id="s7"></section><section class="lesson mb-5" id="s8"></section><section class="lesson mb-5" id="s9"></section>
+    </div>
+  </main>
+
+  
+  <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#0c8599"><h5 class="modal-title fw-bold"><i class="bi bi-journal-richtext me-2"></i>Formulario · Variación proporcional y función lineal</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light"><div id="form-wrap"></div></div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Matemáticas • Variación proporcional</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" }, { label: "Los números", href: "los_numero.html", icon: "bi-123" }, { label: "Variación proporcional", href: "variacion_proporcional.html", icon: "bi-graph-up-arrow" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" },
+          { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }
+        ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" }, { label: "Medidas de dispersión", href: "medidas_dispersion.html", icon: "bi-arrows-expand" }, { label: "Amplitudes", href: "amplitudes.html", icon: "bi-distribute-horizontal" }, { label: "Correlación lineal", href: "correlacion_lineal.html", icon: "bi-graph-up-arrow" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+          <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div>
+        </div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'variacion_proporcional.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+<script>
+/*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { lceil: '⌈', rceil: '⌉', Delta: 'Δ', ne: '≠', rightarrow: '→', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['ne', 'rightarrow', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'tilde': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name}">${x}</span>`; }
+          case 'mathbf': { const h = arg(); last = 'val'; return `<b>${h}</b>`; }
+          case 'log': last = 'val'; return '<span class="tx">log</span>';
+          case 'sum': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">∑</span><span class="sl">${lo}</span></span>`; }
+          case 'pop': { const id = raw().replace(/[^\w-]/g, ''), h = arg(); last = 'val'; return `<span class="pp" data-pop="${id}" tabindex="0" role="button">${h}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    /*ENDFX*/
+
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const escH = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$(?!\d)([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? fd(m[1]) : fi(m[2])); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+    /* ---------- Popovers con el paso a paso de cada operación ---------- */
+    let POPS = {}, PID = 0;
+    // lines: [caption, tex, 'res'?] | [caption, html, 'html'] | 'texto'
+    function reg(title, lines, color) {
+      const id = 'p' + (++PID);
+      POPS[id] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
+        : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('') };
+      return id;
+    }
+    const pp = (id, tex) => T`\pop{${id}}{${tex}}`;
+    function initPops(root) {
+      (root || document).querySelectorAll('[data-pop]').forEach(el => {
+        const d = POPS[el.dataset.pop]; if (!d || bootstrap.Popover.getInstance(el)) return;
+        new bootstrap.Popover(el, { trigger: 'click', html: true, sanitize: false, placement: 'auto', container: 'body', customClass: 'calc-pop', title: d.t, content: d.h, fallbackPlacements: ['top', 'bottom', 'right', 'left'] });
+      });
+    }
+    const hideAllPops = () => $$('[data-pop]').forEach(el => { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); });
+    document.addEventListener('show.bs.popover', e => $$('[data-pop]').forEach(el => { if (el !== e.target) { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); } }));
+    document.addEventListener('click', e => { if (!e.target.closest('[data-pop],.popover')) hideAllPops(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideAllPops(); if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-pop]')) { e.preventDefault(); e.target.click(); } });
+
+    const lesson = (n, title, sub, c, body) => `<div class="card lesson-card"><div class="lesson-head hc" style="--c:${c}"><div class="num">${n}</div><div><h2 class="h4 fw-bold mb-0">${title}</h2><small>${sub}</small></div></div><div class="card-body">${body}</div></div>`;
+    const timeline = (h, c) => `<div class="tline" style="--c:${c}">${h.map(([y, t], i) => `<div class="ev" style="--i:${i}"><div class="yr">${y}</div><div class="tx">${t}</div></div>`).join('')}</div>`;
+    const chips = (a, cls = '') => a.map((x, i) => `<span class="chipx ${cls}" style="animation-delay:${i * 60}ms">${x}</span>`).join('');
+    const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+    const isPrime = n => { if (n < 2 || !Number.isInteger(n)) return false; if (n < 4) return true; if (n % 2 === 0) return false; for (let d = 3; d * d <= n; d += 2) if (n % d === 0) return false; return true; };
+    const factor = n => { const f = []; for (let d = 2; d * d <= n; d++) { let k = 0; while (n % d === 0) { n /= d; k++; } if (k) f.push([d, k]); } if (n > 1) f.push([n, 1]); return f; };
+    const sup = k => String(k).replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+
+    const COL = { X: '#1c7ed6', Y: '#e8590c', D: '#2f9e44', L: '#7048e8', R: '#e03131', F: '#0c8599', G: '#868e96', P: '#d6336c' };
+    const ft = (v, d = 3) => isFinite(v) ? String(+v.toFixed(d)) : '—';
+    const fz = (v, d = 3) => ft(v, d).replace('-', '−');
+    const pn = v => v < 0 ? `(${ft(v)})` : ft(v);
+    const eqTex = (a, b) => { let r = 'y = '; if (a === 0) return r + ft(b); r += a === 1 ? 'x' : a === -1 ? '-x' : ft(a) + 'x'; if (b > 0) r += ' + ' + ft(b); else if (b < 0) r += ' - ' + ft(-b); return r; };
+    const money = (u, v) => u === '$' ? '$' + fz(v, 2) : fz(v, 2) + ' ' + u;
+    function niceTicks(lo, hi, cnt = 6) {
+      const span = (hi - lo) || 1, raw = span / cnt, p = Math.pow(10, Math.floor(Math.log10(raw))), q = raw / p, step = (q <= 1 ? 1 : q <= 2 ? 2 : q <= 5 ? 5 : 10) * p;
+      const a = Math.floor(lo / step + 1e-9) * step, out = [];
+      for (let v = a; v <= hi + step * 1e-9; v += step) out.push(+v.toFixed(10));
+      return { ticks: out, lo: out[0], hi: out[out.length - 1] };
+    }
+    /* Gráfica genérica: o = {xr, yr, lines:[{f,c,w,dash}], pts:[{x,y,c,r,l}], segs:[{x1,y1,x2,y2,c,w,dash,l}], xl, yl, anim, from0} */
+    function plot(el, o) {
+      const W = o.W || 560, H = o.H || 360, ml = 54, mr = 16, mt = 16, mb = 44;
+      let [xl, xh] = o.xr, ys = [];
+      (o.lines || []).forEach(l => { ys.push(l.f(xl), l.f(xh)); }); (o.pts || []).forEach(p => ys.push(p.y)); (o.segs || []).forEach(s => ys.push(s.y1, s.y2));
+      if (o.yr) ys = [...o.yr]; else if (o.zero !== false) ys.push(0);
+      let yl = Math.min(...ys), yh = Math.max(...ys); if (yl === yh) { yl -= 1; yh += 1; } const pd = (yh - yl) * .06; if (!o.yr) { yl -= pd; yh += pd; }
+      const NX = niceTicks(xl, xh), NY = niceTicks(yl, yh), sx = v => ml + (v - NX.lo) / (NX.hi - NX.lo) * (W - ml - mr), sy = v => H - mb - (v - NY.lo) / (NY.hi - NY.lo) * (H - mt - mb);
+      const ax0 = Math.min(Math.max(0, NX.lo), NX.hi), ay0 = Math.min(Math.max(0, NY.lo), NY.hi);
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="${o.anim ? '' : 'noanim'}" role="img"><defs><clipPath id="cl-${el.id}"><rect x="${ml}" y="${mt}" width="${W - ml - mr}" height="${H - mt - mb}"/></clipPath></defs>`;
+      NY.ticks.forEach(t => { s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(t)}" y2="${sy(t)}" stroke="#e9ecef"/><text x="${ml - 7}" y="${sy(t) + 4}" text-anchor="end" font-size="11" fill="#64748b">${fz(t, 2)}</text>`; });
+      NX.ticks.forEach(t => { s += `<line y1="${mt}" y2="${H - mb}" x1="${sx(t)}" x2="${sx(t)}" stroke="#f1f3f5"/><text x="${sx(t)}" y="${H - mb + 16}" text-anchor="middle" font-size="11" fill="#64748b">${fz(t, 2)}</text>`; });
+      s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(ay0)}" y2="${sy(ay0)}" stroke="#334155" stroke-width="1.8"/><line x1="${sx(ax0)}" x2="${sx(ax0)}" y1="${mt}" y2="${H - mb}" stroke="#334155" stroke-width="1.8"/>`;
+      s += `<text x="${W - mr - 4}" y="${sy(ay0) - 6}" text-anchor="end" font-size="13" font-weight="800" fill="${COL.X}">${o.xl || 'x'}</text><text x="${sx(ax0) + 8}" y="${mt + 12}" font-size="13" font-weight="800" fill="${COL.Y}">${o.yl || 'y'}</text>`;
+      let d = 0.1;
+      (o.lines || []).forEach(l => { s += `<g clip-path="url(#cl-${el.id})"><path class="sc-line" pathLength="1" style="--d:${d}s" d="M${sx(NX.lo)} ${sy(l.f(NX.lo))} L${sx(NX.hi)} ${sy(l.f(NX.hi))}" stroke="${l.c}" stroke-width="${l.w || 3.2}" ${l.dash ? 'stroke-dasharray="6 5"' : ''} stroke-linecap="round"/></g>`; });
+      (o.curves || []).forEach(l => { let p = '', n = 120; for (let i = 0; i <= n; i++) { const x = NX.lo + (NX.hi - NX.lo) * i / n, y = l.f(x); if (!isFinite(y)) continue; p += (p ? 'L' : 'M') + sx(x) + ' ' + sy(y); } s += `<g clip-path="url(#cl-${el.id})"><path class="sc-line" pathLength="1" style="--d:${d}s" d="${p}" stroke="${l.c}" stroke-width="3.2" fill="none"/></g>`; });
+      (o.segs || []).forEach(g => { s += `<line class="sc-fade" style="--d:.8s" x1="${sx(g.x1)}" y1="${sy(g.y1)}" x2="${sx(g.x2)}" y2="${sy(g.y2)}" stroke="${g.c}" stroke-width="${g.w || 3}" ${g.dash ? 'stroke-dasharray="5 4"' : ''}/>${g.l ? `<text class="sc-fade" style="--d:1s" x="${(sx(g.x1) + sx(g.x2)) / 2 + (g.dx || 0)}" y="${(sy(g.y1) + sy(g.y2)) / 2 + (g.dy || 0)}" font-size="13" font-weight="800" fill="${g.c}" text-anchor="middle">${g.l}</text>` : ''}`; });
+      (o.pts || []).forEach((p, i) => { s += `<circle class="sc-pt" style="--d:${.3 + i * .08}s" cx="${sx(p.x)}" cy="${sy(p.y)}" r="${p.r || 6.5}" fill="${p.c || COL.X}" stroke="#fff" stroke-width="2"><title>(${fz(p.x)}, ${fz(p.y)})</title></circle>${p.l ? `<text class="sc-fade" style="--d:${.6 + i * .08}s" x="${sx(p.x) + (p.dx === undefined ? 9 : p.dx)}" y="${sy(p.y) + (p.dy === undefined ? -9 : p.dy)}" font-size="12" font-weight="800" fill="${p.c || COL.X}">${p.l}</text>` : ''}`; });
+      el.innerHTML = s + '</svg>'; return { sx, sy };
+    }
+    const smax = (a) => Math.max(...a);
+
+    /* ---------- Situaciones (contextos) ---------- */
+    const CTX = [
+      { id: 'tort', n: 'Tortillas', ic: 'bi-basket', X: ['kilos de tortilla', 'kg'], Y: ['precio a pagar', '$'], a: 28, b: 0, cont: true, xs: [0.5, 1, 1.5, 2, 3], xr: [0, 5], v: 'Un kilo de tortilla cuesta $28 y se paga proporcionalmente a lo que se compra.' },
+      { id: 'copy', n: 'Fotocopias', ic: 'bi-printer', X: ['número de copias', 'copias'], Y: ['costo total', '$'], a: 1.5, b: 0, cont: false, xs: [1, 2, 3, 4, 5, 10], xr: [0, 12], v: 'Cada fotocopia cuesta $1.50.' },
+      { id: 'taxi', n: 'Taxi', ic: 'bi-taxi-front', X: ['distancia recorrida', 'km'], Y: ['costo del viaje', '$'], a: 9, b: 12, cont: true, xs: [0, 1, 2, 3, 4, 5], xr: [0, 8], v: 'Un taxi cobra $12 de banderazo (cobro inicial) y $9 por cada kilómetro recorrido.' },
+      { id: 'gym', n: 'Gimnasio', ic: 'bi-bicycle', X: ['meses transcurridos', 'meses'], Y: ['pago acumulado', '$'], a: 250, b: 300, cont: false, xs: [0, 1, 2, 3, 4, 6], xr: [0, 8], v: 'Un gimnasio cobra $300 de inscripción y $250 por cada mes.' },
+      { id: 'tinaco', n: 'Llenado de tinaco', ic: 'bi-droplet-fill', X: ['tiempo', 'min'], Y: ['agua en el tinaco', 'L'], a: 20, b: 100, cont: true, xs: [0, 1, 2, 3, 4, 5], xr: [0, 10], v: 'Un tinaco ya tiene 100 L y se llena con una llave que aporta 20 L cada minuto.' },
+      { id: 'tanque', n: 'Vaciado de tanque', ic: 'bi-box-arrow-down', X: ['tiempo', 'min'], Y: ['agua en el tanque', 'L'], a: -20, b: 300, cont: true, xs: [0, 2, 4, 6, 8, 10], xr: [0, 15], v: 'Un tanque con 300 L se vacía a razón de 20 L por minuto.' },
+      { id: 'temp', n: 'Temperatura °C → °F', ic: 'bi-thermometer-half', X: ['temperatura en Celsius', '°C'], Y: ['temperatura en Fahrenheit', '°F'], a: 1.8, b: 32, cont: true, xs: [0, 10, 20, 30, 40], xr: [-10, 45], v: 'Para convertir de °C a °F se multiplica por 1.8 y se suman 32.' },
+      { id: 'walk', n: 'Caminata', ic: 'bi-person-walking', X: ['tiempo', 'h'], Y: ['distancia recorrida', 'km'], a: 5, b: 0, cont: true, xs: [0.5, 1, 1.5, 2, 3], xr: [0, 5], v: 'Una persona camina con rapidez constante de 5 km por hora.' },
+      { id: 'agua', n: 'Regadera (sustentabilidad)', ic: 'bi-moisture', X: ['tiempo de baño', 'min'], Y: ['agua consumida', 'L'], a: 12, b: 0, cont: true, xs: [1, 2, 5, 8, 10], xr: [0, 12], v: 'Una regadera consume 12 L de agua por minuto (dato de ejemplo).' },
+      { id: 'ahorro', n: 'Ahorro semanal', ic: 'bi-piggy-bank', X: ['semanas', 'semanas'], Y: ['ahorro acumulado', '$'], a: 200, b: 500, cont: false, xs: [0, 1, 2, 3, 4, 8], xr: [0, 10], v: 'Una persona tiene $500 ahorrados y agrega $200 cada semana.' }
+    ];
+    const cval = (c, x) => c.a * x + c.b;
+    const ctxChips = (attr, cur) => CTX.map((c, i) => `<button class="mbtn ${i === cur ? 'on' : ''}" data-${attr}="${i}" style="--c:${COL.L}"><i class="bi ${c.ic} me-1"></i>${c.n}</button>`).join('');
+    const arrow = (a) => a > 0 ? 'aumenta' : a < 0 ? 'disminuye' : 'no cambia';
+
+    /* ---------- Ruta de aprendizaje ---------- */
+    const FLOW = [['Variables', 'bi-diagram-2', COL.X, '#s1'], ['Razón de cambio', 'bi-graph-up-arrow', COL.R, '#s2'], ['Directa  y = ax', 'bi-arrow-up-right-circle', COL.D, '#s3'], ['Lineal  y = ax + b', 'bi-bar-chart-steps', COL.L, '#s4'], ['Representaciones', 'bi-grid-3x3-gap', COL.Y, '#s5'], ['Función lineal', 'bi-cpu', COL.F, '#s6'], ['Modelación', 'bi-lightbulb', COL.P, '#s7']];
+    const AP = [['Identifica las variables y su relación en una situación dada', 'Variación entre dos magnitudes · variables independiente y dependiente', '#s1', COL.X], ['Calcula e interpreta la razón de cambio', 'Razón de cambio y sus distintos tipos', '#s2', COL.R], ['Reconoce cuándo la relación es directamente proporcional', 'y = ax + b con b = 0 · cociente y/x constante', '#s3', COL.D], ['Transita entre representaciones (verbal, algebraica, tabular y gráfica)', 'Variación lineal y directamente proporcional · variables continuas y discretas', '#s4', COL.L], ['Modela situaciones cotidianas con funciones lineales', 'Función lineal · razón de cambio constante · condición inicial', '#s6', COL.F]];
+    function renderS0() {
+      $('#s0').innerHTML = lesson('★', 'Ruta de aprendizaje', 'Qué se aprende, en qué orden y dónde practicarlo en esta página', '#2b3a7a', `
+        <div class="flow mb-3">${FLOW.map(([t, ic, c, h], i) => `<a href="${h}" class="flow-i" style="--c:${c};--i:${i}"><i class="bi ${ic}"></i><span>${t}</span></a>${i < FLOW.length - 1 ? '<i class="bi bi-chevron-right flow-ar" style="--i:' + i + '"></i>' : ''}`).join('')}</div>
+        <div class="row g-3">${AP.map(([t, s, h, c], i) => `<div class="col-md-6 col-lg-4"><a href="${h}" class="apc" style="--c:${c};--i:${i}"><div class="apn">${i + 1}</div><div><div class="fw-bold">${t}</div><div class="small text-muted">${s}</div></div></a></div>`).join('')}
+          <div class="col-md-6 col-lg-4"><div class="apc" style="--c:#2f9e44;--i:5"><div class="apn"><i class="bi bi-people-fill"></i></div><div><div class="fw-bold">Cómo trabajarlo</div><div class="small text-muted">Resolución de problemas, trabajo individual, en equipo y en plenaria, con respeto y equidad.</div></div></div></div></div>
+        <div class="tip-box s-ok small mt-3"><i class="bi bi-lightbulb-fill me-1"></i><strong>Idea central:</strong> dos magnitudes están relacionadas cuando una <em>depende</em> de la otra. Si al aumentar la primera en 1 unidad la segunda siempre cambia lo mismo (<strong>razón de cambio constante</strong>), la variación es <strong>lineal</strong>: $y=ax+b$. Si además $b=0$ (la gráfica pasa por el origen), es <strong>directamente proporcional</strong>: $y=ax$.</div>`);
+    }
+
+    /* ---------- 1. Variables ---------- */
+    let V1 = 2, V1swap = false;
+    function renderV1() {
+      const c = CTX[V1], X = c.X, Y = c.Y;
+      $$('[data-v1]').forEach(b => b.classList.toggle('on', +b.dataset.v1 === V1));
+      const ys = c.xs.map(x => cval(c, x)), rel = c.a > 0 ? 'aumenta' : c.a < 0 ? 'disminuye' : 'no cambia';
+      $('#v1-out').innerHTML = `<div class="tip-box s-amp mb-3" style="animation:pop .4s both"><i class="bi bi-quote me-1"></i>${c.v}</div>
+        <div class="row g-3 align-items-stretch"><div class="col-md-5"><div class="vcard" style="--c:${V1swap ? COL.Y : COL.X}"><div class="vt">${V1swap ? 'Variable dependiente' : 'Variable independiente'}</div><div class="vn">${X[0]}</div><div class="vu">se mide en ${X[1]}</div><div class="small mt-1">${V1swap ? '«Resulta» de la otra: su valor depende de ella.' : 'La que <strong>elijo o controlo</strong>. Va en el eje horizontal (x).'}</div></div></div>
+          <div class="col-md-2 d-flex flex-column align-items-center justify-content-center"><div class="dep-arrow ${V1swap ? 'rev' : ''}"><i class="bi bi-arrow-right-circle-fill"></i></div><div class="small fw-bold text-center">${V1swap ? '¿' + X[0] + ' depende de ' + Y[0] + '?' : Y[0] + ' <u>depende de</u> ' + X[0]}</div><button class="btn btn-sm btn-outline-dark rounded-pill mt-2" id="v1-swap"><i class="bi bi-arrow-left-right me-1"></i>${V1swap ? 'Regresar' : 'Invertir'}</button></div>
+          <div class="col-md-5"><div class="vcard" style="--c:${V1swap ? COL.X : COL.Y}"><div class="vt">${V1swap ? 'Variable independiente' : 'Variable dependiente'}</div><div class="vn">${Y[0]}</div><div class="vu">se mide en ${Y[1] === '$' ? 'pesos ($)' : Y[1]}</div><div class="small mt-1">${V1swap ? 'Ahora la tratamos como si la eligiéramos…' : 'La que <strong>resulta</strong>: cambia según el valor de la otra. Va en el eje vertical (y).'}</div></div></div></div>
+        ${V1swap ? `<div class="tip-box s-volt small mt-2"><i class="bi bi-exclamation-triangle-fill me-1"></i><strong>Para discutir:</strong> matemáticamente se puede despejar y calcular al revés, pero en la situación real lo natural es que ${X[0]} se elige y ${Y[0]} es el resultado. La variable independiente es la que tiene sentido <em>controlar o conocer primero</em>.</div>` : ''}
+        <div class="row g-3 mt-1"><div class="col-lg-6"><div class="small fw-bold text-muted">Tabla de valores</div><div class="table-responsive rounded-3 border"><table class="table table-bordered text-center freq-table mb-0"><thead><tr><th style="background:${COL.X}">${X[0]} (${X[1]})</th><th style="background:${COL.Y}">${Y[0]} (${Y[1]})</th></tr></thead><tbody>${c.xs.map((x, i) => `<tr style="animation:pop .4s ${i * .1}s both"><td class="cb-x">${fz(x)}</td><td class="cb-y fw-bold">${fz(ys[i], 2)}</td></tr>`).join('')}</tbody></table></div></div>
+        <div class="col-lg-6"><div class="small fw-bold text-muted">Relación observada</div><div class="tip-box s-ok"><i class="bi bi-${c.a >= 0 ? 'graph-up-arrow' : 'graph-down-arrow'} me-1"></i>Al aumentar <strong>${X[0]}</strong>, <strong>${Y[0]}</strong> <strong>${rel}</strong>.</div>
+          <div class="small fw-bold text-muted mt-2">Para discutir en equipo</div><ul class="small mb-0" style="line-height:1.7"><li>¿Qué otras variables podrían intervenir en esta situación?</li><li>¿Qué se mantiene <strong>constante</strong> (no cambia)?</li><li>¿Qué valores tiene sentido que tome ${X[0]}: solo enteros, o cualquier valor?</li></ul></div></div>`;
+    }
+    function renderS1() {
+      $('#s1').innerHTML = lesson(1, 'Variación entre dos magnitudes', 'Identifica las variables y cómo se relacionan', COL.X, `
+        <div class="row g-3 mb-3"><div class="col-lg-7"><p class="mb-2">Una <strong>magnitud</strong> es algo que se puede medir (distancia, tiempo, dinero, litros…). Una <strong>variable</strong> es una magnitud que puede tomar distintos valores. Cuando el valor de una depende del valor de la otra, hay <strong>variación entre dos magnitudes</strong>.</p>
+          <div class="d-flex flex-wrap gap-2 mb-2"><span class="vchip" style="--c:${COL.X}"><b>Independiente (x):</b> la que se elige o se conoce primero</span><span class="vchip" style="--c:${COL.Y}"><b>Dependiente (y):</b> la que resulta; depende de x</span></div>
+          <div class="small text-muted">Ejemplo: en un taxi, el <em>costo</em> depende de los <em>kilómetros</em>; no se decide cuánto costará y luego cuántos kilómetros se recorren.</div></div>
+          <div class="col-lg-5"><div class="theo-card" style="--c:${COL.X};margin:0"><h6>Vocabulario</h6><ul class="small mb-0"><li><strong>Constante:</strong> no cambia (p. ej. el precio por kilo).</li><li><strong>Variable:</strong> cambia (p. ej. los kilos comprados).</li><li><strong>Dependencia:</strong> un cambio en x provoca un cambio en y.</li></ul></div></div></div>
+        <div class="small fw-bold text-muted mb-1">Elige una situación:</div><div class="d-flex flex-wrap gap-2 mb-3">${ctxChips('v1', V1)}</div><div id="v1-out"></div>`);
+      renderV1();
+    }
+
+    /* ---------- 2. Razón de cambio ---------- */
+    let R2 = 2, R2x1 = 1, R2x2 = 4;
+    function renderR2() {
+      const c = CTX[R2]; $$('[data-r2]').forEach(b => b.classList.toggle('on', +b.dataset.r2 === R2));
+      const lo = c.xr[0], hi = c.xr[1], x1 = Math.min(Math.max(R2x1, lo), hi), x2 = Math.min(Math.max(R2x2, lo), hi), y1 = cval(c, x1), y2 = cval(c, x2);
+      $('#r2-x1').min = $('#r2-x2').min = lo; $('#r2-x1').max = $('#r2-x2').max = hi; $('#r2-x1').step = $('#r2-x2').step = (hi - lo) > 20 ? 1 : .5; $('#r2-x1').value = x1; $('#r2-x2').value = x2; $('#r2-v1').textContent = fz(x1); $('#r2-v2').textContent = fz(x2);
+      const out = $('#r2-calc');
+      plot($('#r2-plot'), { xr: [lo, hi], lines: [{ f: x => cval(c, x), c: COL.L }], pts: [{ x: x1, y: y1, c: COL.X, l: `P₁(${fz(x1)}, ${fz(y1, 2)})`, dy: -12 }, { x: x2, y: y2, c: COL.Y, l: `P₂(${fz(x2)}, ${fz(y2, 2)})`, dy: -12 }], segs: x1 !== x2 ? [{ x1, y1, x2, y2: y1, c: COL.X, dash: true, l: 'Δx = ' + fz(x2 - x1), dy: 16 }, { x1: x2, y1, x2, y2, c: COL.Y, dash: true, l: 'Δy = ' + fz(y2 - y1, 2), dx: 36 }] : [], xl: c.X[1], yl: c.Y[1], anim: false });
+      if (x1 === x2) { out.innerHTML = '<div class="tip-box s-res">Elige dos valores de x distintos para calcular la razón de cambio.</div>'; return; }
+      const m = (y2 - y1) / (x2 - x1), id = reg('Razón de cambio', [['Cambio en y entre cambio en x', T`\frac{Δy}{Δx} = \frac{y_2 - y_1}{x_2 - x_1} = \frac{${pn(y2)} - ${pn(y1)}}{${pn(x2)} - ${pn(x1)}} = \frac{${ft(y2 - y1, 3)}}{${ft(x2 - x1, 3)}} = ${ft(m, 4)}`, 'res']], COL.R);
+      out.innerHTML = `<div class="calc-screen" style="--c:${COL.R}">${fi(T`\frac{Δy}{Δx} = \frac{y_2 - y_1}{x_2 - x_1} = \frac{${pn(y2)} - ${pn(y1)}}{${pn(x2)} - ${pn(x1)}} = ${pp(id, ft(m, 3))}`)}</div>
+        <div class="tip-box s-ok mt-2"><i class="bi bi-chat-quote me-1"></i><strong>Interpretación:</strong> por cada <strong>1 ${c.X[1]}</strong> que aumenta ${c.X[0]}, ${c.Y[0]} <strong>${arrow(m)}${m === 0 ? '' : ' ' + fz(Math.abs(m), 3) + ' ' + (c.Y[1] === '$' ? 'pesos' : c.Y[1])}</strong>.</div>
+        <div class="small text-muted mt-1">Prueba otras parejas de puntos: en una recta la razón <strong>siempre da lo mismo</strong> (${ft(c.a)}). Esa constancia es la característica de la variación lineal.</div>`;
+      initPops($('#r2-calc'));
+    }
+    const TY = [
+      { id: 'lin', n: 'Lineal', eq: 'y = 2x + 1', f: x => 2 * x + 1, c: COL.L, note: 'Δy/Δx es constante (2): cada vez que x sube 1, y sube 2.' },
+      { id: 'dir', n: 'Directamente proporcional', eq: 'y = 3x', f: x => 3 * x, c: COL.D, note: 'Δy/Δx constante (3) y además y/x = 3 siempre: pasa por el origen.' },
+      { id: 'cte', n: 'Constante', eq: 'y = 5', f: x => 5, c: COL.G, note: 'y no cambia: razón de cambio 0 (recta horizontal).' },
+      { id: 'cua', n: 'Cuadrática', eq: 'y = x²', f: x => x * x, c: COL.Y, note: 'Δy/Δx no es constante: crece cada vez más rápido (curva).' },
+      { id: 'inv', n: 'Inversa', eq: 'y = 12/x', f: x => 12 / x, c: COL.P, note: 'Al aumentar x, y disminuye cada vez más lento; el producto x·y es constante (12).' },
+      { id: 'exp', n: 'Exponencial', eq: 'y = 2ˣ', f: x => Math.pow(2, x), c: COL.R, note: 'y se multiplica por 2 cuando x sube 1: Δy/Δx se duplica.' }
+    ];
+    let R2t = 'lin';
+    function renderTY() {
+      const t = TY.find(q => q.id === R2t); $$('[data-ty]').forEach(b => b.classList.toggle('on', b.dataset.ty === R2t));
+      const xs = [1, 2, 3, 4, 5, 6], ys = xs.map(t.f); const rc = ys.slice(1).map((y, i) => y - ys[i]), cst = rc.every(v => Math.abs(v - rc[0]) < 1e-9);
+      const rows = xs.map((x, i) => { const d = i ? ys[i] - ys[i - 1] : null, ratio = ys[i] / x; return `<tr style="animation:pop .35s ${i * .08}s both"><td>${x}</td><td class="fw-bold">${ft(ys[i], 2)}</td><td>${d === null ? '—' : ft(d, 3)}</td><td class="${d !== null ? (cst ? 'ok-c' : 'bad-c') : ''} fw-bold">${d === null ? '—' : ft(d, 3)}</td><td class="${Math.abs(ratio - ys[0] / xs[0]) < 1e-9 ? 'ok-c' : ''}">${ft(ratio, 3)}</td></tr>`; }).join('');
+      $('#ty-tbl').innerHTML = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr><th style="background:${COL.X}">x</th><th style="background:${COL.Y}">y</th><th style="background:${COL.R}">Δy (cuando Δx = 1)</th><th style="background:${COL.R}">Δy/Δx</th><th style="background:${COL.D}">y/x</th></tr></thead><tbody>${rows}</tbody></table>`;
+      plot($('#ty-plot'), { xr: [0, 6], curves: [{ f: t.f, c: t.c }], pts: xs.map(x => ({ x, y: t.f(x), c: t.c, r: 5 })), anim: true, H: 300 });
+      const direct = t.id === 'dir', lin = cst;
+      $('#ty-note').innerHTML = `<div class="tip-box ${lin ? 's-ok' : 's-res'}"><strong>${t.n}:</strong> ${t.eq}<br>${t.note}</div><div class="mt-2">${chips([lin ? '✓ razón de cambio constante → variación lineal' : '✗ razón de cambio NO constante → no es lineal'], lin ? '' : 'no')}${chips([direct ? '✓ y/x constante → directamente proporcional' : '✗ y/x no es constante → no es directa'], direct ? '' : 'no')}</div>`;
+    }
+    function renderS2() {
+      $('#s2').innerHTML = lesson(2, 'Razón de cambio', 'Cuánto cambia y por cada cambio de x; y cómo distinguir tipos de variación', COL.R, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.R}">razón de cambio = Δy / Δx<small>Δ («delta») significa «cambio en»: Δx = x₂ − x₁ y Δy = y₂ − y₁</small></div><p class="small mb-0">Mide <strong>qué tanto cambia la variable dependiente por cada unidad que cambia la independiente</strong>. Si es positiva, y aumenta; si es negativa, y disminuye; si es 0, y no cambia. Gráficamente es la <strong>pendiente</strong> de la recta.</p></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:${COL.R};margin:0"><h6>Cómo leerla</h6><ul class="small mb-0"><li><strong>$\\frac{\\Delta y}{\\Delta x}=9$</strong> en el taxi: «9 pesos más por cada kilómetro».</li><li><strong>$\\frac{\\Delta y}{\\Delta x}=-20$</strong> en el tanque: «pierde 20 litros por minuto».</li><li>Siempre se dice con <em>unidades</em>: (unidades de y) por (unidad de x).</li></ul></div></div></div>
+        <h5 class="fw-bold" style="color:${COL.R}"><i class="bi bi-1-circle me-1"></i>Calcula la razón de cambio entre dos puntos</h5>
+        <div class="d-flex flex-wrap gap-2 mb-2">${ctxChips('r2', R2)}</div>
+        <div class="row g-2 mb-2"><div class="col-md-6"><label class="small fw-bold" style="color:${COL.X}">x₁ = <span id="r2-v1"></span></label><input type="range" id="r2-x1" class="form-range"></div><div class="col-md-6"><label class="small fw-bold" style="color:${COL.Y}">x₂ = <span id="r2-v2"></span></label><input type="range" id="r2-x2" class="form-range"></div></div>
+        <div class="row g-3"><div class="col-lg-7"><div class="viz-card"><div id="r2-plot"></div></div></div><div class="col-lg-5" id="r2-calc"></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.R}"><i class="bi bi-2-circle me-1"></i>Distingue diferentes tipos de variación</h5>
+        <p class="small text-muted mb-2">Elige un tipo. Observa si Δy/Δx es <strong>constante</strong> (variación lineal) y si y/x es constante (directamente proporcional).</p>
+        <div class="d-flex flex-wrap gap-2 mb-2">${TY.map(t => `<button class="mbtn" data-ty="${t.id}" style="--c:${t.c}">${t.n}</button>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-6"><div class="table-responsive rounded-3 border" id="ty-tbl"></div></div><div class="col-lg-6"><div class="viz-card"><div id="ty-plot"></div></div></div></div><div id="ty-note" class="mt-2"></div>`);
+      renderR2(); renderTY();
+    }
+
+    /* ---------- 3. Variación directamente proporcional ---------- */
+    let D3k = 3, D3m = 2;
+    const TP = { x: ['1', '2', '4', '5', '8'], y: ['3', '6', '12', '15', '24'] };
+    const TEX = { dir: [['1', '3'], ['2', '6'], ['4', '12'], ['5', '15'], ['8', '24']], lin: [['1', '5'], ['2', '7'], ['4', '11'], ['5', '13'], ['8', '19']], cua: [['1', '1'], ['2', '4'], ['3', '9'], ['4', '16'], ['5', '25']], inv: [['1', '24'], ['2', '12'], ['3', '8'], ['4', '6'], ['6', '4']] };
+    function renderD3a() {
+      const k = D3k, xs = [1, 2, 3, 4, 5, 6];
+      $('#d3-k').value = k; $('#d3-kv').textContent = fz(k);
+      $('#d3-tbl').innerHTML = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr><th style="background:${COL.X}">x</th><th style="background:${COL.Y}">y = ${fz(k)}·x</th><th style="background:${COL.D}">y / x</th></tr></thead><tbody>${xs.map((x, i) => `<tr style="animation:pop .35s ${i * .08}s both"><td class="cb-x">${x}</td><td class="cb-y fw-bold">${ft(k * x, 3)}</td><td class="fw-bold" style="color:${COL.D};background:#e6f6ea">${ft(k, 3)}</td></tr>`).join('')}</tbody></table>`;
+      plot($('#d3-plot'), { xr: [0, 6], lines: [{ f: x => k * x, c: COL.D }], pts: xs.map(x => ({ x, y: k * x, c: COL.D, r: 5 })), anim: false, H: 300 });
+      const m = D3m, x0 = 2, y0 = k * x0, x1 = x0 * m, y1 = k * x1;
+      $$('[data-mul]').forEach(b => b.classList.toggle('on', +b.dataset.mul === m));
+      $('#d3-mul').innerHTML = `<div class="mulrow"><div class="mc1" style="--c:${COL.X}">x = ${x0}</div><div class="mar">× ${fz(m)}</div><div class="mc1" style="--c:${COL.X}">x = ${fz(x1)}</div></div><div class="mulrow"><div class="mc1" style="--c:${COL.Y}">y = ${ft(y0, 3)}</div><div class="mar">× ${fz(m)}</div><div class="mc1" style="--c:${COL.Y}">y = ${ft(y1, 3)}</div></div>
+        <div class="small mt-1"><strong>Propiedad:</strong> si x se multiplica por ${fz(m)}, y también se multiplica por ${fz(m)}. (Por eso la tabla «escala» y se puede usar la regla de tres.)</div>`;
+    }
+    function evalTable(rows) {
+      const pts = rows.map(([x, y]) => [parseFloat(String(x).replace(',', '.')), parseFloat(String(y).replace(',', '.'))]);
+      if (pts.some(p => !isFinite(p[0]) || !isFinite(p[1]))) return { err: 'Completa todas las casillas con números.' };
+      const ratios = pts.map(([x, y]) => x === 0 ? (y === 0 ? NaN : Infinity) : y / x), hasZero = pts.some(p => p[0] === 0);
+      const ok = !hasZero && ratios.every(r => Math.abs(r - ratios[0]) < 1e-9 * Math.max(1, Math.abs(ratios[0])));
+      const sorted = pts.slice().sort((a, b) => a[0] - b[0]); let lin = false, a = NaN, b = NaN;
+      if (new Set(sorted.map(p => p[0])).size === sorted.length) { const sl = sorted.slice(1).map((p, i) => (p[1] - sorted[i][1]) / (p[0] - sorted[i][0])); lin = sl.every(s => Math.abs(s - sl[0]) < 1e-9 * Math.max(1, Math.abs(sl[0]))); if (lin) { a = sl[0]; b = sorted[0][1] - a * sorted[0][0]; } }
+      return { pts, ratios, ok, lin, a, b, hasZero, sorted };
+    }
+    function renderD3b() {
+      const rows = TP.x.map((x, i) => [x, TP.y[i]]), r = evalTable(rows), out = $('#d3-res');
+      $$('.tp-in').forEach(el => { const i = +el.dataset.i; el.value = TP[el.dataset.ax][i]; });
+      if (r.err) { out.innerHTML = `<div class="tip-box s-res">${r.err}</div>`; $('#d3-plot2').innerHTML = ''; return; }
+      const cls = r.ok ? 's-ok' : r.lin ? 's-volt' : 's-res';
+      const verdict = r.ok ? `<strong>✓ Sí es variación directamente proporcional.</strong> Todos los cocientes y/x valen ${ft(r.ratios[0], 4)}: es la <em>constante de proporcionalidad</em> k. Función: <strong>y = ${ft(r.ratios[0], 4)}x</strong>.` : r.lin ? `<strong>≈ Es variación lineal, pero NO directamente proporcional.</strong> La razón de cambio es constante (a = ${ft(r.a, 4)}), pero hay condición inicial b = ${ft(r.b, 4)} ≠ 0: la recta no pasa por el origen y los cocientes y/x no son iguales.` : `<strong>✗ No es directamente proporcional (ni lineal).</strong> Los cocientes y/x no son todos iguales y la razón de cambio tampoco es constante.`;
+      out.innerHTML = `<div class="table-responsive rounded-3 border mb-2"><table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr><th style="background:${COL.X}">x</th><th style="background:${COL.Y}">y</th><th style="background:${COL.D}">y / x</th></tr></thead><tbody>${r.pts.map(([x, y], i) => `<tr style="animation:pop .3s ${i * .08}s both"><td class="cb-x">${ft(x)}</td><td class="cb-y">${ft(y)}</td><td class="fw-bold ${r.ok ? 'ok-c' : ''}">${x === 0 ? 'x = 0' : ft(r.ratios[i], 4)}</td></tr>`).join('')}</tbody></table></div><div class="tip-box ${cls}">${verdict}</div>`;
+      const xm = Math.max(...r.pts.map(p => p[0]), 1), curve = r.ok ? [] : [];
+      plot($('#d3-plot2'), { xr: [Math.min(0, ...r.pts.map(p => p[0])), xm * 1.1], lines: r.ok ? [{ f: x => r.ratios[0] * x, c: COL.D }] : r.lin ? [{ f: x => r.a * x + r.b, c: COL.L }, { f: x => 0 * x, c: 'transparent', w: 0 }] : [], pts: r.pts.map(p => ({ x: p[0], y: p[1], c: r.ok ? COL.D : r.lin ? COL.L : COL.R, r: 6 })), anim: true, H: 280 });
+    }
+    function renderD3c() {
+      const a = parseFloat($('#t3-a').value), b = parseFloat($('#t3-b').value), c = parseFloat($('#t3-c').value), ux = $('#t3-ux').value || 'x', uy = $('#t3-uy').value || 'y', out = $('#t3-out');
+      if (![a, b, c].every(isFinite) || a === 0) { out.innerHTML = '<div class="tip-box s-res">Escribe números (el primero distinto de 0).</div>'; return; }
+      const k = b / a, x = k * c;
+      out.innerHTML = `<div class="row g-3"><div class="col-md-5"><table class="table table-bordered text-center bg-white mb-1"><thead><tr><th style="background:${COL.X};color:#fff">${ux}</th><th style="background:${COL.Y};color:#fff">${uy}</th></tr></thead><tbody><tr><td>${ft(a)}</td><td>${ft(b)}</td></tr><tr><td>${ft(c)}</td><td class="fw-bold" style="color:${COL.D}">?</td></tr></tbody></table><div class="calc-screen" style="--c:${COL.D}">${fi(T`\frac{${pn(a)}}{${pn(b)}} = \frac{${pn(c)}}{x} \;\Rightarrow\; x = \frac{${pn(b)} \cdot ${pn(c)}}{${pn(a)}} = ${ft(x, 4)}`)}</div></div>
+        <div class="col-md-7"><div class="sstep" style="--i:0;--sc:${COL.X}"><div class="sn">1</div><div class="sb"><div class="st">Ordena los datos en una tabla</div><div class="sx">${ft(a)} ${ux} ↔ ${ft(b)} ${uy}; ${ft(c)} ${ux} ↔ x ${uy}.</div></div></div>
+          <div class="sstep" style="--i:1;--sc:${COL.D}"><div class="sn">2</div><div class="sb"><div class="st">Encuentra la constante de proporcionalidad</div>${fd(T`k = \frac{y}{x} = \frac{${pn(b)}}{${pn(a)}} = ${ft(k, 4)}`)}<div class="sx">Es lo que vale 1 ${ux} en ${uy}.</div></div></div>
+          <div class="sstep" style="--i:2;--sc:${COL.L}"><div class="sn">3</div><div class="sb"><div class="st">Multiplica por la nueva cantidad</div>${fd(T`y = k \cdot x = ${ft(k, 4)} \cdot ${pn(c)} = ${ft(x, 4)}`)}</div></div>
+          <div class="sstep" style="--i:3;--sc:${COL.R}"><div class="sn">4</div><div class="sb"><div class="st">Responde y verifica</div><div class="sx"><strong>${ft(c)} ${ux} ↔ ${ft(x, 4)} ${uy}.</strong> Verifica: ${ft(x, 4)} / ${ft(c)} = ${ft(x / c, 4)} = k ✓</div></div></div></div></div>`;
+    }
+    function renderS3() {
+      $('#s3').innerHTML = lesson(3, 'Variación directamente proporcional', 'y = ax, con b = 0: reconoce cuándo ocurre y cómo se calcula', COL.D, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.D}">y = k · x<small>k = y / x = constante de proporcionalidad (en la forma y = ax + b, a = k y b = 0)</small></div>
+          <ul class="small" style="line-height:1.75"><li>Dos magnitudes son <strong>directamente proporcionales</strong> si al <strong>multiplicar</strong> una por un número, la otra queda multiplicada por <em>el mismo</em> número.</li><li>El <strong>cociente y/x es siempre el mismo</strong> (k).</li><li>La gráfica es una <strong>recta que pasa por el origen</strong> (0, 0): con x = 0 resulta y = 0.</li><li>Ejemplos: precio y cantidad a precio fijo, distancia y tiempo a rapidez constante, perímetro de un cuadrado y su lado ($P=4\\ell$).</li></ul></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:#e03131;margin:0"><h6>No todo lo que «crece junto» es proporcional</h6><p class="small mb-1">Un taxi: 1 km cuesta $21 y 2 km cuestan $30. Al duplicar los km <em>no</em> se duplica el costo (por el banderazo): es lineal pero <strong>no</strong> directa.</p><table class="table table-sm table-bordered text-center bg-white small mb-0"><thead class="table-light"><tr><th></th><th>Directa</th><th>Inversa</th><th>Lineal con b ≠ 0</th></tr></thead><tbody><tr><td>x se duplica</td><td>y se duplica</td><td>y se reduce a la mitad</td><td>y no se duplica</td></tr><tr><td>Constante</td><td>y/x</td><td>x·y</td><td>Δy/Δx</td></tr><tr><td>Gráfica</td><td>recta por el origen</td><td>curva (hipérbola)</td><td>recta, no pasa por el origen</td></tr></tbody></table></div></div></div>
+        <h5 class="fw-bold" style="color:${COL.D}"><i class="bi bi-1-circle me-1"></i>Laboratorio: la constante k y la propiedad de escalar</h5>
+        <div class="row g-3"><div class="col-lg-6"><label class="small fw-bold">Constante de proporcionalidad k = <span id="d3-kv"></span></label><input type="range" id="d3-k" min="0.5" max="10" step="0.5" class="form-range mb-2"><div class="table-responsive rounded-3 border" id="d3-tbl"></div>
+          <div class="small fw-bold text-muted mt-3 mb-1">Multiplica x por…</div><div class="d-flex gap-2 mb-2">${[2, 3, 0.5, 10].map(m => `<button class="mbtn" data-mul="${m}" style="--c:${COL.D}">× ${m}</button>`).join('')}</div><div id="d3-mul"></div></div>
+          <div class="col-lg-6"><div class="viz-card"><div id="d3-plot"></div></div><div class="small text-muted mt-1">Todos los puntos están alineados con el origen. Cambia k: solo cambia la inclinación.</div></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.D}"><i class="bi bi-2-circle me-1"></i>Detector: ¿esta tabla es directamente proporcional?</h5>
+        <p class="small text-muted mb-2">Escribe tus propios pares o elige un ejemplo.</p>
+        <div class="d-flex flex-wrap gap-2 mb-2">${[['dir', 'Proporcional'], ['lin', 'Lineal con b ≠ 0'], ['cua', 'Cuadrática'], ['inv', 'Inversa']].map(([k, t]) => `<button class="mbtn" data-tex="${k}" style="--c:${COL.D}">${t}</button>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-5"><table class="table table-sm table-bordered text-center bg-white mb-2"><thead><tr><th style="background:${COL.X};color:#fff">x</th><th style="background:${COL.Y};color:#fff">y</th></tr></thead><tbody>${[0, 1, 2, 3, 4].map(i => `<tr><td><input class="tp-in form-control form-control-sm text-center" data-ax="x" data-i="${i}"></td><td><input class="tp-in form-control form-control-sm text-center" data-ax="y" data-i="${i}"></td></tr>`).join('')}</tbody></table></div>
+          <div class="col-lg-7"><div id="d3-res"></div><div class="viz-card mt-2"><div id="d3-plot2"></div></div></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.D}"><i class="bi bi-3-circle me-1"></i>Regla de tres directa paso a paso</h5>
+        <div class="row g-2 align-items-end mb-2"><div class="col-6 col-md-2"><label class="small fw-bold">Cantidad a</label><input id="t3-a" type="number" step="any" class="form-control" value="3"></div><div class="col-6 col-md-2"><label class="small fw-bold">equivale a b</label><input id="t3-b" type="number" step="any" class="form-control" value="84"></div><div class="col-6 col-md-2"><label class="small fw-bold">Nueva cantidad c</label><input id="t3-c" type="number" step="any" class="form-control" value="5"></div><div class="col-6 col-md-3"><label class="small fw-bold">Unidad de x</label><input id="t3-ux" class="form-control" value="kg"></div><div class="col-12 col-md-3"><label class="small fw-bold">Unidad de y</label><input id="t3-uy" class="form-control" value="pesos"></div></div><div id="t3-out"></div>`);
+      renderD3a(); renderD3b(); renderD3c();
+    }
+
+    /* ---------- 4. Variación lineal y = ax + b ---------- */
+    const L4 = { a: 2, b: 3 };
+    function renderL4() {
+      const { a, b } = L4; $('#l4-a').value = a; $('#l4-b').value = b; $('#l4-av').textContent = fz(a); $('#l4-bv').textContent = fz(b);
+      const xs = [-2, -1, 0, 1, 2, 3, 4], root = a !== 0 ? -b / a : null;
+      const pts = [{ x: 0, y: b, c: COL.F, r: 8, l: `(0, ${fz(b)})`, dx: 12, dy: -10 }]; if (root !== null && Math.abs(root) < 10) pts.push({ x: root, y: 0, c: COL.P, r: 6, l: `(${fz(root, 2)}, 0)`, dy: -12 });
+      plot($('#l4-plot'), { xr: [-5, 5], yr: [Math.min(-6, b - 6, b - 5 * Math.abs(a) - 1), Math.max(6, b + 6, b + 5 * Math.abs(a) + 1)], lines: [{ f: x => a * x + b, c: COL.L }], pts, segs: [{ x1: 1, y1: a + b, x2: 2, y2: a + b, c: COL.X, dash: true, l: 'Δx = 1', dy: 16 }, { x1: 2, y1: a + b, x2: 2, y2: 2 * a + b, c: COL.Y, dash: true, l: 'Δy = ' + fz(a), dx: 38 }], anim: false });
+      $('#l4-eq').innerHTML = fd(T`y = \textcolor{#e03131}{a}x + \textcolor{#0c8599}{b}`) + fd(eqTex(a, b).replace(/^y = (.*)$/, (m, r) => T`y = ${r}`));
+      $('#l4-tbl').innerHTML = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr><th style="background:${COL.X}">x</th><th style="background:${COL.Y}">y = ${eqTex(a, b).slice(4)}</th></tr></thead><tbody>${xs.map(x => `<tr><td class="cb-x">${x}</td><td class="cb-y fw-bold">${ft(a * x + b, 3)}</td></tr>`).join('')}</tbody></table>`;
+      const tags = [a > 0 ? ['Creciente (a > 0): la recta sube', ''] : a < 0 ? ['Decreciente (a < 0): la recta baja', ''] : ['Constante (a = 0): recta horizontal', 'dep'], b === 0 ? ['b = 0 → directamente proporcional: pasa por el origen', ''] : ['b ≠ 0 → lineal no proporcional: no pasa por el origen', 'dep']];
+      $('#l4-int').innerHTML = `<div class="tip-box s-res mb-2" style="--c:${COL.R}"><strong style="color:${COL.R}">a = ${fz(a)}</strong> (razón de cambio, pendiente): por cada unidad que aumenta x, y ${arrow(a)}${a === 0 ? '' : ' ' + fz(Math.abs(a))}.</div><div class="tip-box s-amp mb-2"><strong style="color:${COL.F}">b = ${fz(b)}</strong> (condición inicial, ordenada al origen): el valor de y cuando x = 0; la recta cruza el eje y en (0, ${fz(b)}).</div>${tags.map(t => `<span class="chipx ${t[1]}">${t[0]}</span>`).join('')}${root !== null ? `<div class="small mt-2">Cruza el eje x en x = −b/a = ${fz(root, 3)} (donde y = 0).</div>` : ''}`;
+    }
+    function renderS4() {
+      $('#s4').innerHTML = lesson(4, 'Variación lineal: y = ax + b', 'La razón de cambio es constante; b es el valor inicial', COL.L, `
+        <div class="row g-3 mb-2"><div class="col-lg-5"><div class="setdef" style="--c:${COL.L}">y = a·x + b<small>a: razón de cambio (pendiente) · b: condición inicial (ordenada al origen)</small></div></div><div class="col-lg-7"><p class="small mb-0">En una variación lineal, y cambia <strong>la misma cantidad</strong> cada vez que x aumenta una unidad (esa cantidad es <strong>a</strong>), y se parte de un valor inicial <strong>b</strong>. Si $b=0$ se obtiene la variación directamente proporcional $y=ax$. Mueve los deslizadores y observa.</p></div></div>
+        <div class="d-flex flex-wrap gap-2 mb-2"><span class="small fw-bold align-self-center">Ejemplos:</span>${[[2, 3, 'y = 2x + 3'], [3, 0, 'directa y = 3x'], [-2, 6, 'decreciente'], [0, 4, 'constante'], [1, -3, 'b negativa']].map(([a, b, t]) => `<button class="mbtn" data-l4="${a},${b}" style="--c:${COL.L}">${t}</button>`).join('')}</div>
+        <div class="row g-2 mb-2"><div class="col-md-6"><label class="small fw-bold" style="color:${COL.R}">a (razón de cambio) = <span id="l4-av"></span></label><input type="range" id="l4-a" min="-5" max="5" step="0.5" class="form-range"></div><div class="col-md-6"><label class="small fw-bold" style="color:${COL.F}">b (condición inicial) = <span id="l4-bv"></span></label><input type="range" id="l4-b" min="-10" max="10" step="1" class="form-range"></div></div>
+        <div class="row g-3"><div class="col-lg-7"><div class="viz-card"><div id="l4-plot"></div></div></div><div class="col-lg-5"><div class="eq-big mb-2" id="l4-eq"></div><div class="table-responsive rounded-3 border mb-2" id="l4-tbl"></div></div></div><div id="l4-int" class="mt-2"></div>`);
+      renderL4();
+    }
+
+    /* ---------- 5. Representaciones ---------- */
+    let R5 = 2;
+    function renderR5() {
+      const c = CTX[R5], X = c.X, Y = c.Y; $$('[data-r5]').forEach(b => b.classList.toggle('on', +b.dataset.r5 === R5));
+      const ys = c.xs.map(x => cval(c, x)), pts = c.xs.map(x => ({ x, y: cval(c, x), c: COL.L, r: 6 })), dir = c.b === 0;
+      $('#r5-verbal').innerHTML = `<p class="mb-2">${c.v}</p><div class="small">${dir ? `Es <strong>directamente proporcional</strong>: ${Y[0]} y ${X[0]} se multiplican igual.` : `Es <strong>lineal</strong> con valor inicial: cuando ${X[0]} = 0, ${Y[0]} ya vale ${fz(c.b)} ${Y[1]}.`} ${c.a < 0 ? 'Como la razón de cambio es negativa, ' + Y[0] + ' disminuye.' : ''}</div>`;
+      $('#r5-tab').innerHTML = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr><th style="background:${COL.X}">${X[1]}</th><th style="background:${COL.Y}">${Y[1]}</th></tr></thead><tbody>${c.xs.map((x, i) => `<tr><td class="cb-x">${fz(x)}</td><td class="cb-y fw-bold">${fz(ys[i], 2)}</td></tr>`).join('')}</tbody></table>`;
+      const xm = c.xr;
+      plot($('#r5-plot'), { xr: xm, lines: c.cont ? [{ f: x => cval(c, x), c: COL.L, w: 3 }] : [], pts: c.cont ? pts : c.xs.map(x => ({ x, y: cval(c, x), c: COL.L, r: 6 })).concat(Array.from({ length: Math.floor(xm[1]) - xm[0] + 1 }, (_, i) => ({ x: xm[0] + i, y: cval(c, xm[0] + i), c: '#cbd5e1', r: 3.5 })).filter(p => !c.xs.includes(p.x))), xl: X[1], yl: Y[1], anim: true, H: 300 });
+      $('#r5-alg').innerHTML = `<div class="eq-big" style="font-size:1.25rem">${fd(eqTex(c.a, c.b).replace(/^y = (.*)$/, (m, r) => T`y = ${r}`))}</div><div class="small mt-2"><strong>x</strong> = ${X[0]} (${X[1]}) · <strong>y</strong> = ${Y[0]} (${Y[1]})<br><strong style="color:${COL.R}">a = ${fz(c.a)}</strong> ${Y[1]} por ${X[1]} (razón de cambio)<br><strong style="color:${COL.F}">b = ${fz(c.b)}</strong> ${Y[1]} (condición inicial)</div>`;
+      $('#r5-kind').innerHTML = `<div class="tip-box ${c.cont ? 's-amp' : 's-volt'} small"><i class="bi bi-${c.cont ? 'graph-up' : 'dot'} me-1"></i><strong>${X[0]}: variable ${c.cont ? 'continua' : 'discreta'}.</strong> ${c.cont ? 'Puede tomar cualquier valor del intervalo (también decimales), por eso la gráfica es una <strong>línea continua</strong> y hay datos que <em>no están en la tabla</em> pero sí existen.' : 'Solo toma valores aislados (enteros), por eso la gráfica son <strong>puntos separados</strong> y no se unen: no existe «2.5 ' + X[1] + '».'}</div>`;
+      renderInterp(); math($('#r5-verbal'));
+    }
+    function renderInterp() {
+      const c = CTX[R5], v = parseFloat($('#r5-x').value), out = $('#r5-int');
+      if (!isFinite(v)) { out.innerHTML = '<div class="small text-muted">Escribe un valor de x.</div>'; return; }
+      const inR = v >= c.xr[0] && v <= c.xr[1], okv = c.cont ? true : Number.isInteger(v);
+      if (!inR) { out.innerHTML = `<div class="tip-box s-res small">x = ${fz(v)} está fuera del intervalo de la situación [${c.xr[0]}, ${c.xr[1]}].</div>`; return; }
+      if (!okv) { out.innerHTML = `<div class="tip-box s-res small"><strong>No tiene sentido:</strong> ${c.X[0]} es discreta, no puede valer ${fz(v)}.</div>`; return; }
+      const y = cval(c, v), inTab = c.xs.includes(v);
+      out.innerHTML = `<div class="tip-box s-ok small">${fi(T`y = ${pn(c.a)}(${pn(v)}) ${c.b >= 0 ? '+' : '-'} ${ft(Math.abs(c.b))} = ${ft(y, 3)}`)} ${c.Y[1]}<br>${inTab ? 'Este dato sí está en la tabla.' : '<strong>Dato no registrado en la tabla</strong>: se obtiene con la expresión algebraica o leyendo la gráfica.'}</div>`;
+    }
+    function renderG2E() {
+      const x1 = parseFloat($('#g-x1').value), y1 = parseFloat($('#g-y1').value), x2 = parseFloat($('#g-x2').value), y2 = parseFloat($('#g-y2').value), out = $('#g2e-out');
+      if (![x1, y1, x2, y2].every(isFinite)) { out.innerHTML = '<div class="tip-box s-res">Completa los cuatro valores.</div>'; return; }
+      if (x1 === x2) { out.innerHTML = '<div class="tip-box s-res">Las x deben ser distintas (si no, la recta es vertical y no es función).</div>'; $('#g2e-plot').innerHTML = ''; return; }
+      const a = (y2 - y1) / (x2 - x1), b = y1 - a * x1;
+      out.innerHTML = `<div class="sstep" style="--i:0;--sc:${COL.R}"><div class="sn">1</div><div class="sb"><div class="st">Razón de cambio</div>${fd(T`a = \frac{y_2 - y_1}{x_2 - x_1} = \frac{${pn(y2)} - ${pn(y1)}}{${pn(x2)} - ${pn(x1)}} = ${ft(a, 4)}`)}</div></div>
+        <div class="sstep" style="--i:1;--sc:${COL.F}"><div class="sn">2</div><div class="sb"><div class="st">Condición inicial (sustituye un punto en y = ax + b)</div>${fd(T`b = y_1 - a x_1 = ${pn(y1)} - (${ft(a, 4)})(${pn(x1)}) = ${ft(b, 4)}`)}</div></div>
+        <div class="sstep" style="--i:2;--sc:${COL.L}"><div class="sn">3</div><div class="sb"><div class="st">Expresión algebraica</div>${fd(eqTex(+a.toFixed(6), +b.toFixed(6)).replace(/^y = (.*)$/, (m, r) => T`y = ${r}`))}<div class="sx">${Math.abs(b) < 1e-9 ? 'Como b = 0, es una variación directamente proporcional.' : 'Como b ≠ 0, es lineal y no proporcional.'}</div></div></div>
+        <div class="sstep" style="--i:3;--sc:${COL.D}"><div class="sn">4</div><div class="sb"><div class="st">Verifica con el otro punto</div><div class="sx">y(${ft(x2)}) = ${ft(a, 4)}·${pn(x2)} ${b >= 0 ? '+' : '−'} ${ft(Math.abs(b), 4)} = ${ft(a * x2 + b, 4)} ✓</div></div></div>`;
+      const lo = Math.min(0, x1, x2), hi = Math.max(x1, x2, 1) * 1.15; plot($('#g2e-plot'), { xr: [lo, hi], lines: [{ f: x => a * x + b, c: COL.L }], pts: [{ x: x1, y: y1, c: COL.X, l: `(${ft(x1)}, ${ft(y1)})` }, { x: x2, y: y2, c: COL.Y, l: `(${ft(x2)}, ${ft(y2)})` }, { x: 0, y: b, c: COL.F, r: 7, l: `b = ${ft(b, 3)}`, dx: 10, dy: 16 }], anim: false, H: 290 });
+    }
+    function renderS5() {
+      $('#s5').innerHTML = lesson(5, 'Representaciones de la variación', 'Verbal, tabular, gráfica y algebraica: transita entre ellas', COL.Y, `
+        <p class="small mb-2">Una misma situación se puede describir de <strong>cuatro maneras</strong>. Entender la variación es poder pasar de una a otra y explicar qué muestra cada una.</p>
+        <div class="d-flex flex-wrap gap-2 mb-3">${ctxChips('r5', R5)}</div>
+        <div class="row g-3"><div class="col-md-6"><div class="repc" style="--c:${COL.P};--i:0"><div class="rh"><i class="bi bi-chat-left-text me-1"></i>1. Verbal</div><div id="r5-verbal"></div></div></div>
+          <div class="col-md-6"><div class="repc" style="--c:${COL.X};--i:1"><div class="rh"><i class="bi bi-table me-1"></i>2. Tabular</div><div class="table-responsive" id="r5-tab"></div></div></div>
+          <div class="col-md-6"><div class="repc" style="--c:${COL.D};--i:2"><div class="rh"><i class="bi bi-graph-up me-1"></i>3. Gráfica</div><div id="r5-plot"></div></div></div>
+          <div class="col-md-6"><div class="repc" style="--c:${COL.L};--i:3"><div class="rh"><i class="bi bi-braces me-1"></i>4. Algebraica</div><div id="r5-alg"></div></div></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.Y}"><i class="bi bi-1-circle me-1"></i>Variables continuas y discretas</h5><div id="r5-kind"></div>
+        <div class="row g-2 align-items-end mt-1"><div class="col-md-4"><label class="small fw-bold">¿Qué pasa con un valor de x que NO está en la tabla?</label><input id="r5-x" type="number" step="any" class="form-control" value="2.5"></div><div class="col-md-8" id="r5-int"></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.Y}"><i class="bi bi-2-circle me-1"></i>De la gráfica a la expresión algebraica</h5>
+        <p class="small text-muted mb-2">Lee dos puntos de la recta (por ejemplo, del taxi: (1, 21) y (4, 48)) y obtén la función.</p>
+        <div class="row g-2 mb-2"><div class="col-6 col-md-3"><label class="small fw-bold" style="color:${COL.X}">x₁</label><input id="g-x1" type="number" step="any" class="form-control" value="1"></div><div class="col-6 col-md-3"><label class="small fw-bold" style="color:${COL.Y}">y₁</label><input id="g-y1" type="number" step="any" class="form-control" value="21"></div><div class="col-6 col-md-3"><label class="small fw-bold" style="color:${COL.X}">x₂</label><input id="g-x2" type="number" step="any" class="form-control" value="4"></div><div class="col-6 col-md-3"><label class="small fw-bold" style="color:${COL.Y}">y₂</label><input id="g-y2" type="number" step="any" class="form-control" value="48"></div></div>
+        <div class="row g-3"><div class="col-lg-6"><div class="viz-card"><div id="g2e-plot"></div></div></div><div class="col-lg-6" id="g2e-out"></div></div>`);
+      renderR5(); renderG2E();
+    }
+
+    /* ---------- 6. Función lineal ---------- */
+    const FL = { a: 2, b: 3, x: 4 };
+    function renderMach() {
+      const { a, b, x } = FL, m = a * x, y = m + b;
+      $('#m-out').innerHTML = `<div class="mach"><div class="mtok in" style="--c:${COL.X};--i:0"><small>entrada</small>x = ${fz(x)}</div><div class="mar2" style="--i:1"><i class="bi bi-arrow-right"></i></div>
+        <div class="mbox" style="--c:${COL.L};--i:2"><div class="mb-t">f(x) = ${eqTex(a, b).slice(4)}</div><div class="gear" style="--c:${COL.R};--i:3">× ${fz(a)}<small>${fz(x)} · ${pn(a).replace(/[()]/g, '')} = ${fz(m)}</small></div><div class="gear" style="--c:${COL.F};--i:4">+ ${fz(b)}<small>${fz(m)} + ${pn(b).replace(/[()]/g, '')} = ${fz(y)}</small></div></div>
+        <div class="mar2" style="--i:5"><i class="bi bi-arrow-right"></i></div><div class="mtok out" style="--c:${COL.Y};--i:6"><small>salida</small>f(${fz(x)}) = ${fz(y)}</div></div>`;
+      $('#m-a').value = a; $('#m-b').value = b; $('#m-x').value = x;
+    }
+    function mapSvg(pairs) {
+      const xs = [...new Set(pairs.map(p => p[0]))], ys = [...new Set(pairs.map(p => p[1]))], rows = Math.max(xs.length, ys.length), H = 30 + rows * 40, W = 280;
+      const yx = v => 30 + xs.indexOf(v) * 40 * rows / xs.length + (rows * 40 / xs.length) / 2 - 20, yy = v => 30 + ys.indexOf(v) * 40 * rows / ys.length + (rows * 40 / ys.length) / 2 - 20;
+      let s = `<svg viewBox="0 0 ${W} ${H + 10}" class="nline"><text x="50" y="16" text-anchor="middle" font-size="12" font-weight="800" fill="${COL.X}">x (entrada)</text><text x="230" y="16" text-anchor="middle" font-size="12" font-weight="800" fill="${COL.Y}">y (salida)</text>`;
+      const cnt = {}; pairs.forEach(p => { cnt[p[0]] = (cnt[p[0]] || 0) + 1; });
+      pairs.forEach((p, i) => { s += `<path class="sc-line" pathLength="1" style="--d:${.2 + i * .25}s" d="M70 ${yx(p[0]) + 14} L210 ${yy(p[1]) + 14}" stroke="${cnt[p[0]] > 1 ? COL.R : COL.L}" stroke-width="2.4" marker-end="url(#ah)"/>`; });
+      s += `<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#475569"/></marker></defs>`;
+      xs.forEach(v => { s += `<circle cx="50" cy="${yx(v) + 14}" r="15" fill="${COL.X}" fill-opacity=".15" stroke="${cnt[v] > 1 ? COL.R : COL.X}" stroke-width="2.4"/><text x="50" y="${yx(v) + 19}" text-anchor="middle" font-weight="800" fill="${COL.X}">${v}</text>`; });
+      ys.forEach(v => { s += `<circle cx="230" cy="${yy(v) + 14}" r="15" fill="${COL.Y}" fill-opacity=".15" stroke="${COL.Y}" stroke-width="2.4"/><text x="230" y="${yy(v) + 19}" text-anchor="middle" font-weight="800" fill="${COL.Y}">${v}</text>`; });
+      return s + '</svg>';
+    }
+    const INI = { tort: 'Con 0 kg se pagan $0: no hay condición inicial (b = 0), es directamente proporcional.', copy: 'Con 0 copias se pagan $0: b = 0, directamente proporcional.', taxi: 'El banderazo: se cobran $12 aunque no se avance ni un kilómetro.', gym: 'La inscripción: $300 que se pagan al inicio, antes de cualquier mensualidad.', tinaco: 'Los 100 L que ya había en el tinaco cuando se empezó a medir el tiempo.', tanque: 'Los 300 L con los que empieza el tanque (antes de que se abra la salida).', temp: '0 °C equivale a 32 °F: el punto de congelación del agua en Fahrenheit.', walk: 'A las 0 h se han recorrido 0 km: b = 0, directamente proporcional.', agua: 'Con 0 min no se gasta agua: b = 0, directamente proporcional.', ahorro: 'Los $500 que ya se tenían ahorrados en la semana 0.' };
+    function renderS6() {
+      $('#s6').innerHTML = lesson(6, 'Función lineal', 'Modelo f(x) = ax + b: razón de cambio constante y condición inicial', COL.F, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.F}">f(x) = ax + b<small>Una función asigna a cada valor de x <u>un único</u> valor de y</small></div>
+          <ul class="small" style="line-height:1.75"><li><strong>Función:</strong> regla que a cada entrada x le asigna exactamente una salida y = f(x).</li><li><strong>Función lineal</strong> (noción intuitiva): su gráfica es una recta y su <strong>razón de cambio es constante</strong> (a).</li><li><strong>Condición inicial:</strong> f(0) = b, el valor de salida cuando la entrada es 0.</li></ul></div>
+          <div class="col-lg-6"><div class="row g-2"><div class="col-12"><div class="theo-card" style="--c:${COL.R};margin:0"><h6>Razón de cambio constante</h6><p class="small mb-0">Entre cualquier par de puntos, Δy/Δx = a. Por eso la tabla crece (o decrece) «a pasos iguales».</p></div></div><div class="col-12"><div class="theo-card" style="--c:${COL.F};margin:0"><h6>Condición inicial</h6><p class="small mb-0">Es el punto donde la recta cruza el eje y: (0, b). Indica cómo «arranca» la situación.</p></div></div></div></div></div>
+        <h5 class="fw-bold" style="color:${COL.F}"><i class="bi bi-1-circle me-1"></i>La máquina de funciones</h5>
+        <div class="row g-2 mb-2 align-items-end"><div class="col-4 col-md-2"><label class="small fw-bold" style="color:${COL.R}">a</label><input id="m-a" type="number" step="any" class="form-control"></div><div class="col-4 col-md-2"><label class="small fw-bold" style="color:${COL.F}">b</label><input id="m-b" type="number" step="any" class="form-control"></div><div class="col-4 col-md-2"><label class="small fw-bold" style="color:${COL.X}">Entrada x</label><input id="m-x" type="number" step="any" class="form-control"></div><div class="col-12 col-md-3"><button class="btn btn-outline-dark rounded-pill" id="m-go"><i class="bi bi-play-fill"></i> Repetir animación</button></div></div>
+        <div class="demo-box" id="m-out"></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.F}"><i class="bi bi-2-circle me-1"></i>¿Es una función? (cada x con un solo y)</h5>
+        <div class="row g-3"><div class="col-md-6"><div class="demo-box text-center"><div class="fw-bold mb-1" style="color:${COL.D}">Relación A</div>${mapSvg([[1, 5], [2, 7], [3, 9]])}<div class="chipx">✓ Es función: cada x tiene una sola flecha</div></div></div>
+          <div class="col-md-6"><div class="demo-box text-center"><div class="fw-bold mb-1" style="color:${COL.R}">Relación B</div>${mapSvg([[1, 4], [2, 6], [2, 8], [3, 9]])}<div class="chipx no">✗ No es función: x = 2 tiene dos salidas</div></div></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.F}"><i class="bi bi-3-circle me-1"></i>Interpreta la condición inicial</h5>
+        <div class="row g-2">${CTX.map((c, i) => `<div class="col-md-6"><div class="inic" style="--c:${c.b === 0 ? COL.D : COL.F};--i:${i}"><i class="bi ${c.ic}"></i><div><div class="fw-bold">${c.n}: ${eqTex(c.a, c.b)}</div><div class="small">${INI[c.id]}</div></div></div></div>`).join('')}</div>`);
+      renderMach();
+    }
+
+    /* ---------- 7. Modelación ---------- */
+    const PRB = [
+      { n: 'Taxi', t: 'Un taxi cobra $21 por un viaje de 1 km y $48 por uno de 4 km. ¿Cuánto cuesta uno de 10 km? ¿Cuántos km se pueden recorrer con $120?', x: ['distancia', 'km'], y: ['costo', '$'], p: [1, 21, 4, 48], qx: 10, qy: 120 },
+      { n: 'Tinaco', t: 'A los 2 min de abrir la llave el tinaco tiene 140 L y a los 5 min tiene 200 L. ¿Cuánta agua tenía al inicio? ¿En cuánto tiempo llegará a 400 L?', x: ['tiempo', 'min'], y: ['agua', 'L'], p: [2, 140, 5, 200], qx: 0, qy: 400 },
+      { n: 'Regadera', t: 'Un baño de 3 min gasta 36 L de agua y uno de 5 min gasta 60 L. ¿Cuánta agua se ahorra en una semana si se reduce un baño diario de 8 min a 4 min?', x: ['tiempo', 'min'], y: ['agua', 'L'], p: [3, 36, 5, 60], qx: 8, qy: 48 },
+      { n: 'Gimnasio', t: 'Tras 2 meses se han pagado $800 en total y tras 4 meses $1 300. ¿Cuánto cuesta la inscripción? ¿Cuántos meses se pagan con $2 800?', x: ['meses', 'meses'], y: ['pago total', '$'], p: [2, 800, 4, 1300], qx: 12, qy: 2800 },
+      { n: 'Tanque', t: 'A los 3 min un tanque tiene 240 L y a los 7 min tiene 160 L. ¿Cuánta agua tenía al inicio? ¿Cuándo se vacía?', x: ['tiempo', 'min'], y: ['agua', 'L'], p: [3, 240, 7, 160], qx: 10, qy: 0 },
+      { n: 'Temperatura', t: '10 °C equivalen a 50 °F y 30 °C a 86 °F. Encuentra la fórmula de conversión y calcula cuántos °F son 25 °C y cuántos °C son 100 °F.', x: ['temperatura', '°C'], y: ['temperatura', '°F'], p: [10, 50, 30, 86], qx: 25, qy: 100 }
+    ];
+    let PI = 0;
+    function loadProblem(i) {
+      PI = i; const q = PRB[i]; $$('[data-pr]').forEach(b => b.classList.toggle('on', +b.dataset.pr === i));
+      ['p-x1', 'p-y1', 'p-x2', 'p-y2'].forEach((id, k) => $('#' + id).value = q.p[k]); $('#p-qx').value = q.qx; $('#p-qy').value = q.qy; $('#p-text').textContent = q.t; renderProb();
+    }
+    function renderProb() {
+      const q = PRB[PI], v = ['p-x1', 'p-y1', 'p-x2', 'p-y2', 'p-qx', 'p-qy'].map(id => parseFloat($('#' + id).value)), [x1, y1, x2, y2, qx, qy] = v, out = $('#p-out'), xu = q.x[1], yu = q.y[1], xn = q.x[0], yn = q.y[0];
+      if (!v.every(isFinite)) { out.innerHTML = '<div class="tip-box s-res">Completa los números.</div>'; return; }
+      if (x1 === x2) { out.innerHTML = '<div class="tip-box s-res">Los dos datos deben tener x distinta.</div>'; return; }
+      const a = (y2 - y1) / (x2 - x1), b = y1 - a * x1, fq = a * qx + b, xq = a !== 0 ? (qy - b) / a : NaN, U = yu === '$' ? 'pesos' : yu;
+      out.innerHTML = `<div class="row g-3"><div class="col-lg-7">
+        <div class="sstep" style="--i:0;--sc:${COL.X}"><div class="sn">1</div><div class="sb"><div class="st">Identifica las variables</div><div class="sx"><span style="color:${COL.X}"><strong>x (independiente):</strong> ${xn} en ${xu}</span><br><span style="color:${COL.Y}"><strong>y (dependiente):</strong> ${yn} en ${yu}</span>. Datos: (${ft(x1)}, ${ft(y1)}) y (${ft(x2)}, ${ft(y2)}).</div></div></div>
+        <div class="sstep" style="--i:1;--sc:${COL.R}"><div class="sn">2</div><div class="sb"><div class="st">Razón de cambio</div>${fd(T`a = \frac{${pn(y2)} - ${pn(y1)}}{${pn(x2)} - ${pn(x1)}} = ${ft(a, 4)}`)}<div class="sx">Por cada ${xu} más, ${yn} ${arrow(a)} ${fz(Math.abs(a), 3)} ${U}.</div></div></div>
+        <div class="sstep" style="--i:2;--sc:${COL.F}"><div class="sn">3</div><div class="sb"><div class="st">Condición inicial</div>${fd(T`b = y_1 - a x_1 = ${pn(y1)} - (${ft(a, 4)})(${pn(x1)}) = ${ft(b, 4)}`)}<div class="sx">Cuando x = 0, ${yn} vale ${fz(b, 3)} ${U}. ${Math.abs(b) < 1e-9 ? 'Como b = 0, es directamente proporcional.' : ''}</div></div></div>
+        <div class="sstep" style="--i:3;--sc:${COL.L}"><div class="sn">4</div><div class="sb"><div class="st">Función que modela la situación</div>${fd(eqTex(+a.toFixed(6), +b.toFixed(6)).replace(/^y = /, 'f(x) = '))}</div></div>
+        <div class="sstep" style="--i:4;--sc:${COL.D}"><div class="sn">5</div><div class="sb"><div class="st">Responde las preguntas</div><div class="sx"><strong>a)</strong> Evaluar en x = ${ft(qx)}:</div>${fd(T`f(${pn(qx)}) = ${pn(a)}(${pn(qx)}) ${b >= 0 ? '+' : '-'} ${ft(Math.abs(b), 4)} = ${ft(fq, 4)}`)}<div class="sx"><strong>b)</strong> Resolver f(x) = ${ft(qy)} (despejar x):</div>${a !== 0 ? fd(T`x = \frac{y - b}{a} = \frac{${pn(qy)} - ${pn(b)}}{${pn(a)}} = ${ft(xq, 4)}`) : '<div class="sx">a = 0: no se puede despejar.</div>'}</div></div>
+        <div class="sstep" style="--i:5;--sc:${COL.P}"><div class="sn">6</div><div class="sb"><div class="st">Interpreta en el contexto</div><div class="sx">${ft(qx)} ${xu} → <strong>${ft(fq, 3)} ${yu}</strong>. ${a !== 0 ? `Para ${ft(qy)} ${yu} se necesita x = <strong>${ft(xq, 3)} ${xu}</strong>${xq < 0 ? ' (negativo: no tiene sentido en la situación)' : ''}.` : ''}</div></div></div></div>
+        <div class="col-lg-5"><div class="viz-card"><div id="p-plot"></div></div><div class="small text-muted mt-1">Puntos dados (azul y naranja), recta del modelo y respuestas (verde).</div></div></div>`;
+      const lo = Math.min(0, x1, x2, qx, xq || 0), hi = Math.max(x1, x2, qx, xq || 0, 1) * 1.1, pts = [{ x: x1, y: y1, c: COL.X, l: 'dato 1' }, { x: x2, y: y2, c: COL.Y, l: 'dato 2' }, { x: qx, y: fq, c: COL.D, r: 7, l: 'a)', dy: -12 }]; if (isFinite(xq)) pts.push({ x: xq, y: qy, c: COL.P, r: 7, l: 'b)', dy: -12 });
+      plot($('#p-plot'), { xr: [lo, hi], lines: [{ f: x => a * x + b, c: COL.L }], pts, xl: xu, yl: yu, anim: false, H: 320 });
+    }
+    function renderS7() {
+      $('#s7').innerHTML = lesson(7, 'Modelación de situaciones cotidianas', 'De un problema en palabras a la función lineal y sus respuestas', COL.P, `
+        <p class="small mb-2">Estrategia general: <strong>1</strong> identificar variables · <strong>2</strong> calcular la razón de cambio · <strong>3</strong> hallar la condición inicial · <strong>4</strong> escribir la función · <strong>5</strong> responder · <strong>6</strong> interpretar. Elige un problema o escribe tus propios datos.</p>
+        <div class="d-flex flex-wrap gap-2 mb-2">${PRB.map((p, i) => `<button class="mbtn" data-pr="${i}" style="--c:${COL.P}">${p.n}</button>`).join('')}</div>
+        <div class="tip-box s-amp mb-2"><i class="bi bi-journal-text me-1"></i><span id="p-text"></span></div>
+        <div class="row g-2 mb-3"><div class="col-6 col-md-2"><label class="small fw-bold" style="color:${COL.X}">x₁</label><input id="p-x1" type="number" step="any" class="form-control"></div><div class="col-6 col-md-2"><label class="small fw-bold" style="color:${COL.Y}">y₁</label><input id="p-y1" type="number" step="any" class="form-control"></div><div class="col-6 col-md-2"><label class="small fw-bold" style="color:${COL.X}">x₂</label><input id="p-x2" type="number" step="any" class="form-control"></div><div class="col-6 col-md-2"><label class="small fw-bold" style="color:${COL.Y}">y₂</label><input id="p-y2" type="number" step="any" class="form-control"></div><div class="col-6 col-md-2"><label class="small fw-bold" style="color:${COL.D}">Evaluar en x =</label><input id="p-qx" type="number" step="any" class="form-control"></div><div class="col-6 col-md-2"><label class="small fw-bold" style="color:${COL.P}">¿x para y =?</label><input id="p-qy" type="number" step="any" class="form-control"></div></div><div id="p-out"></div>`);
+      loadProblem(0);
+    }
+
+    /* ---------- 8. Detective de variaciones ---------- */
+    const DET = { cur: null, score: 0, n: 0, done: false, hint: false };
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    function newRound() {
+      const X = pick([[1, 2, 3, 4, 5], [1, 2, 4, 5, 8], [2, 3, 5, 6, 9], [1, 3, 4, 6, 10]]), type = pick(['dir', 'lin', 'nol']); let f, eq;
+      if (type === 'dir') { const k = pick([1.5, 2, 3, 4, 5, 6, 7, 8, 12]); f = x => k * x; eq = `y = ${k}x`; }
+      else if (type === 'lin') { const a = pick([2, 3, 4, 5, 6, -2, -3]), b = pick([2, 3, 5, 8, 10]); f = x => a * x + b; eq = eqTex(a, b); }
+      else { const t = pick(['cua', 'inv', 'exp', 'cua2']); if (t === 'cua') { const c = pick([1, 2, 3]); f = x => c * x * x; eq = `y = ${c === 1 ? '' : c}x²`; } else if (t === 'inv') { const k = pick([60, 120, 180]); f = x => k / x; eq = `y = ${k}/x`; } else if (t === 'exp') { f = x => Math.pow(2, x); eq = 'y = 2ˣ'; } else { const c = pick([2, 5, 10]); f = x => x * x + c; eq = `y = x² + ${c}`; } }
+      DET.cur = { X, Y: X.map(f), type, eq }; DET.done = false; DET.hint = false; renderDet();
+    }
+    function renderDet() {
+      const c = DET.cur, X = c.X, Y = c.Y, ratios = X.map((x, i) => Y[i] / x), sl = X.slice(1).map((x, i) => (Y[i + 1] - Y[i]) / (x - X[i]));
+      $('#dt-score').innerHTML = `<span class="chipx">Aciertos: ${DET.score} / ${DET.n}</span>`;
+      $('#dt-tbl').innerHTML = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr><th style="background:${COL.X}">x</th><th style="background:${COL.Y}">y</th>${DET.hint || DET.done ? `<th style="background:${COL.D}">y / x</th>` : ''}</tr></thead><tbody>${X.map((x, i) => `<tr><td class="cb-x">${x}</td><td class="cb-y fw-bold">${ft(Y[i], 3)}</td>${DET.hint || DET.done ? `<td>${ft(ratios[i], 3)}</td>` : ''}</tr>`).join('')}</tbody></table>${DET.hint || DET.done ? `<div class="small mt-1"><strong>Δy/Δx entre filas:</strong> ${sl.map(s => ft(s, 3)).join(' ; ')}</div>` : ''}`;
+      $$('[data-ans]').forEach(b => b.disabled = DET.done);
+      if (DET.done) return; $('#dt-fb').innerHTML = '';
+    }
+    function answer(a) {
+      const c = DET.cur; if (DET.done) return; DET.done = true; DET.n++; const ok = a === c.type; if (ok) DET.score++;
+      const msg = { dir: `Directamente proporcional: <strong>y/x es constante</strong> en todas las filas (k = ${ft(c.Y[0] / c.X[0], 3)}) → ${c.eq}.`, lin: `Lineal <strong>no proporcional</strong>: Δy/Δx es constante pero y/x <u>no</u> lo es (hay condición inicial) → ${c.eq}.`, nol: `<strong>No es lineal</strong>: ni y/x ni Δy/Δx son constantes → ${c.eq}.` }[c.type];
+      $('#dt-fb').innerHTML = `<div class="tip-box ${ok ? 's-ok' : 's-res'}" style="animation:pop .4s both"><strong>${ok ? '¡Correcto!' : 'Casi.'}</strong> ${msg}</div>`; renderDet(); $$('[data-ans]').forEach(b => b.disabled = true);
+    }
+    function renderS8() {
+      $('#s8').innerHTML = lesson(8, 'Detective de variaciones', 'Mira la tabla y decide: ¿directa, lineal o no lineal?', '#e67700', `
+        <p class="small mb-2">Reto: observa los valores y clasifica la relación. Usa la pista para ver los cocientes y las razones de cambio.</p>
+        <div class="row g-3"><div class="col-lg-5"><div class="table-responsive rounded-3 border mb-2" id="dt-tbl"></div><div id="dt-score" class="mb-2"></div><button class="btn btn-sm btn-outline-secondary rounded-pill" id="dt-hint"><i class="bi bi-lightbulb me-1"></i>Pista</button> <button class="btn btn-sm btn-dark rounded-pill" id="dt-new"><i class="bi bi-arrow-repeat me-1"></i>Nuevo reto</button></div>
+          <div class="col-lg-7"><div class="d-flex flex-wrap gap-2 mb-3"><button class="btn btn-lg rounded-pill text-white" style="background:${COL.D}" data-ans="dir"><i class="bi bi-arrow-up-right-circle me-1"></i>Directamente proporcional</button><button class="btn btn-lg rounded-pill text-white" style="background:${COL.L}" data-ans="lin"><i class="bi bi-bar-chart-steps me-1"></i>Lineal (b ≠ 0)</button><button class="btn btn-lg rounded-pill text-white" style="background:${COL.R}" data-ans="nol"><i class="bi bi-bezier2 me-1"></i>No lineal</button></div><div id="dt-fb"></div>
+          <div class="small text-muted mt-2"><strong>Truco:</strong> 1) calcula y/x: si todos son iguales → directa. 2) Si no, calcula Δy/Δx entre filas: si son iguales → lineal. 3) Si ninguna es constante → no lineal. (Ojo: los valores de x no siempre van de 1 en 1, por eso hay que dividir entre Δx.)</div></div></div>`);
+      newRound();
+    }
+
+    /* ---------- 9. Docencia ---------- */
+    function renderS9() {
+      const MAP = [['Identifica las variables y su relación en una situación dada', 'Variación entre dos magnitudes. Variables independiente y dependiente', 'En equipo y con guía del profesorado, el alumnado aborda problemas de variación, investiga situaciones y discute para identificar variables y su dependencia.', '#s1', 'Sección 1'], ['Calcula e interpreta la razón de cambio', 'Razón de cambio', 'Discute individual, en equipo o en grupo la razón de cambio en distintas situaciones, y distingue los diferentes tipos de variación.', '#s2', 'Sección 2'], ['Transita entre representaciones (verbal, algebraica, tabular, gráfica) de diferentes tipos de variación', 'Variación lineal y = ax + b · directamente proporcional (b = 0) · representaciones', 'Discute representaciones y explica características de cada registro y su relación; discute la continuidad o discreción de las variables y considera, en casos continuos, los datos no registrados en la tabla.', '#s4', 'Secciones 4 y 5'], ['Reconoce cuándo la relación es directamente proporcional', 'Variación directamente proporcional', 'Investiga y compara situaciones donde la variación sí y no es directamente proporcional; explica sus características y da ejemplos.', '#s3', 'Sección 3 y 8'], ['Modela situaciones cotidianas con funciones lineales · Reconoce la razón de cambio constante · Reconoce e interpreta la condición inicial', 'Función lineal', 'Estudia las características (razón de cambio y condición inicial); transita de la gráfica a la expresión algebraica y viceversa; propone y analiza situaciones modelables.', '#s6', 'Secciones 6 y 7']];
+      const PRIN = [['Resolución de problemas', 'bi-puzzle', COL.P, 'Partir siempre de una situación real y dejar que el alumnado formule, explore y valide antes de formalizar.'], ['Individual, equipo y plenaria', 'bi-people', COL.X, 'Alternar: pensar solo → comparar en pares/equipos → compartir en plenaria. El profesorado propone y guía.'], ['Otras disciplinas', 'bi-diagram-3', COL.D, 'Física (rapidez constante), química (conversiones), biología (crecimiento), economía (costos y salarios), informática (hojas de cálculo).'], ['Perspectiva de género', 'bi-gender-ambiguous', '#862e9c', 'Usar contextos y nombres diversos sin estereotipos; analizar datos de la vida real (p. ej. tiempo dedicado a tareas, pago por hora) y discutirlos con respeto.'], ['Ciudadanía y sustentabilidad', 'bi-tree', '#2b8a3e', 'Modelar consumo de agua o energía, tarifas de transporte, presupuestos familiares o comunitarios; discutir decisiones responsables.'], ['Tecnología', 'bi-laptop', COL.F, 'Hojas de cálculo para tablas y gráficas, graficadores dinámicos y esta misma página para explorar parámetros.'], ['Respeto y equidad', 'bi-heart', COL.R, 'Toda discusión, dentro o fuera del aula, debe promover respeto y equidad entre las personas participantes.']];
+      const ERR = [['«Si crece, es proporcional»', 'No. Una relación puede crecer y no pasar por el origen (taxi con banderazo) o crecer cada vez más rápido (cuadrática). Se verifica con y/x constante.'], ['Confundir razón de cambio con valor de y', 'La razón de cambio es un <em>cambio por unidad</em> (Δy/Δx); y es un valor. 9 pesos por km ≠ 21 pesos.'], ['Olvidar unidades al interpretar', '«a = 9» no dice nada; «$9 más por cada kilómetro» sí.'], ['Invertir x e y al calcular la pendiente', 'Debe ser (y₂ − y₁)/(x₂ − x₁) con el <em>mismo orden</em> arriba y abajo.'], ['Unir puntos de variables discretas', 'Si x son personas o copias, la gráfica son puntos aislados; no existen valores intermedios.'], ['Pensar que b es «el primer dato de la tabla»', 'b es el valor cuando x = 0, aunque la tabla empiece en otro valor.'], ['Usar regla de tres cuando no es directa', 'La regla de tres solo aplica si la relación es directamente proporcional (b = 0).']];
+      const ACT = [['Tarifas de transporte', 'Comparar dos servicios (banderazo distinto, precio por km distinto): ¿a partir de qué distancia conviene cada uno? (ciudadanía)'], ['Mi huella de agua', 'Medir cuánta agua gasta una llave por minuto y modelar el consumo semanal (sustentabilidad, tecnología).'], ['Salario y horas', 'Con tarifas por hora iguales para todas las personas, modelar el pago según las horas trabajadas; discutir igualdad de pago (género, ciudadanía).'], ['Física: rapidez constante', 'Con un carrito o una caminata cronometrada, tomar datos de d y t, graficar y hallar la rapidez (otras disciplinas).'], ['Planes de ahorro', 'Dos personas ahorran distinto: una parte con más dinero y otra ahorra más por semana; ¿cuándo se igualan?'], ['Del problema al póster', 'Cada equipo crea un problema propio, lo representa de las cuatro formas (verbal, tabla, gráfica, fórmula) y lo explica en plenaria.']];
+      const EVAL = [['Una gráfica es una recta que pasa por (0, 0) y por (4, 10). ¿Qué relación es y cuánto vale su razón de cambio?', 'Directamente proporcional; a = 10/4 = 2.5; y = 2.5x.'], ['La tabla x: 1, 2, 3 / y: 7, 9, 11 ¿es directamente proporcional?', 'No: y/x = 7, 4.5, 3.67 (no es constante). Sí es lineal: Δy/Δx = 2, y = 2x + 5.'], ['Un tinaco con 80 L pierde 5 L por minuto. Escribe la función y di cuándo se vacía.', 'f(t) = 80 − 5t; se vacía cuando f(t) = 0 → t = 16 min.'], ['En f(x) = 3x − 4, ¿qué significan 3 y −4?', '3: razón de cambio (y sube 3 por cada unidad de x). −4: condición inicial f(0) = −4.'], ['¿Tiene sentido unir con una línea los puntos de «número de entradas al cine vs. costo»?', 'No: el número de entradas es discreto; se grafican puntos aislados.'], ['Si 5 cuadernos cuestan $90, ¿cuánto cuestan 8? ¿Por qué se puede usar regla de tres?', '$144. Porque el precio es directamente proporcional (b = 0): k = 90/5 = 18.']];
+      const RUB = [['Identifica variables', 'Nombra variables sin distinguir su rol', 'Distingue x de y y la dependencia', 'Además justifica por qué y depende de x y discute otras variables'], ['Razón de cambio', 'Calcula Δy/Δx sin unidades', 'La interpreta con unidades', 'La usa para comparar situaciones y predecir'], ['Representaciones', 'Usa una representación', 'Pasa de una a otra correctamente', 'Explica qué muestra cada una y su relación'], ['Proporcionalidad', 'Aplica regla de tres siempre', 'Verifica y/x constante', 'Distingue directa de lineal con b ≠ 0 y justifica'], ['Modelación', 'Escribe la función con ayuda', 'Modela e interpreta a y b', 'Propone y analiza sus propias situaciones']];
+      $('#s9').innerHTML = lesson(9, 'Manual para la docencia', 'Del programa a la clase: aprendizajes, estrategias, errores, actividades y evaluación', '#2f9e44', `
+        <h5 class="fw-bold" style="color:#2f9e44"><i class="bi bi-diagram-3 me-1"></i>Aprendizajes, temática y estrategias del programa</h5>
+        <div class="table-responsive"><table class="table table-bordered align-middle bg-white small mb-3"><thead class="table-light"><tr><th>Aprendizaje</th><th>Temática</th><th>Estrategias sugeridas</th><th>En esta página</th></tr></thead><tbody>${MAP.map(([a, t, e, h, l], i) => `<tr style="animation:pop .4s ${i * .1}s both"><td class="fw-bold">${a}</td><td>${t}</td><td>${e}</td><td><a href="${h}" class="btn btn-sm btn-outline-success rounded-pill">${l}</a></td></tr>`).join('')}</tbody></table></div>
+        <div class="tip-box s-ok small mb-3"><i class="bi bi-info-circle me-1"></i>Se privilegia la <strong>metodología de resolución de problemas</strong>: actividades individuales, en equipo o en plenaria propuestas por el profesorado; con transversalidad de la matemática con otras disciplinas, perspectiva de género, formación para la ciudadanía, sustentabilidad y uso de tecnología.</div>
+        <h5 class="fw-bold" style="color:#2f9e44"><i class="bi bi-stars me-1"></i>Principios transversales y cómo llevarlos al aula</h5><div class="row g-3 mb-3">${PRIN.map(([t, ic, c, d], i) => `<div class="col-md-6 col-lg-4"><div class="inic" style="--c:${c};--i:${i}"><i class="bi ${ic}"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>
+        <h5 class="fw-bold" style="color:#2f9e44"><i class="bi bi-calendar-week me-1"></i>Secuencia didáctica sugerida (5 sesiones)</h5>
+        <div class="flow mb-3">${[['Sesión 1', 'Variables y dependencia (s. 1) · razón de cambio intuitiva'], ['Sesión 2', 'Razón de cambio y tipos de variación (s. 2)'], ['Sesión 3', 'Proporcionalidad directa (s. 3) · regla de tres'], ['Sesión 4', 'Lineal, representaciones y continuidad (s. 4-5)'], ['Sesión 5', 'Función lineal y modelación (s. 6-7) · evaluación (s. 8)']].map(([a, b], i) => `<div class="flow-i" style="--c:${[COL.X, COL.R, COL.D, COL.L, COL.F][i]};--i:${i};flex-direction:column;align-items:flex-start;max-width:210px"><strong>${a}</strong><span style="font-size:.78rem;font-weight:500">${b}</span></div>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-6"><h5 class="fw-bold" style="color:#a61e1e"><i class="bi bi-exclamation-octagon me-1"></i>Errores frecuentes</h5>${ERR.map(([t, d]) => `<details class="err"><summary>${t}</summary><div class="small mt-2">${d}</div></details>`).join('')}</div>
+          <div class="col-lg-6"><h5 class="fw-bold" style="color:#e8590c"><i class="bi bi-people me-1"></i>Actividades de aula</h5>${ACT.map(([t, d], i) => `<div class="inic" style="--c:#e8590c;--i:${i}"><div class="apn" style="background:#e8590c">${i + 1}</div><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div>`).join('')}</div></div>
+        <h5 class="fw-bold mt-4" style="color:#7048e8"><i class="bi bi-patch-question me-1"></i>Preguntas de evaluación (toca para ver la respuesta)</h5>${EVAL.map(([q, a]) => `<details class="err" style="border-left-color:#7048e8"><summary style="color:#4c2fb0">${q}</summary><div class="small mt-2 text-success fw-semibold">${a}</div></details>`).join('')}
+        <h5 class="fw-bold mt-4" style="color:#7048e8"><i class="bi bi-ui-checks me-1"></i>Rúbrica sugerida</h5><div class="table-responsive"><table class="table table-bordered bg-white small mb-0"><thead class="table-light"><tr><th>Criterio</th><th>En desarrollo</th><th>Logrado</th><th>Destacado</th></tr></thead><tbody>${RUB.map(r => `<tr><td class="fw-bold">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>`);
+    }
+
+    /* ---------- Formulario (modal) ---------- */
+    function renderForm() {
+      const F = [['Razón de cambio (pendiente)', T`a = \frac{Δy}{Δx} = \frac{y_2 - y_1}{x_2 - x_1}`, 'Cambio de y por cada unidad que cambia x. Se interpreta siempre con unidades.', COL.R], ['Variación lineal / función lineal', T`y = a x + b \qquad f(x) = a x + b`, 'a: razón de cambio · b: condición inicial, f(0) = b (donde la recta cruza el eje y).', COL.L], ['Condición inicial', T`b = y_1 - a\,x_1`, 'Se obtiene sustituyendo un punto (x₁, y₁) conocido y la razón de cambio.', COL.F], ['Variación directamente proporcional', T`y = k\,x \qquad k = \frac{y}{x}`, 'Es el caso b = 0. k es la constante de proporcionalidad; y/x es igual en todas las parejas.', COL.D], ['Regla de tres directa', T`\frac{a}{b} = \frac{c}{x} \;\Rightarrow\; x = \frac{b \cdot c}{a}`, 'Solo se usa si la relación es directamente proporcional.', COL.D], ['Valor de x para un y dado', T`x = \frac{y - b}{a}`, 'Se despeja x de y = ax + b (a ≠ 0).', COL.P], ['Intersección con el eje x', T`x = -\frac{b}{a}`, 'Valor de x donde y = 0 (a ≠ 0).', COL.G], ['Variación inversa (contraste)', T`y = \frac{k}{x} \qquad x \cdot y = k`, 'No es lineal: al duplicar x, y se reduce a la mitad.', COL.Y]];
+      $('#form-wrap').innerHTML = `<table class="form-tbl">${F.map(([t, f, d, c]) => `<tr><td class="fl"><span class="badge-v" style="background:${c}">${t}</span><div class="mt-3">${fd(f)}</div></td><td class="fr2">${d}</td></tr>`).join('')}</table>
+        <div class="theo-card" style="--c:${COL.L}"><h6>Cómo reconocer cada tipo en una tabla</h6><ol class="small mb-0"><li>¿y/x es igual en todas las filas? → <strong>directamente proporcional</strong>.</li><li>Si no, ¿Δy/Δx es igual entre todas las filas consecutivas? → <strong>lineal</strong> (con b ≠ 0).</li><li>Si ninguna es constante → <strong>no lineal</strong>.</li></ol></div>`;
+      math($('#form-wrap'));
+    }
+
+    /* ---------- Eventos ---------- */
+    const on = (sel, ev, fn) => document.addEventListener(ev, e => { const t = e.target.closest ? e.target.closest(sel) : null; if (t) fn(t, e); });
+    on('[data-v1]', 'click', t => { V1 = +t.dataset.v1; V1swap = false; renderV1(); });
+    on('#v1-swap', 'click', () => { V1swap = !V1swap; renderV1(); });
+    on('[data-r2]', 'click', t => { R2 = +t.dataset.r2; const c = CTX[R2]; R2x1 = c.xr[0] + (c.xr[1] - c.xr[0]) * .2; R2x2 = c.xr[0] + (c.xr[1] - c.xr[0]) * .7; R2x1 = Math.round(R2x1 * 2) / 2; R2x2 = Math.round(R2x2 * 2) / 2; renderR2(); });
+    on('[data-ty]', 'click', t => { R2t = t.dataset.ty; renderTY(); });
+    on('[data-mul]', 'click', t => { D3m = +t.dataset.mul; renderD3a(); });
+    on('[data-tex]', 'click', t => { const d = TEX[t.dataset.tex]; TP.x = d.map(p => p[0]); TP.y = d.map(p => p[1]); renderD3b(); $$('[data-tex]').forEach(b => b.classList.toggle('on', b === t)); });
+    on('[data-l4]', 'click', t => { const [a, b] = t.dataset.l4.split(',').map(Number); L4.a = a; L4.b = b; renderL4(); });
+    on('[data-r5]', 'click', t => { R5 = +t.dataset.r5; renderR5(); });
+    on('[data-pr]', 'click', t => loadProblem(+t.dataset.pr));
+    on('#m-go', 'click', () => renderMach());
+    on('#dt-new', 'click', () => newRound()); on('#dt-hint', 'click', () => { DET.hint = true; renderDet(); }); on('[data-ans]', 'click', t => answer(t.dataset.ans));
+    document.addEventListener('input', e => {
+      const t = e.target, id = t.id;
+      if (id === 'r2-x1') { R2x1 = +t.value; renderR2(); } else if (id === 'r2-x2') { R2x2 = +t.value; renderR2(); }
+      else if (id === 'd3-k') { D3k = +t.value; renderD3a(); }
+      else if (t.classList && t.classList.contains('tp-in')) { TP[t.dataset.ax][+t.dataset.i] = t.value; renderD3b(); document.activeElement; }
+      else if (['t3-a', 't3-b', 't3-c', 't3-ux', 't3-uy'].includes(id)) renderD3c();
+      else if (id === 'l4-a') { L4.a = +t.value; renderL4(); } else if (id === 'l4-b') { L4.b = +t.value; renderL4(); }
+      else if (id === 'r5-x') renderInterp(); else if (['g-x1', 'g-y1', 'g-x2', 'g-y2'].includes(id)) renderG2E();
+      else if (['m-a', 'm-b', 'm-x'].includes(id)) { const v = parseFloat(t.value); if (isFinite(v)) { FL[id.slice(2)] = v; renderMachKeep(); } }
+      else if (id && id.startsWith('p-') && id !== 'p-text') renderProb();
+    });
+    function renderMachKeep() { const f = document.activeElement.id, pos = document.activeElement.selectionStart; renderMach(); const el = $('#' + f); if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) { } } }
+    document.addEventListener('click', e => { const f = e.target.closest('[data-form]'); if (f) { hideAllPops(); bootstrap.Modal.getOrCreateInstance($('#formModal')).show(); } });
+    const navLinks = $$('#sec-nav a'), io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+
+    /* ---------- Arranque ---------- */
+    $('#hero-bars').innerHTML = [20, 34, 48, 62, 76, 90, 100].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    renderS0(); renderS1(); renderS2(); renderS3(); renderS4(); renderS5(); renderS6(); renderS7(); renderS8(); renderS9(); renderForm();
+    math(document.body); initPops(); $$('section.lesson').forEach(s => io.observe(s));
+
+</script>
+</body>
+</html>
