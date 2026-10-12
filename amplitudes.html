@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadística - Amplitudes de Clase</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, gráficas SVG propias -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --mean:#1864ab; --med:#c26e00; --mode:#5130b9; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con barras de histograma */
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
+    .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
+    .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+
+    /* Tarjetas */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .stat-pill { background:#f1f5f9; border-radius:12px; padding:.45rem .8rem; font-size:.88rem; border:1px solid #e2e8f0; }
+    .stat-pill b { font-family:'Courier New',monospace; }
+    #data { font-family:'Courier New',monospace; font-size:.9rem; }
+
+    /* Instructivo: pasos vivos */
+    .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
+    .istep h6 { color:var(--c); font-weight:800; }
+    .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
+    .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
+
+    /* Fórmulas y leyendas */
+    .fx { overflow-x:auto; padding:.4rem 0; }
+    .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
+    .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
+    .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
+    .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
+
+    /* Tablas de frecuencias */
+    .freq-table { font-size:.95rem; text-align:center; margin:0; }
+    .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
+    .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
+    .freq-table tbody tr { transition:background .2s; cursor:default; }
+    .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
+    .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
+    .hl-legend { font-size:.85rem; min-height:1.4rem; }
+    /* Resaltados por medida */
+    [data-hl="mean"] td.c-use { background:rgba(24,100,171,.2); font-weight:800; }
+    [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
+    [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
+    [data-hl="mode"] tr.r-mode td { background:rgba(112,72,232,.3); font-weight:800; }
+    [data-hl="mode"] tr.r-near td { background:rgba(12,133,153,.2); }
+    .hl-btn.active[data-hl="mean"] { background:var(--mean); color:#fff; border-color:var(--mean); }
+    .hl-btn.active[data-hl="med"] { background:var(--med); color:#fff; border-color:var(--med); }
+    .hl-btn.active[data-hl="mode"] { background:var(--mode); color:#fff; border-color:var(--mode); }
+    .hl-btn.active[data-hl="none"] { background:#334155; color:#fff; border-color:#334155; }
+
+    .measure-head { color:#fff; padding:.9rem 1.2rem; border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .measure { border-radius:14px; box-shadow:var(--shadow-md); background:#fff; overflow:hidden; border:1px solid #e2e8f0; }
+    .result-big { font-size:1.6rem; font-weight:800; font-family:'Courier New',monospace; border-radius:14px; padding:.6rem 1rem; text-align:center; color:#fff; }
+    .real-card { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1.2rem; animation:pop .4s both; }
+    .cmp th { background:#f1f5f9; } .cmp td, .cmp th { padding:.45rem .7rem; text-align:center; }
+    .chart-box { position:relative; height:420px; }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    /* ===== Fórmulas estilo calculadora ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; } .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; } .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; } .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; } .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; } .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; }
+    .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before, .cx .ac.tilde::before { position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    /* Operaciones con popover */
+    .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
+    .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
+    td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
+    th.pp .bi { font-size:.7rem; opacity:.7; }
+    .popover.calc-pop { --bs-popover-max-width:430px; --bs-popover-border-radius:16px; border:0; box-shadow:var(--shadow-lg); font-family:'Segoe UI',sans-serif; }
+    .calc-pop .popover-header { background:linear-gradient(90deg,#0f172a,#1e293b); color:#fff; font-weight:700; font-size:.92rem; border-radius:16px 16px 0 0; }
+    .calc-pop .popover-body { padding:.7rem .9rem; max-height:60vh; overflow:auto; color:#1e293b; }
+    .pcap { font-size:.78rem; font-weight:700; color:#64748b; margin-top:.45rem; text-transform:uppercase; letter-spacing:.02em; } .pcap:first-child { margin-top:0; }
+    .pf { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:.25rem .6rem; overflow-x:auto; } .pf.res { background:#0f172a; color:#e0f2fe; border-color:#0f172a; }
+    .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
+    .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
+    .pm { font-size:.88rem; }
+    /* Pantalla de resultado */
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
+    .cmp-chips { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.5rem; }
+    .cmp-chip { font-size:.8rem; border-radius:999px; padding:.15rem .7rem; background:#f1f5f9; border:1.5px solid #e2e8f0; color:#475569; } .cmp-chip b { font-family:'Courier New',monospace; color:#0f172a; } .cmp-chip.on { background:#fff4e0; border-color:#f08c00; }
+    /* Tabla unificada */
+    .tbl-bar { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 1.2rem; margin-bottom:.8rem; }
+    .real-switch { display:flex; align-items:center; gap:.5rem; background:#fff4e0; border:2px solid #f08c00; border-radius:999px; padding:.35rem 1rem .35rem .6rem; box-shadow:var(--shadow-sm); transition:background .25s, border-color .25s, color .25s; }
+    .real-switch .form-check-input { width:2.6em; height:1.4em; cursor:pointer; margin:0; } .real-switch .form-check-input:checked { background-color:#f08c00; border-color:#f08c00; }
+    .real-switch label { font-weight:800; cursor:pointer; }
+    .real-switch.on { background:#0f172a; border-color:#0f172a; color:#fff; }
+    .freq-table td .old { display:block; font-size:.7rem; color:#94a3b8; text-decoration:line-through; line-height:1; font-weight:500; }
+    .freq-table td.chg { background:#fff4e0; }
+    .freq-table.anim td.chg { animation:flash 1s both; }
+    @keyframes flash { 0% { background:#ffd8a8; transform:scale(1.08); } 100% { background:#fff4e0; transform:none; } }
+    .freq-table th small { display:block; font-weight:500; opacity:.75; font-size:.7rem; }
+    .real-banner { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1rem 1.2rem; animation:pop .4s both; }
+    .imp { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; font-size:.8rem; font-weight:700; padding:.15rem .7rem; margin:.15rem .2rem .15rem 0; }
+    .imp.yes { background:#fff4e0; color:#b45309; border:1.5px solid #f08c00; } .imp.no { background:#f1f5f9; color:#64748b; border:1.5px solid #e2e8f0; }
+    .formula-card { border-radius:14px; padding:.8rem; background:#fff; border:1px solid #e2e8f0; height:100%; }
+
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep,.freq-table.anim td.chg,.real-banner{animation:none} }
+  
+    /* ===== Medidas de dispersión: colores por medida ===== */
+    :root { --m-mean:#1864ab; --m-dm:#0c8599; --m-var:#e8590c; --m-sd:#7048e8; }
+    .h-6 { background:linear-gradient(135deg,#c2255c,#8f1a43); }
+    .hero-bars span { background:#74c0fc; }
+    /* Interruptores */
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.88rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    /* Tabla: columnas coloreadas por medida */
+    #tbl-wrap { --mc:var(--m-mean); }
+    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
+    .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
+    .freq-table th.cb-fi { background:#d6336c; } .freq-table th.cb-x { background:#2f9e44; }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table.anim td.cb-fi, .freq-table.anim td.cb-x { animation:baseWave .7s both; animation-delay:calc(var(--ri,0) * 40ms); }
+    @keyframes baseWave { 0% { filter:brightness(.8); transform:scale(1.06); } 100% { filter:none; transform:none; } }
+    .fi-in { width:72px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #d6336c; border-radius:10px; padding:.15rem .2rem; background:#fff; color:#9c1d4a; }
+    .fi-in:focus { outline:3px solid #fbc2d5; }
+    .col-legend { display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.82rem; margin:.6rem 0 0; }
+    .col-legend span { display:inline-flex; align-items:center; gap:.35rem; } .col-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
+    /* Tarjetas de resultado */
+    .tile { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; transition:transform .25s, box-shadow .25s, background .25s; height:100%; position:relative; overflow:hidden; }
+    .tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .tile.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 10px 26px color-mix(in srgb,var(--c) 45%,transparent); }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; opacity:.85; }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; }
+    .tile .ts { font-size:.78rem; opacity:.8; }
+    .tile .cx { font-size:1em; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } .tile.on::after { background:rgba(255,255,255,.5); }
+    @keyframes tileBar { to { transform:scaleX(1); } }
+    /* Formulario estilo hoja */
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; }
+    .form-tbl td.fl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; }
+    .form-tbl td.fr2 { line-height:1.75; }
+    .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    /* Gráfica SVG */
+    .chart-svg { width:100%; height:auto; display:block; background:#fff; border-radius:14px; border:1px solid #e2e8f0; }
+    .chart-svg text { font-family:'Segoe UI',sans-serif; }
+    .bar-r { transform-box:fill-box; transform-origin:bottom; animation:barUp .8s cubic-bezier(.2,.9,.3,1.1) both; animation-delay:calc(var(--i) * 70ms); cursor:pointer; transition:fill .2s; }
+    .bar-r:hover { fill:#ffd43b; }
+    @keyframes barUp { from { transform:scaleY(0); } }
+    .poly-l { fill:none; stroke:#e03131; stroke-width:3; stroke-dasharray:1; stroke-dashoffset:1; animation:drawL 1.4s .6s forwards; } @keyframes drawL { to { stroke-dashoffset:0; } }
+    .band-r { animation:fadeB .8s 1s both; } @keyframes fadeB { from { opacity:0; } }
+    .vline { stroke-dasharray:7 5; animation:fadeB .8s 1s both; }
+    .chart-tip { position:fixed; z-index:1080; pointer-events:none; background:#0f172a; color:#fff; border-radius:10px; padding:.35rem .7rem; font-size:.82rem; box-shadow:var(--shadow-lg); display:none; }
+    .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
+    @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
+
+    /* ===== Amplitudes ===== */
+    .h-7 { background:linear-gradient(135deg,#5f3dc4,#3b2a8c); }
+    :root { --a-amp:#0ca678; }
+    .cls-chip { border:2px solid #0ca678; color:#087f5b; background:#fff; font-weight:800; font-size:.85rem; border-radius:10px; padding:.2rem .6rem; transition:all .2s; font-family:'Courier New',monospace; }
+    .cls-chip:hover { background:#e6fcf5; } .cls-chip.on { background:#0ca678; color:#fff; transform:translateY(-2px); box-shadow:0 4px 12px rgba(12,166,120,.4); }
+    .type-grid { display:grid; grid-template-columns:1fr 1fr; gap:.4rem; }
+    .type-btn { border:2px solid #334155; background:#fff; border-radius:12px; padding:.35rem .4rem; font-weight:800; font-family:'Courier New',monospace; font-size:1rem; transition:all .2s; text-align:center; line-height:1.2; }
+    .type-btn small { display:block; font-family:'Segoe UI',sans-serif; font-weight:600; font-size:.68rem; color:#64748b; }
+    .type-btn:hover { background:#f1f5f9; } .type-btn.on { background:#1e293b; color:#fff; transform:translateY(-2px); box-shadow:var(--shadow-md); } .type-btn.on small { color:#cbd5e1; }
+    .type-btn.auto { grid-column:1 / -1; border-style:dashed; }
+    .viz-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; overflow:hidden; }
+    .viz-card svg { width:100%; height:auto; display:block; }
+    .viz-card text { font-family:'Segoe UI',sans-serif; }
+    .vz-axis { stroke:#334155; stroke-width:2.5; stroke-dasharray:1; stroke-dashoffset:1; animation:vzDraw 1s .05s forwards; fill:none; }
+    @keyframes vzDraw { to { stroke-dashoffset:0; } }
+    .vz-fade { opacity:0; animation:vzFade .6s var(--d,0s) forwards; } @keyframes vzFade { to { opacity:1; } }
+    .vz-grow { transform-box:fill-box; transform-origin:left center; transform:scaleX(0); animation:vzGrow .9s var(--d,0s) cubic-bezier(.2,.8,.2,1) forwards; } @keyframes vzGrow { to { transform:scaleX(1); } }
+    .vz-pop { transform-box:fill-box; transform-origin:center; transform:scale(0); animation:vzPop .55s var(--d,0s) cubic-bezier(.3,1.6,.5,1) forwards; } @keyframes vzPop { to { transform:scale(1); } }
+    .vz-rise { transform-box:fill-box; transform-origin:center bottom; transform:scaleY(0); animation:vzRise .6s var(--d,0s) cubic-bezier(.2,.9,.3,1.2) forwards; } @keyframes vzRise { to { transform:scaleY(1); } }
+    .vz-dash { stroke-dasharray:6 5; animation:vzFade .6s var(--d,0s) forwards, vzMarch 1.2s linear infinite; opacity:0; } @keyframes vzMarch { to { stroke-dashoffset:-22; } }
+    .vz-sel { cursor:pointer; } .vz-sel:hover { filter:brightness(1.08); }
+    .vz-pulse { animation:vzPulse 1.6s 1.6s ease-in-out 2; transform-box:fill-box; transform-origin:center; } @keyframes vzPulse { 50% { transform:scale(1.25); } }
+    .vz-in { fill:#2f9e44; } .vz-out { fill:#cbd5e1; }
+    .v-inc { display:inline-flex; align-items:center; gap:.35rem; font-weight:700; }
+    .dot { display:inline-block; width:14px; height:14px; border-radius:50%; border:2.5px solid #0ca678; vertical-align:middle; } .dot.full { background:#0ca678; }
+    .vals { display:flex; flex-wrap:wrap; gap:.25rem; margin-top:.3rem; } .vals span { background:#d3f9d8; color:#2b8a3e; border-radius:8px; padding:.05rem .45rem; font-family:'Courier New',monospace; font-weight:700; font-size:.85rem; animation:pop .4s both; }
+    .vals span.no { background:#f1f3f5; color:#868e96; text-decoration:line-through; }
+    .freq-table tr.r-sel td:first-child { box-shadow:inset 5px 0 0 #0ca678; font-weight:800; }
+    .freq-table td.cl-n { cursor:pointer; } .freq-table td.cl-n:hover { background:#e6fcf5; }
+    .freq-table td.cb-i { background:rgba(12,166,120,.10); }
+    .tile .tv { font-size:1.7rem; }
+    /* Ejercicios */
+    .ex-card { border:2px solid #e2e8f0; border-radius:18px; background:#fff; margin-bottom:1.4rem; overflow:hidden; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .ex-head { background:#f8f9ff; border-bottom:2px solid #e2e8f0; padding:.7rem 1rem; display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; }
+    .ex-head .en { background:#5f3dc4; color:#fff; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; font-weight:800; }
+    .ex-head .lvb { margin-left:auto; background:#e5dbff; color:#5f3dc4; border-radius:999px; font-size:.72rem; font-weight:800; padding:.1rem .7rem; }
+    .ex-body { padding:1rem; }
+    .q-row { display:flex; align-items:center; gap:.5rem; margin:.35rem 0; flex-wrap:wrap; }
+    .q-row label { min-width:210px; font-weight:600; font-size:.92rem; }
+    .q-row input { width:130px; font-family:'Courier New',monospace; font-weight:700; text-align:center; }
+    .q-row input.ok { border-color:#2f9e44; background:#ebfbee; } .q-row input.bad { border-color:#e03131; background:#fff5f5; }
+    .q-row .mk { font-weight:800; }
+    .sstep { display:flex; gap:.8rem; padding:.7rem .8rem; border-left:5px solid #5f3dc4; background:#faf8ff; border-radius:0 14px 14px 0; margin:.6rem 0; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 700ms); }
+    @keyframes sIn { from { opacity:0; transform:translateX(-22px); } to { opacity:1; transform:none; } }
+    .sstep .sn { flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:#5f3dc4; color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sstep .sb { min-width:0; flex:1 1 auto; } .sstep .st { font-weight:800; color:#3b2a8c; margin-bottom:.15rem; } .sstep .sx { font-size:.85rem; color:#475569; }
+    .sstep .cx.d { text-align:left; margin:.15rem 0; }
+    .ex-tbl { border-collapse:collapse; font-size:.9rem; margin:.5rem 0; } .ex-tbl th, .ex-tbl td { border:1.5px solid #343a40; padding:.2rem .7rem; text-align:center; } .ex-tbl th { background:#e5dbff; }
+    .form-tbl.int td { text-align:center; } .form-tbl .mono { font-weight:800; }
+    @media (prefers-reduced-motion:reduce) { .vz-axis,.vz-fade,.vz-grow,.vz-pop,.vz-rise,.vz-dash,.vz-pulse,.sstep { animation:none !important; opacity:1 !important; transform:none !important; stroke-dashoffset:0 !important; } }
+
+    #tbl-wrap[data-m="median"] { --mc:#e8590c; } #tbl-wrap[data-m="mode"] { --mc:#7048e8; }
+
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s1">1. Datos</a><a href="#s2">2. Intervalos</a><a href="#s3">3. Amplitud</a><a href="#s4">4. Tabla</a><a href="#s5">5. Media, mediana y moda</a><a href="#s6">6. Formulario</a><a href="#s7">7. Ejercicios</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bars" id="hero-bars"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-distribute-horizontal text-info me-2"></i>Amplitudes de clase</h1>
+        <p class="lead mb-1">Qué mide el intervalo, cómo se calcula y qué significa que sea <strong>abierto</strong> o <strong>cerrado</strong></p>
+        <p class="mb-3 text-light opacity-75">Elige una clase y mírala dibujarse en la recta numérica • después calcula media, mediana y moda</p>
+        <a class="btn btn-warning rounded-pill px-4 fw-semibold me-1" href="#s2"><i class="bi bi-play-circle-fill me-1"></i>Ver los intervalos animados</a>
+        <a class="btn btn-outline-light rounded-pill px-4 fw-semibold" href="#s7"><i class="bi bi-pencil-square me-1"></i>Ir a los ejercicios</a>
+      </div>
+    </header>
+
+    <div class="container mb-5">
+
+      <!-- 1. DATOS -->
+      <section class="lesson mb-5" id="s1">
+        <div class="card lesson-card">
+          <div class="lesson-head h-1"><div class="num">1</div><div><h2 class="h4 fw-bold mb-0">Límites y número de clases</h2><small>Pon el límite inferior, el superior y cuántas clases quieres (o aplica Sturges)</small></div></div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-lg-7"><div class="panel h-100">
+                <h6 class="fw-bold mb-3"><i class="bi bi-arrows-collapse-vertical me-1"></i>Límites de los datos</h6>
+                <div class="row g-3">
+                  <div class="col-sm-6"><label class="form-label small fw-semibold" for="lo"><span class="vchip" style="--c:#1c7ed6">$X_{inf}$</span> Límite inferior (dato menor)</label><input type="number" class="form-control form-control-lg" id="lo" step="any" value="55"></div>
+                  <div class="col-sm-6"><label class="form-label small fw-semibold" for="hi"><span class="vchip" style="--c:#e03131">$X_{sup}$</span> Límite superior (dato mayor)</label><input type="number" class="form-control form-control-lg" id="hi" step="any" value="100"></div>
+                  <div class="col-sm-6"><label class="form-label small fw-semibold" for="nn"><span class="vchip" style="--c:#343a40">$n$</span> Tamaño de la muestra</label><input type="number" class="form-control" id="nn" min="2" max="5000" step="1" value="60"></div>
+                  <div class="col-sm-6"><label class="form-label small fw-semibold" for="dec">Decimales de tus datos (precisión)</label>
+                    <select id="dec" class="form-select"><option value="0" selected>0 (números enteros)</option><option value="1">1 decimal</option><option value="2">2 decimales</option></select></div>
+                </div>
+                <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>$n$ sirve para Sturges y para generar frecuencias de ejemplo; luego <strong>puedes escribir las tuyas</strong> en la tabla.</div>
+                <div class="d-flex flex-wrap gap-2 mt-3" id="data-stats"></div>
+              </div></div>
+              <div class="col-lg-5"><div class="panel h-100">
+                <h6 class="fw-bold mb-3"><i class="bi bi-sliders me-1"></i>Número de clases</h6>
+                <label class="form-label small fw-semibold" for="k">Clases que quiero ($k$): <span id="k-out" class="mono">9</span></label>
+                <input type="range" class="form-range" id="k" min="2" max="20" step="1" value="9">
+                <div class="usebox mt-3" style="--c:#0c8599">
+                  <button class="btn btn-sm btn-info text-white rounded-pill fw-semibold" id="b-sturges"><i class="bi bi-magic me-1"></i>Aplicar Sturges</button>
+                  <div class="fx mt-2" data-f="sturges"></div><div class="small" id="sturges-live"></div>
+                </div>
+              </div></div>
+            </div>
+            <div id="err" class="tip-box s-res mt-3 d-none"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="results">
+
+      <!-- 2. VISUALIZADOR -->
+      <section class="lesson mb-5" id="s2">
+        <div class="card lesson-card">
+          <div class="lesson-head h-2"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Intervalos abiertos y cerrados, dibujados</h2><small>Elige una clase y un tipo de intervalo: se dibuja sobre la recta numérica</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" id="v-play"><i class="bi bi-arrow-repeat me-1"></i>Repetir animación</button></div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-lg-4">
+                <div class="panel mb-3">
+                  <div class="small fw-bold text-muted mb-2"><i class="bi bi-hand-index-thumb me-1"></i>1. Elige la clase</div>
+                  <div class="d-flex flex-wrap gap-1" id="cls-chips"></div>
+                </div>
+                <div class="panel mb-3">
+                  <div class="small fw-bold text-muted mb-2"><i class="bi bi-code-square me-1"></i>2. Tipo de intervalo</div>
+                  <div class="type-grid" id="type-sw"></div>
+                </div>
+                <div class="real-switch" id="real-switch-v"><div class="form-check form-switch m-0 p-0 d-flex align-items-center gap-2"><input class="form-check-input m-0 sw-real" type="checkbox" role="switch" id="sw-real-v"><label for="sw-real-v"><i class="bi bi-rulers me-1"></i>Fronteras reales</label></div></div>
+              </div>
+              <div class="col-lg-8">
+                <div class="viz-card"><div id="v-svg"></div></div>
+                <div id="v-expl" class="mt-3"></div>
+              </div>
+            </div>
+            <h6 class="fw-bold mt-4 mb-2"><i class="bi bi-layout-three-columns me-1"></i>Todas las clases en la recta <small class="text-muted fw-normal">(toca una para seleccionarla)</small></h6>
+            <div class="viz-card"><div id="v-strip"></div></div>
+            <div class="row g-3 mt-1">
+              <div class="col-lg-6"><div class="tip-box s-volt h-100"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Convención de la tabla:</strong> cada clase es <strong class="mono">[Li, Ls)</strong>: <em>incluye</em> el límite inferior y <em>no incluye</em> el superior, que pertenece a la clase siguiente. Así ningún dato queda en dos clases. La <strong>última clase</strong> se cierra <strong class="mono">[Li, Ls]</strong> cuando el dato mayor coincide con su límite superior.</div></div>
+              <div class="col-lg-6"><div class="tip-box s-amp h-100" id="open-ended"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. AMPLITUD -->
+      <section class="lesson mb-5" id="s3">
+        <div class="card lesson-card">
+          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Amplitud: fórmula y cómo calcularla</h2><small>La amplitud (o tamaño de clase) es el ancho de cada intervalo</small></div></div>
+          <div class="card-body">
+            <div class="row g-3 align-items-start mb-3">
+              <div class="col-lg-6">
+                <div class="small fw-bold text-muted">Amplitud de una clase</div><div class="fx" data-f="amp"></div>
+                <div class="small fw-bold text-muted">Amplitud para formar las clases</div><div class="fx" data-f="ampR"></div>
+                <div class="small fw-bold text-muted">Amplitud con fronteras reales</div><div class="fx" data-f="ampReal"></div>
+              </div>
+              <div class="col-lg-6"><div class="tip-box s-volt"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Regla de la comprobación:</strong> multiplica la amplitud por el número de clases. Si es igual al rango, la fracción es <span class="verdict pure">pura</span>; si no, es <span class="verdict impure">impura</span> y se <strong>redondea hacia arriba</strong> a la precisión de los datos. <hr class="my-2"><strong>Ojo:</strong> la amplitud es la misma en un intervalo abierto, cerrado o semiabierto; lo que cambia es qué valores contiene.</div></div>
+            </div>
+            <div class="row g-3" id="steps"></div>
+            <h6 class="fw-bold mt-4 mb-2"><i class="bi bi-table me-1"></i>Amplitud de cada clase <small class="text-muted fw-normal">(toca una fila para dibujarla arriba)</small></h6>
+            <div class="table-responsive rounded-3 border"><table class="table table-bordered freq-table mb-0" id="amp-tbl"><thead></thead><tbody></tbody></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. TABLA -->
+      <section class="lesson mb-5" id="s4">
+        <div class="card lesson-card">
+          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Tabla de frecuencias</h2><small>Elige la medida: se colorean las columnas y filas que usa</small></div></div>
+          <div class="card-body">
+            <div class="tbl-bar">
+              <div><div class="small fw-bold text-muted mb-1">&nbsp;</div>
+                <div class="real-switch" id="real-switch"><div class="form-check form-switch m-0 p-0 d-flex align-items-center gap-2"><input class="form-check-input m-0 sw-real" type="checkbox" role="switch" id="sw-real"><label for="sw-real"><i class="bi bi-rulers me-1"></i>Fronteras reales</label></div></div></div>
+              <div class="flex-grow-1"><div class="small fw-bold text-muted mb-1"><i class="bi bi-palette-fill me-1"></i>Medida (colorea la tabla):</div><div class="d-flex flex-wrap gap-2" id="m-group"></div></div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><strong class="small"><i class="bi bi-table me-1"></i>Frecuencias:</strong>
+              <button class="btn btn-sm btn-outline-primary rounded-pill" id="b-bell"><i class="bi bi-graph-up me-1"></i>Campana</button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="b-rand"><i class="bi bi-shuffle me-1"></i>Aleatorias</button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="b-flat"><i class="bi bi-distribute-vertical me-1"></i>Iguales</button>
+              <span class="small text-muted">…o escribe la tuya en cada clase.</span></div>
+            <div id="real-info" class="mb-3 d-none"></div>
+            <div class="table-responsive rounded-3 border" id="tbl-wrap" data-m="mean"><table class="table table-bordered freq-table mb-0" id="tbl"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
+            <div class="col-legend" id="col-legend"></div>
+            <div class="tip-box s-volt mt-3 small"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i><strong>Toca cualquier número o encabezado</strong> (subrayado punteado) para ver la operación. Toca el número de clase para dibujarla en la sección 2.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. RESULTADOS -->
+      <section class="lesson mb-5" id="s5">
+        <div class="card lesson-card">
+          <div class="lesson-head h-5"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Media, mediana y moda con la amplitud</h2><small>La mediana y la moda usan la amplitud $A$ de la clase donde se ubican</small></div></div>
+          <div class="card-body">
+            <div class="row g-3 mb-3" id="tiles"></div>
+            <div class="measure" id="m-detail"></div>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <!-- 6. FORMULARIO -->
+      <section class="lesson mb-5" id="s6">
+        <div class="card lesson-card">
+          <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Formulario</h2><small>Todas las fórmulas del tema con la descripción de cada elemento</small></div></div>
+          <div class="card-body"><div id="form-wrap"></div></div>
+        </div>
+      </section>
+
+      <!-- 7. EJERCICIOS -->
+      <section class="lesson mb-5" id="s7">
+        <div class="card lesson-card">
+          <div class="lesson-head h-7"><div class="num">7</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ejercicios resueltos paso a paso</h2><small>Resuelve, comprueba tu respuesta y mira la solución animada</small></div>
+            <button class="btn btn-sm btn-light rounded-pill me-1" id="g-int"><i class="bi bi-plus-circle me-1"></i>Otro de intervalos</button>
+            <button class="btn btn-sm btn-light rounded-pill" id="g-tab"><i class="bi bi-plus-circle me-1"></i>Otro de tabla</button></div>
+          <div class="card-body"><div id="ex-list"></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Amplitudes</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" },
+          { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }
+        ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" }, { label: "Medidas de dispersión", href: "medidas_dispersion.html", icon: "bi-arrows-expand" }, { label: "Amplitudes", href: "amplitudes.html", icon: "bi-distribute-horizontal" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+          <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div>
+        </div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'amplitudes.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+
+  <script>
+/*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { lceil: '⌈', rceil: '⌉', Delta: 'Δ', ne: '≠', rightarrow: '→', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['ne', 'rightarrow', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'tilde': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name}">${x}</span>`; }
+          case 'mathbf': { const h = arg(); last = 'val'; return `<b>${h}</b>`; }
+          case 'log': last = 'val'; return '<span class="tx">log</span>';
+          case 'sum': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">∑</span><span class="sl">${lo}</span></span>`; }
+          case 'pop': { const id = raw().replace(/[^\w-]/g, ''), h = arg(); last = 'val'; return `<span class="pp" data-pop="${id}" tabindex="0" role="button">${h}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    /*ENDFX*/
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const fmt = (x, d = 4) => isFinite(x) ? String(+x.toFixed(d)) : '—';
+    const r10 = x => Math.round(x * 1e10) / 1e10;
+    const f2 = x => { if (!isFinite(x)) return '—'; const v = x.toFixed(2); return v === '-0.00' ? '0.00' : v; };
+    const sturgesK = n => 1 + 3.322 * Math.log10(n);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+    /* ---------- Colores y fórmulas ---------- */
+    const CL = { n: '#343a40', xi: '#2f9e44', fi: '#d6336c', A: '#0ca678', Li: '#1c7ed6', Ls: '#e03131', fa: '#e03131', fmed: '#f08c00', d1: '#7048e8', d2: '#0c8599', sup: '#e03131', inf: '#1c7ed6', R: '#495057', mean: '#1864ab', median: '#e8590c', mode: '#7048e8' };
+    const MC = { mean: CL.mean, median: CL.median, mode: CL.mode };
+    const MS = [{ k: 'mean', name: 'Media', ic: 'bi-graph-up' }, { k: 'median', name: 'Mediana', ic: 'bi-distribute-vertical' }, { k: 'mode', name: 'Moda', ic: 'bi-bar-chart-fill' }];
+    const K = (c, s) => T`\textcolor{${c}}{${s}}`;
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const F = {
+      amp: T`${K(CL.A, 'A')} \;=\; ${K(CL.Ls, 'L_s')} - ${K(CL.Li, 'L_i')}`,
+      ampR: T`${K(CL.A, 'A')} \;=\; \frac{R}{k} \;=\; \frac{${K(CL.sup, 'X_{sup}')} - ${K(CL.inf, 'X_{inf}')}}{k}`,
+      ampReal: T`${K(CL.A, 'A_{real}')} \;=\; F_{sup} - F_{inf} \qquad (\text{última clase cerrada: } A + u)`,
+      range: T`R \;=\; ${K(CL.sup, 'X_{sup}')} \;-\; ${K(CL.inf, 'X_{inf}')}`,
+      check: T`A \cdot k = R \;\Rightarrow\; \text{pura} \qquad A \cdot k \neq R \;\Rightarrow\; \text{impura (se redondea)}`,
+      sturges: T`${K('#0c8599', 'k')} \;=\; 1 + 3.322 \, \log_{10}(${K(CL.n, 'n')})`,
+      xi: T`${K(CL.xi, 'x_i')} \;=\; \frac{L_i + L_s}{2}`,
+      front: T`F_{inf} = L_i - \frac{u}{2} \qquad F_{sup} = L_s - \frac{u}{2} \qquad u = 10^{-d}`,
+      fr: T`f_r = \frac{${K(CL.fi, 'f_i')}}{${K(CL.n, 'n')}}`,
+      fa: T`Fa_j = Fa_{j-1} + ${K(CL.fi, 'f_j')}`,
+      mean: T`${K(CL.mean, '\\bar{x}')} \;=\; \frac{\sum_{i=1}^{k} ${K(CL.fi, 'f_i')} \cdot ${K(CL.xi, 'x_i')}}{${K(CL.n, 'n')}}`,
+      median: T`${K(CL.median, '\\tilde{x}')} \;=\; ${K(CL.Li, 'L_i')} + \left( \frac{\frac{${K(CL.n, 'n')}}{2} - ${K(CL.fa, '\\sum fa')}}{${K(CL.fmed, 'f_{med}')}} \right) ${K(CL.A, 'A')}`,
+      mode: T`${K(CL.mode, '\\hat{x}')} \;=\; ${K(CL.Li, 'L_i')} + \left( \frac{${K(CL.d1, '\\Delta_1')}}{${K(CL.d1, '\\Delta_1')} + ${K(CL.d2, '\\Delta_2')}} \right) ${K(CL.A, 'A')}`
+    };
+    const LEG = {
+      amp: [['A', 'Amplitud (o tamaño) del intervalo: su ancho', CL.A], ['L_s', 'Límite superior del intervalo', CL.Ls], ['L_i', 'Límite inferior del intervalo', CL.Li]],
+      ampR: [['A', 'Amplitud que se usará en todas las clases', CL.A], ['R', 'Rango o recorrido de los datos', CL.R], ['k', 'Número de clases deseadas', CL.R], ['X_{sup}', 'Dato mayor (límite superior de los datos)', CL.sup], ['X_{inf}', 'Dato menor (límite inferior de los datos)', CL.inf]],
+      ampReal: [['A_{real}', 'Amplitud medida entre las fronteras reales', CL.A], ['F_{sup}', 'Frontera real superior', CL.Ls], ['F_{inf}', 'Frontera real inferior', CL.Li], ['u', 'Unidad de medida de los datos (1 si son enteros)', CL.R]],
+      xi: [['x_i', 'Marca de clase (punto medio del intervalo)', CL.xi], ['L_i', 'Límite inferior', CL.Li], ['L_s', 'Límite superior', CL.Ls]],
+      front: [['F_{inf}', 'Frontera real inferior de la clase', CL.Li], ['F_{sup}', 'Frontera real superior de la clase', CL.Ls], ['u', 'Unidad de medida de los datos (1 para enteros, 0.1 con un decimal…)', CL.R], ['d', 'Decimales con los que se miden los datos', CL.R]],
+      mean: [['\\bar{x}', 'Media aritmética de la muestra', CL.mean], ['\\sum', 'Suma de todas las clases', CL.R], ['f_i', 'Frecuencia de la clase', CL.fi], ['x_i', 'Marca de clase', CL.xi], ['n', 'Tamaño de la muestra', CL.n]],
+      median: [['\\tilde{x}', 'Mediana de la muestra', CL.median], ['L_i', 'Límite inferior de la clase donde está la mediana (primera con Fa ≥ n/2)', CL.Li], ['n', 'Tamaño de la muestra', CL.n], ['\\sum fa', 'Suma de las frecuencias anteriores a la clase mediana', CL.fa], ['f_{med}', 'Frecuencia de la clase mediana', CL.fmed], ['A', 'Amplitud de la clase mediana', CL.A]],
+      mode: [['\\hat{x}', 'Moda de la muestra', CL.mode], ['L_i', 'Límite inferior de la clase modal (la de mayor frecuencia)', CL.Li], ['\\Delta_1', 'Frecuencia modal menos la de la clase anterior', CL.d1], ['\\Delta_2', 'Frecuencia modal menos la de la clase siguiente', CL.d2], ['A', 'Amplitud de la clase modal', CL.A]]
+    };
+    const legRows = arr => arr.map(([s, t, c]) => `<div class="legend-row"><span class="vchip" style="--c:${c}">${fi(s)}</span><span>${t}</span></div>`).join('');
+
+    const escH = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? fd(m[1]) : fi(m[2])); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+
+    /* ---------- Popovers con el paso a paso de cada operación ---------- */
+    let POPS = {}, PID = 0;
+    // lines: [caption, tex, 'res'?] | [caption, html, 'html'] | 'texto'
+    function reg(title, lines, color) {
+      const id = 'p' + (++PID);
+      POPS[id] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
+        : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('') };
+      return id;
+    }
+    const pp = (id, tex) => T`\pop{${id}}{${tex}}`;
+    function initPops(root) {
+      (root || document).querySelectorAll('[data-pop]').forEach(el => {
+        const d = POPS[el.dataset.pop]; if (!d || bootstrap.Popover.getInstance(el)) return;
+        new bootstrap.Popover(el, { trigger: 'click', html: true, sanitize: false, placement: 'auto', container: 'body', customClass: 'calc-pop', title: d.t, content: d.h, fallbackPlacements: ['top', 'bottom', 'right', 'left'] });
+      });
+    }
+    const hideAllPops = () => $$('[data-pop]').forEach(el => { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); });
+    document.addEventListener('show.bs.popover', e => $$('[data-pop]').forEach(el => { if (el !== e.target) { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); } }));
+    document.addEventListener('click', e => { if (!e.target.closest('[data-pop],.popover')) hideAllPops(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideAllPops(); if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-pop]')) { e.preventDefault(); e.target.click(); } });
+
+    /* ---------- Intervalos: tipos y pertenencia ---------- */
+    const TYPES = {
+      cc: { l: '[', r: ']', lc: true, rc: true, name: 'Cerrado', sub: 'incluye ambos' },
+      ca: { l: '[', r: ')', lc: true, rc: false, name: 'Semiabierto der.', sub: 'incluye el inferior' },
+      ac: { l: '(', r: ']', lc: false, rc: true, name: 'Semiabierto izq.', sub: 'incluye el superior' },
+      aa: { l: '(', r: ')', lc: false, rc: false, name: 'Abierto', sub: 'no incluye ninguno' }
+    };
+    const notation = (a, b, t) => `${t.l}${fmt(a)}, ${fmt(b)}${t.r}`;
+    const inside = (v, a, b, t) => { const ea = Math.abs(v - a) < 1e-9, eb = Math.abs(v - b) < 1e-9; if (ea) return t.lc; if (eb) return t.rc; return v > a && v < b; };
+    function gridVals(a, b, u) { const out = []; for (let i = Math.round(a / u); i <= Math.round(b / u); i++) out.push(r10(i * u)); return out; }
+
+    /* ---------- Estado ---------- */
+    const S = { lo: 55, hi: 100, d: 0, n: 60, k: 9, fi: [], dist: 'bell', real: false, m: 'mean', sel: 2, vt: 'auto' };
+    let ST = null, RP = [], HP = {}, TOT = {}, ANIM = false, VKEY = '', SELPOP = null;
+    const lab = r => `${fmt(r.Li)}-${fmt(r.Ls)}`, labF = r => `${fmt(r.lb)}-${fmt(r.ub)}`;
+    const sumList = (a, f = x => x) => a.length > 6 ? [...a.slice(0, 3).map(f), '\\cdots', f(a[a.length - 1])].join(' + ') : a.map(f).join(' + ');
+
+    function alloc(w, n) {
+      const t = w.reduce((a, b) => a + b, 0), q = w.map(x => x / t * n), fl = q.map(Math.floor);
+      let rest = n - fl.reduce((a, b) => a + b, 0);
+      q.map((v, i) => [v - Math.floor(v), i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rest > 0) { fl[i]++; rest--; } });
+      return fl;
+    }
+    function genW(k, kind) {
+      if (kind === 'flat') return Array(k).fill(1);
+      if (kind === 'rand') { const ctr = (.2 + Math.random() * .6) * (k - 1), sg = Math.max(.9, k * (.12 + Math.random() * .2)); return Array.from({ length: k }, (_, j) => Math.exp(-.5 * ((j - ctr) / sg) ** 2) * (.55 + Math.random() * .9) + .02); }
+      const ctr = (k - 1) / 2, sg = Math.max(.9, k / 4.2); return Array.from({ length: k }, (_, j) => Math.exp(-.5 * ((j - ctr) / sg) ** 2) + .01);
+    }
+    const genFi = kind => alloc(genW(S.k, kind), S.n);
+
+    /* ---------- Núcleo de cálculo (sin DOM) ---------- */
+    function build(o) {
+      const { lo, c, k, d, fi: fr0, real, closedEnd } = o, u = 1 / Math.pow(10, d);
+      const rows = Array.from({ length: k }, (_, j) => {
+        const Li = r10(lo + j * c), Ls = r10(lo + (j + 1) * c), xi = r10((Li + Ls) / 2), last = j === k - 1;
+        let L = Li, w = c, x = xi, lb = null, ub = null;
+        if (real) { lb = r10(Li - u / 2); ub = r10(Ls - u / 2); if (last && closedEnd) ub = r10(Ls + u / 2); L = lb; w = r10(ub - lb); x = r10((lb + ub) / 2); }
+        return { j, Li, Ls, xi, lb, ub, L, w, x, fi: fr0[j] | 0, closed: last && closedEnd };
+      });
+      const n = rows.reduce((a, r) => a + r.fi, 0); let Fa = 0, sfx = 0;
+      rows.forEach(r => { r.fx = r.x * r.fi; sfx += r.fx; r.fr = n ? r.fi / n : 0; r.faPrev = Fa; Fa += r.fi; r.Fa = Fa; });
+      const mean = n ? sfx / n : NaN, half = n / 2, mi = Math.max(0, rows.findIndex(r => r.Fa >= half)), mr = rows[mi];
+      const median = n ? mr.L + ((half - mr.faPrev) / mr.fi) * mr.w : NaN;
+      const maxF = Math.max(...rows.map(r => r.fi)), modals = rows.filter(r => r.fi === maxF).map(r => r.j), oi = modals[0], or = rows[oi];
+      const fprev = oi > 0 ? rows[oi - 1].fi : 0, fnext = oi < k - 1 ? rows[oi + 1].fi : 0, d1 = or.fi - fprev, d2 = or.fi - fnext;
+      const mode = n && d1 + d2 > 0 ? or.L + (d1 / (d1 + d2)) * or.w : NaN;
+      return { lo, c, k, d, u, rows, n, sfx, mean, half, mi, median, modals, oi, fprev, fnext, d1, d2, mode, real, closedEnd, val: { mean, median, mode } };
+    }
+    function calc() {
+      const lo = S.lo, hi = S.hi, k = S.k, d = S.d;
+      if (!isFinite(lo) || !isFinite(hi)) return { err: 'Escribe el límite inferior y el límite superior (números).' };
+      if (hi <= lo) return { err: 'El límite superior debe ser mayor que el límite inferior.' };
+      const R = r10(hi - lo), p = Math.pow(10, d);
+      const raw = R / k, trunc = Math.floor(raw * p + 1e-9) / p, prod = r10(trunc * k), pure = Math.abs(prod - R) < 1e-9;
+      const c = pure ? trunc : Math.ceil(raw * p - 1e-9) / p;
+      if (!(c > 0)) return { err: 'La amplitud resulta 0: aumenta los decimales o amplía el rango.' };
+      const closedEnd = Math.abs(hi - r10(lo + k * c)) < 1e-9;
+      const s = build({ lo, c, k, d, fi: S.fi, real: S.real, closedEnd });
+      return Object.assign(s, { hi, R, step: { raw, trunc, prod, pure }, fine: [lo, hi].some(v => Math.abs(v * p - Math.round(v * p)) > 1e-7) });
+    }
+
+    /* ---------- Instructivo de la amplitud ---------- */
+    function renderSteps(s) {
+      const a = '#e03131', b = '#1c7ed6', cc = '#f08c00', d = '#2f9e44', st = s.step, f = fmt;
+      const pmax = reg('Límite superior', [['Dato mayor que escribiste', T`X_{sup} = ${f(s.hi)}`, 'res']], a);
+      const pmin = reg('Límite inferior', [['Dato menor que escribiste', T`X_{inf} = ${f(s.lo)}`, 'res']], b);
+      const pR = reg('Rango', [['Límite superior − límite inferior', T`R = ${f(s.hi)} - ${f(s.lo)} = ${f(s.R)}`, 'res']], a);
+      const pk = reg('Número de clases', [['Lo elegiste con el control (o con Sturges)', T`k = ${s.k}`, 'res']], b);
+      const pc = reg('Comprobación', [['Amplitud a la precisión de tus datos', T`A = ${f(st.trunc)}`], ['Multiplica por k', T`${f(st.trunc)} \cdot ${s.k} = ${f(st.prod)}`], ['Compara con el rango', T`${f(st.prod)} ${st.pure ? '=' : '\\neq'} ${f(s.R)}`, 'res'], st.pure ? 'Son iguales: fracción pura.' : 'Son distintos: fracción impura → se redondea el decimal.'], cc);
+      const s3 = `$${pp(pc, `${f(st.trunc)} \\times ${s.k} = ${f(st.prod)}`)}$ y el rango es $${f(s.R)}$ → ${st.pure ? `<span class="verdict pure">son iguales: PURA</span>` : `<span class="verdict impure">son distintos: IMPURA</span>`}`;
+      const pr = reg('Redondeo hacia arriba', [['Amplitud exacta', T`R / k = ${f(st.raw, 6)}`], ['Se sube a la precisión de los datos', T`${f(st.raw, 6)} \rightarrow ${f(s.c)}`, 'res'], ['Ahora cubre todos los datos', T`A \cdot k = ${f(s.c * s.k)} \ge ${f(s.R)}`]], d);
+      const s4 = st.pure ? `Se usa tal cual: $A = ${f(s.c)}$. Las clases llegan justo a <strong>${f(s.hi)}</strong>.` : `Redondeo hacia arriba: $${pp(pr, `${f(st.raw)} \\rightarrow ${f(s.c)}`)}$. Ahora $A \\cdot k = ${f(s.c * s.k)} \\ge R$ y las clases llegan a <strong>${f(s.lo + s.c * s.k)}</strong>.`;
+      $('#steps').innerHTML = [
+        [a, 'Hallar el rango', `$R = ${pp(pmax, f(s.hi))} - ${pp(pmin, f(s.lo))} = ${pp(pR, f(s.R))}$`],
+        [b, 'Dividir entre $k$', `$A = \\frac{${pp(pR, f(s.R))}}{${pp(pk, s.k)}} = ${f(st.raw, 6)}$`],
+        [cc, 'Comprobar multiplicando', s3],
+        [d, st.pure ? 'Amplitud final' : 'Redondear el decimal', s4]
+      ].map(([c, t, body], i) => `<div class="col-md-6 col-xl-3"><div class="istep" style="--c:${c};animation-delay:${i * 90}ms"><h6><span class="badge-n">${i + 1}</span>${t}</h6><div class="small">${body}</div></div></div>`).join('');
+    }
+
+    /* Tabla de amplitud por clase */
+    function typeOf(s, r) { return r.closed ? 'cc' : 'ca'; }
+    function renderAmpTbl(s) {
+      const f = fmt, u = s.u;
+      $('#amp-tbl thead').innerHTML = `<tr><th>Clase</th><th>Intervalo<small>notación</small></th><th>Amplitud<small>A = Ls − Li</small></th><th>Fronteras reales<small>Li − u/2 , Ls − u/2</small></th><th>Amplitud real<small>Fsup − Finf</small></th></tr>`;
+      $('#amp-tbl tbody').innerHTML = s.rows.map(r => {
+        const t = TYPES[typeOf(s, r)], fl = r10(r.Li - u / 2), fu = r.closed ? r10(r.Ls + u / 2) : r10(r.Ls - u / 2);
+        return `<tr class="${r.j === S.sel ? 'r-sel' : ''}" data-sel="${r.j}" style="cursor:pointer"><td class="cl-n">${r.j + 1}</td><td class="mono">${notation(r.Li, r.Ls, t)}</td><td class="mc" style="background:#d3f9d8">${f(r10(r.Ls - r.Li))}</td><td class="mono">${f(fl)} – ${f(fu)}</td><td>${f(r10(fu - fl))}${r.closed ? ' <small class="text-muted">(cerrada: A + u)</small>' : ''}</td></tr>`;
+      }).join('');
+    }
+
+    /* ---------- Popovers de la tabla ---------- */
+    function buildPops(s) {
+      const f = fmt, R = s.real, h = f(s.u / 2);
+      RP = s.rows.map(r => {
+        const j = r.j, t = `Clase ${j + 1}`;
+        const ivl = [[j ? 'Límite inferior' : 'Límite inferior = el que escribiste', j ? T`L_i = X_{inf} + ${j} \cdot A = ${f(s.lo)} + ${j} \cdot ${f(s.c)} = ${f(r.Li)}` : T`L_i = X_{inf} = ${f(s.lo)}`],
+          ['Límite superior', T`L_s = L_i + A = ${f(r.Li)} + ${f(s.c)} = ${f(r.Ls)}`, R ? '' : 'res']];
+        if (R) ivl.push(['Frontera real inferior', T`F_{inf} = L_i - \frac{u}{2} = ${f(r.Li)} - ${h} = ${f(r.lb)}`], ['Frontera real superior' + (r.closed ? ' (última clase cerrada: + u/2)' : ''), r.closed ? T`F_{sup} = L_s + \frac{u}{2} = ${f(r.Ls)} + ${h} = ${f(r.ub)}` : T`F_{sup} = L_s - \frac{u}{2} = ${f(r.Ls)} - ${h} = ${f(r.ub)}`, 'res'], ['Amplitud real', T`F_{sup} - F_{inf} = ${f(r.ub)} - ${f(r.lb)} = ${f(r.w)}`]);
+        else ivl.push(['Amplitud', T`A = L_s - L_i = ${f(r.Ls)} - ${f(r.Li)} = ${f(r.w)}`, 'res']);
+        const mid = R ? [['Punto medio de las fronteras', T`x_i = \frac{F_{inf} + F_{sup}}{2} = \frac{${f(r.lb)} + ${f(r.ub)}}{2} = ${f(r.x)}`, 'res']] : [['Punto medio del intervalo', T`x_i = \frac{L_i + L_s}{2} = \frac{${f(r.Li)} + ${f(r.Ls)}}{2} = ${f(r.x)}`, 'res']];
+        return {
+          ivl: reg(`${t}: intervalo`, ivl, '#fcc419'), xi: reg(`${t}: marca de clase`, mid, CL.xi),
+          fx: reg(`${t}: xi · fi`, [['Marca de clase por frecuencia', T`x_i \cdot f_i = ${f(r.x)} \cdot ${r.fi} = ${f2(r.fx)}`, 'res']], CL.mean),
+          fr: reg(`${t}: frecuencia relativa`, [['Frecuencia entre el total', T`f_r = \frac{${r.fi}}{${s.n}} = ${f(r.fr, 4)}`, 'res']], CL.fi),
+          fa: reg(`${t}: frecuencia acumulada`, [['Acumulada anterior + frecuencia', j ? T`Fa = ${r.faPrev} + ${r.fi} = ${r.Fa}` : T`Fa = f_1 = ${r.Fa}`, 'res']], CL.fa)
+        };
+      });
+      const rs = s.rows, all = g => sumList(rs, g);
+      TOT = {
+        fi: reg('Suma de frecuencias', [['Todas las clases', T`\sum f_i = ${all(r => r.fi)} = ${s.n}`, 'res']], CL.fi),
+        fx: reg('Suma de xi · fi', [['Se suman los productos', T`\sum x_i f_i = ${all(r => f2(r.fx))} = ${f2(s.sfx)}`, 'res'], 'Este total es el numerador de la media.'], CL.mean),
+        fr: reg('Suma de frecuencias relativas', [['Deben sumar 1', T`\sum f_r = 1`, 'res']], CL.fi)
+      };
+      HP = {
+        ivl: reg(R ? 'Fronteras reales' : 'Intervalos', [['Límite inferior de cada clase', T`L_i = X_{inf} + (j-1) \cdot A`], ['Límite superior = inferior + A', T`L_s = L_i + A`], ...(R ? [['Fronteras reales', T`F_{inf} = L_i - \frac{u}{2}`, 'res'], ['', T`F_{sup} = L_s - \frac{u}{2}`, 'res']] : [])], '#fcc419'),
+        fi: reg('Frecuencia fi', [['Número de observaciones de la clase', T`f_i`], 'Escríbela en la columna rosa: la suma es n.'], CL.fi),
+        xi: reg(R ? 'Marca de clase real' : 'Marca de clase', [['Punto medio', R ? T`x_i = \frac{F_{inf} + F_{sup}}{2}` : T`x_i = \frac{L_i + L_s}{2}`, 'res']], CL.xi),
+        fx: reg('Producto xi · fi', [['Marca por frecuencia', T`x_i \cdot f_i`], ['Su suma es el numerador de la media', T`\sum x_i f_i`, 'res']], CL.mean),
+        fr: reg('Frecuencia relativa', [['Proporción de datos', T`f_r = \frac{f_i}{n}`, 'res']], CL.fi),
+        fa: reg('Frecuencia acumulada', [['Suma corrida', T`Fa_j = Fa_{j-1} + f_j`, 'res'], 'La mediana está en la primera clase con Fa ≥ n/2.'], CL.fa)
+      };
+    }
+
+    /* ---------- Tabla de frecuencias ---------- */
+    const MCOL = { mean: ['fx'], median: ['fa'], mode: [] };
+    function renderTable(s) {
+      const R = s.real, f = fmt, cols = MCOL[S.m];
+      $('#tbl-wrap').dataset.m = S.m;
+      const TH = { fx: 'x<sub>i</sub> · f<sub>i</sub>', fr: 'Frec. relativa<small>f<sub>r</sub></small>', fa: 'Acumulada<small>Fa</small>' };
+      const thc = (k, extra = '') => `<th class="pp ${cols.includes(k) ? 'mc' : ''} ${extra}" ${cols.includes(k) ? `style="--ci:${cols.indexOf(k)}"` : ''} data-pop="${HP[k]}" tabindex="0" role="button">${TH[k]} <i class="bi bi-question-circle"></i></th>`;
+      $('#tbl thead').innerHTML = `<tr><th>Clase</th><th class="pp" data-pop="${HP.ivl}" tabindex="0" role="button">${R ? 'Fronteras reales<small>Li − u/2 , Ls − u/2</small>' : 'Intervalos<small>Li – Ls</small>'} <i class="bi bi-question-circle"></i></th><th class="cb-fi pp" data-pop="${HP.fi}" tabindex="0" role="button">Frecuencia<small>f<sub>i</sub> (editable)</small></th><th class="cb-x pp" data-pop="${HP.xi}" tabindex="0" role="button">${R ? 'Marca real' : 'Marca de clase'}<small>x<sub>i</sub></small></th>${thc('fx')}${thc('fr')}${thc('fa')}</tr>`;
+      const td = (id, inner, c = '', st = '') => `<td class="pp ${c}" ${st ? `style="${st}"` : ''} data-pop="${id}" tabindex="0" role="button">${inner}</td>`;
+      const cls = r => S.m === 'median' ? (r.j < s.mi ? 'r-before' : r.j === s.mi ? 'r-med' : '') : S.m === 'mode' ? (r.j === s.oi ? 'r-mode' : (r.j === s.oi - 1 || r.j === s.oi + 1) ? 'r-near' : '') : '';
+      const mcc = (k, r) => cols.includes(k) ? `mc${k === cols[cols.length - 1] ? ' last' : ''}` : '';
+      $('#tbl tbody').innerHTML = s.rows.map((r, j) => `<tr data-j="${j}" class="${cls(r)} ${j === S.sel ? 'r-sel' : ''}"><td class="cl-n" data-sel="${j}" title="Dibujar esta clase">${j + 1}</td>
+        ${td(RP[j].ivl, `<span class="mono">${R ? labF(r) : lab(r)}</span>`)}
+        <td class="cb-fi"><input class="fi-in" type="text" inputmode="numeric" autocomplete="off" data-j="${j}" value="${r.fi}" aria-label="Frecuencia de la clase ${j + 1}"></td>
+        ${td(RP[j].xi, f(r.x), 'cb-x')}
+        ${td(RP[j].fx, f2(r.fx), mcc('fx', r), `--ci:0;--ri:${j}`)}${td(RP[j].fr, `${f(r.fr, 4)}`, '')}${td(RP[j].fa, r.Fa, mcc('fa', r), `--ci:0;--ri:${j}`)}</tr>`).join('');
+      $('#tbl tfoot').innerHTML = `<tr><td colspan="2">Total</td>${td(TOT.fi, s.n, 'cb-fi')}<td class="cb-x">—</td>${td(TOT.fx, f2(s.sfx), cols.includes('fx') ? 'mc' : '')}${td(TOT.fr, '1')}<td>—</td></tr>`;
+      const M = { mean: 'Media: se usa la columna x<sub>i</sub>·f<sub>i</sub> y su total, entre n.', median: 'Mediana: la primera clase con Fa ≥ n/2 (fila naranja); las anteriores en tono suave.', mode: 'Moda: la clase de mayor frecuencia (fila morada) y sus vecinas (turquesa).' }[S.m];
+      $('#col-legend').innerHTML = `<span><i style="background:${CL.fi}"></i>f<sub>i</sub> (la escribes tú)</span><span><i style="background:${CL.xi}"></i>x<sub>i</sub></span><span><i style="background:${MC[S.m]}"></i>${M}</span>`;
+      const t = $('#tbl'); t.classList.remove('anim'); if (ANIM) { void t.offsetWidth; t.classList.add('anim'); }
+    }
+    function renderReal(s) {
+      const box = $('#real-info'); $$('.real-switch').forEach(e => e.classList.toggle('on', s.real));
+      if (!s.real) { box.classList.add('d-none'); box.innerHTML = ''; return; }
+      box.classList.remove('d-none'); const f = fmt, r0 = s.rows[0];
+      box.innerHTML = `<div class="real-banner"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><h5 class="fw-bold mb-0 me-auto"><i class="bi bi-rulers text-warning me-1"></i>Fronteras reales activas</h5><button class="btn btn-sm btn-dark rounded-pill" id="b-unreal"><i class="bi bi-arrow-counterclockwise me-1"></i>Volver a los intervalos originales</button></div>
+        ${s.fine ? '<div class="tip-box s-res small mb-2"><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>Tus límites tienen más decimales que la precisión elegida. Ajusta «Decimales».</div>' : ''}
+        <div class="row g-3"><div class="col-lg-7"><p class="small mb-2"><strong>¿Qué son?</strong> Con la unidad $u = ${f(s.u)}$, en la clase <span class="mono">${lab(r0)}</span> el dato mayor posible es <strong>${f(r0.Ls - s.u)}</strong>; el ${f(r0.Ls)} es de la siguiente. La <strong>frontera real</strong> es el punto medio de ese hueco: las clases se tocan sin vacíos. Se recalculan $x_i$, $x_i\\cdot f_i$ y la media; $f_i$, $n$ y $A$ no cambian. En la mediana y la moda, $L_i$ pasa a ser la frontera inferior real. ${s.closedEnd ? 'La última clase, cerrada, mide $A + u$.' : ''}</p></div>
+        <div class="col-lg-5"><div class="formula-card"><div class="small fw-bold text-muted">Fórmula</div>${fd(F.front)}</div></div></div></div>`;
+    }
+
+    /* ---------- Visualizador de intervalos (SVG animado) ---------- */
+    function resolveType(s) { return S.vt === 'auto' ? typeOf(s, s.rows[S.sel]) : S.vt; }
+    function drawViz(s) {
+      const r = s.rows[S.sel], u = s.u, a = r.Li, b = r.Ls, A = r10(b - a), tk = resolveType(s), t = TYPES[tk], R = s.real, f = fmt;
+      const W = 900, H = 300, ml = 36, mr = 36, AX = 178;
+      const pad = r10(Math.max(2 * u, Math.round(A * .4 / u) * u)), d0 = r10(a - pad), d1 = r10(b + pad);
+      const X = v => ml + (v - d0) / (d1 - d0) * (W - ml - mr), N = Math.round((d1 - d0) / u), step = Math.max(1, Math.ceil(N / 20));
+      let g = `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0ca678"/></marker></defs>`;
+      g += `<line class="vz-axis" pathLength="1" x1="${ml - 14}" x2="${W - mr + 14}" y1="${AX}" y2="${AX}"/>`;
+      let dl = 0.4;
+      for (let i = 0; i <= N; i++) { const v = r10(d0 + i * u), x = X(v);
+        if (i % step === 0) g += `<line class="vz-fade" style="--d:${.2 + i * .02}s" x1="${x}" x2="${x}" y1="${AX - 6}" y2="${AX + 6}" stroke="#334155" stroke-width="2"/><text class="vz-fade" style="--d:${.3 + i * .02}s" x="${x}" y="${AX + 26}" text-anchor="middle" font-size="13" fill="#334155">${f(v)}</text>`; }
+      const vals = gridVals(r10(d0), r10(d1), u), n1 = (W - ml - mr) / Math.max(1, N);
+      // puntos de datos
+      if (N <= 70) vals.forEach((v, i) => { const ins = R ? (v > r.lb && v < r.ub) : inside(v, a, b, t);
+        g += `<circle class="vz-pop ${ins ? 'vz-in' : 'vz-out'}" style="--d:${1.2 + i * .03}s" cx="${X(v)}" cy="${AX}" r="${ins ? 5.5 : 4}"/>`; });
+      const mid = (a + b) / 2, yb = 96; let cells = [];
+      if (!R) {
+        // barra del intervalo
+        g += `<rect class="vz-grow" style="--d:.7s" x="${X(a)}" y="${yb - 9}" width="${X(b) - X(a)}" height="18" rx="9" fill="#0ca678" opacity=".35"/>`;
+        [[a, t.lc, 'l'], [b, t.rc, 'r']].forEach(([v, inc, side], i) => { const x = X(v), dd = 1.3 + i * .25;
+          g += `<line class="vz-dash" style="--d:${dd}s" x1="${x}" x2="${x}" y1="${yb + 24}" y2="${AX - 8}" stroke="#0ca678" stroke-width="2"/>`;
+          const bx = side === 'l' ? 1 : -1, p = inc ? `M${x + 9 * bx} ${yb - 24} H${x} V${yb + 24} H${x + 9 * bx}` : `M${x + 7 * bx} ${yb - 24} Q${x - 9 * bx} ${yb} ${x + 7 * bx} ${yb + 24}`;
+          g += `<path class="vz-pop" style="--d:${dd}s" d="${p}" fill="none" stroke="#087f5b" stroke-width="4" stroke-linecap="round"/>`;
+          g += `<circle class="vz-pop vz-pulse" style="--d:${dd + .15}s" cx="${x}" cy="${AX}" r="10" fill="${inc ? '#0ca678' : '#fff'}" stroke="#087f5b" stroke-width="3.5"/>`;
+          g += `<text class="vz-fade" style="--d:${dd}s" x="${x}" y="${yb - 36}" text-anchor="middle" font-size="15" font-weight="800" fill="${side === 'l' ? CL.Li : CL.Ls}">${side === 'l' ? 'Li' : 'Ls'} = ${f(v)}</text>`;
+          g += `<text class="vz-fade" style="--d:${dd + .2}s" x="${x}" y="${AX + 50}" text-anchor="middle" font-size="12" font-weight="700" fill="#087f5b">${inc ? 'lo incluye' : 'no lo incluye'}</text>`; });
+        g += `<g class="vz-fade" style="--d:1.9s"><path d="M${X(mid) - 7} ${yb - 20} h14 l-7 10z" fill="${CL.xi}"/><text x="${X(mid)}" y="${yb - 26}" text-anchor="middle" font-size="13" font-weight="800" fill="${CL.xi}">xi = ${f(mid)}</text></g>`;
+      } else {
+        const lb = r.lb, ub = r.ub; cells = gridVals(r10(lb + u / 2), r10(ub - u / 2), u);
+        cells.forEach((v, i) => { const w = X(v + u / 2) - X(v - u / 2);
+          g += `<rect class="vz-rise" style="--d:${.7 + i * .12}s" x="${X(v - u / 2) + 1}" y="${AX - 56}" width="${Math.max(1, w - 2)}" height="40" rx="5" fill="#0ca678" opacity="${i % 2 ? .45 : .62}"/>`;
+          if (w > 18) g += `<text class="vz-fade" style="--d:${.9 + i * .12}s" x="${X(v)}" y="${AX - 31}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${f(v)}</text>`; });
+        [[lb, 'F_inf', CL.Li], [ub, 'F_sup', CL.Ls]].forEach(([v, nm, c], i) => { const x = X(v), dd = 1.4 + cells.length * .12 + i * .25;
+          g += `<line class="vz-dash" style="--d:${dd}s" x1="${x}" x2="${x}" y1="${yb - 30}" y2="${AX + 12}" stroke="${c}" stroke-width="2.6"/>`;
+          g += `<text class="vz-fade" style="--d:${dd}s" x="${x}" y="${yb - 42}" text-anchor="middle" font-size="14" font-weight="800" fill="${c}">${nm.replace('_', '')} = ${f(v)}</text>`; });
+        g += `<g class="vz-fade" style="--d:${1.9 + cells.length * .12}s"><text x="${X((lb + ub) / 2)}" y="${AX - 64}" text-anchor="middle" font-size="13" font-weight="800" fill="${CL.xi}">xi = ${f(r.x)}</text></g>`;
+      }
+      // cota de amplitud
+      const aa = R ? r10(r.ub - r.lb) : A, xa = X(R ? r.lb : a), xb = X(R ? r.ub : b), yc = 252;
+      g += `<g class="vz-fade" style="--d:${R ? 2.6 + 1 : 2.2}s"><line x1="${xa}" x2="${xb}" y1="${yc}" y2="${yc}" stroke="#0ca678" stroke-width="3" marker-start="url(#ah)" marker-end="url(#ah)"/><line x1="${xa}" x2="${xa}" y1="${yc - 8}" y2="${yc + 8}" stroke="#0ca678" stroke-width="3"/><line x1="${xb}" x2="${xb}" y1="${yc - 8}" y2="${yc + 8}" stroke="#0ca678" stroke-width="3"/>
+        <rect x="${(xa + xb) / 2 - 118}" y="${yc + 6}" width="236" height="30" rx="15" fill="#0ca678"/><text x="${(xa + xb) / 2}" y="${yc + 26}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">${R ? `A real = ${f(r.ub)} − ${f(r.lb)} = ${f(aa)}` : `A = ${f(b)} − ${f(a)} = ${f(aa)}`}</text></g>`;
+      $('#v-svg').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Intervalo ${notation(a, b, t)} en la recta numérica">${g}</svg>`;
+      // explicación
+      const inc = vals.filter(v => v >= a - 1e-9 && v <= b + 1e-9 && inside(v, a, b, t)), exc = vals.filter(v => v >= a - 1e-9 && v <= b + 1e-9 && !inside(v, a, b, t));
+      const showV = arr => arr.length > 24 ? [...arr.slice(0, 10), '…', ...arr.slice(-3)] : arr;
+      const chipV = (arr, cl) => showV(arr).map(v => `<span class="${cl}">${v === '…' ? '…' : f(v)}</span>`).join('');
+      let html;
+      if (!R) html = `<div class="panel"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="vchip" style="--c:#0ca678;font-size:1.05rem">Clase ${r.j + 1}</span><span class="mono fw-bold fs-5">${notation(a, b, t)}</span><span class="badge bg-dark">${t.name}</span>${S.vt === 'auto' ? '<span class="badge bg-secondary">convención de la tabla</span>' : ''}</div>
+        <div class="row g-2"><div class="col-md-6"><div class="v-inc"><span class="dot ${t.lc ? 'full' : ''}"></span> Extremo izquierdo <span class="mono">${t.l}</span>: ${t.lc ? `<strong>incluye</strong> el ${f(a)}` : `<strong>no incluye</strong> el ${f(a)}`}</div>
+          <div class="v-inc mt-1"><span class="dot ${t.rc ? 'full' : ''}"></span> Extremo derecho <span class="mono">${t.r}</span>: ${t.rc ? `<strong>incluye</strong> el ${f(b)}` : `<strong>no incluye</strong> el ${f(b)}`}</div>
+          <div class="small mt-2">Desigualdad: <span class="mono fw-bold">${f(a)} ${t.lc ? '≤' : '<'} x ${t.rc ? '≤' : '<'} ${f(b)}</span></div></div>
+        <div class="col-md-6">${fd(T`A = ${K(CL.Ls, 'L_s')} - ${K(CL.Li, 'L_i')} = ${f(b)} - ${f(a)} = ${K(CL.A, f(A))}`)}<div class="small text-muted">La amplitud no depende de si el intervalo es abierto o cerrado.</div></div></div>
+        <div class="mt-2 small fw-bold">Valores medibles (de ${f(u)} en ${f(u)}) que contiene: <span class="badge bg-success">${inc.length}</span></div><div class="vals">${chipV(inc, '')}${exc.length ? chipV(exc, 'no') : ''}</div>
+        <div class="small text-muted mt-1">En gris tachado: valores que quedan fuera por ser extremos excluidos.</div></div>`;
+      else html = `<div class="panel"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="vchip" style="--c:#0ca678;font-size:1.05rem">Clase ${r.j + 1}</span><span class="mono fw-bold fs-5">${f(r.lb)} – ${f(r.ub)}</span><span class="badge bg-warning text-dark">fronteras reales</span></div>
+        <div class="row g-2"><div class="col-md-6">${fd(T`F_{inf} = L_i - \frac{u}{2} = ${f(r.Li)} - ${f(u / 2)} = ${K(CL.Li, f(r.lb))}`)}${fd(r.closed ? T`F_{sup} = L_s + \frac{u}{2} = ${f(r.Ls)} + ${f(u / 2)} = ${K(CL.Ls, f(r.ub))}` : T`F_{sup} = L_s - \frac{u}{2} = ${f(r.Ls)} - ${f(u / 2)} = ${K(CL.Ls, f(r.ub))}`)}</div>
+        <div class="col-md-6">${fd(T`A_{real} = ${f(r.ub)} - ${f(r.lb)} = ${K(CL.A, f(aa))}`)}<div class="small text-muted">${r.closed ? 'Esta clase es cerrada: incluye su límite superior, por eso mide una unidad más (A + u).' : 'Cada dato ocupa un «cuadrito» de ancho u centrado en su valor; las clases quedan pegadas sin huecos.'}</div></div></div>
+        <div class="mt-2 small fw-bold">Datos que caben: <span class="badge bg-success">${cells.length}</span></div><div class="vals">${chipV(cells, '')}</div></div>`;
+      $('#v-expl').innerHTML = html;
+      $('#cls-chips').innerHTML = s.rows.map(q => `<button class="cls-chip ${q.j === S.sel ? 'on' : ''}" data-sel="${q.j}">${q.j + 1}</button>`).join('');
+      const real = TYPES[typeOf(s, r)];
+      $('#type-sw').innerHTML = `<button class="type-btn auto ${S.vt === 'auto' ? 'on' : ''}" data-vt="auto">Convención de la tabla<small>esta clase es ${notation(a, b, real)}</small></button>` + Object.entries(TYPES).map(([k, q]) => `<button class="type-btn ${S.vt === k ? 'on' : ''}" data-vt="${k}">${q.l}a, b${q.r}<small>${q.name}</small></button>`).join('');
+      math($('#v-expl'));
+    }
+    function drawStrip(s) {
+      const W = 900, H = 120, ml = 30, mr = 30, d0 = s.lo, d1 = r10(s.lo + s.k * s.c), X = v => ml + (v - d0) / (d1 - d0) * (W - ml - mr), f = fmt;
+      let g = `<line x1="${ml - 10}" x2="${W - mr + 10}" y1="86" y2="86" stroke="#334155" stroke-width="2"/>`;
+      s.rows.forEach(r => { const x1 = X(r.Li), x2 = X(r.Ls), on = r.j === S.sel, col = on ? '#0ca678' : (r.j % 2 ? '#74c0fc' : '#a5d8ff'), dd = r.j * .07;
+        g += `<g class="vz-sel" data-sel="${r.j}"><rect class="vz-grow" style="--d:${dd}s" x="${x1 + 1}" y="36" width="${Math.max(2, x2 - x1 - 2)}" height="30" rx="7" fill="${col}" stroke="${on ? '#087f5b' : '#1c7ed6'}" stroke-width="${on ? 3.5 : 1.5}"/>
+          <text class="vz-fade" style="--d:${dd + .3}s" x="${(x1 + x2) / 2}" y="56" text-anchor="middle" font-size="${x2 - x1 > 30 ? 14 : 11}" font-weight="800" fill="${on ? '#fff' : '#1c4f8a'}">${r.j + 1}</text></g>
+          <circle class="vz-pop" style="--d:${dd + .3}s" cx="${x1}" cy="86" r="6" fill="#0ca678" stroke="#087f5b" stroke-width="2"/>
+          <text class="vz-fade" style="--d:${dd + .3}s" x="${x1}" y="108" text-anchor="middle" font-size="${s.k > 14 ? 10 : 12}" fill="#334155">${f(r.Li)}</text>`; });
+      const lastR = s.rows[s.k - 1];
+      g += `<circle class="vz-pop" style="--d:${s.k * .07 + .3}s" cx="${X(d1)}" cy="86" r="6" fill="${lastR.closed ? '#0ca678' : '#fff'}" stroke="#087f5b" stroke-width="2"/><text class="vz-fade" style="--d:${s.k * .07 + .3}s" x="${X(d1)}" y="108" text-anchor="middle" font-size="${s.k > 14 ? 10 : 12}" fill="#334155">${f(d1)}</text>`;
+      g += `<text x="${ml}" y="20" font-size="12" fill="#64748b">● extremo incluido   ○ extremo no incluido</text>`;
+      $('#v-strip').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;
+    }
+    function renderOpen(s) {
+      const c = s.c, f = fmt;
+      $('#open-ended').innerHTML = `<i class="bi bi-infinity text-primary me-1"></i><strong>Clases abiertas en los extremos.</strong> «Menos de ${f(s.lo)}» es <span class="mono">(−∞, ${f(s.lo)})</span> y «${f(s.hi)} o más» es <span class="mono">[${f(s.hi)}, +∞)</span>: su amplitud no está definida, así que se <strong>supone igual a la de las clases vecinas</strong> ($A = ${f(c)}$). Con eso su marca de clase es $x_1 = L_s - A/2 = ${f(r10(s.lo - c / 2))}$ (primera) y $x_k = L_i + A/2$ (última).
+        <svg viewBox="0 0 420 46" style="width:100%;max-width:420px;display:block;margin-top:.3rem"><line x1="10" x2="410" y1="26" y2="26" stroke="#334155" stroke-width="2"/><path class="vz-fade" style="--d:.2s" d="M10 26 l10 -6 v12z" fill="#334155"/><path class="vz-fade" style="--d:.2s" d="M410 26 l-10 -6 v12z" fill="#334155"/>
+        <rect class="vz-grow" style="--d:.4s" x="14" y="20" width="136" height="12" rx="6" fill="#74c0fc"/><circle class="vz-pop" style="--d:.9s" cx="150" cy="26" r="6" fill="#fff" stroke="#1c7ed6" stroke-width="2.5"/><text x="150" y="44" font-size="11" text-anchor="middle" fill="#334155">${f(s.lo)}</text>
+        <rect class="vz-grow" style="--d:.6s" x="270" y="20" width="136" height="12" rx="6" fill="#74c0fc"/><circle class="vz-pop" style="--d:1.1s" cx="270" cy="26" r="6" fill="#1c7ed6"/><text x="270" y="44" font-size="11" text-anchor="middle" fill="#334155">${f(s.hi)}</text></svg>`;
+      math($('#open-ended'));
+    }
+
+    /* ---------- Resultados: media, mediana y moda ---------- */
+    const chip = (c, s) => `<span class="vchip" style="--c:${c}">${s}</span>`;
+    const use = (c, h) => `<div class="usebox" style="--c:${c}">${h}</div>`;
+    function renderTiles(s) {
+      const sym = { mean: 'x̄', median: 'x̃', mode: 'x̂' };
+      $('#tiles').innerHTML = MS.map(m => `<div class="col-12 col-md-4"><div class="tile ${S.m === m.k ? 'on' : ''}" data-mm="${m.k}" style="--c:${MC[m.k]}" tabindex="0" role="button"><div class="tl"><i class="bi ${m.ic} me-1"></i>${m.name}</div><div class="tv">${f2(s.val[m.k])}</div><div class="ts">${sym[m.k]}${s.real ? ' · con fronteras reales' : ''}</div></div></div>`).join('');
+    }
+    function renderDetail(s) {
+      const m = S.m, c = MC[m], meta = MS.find(q => q.k === m), f = fmt;
+      let steps = [], resTex = '', note = '';
+      const nId = reg('Tamaño de la muestra', [['Suma de todas las frecuencias', T`n = \sum f_i = ${s.n}`, 'res']], CL.n);
+      const lis = (L, extra = '') => `<span class="mono">${f(L)}</span>${extra}`;
+      if (m === 'mean') {
+        const sId = reg('Suma de productos', [['Se suman todos los xi · fi', T`\sum x_i f_i = ${sumList(s.rows, r => f2(r.fx))} = ${f2(s.sfx)}`, 'res']], CL.mean);
+        const terms = s.rows.map((r, j) => pp(RP[j].fx, T`(${K(CL.xi, f(r.x))})(${K(CL.fi, r.fi)})`)), tx = terms.length > 6 ? [...terms.slice(0, 3), '\\cdots', terms[terms.length - 1]] : terms;
+        const rId = reg('Resultado', [['Suma entre n', T`\bar{x} = \frac{${f2(s.sfx)}}{${s.n}} = ${f(s.mean, 6)}`], ['A 2 decimales', T`\bar{x} = ${f2(s.mean)}`, 'res']], CL.mean);
+        steps = [['Multiplicar cada marca por su frecuencia y sumar', fd(T`\sum x_i f_i = ${tx.join(' + ')} = ${pp(sId, f2(s.sfx))}`)],
+          ['Dividir entre el tamaño de la muestra', fd(T`\bar{x} = \frac{${pp(sId, f2(s.sfx))}}{${pp(nId, K(CL.n, s.n))}}`)]];
+        resTex = T`\bar{x} = ${pp(rId, f2(s.mean))}`;
+        note = use(CL.xi, `<strong>De la tabla usamos:</strong> ${chip(CL.xi, s.real ? 'marca real $x_i$' : 'marca de clase $x_i$')}, ${chip(CL.fi, 'frecuencia $f_i$')} y ${chip(CL.n, `$n = ${s.n}$`)}.`);
+      } else if (m === 'median') {
+        const r = s.rows[s.mi], fl = s.rows.map(q => `<div class="${q.j === s.mi ? 'fw-bold text-danger' : ''}">Clase ${q.j + 1}: Fa = ${q.Fa}${q.j === s.mi ? ' ← primera ≥ ' + f(s.half) : ''}</div>`).join('');
+        const pPos = reg('Clase mediana', [['Mitad de los datos', T`\frac{n}{2} = \frac{${s.n}}{2} = ${f(s.half)}`], ['Primera clase con Fa ≥ ' + f(s.half), `<div style="max-height:150px;overflow:auto">${fl}</div>`, 'html'], ['Resultado', T`\text{clase } ${r.j + 1}`, 'res']], CL.fmed);
+        const pL = reg(s.real ? 'Frontera real inferior' : 'Límite inferior', [[s.real ? 'Frontera real de la clase mediana' : 'Límite inferior de la clase mediana', T`L_i = ${f(r.L)}`, 'res'], s.real ? 'Sin fronteras valdría ' + f(r.Li) + '.' : ''].filter(Boolean), CL.Li);
+        const pA = reg('Amplitud de la clase mediana', [[s.real ? 'Ancho entre fronteras' : 'Límite superior − inferior', s.real ? T`A = ${f(r.ub)} - ${f(r.lb)} = ${f(r.w)}` : T`A = ${f(r.Ls)} - ${f(r.Li)} = ${f(r.w)}`, 'res']], CL.A);
+        const pFa = reg('Frecuencias anteriores', [['Fa de la clase anterior', T`\sum fa = ${r.faPrev}`, 'res']], CL.fa);
+        const pFm = reg('Frecuencia de la clase mediana', [['Frecuencia de la clase ' + (r.j + 1), T`f_{med} = ${r.fi}`, 'res']], CL.fmed);
+        const q = (s.half - r.faPrev) / r.fi, rId = reg('Resultado', [['Fracción', T`\frac{${f(s.half)} - ${r.faPrev}}{${r.fi}} = ${f(q, 6)}`], ['Por la amplitud y sumando Li', T`${f(r.L)} + ${f(q, 6)} \cdot ${f(r.w)} = ${f(s.median, 6)}`], ['A 2 decimales', T`\tilde{x} = ${f2(s.median)}`, 'res']], CL.median);
+        steps = [['Hallar la mitad de los datos', fd(T`\frac{n}{2} = \frac{${pp(nId, s.n)}}{2} = ${f(s.half)}`)],
+          ['Ubicar la clase mediana (primera con Fa ≥ n/2)', `<div class="small">${s.rows.map(q => `<span class="cmp-chip ${q.j === s.mi ? 'on' : ''}">Clase ${q.j + 1}: Fa = ${q.Fa}</span>`).join(' ')}</div><div class="small mt-1">→ ${pp0(pPos, `la clase ${r.j + 1}`)}</div>`],
+          ['Tomar los datos de esa clase', `<div class="d-flex flex-wrap gap-2">${chip(CL.Li, '$L_i$ = ' + f(r.L))} ${chip(CL.fa, '$\\sum fa$ = ' + r.faPrev)} ${chip(CL.fmed, '$f_{med}$ = ' + r.fi)} ${chip(CL.A, '$A$ = ' + f(r.w))}</div>`],
+          ['Sustituir en la fórmula', fd(T`\tilde{x} = ${pp(pL, K(CL.Li, f(r.L)))} + \left( \frac{\frac{${s.n}}{2} - ${pp(pFa, K(CL.fa, r.faPrev))}}{${pp(pFm, K(CL.fmed, r.fi))}} \right) ${pp(pA, K(CL.A, f(r.w)))} = ${f(r.L)} + ${f(q, 4)} \cdot ${f(r.w)}`)]];
+        resTex = T`\tilde{x} = ${pp(rId, f2(s.median))}`;
+        note = use(CL.A, `<strong>Amplitud:</strong> $A = ${f(r.w)}$ es el ancho de la clase mediana${s.real ? ' (entre fronteras reales)' : ''}; multiplica a la fracción para avanzar dentro de la clase.`);
+      } else {
+        const r = s.rows[s.oi];
+        if (!isFinite(s.mode)) { steps = [['No hay moda única', `<div class="small">Las clases vecinas tienen la misma frecuencia que la modal ($\\Delta_1 + \\Delta_2 = 0$): la distribución es plana en ese punto.</div>`]]; resTex = T`\hat{x} = \text{—}`; note = ''; }
+        else {
+          const pc = reg('Clase modal', [['La de mayor frecuencia', T`f_{max} = ${r.fi}`], ['Resultado', T`\text{clase } ${r.j + 1}`, 'res'], s.modals.length > 1 ? 'Hay varias clases con la misma frecuencia máxima: se usa la primera.' : ''].filter(Boolean), CL.mode);
+          const pD1 = reg('Delta 1', [['Modal menos la anterior (0 si no hay)', T`\Delta_1 = ${r.fi} - ${s.fprev} = ${s.d1}`, 'res']], CL.d1), pD2 = reg('Delta 2', [['Modal menos la siguiente (0 si no hay)', T`\Delta_2 = ${r.fi} - ${s.fnext} = ${s.d2}`, 'res']], CL.d2);
+          const pL = reg(s.real ? 'Frontera real inferior' : 'Límite inferior', [['Límite inferior de la clase modal', T`L_i = ${f(r.L)}`, 'res']], CL.Li), pA = reg('Amplitud de la clase modal', [['Ancho de la clase', T`A = ${f(r.w)}`, 'res']], CL.A);
+          const q = s.d1 / (s.d1 + s.d2), rId = reg('Resultado', [['Fracción', T`\frac{${s.d1}}{${s.d1} + ${s.d2}} = ${f(q, 6)}`], ['Por la amplitud y sumando Li', T`${f(r.L)} + ${f(q, 6)} \cdot ${f(r.w)} = ${f(s.mode, 6)}`], ['A 2 decimales', T`\hat{x} = ${f2(s.mode)}`, 'res']], CL.mode);
+          steps = [['Ubicar la clase modal (mayor frecuencia)', `<div class="small">${s.rows.map(q => `<span class="cmp-chip ${q.j === s.oi ? 'on' : ''}">Clase ${q.j + 1}: f = ${q.fi}</span>`).join(' ')}</div><div class="small mt-1">→ ${pp0(pc, `la clase ${r.j + 1}`)}</div>`],
+            ['Calcular los excesos de frecuencia', fd(T`${pp(pD1, K(CL.d1, '\\Delta_1'))} = ${r.fi} - ${s.fprev} = ${s.d1} \qquad ${pp(pD2, K(CL.d2, '\\Delta_2'))} = ${r.fi} - ${s.fnext} = ${s.d2}`)],
+            ['Sustituir en la fórmula', fd(T`\hat{x} = ${pp(pL, K(CL.Li, f(r.L)))} + \left( \frac{${s.d1}}{${s.d1} + ${s.d2}} \right) ${pp(pA, K(CL.A, f(r.w)))} = ${f(r.L)} + ${f(q, 4)} \cdot ${f(r.w)}`)]];
+          resTex = T`\hat{x} = ${pp(rId, f2(s.mode))}`;
+          note = use(CL.A, `<strong>Amplitud:</strong> $A = ${f(r.w)}$ es el ancho de la clase modal${s.real ? ' (entre fronteras reales)' : ''}.`);
+        }
+      }
+      $('#m-detail').innerHTML = `<div class="measure-head" style="background:${c}"><i class="bi ${meta.ic} fs-4"></i><h5 class="fw-bold mb-0 me-auto">${meta.name}</h5><a class="btn btn-sm btn-light rounded-pill" href="#s4"><i class="bi bi-table me-1"></i>Ver tabla</a></div>
+        <div class="p-3"><div class="row g-3"><div class="col-lg-5"><div class="small fw-bold text-muted">Fórmula</div>${fd(F[m])}<div class="small fw-bold text-muted mt-2">Dónde</div>${legRows(LEG[m])}</div>
+        <div class="col-lg-7">${note}<div class="small fw-bold text-muted">Paso a paso <span class="fw-normal">(toca cualquier número)</span></div>
+        ${steps.map(([t, b], i) => `<div class="sstep" style="--i:${i * .35};animation-delay:${i * 250}ms"><div class="sn">${i + 1}</div><div class="sb"><div class="st">${t}</div>${b}</div></div>`).join('')}
+        <div class="calc-screen mt-2" style="--c:${c}">${fi(resTex)}</div><div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Resultado a <strong>2 decimales</strong>.</div></div></div></div>`;
+    }
+    const pp0 = (id, txt) => `<span class="pp" data-pop="${id}" tabindex="0" role="button">${txt}</span>`;
+
+    /* ---------- Formulario ---------- */
+    LEG.sturges = [['k', 'Número de clases (se redondea al entero más cercano)', '#0c8599'], ['n', 'Tamaño de la muestra', CL.n]];
+    LEG.range = [['R', 'Rango o recorrido', CL.R], ['X_{sup}', 'Dato mayor', CL.sup], ['X_{inf}', 'Dato menor', CL.inf]];
+    function renderForm() {
+      const sheets = [['Amplitud de una clase', 'amp', 'bi-distribute-horizontal'], ['Rango', 'range', 'bi-arrows-expand'], ['Amplitud para formar las clases', 'ampR', 'bi-rulers'], ['Número de clases (Sturges)', 'sturges', 'bi-magic'], ['Marca de clase', 'xi', 'bi-bullseye'], ['Fronteras reales', 'front', 'bi-rulers'], ['Amplitud con fronteras reales', 'ampReal', 'bi-distribute-horizontal'], ['Media', 'mean', 'bi-graph-up'], ['Mediana', 'median', 'bi-distribute-vertical'], ['Moda', 'mode', 'bi-bar-chart-fill']];
+      const row = k => `<tr class="vm"><td class="fl" style="width:46%">${fd(k === 'range' || k === 'sturges' || k === 'xi' || k === 'front' ? F[k] : F[k])}</td><td class="fr2"><div class="fw-bold">Donde:</div>${LEG[k].map(([t, d, c]) => `<div class="dw"><span class="vchip" style="--c:${c}">${fi(t)}</span> = ${d}</div>`).join('')}</td></tr>`;
+      const TT = `<div class="sheet-title" style="color:#087f5b"><i class="bi bi-code-square me-1"></i>Tipos de intervalo</div><div class="table-responsive"><table class="form-tbl int"><tr style="font-weight:800;background:#e6fcf5"><td>Notación</td><td>Nombre</td><td>Desigualdad</td><td>Extremo inferior</td><td>Extremo superior</td><td>Ejemplo (valores enteros)</td></tr>`
+        + Object.entries(TYPES).map(([k, t]) => { const v = gridVals(5, 10, 1).filter(x => inside(x, 5, 10, t)); return `<tr><td class="mono">${t.l}a, b${t.r}</td><td>${t.name}</td><td class="mono">a ${t.lc ? '≤' : '<'} x ${t.rc ? '≤' : '<'} b</td><td><span class="dot ${t.lc ? 'full' : ''}"></span> ${t.lc ? 'incluido' : 'excluido'}</td><td><span class="dot ${t.rc ? 'full' : ''}"></span> ${t.rc ? 'incluido' : 'excluido'}</td><td class="mono">${t.l}5, 10${t.r} → ${v.join(', ')} (${v.length})</td></tr>`; }).join('')
+        + `</table></div><div class="small text-muted mb-3">En todos la amplitud es la misma: $A = b - a = 5$. Cambia cuántos valores caben: cerrado $A+1$, semiabiertos $A$, abierto $A-1$ (con datos enteros).</div>`;
+      $('#form-wrap').innerHTML = TT + sheets.map(([t, k, ic], i) => `<div class="sheet-title"><i class="bi ${ic} me-1"></i>${t}</div><div class="table-responsive"><table class="form-tbl" style="animation-delay:${i * 60}ms">${row(k)}</table></div>`).join('')
+        + `<div class="tip-box s-volt small"><i class="bi bi-diagram-3-fill text-warning me-1"></i><strong>Resumen:</strong> la <strong>amplitud</strong> $A$ aparece en el cálculo de la <strong>mediana</strong> y de la <strong>moda</strong>, que usan la clase donde se ubican; la media solo usa marcas de clase y frecuencias. Con <strong>fronteras reales</strong>, $L_i$ es la frontera inferior de la clase y $A$ el ancho entre fronteras.</div>`;
+    }
+
+    /* ---------- Ejercicios ---------- */
+    const EXS = []; let EXN = 0;
+    function qsOf(ex) {
+      if (ex.kind === 'int') { const t = TYPES[ex.tk], vals = gridVals(ex.a, ex.b, 1).filter(v => inside(v, ex.a, ex.b, t)); return [{ k: 'A', label: 'Amplitud A', ans: r10(ex.b - ex.a) }, { k: 'cnt', label: '¿Cuántos enteros contiene?', ans: vals.length }, { k: 'xi', label: 'Marca de clase x_i', ans: (ex.a + ex.b) / 2 }]; }
+      const s = ex.s; return [{ k: 'A', label: 'Amplitud de la clase 1', ans: s.rows[0].w }, { k: 'n', label: 'Tamaño de la muestra n', ans: s.n }, { k: 'mean', label: 'Media', ans: s.mean }, { k: 'median', label: 'Mediana', ans: s.median }, { k: 'mode', label: 'Moda', ans: s.mode }];
+    }
+    function addInt(a, A, tk) { const ex = { id: ++EXN, kind: 'int', a, b: a + A, tk, lv: 'Intervalos' }; ex.qs = qsOf(ex); EXS.push(ex); return ex; }
+    function addTab(lo, c, fi, real, lv) { const ex = { id: ++EXN, kind: 'tab', lo, c, fi, real, lv: lv || 'Tabla' }; ex.s = build({ lo, c, k: fi.length, d: 0, fi, real, closedEnd: true }); ex.qs = qsOf(ex); EXS.push(ex); return ex; }
+    function genTab() {
+      for (let t = 0; t < 50; t++) { const k = rnd(5, 7), c = [5, 10][rnd(0, 1)], lo = rnd(1, 9) * 10, n = rnd(30, 60), fi = alloc(genW(k, 'rand'), n), mx = Math.max(...fi);
+        if (fi.filter(v => v === mx).length === 1 && fi.every(v => v >= 1)) { const ex = addTab(lo, c, fi, Math.random() < .35); return ex; } }
+      return addTab(20, 5, [3, 7, 12, 10, 6, 2], false);
+    }
+    function exCard(ex) {
+      const stmt = ex.kind === 'int'
+        ? `Dado el intervalo <strong class="mono fs-5">${notation(ex.a, ex.b, TYPES[ex.tk])}</strong> (${TYPES[ex.tk].name.toLowerCase()}) con datos enteros, calcula:`
+        : `En una muestra de datos enteros se formaron las clases de la tabla (cada una es $[L_i, L_s)$ y la última es cerrada). ${ex.real ? '<strong>Resuélvelo con fronteras reales.</strong>' : 'Usa los intervalos tal como están.'}<div class="table-responsive"><table class="ex-tbl"><tr><th>Clase</th>${ex.s.rows.map(r => `<td>${fmt(r.Li)}–${fmt(r.Ls)}</td>`).join('')}</tr><tr><th>f<sub>i</sub></th>${ex.s.rows.map(r => `<td>${r.fi}</td>`).join('')}</tr></table></div>`;
+      return `<div class="ex-card" id="ex-${ex.id}"><div class="ex-head"><div class="en">${ex.id}</div><strong>${ex.kind === 'int' ? 'Intervalo y amplitud' : 'Media, mediana y moda con amplitud'}</strong><span class="lvb">${ex.lv}</span></div>
+        <div class="ex-body"><div class="mb-2">${stmt}</div>
+        ${ex.qs.map(q => `<div class="q-row"><label for="q-${ex.id}-${q.k}">${q.label.replace(/x_i/, 'xᵢ')}</label><input class="form-control form-control-sm" id="q-${ex.id}-${q.k}" data-ex="${ex.id}" data-q="${q.k}" inputmode="decimal" autocomplete="off"><span class="mk"></span></div>`).join('')}
+        <div class="d-flex flex-wrap gap-2 mt-2"><button class="btn btn-sm btn-success rounded-pill" data-chk="${ex.id}"><i class="bi bi-check2-circle me-1"></i>Comprobar</button><button class="btn btn-sm btn-primary rounded-pill" data-sol="${ex.id}"><i class="bi bi-play-circle-fill me-1"></i>Ver solución paso a paso</button><span class="small align-self-center text-muted" id="fb-${ex.id}"></span></div>
+        <div id="sl-${ex.id}" class="mt-2"></div></div></div>`;
+    }
+    function addCard(ex) { $('#ex-list').insertAdjacentHTML('beforeend', exCard(ex)); math($('#ex-' + ex.id)); }
+    function checkEx(id) {
+      const ex = EXS.find(e => e.id === id); let ok = 0, tot = 0;
+      ex.qs.forEach(q => { const el = $(`#q-${id}-${q.k}`), v = parseFloat(String(el.value).replace(',', '.')), mk = el.parentElement.querySelector('.mk'); if (!isFinite(q.ans)) return; tot++;
+        const good = isFinite(v) && Math.abs(v - q.ans) <= 0.011; el.classList.toggle('ok', good); el.classList.toggle('bad', !good && el.value !== ''); mk.textContent = good ? '✓' : (el.value === '' ? '' : '✗'); mk.style.color = good ? '#2f9e44' : '#e03131'; if (good) ok++; });
+      $('#fb-' + id).textContent = ok === tot ? '¡Todo correcto! 🎉' : `${ok} de ${tot} correctas. Revisa la solución paso a paso si lo necesitas.`;
+    }
+    const stepsHTML = st => st.map(([t, body, nt], i) => `<div class="sstep" style="--i:${i}"><div class="sn">${i + 1}</div><div class="sb"><div class="st">${t}</div>${body}${nt ? `<div class="sx">${nt}</div>` : ''}</div></div>`).join('');
+    function solInt(ex) {
+      const t = TYPES[ex.tk], a = ex.a, b = ex.b, A = r10(b - a), vals = gridVals(a, b, 1), inc = vals.filter(v => inside(v, a, b, t)), f = fmt;
+      const lst = arr => arr.length > 14 ? [...arr.slice(0, 6).map(f), '\\ldots', ...arr.slice(-3).map(f)].join(',\\, ') : arr.map(f).join(',\\, ');
+      const cnt = ex.tk === 'cc' ? 'A + 1' : ex.tk === 'aa' ? 'A - 1' : 'A', cv = ex.tk === 'cc' ? A + 1 : ex.tk === 'aa' ? A - 1 : A;
+      return [['Amplitud: restar los límites', fd(T`A = L_s - L_i = ${f(b)} - ${f(a)} = ${K(CL.A, f(A))}`), 'La amplitud no depende de si los extremos son abiertos o cerrados.'],
+        ['Leer la notación', `<div class="small">Intervalo <span class="mono fw-bold">${notation(a, b, t)}</span>: el extremo izquierdo <span class="mono">${t.l}</span> ${t.lc ? '<strong>incluye</strong>' : '<strong>no incluye</strong>'} el ${f(a)} y el derecho <span class="mono">${t.r}</span> ${t.rc ? '<strong>incluye</strong>' : '<strong>no incluye</strong>'} el ${f(b)}.</div>${fd(T`${f(a)} ${t.lc ? '\\le' : '<'} x ${t.rc ? '\\le' : '<'} ${f(b)}`)}`],
+        ['Contar los enteros que caben', fd(T`\{${lst(inc)}\}`) + fd(T`\text{cantidad} = ${cnt} = ${f(cv)}`), 'Con datos enteros: cerrado A + 1, semiabierto A, abierto A − 1.'],
+        ['Marca de clase: el punto medio', fd(T`x_i = \frac{L_i + L_s}{2} = \frac{${f(a)} + ${f(b)}}{2} = ${K(CL.xi, f((a + b) / 2))}`)]];
+    }
+    function solTab(ex) {
+      const s = ex.s, f = fmt, rs = s.rows, R = ex.real, r1 = rs[0], u = 1;
+      const pr = (j, r) => pp(reg(`Clase ${j + 1}: xi · fi`, [['Marca por frecuencia', T`x_i \cdot f_i = ${f(r.x)} \cdot ${r.fi} = ${f2(r.fx)}`, 'res']], CL.mean), `${f(r.x)}\\cdot ${r.fi}`);
+      const tx = rs.map((r, j) => pr(j, r)), txs = tx.length > 6 ? [...tx.slice(0, 3), '\\cdots', tx[tx.length - 1]] : tx;
+      const mr = rs[s.mi], q = (s.half - mr.faPrev) / mr.fi, or = rs[s.oi];
+      const st = [];
+      st.push(['Amplitud de la clase', fd(R ? T`A = F_{sup} - F_{inf} = ${f(r1.ub)} - ${f(r1.lb)} = ${K(CL.A, f(r1.w))}` : T`A = L_s - L_i = ${f(r1.Ls)} - ${f(r1.Li)} = ${K(CL.A, f(r1.w))}`), R ? 'Con fronteras reales: Li − 0.5 y Ls − 0.5 (la última clase, cerrada, suma 0.5 a su límite superior).' : 'Es la misma en todas las clases.']);
+      st.push([R ? 'Fronteras reales y marcas de clase' : 'Marcas de clase', fd(T`${rs.map((r, j) => `x_{${j + 1}} = ${R ? `\\frac{${f(r.lb)} + ${f(r.ub)}}{2}` : `\\frac{${f(r.Li)} + ${f(r.Ls)}}{2}`} = ${f(r.x)}`).slice(0, 3).join(' \\qquad ')} \qquad \cdots`), 'Se calcula igual en cada clase; mira la tabla de la sección 4 para ver todas.']);
+      st.push(['Suma de xi · fi y tamaño de la muestra', fd(T`\sum x_i f_i = ${txs.join(' + ')} = ${f2(s.sfx)}`) + fd(T`n = \sum f_i = ${rs.map(r => r.fi).join(' + ')} = ${K(CL.n, s.n)}`)]);
+      st.push(['Media', fd(T`\bar{x} = \frac{\sum x_i f_i}{n} = \frac{${f2(s.sfx)}}{${s.n}} = ${K(CL.mean, f2(s.mean))}`)]);
+      st.push(['Mediana: mitad de los datos y clase mediana', fd(T`\frac{n}{2} = \frac{${s.n}}{2} = ${f(s.half)}`) + `<div class="small">${rs.map(r => `<span class="cmp-chip ${r.j === s.mi ? 'on' : ''}">Fa${r.j + 1} = ${r.Fa}</span>`).join(' ')}</div>`, `La primera Fa ≥ ${f(s.half)} es ${mr.Fa}: la clase mediana es la ${mr.j + 1}.`]);
+      st.push(['Mediana: sustituir', fd(T`\tilde{x} = L_i + \left( \frac{\frac{n}{2} - \sum fa}{f_{med}} \right) A = ${f(mr.L)} + \left( \frac{${f(s.half)} - ${mr.faPrev}}{${mr.fi}} \right) ${f(mr.w)} = ${f(mr.L)} + ${f(q, 4)} \cdot ${f(mr.w)} = ${K(CL.median, f2(s.median))}`)]);
+      st.push(['Moda: clase modal y excesos', `<div class="small">La mayor frecuencia es ${or.fi}, en la clase ${or.j + 1}.</div>` + fd(T`\Delta_1 = ${or.fi} - ${s.fprev} = ${s.d1} \qquad \Delta_2 = ${or.fi} - ${s.fnext} = ${s.d2}`)]);
+      st.push(['Moda: sustituir', fd(T`\hat{x} = L_i + \left( \frac{\Delta_1}{\Delta_1 + \Delta_2} \right) A = ${f(or.L)} + \left( \frac{${s.d1}}{${s.d1} + ${s.d2}} \right) ${f(or.w)} = ${K(CL.mode, f2(s.mode))}`)]);
+      return st;
+    }
+    function showSol(id) {
+      const ex = EXS.find(e => e.id === id), box = $('#sl-' + id);
+      box.innerHTML = `<div class="d-flex align-items-center gap-2"><strong class="text-primary"><i class="bi bi-list-check me-1"></i>Solución paso a paso</strong><button class="btn btn-sm btn-outline-primary rounded-pill" data-rep="${id}"><i class="bi bi-arrow-repeat me-1"></i>Repetir</button></div>` + stepsHTML(ex.kind === 'int' ? solInt(ex) : solTab(ex));
+      math(box); initPops(box);
+    }
+
+    /* ---------- Orquestador ---------- */
+    function update(force) {
+      hideAllPops(); $$('.popover').forEach(p => p.remove());
+      S.lo = parseFloat($('#lo').value); S.hi = parseFloat($('#hi').value); S.d = +$('#dec').value;
+      if (S.fi.length !== S.k) S.fi = genFi(S.dist);
+      S.n = S.fi.reduce((a, b) => a + b, 0); S.sel = clamp(S.sel, 0, S.k - 1);
+      $('#k').value = S.k; $('#k-out').textContent = S.k; if (document.activeElement !== $('#nn')) $('#nn').value = S.n;
+      $('#m-group').innerHTML = MS.map(m => `<button class="mbtn ${S.m === m.k ? 'on' : ''}" data-mm="${m.k}" style="--c:${MC[m.k]}"><i class="bi ${m.ic} me-1"></i>${m.name}</button>`).join('');
+      $$('.sw-real').forEach(e => e.checked = S.real);
+      const ae = document.activeElement, keep = ae && ae.classList && ae.classList.contains('fi-in') ? { j: +ae.dataset.j, a: ae.selectionStart, b: ae.selectionEnd } : null;
+      const n = S.n;
+      if (n >= 2) {
+        const kS = sturgesK(n), lg = Math.log10(n), kr = clamp(Math.round(kS), 2, 20), f = fmt;
+        const id = reg('Regla de Sturges', [['Logaritmo base 10 de n', T`\log_{10}(${n}) = ${f(lg, 4)}`], ['Se multiplica por 3.322', T`3.322 \cdot ${f(lg, 4)} = ${f(3.322 * lg, 4)}`], ['Se suma 1', T`1 + ${f(3.322 * lg, 4)} = ${f(kS, 4)}`], ['Se redondea', T`k \approx ${Math.round(kS)}`, 'res'], kr !== Math.round(kS) ? `El deslizador admite de 2 a 20: se usará ${kr}.` : ''].filter(Boolean), '#0c8599');
+        $('#sturges-live').innerHTML = fi(T`k = 1 + 3.322 \, \log_{10}(${n}) = ${pp(id, f(kS, 2))} \approx \mathbf{${Math.round(kS)}}`);
+      } else $('#sturges-live').textContent = 'Necesitas n ≥ 2 para aplicar Sturges.';
+      const s = calc(), err = $('#err');
+      if (s.err) { err.classList.remove('d-none'); err.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>${s.err}`; $('#results').classList.add('d-none'); ST = null; $('#data-stats').innerHTML = ''; math($('#s1')); initPops(); return; }
+      ST = s;
+      if (n < 2) { err.classList.remove('d-none'); err.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>La suma de frecuencias es ${n}: necesitas al menos 2 observaciones.`; } else err.classList.add('d-none');
+      $('#results').classList.remove('d-none');
+      $('#data-stats').innerHTML = [['Rango R', fmt(s.R)], ['Clases k', s.k], ['Amplitud A', fmt(s.c)], ['n (suma de fi)', n]].map(([a, b]) => `<span class="stat-pill">${a}: <b>${b}</b></span>`).join('');
+      buildPops(s); renderSteps(s); renderAmpTbl(s); renderTable(s); renderReal(s); renderTiles(s); renderDetail(s);
+      const key = [S.lo, S.hi, S.k, S.d, S.sel, S.vt, S.real].join('|');
+      if (force || key !== VKEY) { VKEY = key; drawViz(s); drawStrip(s); renderOpen(s); }
+      math(); initPops(); ANIM = false;
+      if (keep) { const el = $(`.fi-in[data-j="${keep.j}"]`); if (el) { el.focus(); try { el.setSelectionRange(keep.a, keep.b); } catch (e) {} } }
+    }
+
+    /* ---------- Eventos ---------- */
+    let tm; const later = (ms = 200) => { clearTimeout(tm); tm = setTimeout(update, ms); };
+    ['#lo', '#hi'].forEach(q => $(q).addEventListener('input', () => later()));
+    $('#dec').addEventListener('change', () => update());
+    $('#k').addEventListener('input', e => { S.k = +e.target.value; S.fi = genFi(S.dist); $('#k-out').textContent = S.k; later(120); });
+    $('#nn').addEventListener('input', e => { const v = Math.floor(+e.target.value); if (!(v >= 2)) return; S.n = Math.min(5000, v); S.fi = genFi(S.dist); later(250); });
+    $('#nn').addEventListener('blur', () => update());
+    $('#b-sturges').onclick = () => { if (S.n < 2) return; S.k = clamp(Math.round(sturgesK(S.n)), 2, 20); S.fi = genFi(S.dist); update(); };
+    [['#b-bell', 'bell'], ['#b-rand', 'rand'], ['#b-flat', 'flat']].forEach(([q, kd]) => $(q).onclick = () => { S.dist = kd; if (S.n < 2) S.n = 2; S.fi = genFi(kd); ANIM = true; update(); });
+    $('#tbl').addEventListener('input', e => { const el = e.target.closest('.fi-in'); if (!el) return; const v = parseInt(el.value.replace(/\D/g, ''), 10) || 0; S.fi[+el.dataset.j] = Math.min(v, 9999); later(160); });
+    $('#tbl').addEventListener('focusin', e => { if (e.target.classList.contains('fi-in')) e.target.select(); });
+    $$('.sw-real').forEach(el => el.onchange = e => { S.real = e.target.checked; ANIM = true; update(); });
+    $('#v-play').onclick = () => update(true);
+    document.addEventListener('click', e => {
+      if (e.target.closest('#b-unreal')) { S.real = false; ANIM = true; update(); return; }
+      const mm = e.target.closest('[data-mm]'); if (mm) { S.m = mm.dataset.mm; ANIM = true; update(); return; }
+      const vt = e.target.closest('[data-vt]'); if (vt) { S.vt = vt.dataset.vt; update(); return; }
+      const sl = e.target.closest('[data-sel]'); if (sl && !e.target.closest('input')) { S.sel = +sl.dataset.sel; update(); if (sl.closest('#tbl') || sl.closest('#amp-tbl')) $('#s2').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      const ck = e.target.closest('[data-chk]'); if (ck) { checkEx(+ck.dataset.chk); return; }
+      const so = e.target.closest('[data-sol]'); if (so) { const box = $('#sl-' + so.dataset.sol); if (box.innerHTML) box.innerHTML = ''; else showSol(+so.dataset.sol); return; }
+      const rp = e.target.closest('[data-rep]'); if (rp) { showSol(+rp.dataset.rep); return; }
+    });
+    document.addEventListener('keydown', e => { const t = e.target.closest && e.target.closest('.tile'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
+    $('#g-int').onclick = () => { const A = rnd(4, 18), ex = addInt(rnd(5, 80), A, Object.keys(TYPES)[rnd(0, 3)]); addCard(ex); $('#ex-' + ex.id).scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+    $('#g-tab').onclick = () => { const ex = genTab(); addCard(ex); $('#ex-' + ex.id).scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+
+    /* ---------- Arranque ---------- */
+    $$('[data-f]').forEach(el => el.innerHTML = fd(F[el.dataset.f]));
+    $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    addInt(20, 15, 'ca'); addInt(10, 8, 'ac'); addInt(40, 12, 'cc');
+    addTab(20, 5, [3, 7, 12, 10, 6, 2], false, 'Tabla'); addTab(100, 10, [5, 12, 20, 9, 4], false, 'Tabla'); addTab(45, 5, [2, 5, 9, 13, 8, 3], true, 'Fronteras reales');
+    EXS.forEach(ex => $('#ex-list').insertAdjacentHTML('beforeend', exCard(ex)));
+    renderForm();
+    S.fi = genFi('bell');
+    update(true);
+  </script>
+</body>
+</html>
