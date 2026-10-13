@@ -215,13 +215,27 @@
     .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
     @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
 
+    .cb-y { background:rgba(232,89,12,.10); } .freq-table th.cb-y { background:#e8590c; } .freq-table td.cb-y input, .freq-table td.cb-x input { width:84px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #94a3b8; border-radius:10px; padding:.15rem .2rem; background:#fff; }
+    .cov-in:focus { outline:3px solid #bac8ff; }
+    #cov-wrap { --mc:#0c8599; } #cov-wrap[data-m="ari"] { --mc:#7048e8; }
+    #cov-tbl td.mc.pos { color:#2b8a3e; } #cov-tbl td.mc.neg { color:#c92a2a; }
+    .viz-cov { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; } .viz-cov svg { width:100%; height:auto; display:block; } .viz-cov text { font-family:'Segoe UI',sans-serif; }
+    .cov-pt { transform-box:fill-box; transform-origin:center; transform:scale(0); animation:cvPop .5s var(--d,0s) cubic-bezier(.3,1.6,.5,1) forwards; } @keyframes cvPop { to { transform:scale(1); } }
+    .cov-fade { opacity:0; animation:cvFade .7s var(--d,0s) forwards; } @keyframes cvFade { to { opacity:1; } }
+    @media (prefers-reduced-motion:reduce) { .cov-pt,.cov-fade { animation:none !important; opacity:1 !important; transform:none !important; } }
+    /* Manual: definición + teorema */
+    .man-sec { background:#fff; border-radius:14px; border-left:6px solid var(--c,#1c7ed6); box-shadow:var(--shadow-sm); padding:.8rem 1rem; margin-bottom:.8rem; animation:pop .4s both; }
+    .man-sec h6 { font-weight:800; color:var(--c,#1c7ed6); text-transform:uppercase; font-size:.78rem; letter-spacing:.05em; margin-bottom:.3rem; }
+    .man-sec.thm { background:#fff9db; } .man-sec .cx.d { text-align:left; }
+    #man-tabs .nav-link { font-size:.85rem; padding:.35rem .8rem; }
+    #man-tabs .grp-sep { flex-basis:100%; height:0; }
   </style>
 </head>
 <body>
 
   <div id="app-header"></div>
   <nav class="sec-nav" id="sec-nav">
-    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla de cálculo</a><a href="#s4">4. Resultados</a><a href="#s5">5. Gráfica</a><a href="#" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</a>
+    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla de cálculo</a><a href="#s4">4. Resultados</a><a href="#s5">5. Covarianza</a><a href="#s6">6. Gráfica</a><a href="#" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</a>
   </nav>
 
   <main>
@@ -334,10 +348,39 @@
       </section>
       </div>
 
-      <!-- 5. GRÁFICA -->
+      <!-- 5. COVARIANZA -->
       <section class="lesson mb-5" id="s5">
         <div class="card lesson-card">
-          <div class="lesson-head h-6"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Gráfica</h2><small>Oculta por defecto: presiona el botón y se genera la más adecuada para datos agrupados</small></div></div>
+          <div class="lesson-head" style="background:linear-gradient(135deg,#0b7285,#5f3dc4)"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Covarianza</h2><small>Cómo varían juntas dos variables: fórmula estándar y fórmula aritmética</small></div>
+            <button class="btn btn-sm btn-light rounded-pill" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Teorema y definición</button></div>
+          <div class="card-body">
+            <div class="tbl-bar">
+              <div><div class="small fw-bold text-muted mb-1"><i class="bi bi-people-fill me-1"></i>Se calcula para…</div>
+                <div class="seg-sw" role="group"><button data-pop-mode="muestra" class="on">Muestra</button><button data-pop-mode="poblacion">Población</button></div></div>
+              <div class="flex-grow-1"><div class="small fw-bold text-muted mb-1"><i class="bi bi-palette-fill me-1"></i>Fórmula (colorea las columnas):</div><div class="d-flex flex-wrap gap-2" id="cv-group"></div></div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><strong class="small"><i class="bi bi-table me-1"></i>Pares (x, y):</strong>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="cv-ex"><i class="bi bi-bookmark-star me-1"></i>Ejemplo</button>
+              <button class="btn btn-sm btn-outline-success rounded-pill" id="cv-pos"><i class="bi bi-graph-up-arrow me-1"></i>Positiva</button>
+              <button class="btn btn-sm btn-outline-danger rounded-pill" id="cv-neg"><i class="bi bi-graph-down-arrow me-1"></i>Negativa</button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" id="cv-none"><i class="bi bi-dash-circle me-1"></i>Sin relación</button>
+              <button class="btn btn-sm btn-outline-primary rounded-pill" id="cv-add"><i class="bi bi-plus-lg me-1"></i>Agregar par</button>
+              <button class="btn btn-sm btn-outline-primary rounded-pill" id="cv-del"><i class="bi bi-dash-lg me-1"></i>Quitar último</button>
+              <span class="small text-muted">…o escribe tus propios valores.</span></div>
+            <div class="row g-3 align-items-start">
+              <div class="col-lg-7"><div class="d-flex flex-wrap gap-2 mb-2" id="cov-means"></div>
+                <div class="table-responsive rounded-3 border" id="cov-wrap" data-m="std"><table class="table table-bordered freq-table mb-0" id="cov-tbl"><thead></thead><tbody></tbody><tfoot></tfoot></table></div></div>
+              <div class="col-lg-5"><div class="viz-cov"><div id="cov-svg"></div></div><div class="small text-muted mt-1">Verde: producto de desviaciones positivo · Rojo: negativo. Las líneas son las medias.</div></div>
+            </div>
+            <div class="measure mt-4" id="cov-detail"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. GRÁFICA -->
+      <section class="lesson mb-5" id="s6">
+        <div class="card lesson-card">
+          <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Gráfica</h2><small>Oculta por defecto: presiona el botón y se genera la más adecuada para datos agrupados</small></div></div>
           <div class="card-body">
             <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><button class="btn btn-danger rounded-pill px-4 fw-semibold" id="b-chart"><i class="bi bi-graph-up-arrow me-1"></i>Generar gráfica</button><span class="small text-muted" id="chart-hint">Histograma con polígono de frecuencias, con la media y la dispersión de la medida elegida.</span></div>
             <div id="no-chart" class="no-chart"><i class="bi bi-bar-chart-line fs-1"></i><div class="fw-semibold">La gráfica está oculta</div><div class="small">Presiona «Generar gráfica» para verla.</div></div>
@@ -362,7 +405,7 @@
   <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="modal-header text-white" style="background:#862e9c"><h5 class="modal-title fw-bold"><i class="bi bi-journal-richtext me-2"></i>Formulario · Media, desviación media, varianza y desviación estándar</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-header text-white" style="background:#862e9c"><h5 class="modal-title fw-bold"><i class="bi bi-journal-richtext me-2"></i>Formulario · Medidas de dispersión y covarianza</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
         <div class="modal-body bg-light">
           <div class="tip-box s-amp small mb-2"><i class="bi bi-info-circle-fill me-1"></i><strong>¿$n - 1$ o $N$?</strong> Si tus datos son <strong>toda la población</strong>, se divide entre $N$. Si son una <strong>muestra</strong> (una parte que representa a la población), la varianza se divide entre $n - 1$ (corrección de Bessel) para no subestimar la dispersión. Con datos agrupados, $x_i$ es la <strong>marca de clase</strong> y cada una se cuenta $f_i$ veces; con datos sin agrupar, $f_i = 1$ y $x_i$ es el dato.</div>
           <div id="form-wrap"></div>
@@ -376,7 +419,7 @@
   <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="modal-header text-white" style="background:#0f172a"><h5 class="modal-title fw-bold"><i class="bi bi-journal-bookmark-fill me-2"></i>Manual de fórmulas · Medidas de dispersión</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-header text-white" style="background:#0f172a"><h5 class="modal-title fw-bold"><i class="bi bi-journal-bookmark-fill me-2"></i>Manual · Definiciones, teoremas y fórmulas · Medidas de dispersión</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
         <div class="modal-body bg-light">
           <ul class="nav nav-pills mb-3 flex-wrap gap-1" id="man-tabs"></ul>
           <div id="man-body" class="panel"></div>
@@ -655,6 +698,84 @@
       var: { t: 'Varianza', ic: 'bi-bounding-box-circles', both: 'var', alt: true, how: ['Calcula la media.', 'Resta la media a cada marca de clase: $x_i - \\bar{x}$.', 'Eleva al cuadrado esa desviación y multiplícala por $f_i$.', 'Suma la columna $f_i (x_i - \\bar{x})^2$.', 'Divide entre <strong>$n - 1$</strong> si trabajas con una muestra, o entre <strong>$N$</strong> si es la población completa.', 'La varianza queda en unidades al cuadrado.'] },
       sd: { t: 'Desviación estándar', ic: 'bi-distribute-horizontal', both: 'sd', how: ['Calcula la varianza (muestral o poblacional).', 'Obtén su raíz cuadrada.', 'Así la dispersión vuelve a las unidades originales de los datos.', 'Regla práctica: la mayoría de los datos cae a menos de 2 desviaciones estándar de la media.'] }
     };
+    /* Fórmulas extra del manual */
+    Object.assign(F0, {
+      koenig: T`\sum_{i=1}^{k} f_i \, (x_i - \bar{x})^2 \;=\; \sum_{i=1}^{k} f_i \, x_i^2 \;-\; n \, \bar{x}^2`,
+      bessel: T`E(s^2) = σ^2 \qquad\text{pero}\qquad E\left(\frac{\sum f_i (x_i - \bar{x})^2}{n}\right) = \frac{n-1}{n} \, σ^2`,
+      prop: T`y_i = a \, x_i + b \;\Rightarrow\; \bar{y} = a \, \bar{x} + b \qquad s_y^2 = a^2 \, s_x^2 \qquad s_y = |a| \, s_x`,
+      cv: T`CV \;=\; \frac{s}{|\bar{x}|} \cdot 100 \qquad\left(\text{población: } \frac{σ}{|μ|} \cdot 100\right)`,
+      z: T`z_i = \frac{x_i - \bar{x}}{s} \qquad\Rightarrow\qquad \bar{z} = 0 \quad s_z = 1`,
+      cheb: T`\frac{\text{n.º de datos en } (\bar{x} - k s,\; \bar{x} + k s)}{n} \;\ge\; 1 - \frac{1}{k^2} \qquad (k > 1)`,
+      emp: T`\bar{x} \pm 1s \approx 68 \qquad \bar{x} \pm 2s \approx 95 \qquad \bar{x} \pm 3s \approx 99.7 \qquad \text{(en porcentaje)}`,
+      sumdev: T`\sum_{i=1}^{k} f_i \, (x_i - \bar{x}) = 0 \qquad \sum_{i=1}^{k} f_i \, (x_i - c)^2 \;\ge\; \sum_{i=1}^{k} f_i \, (x_i - \bar{x})^2`
+    });
+    const within = (s, kk) => s.rows.reduce((a, r) => a + (Math.abs(r.x - s.mean) <= kk * s.sd + 1e-9 ? r.fi : 0), 0) / s.n;
+    const pc = v => (v * 100).toFixed(1) + ' %';
+    /* Definición, teorema y ejemplo de cada concepto */
+    const MX = {
+      sturges: { def: 'El <strong>número de clases</strong> $k$ indica en cuántos intervalos se agrupan los datos. La <strong>regla de Sturges</strong> propone un valor de $k$ a partir del tamaño de la muestra $n$.',
+        thmT: 'Regla de Sturges (1926)', thm: 'Si una muestra de $n = 2^{k-1}$ datos se reparte en $k$ clases según los coeficientes binomiales de $(1+1)^{k-1}$ (1, k−1, …, 1), la suma de frecuencias es $2^{k-1}$. Despejando: $k = 1 + \\log_2 n = 1 + 3.322\\,\\log_{10} n$. Es una <em>guía</em>, no una ley exacta: funciona mejor con distribuciones simétricas y $n$ moderado.',
+        ex: s => { const kS = 1 + 3.322 * Math.log10(s.n); return fd(T`k = 1 + 3.322 \log_{10}(${s.n}) = ${fmt(kS, 2)} \approx ${Math.round(kS)}`); } },
+      size: { def: 'El <strong>rango</strong> $R$ es la distancia entre el dato mayor y el menor. El <strong>tamaño de clase</strong> $c$ (amplitud) es el ancho de cada intervalo. El rango ya es una medida de dispersión sencilla, pero solo usa los dos datos extremos.',
+        thmT: 'Teorema de cobertura del rango', thm: 'Todo dato $x$ cumple $X_{inf} \\le x \\le X_{sup}$, así que $R$ es la longitud mínima de un intervalo que contiene todos los datos. Con $k$ clases iguales de tamaño $c$ se cubren todos solo si $c \\cdot k \\ge R$; por eso, si $R/k$ no es exacto (fracción <em>impura</em>), se <strong>redondea hacia arriba</strong>.',
+        ex: s => fd(T`c = \frac{${fmt(s.hi)} - ${fmt(s.lo)}}{${s.k}} = \frac{${fmt(s.R)}}{${s.k}} = ${fmt(s.step.raw, 4)} \rightarrow ${fmt(s.c)}`) },
+      front: { def: 'Las <strong>fronteras reales</strong> son los límites «verdaderos» de cada clase cuando los datos se midieron con una unidad $u$ (1 si son enteros, 0.1 con un decimal…). Cierran el hueco entre el $L_s$ de una clase y el $L_i$ de la siguiente.',
+        thmT: 'Regla del redondeo', thm: 'Un valor registrado $v$ representa en realidad el intervalo $[v - u/2,\\; v + u/2)$. Entre el mayor valor de una clase y el menor de la siguiente queda un hueco de tamaño $u$, y la frontera real es su <strong>punto medio</strong>: $F = L \\mp u/2$. Así las clases quedan pegadas y la amplitud real sigue siendo $c$.',
+        ex: s => { const r = s.rows[0]; return fd(T`F_{inf} = ${fmt(r.Li)} - ${fmt(s.u / 2)} = ${fmt(r10(r.Li - s.u / 2))} \qquad F_{sup} = ${fmt(r.Ls)} - ${fmt(s.u / 2)} = ${fmt(r10(r.Ls - s.u / 2))}`); } },
+      mean: { def: 'La <strong>media</strong> es el promedio aritmético: el valor que tendrían todos los datos si se repartieran por igual. Con datos agrupados es un <em>promedio ponderado</em> de las marcas de clase con pesos $f_i$.',
+        thmT: 'Propiedad del punto de equilibrio y de los mínimos cuadrados', thm: '(1) Las desviaciones respecto a la media se compensan: $\\sum f_i (x_i - \\bar{x}) = 0$; la media es el <strong>centro de gravedad</strong> de la distribución. (2) Entre todos los valores $c$, la media es el que hace mínima la suma $\\sum f_i (x_i - c)^2$ (teorema de mínimos cuadrados). Con datos agrupados es una aproximación, pues cada dato se sustituye por su marca.',
+        extra: ['sumdev'], ex: s => fd(T`\bar{x} = \frac{${f2(s.sfx)}}{${s.n}} = ${f2(s.mean)}`) + `<div class="small">Comprobación: $\\sum f_i (x_i - \\bar{x}) = ${f2(s.rows.reduce((a, r) => a + r.fi * r.d, 0))}$ (≈ 0).</div>` },
+      dm: { def: 'La <strong>desviación media</strong> (DM) es el promedio de las distancias absolutas entre cada dato y la media: indica «en promedio, cuánto se alejan los datos de la media».',
+        thmT: 'Propiedad de mínimo y cota', thm: 'La suma $\\sum f_i |x_i - c|$ es mínima cuando $c$ es la <strong>mediana</strong> (no la media). Además la desviación media nunca supera a la desviación estándar poblacional: $DM \\le σ$ (desigualdad de Cauchy–Schwarz), con igualdad solo si todas las desviaciones tienen el mismo valor absoluto.',
+        ex: s => fd(T`DM = \frac{${f2(s.sad)}}{${s.n}} = ${f2(s.dm)}`) + `<div class="small">Cota: $DM = ${f2(s.dm)} \\le σ = ${f2(s.sdP)}$ ✓</div>` },
+      var: { def: 'La <strong>varianza</strong> es el promedio de los cuadrados de las desviaciones respecto a la media. Eleva al cuadrado para que desviaciones positivas y negativas no se cancelen. Se mide en unidades <em>al cuadrado</em>.',
+        thmT: 'Propiedades de la varianza', thm: '(1) $s^2 \\ge 0$, y $s^2 = 0$ si y solo si <strong>todos los datos son iguales</strong>. (2) Es la suma de cuadrados mínima: $\\sum f_i (x_i - c)^2$ es menor cuando $c = \\bar{x}$. (3) Es muy sensible a los datos extremos, porque las desviaciones se elevan al cuadrado.',
+        ex: s => { const y = SY(S.pop); return fd(T`${y.v} = \frac{${f2(s.ss)}}{${S.pop ? s.n : s.n + ' - 1'}} = ${f2(s.v)}`); } },
+      sd: { def: 'La <strong>desviación estándar</strong> es la raíz cuadrada de la varianza. Devuelve la dispersión a las <strong>mismas unidades</strong> de los datos, por lo que se interpreta como una «distancia típica» a la media.',
+        thmT: 'Relación con la varianza y con la regla práctica', thm: '$s = \\sqrt{s^2} \\ge 0$ y $s = 0$ solo si no hay dispersión. Cumple $DM \\le σ$. Además, por el <strong>teorema de Chebyshev</strong> al menos el 75 % de los datos está a menos de 2 desviaciones estándar de la media, y si la distribución es aproximadamente normal, la <strong>regla empírica</strong> afina ese porcentaje a 95 %.',
+        ex: s => fd(T`${SY(S.pop).sd} = \sqrt{${f2(s.v)}} = ${f2(s.sd)}`) },
+      koenig: { t: 'Fórmula abreviada', ic: 'bi-lightning-charge-fill', f: () => [F0.koenig, FF(false).alt], leg: () => [LEGD('alt', false)],
+        def: 'La <strong>fórmula abreviada</strong> calcula la varianza sin restar la media a cada marca: solo necesita $\\sum f_i x_i^2$, $n$ y $\\bar{x}$.',
+        thmT: 'Teorema de König–Huygens', thm: 'Desarrollando el cuadrado: $\\sum f_i (x_i - \\bar{x})^2 = \\sum f_i x_i^2 - 2\\bar{x}\\sum f_i x_i + \\bar{x}^2 \\sum f_i$. Como $\\sum f_i x_i = n\\bar{x}$ y $\\sum f_i = n$, queda $\\sum f_i x_i^2 - n\\bar{x}^2$. Es decir: «media de los cuadrados menos cuadrado de la media».',
+        how: ['Calcula la media $\\bar{x}$.', 'Calcula $f_i x_i^2$ para cada clase y suma la columna.', 'Resta $n\\,\\bar{x}^2$.', 'Divide entre $n - 1$ (muestra) o $N$ (población).', 'Cuidado: con muchos decimales conviene no redondear antes de restar (la resta de números grandes pierde precisión).'],
+        ex: s => { const sx2 = s.rows.reduce((a, r) => a + r.fi * r.x * r.x, 0); return fd(T`\sum f_i x_i^2 - n \bar{x}^2 = ${f2(sx2)} - ${s.n} \cdot ${f2(s.mean * s.mean)} = ${f2(sx2 - s.n * s.mean * s.mean)}`) + `<div class="small">Coincide con $\\sum f_i (x_i - \\bar{x})^2 = ${f2(s.ss)}$ ✓</div>`; } },
+      bessel: { t: 'Corrección de Bessel (n − 1)', ic: 'bi-calculator', f: () => [F0.bessel], leg: () => [[['E(\\cdot)', 'Valor esperado (promedio sobre todas las muestras posibles)', '#495057'], ['s^2', 'Varianza muestral (divide entre n − 1)', CL.var], ['σ^2', 'Varianza de la población', CL.var], ['n', 'Tamaño de la muestra', CL.n]]],
+        def: 'La <strong>corrección de Bessel</strong> consiste en dividir entre $n - 1$ (los <em>grados de libertad</em>) en lugar de $n$ cuando los datos son una <strong>muestra</strong> y se quiere estimar la varianza de la población.',
+        thmT: 'Estimador insesgado de la varianza', thm: 'La media muestral $\\bar{x}$ se ajusta a los datos, así que las desviaciones respecto a ella son en promedio más pequeñas que respecto a $μ$. Dividir entre $n$ <strong>subestima</strong> a $σ^2$ en el factor $(n-1)/n$; dividir entre $n - 1$ corrige exactamente ese sesgo: $E(s^2) = σ^2$. Con una población completa se divide entre $N$.',
+        how: ['¿Tus datos son <strong>toda</strong> la población? Divide entre $N$.', '¿Son una <strong>muestra</strong>? Divide entre $n - 1$.', 'La diferencia importa poco si $n$ es grande, pero es notable si $n$ es pequeña.'],
+        ex: s => fd(T`s^2 = \frac{${f2(s.ss)}}{${s.n} - 1} = ${f2(s.varS)} \qquad σ^2 = \frac{${f2(s.ss)}}{${s.n}} = ${f2(s.varP)}`) + `<div class="small">Razón: $s^2 / σ^2 = n/(n-1) = ${fmt(s.n / (s.n - 1), 4)}$</div>` },
+      prop: { t: 'Cambio lineal de datos', ic: 'bi-arrow-left-right', f: () => [F0.prop], leg: () => [[['a', 'Factor por el que se multiplican los datos (cambio de escala)', CL.xi], ['b', 'Constante que se suma a los datos (traslación)', CL.dm], ['\\bar{y}, s_y', 'Media y desviación estándar de los datos nuevos', CL.sd]]],
+        def: 'Un <strong>cambio lineal</strong> transforma cada dato con $y = a x + b$: por ejemplo convertir °C a °F, o sumar puntos extra a todos.',
+        thmT: 'Efecto de una transformación lineal', thm: 'La media se transforma igual que los datos: $\\bar{y} = a\\bar{x} + b$. <strong>Sumar una constante $b$ no cambia la dispersión</strong> (todos se desplazan igual). Multiplicar por $a$ <em>sí</em> la escala: $s_y = |a|\\,s_x$ y $s_y^2 = a^2 s_x^2$, y la desviación media también: $DM_y = |a|\\,DM_x$.',
+        how: ['Suma $b$: la media sube $b$, la desviación estándar <strong>no cambia</strong>.', 'Multiplica por $a$: la media y la desviación estándar se multiplican por $a$ (por $|a|$ en la desviación).', 'La varianza se multiplica por $a^2$.'],
+        ex: s => fd(T`y = 2x + 10 \;\Rightarrow\; \bar{y} = ${f2(2 * s.mean + 10)} \quad s_y = ${f2(2 * s.sd)} \quad s_y^2 = ${f2(4 * s.v)}`) },
+      cv: { t: 'Coeficiente de variación', ic: 'bi-percent', f: () => [F0.cv], leg: () => [[['CV', 'Coeficiente de variación (en porcentaje)', '#c2255c'], ['s', 'Desviación estándar', CL.sd], ['\\bar{x}', 'Media de los datos', CL.mean]]],
+        def: 'El <strong>coeficiente de variación</strong> expresa la desviación estándar como un porcentaje de la media. Es una medida de dispersión <em>relativa</em> y no tiene unidades.',
+        thmT: 'Invariancia ante el cambio de escala', thm: 'Si se multiplican los datos por $a > 0$, la media y la desviación estándar se multiplican por $a$, así que el cociente no cambia: $CV(a x) = CV(x)$. Por eso sirve para <strong>comparar la dispersión</strong> de variables con distintas unidades o medias muy diferentes (peso en kg vs. estatura en cm). No es invariante ante traslaciones ($x + b$) y solo tiene sentido si la media es distinta de 0 y los datos son positivos.',
+        how: ['Calcula la media y la desviación estándar.', 'Divide $s$ entre el valor absoluto de la media.', 'Multiplica por 100 para expresarlo en %.', 'Menor CV = datos más homogéneos (regla práctica: menos de 15 % suele considerarse poco disperso).'],
+        ex: s => fd(T`CV = \frac{${f2(s.sd)}}{${f2(Math.abs(s.mean))}} \cdot 100 = ${f2(s.sd / Math.abs(s.mean) * 100)}\;\%`) },
+      z: { t: 'Puntaje z', ic: 'bi-rulers', f: () => [F0.z], leg: () => [[['z_i', 'Puntaje estándar: cuántas desviaciones estándar está x_i de la media', '#e67700'], ['x_i', 'Valor (marca de clase)', CL.xi], ['\\bar{x}', 'Media', CL.mean], ['s', 'Desviación estándar', CL.sd]]],
+        def: 'El <strong>puntaje z</strong> (o valor estandarizado) dice a cuántas desviaciones estándar de la media se encuentra un dato. Positivo: por encima de la media; negativo: por debajo.',
+        thmT: 'Propiedad de la estandarización', thm: 'Al estandarizar todos los datos, el nuevo conjunto tiene <strong>media 0 y desviación estándar 1</strong> (consecuencia del teorema de cambio lineal con $a = 1/s$ y $b = -\\bar{x}/s$). Permite comparar valores de variables distintas en una misma escala: un dato con $z = 2$ está dos desviaciones sobre su media, sin importar las unidades.',
+        how: ['Resta la media al dato.', 'Divide entre la desviación estándar.', 'Interpreta: $|z| > 2$ suele indicar un dato poco común; $|z| > 3$, un posible valor atípico.'],
+        ex: s => { const r = s.rows.reduce((m, q) => q.fi > m.fi ? q : m, s.rows[0]); return fd(T`z = \frac{${fmt(r.x)} - ${f2(s.mean)}}{${f2(s.sd)}} = ${f2((r.x - s.mean) / s.sd)}`) + `<div class="small">Para la marca de la clase más frecuente (${fmt(r.x)}).</div>`; } },
+      cheb: { t: 'Teorema de Chebyshev', ic: 'bi-bullseye', f: () => [F0.cheb], leg: () => [[['k', 'Número de desviaciones estándar (mayor que 1)', '#e67700'], ['\\bar{x}', 'Media', CL.mean], ['s', 'Desviación estándar', CL.sd], ['n', 'Número total de datos', CL.n]]],
+        def: 'El <strong>teorema de Chebyshev</strong> da una cota mínima de la proporción de datos que están a menos de $k$ desviaciones estándar de la media, <em>sin importar la forma de la distribución</em>.',
+        thmT: 'Teorema de Chebyshev', thm: 'Para cualquier conjunto de datos y cualquier $k > 1$, al menos una fracción $1 - 1/k^2$ de los datos está dentro del intervalo $(\\bar{x} - ks,\\; \\bar{x} + ks)$. Con $k = 2$: al menos <strong>75 %</strong>; con $k = 3$: al menos <strong>88.9 %</strong>; con $k = 4$: al menos <strong>93.75 %</strong>. Es una cota mínima: casi siempre el porcentaje real es mayor.',
+        how: ['Elige $k$ (2, 3…).', 'Calcula $\\bar{x} - ks$ y $\\bar{x} + ks$.', 'Cuenta (con las frecuencias) los datos dentro del intervalo.', 'Comprueba que la proporción sea $\\ge 1 - 1/k^2$.'],
+        ex: s => [1.5, 2, 3].map(k => `<div class="small">$k = ${k}$: intervalo $(${f2(s.mean - k * s.sd)},\\; ${f2(s.mean + k * s.sd)})$ → real <strong>${pc(within(s, k))}</strong> ≥ cota <strong>${pc(1 - 1 / (k * k))}</strong> ${within(s, k) + 1e-9 >= 1 - 1 / (k * k) ? '✓' : '✗'}</div>`).join('') },
+      emp: { t: 'Regla empírica', ic: 'bi-graph-up-arrow', f: () => [F0.emp], leg: () => [[['\\bar{x} \\pm ks', 'Intervalo centrado en la media con k desviaciones estándar', CL.sd], ['%', 'Porcentaje aproximado de datos dentro del intervalo', '#e67700']]],
+        def: 'La <strong>regla empírica</strong> (68-95-99.7) indica qué porcentaje de los datos cae a 1, 2 y 3 desviaciones estándar de la media cuando la distribución es <strong>aproximadamente simétrica y unimodal</strong> (en forma de campana).',
+        thmT: 'Regla empírica (distribución normal)', thm: 'Si los datos siguen aproximadamente una distribución normal, cerca del <strong>68 %</strong> está en $\\bar{x} \\pm 1s$, cerca del <strong>95 %</strong> en $\\bar{x} \\pm 2s$ y cerca del <strong>99.7 %</strong> en $\\bar{x} \\pm 3s$. Es más precisa que Chebyshev, pero solo vale si la forma es de campana; si hay sesgo fuerte o varias modas, debe usarse Chebyshev.',
+        how: ['Revisa que la distribución sea simétrica y de una sola moda.', 'Calcula $\\bar{x} \\pm s$, $\\bar{x} \\pm 2s$ y $\\bar{x} \\pm 3s$.', 'Compara los porcentajes reales con 68, 95 y 99.7.'],
+        ex: s => [[1, 68], [2, 95], [3, 99.7]].map(([k, p]) => `<div class="small">$\\bar{x} \\pm ${k}s$: <strong>${pc(within(s, k))}</strong> de tus datos (regla: ≈ ${p} %)</div>`).join('') + '<div class="small text-muted mt-1">Con los datos de ejemplo en forma de campana se acerca; con otra forma puede diferir.</div>' },
+      cov: { t: 'Covarianza', ic: 'bi-diagram-2', f: () => [covF(false).std, covF(true).std, covF(false).ari], leg: () => [covLeg('ari', false)],
+        def: 'La <strong>covarianza</strong> mide cómo varían <em>juntas</em> dos variables $X$ y $Y$: es el promedio del producto de las desviaciones de cada variable respecto a su media.',
+        thmT: 'Signo, desigualdad de Cauchy–Schwarz y relación con r', thm: '$s_{xy} > 0$: relación <strong>directa</strong> (si una sube, la otra tiende a subir); $s_{xy} < 0$: relación <strong>inversa</strong>; $s_{xy} \\approx 0$: no hay relación <em>lineal</em>. Además $s_{xy}$ de una variable consigo misma es su varianza, y cumple $|s_{xy}| \\le s_x s_y$ (Cauchy–Schwarz). Dividiendo entre ambas desviaciones se obtiene el coeficiente de correlación $r = s_{xy}/(s_x s_y)$, que siempre cae entre −1 y 1.',
+        how: ['Calcula las medias $\\bar{x}$ y $\\bar{y}$.', 'Para cada par, multiplica $(x_i - \\bar{x})(y_i - \\bar{y})$.', 'Suma los productos y divide entre $n - 1$ (muestra) o $N$ (población).', 'Interpreta el <strong>signo</strong>; la magnitud depende de las unidades (por eso se usa $r$).'],
+        ex: () => { const c = covStats(); return `<div class="small">Con los pares X, Y de la sección 5:</div>` + fd(T`${S.pop ? 'σ_{xy}' : 's_{xy}'} = ${f2(c.std)} \qquad r = ${isFinite(c.r) ? f2(c.r) : '—'}`) + `<div class="small">${c.std > 0 ? 'Covarianza positiva: relación directa.' : c.std < 0 ? 'Covarianza negativa: relación inversa.' : 'Sin relación lineal.'}</div>`; } }
+    };
+    for (const [k, v] of Object.entries(MX)) { if (MAN[k]) Object.assign(MAN[k], v); else MAN[k] = v; }
     function showManual(key) {
       hideAllPops();
       $('#man-tabs').innerHTML = Object.entries(MAN).map(([k, m]) => `<li class="nav-item"><button class="nav-link ${k === key ? 'active' : ''}" data-man="${k}"><i class="bi ${m.ic} me-1"></i>${m.t}</button></li>`).join('');
@@ -663,7 +784,14 @@
         const one = pop => `<div class="mb-3"><span class="badge ${pop ? 'bg-success' : 'bg-warning text-dark'} mb-1">${pop ? 'Población' : 'Muestra'}</span>${fd(FF(pop)[m.both])}${m.alt ? fd(FF(pop).alt) : ''}<div class="small fw-bold mt-1">Donde:</div>${legRows(LEGD(m.both, pop))}${m.alt ? `<div class="small text-muted mt-1">La segunda fórmula es equivalente (forma abreviada): no necesita calcular cada desviación.</div>` : ''}</div>`;
         body = one(false) + one(true);
       } else body = m.f().map(fd).join('') + `<h6 class="fw-bold mt-3">Donde:</h6>` + m.leg().map(legRows).join('');
-      $('#man-body').innerHTML = `<h5 class="fw-bold mb-2"><i class="bi ${m.ic} me-1"></i>${m.t}</h5>${body}<h6 class="fw-bold mt-3">Cómo se usa</h6><ol class="small lh-lg mb-0">${m.how.map(h => `<li>${h}</li>`).join('')}</ol>`;
+      if (m.extra) body += m.extra.map(k => fd(F0[k])).join('');
+      const sec = (c, ic, t, inner, cls = '') => `<div class="man-sec ${cls}" style="--c:${c}"><h6><i class="bi ${ic} me-1"></i>${t}</h6>${inner}</div>`;
+      $('#man-body').innerHTML = `<h5 class="fw-bold mb-3"><i class="bi ${m.ic} me-1"></i>${m.t}</h5>`
+        + (m.def ? sec('#1c7ed6', 'bi-chat-quote-fill', 'Definición', `<div>${m.def}</div>`) : '')
+        + (m.thm ? sec('#e67700', 'bi-patch-check-fill', m.thmT || 'Teorema', `<div>${m.thm}</div>`, 'thm') : '')
+        + sec('#0c8599', 'bi-calculator-fill', 'Fórmula', body)
+        + sec('#5f3dc4', 'bi-list-ol', 'Cómo se usa', `<ol class="small lh-lg mb-0">${m.how.map(h => `<li>${h}</li>`).join('')}</ol>`)
+        + (m.ex ? sec('#2f9e44', 'bi-lightning-charge-fill', 'Ejemplo con tus datos', `<div>${ST ? m.ex(ST) : '<span class="text-muted">Escribe límites válidos para ver el ejemplo.</span>'}</div>`) : '');
       math($('#man-body')); bootstrap.Modal.getOrCreateInstance($('#manualModal')).show();
     }
     document.addEventListener('click', e => {
@@ -840,7 +968,7 @@
       $('#form-wrap').innerHTML = MS.map((m, i) => `<div class="sheet-title" style="color:${MC[m.k]}"><i class="bi ${m.ic} me-1"></i>${T2[m.k]}</div>
         <div class="table-responsive"><table class="form-tbl" style="animation-delay:${i * 80}ms">${row(false, m.k, LEGD(m.k, false))}${row(true, m.k, LEGD(m.k, true))}
         ${m.k === 'var' ? row(false, 'alt', LEGD('alt', false), 'Muestra · abreviada') + row(true, 'alt', LEGD('alt', true), 'Población · abreviada') : ''}</table></div>`).join('')
-        + `<div class="tip-box s-volt small"><i class="bi bi-diagram-3-fill text-warning me-1"></i><strong>Relaciones:</strong> $s = \\sqrt{s^2}$ y $\\sigma = \\sqrt{\\sigma^2}$; $s^2 = \\sigma^2 \\cdot \\frac{N}{n-1}$ cuando se usan los mismos datos; la media y la desviación media se calculan igual en muestra y población. Todos los resultados se muestran a <strong>2 decimales</strong>.</div>`;
+        + covFormHTML() + `<div class="tip-box s-volt small"><i class="bi bi-diagram-3-fill text-warning me-1"></i><strong>Relaciones:</strong> $s = \\sqrt{s^2}$ y $\\sigma = \\sqrt{\\sigma^2}$; $s^2 = \\sigma^2 \\cdot \\frac{N}{n-1}$ cuando se usan los mismos datos; la media y la desviación media se calculan igual en muestra y población. Todos los resultados se muestran a <strong>2 decimales</strong>.</div>`;
     }
 
     /* ---------- Gráfica (SVG propio) ---------- */
@@ -887,7 +1015,7 @@
       if (S.fi.length !== S.k) S.fi = genFi(S.dist);
       S.n = S.fi.reduce((a, b) => a + b, 0);
       $('#k').value = S.k; $('#k-out').textContent = S.k; if (document.activeElement !== $('#nn')) $('#nn').value = S.n;
-      $$('#pop-sw button').forEach(b => b.classList.toggle('on', (b.dataset.popMode === 'poblacion') === S.pop));
+      $$('[data-pop-mode]').forEach(b => b.classList.toggle('on', (b.dataset.popMode === 'poblacion') === S.pop)); renderCov();
       $('#m-group').innerHTML = MS.map(m => `<button class="mbtn ${S.m === m.k ? 'on' : ''}" data-mm="${m.k}" style="--c:${MC[m.k]}"><i class="bi ${m.ic} me-1"></i>${m.name}</button>`).join('');
       $('#sw-real').checked = S.real;
       const ae = document.activeElement, keep = ae && ae.classList && ae.classList.contains('fi-in') ? { j: +ae.dataset.j, a: ae.selectionStart, b: ae.selectionEnd } : null;
@@ -931,8 +1059,134 @@
       const mm = e.target.closest('[data-mm]'); if (mm) { S.m = mm.dataset.mm; ANIM = true; syncBands(); update(); return; }
     });
     document.addEventListener('keydown', e => { const t = e.target.closest && e.target.closest('.tile'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); t.click(); } });
-    $('#b-chart').onclick = () => { S.chart = !S.chart; if (S.chart) syncBands(); drawChart(); if (S.chart) $('#s5').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    $('#b-chart').onclick = () => { S.chart = !S.chart; if (S.chart) syncBands(); drawChart(); if (S.chart) $('#s6').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
     $$('.g-opt').forEach(el => el.addEventListener('change', drawChart));
+
+
+    /* ---------- Covarianza (dos variables) ---------- */
+    const CV = { x: '#2f9e44', y: '#e8590c', c: '#0c8599', std: '#0c8599', ari: '#7048e8' };
+    const COV = { xs: ['2', '3', '4', '5', '6', '7', '8', '9'], ys: ['55', '58', '64', '66', '73', '75', '82', '86'], m: 'std' };
+    const num = v => { const q = parseFloat(String(v).replace(',', '.')); return isFinite(q) ? q : 0; };
+    function covStats() {
+      const x = COV.xs.map(num), y = COV.ys.map(num), n = x.length, mx = x.reduce((a, b) => a + b, 0) / n, my = y.reduce((a, b) => a + b, 0) / n;
+      const rows = x.map((xi, i) => ({ i, x: xi, y: y[i], dx: xi - mx, dy: y[i] - my, p: (xi - mx) * (y[i] - my), xy: xi * y[i] }));
+      const sp = rows.reduce((a, r) => a + r.p, 0), sxy = rows.reduce((a, r) => a + r.xy, 0), sx = x.reduce((a, b) => a + b, 0), sy = y.reduce((a, b) => a + b, 0);
+      const stdS = n > 1 ? sp / (n - 1) : NaN, stdP = sp / n, ariS = n > 1 ? (sxy - n * mx * my) / (n - 1) : NaN, ariP = sxy / n - mx * my;
+      const sdx2 = rows.reduce((a, r) => a + r.dx * r.dx, 0), sdy2 = rows.reduce((a, r) => a + r.dy * r.dy, 0), rr = sdx2 > 0 && sdy2 > 0 ? sp / Math.sqrt(sdx2 * sdy2) : NaN;
+      return { n, x, y, mx, my, rows, sp, sxy, sx, sy, stdS, stdP, ariS, ariP, r: rr, std: S.pop ? stdP : stdS, ari: S.pop ? ariP : ariS };
+    }
+    const covSym = () => S.pop ? { cov: 'σ_{xy}', mx: 'μ_x', my: 'μ_y', N: 'N', mxH: 'μ<sub>x</sub>', myH: 'μ<sub>y</sub>', covH: 'σ<sub>xy</sub>' } : { cov: 's_{xy}', mx: '\\bar{x}', my: '\\bar{y}', N: 'n', mxH: 'x̄', myH: 'ȳ', covH: 's<sub>xy</sub>' };
+    function covF(pop) {
+      const y = pop ? { cov: 'σ_{xy}', mx: 'μ_x', my: 'μ_y', N: 'N' } : { cov: 's_{xy}', mx: '\\bar{x}', my: '\\bar{y}', N: 'n' };
+      const X = K(CV.x, 'x_i'), Y = K(CV.y, 'y_i'), mx = K(CV.x, y.mx), my = K(CV.y, y.my), cv = K(CV.c, y.cov), den = pop ? K(CL.n, 'N') : K(CL.n, 'n - 1'), Nn = K(CL.n, y.N);
+      return {
+        std: T`${cv} = \frac{\sum_{i=1}^{${y.N}} (${X} - ${mx})(${Y} - ${my})}{${den}}`,
+        ari: pop ? T`${cv} = \frac{\sum_{i=1}^{N} ${X} \, ${Y}}{${Nn}} - ${mx} \, ${my}` : T`${cv} = \frac{\sum_{i=1}^{n} ${X} \, ${Y} - ${Nn} \, ${mx} \, ${my}}{${den}}`
+      };
+    }
+    function covLeg(kind, pop) {
+      const y = pop ? { cov: 'σ_{xy}', mx: 'μ_x', my: 'μ_y', N: 'N' } : { cov: 's_{xy}', mx: '\\bar{x}', my: '\\bar{y}', N: 'n' };
+      const b = [[y.cov, pop ? 'Covarianza poblacional de X y Y' : 'Covarianza muestral de X y Y', CV.c], ['\\sum', 'Suma de todos los pares (de i = 1 hasta ' + y.N + ')', '#495057'], ['x_i', 'Valor de X en el par i', CV.x], ['y_i', 'Valor de Y en el par i', CV.y], [y.mx, 'Media de X' + (pop ? ' (poblacional)' : ''), CV.x], [y.my, 'Media de Y' + (pop ? ' (poblacional)' : ''), CV.y]];
+      if (kind === 'ari') b.push(['x_i y_i', 'Producto de los dos valores de cada par', '#7048e8']);
+      b.push(pop ? ['N', 'Número total de pares (tamaño de la población)', CL.n] : ['n', 'Número de pares (tamaño de la muestra)', CL.n]);
+      if (!pop) b.push(['n - 1', 'Grados de libertad: corrección de Bessel', CL.n]);
+      return b;
+    }
+    function renderCov() {
+      const c = covStats(), y = covSym(), f = fmt, F = covF(S.pop), M = COV.m, col = CV[M], n = c.n, den = S.pop ? n : n - 1;
+      $$('[data-pop-mode]').forEach(b => b.classList.toggle('on', (b.dataset.popMode === 'poblacion') === S.pop));
+      $('#cv-group').innerHTML = [['std', 'Fórmula estándar (definición)', 'bi-bullseye'], ['ari', 'Fórmula aritmética (de cálculo)', 'bi-calculator']].map(([k, t, ic]) => `<button class="mbtn ${M === k ? 'on' : ''}" data-cvm="${k}" style="--c:${CV[k]}"><i class="bi ${ic} me-1"></i>${t}</button>`).join('');
+      const ae = document.activeElement, keep = ae && ae.classList && ae.classList.contains('cov-in') ? { i: +ae.dataset.i, c: ae.dataset.c, a: ae.selectionStart, b: ae.selectionEnd } : null;
+      // popovers
+      const hp = {
+        dx: reg('Columna xi − media de x', [['Desviación de cada x respecto a su media', T`x_i - ${y.mx}`, 'res'], 'Es negativa si el valor está por debajo de la media.'], CV.x),
+        dy: reg('Columna yi − media de y', [['Desviación de cada y respecto a su media', T`y_i - ${y.my}`, 'res']], CV.y),
+        p: reg('Columna (xi − x̄)(yi − ȳ)', [['Producto de las dos desviaciones', T`(x_i - ${y.mx})(y_i - ${y.my})`, 'res'], 'Positivo si ambas desviaciones tienen el mismo signo; negativo si son opuestas.'], CV.c),
+        xy: reg('Columna xi · yi', [['Producto de los dos valores del par', T`x_i \cdot y_i`, 'res'], 'Su suma es el primer término de la fórmula aritmética.'], CV.ari)
+      };
+      const rp = c.rows.map(r => ({
+        dx: reg(`Par ${r.i + 1}: desviación de x`, [['x menos su media', T`x_i - ${y.mx} = ${ngx(r.x)} - ${ng(c.mx)} = ${f2(r.dx)}`, 'res']], CV.x),
+        dy: reg(`Par ${r.i + 1}: desviación de y`, [['y menos su media', T`y_i - ${y.my} = ${ngx(r.y)} - ${ng(c.my)} = ${f2(r.dy)}`, 'res']], CV.y),
+        p: reg(`Par ${r.i + 1}: producto de desviaciones`, [['Se multiplican las dos desviaciones', T`(${f2(r.dx)})(${f2(r.dy)}) = ${f2(r.p)}`, 'res'], r.p >= 0 ? 'Producto positivo: este par aporta a una relación directa.' : 'Producto negativo: este par aporta a una relación inversa.'], CV.c),
+        xy: reg(`Par ${r.i + 1}: x · y`, [['Producto de los valores', T`x_i \cdot y_i = ${ngx(r.x)} \cdot ${ngx(r.y)} = ${f2(r.xy)}`, 'res']], CV.ari)
+      }));
+      const tot = {
+        p: reg('Suma de productos de desviaciones', [['Se suman todos', T`\sum (x_i - ${y.mx})(y_i - ${y.my}) = ${sumList(c.rows, r => ng(r.p))} = ${f2(c.sp)}`, 'res']], CV.c),
+        xy: reg('Suma de xi · yi', [['Se suman todos los productos', T`\sum x_i y_i = ${sumList(c.rows, r => f2(r.xy))} = ${f2(c.sxy)}`, 'res']], CV.ari)
+      };
+      const cols = M === 'std' ? ['dx', 'dy', 'p'] : ['xy'], TH = { dx: `x<sub>i</sub> − ${y.mxH}`, dy: `y<sub>i</sub> − ${y.myH}`, p: `(x<sub>i</sub> − ${y.mxH})(y<sub>i</sub> − ${y.myH})`, xy: 'x<sub>i</sub> · y<sub>i</sub>' }, lastC = cols[cols.length - 1];
+      $('#cov-wrap').dataset.m = M;
+      $('#cov-tbl thead').innerHTML = `<tr><th>#</th><th class="cb-x">x<sub>i</sub></th><th class="cb-y">y<sub>i</sub></th>${cols.map((k, ci) => `<th class="mc pp${k === lastC ? ' last' : ''}" style="--ci:${ci}" data-pop="${hp[k]}" tabindex="0" role="button">${TH[k]} <i class="bi bi-question-circle"></i></th>`).join('')}</tr>`;
+      const td = (id, inner, cl = '', st = '') => `<td class="pp ${cl}" ${st ? `style="${st}"` : ''} data-pop="${id}" tabindex="0" role="button">${inner}</td>`;
+      $('#cov-tbl tbody').innerHTML = c.rows.map((r, i) => `<tr><td>${i + 1}</td><td class="cb-x"><input class="cov-in" data-i="${i}" data-c="x" inputmode="decimal" autocomplete="off" value="${COV.xs[i]}" aria-label="x del par ${i + 1}"></td><td class="cb-y"><input class="cov-in" data-i="${i}" data-c="y" inputmode="decimal" autocomplete="off" value="${COV.ys[i]}" aria-label="y del par ${i + 1}"></td>${cols.map((k, ci) => td(rp[i][k], f2(r[k]), 'mc' + (k === lastC ? ' last' : '') + (k === 'p' ? (r.p >= 0 ? ' pos' : ' neg') : ''), `--ci:${ci};--ri:${i}`)).join('')}</tr>`).join('');
+      $('#cov-tbl tfoot').innerHTML = `<tr><td>Σ</td><td class="cb-x">${f2(c.sx)}</td><td class="cb-y">${f2(c.sy)}</td>${cols.map((k, ci) => (k === 'p' || k === 'xy') ? td(tot[k], f2(k === 'p' ? c.sp : c.sxy), 'mc', `--ci:${ci}`) : `<td class="mc" style="--ci:${ci}">—</td>`).join('')}</tr>`;
+      const t = $('#cov-tbl'); t.classList.remove('anim'); if (COVANIM) { void t.offsetWidth; t.classList.add('anim'); } COVANIM = false;
+      $('#cov-means').innerHTML = `<span class="stat-pill" style="border-color:${CV.x}">${y.mxH} = <b>${f2(c.mx)}</b></span><span class="stat-pill" style="border-color:${CV.y}">${y.myH} = <b>${f2(c.my)}</b></span><span class="stat-pill">${S.pop ? 'N' : 'n'} = <b>${n}</b></span>`;
+      // detalle
+      const mxId = reg('Media de x', [['Suma de x entre ' + y.N, T`${y.mx} = \frac{${sumList(c.rows, r => ngx(r.x))}}{${n}} = ${f(c.mx, 6)}`, 'res']], CV.x), myId = reg('Media de y', [['Suma de y entre ' + y.N, T`${y.my} = \frac{${sumList(c.rows, r => ngx(r.y))}}{${n}} = ${f(c.my, 6)}`, 'res']], CV.y);
+      const nId = reg(S.pop ? 'Tamaño de la población' : 'Denominador', S.pop ? [['Número de pares', T`N = ${n}`, 'res']] : [['Número de pares menos 1 (Bessel)', T`n - 1 = ${n} - 1 = ${n - 1}`, 'res'], 'Con una muestra se divide entre n − 1.'], CL.n);
+      const val = c[M], valId = reg('Resultado', M === 'std'
+        ? [['Suma entre ' + (S.pop ? 'N' : 'n − 1'), T`${y.cov} = \frac{${f2(c.sp)}}{${den}} = ${f(val, 6)}`], ['A 2 decimales', T`${y.cov} = ${f2(val)}`, 'res']]
+        : S.pop ? [['Promedio de productos menos producto de medias', T`${y.cov} = \frac{${f2(c.sxy)}}{${n}} - (${f2(c.mx)})(${f2(c.my)}) = ${f(val, 6)}`], ['A 2 decimales', T`${y.cov} = ${f2(val)}`, 'res']]
+          : [['Numerador entre n − 1', T`${y.cov} = \frac{${f2(c.sxy)} - ${n}(${f2(c.mx)})(${f2(c.my)})}{${n - 1}} = ${f(val, 6)}`], ['A 2 decimales', T`${y.cov} = ${f2(val)}`, 'res']], col);
+      const terms = c.rows.map((r, i) => pp(rp[i].p, T`(${K(CV.x, ngx(r.x))} - ${ng(c.mx)})(${K(CV.y, ngx(r.y))} - ${ng(c.my)})`)), tx = (terms.length > 4 ? [...terms.slice(0, 2), '\\cdots', terms[terms.length - 1]] : terms).join(' + ');
+      const xyT = c.rows.map((r, i) => pp(rp[i].xy, T`(${K(CV.x, ngx(r.x))})(${K(CV.y, ngx(r.y))})`)), xt = (xyT.length > 4 ? [...xyT.slice(0, 2), '\\cdots', xyT[xyT.length - 1]] : xyT).join(' + ');
+      const sub = M === 'std'
+        ? [T`${y.cov} = \frac{${tx}}{${pp(nId, K(CL.n, den))}}`, T`${y.cov} = \frac{${pp(tot.p, f2(c.sp))}}{${pp(nId, den)}}`]
+        : S.pop ? [T`${y.cov} = \frac{${xt}}{${pp(nId, K(CL.n, n))}} - (${pp(mxId, f2(c.mx))})(${pp(myId, f2(c.my))})`, T`${y.cov} = \frac{${pp(tot.xy, f2(c.sxy))}}{${n}} - ${f2(c.mx * c.my)}`]
+          : [T`${y.cov} = \frac{${xt} - ${n}(${pp(mxId, f2(c.mx))})(${pp(myId, f2(c.my))})}{${pp(nId, K(CL.n, den))}}`, T`${y.cov} = \frac{${pp(tot.xy, f2(c.sxy))} - ${f2(n * c.mx * c.my)}}{${den}}`];
+      const sign = Math.abs(val) < 1e-9 ? ['0', 'Covarianza cercana a 0: no hay relación lineal (las variables no suben ni bajan juntas).', '#868e96'] : val > 0 ? ['+', 'Covarianza positiva: cuando X aumenta, Y tiende a aumentar (relación directa).', '#2f9e44'] : ['−', 'Covarianza negativa: cuando X aumenta, Y tiende a disminuir (relación inversa).', '#e03131'];
+      const agree = Math.abs(c.std - c.ari) < 1e-7;
+      $('#cov-detail').innerHTML = `<div class="measure-head" style="background:${col}"><i class="bi ${M === 'std' ? 'bi-bullseye' : 'bi-calculator'} fs-4"></i><h5 class="fw-bold mb-0 me-auto">Covarianza ${S.pop ? 'poblacional' : 'muestral'} · fórmula ${M === 'std' ? 'estándar (definición)' : 'aritmética (de cálculo)'}</h5><button class="btn btn-sm btn-light rounded-pill" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Ver teorema y definición</button></div>
+        <div class="p-3"><div class="row g-3"><div class="col-lg-5"><div class="small fw-bold text-muted">Fórmula</div>${fd(F[M])}<div class="small fw-bold text-muted mt-2">Dónde</div>${legRows(covLeg(M, S.pop))}</div>
+        <div class="col-lg-7"><div class="usebox" style="--c:${col}"><strong>De la tabla usamos:</strong> ${M === 'std' ? `${chip(CV.x, 'las desviaciones $x_i - ' + (S.pop ? '\\mu_x' : '\\bar{x}') + '$')}, ${chip(CV.y, 'las de $y_i$')} y su producto, ${chip(CL.n, S.pop ? `$N = ${n}$` : `$n - 1 = ${n - 1}$`)}.` : `${chip('#7048e8', 'la columna $x_i \\cdot y_i$ y su suma')}, las medias ${chip(CV.x, '$' + y.mx + '$')} ${chip(CV.y, '$' + y.my + '$')} y ${chip(CL.n, S.pop ? `$N = ${n}$` : `$n - 1 = ${n - 1}$`)}.`}</div>
+        <div class="small fw-bold text-muted">Sustitución <span class="fw-normal">(toca cualquier número)</span></div>${sub.map(fd).join('')}
+        <div class="calc-screen mt-2" style="--c:${col}">${fi(T`${y.cov} = ${pp(valId, f2(val))}`)}</div>
+        <div class="cmp-chips"><span class="cmp-chip ${M === 'std' ? 'on' : ''}">Estándar: <b>${f2(c.std)}</b></span><span class="cmp-chip ${M === 'ari' ? 'on' : ''}">Aritmética: <b>${f2(c.ari)}</b></span><span class="cmp-chip">${agree ? '✓ Las dos fórmulas coinciden' : '≠'}</span><span class="cmp-chip">Correlación r: <b>${f2(c.r)}</b></span></div>
+        <div class="tip-box mt-2 small" style="background:${sign[2]}18;border-left:5px solid ${sign[2]}"><strong style="color:${sign[2]}">${sign[0]}</strong> ${sign[1]}</div></div></div></div>`;
+      drawScatter(c);
+      math($('#s5')); initPops($('#s5'));
+      if (keep) { const el = $(`.cov-in[data-i="${keep.i}"][data-c="${keep.c}"]`); if (el) { el.focus(); try { el.setSelectionRange(keep.a, keep.b); } catch (e) {} } }
+    }
+    function drawScatter(c) {
+      const W = 520, H = 340, ml = 46, mr = 20, mt = 20, mb = 42, xs = c.x, ys = c.y;
+      const pad = (a, b) => { const p = (b - a || 1) * .12; return [a - p, b + p]; };
+      const [x0, x1] = pad(Math.min(...xs), Math.max(...xs)), [y0, y1] = pad(Math.min(...ys), Math.max(...ys));
+      const X = v => ml + (v - x0) / (x1 - x0) * (W - ml - mr), Y = v => H - mb - (v - y0) / (y1 - y0) * (H - mt - mb), mx = X(c.mx), my = Y(c.my);
+      let g = `<rect class="cov-fade" style="--d:.1s" x="${mx}" y="${mt}" width="${W - mr - mx}" height="${my - mt}" fill="#2f9e44" fill-opacity=".10"/><rect class="cov-fade" style="--d:.1s" x="${ml}" y="${my}" width="${mx - ml}" height="${H - mb - my}" fill="#2f9e44" fill-opacity=".10"/><rect class="cov-fade" style="--d:.1s" x="${ml}" y="${mt}" width="${mx - ml}" height="${my - mt}" fill="#e03131" fill-opacity=".08"/><rect class="cov-fade" style="--d:.1s" x="${mx}" y="${my}" width="${W - mr - mx}" height="${H - mb - my}" fill="#e03131" fill-opacity=".08"/>`;
+      g += `<line x1="${ml}" x2="${W - mr}" y1="${H - mb}" y2="${H - mb}" stroke="#334155" stroke-width="2"/><line x1="${ml}" x2="${ml}" y1="${mt}" y2="${H - mb}" stroke="#334155" stroke-width="2"/>`;
+      g += `<line class="cov-fade" style="--d:.4s" x1="${mx}" x2="${mx}" y1="${mt}" y2="${H - mb}" stroke="${CV.x}" stroke-width="2" stroke-dasharray="6 4"/><line class="cov-fade" style="--d:.4s" x1="${ml}" x2="${W - mr}" y1="${my}" y2="${my}" stroke="${CV.y}" stroke-width="2" stroke-dasharray="6 4"/>`;
+      g += `<text x="${mx}" y="${mt - 6}" text-anchor="middle" font-size="12" font-weight="700" fill="${CV.x}">x̄ = ${f2(c.mx)}</text><text x="${W - mr}" y="${my - 5}" text-anchor="end" font-size="12" font-weight="700" fill="${CV.y}">ȳ = ${f2(c.my)}</text>`;
+      g += `<text x="${(ml + W - mr) / 2}" y="${H - 8}" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">X</text><text transform="translate(14 ${(mt + H - mb) / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Y</text>`;
+      g += `<text x="${W - mr - 6}" y="${mt + 16}" text-anchor="end" font-size="14" font-weight="800" fill="#2f9e44">+</text><text x="${ml + 8}" y="${H - mb - 8}" font-size="14" font-weight="800" fill="#2f9e44">+</text><text x="${ml + 8}" y="${mt + 16}" font-size="14" font-weight="800" fill="#e03131">−</text><text x="${W - mr - 6}" y="${H - mb - 8}" text-anchor="end" font-size="14" font-weight="800" fill="#e03131">−</text>`;
+      g += c.rows.map(r => `<circle class="cov-pt" style="--d:${.5 + r.i * .1}s" cx="${X(r.x)}" cy="${Y(r.y)}" r="7" fill="${r.p >= 0 ? '#2f9e44' : '#e03131'}" stroke="#fff" stroke-width="2"><title>Par ${r.i + 1}: (${fmt(r.x)}, ${fmt(r.y)}) · producto ${f2(r.p)}</title></circle>`).join('');
+      $('#cov-svg').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama de dispersión de los pares (x, y)">${g}</svg>`;
+    }
+    let COVANIM = false;
+    function covGen(kind) {
+      const n = COV.xs.length, xs = Array.from({ length: n }, (_, i) => i + 1 + Math.round(Math.random() * 2));
+      const ys = xs.map(v => Math.round(kind === 'pos' ? 40 + v * 6 + (Math.random() - .5) * 14 : kind === 'neg' ? 100 - v * 6 + (Math.random() - .5) * 14 : 70 + (Math.random() - .5) * 40));
+      COV.xs = xs.map(String); COV.ys = ys.map(String); COVANIM = true; renderCov();
+    }
+    $('#cov-tbl').addEventListener('input', e => { const el = e.target.closest('.cov-in'); if (!el) return; (el.dataset.c === 'x' ? COV.xs : COV.ys)[+el.dataset.i] = el.value; clearTimeout(window.__cvt); window.__cvt = setTimeout(() => { hideAllPops(); renderCov(); }, 220); });
+    $('#cov-tbl').addEventListener('focusin', e => { if (e.target.classList.contains('cov-in')) e.target.select(); });
+    $('#cv-add').onclick = () => { if (COV.xs.length >= 20) return; COV.xs.push(String(num(COV.xs[COV.xs.length - 1]) + 1)); COV.ys.push(COV.ys[COV.ys.length - 1]); COVANIM = true; hideAllPops(); renderCov(); };
+    $('#cv-del').onclick = () => { if (COV.xs.length <= 2) return; COV.xs.pop(); COV.ys.pop(); COVANIM = true; hideAllPops(); renderCov(); };
+    $('#cv-pos').onclick = () => covGen('pos'); $('#cv-neg').onclick = () => covGen('neg'); $('#cv-none').onclick = () => covGen('none');
+    $('#cv-ex').onclick = () => { COV.xs = ['2', '3', '4', '5', '6', '7', '8', '9']; COV.ys = ['55', '58', '64', '66', '73', '75', '82', '86']; COVANIM = true; renderCov(); };
+    document.addEventListener('click', e => { const b = e.target.closest('[data-cvm]'); if (b) { COV.m = b.dataset.cvm; COVANIM = true; hideAllPops(); renderCov(); } });
+
+    /* Formulario de la covarianza (para el modal) */
+    function covFormHTML() {
+      const dw = arr => arr.map(([t, d, c]) => `<div class="dw"><span class="vchip" style="--c:${c}">${fi(t)}</span> = ${d}</div>`).join('');
+      const tr = (pop, kind) => `<tr class="${pop ? 'vp' : 'vm'}"><td class="fl" style="width:46%"><span class="badge-v">${pop ? 'Población' : 'Muestra'} · ${kind === 'std' ? 'estándar' : 'aritmética'}</span><div class="pt-3">${fd(covF(pop)[kind])}</div></td><td class="fr2"><div class="fw-bold">Donde:</div>${dw(covLeg(kind, pop))}</td></tr>`;
+      const sx = `<div class="sheet-title" style="color:${CV.c}"><i class="bi bi-bounding-box me-1"></i>Covarianza</div>
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="tip-box s-volt h-100"><strong><i class="bi bi-book me-1"></i>Definición</strong><div class="small mt-1">La <strong>covarianza</strong> mide cómo varían <em>juntas</em> dos variables $X$ y $Y$: es el <strong>promedio del producto de las desviaciones</strong> de cada variable respecto a su media.</div>${fd(T`\text{Cov}(X,Y) = E\left[ (X - μ_x)(Y - μ_y) \right]`)}<div class="small">Positiva: las variables suben juntas. Negativa: una sube y la otra baja. Cercana a 0: no hay relación lineal. Se mide en (unidades de $X$) × (unidades de $Y$).</div></div></div>
+        <div class="col-lg-6"><div class="tip-box s-amp h-100"><strong><i class="bi bi-patch-check me-1"></i>Teorema (fórmula de cálculo)</strong><div class="small mt-1">La covarianza es igual a la <strong>esperanza del producto menos el producto de las esperanzas</strong>:</div>${fd(T`\text{Cov}(X,Y) = E[XY] - E[X] \, E[Y]`)}<div class="small fw-bold">Demostración</div>${fd(T`\text{Cov}(X,Y) = E\left[ XY - μ_y X - μ_x Y + μ_x μ_y \right]`)}${fd(T`= E[XY] - μ_y E[X] - μ_x E[Y] + μ_x μ_y`)}${fd(T`= E[XY] - μ_y μ_x - μ_x μ_y + μ_x μ_y = E[XY] - μ_x μ_y`)}<div class="small">Con datos: $E[XY]$ es el promedio de los $x_i y_i$, y por eso la <strong>fórmula aritmética</strong> es $\\frac{\\sum x_i y_i}{N} - μ_x μ_y$.</div></div></div></div>
+        <div class="table-responsive"><table class="form-tbl">${tr(false, 'std')}${tr(true, 'std')}${tr(false, 'ari')}${tr(true, 'ari')}</table></div>
+        <div class="tip-box s-volt small"><i class="bi bi-list-check text-warning me-1"></i><strong>Propiedades:</strong> $\\text{Cov}(X,X) = \\text{Var}(X)$ · $\\text{Cov}(X,Y) = \\text{Cov}(Y,X)$ · $\\text{Cov}(aX + b,\\, cY + d) = ac \\, \\text{Cov}(X,Y)$ · si $X$ y $Y$ son independientes, $\\text{Cov}(X,Y) = 0$ (el recíproco no siempre es cierto). Con la covarianza se obtiene la <strong>correlación</strong> $r = \\frac{s_{xy}}{s_x \\, s_y}$, que siempre queda entre $-1$ y $1$. La fórmula aritmética con muestra equivale a $\\frac{\\sum x_i y_i - n \\bar{x} \\bar{y}}{n-1}$.</div>`;
+      return sx;
+    }
 
     /* ---------- Arranque ---------- */
     $$('[data-f]').forEach(el => el.innerHTML = fd(F0[el.dataset.f]));
