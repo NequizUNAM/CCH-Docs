@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matemáticas - Ángulos y geometría</title>
+
+  <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, gráficas SVG propias -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --mean:#1864ab; --med:#c26e00; --mode:#5130b9; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+
+    /* Header */
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    /* Hero con barras de histograma */
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
+    .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
+    .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
+    @keyframes grow { from { transform:scaleY(0); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    /* Navegación de la página */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+
+    /* Tarjetas */
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.2rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .stat-pill { background:#f1f5f9; border-radius:12px; padding:.45rem .8rem; font-size:.88rem; border:1px solid #e2e8f0; }
+    .stat-pill b { font-family:'Courier New',monospace; }
+    #data { font-family:'Courier New',monospace; font-size:.9rem; }
+
+    /* Instructivo: pasos vivos */
+    .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
+    .istep h6 { color:var(--c); font-weight:800; }
+    .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
+    .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
+
+    /* Fórmulas y leyendas */
+    .fx { overflow-x:auto; padding:.4rem 0; }
+    .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
+    .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
+    .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
+    .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
+
+    /* Tablas de frecuencias */
+    .freq-table { font-size:.95rem; text-align:center; margin:0; }
+    .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
+    .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
+    .freq-table tbody tr { transition:background .2s; cursor:default; }
+    .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
+    .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
+    .hl-legend { font-size:.85rem; min-height:1.4rem; }
+    /* Resaltados por medida */
+    [data-hl="mean"] td.c-use { background:rgba(24,100,171,.2); font-weight:800; }
+    [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
+    [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
+    [data-hl="mode"] tr.r-mode td { background:rgba(112,72,232,.3); font-weight:800; }
+    [data-hl="mode"] tr.r-near td { background:rgba(12,133,153,.2); }
+    .hl-btn.active[data-hl="mean"] { background:var(--mean); color:#fff; border-color:var(--mean); }
+    .hl-btn.active[data-hl="med"] { background:var(--med); color:#fff; border-color:var(--med); }
+    .hl-btn.active[data-hl="mode"] { background:var(--mode); color:#fff; border-color:var(--mode); }
+    .hl-btn.active[data-hl="none"] { background:#334155; color:#fff; border-color:#334155; }
+
+    .measure-head { color:#fff; padding:.9rem 1.2rem; border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .measure { border-radius:14px; box-shadow:var(--shadow-md); background:#fff; overflow:hidden; border:1px solid #e2e8f0; }
+    .result-big { font-size:1.6rem; font-weight:800; font-family:'Courier New',monospace; border-radius:14px; padding:.6rem 1rem; text-align:center; color:#fff; }
+    .real-card { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1.2rem; animation:pop .4s both; }
+    .cmp th { background:#f1f5f9; } .cmp td, .cmp th { padding:.45rem .7rem; text-align:center; }
+    .chart-box { position:relative; height:420px; }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    /* ===== Fórmulas estilo calculadora ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; } .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; } .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; } .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; } .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; } .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; }
+    .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before, .cx .ac.tilde::before { position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    /* Operaciones con popover */
+    .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
+    .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
+    td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
+    th.pp .bi { font-size:.7rem; opacity:.7; }
+    .popover.calc-pop { --bs-popover-max-width:430px; --bs-popover-border-radius:16px; border:0; box-shadow:var(--shadow-lg); font-family:'Segoe UI',sans-serif; }
+    .calc-pop .popover-header { background:linear-gradient(90deg,#0f172a,#1e293b); color:#fff; font-weight:700; font-size:.92rem; border-radius:16px 16px 0 0; }
+    .calc-pop .popover-body { padding:.7rem .9rem; max-height:60vh; overflow:auto; color:#1e293b; }
+    .pcap { font-size:.78rem; font-weight:700; color:#64748b; margin-top:.45rem; text-transform:uppercase; letter-spacing:.02em; } .pcap:first-child { margin-top:0; }
+    .pf { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:.25rem .6rem; overflow-x:auto; } .pf.res { background:#0f172a; color:#e0f2fe; border-color:#0f172a; }
+    .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
+    .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
+    .pm { font-size:.88rem; }
+    /* Pantalla de resultado */
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
+    .cmp-chips { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.5rem; }
+    .cmp-chip { font-size:.8rem; border-radius:999px; padding:.15rem .7rem; background:#f1f5f9; border:1.5px solid #e2e8f0; color:#475569; } .cmp-chip b { font-family:'Courier New',monospace; color:#0f172a; } .cmp-chip.on { background:#fff4e0; border-color:#f08c00; }
+    /* Tabla unificada */
+    .tbl-bar { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 1.2rem; margin-bottom:.8rem; }
+    .real-switch { display:flex; align-items:center; gap:.5rem; background:#fff4e0; border:2px solid #f08c00; border-radius:999px; padding:.35rem 1rem .35rem .6rem; box-shadow:var(--shadow-sm); transition:background .25s, border-color .25s, color .25s; }
+    .real-switch .form-check-input { width:2.6em; height:1.4em; cursor:pointer; margin:0; } .real-switch .form-check-input:checked { background-color:#f08c00; border-color:#f08c00; }
+    .real-switch label { font-weight:800; cursor:pointer; }
+    .real-switch.on { background:#0f172a; border-color:#0f172a; color:#fff; }
+    .freq-table td .old { display:block; font-size:.7rem; color:#94a3b8; text-decoration:line-through; line-height:1; font-weight:500; }
+    .freq-table td.chg { background:#fff4e0; }
+    .freq-table.anim td.chg { animation:flash 1s both; }
+    @keyframes flash { 0% { background:#ffd8a8; transform:scale(1.08); } 100% { background:#fff4e0; transform:none; } }
+    .freq-table th small { display:block; font-weight:500; opacity:.75; font-size:.7rem; }
+    .real-banner { border:2px solid #f08c00; border-radius:16px; background:#fffaf0; padding:1rem 1.2rem; animation:pop .4s both; }
+    .imp { display:inline-flex; align-items:center; gap:.3rem; border-radius:999px; font-size:.8rem; font-weight:700; padding:.15rem .7rem; margin:.15rem .2rem .15rem 0; }
+    .imp.yes { background:#fff4e0; color:#b45309; border:1.5px solid #f08c00; } .imp.no { background:#f1f5f9; color:#64748b; border:1.5px solid #e2e8f0; }
+    .formula-card { border-radius:14px; padding:.8rem; background:#fff; border:1px solid #e2e8f0; height:100%; }
+
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep,.freq-table.anim td.chg,.real-banner{animation:none} }
+  
+    /* ===== Medidas de dispersión: colores por medida ===== */
+    :root { --m-mean:#1864ab; --m-dm:#0c8599; --m-var:#e8590c; --m-sd:#7048e8; }
+    .h-6 { background:linear-gradient(135deg,#c2255c,#8f1a43); }
+    .hero-bars span { background:#74c0fc; }
+    /* Interruptores */
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.88rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    /* Tabla: columnas coloreadas por medida */
+    #tbl-wrap { --mc:var(--m-mean); }
+    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
+    .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
+    .freq-table th.cb-fi { background:#d6336c; } .freq-table th.cb-x { background:#2f9e44; }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table.anim td.cb-fi, .freq-table.anim td.cb-x { animation:baseWave .7s both; animation-delay:calc(var(--ri,0) * 40ms); }
+    @keyframes baseWave { 0% { filter:brightness(.8); transform:scale(1.06); } 100% { filter:none; transform:none; } }
+    .fi-in { width:72px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #d6336c; border-radius:10px; padding:.15rem .2rem; background:#fff; color:#9c1d4a; }
+    .fi-in:focus { outline:3px solid #fbc2d5; }
+    .col-legend { display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.82rem; margin:.6rem 0 0; }
+    .col-legend span { display:inline-flex; align-items:center; gap:.35rem; } .col-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
+    /* Tarjetas de resultado */
+    .tile { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; transition:transform .25s, box-shadow .25s, background .25s; height:100%; position:relative; overflow:hidden; }
+    .tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .tile.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 10px 26px color-mix(in srgb,var(--c) 45%,transparent); }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; opacity:.85; }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; }
+    .tile .ts { font-size:.78rem; opacity:.8; }
+    .tile .cx { font-size:1em; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } .tile.on::after { background:rgba(255,255,255,.5); }
+    @keyframes tileBar { to { transform:scaleX(1); } }
+    /* Formulario estilo hoja */
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; }
+    .form-tbl td.fl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; }
+    .form-tbl td.fr2 { line-height:1.75; }
+    .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    /* Gráfica SVG */
+    .chart-svg { width:100%; height:auto; display:block; background:#fff; border-radius:14px; border:1px solid #e2e8f0; }
+    .chart-svg text { font-family:'Segoe UI',sans-serif; }
+    .bar-r { transform-box:fill-box; transform-origin:bottom; animation:barUp .8s cubic-bezier(.2,.9,.3,1.1) both; animation-delay:calc(var(--i) * 70ms); cursor:pointer; transition:fill .2s; }
+    .bar-r:hover { fill:#ffd43b; }
+    @keyframes barUp { from { transform:scaleY(0); } }
+    .poly-l { fill:none; stroke:#e03131; stroke-width:3; stroke-dasharray:1; stroke-dashoffset:1; animation:drawL 1.4s .6s forwards; } @keyframes drawL { to { stroke-dashoffset:0; } }
+    .band-r { animation:fadeB .8s 1s both; } @keyframes fadeB { from { opacity:0; } }
+    .vline { stroke-dasharray:7 5; animation:fadeB .8s 1s both; }
+    .chart-tip { position:fixed; z-index:1080; pointer-events:none; background:#0f172a; color:#fff; border-radius:10px; padding:.35rem .7rem; font-size:.82rem; box-shadow:var(--shadow-lg); display:none; }
+    .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
+    @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
+
+    /* ===== Correlación lineal ===== */
+    :root { --c-x:#1c7ed6; --c-y:#e8590c; --c-m:#e03131; --c-b:#2f9e44; --c-r:#7048e8; --c-cov:#0c8599; }
+    .h-6 { background:linear-gradient(135deg,#1864ab,#0b3d6e); }
+    .hero-bars span { background:#74c0fc; }
+    .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
+    .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
+    .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
+    .seg-sw button.on[data-pop-mode="muestra"] { background:#e8590c; } .seg-sw button.on[data-pop-mode="poblacion"] { background:#2f9e44; }
+    .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.86rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; text-align:left; }
+    .mbtn small { font-weight:600; opacity:.8; margin-left:.3rem; }
+    .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
+    .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
+    .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
+    .freq-table th.mc { background:var(--mc); }
+    .freq-table td.mc.last { background:color-mix(in srgb,var(--mc) 30%,#fff); }
+    .freq-table tfoot td.mc { background:var(--mc); color:#fff; }
+    .freq-table td.cb-x { background:rgba(28,126,214,.10); } .freq-table th.cb-x { background:#1c7ed6; }
+    .freq-table td.cb-y { background:rgba(232,89,12,.10); } .freq-table th.cb-y { background:#e8590c; }
+    .freq-table tfoot td.cb-x, .freq-table tfoot td.cb-y { color:#fff; } .freq-table tfoot td.cb-x { background:#1c7ed6; } .freq-table tfoot td.cb-y { background:#e8590c; }
+    .freq-table tfoot tr.mean-r td { background:#f1f5f9; color:#334155; font-weight:700; }
+    .freq-table tfoot tr.mean-r td.cb-x { background:rgba(28,126,214,.18); color:#1864ab; } .freq-table tfoot tr.mean-r td.cb-y { background:rgba(232,89,12,.18); color:#b34000; }
+    .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
+    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
+    .freq-table td input { width:84px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #94a3b8; border-radius:10px; padding:.15rem .2rem; background:#fff; }
+    .freq-table td input:focus { outline:3px solid #bac8ff; }
+    .freq-table td.pos { color:#2b8a3e; } .freq-table td.neg { color:#c92a2a; }
+    .tile { cursor:default; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; height:100%; position:relative; overflow:hidden; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .tile .tl { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--c); }
+    .tile .tv { font-family:'Courier New',monospace; font-weight:800; font-size:1.7rem; line-height:1.2; color:#0f172a; } .tile .ts { font-size:.78rem; color:#64748b; }
+    .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } @keyframes tileBar { to { transform:scaleX(1); } }
+    .eq-big { text-align:center; background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:18px; padding:1rem; font-size:1.5rem; box-shadow:var(--shadow-md); }
+    .eq-big .cx { font-size:1.15em; }
+    .viz-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; overflow:hidden; } .viz-card svg { width:100%; height:auto; display:block; } .viz-card text { font-family:'Segoe UI',sans-serif; }
+    .sc-pt { transform-box:fill-box; transform-origin:center; transform:scale(0); animation:scPop .5s var(--d,0s) cubic-bezier(.3,1.6,.5,1) forwards; cursor:pointer; } @keyframes scPop { to { transform:scale(1); } }
+    .sc-fade { opacity:0; animation:scFade .7s var(--d,0s) forwards; } @keyframes scFade { to { opacity:1; } }
+    .sc-line { stroke-dasharray:1; stroke-dashoffset:1; animation:scDraw 1.3s var(--d,.8s) ease forwards; fill:none; } @keyframes scDraw { to { stroke-dashoffset:0; } }
+    .sc-res { transform-box:fill-box; transform-origin:center top; transform:scaleY(0); animation:scRes .5s var(--d,0s) forwards; } @keyframes scRes { to { transform:scaleY(1); } }
+    .sstep { display:flex; gap:.8rem; padding:.7rem .8rem; border-left:5px solid var(--sc,#5f3dc4); background:color-mix(in srgb,var(--sc,#5f3dc4) 6%,#fff); border-radius:0 14px 14px 0; margin:.6rem 0; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 450ms); }
+    @keyframes sIn { from { opacity:0; transform:translateX(-22px); } to { opacity:1; transform:none; } }
+    .sstep .sn { flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:var(--sc,#5f3dc4); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sstep .sb { min-width:0; flex:1 1 auto; } .sstep .st { font-weight:800; color:var(--sc,#3b2a8c); margin-bottom:.15rem; } .sstep .sx { font-size:.85rem; color:#475569; }
+    .sstep .cx.d { text-align:left; margin:.15rem 0; }
+    .rv { display:inline-block; padding:.2rem .8rem; border-radius:999px; font-weight:800; color:#fff; }
+    .theo-card { background:#fff; border:1px solid #e2e8f0; border-left:6px solid var(--c); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; box-shadow:var(--shadow-sm); animation:pop .5s both; }
+    .theo-card h6 { color:var(--c); font-weight:800; } .theo-card .box { background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:12px; padding:.6rem .9rem; margin:.5rem 0; }
+    .theo-card ol, .theo-card ul { font-size:.93rem; line-height:1.7; } .theo-card .pf { font-size:.9rem; }
+    .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
+    .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
+    .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
+    .form-tbl td.fl { width:46%; text-align:center; position:relative; } .form-tbl td.fr2 { line-height:1.75; } .form-tbl td.fr2 .dw { font-weight:600; }
+    .form-tbl .badge-v { position:absolute; left:.5rem; top:.4rem; font-size:.7rem; font-weight:800; color:#fff; border-radius:999px; padding:.05rem .6rem; background:#868e96; }
+    .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
+    .form-tbl tr { animation:pop .5s both; }
+    .strength { display:flex; gap:2px; margin:.4rem 0; } .strength span { flex:1; text-align:center; font-size:.7rem; font-weight:700; color:#fff; padding:.15rem 0; border-radius:4px; opacity:.35; } .strength span.on { opacity:1; transform:scaleY(1.15); box-shadow:var(--shadow-sm); }
+    @media (prefers-reduced-motion:reduce) { .sc-pt,.sc-fade,.sc-line,.sc-res,.sstep,.tile,.tile::after { animation:none !important; opacity:1 !important; transform:none !important; stroke-dashoffset:0 !important; } .tile::after { transform:scaleX(1) !important; } }
+    .noanim .sc-pt, .noanim .sc-fade, .noanim .sc-line, .noanim .sc-res { animation:none !important; opacity:1; transform:none; stroke-dashoffset:0; }
+    .noanim .sc-res { transform:scaleY(1); }
+    .lesson-head h2, .lesson-head small { color:#fff !important; }
+    .lesson-head.h-2 { background:linear-gradient(135deg,#0c8599,#0a5f6d); } .lesson-head.h-3 { background:linear-gradient(135deg,#7048e8,#4c2fb0); }
+    .lesson-head.h-4 { background:linear-gradient(135deg,#e03131,#a61e1e); } .lesson-head.h-5 { background:linear-gradient(135deg,#2f9e44,#1f6e2f); }
+    .tile .tl { text-transform:none; font-size:.85rem; }
+    .modal-header .modal-title { color:#fff !important; }
+
+    /* ===== Los números ===== */
+    .lesson-head.hc { background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 62%,#000)); }
+    .hero-bars span { background:#74c0fc; }
+    .setdef { font-size:1.45rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; background:color-mix(in srgb,var(--c) 10%,#fff); border:2px solid var(--c); color:#0f172a; border-radius:14px; padding:.6rem 1rem; text-align:center; margin-bottom:.6rem; animation:pop .5s both; }
+    .setdef small { display:block; font-size:.8rem; font-weight:600; color:#475569; font-family:'Segoe UI',sans-serif; }
+    .bigsym { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:3.2rem; font-weight:800; line-height:1; color:var(--c); }
+    .chipx { display:inline-block; margin:.15rem; padding:.15rem .7rem; border-radius:999px; font-weight:700; font-size:.9rem; background:#e6f6ea; border:1.5px solid #2f9e44; color:#1b6b2f; font-family:'Cambria Math','Segoe UI Symbol',serif; animation:pop .4s both; }
+    .chipx.no { background:#fdeaea; border-color:#e03131; color:#a61e1e; }
+    .chipx.dep { background:#fff4e0; border-color:#f08c00; color:#a45d00; }
+    button.chipx { cursor:pointer; } button.chipx:hover { transform:translateY(-2px); }
+    .tline { position:relative; margin:.2rem 0 .2rem .6rem; padding-left:1.2rem; border-left:3px solid color-mix(in srgb,var(--c) 40%,#fff); }
+    .tline .ev { position:relative; margin-bottom:.7rem; opacity:0; animation:sIn .6s forwards; animation-delay:calc(var(--i) * 250ms); }
+    .tline .ev::before { content:''; position:absolute; left:-1.65rem; top:.25rem; width:14px; height:14px; border-radius:50%; background:var(--c); border:3px solid #fff; box-shadow:0 0 0 2px var(--c); }
+    .tline .yr { font-weight:800; color:var(--c); font-size:.85rem; } .tline .tx { font-size:.9rem; }
+    .nsvg { width:100%; height:auto; } .nsvg text { font-family:'Cambria Math','Segoe UI Symbol','Segoe UI',serif; pointer-events:none; }
+    .nsvg .reg { cursor:pointer; transform-box:fill-box; transform-origin:center; animation:regIn .7s var(--d,0s) both cubic-bezier(.3,1.4,.5,1); }
+    @keyframes regIn { from { transform:scale(.2); opacity:0; } to { transform:none; opacity:1; } }
+    .nsvg .reg shape, .nsvg .reg .shp { fill:var(--c); fill-opacity:.16; stroke:var(--c); stroke-width:2.5; transition:fill-opacity .3s, stroke-width .3s; }
+    .nsvg .reg:hover .shp { fill-opacity:.28; }
+    .nsvg .reg.sel .shp { fill-opacity:.38; stroke-width:5; }
+    .nsvg .reg.dim .shp { fill-opacity:.07; }
+    .nsel { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin:.6rem 0; }
+    .cl-in { font-size:1.3rem; font-weight:800; text-align:center; font-family:'Courier New',monospace; }
+    .cl-res { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; margin:.8rem 0; }
+    .cl-box { min-width:96px; text-align:center; border-radius:14px; border:2px solid var(--c); padding:.4rem .6rem; background:#fff; animation:pop .5s both; animation-delay:calc(var(--i) * 90ms); }
+    .cl-box .s { font-size:1.5rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; color:var(--c); } .cl-box .t { font-size:1.2rem; font-weight:800; }
+    .cl-box.yes { background:color-mix(in srgb,var(--c) 14%,#fff); } .cl-box.yes .t { color:#2b8a3e; } .cl-box.no { opacity:.55; } .cl-box.no .t { color:#c92a2a; } .cl-box.dep .t { color:#f08c00; }
+    .ctbl td, .ctbl th { text-align:center; vertical-align:middle; } .ctbl td.ok { background:#e6f6ea; color:#2b8a3e; font-weight:800; cursor:pointer; } .ctbl td.bad { background:#fdeaea; color:#c92a2a; font-weight:800; cursor:pointer; } .ctbl td.part { background:#fff4e0; color:#e67700; font-weight:800; cursor:pointer; }
+    .ctbl td:hover { filter:brightness(.95); } .ctbl th.rh { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:1.2rem; }
+    .nline { width:100%; height:auto; } .nline text { font-family:'Segoe UI',sans-serif; }
+    .ngrid { display:grid; grid-template-columns:repeat(10,1fr); gap:5px; max-width:560px; margin:auto; }
+    .nc { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-weight:800; border-radius:10px; background:#f1f5f9; border:2px solid #e2e8f0; cursor:pointer; font-size:clamp(.7rem,1.6vw,1rem); transition:background .4s var(--dl,0s), color .4s var(--dl,0s), transform .2s, opacity .4s; user-select:none; }
+    .nc:hover { transform:scale(1.12); z-index:2; box-shadow:var(--shadow-sm); }
+    .nc.sel { outline:3px solid #0f172a; transform:scale(1.15); }
+    .nc.hl { background:var(--hc); color:#fff; border-color:var(--hc); }
+    .nc.struck { background:#e9ecef; color:#adb5bd; text-decoration:line-through; border-color:#dee2e6; }
+    .nc.cur { background:#fcc419; color:#000; border-color:#f08c00; transform:scale(1.18); }
+    .nc.pr { background:#e03131; color:#fff; border-color:#e03131; }
+    .cardc { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.7rem .5rem; text-align:center; height:100%; transition:transform .25s, box-shadow .25s, background .25s; animation:pop .5s both; animation-delay:calc(var(--i) * 70ms); }
+    .cardc:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); } .cardc.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 8px 22px color-mix(in srgb,var(--c) 45%,transparent); }
+    .cardc .cs { font-size:2rem; font-weight:800; font-family:'Cambria Math','Segoe UI Symbol',serif; line-height:1.1; } .cardc .cn { font-size:.78rem; font-weight:700; } .cardc .cv { font-family:'Courier New',monospace; font-size:.75rem; opacity:.85; }
+    .digits { font-family:'Courier New',monospace; font-size:1.25rem; font-weight:700; word-break:break-all; line-height:1.9; }
+    .digits span { display:inline-block; opacity:0; animation:dIn .35s forwards; animation-delay:calc(var(--i) * 35ms); } .digits .g5 { margin-right:.35rem; }
+    @keyframes dIn { from { opacity:0; transform:translateY(-10px) scale(1.3); color:var(--c); } to { opacity:1; transform:none; } }
+    .demo-box { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:1rem; box-shadow:var(--shadow-sm); }
+    .symtbl td, .symtbl th { vertical-align:middle; } .symtbl td.sy { font-size:1.5rem; font-weight:800; text-align:center; font-family:'Cambria Math','Segoe UI Symbol',serif; color:#2b3a7a; width:90px; }
+    .symtbl tr { animation:pop .4s both; }
+    .catc { border:2px solid var(--c); border-radius:14px; padding:.7rem .9rem; background:#fff; height:100%; animation:pop .4s both; } .catc .cs { font-size:1.6rem; font-weight:800; color:var(--c); font-family:'Cambria Math','Segoe UI Symbol',serif; } .catc .cat { font-size:.72rem; font-weight:800; color:#fff; background:var(--c); border-radius:999px; padding:.05rem .6rem; }
+    .iv-out { font-family:'Cambria Math','Segoe UI Symbol',serif; font-size:1.15rem; }
+    .roll-wheel { transform-box:fill-box; transform-origin:center; }
+    details.err { background:#fff; border:1px solid #e2e8f0; border-left:5px solid #e03131; border-radius:12px; padding:.6rem .9rem; margin-bottom:.6rem; } details.err summary { font-weight:800; cursor:pointer; color:#a61e1e; }
+    .nrow { display:flex; flex-wrap:wrap; gap:6px; align-items:flex-end; } .nrow .cube { width:26px; height:26px; border-radius:6px; background:var(--c); color:#fff; font-size:.7rem; font-weight:800; display:flex; align-items:center; justify-content:center; animation:cubeIn .4s both; animation-delay:calc(var(--i) * 40ms); } @keyframes cubeIn { from { transform:translateY(-30px) scale(.3); opacity:0; } to { transform:none; opacity:1; } }
+    tr.per td { background:#fff4e0 !important; font-weight:800; }
+    .overl { text-decoration:overline; text-decoration-thickness:2px; }
+    @media (prefers-reduced-motion:reduce) { .nsvg .reg,.tline .ev,.digits span,.cardc,.cl-box,.nc,.symtbl tr,.catc,.nrow .cube { animation:none !important; opacity:1 !important; transform:none !important; } }
+    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; }
+    .flow-i { display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .8rem; border-radius:999px; background:var(--c); color:#fff; font-weight:700; font-size:.88rem; text-decoration:none; animation:pop .45s calc(var(--i)*.09s) both; transition:transform .2s; }
+    .flow-i:hover { transform:translateY(-3px); color:#fff; }
+    .flow-ar { color:#adb5bd; animation:pop .4s calc(var(--i)*.09s) both; }
+    .apc { display:flex; gap:.7rem; align-items:center; padding:.7rem .8rem; background:#fff; border:2px solid var(--c); border-radius:14px; text-decoration:none; color:#212529; height:100%; animation:pop .45s calc(var(--i)*.07s) both; transition:transform .2s, box-shadow .2s; }
+    a.apc:hover { transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.12); color:#212529; }
+    .apn { flex:none; width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+    .vcard { background:#fff; border:3px solid var(--c); border-radius:16px; padding:1rem; text-align:center; height:100%; animation:pop .45s both; }
+    .vt { font-size:.75rem; font-weight:800; color:var(--c); text-transform:uppercase; letter-spacing:.04em; }
+    .vn { font-size:1.4rem; font-weight:800; color:var(--c); }
+    .vu { font-size:.85rem; color:#6c757d; }
+    .dep-arrow { font-size:2.4rem; color:#495057; animation:nudge 1.2s ease-in-out infinite; }
+    .dep-arrow.rev { transform:scaleX(-1); animation:none; color:#e8590c; }
+    @keyframes nudge { 50% { transform:translateX(8px); } }
+    .ok-c { background:#d3f9d8; color:#2b8a3e; } .bad-c { background:#ffe3e3; color:#c92a2a; }
+    .mulrow { display:flex; align-items:center; gap:.6rem; margin-bottom:.5rem; flex-wrap:wrap; }
+    .mc1 { padding:.4rem .8rem; border-radius:10px; border:2px solid var(--c); color:var(--c); font-weight:800; background:#fff; }
+    .mar { font-weight:800; color:#e03131; animation:nudge 1.2s infinite; }
+    .repc { background:#fff; border:2px solid var(--c); border-radius:14px; padding:.7rem; height:100%; animation:pop .45s calc(var(--i)*.1s) both; }
+    .rh { font-weight:800; color:var(--c); margin-bottom:.4rem; }
+    .inic { display:flex; gap:.7rem; align-items:flex-start; background:#fff; border-left:5px solid var(--c); border-radius:10px; padding:.6rem .8rem; height:100%; box-shadow:0 1px 4px rgba(0,0,0,.08); animation:pop .4s calc(var(--i)*.06s) both; }
+    .inic > i { font-size:1.5rem; color:var(--c); }
+    .mach { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.6rem; padding:.5rem; }
+    .mtok { background:#fff; border:3px solid var(--c); color:var(--c); border-radius:14px; padding:.5rem .9rem; font-weight:800; text-align:center; animation:pop .5s calc(var(--i)*.35s) both; }
+    .mtok small { display:block; font-size:.7rem; opacity:.8; }
+    .mar2 { font-size:1.8rem; color:#495057; animation:pop .4s calc(var(--i)*.35s) both; }
+    .mbox { background:#f3f0ff; border:3px solid var(--c); border-radius:16px; padding:.6rem; display:flex; flex-direction:column; gap:.4rem; animation:pop .5s calc(var(--i)*.35s) both; }
+    .mb-t { text-align:center; font-weight:800; color:var(--c); }
+    .gear { background:var(--c); color:#fff; border-radius:10px; padding:.35rem .8rem; font-weight:800; text-align:center; animation:pop .5s calc(var(--i)*.35s) both; }
+    .gear small { display:block; font-size:.72rem; font-weight:600; }
+    #dt-tbl table { min-width:200px; }
+    .letter { display:inline-block; color:#fff; font-weight:800; border-radius:8px; padding:0 .5rem; }
+    .box2 { background:#f8f9fa; border-radius:10px; padding:.4rem .7rem; }
+    .sumbar { display:flex; border-radius:10px; overflow:hidden; font-size:.78rem; font-weight:800; color:#fff; text-align:center; }
+    .sumbar span { padding:.35rem .2rem; transition:flex .3s; white-space:nowrap; overflow:hidden; }
+    .gcard { background:#fff; border:1.5px solid color-mix(in srgb,var(--c) 40%,#fff); border-left:6px solid var(--c); border-radius:12px; padding:.6rem .8rem; height:100%; animation:pop .35s both; }
+    .gcat { float:right; font-size:.62rem; font-weight:800; text-transform:uppercase; color:#fff; background:var(--c); border-radius:999px; padding:0 .5rem; }
+    .nline { max-width:100%; height:auto; }
+
+  </style>
+</head>
+<body>
+
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s0">0. Ruta</a><a href="#s1">1. Ángulos</a><a href="#s2">2. Pares de ángulos</a><a href="#s3">3. Paralelas y transversal</a><a href="#s4">4. Ecuaciones</a><a href="#s5">5. Triángulos</a><a href="#s6">6. Circunferencia</a><a href="#s7">7. Glosario</a><a href="#s8">8. Docencia</a>
+  </nav>
+
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bars" id="hero-bars"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-triangle text-info me-2"></i>Ángulos, triángulos y circunferencia</h1>
+        <p class="lead mb-1">correspondientes · alternos · conjugados · triángulos · círculo</p>
+        <p class="mb-3 text-light opacity-75">Manual interactivo de geometría: conceptos, nombres, fórmulas y su significado</p>
+        <a class="btn btn-warning rounded-pill px-4 fw-semibold me-1" href="#s3"><i class="bi bi-distribute-vertical me-1"></i>Paralelas y transversal</a>
+        <a class="btn btn-outline-light rounded-pill px-4 fw-semibold me-1" href="#s6"><i class="bi bi-circle me-1"></i>Circunferencia</a>
+        <button class="btn btn-outline-light rounded-pill px-4 fw-semibold" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button>
+      </div>
+    </header>
+    <div class="container mb-5" id="secs">
+      
+      <section class="lesson mb-5" id="s0"></section><section class="lesson mb-5" id="s1"></section><section class="lesson mb-5" id="s2"></section><section class="lesson mb-5" id="s3"></section><section class="lesson mb-5" id="s4"></section><section class="lesson mb-5" id="s5"></section><section class="lesson mb-5" id="s6"></section><section class="lesson mb-5" id="s7"></section><section class="lesson mb-5" id="s8"></section>
+    
+    </div>
+  </main>
+
+  
+  <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#0c8599"><h5 class="modal-title fw-bold"><i class="bi bi-journal-richtext me-2"></i>Formulario interactivo · Ángulos, triángulos y circunferencia</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light"><div id="form-wrap"></div></div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Matemáticas • Ángulos y geometría</small></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ===================== HEADER DINÁMICO ===================== -->
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" }, { label: "Los números", href: "los_numero.html", icon: "bi-123" }, { label: "Ángulos y geometría", href: "angulos.html", icon: "bi-triangle" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" },
+          { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" },
+          { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }
+        ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" }, { label: "Medidas de dispersión", href: "medidas_dispersion.html", icon: "bi-arrows-expand" }, { label: "Amplitudes", href: "amplitudes.html", icon: "bi-distribute-horizontal" }, { label: "Correlación lineal", href: "correlacion_lineal.html", icon: "bi-graph-up-arrow" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `
+        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+          <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div>
+        </div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header');
+      const page = location.pathname.split('/').pop() || 'angulos.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try {
+        const res = await fetch('index.html', { cache: 'no-store' });
+        if (!res.ok) throw new Error('sin index');
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page);
+      } catch (e) {}
+    })();
+  </script>
+<script>
+/*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { lceil: '⌈', rceil: '⌉', Delta: 'Δ', ne: '≠', rightarrow: '→', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['ne', 'rightarrow', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'tilde': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name}">${x}</span>`; }
+          case 'mathbf': { const h = arg(); last = 'val'; return `<b>${h}</b>`; }
+          case 'log': last = 'val'; return '<span class="tx">log</span>';
+          case 'sum': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">∑</span><span class="sl">${lo}</span></span>`; }
+          case 'pop': { const id = raw().replace(/[^\w-]/g, ''), h = arg(); last = 'val'; return `<span class="pp" data-pop="${id}" tabindex="0" role="button">${h}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    /*ENDFX*/
+
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const T = String.raw;
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const escH = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$(?!\d)([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? fd(m[1]) : fi(m[2])); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+    /* ---------- Popovers con el paso a paso de cada operación ---------- */
+    let POPS = {}, PID = 0;
+    // lines: [caption, tex, 'res'?] | [caption, html, 'html'] | 'texto'
+    function reg(title, lines, color) {
+      const id = 'p' + (++PID);
+      POPS[id] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
+        : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('') };
+      return id;
+    }
+    const pp = (id, tex) => T`\pop{${id}}{${tex}}`;
+    function initPops(root) {
+      (root || document).querySelectorAll('[data-pop]').forEach(el => {
+        const d = POPS[el.dataset.pop]; if (!d || bootstrap.Popover.getInstance(el)) return;
+        new bootstrap.Popover(el, { trigger: 'click', html: true, sanitize: false, placement: 'auto', container: 'body', customClass: 'calc-pop', title: d.t, content: d.h, fallbackPlacements: ['top', 'bottom', 'right', 'left'] });
+      });
+    }
+    const hideAllPops = () => $$('[data-pop]').forEach(el => { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); });
+    document.addEventListener('show.bs.popover', e => $$('[data-pop]').forEach(el => { if (el !== e.target) { const p = bootstrap.Popover.getInstance(el); if (p) p.hide(); } }));
+    document.addEventListener('click', e => { if (!e.target.closest('[data-pop],.popover')) hideAllPops(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideAllPops(); if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-pop]')) { e.preventDefault(); e.target.click(); } });
+
+    const lesson = (n, title, sub, c, body) => `<div class="card lesson-card"><div class="lesson-head hc" style="--c:${c}"><div class="num">${n}</div><div><h2 class="h4 fw-bold mb-0">${title}</h2><small>${sub}</small></div></div><div class="card-body">${body}</div></div>`;
+    const timeline = (h, c) => `<div class="tline" style="--c:${c}">${h.map(([y, t], i) => `<div class="ev" style="--i:${i}"><div class="yr">${y}</div><div class="tx">${t}</div></div>`).join('')}</div>`;
+    const chips = (a, cls = '') => a.map((x, i) => `<span class="chipx ${cls}" style="animation-delay:${i * 60}ms">${x}</span>`).join('');
+    const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+    const isPrime = n => { if (n < 2 || !Number.isInteger(n)) return false; if (n < 4) return true; if (n % 2 === 0) return false; for (let d = 3; d * d <= n; d += 2) if (n % d === 0) return false; return true; };
+    const factor = n => { const f = []; for (let d = 2; d * d <= n; d++) { let k = 0; while (n % d === 0) { n /= d; k++; } if (k) f.push([d, k]); } if (n > 1) f.push([n, 1]); return f; };
+    const sup = k => String(k).replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+
+    const COL = { B: '#1c7ed6', R: '#e03131', G: '#2f9e44', O: '#e8590c', P: '#7048e8', T: '#0c8599', K: '#d6336c', Y: '#f08c00', N: '#868e96' };
+    const ft = (v, d = 2) => isFinite(v) ? String(+v.toFixed(d)) : '—';
+    const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+    const pt = (cx, cy, r, a) => [cx + r * Math.cos(rad(a)), cy - r * Math.sin(rad(a))];
+    const P2 = p => p[0].toFixed(1) + ' ' + p[1].toFixed(1);
+    /* arco de a1 a a2 (grados matemáticos, antihorario) */
+    const arcP = (cx, cy, r, a1, a2) => `M${P2(pt(cx, cy, r, a1))} A${r} ${r} 0 ${(a2 - a1) > 180 ? 1 : 0} 0 ${P2(pt(cx, cy, r, a2))}`;
+    const wedge = (cx, cy, r, a1, a2) => `M${cx} ${cy} L${P2(pt(cx, cy, r, a1))} A${r} ${r} 0 ${(a2 - a1) > 180 ? 1 : 0} 0 ${P2(pt(cx, cy, r, a2))} Z`;
+    const aTxt = (x, y, t, c, s = 12, anchor = 'middle') => `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${anchor}" font-size="${s}" font-weight="800" fill="${c}" paint-order="stroke" stroke="#fff" stroke-width="3.5">${t}</text>`;
+    const fadeIn = i => `class="sc-fade" style="--d:${(i * .1).toFixed(2)}s"`;
+    const kind = a => a === 0 ? 'nulo' : a < 90 ? 'agudo' : a === 90 ? 'recto' : a < 180 ? 'obtuso' : a === 180 ? 'llano (colineal)' : a < 360 ? 'cóncavo (reflejo)' : 'completo (perigonal)';
+
+    /* ---------- 0. Ruta ---------- */
+    function renderS0() {
+      const FLOW = [['Ángulos', 'bi-slash-lg', COL.B, '#s1'], ['Pares de ángulos', 'bi-intersect', COL.O, '#s2'], ['Paralelas y transversal', 'bi-distribute-vertical', COL.G, '#s3'], ['Ecuaciones de ángulos', 'bi-calculator', COL.P, '#s4'], ['Triángulos', 'bi-triangle', COL.R, '#s5'], ['Circunferencia', 'bi-circle', COL.T, '#s6'], ['Glosario', 'bi-book', COL.K, '#s7']];
+      const AP = [['Ángulos y su medida', 'Elementos, clasificación, complementarios y suplementarios.', '#s1', COL.B], ['Correspondientes, alternos y conjugados', 'Los ocho ángulos que forma una transversal con dos paralelas.', '#s3', COL.G], ['Resolver con álgebra', 'Plantear ecuaciones con ángulos expresados en x.', '#s4', COL.P], ['Triángulos', 'Clasificación, suma 180°, ángulo exterior, rectas y puntos notables.', '#s5', COL.R], ['Circunferencia', 'Elementos, ángulos, arcos, sectores y posiciones relativas.', '#s6', COL.T], ['Manual docente', 'Errores, actividades, evaluación y rúbrica.', '#s8', '#2f9e44']];
+      $('#s0').innerHTML = lesson(0, 'Ruta de aprendizaje', 'De los ángulos a la circunferencia, en orden', '#364fc7', `
+        <div class="flow mb-3">${FLOW.map(([t, ic, c, h], i) => `<a href="${h}" class="flow-i" style="--c:${c};--i:${i}"><i class="bi ${ic}"></i><span>${t}</span></a>${i < FLOW.length - 1 ? `<i class="bi bi-chevron-right flow-ar" style="--i:${i}"></i>` : ''}`).join('')}</div>
+        <div class="row g-3">${AP.map(([t, s, h, c], i) => `<div class="col-md-6 col-lg-4"><a href="${h}" class="apc" style="--c:${c};--i:${i}"><div class="apn">${i + 1}</div><div><div class="fw-bold">${t}</div><div class="small text-muted">${s}</div></div></a></div>`).join('')}</div>
+        <div class="tip-box s-ok mt-3"><strong>Hilo conductor:</strong> un <em>ángulo</em> mide un giro. Cuando dos rectas se cruzan, o una recta corta a dos paralelas, se forman <strong>pares de ángulos con relaciones fijas</strong> (iguales o suplementarios). Esas relaciones permiten calcular ángulos desconocidos y demostrar que la suma de los ángulos de un <strong>triángulo</strong> es 180°; y el mismo lenguaje de ángulos explica la <strong>circunferencia</strong> (central, inscrito, arcos).</div>
+        <div class="row g-2 mt-2">${[['Truco F', 'Correspondientes: forma de F → iguales', COL.G], ['Truco Z', 'Alternos: forma de Z → iguales', COL.O], ['Truco C', 'Conjugados (mismo lado): forma de C → suman 180°', COL.P]].map(([a, b, c], i) => `<div class="col-md-4"><div class="inic" style="--c:${c};--i:${i}"><i class="bi bi-lightbulb"></i><div><div class="fw-bold">${a}</div><div class="small">${b}</div></div></div></div>`).join('')}</div>`);
+    }
+
+    /* ---------- 1. El ángulo ---------- */
+    let A1 = 50, A1u = 'deg';
+    function drawAngle(el, a, o = {}) {
+      const cx = 120, cy = 180, r = 110, W = 460, H = 220; let s = `<svg viewBox="0 0 ${W} ${H}" class="nline noanim">`;
+      const full = a >= 360, c = a === 90 ? COL.G : a < 90 ? COL.B : a < 180 ? COL.O : a === 180 ? COL.T : COL.P;
+      if (a > 0) s += `<path d="${full ? `M${cx} ${cy} m${r * .55} 0 a${r * .55} ${r * .55} 0 1 0 ${-r * 1.1} 0 a${r * .55} ${r * .55} 0 1 0 ${r * 1.1} 0` : wedge(cx, cy, r * .55, 0, a)}" fill="${c}" fill-opacity=".2" stroke="${c}" stroke-width="2.5"/>`;
+      s += `<line x1="${cx}" y1="${cy}" x2="${cx + r * 1.6}" y2="${cy}" stroke="#334155" stroke-width="3"/><line x1="${cx}" y1="${cy}" x2="${P2(pt(cx, cy, r * 1.6, a)).split(' ')[0]}" y2="${P2(pt(cx, cy, r * 1.6, a)).split(' ')[1]}" stroke="${COL.R}" stroke-width="3"/>`;
+      if (a === 90) s += `<path d="M${cx + 16} ${cy} V${cy - 16} H${cx}" fill="none" stroke="${COL.G}" stroke-width="2.5"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="6" fill="#334155"/>${aTxt(cx - 6, cy + 20, 'vértice O', '#334155', 12, 'end')}${aTxt(cx + r * 1.5, cy + 22, 'lado inicial', '#334155', 12, 'end')}`;
+      const e = pt(cx, cy, r * 1.6, a); s += aTxt(Math.min(Math.max(e[0], 70), W - 70), Math.min(e[1] - 10, H - 10) - 4, 'lado final', COL.R, 12);
+      const m = pt(cx, cy, r * .8, a / 2); if (a > 0 && a < 360) s += aTxt(m[0], m[1], ft(a, 1) + '°', c, 15);
+      el.innerHTML = s + '</svg>';
+    }
+    function renderA1() {
+      drawAngle($('#a1-fig'), A1); const rd = rad(A1);
+      $('#a1-info').innerHTML = `<div class="row g-2"><div class="col-6"><div class="tile" style="--c:${COL.B}"><div class="tl">Medida</div><div class="fw-bold fs-4">${ft(A1, 1)}°</div></div></div><div class="col-6"><div class="tile" style="--c:${COL.O}"><div class="tl">Clase</div><div class="fw-bold fs-5">${kind(A1)}</div></div></div><div class="col-6"><div class="tile" style="--c:${COL.P}"><div class="tl">Radianes</div><div class="fw-bold fs-5">${ft(rd, 3)} rad</div><small>${ft(A1 / 180, 3)} π</small></div></div><div class="col-6"><div class="tile" style="--c:${COL.T}"><div class="tl">Fracción de giro</div><div class="fw-bold fs-5">${ft(A1 / 360 * 100, 1)} %</div><small>de una vuelta</small></div></div></div>
+        <div class="d-flex flex-wrap gap-1 mt-2">${[0, 30, 45, 60, 90, 120, 180, 270, 360].map(v => `<button class="mbtn" data-a1="${v}" style="--c:${COL.B};padding:.1rem .6rem">${v}°</button>`).join('')}</div>`;
+      $('#a1-val').textContent = A1;
+    }
+    function renderS1() {
+      const OBJ = [['Punto', 'Ubicación sin tamaño. Se nombra con mayúscula: A.', 'bi-dot', COL.R], ['Recta', 'Sucesión infinita de puntos en ambos sentidos. ↔ AB', 'bi-dash-lg', COL.B], ['Semirrecta', 'Parte de una recta con un origen y que se extiende en un solo sentido. → AB', 'bi-arrow-right', COL.O], ['Segmento', 'Parte de una recta entre dos puntos (tiene longitud). AB', 'bi-hr', COL.G], ['Plano', 'Superficie sin espesor que se extiende indefinidamente.', 'bi-square', COL.P]];
+      $('#s1').innerHTML = lesson(1, 'El ángulo y su medida', 'Punto, recta, semirrecta, segmento y la abertura entre dos semirrectas', COL.B, `
+        <div class="row g-2 mb-3">${OBJ.map(([t, d, ic, c], i) => `<div class="col-md-6 col-lg"><div class="inic" style="--c:${c};--i:${i}"><i class="bi ${ic}"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.B}">Ángulo = abertura entre dos semirrectas con el mismo origen<small>Se nombra ∠AOB, ∠O o con una letra griega (α, β, θ)</small></div>
+          <ul class="small" style="line-height:1.8"><li><strong>Vértice:</strong> el origen común (O).</li><li><strong>Lados:</strong> las dos semirrectas. El <em>inicial</em> está fijo; el <em>final</em> gira.</li><li><strong>Medida:</strong> cuánto gira el lado final; se mide con transportador.</li><li><strong>Unidades:</strong> grado (1/360 de vuelta), radián (180° = π rad), grado centesimal (400ᵍ por vuelta).</li><li>1° = 60′ (minutos) y 1′ = 60″ (segundos): 25° 30′ = 25.5°.</li></ul></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:${COL.O};margin:0"><h6>Conversión de unidades</h6>${fd(T`\text{rad} = \text{grados}\cdot\frac{π}{180} \qquad \text{grados} = \text{rad}\cdot\frac{180}{π}`)}<p class="small mb-0">Ejemplos: 90° = π/2 rad · 180° = π rad · 360° = 2π rad.</p></div></div></div>
+        <h5 class="fw-bold" style="color:${COL.B}"><i class="bi bi-sliders me-1"></i>Gira el lado final</h5>
+        <div class="row g-3 align-items-center"><div class="col-lg-7"><div class="viz-card"><div id="a1-fig"></div></div><label class="small fw-bold mt-2">Medida: <span id="a1-val" style="color:${COL.B}"></span>°</label><input type="range" class="form-range" id="a1" min="0" max="360" step="1" value="${A1}"></div><div class="col-lg-5" id="a1-info"></div></div>
+        <div class="table-responsive mt-3"><table class="table table-bordered table-sm text-center align-middle bg-white small mb-0"><thead class="table-light"><tr><th>Ángulo</th><th>Medida</th><th>Característica</th></tr></thead><tbody>${[['Nulo', '0°', 'Los lados coinciden'], ['Agudo', 'entre 0° y 90°', 'Menor que un recto'], ['Recto', '90°', 'Lados perpendiculares (⊥)'], ['Obtuso', 'entre 90° y 180°', 'Mayor que un recto'], ['Llano', '180°', 'Los lados forman una recta'], ['Cóncavo (reflejo)', 'entre 180° y 360°', 'Mayor que un llano'], ['Completo (perigonal)', '360°', 'Una vuelta entera']].map(r => `<tr><td class="fw-bold">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table></div>`);
+      renderA1();
+    }
+
+    /* ---------- 2. Pares de ángulos y rectas ---------- */
+    let A2 = 40, A2m = 'cc';
+    function drawPair(el, a, mode) {
+      const W = 480, H = 230, cx = 110, cy = 180, r = 90; let s = `<svg viewBox="0 0 ${W} ${H}" class="nline noanim">`;
+      if (mode === 'cc') { s += `<path d="${wedge(cx, cy, r, 0, a)}" fill="${COL.B}" fill-opacity=".25" stroke="${COL.B}" stroke-width="2.4"/><path d="${wedge(cx, cy, r * .7, a, 90)}" fill="${COL.O}" fill-opacity=".25" stroke="${COL.O}" stroke-width="2.4"/><path d="M${cx + 14} ${cy} V${cy - 14} H${cx}" fill="none" stroke="#334155" stroke-width="2"/>`; s += `<line x1="${cx}" y1="${cy}" x2="${cx + 150}" y2="${cy}" stroke="#334155" stroke-width="3"/><line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 150}" stroke="#334155" stroke-width="3"/><line x1="${cx}" y1="${cy}" x2="${P2(pt(cx, cy, 150, a)).split(' ')[0]}" y2="${P2(pt(cx, cy, 150, a)).split(' ')[1]}" stroke="${COL.R}" stroke-width="3"/>`; const m1 = pt(cx, cy, r * .6, a / 2), m2 = pt(cx, cy, r * .5, a + (90 - a) / 2); s += aTxt(m1[0], m1[1], 'α', COL.B, 16) + aTxt(m2[0], m2[1] - 4, 'β', COL.O, 16); }
+      else if (mode === 'su') { s += `<path d="${wedge(cx, cy, r, 0, a)}" fill="${COL.B}" fill-opacity=".25" stroke="${COL.B}" stroke-width="2.4"/><path d="${wedge(cx, cy, r * .7, a, 180)}" fill="${COL.O}" fill-opacity=".25" stroke="${COL.O}" stroke-width="2.4"/><line x1="${cx - 150}" y1="${cy}" x2="${cx + 190}" y2="${cy}" stroke="#334155" stroke-width="3"/><line x1="${cx}" y1="${cy}" x2="${P2(pt(cx, cy, 150, a)).split(' ')[0]}" y2="${P2(pt(cx, cy, 150, a)).split(' ')[1]}" stroke="${COL.R}" stroke-width="3"/>`; const m1 = pt(cx, cy, r * .6, a / 2), m2 = pt(cx, cy, r * .5, a + (180 - a) / 2); s += aTxt(m1[0], m1[1], 'α', COL.B, 16) + aTxt(m2[0], m2[1] - 4, 'β', COL.O, 16); }
+      else if (mode === 'cj') { s += `<path d="${wedge(cx, cy, r, 0, a)}" fill="${COL.B}" fill-opacity=".25" stroke="${COL.B}" stroke-width="2.4"/><path d="${wedge(cx, cy, r * .75, a, 360)}" fill="${COL.O}" fill-opacity=".15" stroke="${COL.O}" stroke-width="2.4"/><line x1="${cx}" y1="${cy}" x2="${cx + 150}" y2="${cy}" stroke="#334155" stroke-width="3"/><line x1="${cx}" y1="${cy}" x2="${P2(pt(cx, cy, 150, a)).split(' ')[0]}" y2="${P2(pt(cx, cy, 150, a)).split(' ')[1]}" stroke="${COL.R}" stroke-width="3"/>`; const m1 = pt(cx, cy, r * .6, a / 2), m2 = pt(cx, cy, r * .5, a + (360 - a) / 2); s += aTxt(m1[0], m1[1], 'α', COL.B, 16) + aTxt(m2[0], m2[1], 'β', COL.O, 16); }
+      else { /* opuestos por el vértice: dos rectas que se cruzan */ const ox = 240, oy = 115, L = 160, d1 = a, d2 = 0; const e = (ang, l) => pt(ox, oy, l, ang); s += `<path d="${wedge(ox, oy, 52, d2, d1)}" fill="${COL.B}" fill-opacity=".3" stroke="${COL.B}" stroke-width="2"/><path d="${wedge(ox, oy, 52, 180, 180 + d1)}" fill="${COL.B}" fill-opacity=".3" stroke="${COL.B}" stroke-width="2"/><path d="${wedge(ox, oy, 44, d1, 180)}" fill="${COL.O}" fill-opacity=".25" stroke="${COL.O}" stroke-width="2"/><path d="${wedge(ox, oy, 44, 180 + d1, 360)}" fill="${COL.O}" fill-opacity=".25" stroke="${COL.O}" stroke-width="2"/>`; [0, d1].forEach(g => { const p1 = e(g, L), p2 = e(g + 180, L); s += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" stroke="${g ? COL.R : '#334155'}" stroke-width="3"/>`; }); [[d1 / 2, 'α', COL.B], [180 + d1 / 2, 'α', COL.B], [(d1 + 180) / 2, 'β', COL.O], [(180 + d1 + 360) / 2, 'β', COL.O]].forEach(([g, t, c]) => { const m = pt(ox, oy, 68, g); s += aTxt(m[0], m[1], t, c, 16); }); }
+      return s + '</svg>';
+    }
+    function renderA2() {
+      const a = A2, mode = A2m, b = mode === 'cc' ? 90 - a : mode === 'su' ? 180 - a : mode === 'cj' ? 360 - a : 180 - a, el = $('#a2-out');
+      const names = { cc: ['Complementarios', 90, 'β = 90° − α'], su: ['Suplementarios (par lineal)', 180, 'β = 180° − α'], cj: ['Conjugados (explementarios)', 360, 'β = 360° − α'], op: ['Opuestos por el vértice', null, 'α = α (iguales)'] };
+      const lim = mode === 'cc' ? 89 : mode === 'cj' ? 359 : 179; if (a > lim) A2 = lim;
+      const svg = drawPair(null, A2, mode), aa = A2, bb = mode === 'cc' ? 90 - aa : mode === 'su' ? 180 - aa : mode === 'cj' ? 360 - aa : 180 - aa;
+      el.innerHTML = `<div class="row g-3 align-items-center"><div class="col-lg-7"><div class="viz-card">${svg}</div></div><div class="col-lg-5">${mode === 'op' ? `<div class="sstep" style="--i:0;--sc:${COL.B}"><div class="sn">1</div><div class="sb"><div class="st">Dos rectas que se cortan forman 4 ángulos</div><div class="sx">Los <strong>opuestos por el vértice</strong> (mismo color) son <b>iguales</b>: α = ${ft(aa)}° y β = ${ft(bb)}°.</div></div></div><div class="sstep" style="--i:1;--sc:${COL.O}"><div class="sn">2</div><div class="sb"><div class="st">¿Por qué?</div><div class="sx">Cada uno es suplemento del mismo ángulo: α + β = 180° en los dos casos, así que los dos α son iguales.</div></div></div>` : `<div class="tip-box s-amp mb-2"><strong>${names[mode][0]}:</strong> α + β = ${names[mode][1]}°</div>${fd(T`β = ${names[mode][1]}° - α = ${names[mode][1]}° - ${ft(aa)}° = ${ft(bb)}°`)}<div class="small">Comprobación: ${ft(aa)}° + ${ft(bb)}° = <strong>${ft(aa + bb)}°</strong> ✓</div>`}</div></div>`;
+      $('#a2-val').textContent = A2; $('#a2').max = mode === 'cc' ? 89 : mode === 'cj' ? 359 : 179; $('#a2').value = A2; $$('[data-a2m]').forEach(b => b.classList.toggle('on', b.dataset.a2m === mode));
+    }
+    function renderS2() {
+      const POS = [['Adyacentes', 'Comparten vértice y un lado, y no se traslapan. Si sus lados no comunes forman una recta → <b>par lineal</b> (suman 180°).', COL.B], ['Consecutivos', 'Dos o más ángulos adyacentes seguidos (cada uno comparte lado con el siguiente).', COL.O], ['Opuestos por el vértice', 'Los lados de uno son prolongaciones de los lados del otro. Siempre iguales.', COL.G], ['Bisectriz', 'Semirrecta que divide un ángulo en dos ángulos iguales. Cada uno mide la mitad.', COL.P]];
+      const REC = [['Paralelas (∥)', 'No se cortan nunca; la distancia entre ellas es constante.', COL.G], ['Secantes', 'Se cortan en un punto. Forman 4 ángulos.', COL.O], ['Perpendiculares (⊥)', 'Secantes que forman ángulos de 90°.', COL.R], ['Oblicuas', 'Secantes que no son perpendiculares.', COL.B], ['Coincidentes', 'Son la misma recta (tienen todos sus puntos en común).', COL.N], ['Transversal', 'Recta que corta a otras dos (o más) rectas.', COL.P]];
+      $('#s2').innerHTML = lesson(2, 'Rectas y pares de ángulos', 'Complementarios, suplementarios, conjugados, adyacentes y opuestos por el vértice', COL.O, `
+        <h5 class="fw-bold" style="color:${COL.O}"><i class="bi bi-1-circle me-1"></i>Posiciones relativas de dos rectas (en el plano)</h5><div class="row g-2 mb-3">${REC.map(([t, d, c], i) => `<div class="col-md-6 col-lg-4"><div class="inic" style="--c:${c};--i:${i}"><i class="bi bi-slash-lg"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>
+        <h5 class="fw-bold" style="color:${COL.O}"><i class="bi bi-2-circle me-1"></i>Pares de ángulos según su suma</h5>
+        <div class="d-flex flex-wrap gap-2 mb-2">${[['cc', 'Complementarios (90°)'], ['su', 'Suplementarios (180°)'], ['cj', 'Conjugados (360°)'], ['op', 'Opuestos por el vértice']].map(([k, n]) => `<button class="mbtn" data-a2m="${k}" style="--c:${COL.O}">${n}</button>`).join('')}</div>
+        <label class="small fw-bold">α = <span id="a2-val" style="color:${COL.B}"></span>°</label><input type="range" class="form-range mb-2" id="a2" min="1" max="89" style="max-width:420px"><div id="a2-out"></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.O}"><i class="bi bi-3-circle me-1"></i>Pares de ángulos según su posición</h5><div class="row g-2">${POS.map(([t, d, c], i) => `<div class="col-md-6"><div class="inic" style="--c:${c};--i:${i}"><i class="bi bi-intersect"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>`);
+      renderA2();
+    }
+
+    /* ---------- 3. Paralelas y transversal ---------- */
+    let TH = 60, REL = 'corr', PAIRI = 0, VERT = 'on';
+    const RELS = {
+      corr: { n: 'Correspondientes', eq: true, pairs: [[1, 5], [2, 6], [3, 7], [4, 8]], c: COL.G, letter: 'F', def: 'Están en la <b>misma posición</b> respecto a cada paralela (ambos arriba o ambos abajo) y del <b>mismo lado</b> de la transversal.' },
+      ai: { n: 'Alternos internos', eq: true, pairs: [[3, 5], [4, 6]], c: COL.O, letter: 'Z', def: 'Quedan <b>entre las paralelas</b> (internos) y en <b>lados opuestos</b> de la transversal (alternos).' },
+      ae: { n: 'Alternos externos', eq: true, pairs: [[1, 7], [2, 8]], c: COL.B, letter: 'Z ampliada', def: 'Quedan <b>fuera de las paralelas</b> (externos) y en <b>lados opuestos</b> de la transversal.' },
+      ci: { n: 'Conjugados internos (mismo lado internos)', eq: false, pairs: [[4, 5], [3, 6]], c: COL.P, letter: 'C', def: 'Quedan <b>entre las paralelas</b> y del <b>mismo lado</b> de la transversal. Son <b>suplementarios</b>.' },
+      ce: { n: 'Conjugados externos (mismo lado externos)', eq: false, pairs: [[1, 8], [2, 7]], c: COL.K, letter: 'C ampliada', def: 'Quedan <b>fuera de las paralelas</b> y del <b>mismo lado</b> de la transversal. Son <b>suplementarios</b>.' },
+      op: { n: 'Opuestos por el vértice', eq: true, pairs: [[1, 3], [2, 4], [5, 7], [6, 8]], c: COL.T, letter: 'X', def: 'Comparten vértice y están uno frente al otro en el cruce de dos rectas. Siempre son iguales (no requieren paralelas).' },
+      ady: { n: 'Adyacentes (par lineal)', eq: false, pairs: [[1, 2], [2, 3], [3, 4], [4, 1], [5, 6], [6, 7], [7, 8], [8, 5]], c: COL.Y, letter: '—', def: 'Comparten vértice y un lado; los otros lados forman una recta. Suman 180° (no requieren paralelas).' }
+    };
+    const angVal = (i, th) => ((i - 1) % 4) % 2 === 0 ? th : 180 - th;
+    function drawTransv(el, th, o = {}) {
+      const W = 640, H = 330, y1 = 105, y2 = 235, mx = 320, k = 65 / Math.tan(rad(th)), px = mx + k, qx = mx - k, hl = o.hl || [], hc = o.c || COL.G, R = 34;
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="nline noanim"><defs><marker id="par" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M2 2 L11 7 L2 12" fill="none" stroke="#334155" stroke-width="2"/></marker></defs>`;
+      s += `<line x1="30" y1="${y1}" x2="610" y2="${y1}" stroke="#334155" stroke-width="3.2"/><line x1="30" y1="${y2}" x2="610" y2="${y2}" stroke="#334155" stroke-width="3.2"/><path d="M575 ${y1} h20" stroke="#334155" stroke-width="3" marker-end="url(#par)" fill="none"/><path d="M575 ${y2} h20" stroke="#334155" stroke-width="3" marker-end="url(#par)" fill="none"/>${aTxt(30, y1 - 12, 'a', '#334155', 14, 'start')}${aTxt(30, y2 - 12, 'b', '#334155', 14, 'start')}`;
+      const T1 = pt(px, y1, 175, th), T2 = pt(px, y1, 175, th + 180); s += `<line x1="${T1[0]}" y1="${T1[1]}" x2="${T2[0]}" y2="${T2[1]}" stroke="${COL.R}" stroke-width="3.2"/>${aTxt(T1[0] + 14, T1[1] + 10, 't', COL.R, 14)}`;
+      [[px, y1, 0], [qx, y2, 4]].forEach(([cx, cy, off]) => { for (let j = 0; j < 4; j++) { const i = off + j + 1, a1 = j === 0 ? 0 : j === 1 ? th : j === 2 ? 180 : 180 + th, a2 = j === 0 ? th : j === 1 ? 180 : j === 2 ? 180 + th : 360, on = hl.includes(i), pair = o.all && o.all.includes(i); const mid = (a1 + a2) / 2, v = angVal(i, th);
+        s += `<path d="${wedge(cx, cy, R, a1, a2)}" fill="${on ? hc : pair ? hc : '#adb5bd'}" fill-opacity="${on ? .55 : pair ? .18 : .08}" stroke="${on ? hc : '#adb5bd'}" stroke-width="${on ? 2.4 : 1}" ${on ? 'class="sc-pt" style="--d:0s"' : ''}/>`;
+        const lp = pt(cx, cy, 52 + (v < 40 ? 8 : 0), mid); s += aTxt(lp[0], lp[1], (o.labels && o.labels[i] ? o.labels[i] : o.vals !== false ? `${i}· ${ft(v, 1)}°` : `${i}`), on ? hc : '#6c757d', on ? 13 : 11.5); } });
+      return (el ? (el.innerHTML = s + '</svg>') : s + '</svg>');
+    }
+    function renderT3() {
+      const R = RELS[REL], p = R.pairs[Math.min(PAIRI, R.pairs.length - 1)], all = R.pairs.flat(), v1 = angVal(p[0], TH), v2 = angVal(p[1], TH), same = Math.abs(v1 - v2) < 1e-9;
+      drawTransv($('#t3-fig'), TH, { hl: p, all, c: R.c });
+      $('#t3-th').textContent = TH; $('#t3-in').value = TH;
+      $('#t3-card').innerHTML = `<div class="theo-card" style="--c:${R.c};margin:0"><h6>${R.n}${R.letter !== '—' ? ` · forma de <span class="letter" style="background:${R.c}">${R.letter}</span>` : ''}</h6><p class="small">${R.def}</p>
+        <div class="d-flex flex-wrap gap-1 mb-2">${R.pairs.map((q, i) => `<button class="mbtn ${i === PAIRI ? 'on' : ''}" data-pair="${i}" style="--c:${R.c};padding:.1rem .6rem">∠${q[0]} y ∠${q[1]}</button>`).join('')}</div>
+        <div class="box2">${fd(T`∠${p[0]} = ${ft(v1, 1)}° \qquad ∠${p[1]} = ${ft(v2, 1)}°`)}${R.eq ? `<div class="small"><b>Relación:</b> son <b>iguales</b> → ∠${p[0]} = ∠${p[1]} ✓ ${same ? '' : '(¡revisa!)'}</div>` : `<div class="small"><b>Relación:</b> son <b>suplementarios</b> → ∠${p[0]} + ∠${p[1]} = ${ft(v1, 1)}° + ${ft(v2, 1)}° = <b>${ft(v1 + v2, 1)}°</b> ✓</div>`}</div></div>`;
+      $$('[data-rel]').forEach(b => b.classList.toggle('on', b.dataset.rel === REL));
+    }
+    let TT = { rel: 'corr', a: 65, b: 65 };
+    function renderTest() {
+      const R = RELS[TT.rel], ok = R.eq ? Math.abs(TT.a - TT.b) < .5 : Math.abs(TT.a + TT.b - 180) < .5;
+      $('#tt-out').innerHTML = `<div class="tip-box ${ok ? 's-ok' : 's-res'}" style="animation:pop .4s both">${ok ? `<strong>Sí cumple:</strong> ${R.eq ? `${TT.a}° = ${TT.b}°` : `${TT.a}° + ${TT.b}° = ${TT.a + TT.b}°`} → <b>las rectas a y b son paralelas</b> (criterio inverso).` : `<strong>No cumple:</strong> ${R.eq ? `${TT.a}° ≠ ${TT.b}°` : `${TT.a}° + ${TT.b}° = ${TT.a + TT.b}° ≠ 180°`} → <b>las rectas NO son paralelas</b>.`}</div>`;
+    }
+    function renderS3() {
+      $('#s3').innerHTML = lesson(3, 'Dos paralelas y una transversal', 'Correspondientes, alternos internos y externos, conjugados (mismo lado)', COL.G, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.G}">a ∥ b y t transversal → 8 ángulos, solo 2 medidas<small>Cuatro valen θ y cuatro valen 180° − θ</small></div></div>
+          <div class="col-lg-6"><ul class="small mb-0" style="line-height:1.75"><li><strong>Internos:</strong> entre las paralelas. <strong>Externos:</strong> fuera de ellas.</li><li><strong>Alternos:</strong> en lados <u>opuestos</u> de la transversal. <strong>Mismo lado (conjugados):</strong> del <u>mismo</u> lado.</li><li><strong>Correspondientes:</strong> misma posición en cada paralela.</li></ul></div></div>
+        <div class="d-flex flex-wrap gap-2 mb-2">${Object.entries(RELS).map(([k, r]) => `<button class="mbtn" data-rel="${k}" style="--c:${r.c}">${r.n.split(' (')[0]}</button>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-8"><div class="viz-card"><div id="t3-fig"></div></div><div class="d-flex align-items-center gap-2 mt-2"><label class="small fw-bold">Inclinación θ = <span id="t3-th" style="color:${COL.R}"></span>°</label><input type="range" class="form-range" id="t3-in" min="20" max="160" style="max-width:340px"></div></div><div class="col-lg-4" id="t3-card"></div></div>
+        <div class="table-responsive mt-3"><table class="table table-bordered table-sm bg-white small text-center align-middle mb-0"><thead class="table-light"><tr><th>Par</th><th>¿Dentro / fuera?</th><th>¿Mismo lado?</th><th>Relación</th><th>Ejemplo</th></tr></thead><tbody>${[['Correspondientes', 'misma posición', 'mismo lado', 'iguales', '∠1 = ∠5'], ['Alternos internos', 'dentro', 'lados opuestos', 'iguales', '∠3 = ∠5'], ['Alternos externos', 'fuera', 'lados opuestos', 'iguales', '∠1 = ∠7'], ['Conjugados internos', 'dentro', 'mismo lado', 'suman 180°', '∠4 + ∠5 = 180°'], ['Conjugados externos', 'fuera', 'mismo lado', 'suman 180°', '∠1 + ∠8 = 180°'], ['Opuestos por el vértice', '—', '—', 'iguales', '∠1 = ∠3'], ['Adyacentes', '—', '—', 'suman 180°', '∠1 + ∠2 = 180°']].map(r => `<tr><td class="fw-bold">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</tbody></table></div>
+        <div class="tip-box s-amp small mt-2"><i class="bi bi-exclamation-triangle-fill me-1"></i>Las igualdades de correspondientes y alternos <u>solo</u> valen si las rectas son <b>paralelas</b>. Opuestos por el vértice y adyacentes valen siempre.</div>
+        <h5 class="fw-bold mt-4" style="color:${COL.G}"><i class="bi bi-arrow-repeat me-1"></i>Criterio inverso: ¿son paralelas?</h5>
+        <div class="row g-2 align-items-end mb-2"><div class="col-md-5"><label class="small fw-bold">Par que mediste</label><select class="form-select form-select-sm" id="tt-rel">${Object.entries(RELS).filter(([k]) => ['corr', 'ai', 'ae', 'ci', 'ce'].includes(k)).map(([k, r]) => `<option value="${k}">${r.n}</option>`).join('')}</select></div><div class="col-6 col-md-2"><label class="small fw-bold">Ángulo 1</label><input type="number" class="form-control form-control-sm" id="tt-a" value="${TT.a}"></div><div class="col-6 col-md-2"><label class="small fw-bold">Ángulo 2</label><input type="number" class="form-control form-control-sm" id="tt-b" value="${TT.b}"></div></div><div id="tt-out"></div>`);
+      renderT3(); renderTest();
+    }
+
+    /* ---------- 4. Ecuaciones con ángulos ---------- */
+    const rint = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const lin = (a, b) => `${a === 1 ? '' : a}x${b === 0 ? '' : (b < 0 ? ' − ' : ' + ') + Math.abs(b)}`;
+    let CH = null, CHshow = false, CHmsg = '', CHscore = [0, 0];
+    function newChallenge() {
+      const key = pick(['corr', 'ai', 'ae', 'ci', 'ce', 'op', 'ady']), R = RELS[key], pair = pick(R.pairs), x = rint(4, 24), a1 = rint(1, 5), v1 = rint(40, 130);
+      let a2 = rint(1, 5); if (R.eq) while (a2 === a1) a2 = rint(1, 5);
+      const v2 = R.eq ? v1 : 180 - v1, b1 = v1 - a1 * x, b2 = v2 - a2 * x, th = ((pair[0] - 1) % 4) % 2 === 0 ? v1 : 180 - v1;
+      CH = { key, pair, x, a1, b1, a2, b2, v1, v2, th }; CHshow = false; CHmsg = ''; renderCH();
+    }
+    function renderCH() {
+      const c = CH, R = RELS[c.key], e1 = lin(c.a1, c.b1), e2 = lin(c.a2, c.b2), el = $('#ch-out');
+      const labels = {}; labels[c.pair[0]] = `(${e1})°`; labels[c.pair[1]] = `(${e2})°`;
+      let sol = '';
+      if (CHshow) {
+        const eqTex = R.eq ? T`${lin(c.a1, c.b1)} = ${lin(c.a2, c.b2)}` : T`(${lin(c.a1, c.b1)}) + (${lin(c.a2, c.b2)}) = 180`;
+        const step3 = R.eq ? T`(${c.a1} - ${c.a2})x = ${c.b2} - (${c.b1}) \Rightarrow x = \frac{${c.b2 - c.b1}}{${c.a1 - c.a2}} = ${ft(c.x)}` : T`${c.a1 + c.a2}x = 180 - (${c.b1}) - (${c.b2}) \Rightarrow x = \frac{${180 - c.b1 - c.b2}}{${c.a1 + c.a2}} = ${ft(c.x)}`;
+        sol = `<div class="sstep" style="--i:0;--sc:${R.c}"><div class="sn">1</div><div class="sb"><div class="st">Identifica la relación</div><div class="sx">Son <strong>${R.n.split(' (')[0].toLowerCase()}</strong> → ${R.eq ? '<b>iguales</b>' : 'suman <b>180°</b>'} (si las rectas son paralelas).</div></div></div><div class="sstep" style="--i:1;--sc:${COL.P}"><div class="sn">2</div><div class="sb"><div class="st">Plantea la ecuación</div>${fd(eqTex)}</div></div><div class="sstep" style="--i:2;--sc:${COL.O}"><div class="sn">3</div><div class="sb"><div class="st">Despeja x</div>${fd(step3)}</div></div><div class="sstep" style="--i:3;--sc:${COL.G}"><div class="sn">4</div><div class="sb"><div class="st">Calcula los ángulos y comprueba</div><div class="sx">∠${c.pair[0]} = ${c.a1}(${c.x}) ${c.b1 < 0 ? '−' : '+'} ${Math.abs(c.b1)} = <b>${c.v1}°</b> · ∠${c.pair[1]} = ${c.a2}(${c.x}) ${c.b2 < 0 ? '−' : '+'} ${Math.abs(c.b2)} = <b>${c.v2}°</b>${R.eq ? '' : ` · suma = ${c.v1 + c.v2}°`} ✓</div></div></div>`;
+      }
+      el.innerHTML = `<div class="row g-3"><div class="col-lg-7"><div class="viz-card"><div id="ch-fig"></div></div></div><div class="col-lg-5"><div class="tip-box s-amp mb-2"><strong>${R.n}</strong> entre ∠${c.pair[0]} y ∠${c.pair[1]} con <b>a ∥ b</b>. Encuentra x.</div><div class="mb-2">${fd(T`∠${c.pair[0]} = (${e1})° \qquad ∠${c.pair[1]} = (${e2})°`)}</div>
+        <div class="input-group mb-2" style="max-width:300px"><span class="input-group-text fw-bold">x =</span><input id="ch-x" type="number" step="any" class="form-control" placeholder="tu respuesta"><button class="btn btn-dark" id="ch-ok">Comprobar</button></div>${CHmsg}<div class="d-flex gap-2 flex-wrap mt-2"><button class="btn btn-sm btn-outline-secondary rounded-pill" id="ch-sol"><i class="bi bi-eye me-1"></i>Ver solución</button><button class="btn btn-sm btn-dark rounded-pill" id="ch-new"><i class="bi bi-arrow-repeat me-1"></i>Nuevo reto</button><span class="chipx">Aciertos: ${CHscore[0]} / ${CHscore[1]}</span></div></div></div><div class="mt-3">${sol}</div>`;
+      drawTransv($('#ch-fig'), c.th, { hl: c.pair, all: c.pair, c: R.c, labels, vals: false });
+    }
+    function checkCH() {
+      const v = parseFloat($('#ch-x').value); if (!isFinite(v)) return; CHscore[1]++;
+      if (Math.abs(v - CH.x) < .01) { CHscore[0]++; CHmsg = `<div class="tip-box s-ok" style="animation:pop .4s both"><strong>¡Correcto!</strong> x = ${CH.x}; los ángulos miden ${CH.v1}° y ${CH.v2}°.</div>`; CHshow = true; } else CHmsg = `<div class="tip-box s-res" style="animation:pop .4s both"><strong>Casi.</strong> Revisa: ¿los ángulos son iguales o suman 180°? Pulsa «Ver solución» para ver el procedimiento.</div>`;
+      renderCH();
+    }
+    function renderS4() {
+      $('#s4').innerHTML = lesson(4, 'Ecuaciones con ángulos', 'Plantea una ecuación según la relación del par y despeja x', COL.P, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.P}">¿Iguales? → expresión₁ = expresión₂<br>¿Suman 180°? → expresión₁ + expresión₂ = 180<small>Identifica primero la relación; después resuelves una ecuación lineal</small></div></div>
+          <div class="col-lg-6"><ol class="small mb-0" style="line-height:1.75"><li>Identifica el tipo de par (¿alternos? ¿conjugados? …).</li><li>Decide: <b>iguales</b> o <b>suplementarios</b>.</li><li>Escribe la ecuación con las expresiones algebraicas.</li><li>Resuelve x y <b>sustituye</b> para obtener los ángulos.</li><li>Comprueba: ¿se cumple la relación?</li></ol></div></div>
+        <div id="ch-out"></div>`);
+      newChallenge();
+    }
+
+    /* ---------- 5. Triángulos ---------- */
+    let TA = 50, TB = 60, NOT = 'none', EXT = false, TS = { a: 5, b: 6, c: 7 };
+    const V = { sub: (p, q) => [p[0] - q[0], p[1] - q[1]], add: (p, q) => [p[0] + q[0], p[1] + q[1]], mul: (p, k) => [p[0] * k, p[1] * k], len: p => Math.hypot(p[0], p[1]), dot: (p, q) => p[0] * q[0] + p[1] * q[1] };
+    const angOf = (from, to) => deg(Math.atan2(-(to[1] - from[1]), to[0] - from[0]));
+    function triPts(A, B, C, W, H, pad) {
+      const c = Math.sin(rad(C)), b = Math.sin(rad(B)), pa = [0, 0], pb = [c, 0], pc = [b * Math.cos(rad(A)), b * Math.sin(rad(A))], xs = [pa[0], pb[0], pc[0]], ys = [0, 0, pc[1]];
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y1 = Math.max(...ys), s = Math.min((W - 2 * pad) / (x1 - x0 || 1), (H - 2 * pad) / (y1 || 1)), ox = (W - (x1 - x0) * s) / 2 - x0 * s, oy = H - pad - (H - 2 * pad - y1 * s) / 2;
+      return [pa, pb, pc].map(p => [ox + p[0] * s, oy - p[1] * s]);
+    }
+    const foot = (p, a, b) => { const ab = V.sub(b, a), t = V.dot(V.sub(p, a), ab) / V.dot(ab, ab); return V.add(a, V.mul(ab, t)); };
+    function circum(A, B, C) { const d = 2 * (A[0] * (B[1] - C[1]) + B[0] * (C[1] - A[1]) + C[0] * (A[1] - B[1])), a2 = V.dot(A, A), b2 = V.dot(B, B), c2 = V.dot(C, C); return [(a2 * (B[1] - C[1]) + b2 * (C[1] - A[1]) + c2 * (A[1] - B[1])) / d, (a2 * (C[0] - B[0]) + b2 * (A[0] - C[0]) + c2 * (B[0] - A[0])) / d]; }
+    function drawTri(el, A, B, C, o = {}) {
+      const W = 560, H = 300, [pa, pb, pc] = triPts(A, B, C, W, H, 50), P = [pa, pb, pc], ang = [A, B, C], cols = [COL.B, COL.R, COL.G], nm = ['A', 'B', 'C'];
+      const a = V.len(V.sub(pb, pc)), b = V.len(V.sub(pa, pc)), c = V.len(V.sub(pa, pb)), cen = V.mul(V.add(V.add(pa, pb), pc), 1 / 3);
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="nline noanim"><polygon points="${P.map(P2).join(' ')}" fill="#e7f5ff" fill-opacity=".6" stroke="#334155" stroke-width="3" stroke-linejoin="round"/>`;
+      const Ocr = circum(pa, pb, pc), Hh = V.sub(V.add(V.add(pa, pb), pc), V.mul(Ocr, 2)), G = cen, I = V.mul(V.add(V.add(V.mul(pa, a), V.mul(pb, b)), V.mul(pc, c)), 1 / (a + b + c));
+      const ptDot = (p, l, c) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="5.5" fill="${c}" stroke="#fff" stroke-width="2" class="sc-pt" style="--d:.4s"/>${aTxt(p[0] + 12, p[1] - 8, l, c, 13)}`;
+      const seg = (p, q, c, d) => `<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="${c}" stroke-width="2.4" ${d ? 'stroke-dasharray="6 4"' : ''} class="sc-fade" style="--d:.2s"/>`;
+      if (o.not === 'alt') { P.forEach((v, i) => { const q = P[(i + 1) % 3], r = P[(i + 2) % 3], f = foot(v, q, r); s += seg(v, f, COL.R); s += `<rect x="${(f[0] - 4).toFixed(1)}" y="${(f[1] - 4).toFixed(1)}" width="8" height="8" fill="none" stroke="${COL.R}" transform="rotate(${-angOf(q, r)} ${f[0].toFixed(1)} ${f[1].toFixed(1)})" opacity=".0"/>`; }); s += ptDot(Hh, 'H (ortocentro)', COL.R); }
+      if (o.not === 'med') { P.forEach((v, i) => { const q = P[(i + 1) % 3], r = P[(i + 2) % 3]; const m = V.mul(V.add(q, r), .5); s += seg(v, m, COL.O) + `<circle cx="${m[0]}" cy="${m[1]}" r="3.5" fill="${COL.O}"/>`; }); s += ptDot(G, 'G (baricentro)', COL.O); }
+      if (o.not === 'mdt') { s += `<circle cx="${Ocr[0].toFixed(1)}" cy="${Ocr[1].toFixed(1)}" r="${V.len(V.sub(pa, Ocr)).toFixed(1)}" fill="none" stroke="${COL.P}" stroke-dasharray="5 4" stroke-width="1.6"/>`; P.forEach((v, i) => { const q = P[(i + 1) % 3], r = P[(i + 2) % 3], m = V.mul(V.add(q, r), .5), d = V.sub(r, q), n = [-d[1], d[0]], k = 60 / V.len(n); s += seg(V.sub(m, V.mul(n, k / 1)), V.add(m, V.mul(n, k)), COL.P) + `<circle cx="${m[0]}" cy="${m[1]}" r="3.5" fill="${COL.P}"/>`; }); s += ptDot(Ocr, 'O (circuncentro)', COL.P); }
+      if (o.not === 'bis') { const r = (V.len(V.sub(V.mul(V.sub(pb, pa), 1), [0, 0])) * 0); const area2 = Math.abs((pb[0] - pa[0]) * (pc[1] - pa[1]) - (pc[0] - pa[0]) * (pb[1] - pa[1])), inr = area2 / (a + b + c); s += `<circle cx="${I[0].toFixed(1)}" cy="${I[1].toFixed(1)}" r="${inr.toFixed(1)}" fill="${COL.T}" fill-opacity=".12" stroke="${COL.T}" stroke-width="1.6"/>`; P.forEach((v, i) => { const q = P[(i + 1) % 3], r2 = P[(i + 2) % 3], lq = V.len(V.sub(v, q)), lr = V.len(V.sub(v, r2)), D = V.add(V.mul(q, lr / (lq + lr)), V.mul(r2, lq / (lq + lr))); s += seg(v, D, COL.T); }); s += ptDot(I, 'I (incentro)', COL.T); }
+      /* ángulos interiores */
+      P.forEach((v, i) => { const q = P[(i + 1) % 3], r = P[(i + 2) % 3], a1 = angOf(v, q), a2 = angOf(v, r), df = ((a2 - a1) + 360) % 360, st = df <= 180 ? a1 : a2, ln = df <= 180 ? df : 360 - df, right = Math.abs(ang[i] - 90) < .01;
+        s += right ? `<path d="${[0, 1].map(k => '').join('')}M${P2(pt(v[0], v[1], 20, st))} L${P2(pt(v[0], v[1], 28.3, st + 45))} L${P2(pt(v[0], v[1], 20, st + 90))}" fill="none" stroke="${cols[i]}" stroke-width="2.4"/>` : `<path d="${wedge(v[0], v[1], 24, st, st + ln)}" fill="${cols[i]}" fill-opacity=".3" stroke="${cols[i]}" stroke-width="2"/>`;
+        const lp = pt(v[0], v[1], 44, st + ln / 2); s += aTxt(lp[0], lp[1], ft(ang[i], 1) + '°', cols[i], 13);
+        const out = V.sub(v, cen), k = 20 / V.len(out), nl = V.add(v, V.mul(out, k)); s += aTxt(nl[0], nl[1], nm[i], '#334155', 16); });
+      /* marcas de lados iguales */
+      const lens = [a, b, c], mids = [V.mul(V.add(pb, pc), .5), V.mul(V.add(pa, pc), .5), V.mul(V.add(pa, pb), .5)], dirs = [V.sub(pc, pb), V.sub(pc, pa), V.sub(pb, pa)];
+      lens.forEach((L, i) => { const n = lens.filter(x => Math.abs(x - L) < .02 * L).length; if (n >= 2) { const d = dirs[i], u = V.mul(d, 1 / V.len(d)), nn = [-u[1], u[0]], tk = (n === 3 ? 3 : (Math.abs(lens[(i + 1) % 3] - L) < .02 * L || Math.abs(lens[(i + 2) % 3] - L) < .02 * L) ? 2 : 1), m = mids[i]; for (let k = 0; k < tk; k++) { const o2 = V.add(m, V.mul(u, (k - (tk - 1) / 2) * 6)); s += `<line x1="${(o2[0] - nn[0] * 7).toFixed(1)}" y1="${(o2[1] - nn[1] * 7).toFixed(1)}" x2="${(o2[0] + nn[0] * 7).toFixed(1)}" y2="${(o2[1] + nn[1] * 7).toFixed(1)}" stroke="#334155" stroke-width="2.2"/>`; } } });
+      if (o.ext) { const e = angOf(pa, pb), bc = angOf(pb, pc), df = ((bc - e) + 360) % 360, st = df <= 180 ? e : bc, ln = df <= 180 ? df : 360 - df, end = V.add(pb, pt(0, 0, 70, e)); s += `<line x1="${pb[0].toFixed(1)}" y1="${pb[1].toFixed(1)}" x2="${(pb[0] + 75 * Math.cos(rad(e))).toFixed(1)}" y2="${(pb[1] - 75 * Math.sin(rad(e))).toFixed(1)}" stroke="#334155" stroke-width="2.6" stroke-dasharray="6 4"/><path d="${wedge(pb[0], pb[1], 34, st, st + ln)}" fill="${COL.Y}" fill-opacity=".4" stroke="${COL.Y}" stroke-width="2"/>`; const lp = pt(pb[0], pb[1], 58, st + ln / 2); s += aTxt(lp[0], lp[1], ft(A + C, 1) + '° (ext.)', COL.O, 12); }
+      return (el ? (el.innerHTML = s + '</svg>') : s + '</svg>');
+    }
+    const clsSides = (a, b, c) => { const e = (x, y) => Math.abs(x - y) < 1e-6 * Math.max(x, y, 1); return e(a, b) && e(b, c) ? 'equilátero' : (e(a, b) || e(b, c) || e(a, c)) ? 'isósceles' : 'escaleno'; };
+    const clsAng = (A, B, C) => { const m = Math.max(A, B, C); return Math.abs(m - 90) < 1e-6 ? 'rectángulo' : m > 90 ? 'obtusángulo' : 'acutángulo'; };
+    function renderTA() {
+      const C = 180 - TA - TB; drawTri($('#ta-fig'), TA, TB, C, { not: NOT, ext: EXT });
+      const eqn = [TA, TB, C].filter((v, i, a) => a.filter(x => Math.abs(x - v) < .01).length > 1).length, bySide = eqn === 3 ? 'equilátero' : eqn >= 2 ? 'isósceles' : 'escaleno', byAng = clsAng(TA, TB, C);
+      $('#ta-A').value = TA; $('#ta-B').value = TB;
+      $('#ta-info').innerHTML = `<div class="sumbar mb-2"><span style="flex:${TA};background:${COL.B}">A ${TA}°</span><span style="flex:${TB};background:${COL.R}">B ${TB}°</span><span style="flex:${C};background:${COL.G}">C ${ft(C, 1)}°</span></div><div class="small mb-2">${fd(T`A + B + C = ${TA} + ${TB} + ${ft(C, 1)} = 180°`)}</div><div class="row g-2"><div class="col-6"><div class="tile" style="--c:${COL.P}"><div class="tl">Por sus lados</div><div class="fw-bold fs-5">${bySide}</div></div></div><div class="col-6"><div class="tile" style="--c:${COL.O}"><div class="tl">Por sus ángulos</div><div class="fw-bold fs-5">${byAng}</div></div></div></div>${EXT ? `<div class="tip-box s-amp small mt-2">Ángulo exterior en B = 180° − B = ${180 - TB}° = A + C = ${TA} + ${ft(C, 1)}.</div>` : ''}
+        <div class="d-flex flex-wrap gap-1 mt-2">${[['Equilátero', 60, 60], ['Isósceles', 40, 70], ['Rectángulo', 90, 45], ['Escaleno agudo', 50, 60], ['Obtusángulo', 30, 40]].map(([n, a, b]) => `<button class="mbtn" data-tri="${a},${b}" style="--c:${COL.R};padding:.1rem .6rem">${n}</button>`).join('')}</div>`;
+      $$('[data-not]').forEach(b => b.classList.toggle('on', b.dataset.not === NOT)); $('#ta-ext').classList.toggle('on', EXT);
+    }
+    function renderTS() {
+      const { a, b, c } = TS, el = $('#ts-out'), ok = a > 0 && b > 0 && c > 0 && a + b > c && a + c > b && b + c > a;
+      if (!ok) { el.innerHTML = `<div class="tip-box s-res"><strong>No se puede formar el triángulo.</strong> Debe cumplirse la <b>desigualdad triangular</b>: cada lado menor que la suma de los otros dos. ${a + b <= c || a + c <= b || b + c <= a ? `Aquí: ${[[a, b, c], [a, c, b], [b, c, a]].filter(t => t[0] + t[1] <= t[2]).map(t => `${t[0]} + ${t[1]} = ${t[0] + t[1]} ≤ ${t[2]}`).join(' ; ')}.` : 'Los lados deben ser positivos.'}</div>`; return; }
+      const A = deg(Math.acos((b * b + c * c - a * a) / (2 * b * c))), B = deg(Math.acos((a * a + c * c - b * b) / (2 * a * c))), C = 180 - A - B, p = a + b + c, s = p / 2, area = Math.sqrt(s * (s - a) * (s - b) * (s - c)), mx = Math.max(a, b, c), o2 = a * a + b * b + c * c - mx * mx, byAng = Math.abs(mx * mx - o2) < 1e-9 ? 'rectángulo' : mx * mx > o2 ? 'obtusángulo' : 'acutángulo';
+      el.innerHTML = `<div class="row g-3"><div class="col-lg-7"><div class="viz-card"><div id="ts-fig"></div></div></div><div class="col-lg-5"><div class="row g-2 mb-2"><div class="col-6"><div class="tile" style="--c:${COL.P}"><div class="tl">Por lados</div><div class="fw-bold fs-5">${clsSides(a, b, c)}</div></div></div><div class="col-6"><div class="tile" style="--c:${COL.O}"><div class="tl">Por ángulos</div><div class="fw-bold fs-5">${byAng}</div></div></div></div>
+        ${fd(T`P = a + b + c = ${ft(p)}`)}${fd(T`s = \frac{P}{2} = ${ft(s)}`)}${fd(T`A = \sqrt{s(s-a)(s-b)(s-c)} = ${ft(area, 3)}`)}<div class="small">Altura sobre c: h = 2A/c = <b>${ft(2 * area / c, 3)}</b> · Ángulos: A = ${ft(A, 1)}°, B = ${ft(B, 1)}°, C = ${ft(C, 1)}°.</div>${byAng === 'rectángulo' ? `<div class="tip-box s-ok small mt-2">Pitágoras: ${ft(mx)}² = ${ft(o2)} ✓ (hipotenusa = ${ft(mx)})</div>` : `<div class="small text-muted mt-1">Criterio: si el lado mayor² &gt; suma de los otros² → obtusángulo; &lt; → acutángulo; = → rectángulo.</div>`}</div></div>`;
+      drawTri($('#ts-fig'), A, B, C, {});
+    }
+    function renderS5() {
+      const CONG = [['LLL', 'Tres lados iguales'], ['LAL', 'Dos lados y el ángulo entre ellos'], ['ALA', 'Dos ángulos y el lado entre ellos'], ['AAL', 'Dos ángulos y un lado no comprendido'], ['H–C', 'Triángulos rectángulos: hipotenusa y un cateto']];
+      const SEM = [['AA', 'Dos ángulos iguales'], ['LAL', 'Dos lados proporcionales y el ángulo entre ellos igual'], ['LLL', 'Tres lados proporcionales']];
+      $('#s5').innerHTML = lesson(5, 'Triángulos', 'Elementos, clasificación, propiedades, rectas y puntos notables', COL.R, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.R}">Triángulo = polígono de 3 lados, 3 vértices y 3 ángulos<small>Si A, B y C son los ángulos, a, b y c son los lados opuestos</small></div>
+          <ul class="small" style="line-height:1.75"><li><strong>Suma de ángulos interiores:</strong> A + B + C = 180°.</li><li><strong>Ángulo exterior</strong> = suma de los dos interiores no adyacentes (y = 180° − interior).</li><li><strong>Desigualdad triangular:</strong> a + b &gt; c (y las otras dos).</li><li>Al <b>mayor lado</b> se opone el <b>mayor ángulo</b>.</li><li><strong>Pitágoras</strong> (rectángulo): a² + b² = c², con c la hipotenusa.</li></ul></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:${COL.R};margin:0"><h6>¿Por qué suman 180°? (con paralelas)</h6><p class="small mb-0">Se traza por un vértice una paralela al lado opuesto. Los <b>alternos internos</b> son iguales, así que los tres ángulos del triángulo quedan juntos formando un ángulo llano: <b>A + B + C = 180°</b>. ¡Aquí se conectan las secciones 3 y 5!</p></div></div></div>
+        <h5 class="fw-bold" style="color:${COL.R}"><i class="bi bi-1-circle me-1"></i>Clasificación y ángulos (mueve A y B)</h5>
+        <div class="row g-3"><div class="col-lg-7"><div class="viz-card"><div id="ta-fig"></div></div><div class="row g-2 mt-1 align-items-center"><div class="col-6"><label class="small fw-bold" style="color:${COL.B}">Ángulo A</label><input type="range" class="form-range" id="ta-A" min="10" max="150"></div><div class="col-6"><label class="small fw-bold" style="color:${COL.R}">Ángulo B</label><input type="range" class="form-range" id="ta-B" min="10" max="150"></div></div>
+          <div class="d-flex flex-wrap gap-1">${[['none', 'Sin líneas'], ['alt', 'Alturas'], ['med', 'Medianas'], ['mdt', 'Mediatrices'], ['bis', 'Bisectrices']].map(([k, n]) => `<button class="mbtn" data-not="${k}" style="--c:${COL.R}">${n}</button>`).join('')}<button class="mbtn" id="ta-ext" style="--c:${COL.Y}">Ángulo exterior</button></div></div><div class="col-lg-5" id="ta-info"></div></div>
+        <div class="table-responsive mt-3"><table class="table table-bordered table-sm bg-white text-center align-middle small mb-0"><thead class="table-light"><tr><th></th><th>Acutángulo (3 agudos)</th><th>Rectángulo (un recto)</th><th>Obtusángulo (un obtuso)</th></tr></thead><tbody><tr><td class="fw-bold">Equilátero (3 lados =)</td><td class="text-success fw-bold">✓ (60°, 60°, 60°)</td><td class="text-danger">✗</td><td class="text-danger">✗</td></tr><tr><td class="fw-bold">Isósceles (2 lados =)</td><td class="text-success fw-bold">✓</td><td class="text-success fw-bold">✓ (90°, 45°, 45°)</td><td class="text-success fw-bold">✓</td></tr><tr><td class="fw-bold">Escaleno (lados distintos)</td><td class="text-success fw-bold">✓</td><td class="text-success fw-bold">✓</td><td class="text-success fw-bold">✓</td></tr></tbody></table></div>
+        <div class="row g-2 mt-2">${[['Altura', 'Perpendicular desde un vértice al lado opuesto (o su prolongación).', 'Ortocentro H', COL.R], ['Mediana', 'Une un vértice con el punto medio del lado opuesto.', 'Baricentro G (centro de gravedad; divide la mediana 2:1)', COL.O], ['Mediatriz', 'Perpendicular a un lado en su punto medio.', 'Circuncentro O (centro de la circunferencia circunscrita)', COL.P], ['Bisectriz', 'Divide un ángulo interior en dos iguales.', 'Incentro I (centro de la circunferencia inscrita)', COL.T]].map(([t, d, p, c], i) => `<div class="col-md-6 col-lg-3"><div class="inic" style="--c:${c};--i:${i}"><i class="bi bi-bullseye"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div><div class="small fw-bold" style="color:${c}">→ ${p}</div></div></div></div>`).join('')}</div>
+        <div class="small text-muted mt-1">Las cuatro rectas notables se cortan en <em>puntos notables</em>. En el triángulo equilátero H, G, O e I coinciden. En un triángulo cualquiera, H, G y O están alineados (<b>recta de Euler</b>).</div>
+        <h5 class="fw-bold mt-4" style="color:${COL.R}"><i class="bi bi-2-circle me-1"></i>Construye con las medidas de los lados</h5>
+        <div class="row g-2 align-items-end mb-2">${['a', 'b', 'c'].map(k => `<div class="col-4 col-md-2"><label class="small fw-bold">Lado ${k}</label><input type="number" min="0" step="any" class="form-control" id="ts-${k}" value="${TS[k]}"></div>`).join('')}<div class="col-12 col-md-6 d-flex flex-wrap gap-1">${[['3-4-5', 3, 4, 5], ['5-5-5', 5, 5, 5], ['5-5-8', 5, 5, 8], ['4-6-9', 4, 6, 9], ['2-3-6', 2, 3, 6]].map(([n, a, b, c]) => `<button class="mbtn" data-ts="${a},${b},${c}" style="--c:${COL.R};padding:.1rem .6rem">${n}</button>`).join('')}</div></div><div id="ts-out"></div>
+        <div class="row g-3 mt-2"><div class="col-lg-6"><div class="theo-card" style="--c:${COL.G};margin:0"><h6>Criterios de congruencia (misma forma y tamaño ≅)</h6><ul class="small mb-0">${CONG.map(([k, d]) => `<li><b>${k}:</b> ${d}</li>`).join('')}</ul></div></div><div class="col-lg-6"><div class="theo-card" style="--c:${COL.B};margin:0"><h6>Criterios de semejanza (misma forma ~)</h6><ul class="small mb-1">${SEM.map(([k, d]) => `<li><b>${k}:</b> ${d}</li>`).join('')}</ul><p class="small mb-0"><b>Teorema de Thales:</b> una paralela a un lado de un triángulo forma otro triángulo semejante y divide a los otros dos lados en segmentos proporcionales.</p></div></div></div>`);
+      renderTA(); renderTS();
+    }
+
+    /* ---------- 6. Circunferencia ---------- */
+    let CE = 'circle', CR = 6, CTH = 100, CU = .5, LD = 3, C2 = { r1: 4, r2: 3, d: 8 };
+    const CEL = {
+      circle: ['Circunferencia', COL.B, 'Línea curva cerrada cuyos puntos están todos a la <b>misma distancia (radio)</b> del centro. Es solo el contorno.', 'Perímetro (longitud): C = 2πr = πd'],
+      disk: ['Círculo', COL.T, 'Región del plano <b>encerrada</b> por una circunferencia (incluye el interior).', 'Área: A = πr²'],
+      center: ['Centro (O)', COL.R, 'Punto interior que equidista de todos los puntos de la circunferencia.', ''],
+      radius: ['Radio (r)', COL.R, 'Segmento que une el centro con un punto de la circunferencia.', 'r = d / 2'],
+      diam: ['Diámetro (d)', COL.O, 'Cuerda que pasa por el centro: es la <b>cuerda más larga</b>.', 'd = 2r'],
+      chord: ['Cuerda', COL.G, 'Segmento que une dos puntos cualesquiera de la circunferencia.', 'Longitud: c = 2r·sen(θ/2)'],
+      arc: ['Arco', COL.P, 'Porción de circunferencia entre dos puntos. Se escribe ⌒AB.', 'Longitud: s = (θ/360°)·2πr'],
+      semi: ['Semicircunferencia', COL.K, 'Arco de 180°: mitad de la circunferencia, determinado por un diámetro.', 's = πr'],
+      sec: ['Secante', COL.O, 'Recta que corta a la circunferencia en <b>dos</b> puntos.', 'Distancia al centro d &lt; r'],
+      tan: ['Tangente', COL.R, 'Recta que toca a la circunferencia en <b>un solo punto</b> (punto de tangencia). Es <b>perpendicular al radio</b> en ese punto.', 'Distancia al centro d = r'],
+      sector: ['Sector circular', COL.Y, 'Región del círculo limitada por dos radios y el arco que determinan.', 'Área: A = (θ/360°)·πr²'],
+      seg: ['Segmento circular', COL.T, 'Región del círculo comprendida entre una cuerda y su arco.', 'Área = (r²/2)(θ − sen θ), con θ en radianes'],
+      sag: ['Flecha o sagita', COL.K, 'Segmento perpendicular a la cuerda desde su punto medio hasta el arco.', 'f = r(1 − cos(θ/2))'],
+      crown: ['Corona circular', COL.G, 'Región entre dos circunferencias concéntricas (mismo centro) de radios R y r.', 'Área: A = π(R² − r²)'],
+      cang: ['Ángulo central', COL.B, 'Vértice en el centro; sus lados son radios. Su medida es <b>igual al arco</b> que abarca.', 'θ = arco'],
+      iang: ['Ángulo inscrito', COL.P, 'Vértice en la circunferencia; sus lados son cuerdas. Mide <b>la mitad del arco</b> (o del ángulo central) que abarca.', 'α = θ/2']
+    };
+    function drawCE(el, key) {
+      const cx = 220, cy = 165, r = 118, W = 440, H = 330, c = CEL[key][1], p = a => pt(cx, cy, r, a), L = (p1, p2, col, w = 3) => `<line x1="${p1[0].toFixed(1)}" y1="${p1[1].toFixed(1)}" x2="${p2[0].toFixed(1)}" y2="${p2[1].toFixed(1)}" stroke="${col}" stroke-width="${w}" class="sc-fade" style="--d:.1s"/>`;
+      let s = `<svg viewBox="0 0 ${W} ${H}" class="nline noanim"><circle cx="${cx}" cy="${cy}" r="${r}" fill="${key === 'disk' ? COL.T : 'none'}" fill-opacity=".22" stroke="${key === 'circle' ? COL.B : '#334155'}" stroke-width="${key === 'circle' ? 5 : 3}"/>`;
+      const dot = (q, col = '#334155') => `<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="5" fill="${col}"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="4.5" fill="${key === 'center' ? COL.R : '#334155'}"/>${aTxt(cx + 12, cy + 14, 'O', '#334155', 14)}`;
+      if (key === 'center') s += `<circle cx="${cx}" cy="${cy}" r="14" fill="none" stroke="${COL.R}" stroke-width="2.5" class="sc-pt"/>`;
+      if (key === 'radius') { const q = p(35); s += L([cx, cy], q, c) + dot(q, c) + aTxt((cx + q[0]) / 2 + 4, (cy + q[1]) / 2 - 12, 'r', c, 16); }
+      if (key === 'diam') { const q1 = p(200), q2 = p(20); s += L(q1, q2, c, 4) + dot(q1, c) + dot(q2, c) + aTxt(cx + 10, cy - 14, 'd = 2r', c, 15); }
+      if (key === 'chord') { const q1 = p(40), q2 = p(140); s += L(q1, q2, c, 4) + dot(q1, c) + dot(q2, c) + aTxt(cx, q1[1] - 12, 'cuerda', c, 14); }
+      if (key === 'arc') s += `<path d="${arcP(cx, cy, r, 40, 140)}" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round"/>` + dot(p(40), c) + dot(p(140), c) + aTxt(cx, cy - r - 10, '⌒AB', c, 15);
+      if (key === 'semi') s += `<path d="${arcP(cx, cy, r, 180, 360)}" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round"/>` + L(p(180), p(0), '#334155', 2.5) + aTxt(cx, cy + r + 22, 'semicircunferencia (180°)', c, 13);
+      if (key === 'sec') { const q1 = p(215), q2 = p(325), d = V.sub(q2, q1), e1 = V.sub(q1, V.mul(d, .35)), e2 = V.add(q2, V.mul(d, .35)); s += L(e1, e2, c, 3.5) + dot(q1, c) + dot(q2, c) + aTxt(e2[0], e2[1] - 12, 'secante', c, 14, 'end'); }
+      if (key === 'tan') { const q = p(300), d = [Math.sin(rad(300)), Math.cos(rad(300))]; const e1 = V.add(q, V.mul(d, -110)), e2 = V.add(q, V.mul(d, 110)); s += L([cx, cy], q, '#334155', 2.2) + L(e1, e2, c, 3.5) + dot(q, c) + aTxt(e2[0], e2[1] - 10, 'tangente', c, 14, 'end') + aTxt(q[0] + 8, q[1] + 22, 'T', c, 14) + `<rect x="${(q[0] - 7).toFixed(1)}" y="${(q[1] - 7).toFixed(1)}" width="14" height="14" fill="none" stroke="${c}" stroke-width="2" transform="rotate(${-(300) + 90 + 0} ${q[0].toFixed(1)} ${q[1].toFixed(1)})" opacity="0"/>`; }
+      if (key === 'sector') s += `<path d="${wedge(cx, cy, r, 20, 110)}" fill="${c}" fill-opacity=".35" stroke="${c}" stroke-width="3"/>` + aTxt(cx + 22, cy - 62, 'θ', '#7a4f00', 16);
+      if (key === 'seg') { const a1 = p(40), a2 = p(140); s += `<path d="M${P2(a1)} A${r} ${r} 0 0 0 ${P2(a2)} Z" fill="${c}" fill-opacity=".35" stroke="${c}" stroke-width="3"/>`; }
+      if (key === 'sag') { const a1 = p(40), a2 = p(140), m = [cx, a1[1]], top = p(90); s += L(a1, a2, '#334155', 2.5) + L(m, top, c, 5) + dot(m, c) + dot(top, c) + aTxt(cx + 18, (m[1] + top[1]) / 2, 'f', c, 16); }
+      if (key === 'crown') s += `<path d="M${cx - r} ${cy} a${r} ${r} 0 1 0 ${2 * r} 0 a${r} ${r} 0 1 0 ${-2 * r} 0 M${cx - r * .55} ${cy} a${r * .55} ${r * .55} 0 1 1 ${r * 1.1} 0 a${r * .55} ${r * .55} 0 1 1 ${-r * 1.1} 0" fill="${c}" fill-opacity=".35" fill-rule="evenodd" stroke="#334155" stroke-width="2.5"/>` + L([cx, cy], p(150), '#334155', 2) + aTxt(cx - 62, cy - 52, 'R', c, 15) + aTxt(cx - 20, cy - 16, 'r', c, 15);
+      if (key === 'cang') { const q1 = p(20), q2 = p(120); s += `<path d="${wedge(cx, cy, 40, 20, 120)}" fill="${c}" fill-opacity=".3" stroke="${c}" stroke-width="2.5"/>` + L([cx, cy], q1, c) + L([cx, cy], q2, c) + dot(q1, c) + dot(q2, c) + `<path d="${arcP(cx, cy, r, 20, 120)}" fill="none" stroke="${c}" stroke-width="6"/>` + aTxt(cx + 26, cy - 40, 'θ = 100°', c, 13); }
+      if (key === 'iang') { const q1 = p(20), q2 = p(120), v = p(250); s += L(v, q1, c) + L(v, q2, c) + `<path d="${arcP(cx, cy, r, 20, 120)}" fill="none" stroke="#adb5bd" stroke-width="6"/>` + dot(q1, c) + dot(q2, c) + dot(v, c) + aTxt(v[0], v[1] + 22, 'α = 50° = θ/2', c, 13) + L([cx, cy], q1, '#adb5bd', 2) + L([cx, cy], q2, '#adb5bd', 2); }
+      return (el.innerHTML = s + '</svg>');
+    }
+    function renderCE() { const [n, c, d, f] = CEL[CE]; drawCE($('#ce-fig'), CE); $('#ce-card').innerHTML = `<div class="theo-card" style="--c:${c};margin:0;animation:pop .4s both"><h6>${n}</h6><p class="small mb-1">${d}</p>${f ? `<div class="box2 small"><b>${f}</b></div>` : ''}</div>`; $$('[data-ce]').forEach(b => b.classList.toggle('on', b.dataset.ce === CE)); }
+    function renderCF() {
+      const r = CR, th = CTH, cx = 220, cy = 160, R = 118, a1 = 0, a2 = th, rng = 352 - th - 16, psi = rng > 0 ? th + 8 + CU * rng : th + 8, p = a => pt(cx, cy, R, a), A = p(a1), B = p(a2), Pp = p(psi);
+      const arc = th / 360 * 2 * Math.PI * r, sec = th / 360 * Math.PI * r * r, ch = 2 * r * Math.sin(rad(th / 2)), f = r * (1 - Math.cos(rad(th / 2))), seg = r * r / 2 * (rad(th) - Math.sin(rad(th)));
+      let s = `<svg viewBox="0 0 440 320" class="nline noanim"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#334155" stroke-width="3"/><path d="${wedge(cx, cy, R, a1, a2)}" fill="${COL.Y}" fill-opacity=".3" stroke="${COL.Y}" stroke-width="2.5"/><path d="${arcP(cx, cy, R, a1, a2)}" fill="none" stroke="${COL.P}" stroke-width="7" stroke-linecap="round"/>`;
+      s += `<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${COL.G}" stroke-width="2.5" stroke-dasharray="6 4"/>`;
+      if (rng > 0) s += `<line x1="${Pp[0].toFixed(1)}" y1="${Pp[1].toFixed(1)}" x2="${A[0].toFixed(1)}" y2="${A[1].toFixed(1)}" stroke="${COL.K}" stroke-width="3"/><line x1="${Pp[0].toFixed(1)}" y1="${Pp[1].toFixed(1)}" x2="${B[0].toFixed(1)}" y2="${B[1].toFixed(1)}" stroke="${COL.K}" stroke-width="3"/><circle cx="${Pp[0].toFixed(1)}" cy="${Pp[1].toFixed(1)}" r="6" fill="${COL.K}"/>` + aTxt(Pp[0] + (Pp[0] > cx ? 14 : -14), Pp[1] + (Pp[1] > cy ? 18 : -10), 'P', COL.K, 14);
+      s += `<circle cx="${cx}" cy="${cy}" r="4" fill="#334155"/><circle cx="${A[0]}" cy="${A[1]}" r="5" fill="${COL.P}"/><circle cx="${B[0].toFixed(1)}" cy="${B[1].toFixed(1)}" r="5" fill="${COL.P}"/>${aTxt(A[0] + 14, A[1], 'A', COL.P, 14)}${aTxt(B[0] + (B[0] > cx ? 12 : -12), B[1] - 8, 'B', COL.P, 14)}${aTxt(cx + 22, cy - 10 - (th > 40 ? 0 : 14), ft(th, 0) + '°', '#9a6700', 14)}`;
+      $('#cf-fig').innerHTML = s + '</svg>';
+      $('#cf-r').textContent = r; $('#cf-th').textContent = th;
+      $('#cf-out').innerHTML = `<div class="row g-2">${[['Diámetro', 2 * r, COL.O, 'd = 2r'], ['Perímetro', 2 * Math.PI * r, COL.B, '2πr'], ['Área del círculo', Math.PI * r * r, COL.T, 'πr²'], ['Longitud del arco AB', arc, COL.P, 's = θ·πr/180'], ['Área del sector', sec, COL.Y, 'θπr²/360'], ['Cuerda AB', ch, COL.G, '2r·sen(θ/2)'], ['Flecha', f, COL.K, 'r(1−cos θ/2)'], ['Área del segmento', seg, COL.T, '½r²(θ−senθ)']].map(([t, v, c, fm], i) => `<div class="col-6"><div class="tile" style="--c:${c};--i:${i}"><div class="tl">${t}</div><div class="fw-bold" style="color:${c}">${ft(v, 2)}</div><small>${fm}</small></div></div>`).join('')}</div><div class="tip-box s-ok small mt-2"><b>Ángulo inscrito ∠APB = θ/2 = ${ft(th / 2, 1)}°</b>${rng > 0 ? ': mueve P y verás que no cambia (cualquier punto del arco mayor ve a AB bajo el mismo ángulo).' : '.'}${th === 180 ? ' Con θ = 180° (AB es diámetro) el inscrito mide 90°.' : ''}</div><div class="small text-muted mt-1">θ en radianes: ${ft(rad(th), 3)} → s = θ·r = ${ft(rad(th) * r, 2)}</div>`;
+    }
+    function renderCP() {
+      const r = 5, d = LD, cx = 160, cy = 110, k = 18; let s = `<svg viewBox="0 0 320 220" class="nline noanim"><circle cx="${cx}" cy="${cy}" r="${r * k}" fill="${COL.B}" fill-opacity=".1" stroke="#334155" stroke-width="3"/><circle cx="${cx}" cy="${cy}" r="3.5" fill="#334155"/>`;
+      const y = cy + d * k, col = d > r ? COL.N : d === r ? COL.R : COL.O; s += `<line x1="10" x2="310" y1="${y}" y2="${y}" stroke="${col}" stroke-width="3.5"/><line x1="${cx}" y1="${cy}" x2="${cx}" y2="${y}" stroke="#334155" stroke-dasharray="5 4"/>${aTxt(cx + 8, (cy + y) / 2, 'd = ' + d, '#334155', 13, 'start')}${aTxt(cx - 14, cy - 8, 'r = 5', '#334155', 12, 'end')}`;
+      if (d < r) { const h = Math.sqrt(r * r - d * d) * k; s += `<circle cx="${cx - h}" cy="${y}" r="5" fill="${COL.O}"/><circle cx="${cx + h}" cy="${y}" r="5" fill="${COL.O}"/>`; } if (d === r) s += `<circle cx="${cx}" cy="${y}" r="6" fill="${COL.R}"/>`;
+      $('#cp-fig').innerHTML = s + '</svg>'; $('#cp-d').textContent = d;
+      $('#cp-txt').innerHTML = d > r ? `<b>d &gt; r → recta exterior</b>: no toca a la circunferencia (0 puntos).` : d === r ? `<b>d = r → recta tangente</b>: 1 punto; es perpendicular al radio.` : `<b>d &lt; r → recta secante</b>: 2 puntos; la cuerda mide 2√(r² − d²) = ${ft(2 * Math.sqrt(r * r - d * d), 2)}.`;
+    }
+    function renderC2() {
+      const { r1, r2, d } = C2, k = 14, cy = 90, x1 = 50 + r1 * k; let s = `<svg viewBox="0 0 380 190" class="nline noanim"><circle cx="${x1}" cy="${cy}" r="${r1 * k}" fill="${COL.B}" fill-opacity=".18" stroke="${COL.B}" stroke-width="3"/><circle cx="${x1 + d * k}" cy="${cy}" r="${r2 * k}" fill="${COL.O}" fill-opacity=".18" stroke="${COL.O}" stroke-width="3"/><circle cx="${x1}" cy="${cy}" r="3.5" fill="${COL.B}"/><circle cx="${x1 + d * k}" cy="${cy}" r="3.5" fill="${COL.O}"/></svg>`;
+      const df = Math.abs(r1 - r2), sm = r1 + r2, t = d === 0 ? (r1 === r2 ? 'coincidentes (la misma circunferencia)' : 'concéntricas') : d > sm ? 'exteriores (separadas)' : d === sm ? 'tangentes exteriormente (1 punto)' : d > df ? 'secantes (2 puntos)' : d === df ? 'tangentes interiormente (1 punto)' : 'interiores (una dentro de otra, sin tocarse)';
+      $('#c2-fig').innerHTML = s; $('#c2-t').innerHTML = `<b>d = ${d}</b> · r₁ + r₂ = ${sm} · |r₁ − r₂| = ${df} → circunferencias <b style="color:${COL.P}">${t}</b>`; $('#c2-d').textContent = d; $('#c2-r1').textContent = r1; $('#c2-r2').textContent = r2;
+    }
+    function renderS6() {
+      const THM = [['Ángulo inscrito', 'Mide la mitad del arco que abarca: α = θ/2.'], ['Inscrito en una semicircunferencia', 'Siempre mide 90° (el triángulo formado con el diámetro es rectángulo: Teorema de Thales).'], ['Inscritos que abarcan el mismo arco', 'Son iguales.'], ['Tangente y radio', 'La tangente es perpendicular al radio en el punto de tangencia.'], ['Diámetro ⊥ cuerda', 'Un diámetro perpendicular a una cuerda la divide en dos partes iguales (y a su arco).'], ['Ángulo semi-inscrito', 'Formado por tangente y cuerda: mide la mitad del arco que abarca.'], ['Ángulo interior', 'Dos cuerdas que se cortan dentro: mide la semisuma de los arcos que abarcan.'], ['Ángulo exterior', 'Dos secantes (o tangente y secante) desde un punto exterior: mide la semidiferencia de los arcos.'], ['Cuadrilátero cíclico', 'Si sus 4 vértices están en una circunferencia, los ángulos opuestos suman 180°.'], ['Tangentes desde un punto exterior', 'Los dos segmentos tangentes tienen la misma longitud.']];
+      $('#s6').innerHTML = lesson(6, 'Geometría de la circunferencia', 'Elementos, nombres, fórmulas, ángulos y posiciones relativas', COL.T, `
+        <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.T}">C = 2πr &nbsp;·&nbsp; A = πr²<small>π ≈ 3.14159… es la razón entre el perímetro y el diámetro de cualquier circunferencia</small></div></div><div class="col-lg-6"><ul class="small mb-0" style="line-height:1.75"><li><b>Circunferencia</b> = contorno (curva). <b>Círculo</b> = región interior. No son lo mismo.</li><li>Perímetro de la circunferencia: <b>longitud</b>; área: solo del círculo.</li><li>π = C/d: ¡siempre el mismo número!</li></ul></div></div>
+        <h5 class="fw-bold" style="color:${COL.T}"><i class="bi bi-1-circle me-1"></i>Elementos (toca cada uno)</h5>
+        <div class="d-flex flex-wrap gap-1 mb-2">${Object.entries(CEL).map(([k, v]) => `<button class="mbtn" data-ce="${k}" style="--c:${v[1]};padding:.15rem .7rem">${v[0]}</button>`).join('')}</div>
+        <div class="row g-3 align-items-center"><div class="col-lg-7"><div class="viz-card"><div id="ce-fig"></div></div></div><div class="col-lg-5" id="ce-card"></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.T}"><i class="bi bi-2-circle me-1"></i>Laboratorio de medidas: radio, ángulo central y ángulo inscrito</h5>
+        <div class="row g-2 mb-2"><div class="col-md-4"><label class="small fw-bold">Radio r = <span id="cf-r" style="color:${COL.T}"></span></label><input type="range" class="form-range" id="cf-rin" min="1" max="12" value="${CR}"></div><div class="col-md-4"><label class="small fw-bold">Ángulo central θ = <span id="cf-th" style="color:${COL.Y}"></span>°</label><input type="range" class="form-range" id="cf-thin" min="10" max="350" step="5" value="${CTH}"></div><div class="col-md-4"><label class="small fw-bold" style="color:${COL.K}">Mueve el vértice P</label><input type="range" class="form-range" id="cf-u" min="0" max="100" value="${CU * 100}"></div></div>
+        <div class="row g-3"><div class="col-lg-6"><div class="viz-card"><div id="cf-fig"></div></div></div><div class="col-lg-6" id="cf-out"></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.T}"><i class="bi bi-3-circle me-1"></i>Posiciones relativas</h5>
+        <div class="row g-3"><div class="col-lg-6"><div class="theo-card" style="--c:${COL.O};margin:0"><h6>Recta y circunferencia (r = 5)</h6><label class="small fw-bold">Distancia del centro a la recta d = <span id="cp-d"></span></label><input type="range" class="form-range" id="cp-in" min="0" max="8" value="${LD}"><div id="cp-fig"></div><div class="small" id="cp-txt"></div></div></div>
+          <div class="col-lg-6"><div class="theo-card" style="--c:${COL.B};margin:0"><h6>Dos circunferencias</h6><div class="row g-1"><div class="col-4"><label class="small fw-bold">r₁ = <span id="c2-r1"></span></label><input type="range" class="form-range" id="c2-r1in" min="1" max="6" value="${C2.r1}"></div><div class="col-4"><label class="small fw-bold">r₂ = <span id="c2-r2"></span></label><input type="range" class="form-range" id="c2-r2in" min="1" max="6" value="${C2.r2}"></div><div class="col-4"><label class="small fw-bold">d = <span id="c2-d"></span></label><input type="range" class="form-range" id="c2-din" min="0" max="14" value="${C2.d}"></div></div><div id="c2-fig"></div><div class="small" id="c2-t"></div></div></div></div>
+        <h5 class="fw-bold mt-4" style="color:${COL.T}"><i class="bi bi-4-circle me-1"></i>Teoremas básicos</h5><div class="row g-2">${THM.map(([t, d], i) => `<div class="col-md-6"><div class="inic" style="--c:${COL.T};--i:${i}"><i class="bi bi-patch-check"></i><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div></div>`).join('')}</div>`);
+      renderCE(); renderCF(); renderCP(); renderC2();
+    }
+
+    /* ---------- 7. Glosario ---------- */
+    const GL = [
+      ['Punto', 'Rectas', 'Ubicación en el espacio sin dimensiones.'], ['Recta', 'Rectas', 'Línea sin principio ni fin que se extiende en dos sentidos.'], ['Semirrecta', 'Rectas', 'Parte de una recta con origen y sin fin en un sentido.'], ['Segmento', 'Rectas', 'Parte de una recta limitada por dos puntos extremos.'], ['Plano', 'Rectas', 'Superficie plana infinita; lo determinan 3 puntos no alineados.'], ['Rectas paralelas', 'Rectas', 'Rectas coplanares que no se cortan (∥).'], ['Rectas secantes', 'Rectas', 'Rectas que se cortan en un punto.'], ['Rectas perpendiculares', 'Rectas', 'Secantes que forman cuatro ángulos de 90° (⊥).'], ['Mediatriz', 'Rectas', 'Recta perpendicular a un segmento por su punto medio; sus puntos equidistan de los extremos.'], ['Punto medio', 'Rectas', 'Punto que divide un segmento en dos partes iguales.'],
+      ['Ángulo', 'Ángulos', 'Abertura entre dos semirrectas con origen común (vértice).'], ['Vértice', 'Ángulos', 'Punto común de los lados de un ángulo (o de un polígono).'], ['Lados de un ángulo', 'Ángulos', 'Las dos semirrectas que lo forman: inicial y final.'], ['Bisectriz', 'Ángulos', 'Semirrecta que divide un ángulo en dos ángulos iguales.'], ['Ángulo agudo', 'Ángulos', 'Mide entre 0° y 90°.'], ['Ángulo recto', 'Ángulos', 'Mide exactamente 90°.'], ['Ángulo obtuso', 'Ángulos', 'Mide entre 90° y 180°.'], ['Ángulo llano', 'Ángulos', 'Mide 180°: sus lados forman una recta.'], ['Ángulo cóncavo (reflejo)', 'Ángulos', 'Mide entre 180° y 360°.'], ['Ángulo completo (perigonal)', 'Ángulos', 'Mide 360°: una vuelta.'], ['Ángulos complementarios', 'Ángulos', 'Dos ángulos que suman 90°.'], ['Ángulos suplementarios', 'Ángulos', 'Dos ángulos que suman 180°.'], ['Ángulos conjugados (explementarios)', 'Ángulos', 'Dos ángulos que suman 360°.'], ['Ángulos adyacentes', 'Ángulos', 'Comparten vértice y un lado; no se traslapan.'], ['Par lineal', 'Ángulos', 'Adyacentes cuyos lados no comunes forman una recta: suman 180°.'], ['Ángulos opuestos por el vértice', 'Ángulos', 'Los lados de uno prolongan los del otro; son iguales.'], ['Ángulos consecutivos', 'Ángulos', 'Adyacentes seguidos que comparten lados sucesivos.'], ['Grado (°)', 'Medidas', '1/360 de una vuelta completa. 1° = 60′; 1′ = 60″.'], ['Radián (rad)', 'Medidas', 'Ángulo central que abarca un arco igual al radio. 180° = π rad.'], ['Transportador', 'Medidas', 'Instrumento para medir y trazar ángulos.'],
+      ['Transversal', 'Paralelas', 'Recta que corta a otras dos o más rectas.'], ['Ángulos correspondientes', 'Paralelas', 'Misma posición en cada paralela y mismo lado de la transversal; iguales si hay paralelismo.'], ['Ángulos alternos internos', 'Paralelas', 'Entre las paralelas y en lados opuestos de la transversal; iguales.'], ['Ángulos alternos externos', 'Paralelas', 'Fuera de las paralelas y en lados opuestos; iguales.'], ['Ángulos conjugados internos', 'Paralelas', 'Entre las paralelas y del mismo lado; suman 180°.'], ['Ángulos conjugados externos', 'Paralelas', 'Fuera de las paralelas y del mismo lado; suman 180°.'], ['Postulado de las paralelas', 'Paralelas', 'Por un punto exterior a una recta pasa una y solo una paralela a ella.'], ['Criterio de paralelismo', 'Paralelas', 'Si correspondientes o alternos son iguales (o conjugados suman 180°), las rectas son paralelas.'],
+      ['Triángulo', 'Triángulos', 'Polígono de tres lados.'], ['Equilátero', 'Triángulos', 'Tres lados iguales (y tres ángulos de 60°).'], ['Isósceles', 'Triángulos', 'Dos lados iguales; los ángulos opuestos a ellos también son iguales.'], ['Escaleno', 'Triángulos', 'Tres lados distintos.'], ['Acutángulo', 'Triángulos', 'Tres ángulos agudos.'], ['Rectángulo', 'Triángulos', 'Un ángulo recto; lados: catetos e hipotenusa.'], ['Obtusángulo', 'Triángulos', 'Un ángulo obtuso.'], ['Hipotenusa', 'Triángulos', 'Lado opuesto al ángulo recto; el más largo.'], ['Catetos', 'Triángulos', 'Los dos lados que forman el ángulo recto.'], ['Ángulo interior', 'Triángulos', 'Formado por dos lados dentro del triángulo; suman 180°.'], ['Ángulo exterior', 'Triángulos', 'Entre un lado y la prolongación de otro; = suma de los dos interiores no adyacentes.'], ['Desigualdad triangular', 'Triángulos', 'Cada lado es menor que la suma de los otros dos.'], ['Altura', 'Triángulos', 'Perpendicular desde un vértice al lado opuesto. Se cortan en el ortocentro.'], ['Mediana', 'Triángulos', 'Vértice → punto medio del lado opuesto. Se cortan en el baricentro.'], ['Mediatriz (triángulo)', 'Triángulos', 'Perpendicular a un lado en su punto medio. Se cortan en el circuncentro.'], ['Bisectriz (triángulo)', 'Triángulos', 'Divide un ángulo interior en dos. Se cortan en el incentro.'], ['Ortocentro', 'Triángulos', 'Punto de corte de las alturas.'], ['Baricentro', 'Triángulos', 'Punto de corte de las medianas (centro de gravedad); divide cada mediana en 2:1.'], ['Circuncentro', 'Triángulos', 'Punto de corte de las mediatrices; centro de la circunferencia circunscrita.'], ['Incentro', 'Triángulos', 'Punto de corte de las bisectrices; centro de la circunferencia inscrita.'], ['Congruencia (≅)', 'Triángulos', 'Misma forma y tamaño. Criterios: LLL, LAL, ALA, AAL.'], ['Semejanza (~)', 'Triángulos', 'Misma forma, lados proporcionales y ángulos iguales. Criterios: AA, LAL, LLL.'], ['Teorema de Pitágoras', 'Triángulos', 'En un triángulo rectángulo: a² + b² = c².'], ['Perímetro', 'Medidas', 'Suma de las longitudes de los lados de una figura.'], ['Área de un triángulo', 'Medidas', 'A = (b·h)/2; o Herón: √[s(s−a)(s−b)(s−c)].'],
+      ['Circunferencia', 'Circunferencia', 'Conjunto de puntos del plano que equidistan de un centro.'], ['Círculo', 'Circunferencia', 'Región del plano limitada por una circunferencia.'], ['Centro', 'Circunferencia', 'Punto equidistante de todos los de la circunferencia.'], ['Radio', 'Circunferencia', 'Segmento del centro a un punto de la circunferencia.'], ['Diámetro', 'Circunferencia', 'Cuerda que pasa por el centro: d = 2r.'], ['Cuerda', 'Circunferencia', 'Segmento que une dos puntos de la circunferencia.'], ['Arco', 'Circunferencia', 'Porción de circunferencia entre dos puntos.'], ['Semicircunferencia', 'Circunferencia', 'Arco de 180°.'], ['Secante (círculo)', 'Circunferencia', 'Recta que corta a la circunferencia en dos puntos.'], ['Tangente', 'Circunferencia', 'Recta que la toca en un solo punto; es ⊥ al radio.'], ['Punto de tangencia', 'Circunferencia', 'El único punto común entre la tangente y la circunferencia.'], ['Sector circular', 'Circunferencia', 'Región entre dos radios y su arco.'], ['Segmento circular', 'Circunferencia', 'Región entre una cuerda y su arco.'], ['Flecha (sagita)', 'Circunferencia', 'Segmento del punto medio de la cuerda al punto medio del arco.'], ['Corona circular', 'Circunferencia', 'Región entre dos circunferencias concéntricas.'], ['Circunferencias concéntricas', 'Circunferencia', 'Tienen el mismo centro y radios distintos.'], ['Ángulo central', 'Circunferencia', 'Vértice en el centro; mide lo mismo que su arco.'], ['Ángulo inscrito', 'Circunferencia', 'Vértice en la circunferencia; mide la mitad de su arco.'], ['Ángulo semi-inscrito', 'Circunferencia', 'Tangente y cuerda; mide la mitad de su arco.'], ['Polígono inscrito', 'Circunferencia', 'Sus vértices están en la circunferencia.'], ['Polígono circunscrito', 'Circunferencia', 'Sus lados son tangentes a la circunferencia.'], ['π (pi)', 'Medidas', 'Razón C/d = 3.14159… Es irracional.'], ['Longitud de la circunferencia', 'Medidas', 'C = 2πr.'], ['Área del círculo', 'Medidas', 'A = πr².']
+    ];
+    let GQ = '', GC = 'Todos';
+    function renderGL() {
+      const cats = ['Todos', ...new Set(GL.map(g => g[1]))], q = GQ.trim().toLowerCase(), cc = { Rectas: COL.N, Ángulos: COL.B, Medidas: COL.Y, Paralelas: COL.G, Triángulos: COL.R, Circunferencia: COL.T };
+      const list = GL.filter(g => (GC === 'Todos' || g[1] === GC) && (!q || (g[0] + ' ' + g[2]).toLowerCase().includes(q)));
+      $('#gl-cats').innerHTML = cats.map(c => `<button class="mbtn ${GC === c ? 'on' : ''}" data-gc="${c}" style="--c:${cc[c] || COL.K}">${c}</button>`).join('');
+      $('#gl-list').innerHTML = list.length ? list.map(([t, c, d], i) => `<div class="col-md-6 col-lg-4"><div class="gcard" style="--c:${cc[c]};animation-delay:${Math.min(i, 12) * 30}ms"><span class="gcat">${c}</span><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div>`).join('') : '<div class="col-12 text-muted">Sin resultados.</div>';
+      $('#gl-n').textContent = `${list.length} de ${GL.length} términos`;
+    }
+    function renderS7() {
+      $('#s7').innerHTML = lesson(7, 'Glosario ilustrado', 'Todos los conceptos del tema, con buscador y filtros', COL.K, `<div class="row g-2 mb-2 align-items-center"><div class="col-md-5"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="gl-q" class="form-control" placeholder="Busca un término (p. ej. tangente, alternos…)"></div></div><div class="col-md-7 small text-muted" id="gl-n"></div></div><div class="d-flex flex-wrap gap-1 mb-3" id="gl-cats"></div><div class="row g-2" id="gl-list"></div>`);
+      renderGL();
+    }
+
+    /* ---------- 8. Docencia ---------- */
+    function renderS8() {
+      const SEQ = [['Sesión 1', 'Ángulos: medida, clasificación y pares (s. 1-2)'], ['Sesión 2', 'Paralelas y transversal (s. 3)'], ['Sesión 3', 'Ecuaciones con ángulos (s. 4)'], ['Sesión 4', 'Triángulos y sus rectas notables (s. 5)'], ['Sesión 5', 'Circunferencia, ángulos y medidas (s. 6)']];
+      const ERR = [['Pensar que alternos y correspondientes son iguales siempre', 'Solo son iguales si las rectas son <b>paralelas</b>. Antes de usar la relación, pregunta: ¿hay paralelismo? (marcas ⟩⟩).'], ['Confundir «alternos» con «conjugados»', 'Alternos: lados <u>opuestos</u> (Z) → iguales. Conjugados: <u>mismo</u> lado (C) → suman 180°.'], ['Resolver igualando cuando deben sumar 180°', 'Primero identifica el par: ¿iguales o suplementarios? Después escribe la ecuación.'], ['Medir con el transportador sin alinear el vértice', 'El centro del transportador va en el vértice y una de las bases sobre un lado.'], ['Creer que el ángulo exterior del triángulo es 180° − suma', 'El exterior es 180° menos <u>un</u> interior, y es igual a la suma de los dos interiores no adyacentes.'], ['Clasificar por ángulos con solo mirar el dibujo', 'Confirma con medidas: un ángulo «casi recto» puede no serlo. Usa a² + b² frente a c².'], ['Aceptar cualquier tres medidas como lados', 'Hay que verificar la desigualdad triangular.'], ['Confundir circunferencia con círculo', 'Circunferencia: curva (longitud). Círculo: región (área).'], ['Mezclar radio y diámetro en las fórmulas', 'A = πr² usa el <u>radio</u>; si te dan el diámetro, divídelo entre 2.'], ['Confundir ángulo inscrito con central', 'Central: vértice en el centro (= arco). Inscrito: vértice en la circunferencia (= ½ arco).'], ['Calcular en grados con la calculadora en radianes', 'Revisa el modo DEG / RAD antes de usar seno y coseno.']];
+      const ACT = [['Paralelas en el aula', 'Identificar rectas paralelas y transversales en ventanas, pisos y calles; medir con transportador y comprobar relaciones (otras disciplinas: arquitectura).'], ['Doblar y rasgar', 'Rasgar las tres esquinas de un triángulo de papel y juntarlas: forman un ángulo llano (suma 180°).'], ['Mapa de la colonia', 'Con un plano de calles, encontrar calles paralelas/perpendiculares y calcular ángulos de cruce (ciudadanía).'], ['Rompecabezas de congruencia', 'Construir triángulos con LLL, LAL y ALA y comprobar cuáles quedan idénticos.'], ['Medir π', 'Medir perímetro y diámetro de objetos circulares (tapas, platos) y calcular C/d; promediar los resultados.'], ['Geometría dinámica', 'Usar un software gratuito (GeoGebra) para mover puntos y verificar teoremas (tecnología).'], ['Diseño con circunferencias', 'Crear una rosetón o logotipo con circunferencias tangentes y secantes, describiendo cada elemento (arte, equidad de participación).'], ['Sustentabilidad', 'Calcular el área de tapas o coronas para optimizar material en envases (sustentabilidad).']];
+      const EVAL = [['Dos paralelas cortadas por una transversal: un ángulo mide 72°. ¿Cuánto mide su alterno interno? ¿Y su conjugado interno?', 'Alterno interno: 72° (iguales). Conjugado interno: 180° − 72° = 108°.'], ['Si (3x + 10)° y (5x − 30)° son alternos internos entre paralelas, halla x.', 'Iguales: 3x + 10 = 5x − 30 → 2x = 40 → x = 20 (ángulos de 70°).'], ['Si (2x + 20)° y (4x − 8)° son conjugados internos, halla x.', 'Suman 180: 6x + 12 = 180 → x = 28 (ángulos de 76° y 104°).'], ['Un triángulo tiene ángulos de 50° y 65°. ¿Cuánto mide el tercero? ¿Y el exterior opuesto al de 50°?', 'Tercero: 180 − 115 = 65° (isósceles). Exterior en el de 50°: 130° = 65° + 65°.'], ['¿Pueden ser 3 cm, 4 cm y 8 cm los lados de un triángulo?', 'No: 3 + 4 = 7 < 8 (no cumple la desigualdad triangular).'], ['Un triángulo tiene lados 6, 8 y 10. Clasifícalo y calcula su área.', 'Rectángulo y escaleno (6² + 8² = 10²). Área = (6·8)/2 = 24.'], ['Una circunferencia tiene radio 5 cm. Calcula perímetro, área y la longitud de un arco de 72°.', 'C = 10π ≈ 31.42 cm; A = 25π ≈ 78.54 cm²; arco = (72/360)·10π = 2π ≈ 6.28 cm.'], ['Un ángulo central mide 80°. ¿Cuánto mide un inscrito que abarca el mismo arco?', '40° (la mitad del central).'], ['Si un triángulo está inscrito en una circunferencia y un lado es un diámetro, ¿cómo es?', 'Rectángulo (el ángulo opuesto al diámetro mide 90°).']];
+      const RUB = [['Clasifica y mide ángulos', 'Los identifica con ayuda', 'Los clasifica y mide con precisión', 'Justifica relaciones entre ellos'], ['Paralelas y transversal', 'Nombra algunos pares', 'Calcula ángulos con la relación correcta', 'Demuestra o argumenta paralelismo'], ['Resuelve ecuaciones con ángulos', 'Plantea con apoyo', 'Plantea, resuelve y comprueba', 'Propone y resuelve sus propios problemas'], ['Triángulos', 'Clasifica por un criterio', 'Clasifica por lados y ángulos y calcula', 'Usa rectas notables y criterios de congruencia'], ['Circunferencia', 'Reconoce elementos', 'Calcula perímetro, área, arcos y sectores', 'Aplica teoremas de ángulos en la circunferencia']];
+      $('#s8').innerHTML = lesson(8, 'Manual para la docencia', 'Secuencia, errores frecuentes, actividades, evaluación y rúbrica', '#2f9e44', `
+        <div class="tip-box s-ok small mb-3"><i class="bi bi-info-circle me-1"></i><strong>Método:</strong> resolución de problemas con construcción y medición. Primero <u>explorar</u> (mover, medir, conjeturar), después <u>formalizar</u> (nombres, relaciones, fórmulas) y por último <u>aplicar</u> (ecuaciones y situaciones reales). Puede trabajarse de forma individual, en equipo y en plenaria, con enlaces a otras disciplinas, perspectiva de género, ciudadanía, sustentabilidad y tecnología.</div>
+        <h5 class="fw-bold" style="color:#2f9e44"><i class="bi bi-calendar-week me-1"></i>Secuencia sugerida (5 sesiones)</h5><div class="flow mb-3">${SEQ.map(([a, b], i) => `<div class="flow-i" style="--c:${[COL.B, COL.G, COL.P, COL.R, COL.T][i]};--i:${i};flex-direction:column;align-items:flex-start;max-width:230px"><strong>${a}</strong><span style="font-size:.78rem;font-weight:500">${b}</span></div>`).join('')}</div>
+        <div class="row g-3"><div class="col-lg-6"><h5 class="fw-bold" style="color:#a61e1e"><i class="bi bi-exclamation-octagon me-1"></i>Errores frecuentes</h5>${ERR.map(([t, d]) => `<details class="err"><summary>${t}</summary><div class="small mt-2">${d}</div></details>`).join('')}</div>
+          <div class="col-lg-6"><h5 class="fw-bold" style="color:#e8590c"><i class="bi bi-people me-1"></i>Actividades de aula</h5>${ACT.map(([t, d], i) => `<div class="inic" style="--c:#e8590c;--i:${i}"><div class="apn" style="background:#e8590c">${i + 1}</div><div><div class="fw-bold">${t}</div><div class="small">${d}</div></div></div>`).join('')}</div></div>
+        <h5 class="fw-bold mt-4" style="color:#7048e8"><i class="bi bi-patch-question me-1"></i>Preguntas de evaluación (toca para ver la respuesta)</h5>${EVAL.map(([q, a]) => `<details class="err" style="border-left-color:#7048e8"><summary style="color:#4c2fb0">${q}</summary><div class="small mt-2 text-success fw-semibold">${a}</div></details>`).join('')}
+        <h5 class="fw-bold mt-4" style="color:#7048e8"><i class="bi bi-ui-checks me-1"></i>Rúbrica sugerida</h5><div class="table-responsive"><table class="table table-bordered bg-white small mb-0"><thead class="table-light"><tr><th>Criterio</th><th>En desarrollo</th><th>Logrado</th><th>Destacado</th></tr></thead><tbody>${RUB.map(r => `<tr><td class="fw-bold">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>`);
+    }
+
+    /* ---------- Formulario (modal) ---------- */
+    let FTAB = 0, FV = { al: 50, th: 65, a: 3, b: 4, c: 5, r: 5, cth: 90 };
+    const FTN = ['Ángulos', 'Paralelas y transversal', 'Triángulos', 'Circunferencia'];
+    function frow(t, f, d, c) { return `<tr><td class="fl"><span class="badge-v" style="background:${c}">${t}</span><div class="mt-3">${fd(f)}</div></td><td class="fr2">${d}</td></tr>`; }
+    function renderForm() {
+      const tabs = FTN.map((t, i) => `<li class="nav-item"><button class="nav-link ${FTAB === i ? 'active' : ''}" data-ftab="${i}">${t}</button></li>`).join(''); let body = '';
+      if (FTAB === 0) {
+        const a = FV.al; body = `<table class="form-tbl">${frow('Complementario', T`β = 90° - α`, 'Dos ángulos que suman 90°.', COL.B)}${frow('Suplementario', T`β = 180° - α`, 'Dos ángulos que suman 180° (par lineal).', COL.O)}${frow('Conjugado', T`β = 360° - α`, 'Dos ángulos que suman 360°.', COL.P)}${frow('Opuestos por el vértice', T`α = β`, 'Siempre iguales.', COL.G)}${frow('Bisectriz', T`\frac{α}{2}`, 'Cada parte mide la mitad del ángulo.', COL.T)}${frow('Grados ↔ radianes', T`\text{rad} = \text{°}\cdot\frac{π}{180}`, '180° = π rad; 90° = π/2; 60° = π/3; 45° = π/4; 30° = π/6.', COL.K)}</table>
+          <div class="theo-card" style="--c:${COL.B}"><h6><i class="bi bi-calculator me-1"></i>Calculadora</h6><div class="row g-2 align-items-end"><div class="col-4"><label class="small fw-bold">α (grados)</label><input type="number" step="any" id="fv-al" class="form-control form-control-sm" value="${a}"></div><div class="col-8"><div class="box">Complemento: <b>${a < 90 ? ft(90 - a, 2) + '°' : '—'}</b> · Suplemento: <b>${a < 180 ? ft(180 - a, 2) + '°' : '—'}</b> · Conjugado: <b>${a < 360 ? ft(360 - a, 2) + '°' : '—'}</b> · ${ft(a, 2)}° = <b>${ft(rad(a), 4)} rad</b> · clase: <b>${kind(a)}</b></div></div></div></div>`;
+      } else if (FTAB === 1) {
+        const th = FV.th; body = `<table class="form-tbl">${frow('Correspondientes', T`∠1 = ∠5 \;;\; ∠2 = ∠6 \;;\; ∠3 = ∠7 \;;\; ∠4 = ∠8`, 'Misma posición en cada paralela: iguales.', COL.G)}${frow('Alternos internos', T`∠3 = ∠5 \;;\; ∠4 = ∠6`, 'Entre paralelas, lados opuestos: iguales.', COL.O)}${frow('Alternos externos', T`∠1 = ∠7 \;;\; ∠2 = ∠8`, 'Fuera de paralelas, lados opuestos: iguales.', COL.B)}${frow('Conjugados internos', T`∠4 + ∠5 = 180° \;;\; ∠3 + ∠6 = 180°`, 'Entre paralelas, mismo lado: suplementarios.', COL.P)}${frow('Conjugados externos', T`∠1 + ∠8 = 180° \;;\; ∠2 + ∠7 = 180°`, 'Fuera de paralelas, mismo lado: suplementarios.', COL.K)}${frow('Ecuaciones', T`\text{iguales: } e_1 = e_2 \qquad \text{suplementarios: } e_1 + e_2 = 180`, 'e₁ y e₂ son las expresiones algebraicas de los ángulos.', COL.T)}</table>
+          <div class="theo-card" style="--c:${COL.G}"><h6><i class="bi bi-calculator me-1"></i>Dado un ángulo θ, los ocho ángulos</h6><div class="row g-2 align-items-end"><div class="col-4"><label class="small fw-bold">θ (grados)</label><input type="number" id="fv-th" min="1" max="179" class="form-control form-control-sm" value="${th}"></div><div class="col-8"><div class="box">∠1 = ∠3 = ∠5 = ∠7 = <b style="color:${COL.G}">${th}°</b><br>∠2 = ∠4 = ∠6 = ∠8 = <b style="color:${COL.O}">${180 - th}°</b></div></div></div></div>`;
+      } else if (FTAB === 2) {
+        const { a, b, c } = FV, ok = a > 0 && b > 0 && c > 0 && a + b > c && a + c > b && b + c > a, s = (a + b + c) / 2, area = ok ? Math.sqrt(s * (s - a) * (s - b) * (s - c)) : NaN;
+        body = `<table class="form-tbl">${frow('Suma de ángulos', T`A + B + C = 180°`, 'Ángulos interiores de cualquier triángulo.', COL.R)}${frow('Ángulo exterior', T`ext = A + C = 180° - B`, 'Igual a la suma de los dos interiores no adyacentes.', COL.Y)}${frow('Desigualdad triangular', T`a + b > c \;;\; a + c > b \;;\; b + c > a`, 'Condición para que existan los tres lados.', COL.P)}${frow('Perímetro y semiperímetro', T`P = a + b + c \qquad s = \frac{P}{2}`, 'Suma de los tres lados.', COL.B)}${frow('Área', T`A = \frac{b\,h}{2} \qquad A = \sqrt{s(s-a)(s-b)(s-c)}`, 'Base por altura entre 2; fórmula de Herón con tres lados.', COL.G)}${frow('Pitágoras', T`a^2 + b^2 = c^2`, 'Solo triángulos rectángulos (c = hipotenusa).', COL.O)}${frow('Ley de cosenos', T`c^2 = a^2 + b^2 - 2\,a\,b\,\text{cos}\,C`, 'Para hallar ángulos con tres lados (se usa en la sección 5).', COL.T)}${frow('Equilátero', T`h = \frac{\sqrt{3}}{2}\,l \qquad A = \frac{\sqrt{3}}{4}\,l^2`, 'Altura y área con el lado l.', COL.K)}</table>
+          <div class="theo-card" style="--c:${COL.R}"><h6><i class="bi bi-calculator me-1"></i>Triángulo con tres lados</h6><div class="row g-2 align-items-end"><div class="col-4"><label class="small fw-bold">a</label><input type="number" step="any" id="fv-a" class="form-control form-control-sm" value="${a}"></div><div class="col-4"><label class="small fw-bold">b</label><input type="number" step="any" id="fv-b" class="form-control form-control-sm" value="${b}"></div><div class="col-4"><label class="small fw-bold">c</label><input type="number" step="any" id="fv-c" class="form-control form-control-sm" value="${c}"></div></div><div class="box mt-2">${ok ? `P = <b>${ft(a + b + c)}</b> · área = <b>${ft(area, 3)}</b> · ${clsSides(a, b, c)} · ${(() => { const mx = Math.max(a, b, c), o = a * a + b * b + c * c - mx * mx; return Math.abs(mx * mx - o) < 1e-9 ? 'rectángulo' : mx * mx > o ? 'obtusángulo' : 'acutángulo'; })()}` : 'No cumple la desigualdad triangular.'}</div></div>`;
+      } else {
+        const r = FV.r, th = FV.cth; body = `<table class="form-tbl">${frow('Diámetro', T`d = 2r`, 'La cuerda más larga.', COL.O)}${frow('Perímetro (longitud)', T`C = 2πr = πd`, 'Longitud de la circunferencia.', COL.B)}${frow('Área del círculo', T`A = πr^2`, 'Usa el radio.', COL.T)}${frow('Longitud de arco', T`s = \frac{θ}{360°}\cdot 2πr \qquad s = θ_{rad}\,r`, 'θ es el ángulo central.', COL.P)}${frow('Área del sector', T`A_s = \frac{θ}{360°}\cdot πr^2 = \frac{1}{2}r^2 θ_{rad}`, 'Fracción θ/360° del área.', COL.Y)}${frow('Cuerda y flecha', T`c = 2r\,\text{sen}\frac{θ}{2} \qquad f = r\left(1 - \text{cos}\frac{θ}{2}\right)`, 'Para un ángulo central θ.', COL.G)}${frow('Segmento circular', T`A_{seg} = \frac{r^2}{2}\,(θ_{rad} - \text{sen}\,θ)`, 'Área entre la cuerda y el arco.', COL.K)}${frow('Corona circular', T`A = π(R^2 - r^2)`, 'Entre dos circunferencias concéntricas.', COL.N)}${frow('Ángulos', T`\text{inscrito} = \frac{\text{central}}{2} \qquad \text{central} = \text{arco}`, 'Un inscrito en una semicircunferencia mide 90°.', COL.R)}</table>
+          <div class="theo-card" style="--c:${COL.T}"><h6><i class="bi bi-calculator me-1"></i>Calculadora</h6><div class="row g-2 align-items-end"><div class="col-6"><label class="small fw-bold">Radio r</label><input type="number" step="any" min="0" id="fv-r" class="form-control form-control-sm" value="${r}"></div><div class="col-6"><label class="small fw-bold">Ángulo central θ (°)</label><input type="number" step="any" min="0" max="360" id="fv-cth" class="form-control form-control-sm" value="${th}"></div></div><div class="box mt-2">d = <b>${ft(2 * r)}</b> · C = <b>${ft(2 * Math.PI * r, 3)}</b> · A = <b>${ft(Math.PI * r * r, 3)}</b><br>arco = <b>${ft(th / 360 * 2 * Math.PI * r, 3)}</b> · sector = <b>${ft(th / 360 * Math.PI * r * r, 3)}</b> · inscrito = <b>${ft(th / 2, 2)}°</b></div></div>`;
+      }
+      $('#form-wrap').innerHTML = `<ul class="nav nav-pills mb-3 flex-wrap gap-1">${tabs}</ul>${body}`; math($('#form-wrap'));
+    }
+
+    /* ---------- Eventos ---------- */
+    const on = (sel, ev, fn) => document.addEventListener(ev, e => { const t = e.target.closest ? e.target.closest(sel) : null; if (t) fn(t, e); });
+    const keep = fn => { const a = document.activeElement, id = a && a.id, pos = a && a.selectionStart; fn(); if (id) { const e = $('#' + id); if (e) { e.focus(); try { e.setSelectionRange(pos, pos); } catch (_) { } } } };
+    on('[data-a1]', 'click', t => { A1 = +t.dataset.a1; $('#a1').value = A1; renderA1(); });
+    on('[data-a2m]', 'click', t => { A2m = t.dataset.a2m; A2 = Math.min(A2, A2m === 'cc' ? 89 : 179); renderA2(); });
+    on('[data-rel]', 'click', t => { REL = t.dataset.rel; PAIRI = 0; renderT3(); });
+    on('[data-pair]', 'click', t => { PAIRI = +t.dataset.pair; renderT3(); });
+    on('#ch-ok', 'click', () => checkCH()); on('#ch-sol', 'click', () => { CHshow = true; renderCH(); }); on('#ch-new', 'click', () => newChallenge());
+    on('[data-tri]', 'click', t => { [TA, TB] = t.dataset.tri.split(',').map(Number); renderTA(); });
+    on('[data-not]', 'click', t => { NOT = t.dataset.not; renderTA(); });
+    on('#ta-ext', 'click', () => { EXT = !EXT; renderTA(); });
+    on('[data-ts]', 'click', t => { const [a, b, c] = t.dataset.ts.split(',').map(Number); TS = { a, b, c }; ['a', 'b', 'c'].forEach(k => $('#ts-' + k).value = TS[k]); renderTS(); });
+    on('[data-ce]', 'click', t => { CE = t.dataset.ce; renderCE(); });
+    on('[data-gc]', 'click', t => { GC = t.dataset.gc; renderGL(); });
+    on('[data-ftab]', 'click', t => { FTAB = +t.dataset.ftab; renderForm(); });
+    on('[data-form]', 'click', () => { hideAllPops(); renderForm(); bootstrap.Modal.getOrCreateInstance($('#formModal')).show(); });
+    document.addEventListener('change', e => { if (e.target.id === 'tt-rel') { TT.rel = e.target.value; renderTest(); } });
+    document.addEventListener('input', e => {
+      const t = e.target, id = t.id, v = parseFloat(t.value);
+      if (id === 'a1') { A1 = v; renderA1(); } else if (id === 'a2') { A2 = v; renderA2(); }
+      else if (id === 't3-in') { TH = v; renderT3(); }
+      else if (id === 'tt-a') { TT.a = v; renderTest(); } else if (id === 'tt-b') { TT.b = v; renderTest(); }
+      else if (id === 'ta-A') { TA = Math.min(v, 170 - TB); renderTA(); } else if (id === 'ta-B') { TB = Math.min(v, 170 - TA); renderTA(); }
+      else if (/^ts-[abc]$/.test(id)) { TS[id.slice(3)] = v; renderTS(); }
+      else if (id === 'cf-rin') { CR = v; renderCF(); } else if (id === 'cf-thin') { CTH = v; renderCF(); } else if (id === 'cf-u') { CU = v / 100; renderCF(); }
+      else if (id === 'cp-in') { LD = v; renderCP(); } else if (id === 'c2-r1in') { C2.r1 = v; renderC2(); } else if (id === 'c2-r2in') { C2.r2 = v; renderC2(); } else if (id === 'c2-din') { C2.d = v; renderC2(); }
+      else if (id === 'gl-q') { GQ = t.value; renderGL(); }
+      else if (id && id.startsWith('fv-') && isFinite(v)) { FV[id.slice(3)] = v; keep(renderForm); }
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'ch-x') checkCH(); });
+    const navLinks = $$('#sec-nav a'), io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+
+    /* ---------- Arranque ---------- */
+    $('#hero-bars').innerHTML = [30, 55, 80, 100, 80, 55, 30].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    renderS0(); renderS1(); renderS2(); renderS3(); renderS4(); renderS5(); renderS6(); renderS7(); renderS8(); renderForm();
+    math(document.body); $$('section.lesson').forEach(s => io.observe(s));
+
+</script>
+</body>
+</html>
