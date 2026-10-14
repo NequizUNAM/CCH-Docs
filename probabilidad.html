@@ -372,6 +372,26 @@
     .sgm td.all { background:color-mix(in srgb,var(--hc) 14%,#fff); color:#334155; }
 
     .pl { fill:none; stroke:#7048e8; stroke-width:2.5; stroke-dasharray:1; stroke-dashoffset:1; animation:draw 1.6s forwards; }
+      /* ===== Enfoques, tablas de contingencia, independencia y Manual de conceptos ===== */
+    .tabp { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; } .tabp button { border-radius:999px; font-weight:800; font-size:.85rem; padding:.3rem .9rem; border:2px solid var(--c); background:#fff; color:var(--c); transition:all .2s; }
+    .tabp button:hover { background:color-mix(in srgb,var(--c) 12%,#fff); } .tabp button.on { background:var(--c); color:#fff; box-shadow:0 4px 10px color-mix(in srgb,var(--c) 40%,transparent); }
+    .urn { background:#fff; border:2px solid #e2e8f0; border-radius:16px; padding:.8rem; text-align:center; height:100%; transition:all .25s; } .urn.sel { border-color:#2f9e44; box-shadow:0 0 0 4px rgba(47,158,68,.18); } .urn.best { border-color:#f08c00; }
+    .balls { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; margin:.4rem 0; min-height:30px; } .bl { width:24px; height:24px; border-radius:50%; display:inline-block; box-shadow:inset -3px -3px 5px rgba(0,0,0,.25); animation:chipPop .45s both; } .bl.n { background:#1e293b; } .bl.b { background:#fff; border:2px solid #94a3b8; box-shadow:inset -3px -3px 5px rgba(0,0,0,.08); }
+    .trl { fill:none; stroke-width:2; stroke-linejoin:round; animation:drw 1.8s ease-out both; } @keyframes drw { from { stroke-dasharray:1; stroke-dashoffset:1; } to { stroke-dasharray:1; stroke-dashoffset:0; } }
+    .tcT { border-collapse:separate; border-spacing:4px; width:100%; text-align:center; } .tcT th { font-size:.8rem; color:#475569; font-weight:800; padding:.25rem .4rem; } .tcT td { border-radius:10px; padding:.55rem .3rem; font-weight:800; font-size:1.05rem; background:#f1f5f9; border:2px solid transparent; transition:all .25s; }
+    .tcT td.tot { background:#e2e8f0; color:#334155; } .tcT td.x { background:#ffd8a8; } .tcT td.y { background:#a5d8ff; } .tcT td.xy { background:linear-gradient(135deg,#ffd8a8 50%,#a5d8ff 50%); } .tcT td.res { border-color:#7048e8; box-shadow:0 0 0 3px rgba(112,72,232,.25); transform:scale(1.04); }
+    .tcin { width:64px; text-align:center; font-weight:700; }
+    .evsel .btn { font-weight:800; } .evsel .btn.on { color:#fff; }
+    .cmb { cursor:pointer; display:inline-flex; align-items:center; gap:.1rem; border:2px solid #cbd5e1; background:#fff; border-radius:999px; padding:.05rem .55rem; font-size:.95rem; margin:.15rem; transition:all .2s; } .cmb sup { font-size:.62rem; font-weight:800; color:#64748b; margin-left:.2rem; }
+    .cmb.hi { background:#7048e8; border-color:#7048e8; color:#fff; } .cmb.hi sup { color:#fff; } .cmb.dim { opacity:.28; }
+    .eqt { width:100%; border-collapse:collapse; font-size:.9rem; } .eqt td, .eqt th { padding:.3rem .5rem; border-bottom:1px solid #e2e8f0; } .eqt tr.pk { cursor:pointer; } .eqt tr.pk:hover, .eqt tr.sel { background:#f3f0ff; }
+    .door { width:100%; border:3px solid #7c4a1e; background:linear-gradient(#c58b4e,#a8692f); color:#fff; border-radius:14px 14px 4px 4px; font-size:2.4rem; font-weight:800; padding:.6rem 0; min-height:110px; transition:all .3s; } .door:hover:not(:disabled) { transform:translateY(-3px); } .door.pick { box-shadow:0 0 0 4px #f08c00; } .door.open { background:#f1f5f9; color:#1e293b; border-color:#94a3b8; } .door.win { background:#d3f9d8; border-color:#2f9e44; } .door:disabled { cursor:default; }
+    .sw-x { display:inline-block; padding:.1rem .7rem; border-radius:999px; font-weight:800; font-size:.8rem; color:#fff; margin:.1rem; }
+    .manb { white-space:nowrap; } .man-nav { display:flex; flex-direction:column; gap:.3rem; max-height:68vh; overflow-y:auto; padding-right:.3rem; }
+    .man-nav button { text-align:left; border:2px solid transparent; background:#f8fafc; border-radius:12px; padding:.35rem .7rem; font-weight:700; font-size:.86rem; color:#334155; border-left:6px solid var(--c); transition:all .2s; } .man-nav button:hover { background:#eef2ff; } .man-nav button.on { background:var(--c); color:#fff; }
+    .man-h { font-weight:800; font-size:1.35rem; color:var(--c); } .man-sec { border-radius:14px; padding:.65rem .9rem; margin:.6rem 0; border-left:6px solid var(--c); background:color-mix(in srgb,var(--c) 7%,#fff); }
+    .man-lb { font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; font-weight:800; color:var(--c); margin-bottom:.25rem; } .man-thm { margin:.3rem 0; padding:.35rem .6rem; background:#fff; border-radius:10px; border:1px solid #e2e8f0; }
+    .man-ex { background:#fffbe6; border-left-color:#f59f00; } .man-ex .man-lb { color:#b45309; }
   </style>
 </head><body>
   <div id="app-header"></div>
@@ -381,9 +401,9 @@
       <span class="sym" style="right:8%;top:14%;font-size:4rem;animation-delay:2s">♠</span><span class="sym" style="right:22%;bottom:8%;font-size:3.5rem;animation-delay:3s">Ω</span>
       <div class="container">
         <h1 class="display-5 fw-bold"><i class="bi bi-dice-5-fill text-info me-2"></i>Probabilidad</h1>
-        <p class="lead mb-1">Espacio muestral Ω · diagramas de árbol · Venn · eventos compuestos · Bayes</p>
+        <p class="lead mb-1">Enfoques · espacio muestral Ω · tablas de contingencia · árbol · Venn · independencia · Bayes</p>
         <p class="mb-0 text-light opacity-75">Elige un experimento (dado, moneda, baraja, meses…) y mira cómo se calcula cada probabilidad, paso a paso y con animaciones</p>
-        <div class="hero-btns mt-3 d-flex gap-2 justify-content-center flex-wrap"><a class="btn btn-info rounded-pill px-4" href="#s1" data-go="b"><i class="bi bi-rocket-takeoff-fill me-1"></i>Empezar</a><a class="btn btn-outline-light rounded-pill px-4" href="#s8" data-go="m"><i class="bi bi-journal-bookmark-fill me-1"></i>Manual paso a paso</a><a class="btn btn-outline-light rounded-pill px-4" href="#s9" data-go="f"><i class="bi bi-journal-richtext me-1"></i>Formulario</a></div>
+        <div class="hero-btns mt-3 d-flex gap-2 justify-content-center flex-wrap"><a class="btn btn-info rounded-pill px-4" href="#s1" data-go="b"><i class="bi bi-rocket-takeoff-fill me-1"></i>Empezar</a><button class="btn btn-warning rounded-pill px-4 fw-bold" data-man="espacio"><i class="bi bi-book-half me-1"></i>Manual de conceptos</button><a class="btn btn-outline-light rounded-pill px-4" href="#s8" data-go="m"><i class="bi bi-journal-bookmark-fill me-1"></i>Manual paso a paso</a><a class="btn btn-outline-light rounded-pill px-4" href="#s9" data-go="f"><i class="bi bi-journal-richtext me-1"></i>Formulario</a></div>
       </div>
     </header>
 
@@ -392,9 +412,10 @@
       <div class="ctl-row tools" style="padding-top:0">
         <div class="dropdown"><button class="btn sp-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="sp-btn"></button><div class="dropdown-menu sp-menu" id="sp-menu"></div></div>
         <label class="pie-sw" title="Mostrar resultados como decimales con dos cifras" style="margin-left:0"><span class="form-check form-switch m-0 p-0"><input class="form-check-input" type="checkbox" role="switch" id="dec-sw"></span><span id="dec-lb"><i class="bi bi-123 me-1" style="color:#7048e8"></i>Fracciones</span></label>
+        <button class="btn btn-sm btn-warning rounded-pill fw-bold manb" data-man="" title="Definiciones, teoremas y fórmulas"><i class="bi bi-book-half me-1"></i>Manual</button>
         <label class="pie-sw" title="Activar o desactivar las animaciones" style="margin-left:0"><span class="form-check form-switch m-0 p-0"><input class="form-check-input" type="checkbox" role="switch" id="anim-sw" checked></span><span><i class="bi bi-stars me-1" style="color:#e8590c"></i>Animaciones</span></label>
       </div>
-      <nav class="sec-nav" id="sec-nav"><a href="#s1" data-g="b">1 Ω y vectores</a><a href="#s2" data-g="b">2 Eventos</a><a href="#s3" data-g="t">3 Diagrama de árbol</a><a href="#s4" data-g="t">4 Fórmulas Ω</a><a href="#s5" data-g="v">5 Diagramas de Venn</a><a href="#s6" data-g="a">6 Eventos compuestos</a><a href="#s7" data-g="a">7 Condicional y Bayes</a><a href="#s8" data-g="m">8 Manual</a><a href="#s9" data-g="f">9 Formulario</a></nav>
+      <nav class="sec-nav" id="sec-nav"><a href="#s1" data-g="b">1 Ω y vectores</a><a href="#s2" data-g="b">2 Eventos</a><a href="#sE1" data-g="e">3 Enfoques</a><a href="#sE2" data-g="e">4 Tablas de contingencia</a><a href="#s3" data-g="t">5 Diagrama de árbol</a><a href="#s4" data-g="t">6 Fórmulas Ω</a><a href="#s5" data-g="v">7 Diagramas de Venn</a><a href="#s6" data-g="a">8 Eventos compuestos</a><a href="#s7" data-g="a">9 Condicional y Bayes</a><a href="#sI" data-g="a">10 Independencia y paradojas</a><a href="#s8" data-g="m">11 Manual paso a paso</a><a href="#s9" data-g="f">12 Formulario</a></nav>
     </div></div>
 
     <div class="container mt-4 mb-5" id="content">
@@ -420,7 +441,17 @@
         <div id="s2-out"></div>
       </section>
 
-      <section class="sec" id="s3" data-g="t"><div class="sec-h"><span class="num">3</span><h2>Diagrama de árbol</h2><span class="lvtag lt2">Intermedio</span></div>
+      <section class="sec" id="sE1" data-g="e"><div class="sec-h"><span class="num">3</span><h2>Enfoques de la probabilidad</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="enfoques"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-signpost-split-fill text-warning me-1"></i>¿De dónde sale un número de probabilidad?</b> Hay tres respuestas que se complementan: <b>clásica</b> (contar casos igual de probables), <b>frecuencial</b> (repetir el experimento muchas veces y observar) y <b>subjetiva</b> (grado de creencia con la información disponible). <i>Primero piensa tu respuesta, después compárala con el resultado.</i></div>
+        <div class="tabp" id="en-tabs"></div><div id="en-body"></div>
+      </section>
+
+      <section class="sec" id="sE2" data-g="e"><div class="sec-h"><span class="num">4</span><h2>Tablas de contingencia y reglas básicas</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="contingencia"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-table text-warning me-1"></i>De la tabla a las reglas:</b> con una tabla de doble entrada se calculan probabilidades por <b>conteo directo</b> y se <b>descubren</b> el complemento, la unión (inclusión–exclusión), la exclusión mutua y la regla de la suma. Puedes <b>editar los datos</b>.</div>
+        <div class="tabp" id="tc-tabs"></div><div id="tc-body"></div>
+      </section>
+
+      <section class="sec" id="s3" data-g="t"><div class="sec-h"><span class="num">5</span><h2>Diagrama de árbol</h2><span class="lvtag lt2">Intermedio</span></div>
         <div class="demo"><div class="d-flex flex-wrap align-items-center gap-3 mb-2"><div class="demo-t m-0"><i class="bi bi-diagram-3-fill"></i>Etapas (repeticiones del experimento)</div>
           <div class="btn-group" id="tr-k"></div><label class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="tr-p" checked><span class="form-check-label small fw-bold">Probabilidad en las ramas</span></label>
           <button class="btn btn-sm btn-dark rounded-pill ms-auto" id="tr-play"><i class="bi bi-play-fill me-1"></i>Animar</button></div>
@@ -428,7 +459,7 @@
         <div class="demo"><div class="demo-t"><i class="bi bi-braces"></i>Espacio muestral Ω del árbol</div><div id="tr-omega"></div></div>
       </section>
 
-      <section class="sec" id="s4" data-g="t"><div class="sec-h"><span class="num">4</span><h2>Fórmulas: espacio muestral Ω, población y muestra</h2><span class="lvtag lt2">Intermedio</span></div>
+      <section class="sec" id="s4" data-g="t"><div class="sec-h"><span class="num">6</span><h2>Fórmulas: espacio muestral Ω, población y muestra</h2><span class="lvtag lt2">Intermedio</span></div>
         <div class="row g-4"><div class="col-12"><div id="f4-count"></div></div></div>
         <div class="demo mt-3"><div class="demo-t"><i class="bi bi-bar-chart-steps"></i>Éxitos en k etapas (distribución binomial del árbol)</div><div id="f4-bin"></div></div>
         <div class="demo mt-3"><div class="demo-t"><i class="bi bi-people-fill"></i>Población vs muestra</div>
@@ -438,7 +469,7 @@
           <div id="f4-res"></div></div>
       </section>
 
-      <section class="sec" id="s5" data-g="v"><div class="sec-h"><span class="num">5</span><h2>Diagramas de Venn: conjunción y disyunción</h2><span class="lvtag lt2">Intermedio</span></div>
+      <section class="sec" id="s5" data-g="v"><div class="sec-h"><span class="num">7</span><h2>Diagramas de Venn: conjunción y disyunción</h2><span class="lvtag lt2">Intermedio</span></div>
         <div class="row g-4"><div class="col-lg-4"><div class="lesson"><h5>Dos eventos, cuatro zonas</h5>
           <p><span class="badge-s" style="background:#7048e8">A ∩ B</span> <b>Conjunción</b> («A <b>y</b> B»): ocurren los dos a la vez.</p>
           <p><span class="badge-s" style="background:#1c7ed6">A ∪ B</span> <b>Disyunción</b> («A <b>o</b> B»): ocurre al menos uno.</p>
@@ -451,7 +482,7 @@
           <div class="rgn-btns mb-2" id="vn-rg"></div><div class="row g-3"><div class="col-lg-7"><div class="venn-wrap" id="vn-svg"></div></div><div class="col-lg-5"><div id="vn-out"></div></div></div></div></div></div>
       </section>
 
-      <section class="sec" id="s6" data-g="a"><div class="sec-h"><span class="num">6</span><h2>Avanzado: eventos compuestos (hasta 5)</h2><span class="lvtag lt3">Avanzado</span></div>
+      <section class="sec" id="s6" data-g="a"><div class="sec-h"><span class="num">8</span><h2>Avanzado: eventos compuestos (hasta 5)</h2><span class="lvtag lt3">Avanzado</span></div>
         <div class="intro-box"><b><i class="bi bi-lightbulb-fill text-warning me-1"></i>Combina hasta 5 eventos.</b> Siempre hay <b>al menos 2 eventos</b> (por defecto, dos monedas; también puedes usar dos dados). Agrega hasta 5 y cambia —del mismo experimento o de otros— y elige si deben ocurrir <b>todos</b> (conjunción «Y», ∩) o <b>al menos uno</b> (disyunción «O», ∪).</div>
         <div class="row g-4"><div class="col-lg-7"><div id="ad-rows"></div><div class="d-flex flex-wrap gap-2 align-items-center mb-2"><button class="btn btn-primary rounded-pill" id="ad-add"><i class="bi bi-plus-lg me-1"></i>Agregar evento</button><span class="small text-muted" id="ad-cnt"></span></div>
           <div class="small fw-bold text-muted mb-1">Ejemplos listos:</div><div class="d-flex flex-wrap gap-1" id="ad-pre"></div></div>
@@ -463,7 +494,7 @@
         <div id="ad-out" class="mt-3"></div>
       </section>
 
-      <section class="sec" id="s7" data-g="a"><div class="sec-h"><span class="num">7</span><h2>Probabilidad condicional y teorema de Bayes</h2><span class="lvtag lt3">Avanzado</span></div>
+      <section class="sec" id="s7" data-g="a"><div class="sec-h"><span class="num">9</span><h2>Probabilidad condicional y teorema de Bayes</h2><span class="lvtag lt3">Avanzado</span></div>
         <div class="row g-4"><div class="col-lg-5"><div class="lesson"><h5>Actualizar lo que sabemos</h5>
           <p>$P(A \mid B) = \dfrac{P(A \cap B)}{P(B)}$ es la probabilidad de A <b>sabiendo que</b> B ya ocurrió: Ω se reduce a B.</p>
           <p class="mb-1"><b>Probabilidad total:</b> $P(E) = \sum P(H_i)\,P(E \mid H_i)$</p>
@@ -474,7 +505,12 @@
         <div id="by-out" class="mt-3"></div>
       </section>
 
-      <section class="sec" id="s8" data-g="m"><div class="sec-h"><span class="num">8</span><h2>Manual paso a paso</h2><span class="lvtag lt1">Guía</span></div>
+      <section class="sec" id="sI" data-g="a"><div class="sec-h"><span class="num">10</span><h2>Independencia, condicionales y paradojas</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="independencia"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-puzzle-fill text-warning me-1"></i>Conjetura primero, comprueba después:</b> urnas con y sin reemplazo, excluyentes vs. independientes, el problema de los dos hijos y el juego de las tres puertas (Monty Hall). En cada actividad se pide <b>predecir</b> antes de ver el resultado.</div>
+        <div class="tabp" id="in-tabs"></div><div id="in-body"></div>
+      </section>
+
+      <section class="sec" id="s8" data-g="m"><div class="sec-h"><span class="num">11</span><h2>Manual paso a paso</h2><span class="lvtag lt1">Guía</span></div>
         <div class="intro-box"><b><i class="bi bi-journal-bookmark-fill text-warning me-1"></i>Un solo problema, resuelto en 10 pasos:</b> «se lanza una moneda y un dado». Usa <i>Siguiente</i>, los puntos de abajo o <i>Reproducir</i>. Aquí se explica qué es cada cosa, y la diferencia entre <b>intersección</b> y <b>conjunción</b>.</div>
         <div class="mm-card" id="mm"><div class="mm-top" id="mm-top"></div><div class="mm-body"><div class="row g-3"><div class="col-lg-6"><div class="mm-vis" id="mm-vis"></div></div><div class="col-lg-6"><div id="mm-say"></div></div></div></div>
           <div class="mm-dots" id="mm-dots"></div>
@@ -482,7 +518,7 @@
         <h5 class="fw-bold mt-4 mb-2"><i class="bi bi-book-half me-1 text-primary"></i>¿Qué es cada cosa?</h5><table class="gl" id="gloss"></table>
       </section>
 
-      <section class="sec" id="s9" data-g="f"><div class="sec-h"><span class="num">9</span><h2>Formulario de probabilidad</h2><span class="lvtag lt4">Referencia</span></div>
+      <section class="sec" id="s9" data-g="f"><div class="sec-h"><span class="num">12</span><h2>Formulario de probabilidad</h2><span class="lvtag lt4">Referencia</span></div>
         <div class="intro-box"><b><i class="bi bi-journal-richtext text-warning me-1"></i>Todas las fórmulas</b> agrupadas por tema, con su ejemplo numérico. Filtra por tema.</div>
         <div class="fcat" id="fm-cat"></div><div class="row g-3" id="fm-grid"></div>
       </section>
@@ -490,6 +526,8 @@
   </main>
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Probabilidad</small></footer>
   <button class="to-top" id="to-top" aria-label="Subir"><i class="bi bi-arrow-up"></i></button>
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-labelledby="manualTitle" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" id="manualTitle"><i class="bi bi-book-half me-2 text-warning"></i>Manual de probabilidad: conceptos, teoremas y teoría</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+    <div class="modal-body"><div class="row g-3"><div class="col-md-3"><input class="form-control form-control-sm mb-2" id="man-q" placeholder="Buscar concepto…" autocomplete="off"><div class="man-nav" id="man-nav"></div></div><div class="col-md-9" id="man-body"></div></div></div></div></div></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const FALLBACK_MENU = {
@@ -542,8 +580,8 @@
       const s = String(src); let i = 0, last = 'start';
       const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
       const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
-      const SYM = { Omega: 'Ω', omega: 'ω', mu: 'μ', sigma: 'σ', lambda: 'λ', cap: '∩', cup: '∪', emptyset: '∅', setminus: '∖', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', land: '∧', lor: '∨', lnot: '¬', triangle: '△', mid: '∣', vee: '∨', wedge: '∧', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', dots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
-      const OPS = new Set(['cap', 'cup', 'setminus', 'in', 'notin', 'subset', 'subseteq', 'land', 'lor', 'mid', 'triangle', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const SYM = { Omega: 'Ω', omega: 'ω', mu: 'μ', sigma: 'σ', lambda: 'λ', cap: '∩', cup: '∪', emptyset: '∅', setminus: '∖', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', land: '∧', lor: '∨', lnot: '¬', triangle: '△', mid: '∣', vee: '∨', wedge: '∧', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', bigcup: '⋃', bigcap: '⋂', varepsilon: 'ε', epsilon: 'ε', delta: 'δ', ne: '≠', iff: '⇔', rightarrow: '→',  ldots: '…', dots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['cap', 'cup', 'setminus', 'in', 'notin', 'subset', 'subseteq', 'land', 'lor', 'mid', 'triangle', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'ne', 'iff', 'rightarrow', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
       const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
       const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
       function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
@@ -1022,7 +1060,7 @@
       $('#gloss').innerHTML = G.map(g => `<tr style="--c:${g[0]}"><td><b>${g[1]}</b></td><td>${g[2]}</td><td class="text-muted">${g[3]}</td></tr>`).join(''); mmR(); }
 
     /* ===================== 9. Formulario ===================== */
-    const FCATS = [['all', 'Todas'], ['b', 'Básicas'], ['e', 'Eventos'], ['c', 'Condicional y Bayes'], ['n', 'Conteo'], ['p', 'Muestra vs población'], ['v', 'Variables']];
+    const FCATS = [['all', 'Todas'], ['b', 'Básicas'], ['e', 'Eventos'], ['c', 'Condicional y Bayes'], ['n', 'Conteo'], ['p', 'Muestra vs población'], ['v', 'Variables'], ['t', 'Enfoques y tablas']];
     function fmCards() { const h = F(1, 2), t = F(1, 3);
       return [
         ['b', '#1c7ed6', 'Probabilidad clásica', 'P(A) = \\frac{n(A)}{n(\\Omega)}', 'Casos favorables ÷ casos posibles (resultados equiprobables).', 'Dado, par: 3/6 = ' + ptxt(h), [['P(A)', 'probabilidad del evento A'], ['n(A)', 'casos favorables'], ['n(\\Omega)', 'casos posibles']]],
@@ -1053,15 +1091,387 @@
         ['p', '#e8590c', 'Proporción muestral', '\\hat{p} = \\frac{x}{n}', 'MUESTRA: estimador de p.', 'p̂ = lo observado', [['x', 'éxitos en la muestra'], ['n', 'tamaño de la muestra']]],
         ['v', '#2f9e44', 'Esperanza (valor esperado)', 'E[X] = \\sum_{i} x_i\\,p_i', 'Promedio de los valores ponderado por sus probabilidades.', 'Dado: 3.5', [['X', 'variable aleatoria'], ['x_i', 'valor posible'], ['p_i', 'su probabilidad']]],
         ['v', '#7048e8', 'Varianza de X', 'Var(X) = E[X^{2}] - \\left(E[X]\\right)^{2}', 'Qué tan dispersos están los valores.', 'Dado: 35/12 ≈ 2.92', [['E[X^{2}]', 'esperanza del cuadrado de X']]],
-        ['v', '#e8590c', 'Distribución binomial', 'P(X = r) = \\binom{k}{r}\\,p^{r}(1-p)^{k-r}', 'r éxitos en k intentos independientes.', '2 soles en 3 monedas: 3/8', [['k', 'intentos'], ['r', 'éxitos buscados'], ['p', 'probabilidad de éxito en un intento']]]]; }
+        ['v', '#e8590c', 'Distribución binomial', 'P(X = r) = \\binom{k}{r}\\,p^{r}(1-p)^{k-r}', 'r éxitos en k intentos independientes.', '2 soles en 3 monedas: 3/8', [['k', 'intentos'], ['r', 'éxitos buscados'], ['p', 'probabilidad de éxito en un intento']]],
+        ['t', '#2f9e44', 'Axiomas de Kolmogorov', ['P(A) \\ge 0 \\qquad P(\\Omega) = 1', 'A_i \\cap A_j = \\emptyset \;\\Rightarrow\; P(A_1 \\cup A_2 \\cup \\cdots) = P(A_1) + P(A_2) + \\cdots'], 'Tres reglas de las que se deducen todas las demás (P(∅) = 0, 0 ≤ P(A) ≤ 1, monotonía).', 'P(par) = 1/6 + 1/6 + 1/6 = 1/2', [['A_i', 'eventos disjuntos de dos en dos']]],
+        ['t', '#e8590c', 'Ley de los grandes números', '\\hat{p}_n = \\frac{x}{n} \;\\to\; p \\qquad (n \\to \\infty)', 'Con muchas repeticiones la frecuencia relativa se estabiliza alrededor de p.', 'Simula al menos 500 lanzamientos', [['\\hat{p}_n', 'frecuencia relativa con n repeticiones'], ['p', 'probabilidad verdadera']]],
+        ['t', '#1c7ed6', 'Cota de Chebyshev para p̂', 'P\\left(|\\hat{p}_n - p| \\ge \\varepsilon\\right) \\le \\frac{p(1-p)}{n\\,\\varepsilon^{2}}', 'Cuánto puede alejarse la frecuencia observada de la probabilidad verdadera.', 'n = 500, ε = 0.05: cota 0.20', [['\\varepsilon', 'error tolerado'], ['n', 'repeticiones']]],
+        ['t', '#7048e8', 'Conjunta y marginal (tabla)', ['P(A \\cap B) = \\frac{n(A \\cap B)}{n(\\Omega)}', 'P(A) = \\sum_{j} P(A \\cap B_j)'], 'La conjunta es una celda; la marginal es la suma de una fila o columna.', 'P(H) = 140/300', [['n(A \\cap B)', 'elementos de la celda'], ['B_j', 'categorías de la otra variable']]],
+        ['t', '#c2255c', 'Condicional en una tabla', 'P(A \\mid B) = \\frac{n(A \\cap B)}{n(B)}', 'Se divide entre el total de la fila o columna de la condición.', 'P(Fuma | Mujer) = 40/160', [['n(B)', 'total del margen de B']]],
+        ['e', '#e03131', 'Excluyentes ≠ independientes', 'A \\cap B = \\emptyset,\; P(A)>0,\; P(B)>0 \;\\Rightarrow\; P(A \\cap B) \\neq P(A)\\,P(B)', 'Dos eventos excluyentes con probabilidad positiva son dependientes.', 'A = {1,2}, B = {3,4,5}', [['P(A \\cap B)', '0 si son excluyentes']]],
+        ['c', '#2f9e44', 'Regla de la cadena', 'P(A \\cap B \\cap C) = P(A)\\,P(B \\mid A)\\,P(C \\mid A \\cap B)', 'Se multiplican las probabilidades condicionales a lo largo de una rama.', 'Sin reemplazo: 2/5 · 1/4 · ...', [['P(C \\mid A \\cap B)', 'C dado que ya ocurrieron A y B']]],
+        ['c', '#e8590c', 'Bayes en forma de razones', '\\frac{P(H \\mid E)}{P(H^{c} \\mid E)} = \\frac{P(H)}{P(H^{c})} \\cdot \\frac{P(E \\mid H)}{P(E \\mid H^{c})}', 'Posterior = a priori × razón de verosimilitudes.', 'Prueba 90 % / 5 %: factor 18', [['P(H)', 'a priori'], ['P(E \\mid H)', 'verosimilitud']]],
+        ['c', '#7c4a1e', 'Tres puertas (Monty Hall)', ['P(\\text{ganar} \\mid \\text{mantener}) = \\frac{1}{3}', 'P(\\text{ganar} \\mid \\text{cambiar}) = \\frac{2}{3}'], 'El conductor sabe dónde está el regalo, por eso cambiar duplica la probabilidad.', 'Cambiar gana en 2 de 3 casos', [['mantener', 'quedarte con tu puerta']]]]; }
     const FMS = { cat: 'all' };
     function fmR() { $('#fm-cat').innerHTML = FCATS.map(c => `<button class="btn btn-sm rounded-pill ${FMS.cat === c[0] ? 'btn-dark' : 'btn-outline-dark'}" data-c="${c[0]}">${c[1]}</button>`).join('');
       $('#fm-grid').innerHTML = fmCards().map((c, i) => `<div class="col-md-6 col-xl-4 fcol" data-c="${c[0]}" ${FMS.cat !== 'all' && FMS.cat !== c[0] ? 'hidden' : ''}><div class="fm reveal in" style="--c:${c[1]};transition-delay:${(i % 6) * 40}ms"><div class="ft">${c[2]}</div><div class="ff">${[].concat(c[3]).map(fd).join('')}</div><div class="fe">${c[4]}</div>${leg(c[6])}<div class="fx"><i class="bi bi-lightbulb-fill me-1" style="color:#f59f00"></i>${c[5]}</div></div></div>`).join(''); }
     function fmSetup() { $('#fm-cat').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (!b) return; FMS.cat = b.dataset.c; fmR(); }); fmR(); }
     RENDERS.push(mmR, fmR);
 
+    /* ===================== Nuevas secciones: enfoques, contingencia, independencia ===================== */
+    const R = String.raw;
+    const tabsP = (tabs, cur) => tabs.map(t => `<button class="${cur === t[0] ? 'on' : ''}" style="--c:${t[3]}" data-t="${t[0]}"><i class="bi ${t[2]} me-1"></i>${t[1]}</button>`).join('');
+    const rndI = n => Math.floor(Math.random() * n);
+    const verd = (ok, a, b) => `<div class="tip-box mt-2" style="background:${ok ? '#d3f9d8' : '#fff3bf'};border:1px solid ${ok ? '#8ce99a' : '#ffe066'}"><b>${ok ? '✔ ' : '💡 '}${a}</b> ${b || ''}</div>`;
+
+    /* ---------- 3. Enfoques ---------- */
+    const EN = { tab: 'cla', pick: null, usim: [null, null, null], exp: 'moneda', n: 500, runs: null, ten: [], two: null, pri: 30, pEH: 80, pEN: 30 };
+    const EN_TABS = [['cla', 'Clásico', 'bi-box-seam-fill', '#2f9e44'], ['fre', 'Frecuencial', 'bi-graph-up', '#e8590c'], ['dos', 'Dos monedas: ¿cuál Ω?', 'bi-coin', '#1c7ed6'], ['sub', 'Subjetivo', 'bi-lightbulb-fill', '#7048e8']];
+    const URNS = [[3, 4], [1, 2], [4, 5]];
+    const ballsH = (N, B) => `<div class="balls">${'<i class="bl n"></i>'.repeat(N)}${'<i class="bl b"></i>'.repeat(B)}</div>`;
+    function enCla() {
+      const ps = URNS.map(u => F(u[0], u[0] + u[1])), best = ps.reduce((m, p, i) => fval(p) > fval(ps[m]) ? i : m, 0), sel = EN.pick;
+      let h = `<div class="tip-box mb-3" style="background:#ebfbee;border:1px solid #b2f2bb"><b>Reto:</b> quieres sacar una bola <b>negra</b> con los ojos cerrados. Hay tres urnas (bolas del mismo tamaño y mezcladas). <b>¿De cuál urna te conviene extraer?</b> Elige una y luego revisa.</div><div class="row g-3">`;
+      h += URNS.map((u, i) => { const T = u[0] + u[1];
+        return `<div class="col-md-4"><div class="urn ${sel === i ? 'sel' : ''} ${sel !== null && best === i ? 'best' : ''}"><div class="fw-bold">Urna ${i + 1}</div>${ballsH(u[0], u[1])}<div class="small text-muted">${u[0]} negras · ${u[1]} blancas</div>
+          ${sel === null ? `<button class="btn btn-sm btn-dark rounded-pill mt-2" data-u="${i}">Elijo esta urna</button>` : `<div class="mt-2">${fd(R`P(N)=\frac{n(N)}{n(\Omega)}=\frac{${u[0]}}{${T}}\approx ${fval(ps[i]).toFixed(4)}`)}<div class="pbar" style="--c:${best === i ? '#f08c00' : '#2f9e44'}"><div class="pt"><i style="--w:${(fval(ps[i]) * 100).toFixed(1)}%"></i></div><b>${pct(ps[i])}</b></div>
+          <button class="btn btn-sm btn-outline-dark rounded-pill" data-us="${i}"><i class="bi bi-play-fill"></i> 200 extracciones</button>${EN.usim[i] !== null ? `<div class="small mt-1">p̂ = ${(EN.usim[i] / 200).toFixed(3)} <span class="text-muted">(teórica ${fval(ps[i]).toFixed(3)})</span></div>` : ''}</div>`}</div></div>`; }).join('') + '</div>';
+      if (sel !== null) h += verd(sel === best, sel === best ? '¡Acertaste!' : `La mejor era la urna ${best + 1}.`, `Lo que importa no es cuántas negras hay, sino la <b>proporción</b> $\\frac{n(N)}{n(\\Omega)}$: ${URNS.map((u, i) => `${u[0]}/${u[0] + u[1]} = ${fval(ps[i]).toFixed(4)}`).join(' · ')}.`) + `<button class="btn btn-sm btn-outline-secondary rounded-pill mt-2" data-ureset="1"><i class="bi bi-arrow-repeat me-1"></i>Intentar de nuevo</button>`;
+      h += `<div class="lesson mt-3"><h5>Enfoque clásico (Laplace)</h5><p>Si los $n(\\Omega)$ resultados son <b>igualmente probables</b>, la probabilidad de un evento A es casos favorables entre casos posibles.</p>${fd(R`P(A)=\frac{n(A)}{n(\Omega)}`)}
+        <p class="mb-1"><b>Cuidado:</b> el espacio $\\Omega=\\{N, B\\}$ <u>no</u> es equiprobable (salir negra no vale 1/2). Lo equiprobable son las <b>bolas</b>: cada bola tiene la misma oportunidad, así que se cuentan bolas, no colores.</p></div>`;
+      return h; }
+    const EXPS = { moneda: ['Moneda: sale Sol', 0.5], dado: ['Dado: sale 6', 1 / 6], carg: ['Moneda cargada: sale Sol (p desconocida)', 0.7] };
+    function logIdx(N) { const s = new Set([1, N]); [10, 100, 1000].forEach(x => { if (x < N) s.add(x); }); for (let k = 0; k <= 110; k++) s.add(Math.max(1, Math.round(Math.exp(Math.log(N) * k / 110)))); return [...s].sort((a, b) => a - b); }
+    function enRun() { const e = EXPS[EN.exp], N = EN.n, idx = logIdx(N), runs = [];
+      for (let r = 0; r < 5; r++) { let s = 0, j = 0; const pts = [], chk = {}; for (let i = 1; i <= N; i++) { if (Math.random() < e[1]) s++; if (i === idx[j]) { pts.push([i, s / i]); chk[i] = s / i; j++; } } runs.push({ pts, chk, s }); }
+      EN.runs = { exp: EN.exp, N, p: e[1], runs }; }
+    const RUNC = ['#e8590c', '#1c7ed6', '#2f9e44', '#7048e8', '#e03131'];
+    function enChart() { const Z = EN.runs; if (!Z) return ''; const W = 620, H = 270, L = 46, B = 32, T = 10, Rr = 12, N = Z.N, lg = Math.log(N) || 1;
+      const X = n => L + (Math.log(n) / lg) * (W - L - Rr), Y = v => T + (1 - v) * (H - T - B);
+      let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Frecuencia relativa contra número de repeticiones"><rect x="${L}" y="${Y(Math.min(1, Z.p + .05)).toFixed(1)}" width="${W - L - Rr}" height="${(Y(Math.max(0, Z.p - .05)) - Y(Math.min(1, Z.p + .05))).toFixed(1)}" fill="#fff3bf" opacity=".7"/>`;
+      [0, .25, .5, .75, 1].forEach(v => s += `<line x1="${L}" x2="${W - Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e2e8f0"/><text x="${L - 6}" y="${Y(v) + 4}" font-size="11" text-anchor="end" fill="#64748b">${v}</text>`);
+      for (let k = 0; Math.pow(10, k) <= N; k++) s += `<line x1="${X(Math.pow(10, k))}" x2="${X(Math.pow(10, k))}" y1="${T}" y2="${H - B}" stroke="#f1f5f9"/><text x="${X(Math.pow(10, k))}" y="${H - B + 15}" font-size="11" text-anchor="middle" fill="#64748b">${fmtN(Math.pow(10, k))}</text>`;
+      s += `<text x="${(L + W - Rr) / 2}" y="${H - 4}" font-size="11" text-anchor="middle" fill="#475569">repeticiones n (escala logarítmica)</text><line x1="${L}" x2="${W - Rr}" y1="${Y(Z.p)}" y2="${Y(Z.p)}" stroke="#0f172a" stroke-dasharray="5 4" stroke-width="1.6"/>`;
+      Z.runs.forEach((r, k) => s += `<path class="trl" pathLength="1" d="${r.pts.map((q, i) => (i ? 'L' : 'M') + X(q[0]).toFixed(1) + ' ' + Y(q[1]).toFixed(1)).join('')}" stroke="${RUNC[k]}"/>`);
+      return s + '</svg>'; }
+    function enFre() { const Z = EN.runs; const e = EXPS[EN.exp];
+      let h = `<div class="row g-3"><div class="col-lg-5"><div class="demo"><div class="demo-t"><i class="bi bi-sliders"></i>Simulador de la ley de los grandes números</div>
+        <label class="small fw-bold">Experimento</label><select class="form-select form-select-sm mb-2" id="fr-exp">${Object.entries(EXPS).map(([k, v]) => `<option value="${k}" ${EN.exp === k ? 'selected' : ''}>${v[0]}</option>`).join('')}</select>
+        <label class="small fw-bold">Repeticiones por corrida (se recomienda ≥ 500)</label><div class="btn-group btn-group-sm w-100 mb-2" id="fr-n">${[20, 100, 500, 2000, 5000].map(n => `<button class="btn ${EN.n === n ? 'btn-dark' : 'btn-outline-dark'}" data-n="${n}">${fmtN(n)}</button>`).join('')}</div>
+        <button class="btn btn-warning fw-bold rounded-pill w-100" id="fr-run"><i class="bi bi-play-fill me-1"></i>Simular 5 corridas</button>
+        <p class="small text-muted mt-2 mb-0">Cada color es una corrida independiente: la <b>frecuencia relativa</b> $\\hat{p}_n=x/n$ al ir aumentando n. La línea punteada es la probabilidad teórica y la franja amarilla es ±0.05.</p></div>
+        <div class="demo"><div class="demo-t"><i class="bi bi-1-circle-fill"></i>Mini-experimento: 10 lanzamientos</div><p class="small mb-2"><b>Predice:</b> en 10 lanzamientos de una moneda, ¿saldrán exactamente 5 soles? ¿Qué proporción esperas? Lanza varias veces y compara.</p>
+        <button class="btn btn-sm btn-dark rounded-pill" id="ten-go"><i class="bi bi-coin me-1"></i>Lanzar 10 monedas</button> <button class="btn btn-sm btn-outline-secondary rounded-pill" id="ten-clr">Borrar</button><div id="ten-out" class="mt-2"></div></div></div>
+        <div class="col-lg-7"><div class="vis">${Z ? enChart() : '<div class="text-center text-muted p-5"><i class="bi bi-graph-up fs-1"></i><br>Pulsa «Simular» para ver cómo se estabilizan las frecuencias relativas.</div>'}<div class="cap">Trayectorias de la frecuencia relativa</div></div>${Z ? enFreTab() : ''}</div></div>
+        <div class="lesson mt-3"><h5>Enfoque frecuencial</h5><p>Cuando no hay simetría que permita contar casos, se <b>repite</b> el experimento y se observa $\\hat{p}_n=\\frac{x}{n}$. Con muchas repeticiones esa proporción se estabiliza cerca de la probabilidad $p$ (<b>ley de los grandes números</b>).</p>${fd(R`\hat{p}_n=\frac{x}{n}\;\to\;p \qquad (n \to \infty)`)}<p class="mb-0">Con pocas repeticiones, ${fi('\\hat{p}_n')} puede ser muy distinto de $p$; con cientos o miles, casi siempre queda dentro de la franja.</p></div>`;
+      return h; }
+    function enFreTab() { const Z = EN.runs, cks = [10, 100, 1000].filter(c => c < Z.N).concat([Z.N]);
+      return `<div class="table-responsive mt-2"><table class="table table-sm align-middle text-center mb-0"><thead><tr><th>Corrida</th>${cks.map(c => `<th>p̂ con n = ${fmtN(c)}</th>`).join('')}<th>|p̂ − p| final</th></tr></thead><tbody>${Z.runs.map((r, k) => `<tr><td><span class="sw-x" style="background:${RUNC[k]}">${k + 1}</span></td>${cks.map(c => `<td>${r.chk[c] !== undefined ? r.chk[c].toFixed(3) : '—'}</td>`).join('')}<td class="${Math.abs(r.chk[Z.N] - Z.p) <= .05 ? 'text-success' : 'text-danger'} fw-bold">${Math.abs(r.chk[Z.N] - Z.p).toFixed(3)}</td></tr>`).join('')}</tbody></table></div><div class="small text-muted mt-1">p teórica = ${Z.p.toFixed(3)}. Observa cómo las diferencias se hacen pequeñas al crecer n.</div>`; }
+    function enTen() { const o = $('#ten-out'); if (!o) return; o.innerHTML = EN.ten.length ? EN.ten.slice(-6).map((t, i) => `<div class="small mb-1">${t.map(x => x ? '☀️' : '🦅').join('')} → <b>${t.filter(Boolean).length}</b> soles, p̂ = <b>${(t.filter(Boolean).length / 10).toFixed(1)}</b></div>`).join('') + `<div class="small text-muted">${EN.ten.length} intento(s). ¿Siempre sale 0.5? La variación con n = 10 es grande.</div>` : '<div class="small text-muted">Aún no has lanzado.</div>'; }
+    function enDos() { const Z = EN.two, two = Z && Z.n;
+      let h = `<div class="row g-3"><div class="col-lg-6"><div class="lesson"><h5>Se lanzan dos monedas justas</h5><p>Dos alumnos proponen espacios muestrales distintos para contar los <b>soles</b>:</p>
+        <div class="opc"><div class="on">Ω₁ = {0 soles, 1 sol, 2 soles}</div><div class="cl">3 resultados → ¿cada uno con probabilidad ${fi('\\frac{1}{3}')}?</div></div>
+        <div class="opc"><div class="on">Ω₂ = {SS, SA, AS, AA}</div><div class="cl">4 resultados (se distingue cuál moneda es cuál) → ¿cada uno con ${fi('\\frac{1}{4}')}?</div></div>
+        <p class="mb-1"><b>Predice:</b> ¿cuál modelo describe bien la realidad? Lanza 50 veces y decide con datos.</p>
+        <div class="d-flex gap-2 flex-wrap"><button class="btn btn-warning fw-bold rounded-pill" data-two="50"><i class="bi bi-play-fill"></i> 50 lanzamientos</button><button class="btn btn-outline-dark rounded-pill" data-two="1000">1,000 lanzamientos</button></div></div></div>
+        <div class="col-lg-6"><div class="demo"><div class="demo-t"><i class="bi bi-bar-chart-fill"></i>Resultados</div>`;
+      if (!two) h += '<div class="text-muted">Pulsa un botón de lanzamientos.</div>';
+      else { const c = Z.c, n = Z.n; const rows = [['0 soles', 0, 1 / 3, 1 / 4, '#1c7ed6'], ['1 sol', 1, 1 / 3, 1 / 2, '#e8590c'], ['2 soles', 2, 1 / 3, 1 / 4, '#2f9e44']];
+        h += rows.map(r => `<div class="pbar" style="--c:${r[4]}"><span class="pl">${r[0]}</span><div class="pt"><i style="--w:${(100 * c[r[1]] / n).toFixed(1)}%"></i></div><b style="min-width:128px">${c[r[1]]} → ${(c[r[1]] / n).toFixed(3)}</b></div>`).join('')
+          + `<div class="small mt-2">Teoría Ω₁: <b>0.333</b> cada uno · Teoría Ω₂: <b>0.250 · 0.500 · 0.250</b></div>` + verd(Math.abs(c[1] / n - .5) < Math.abs(c[1] / n - 1 / 3), 'Los datos apoyan a Ω₂:', `«1 sol» ocurre en ${(100 * c[1] / n).toFixed(1)} % de los casos, cerca de 1/2 y lejos de 1/3. Ω₁ <u>no es equiprobable</u>: el resultado «1 sol» agrupa dos casos (SA y AS).`); }
+      return h + '</div></div></div><div class="lesson mt-3"><h5>Lección</h5><p class="mb-0">Para usar $P(A)=\\frac{n(A)}{n(\\Omega)}$ hay que elegir un espacio muestral <b>cuyos resultados sean igualmente probables</b>. Si no lo son, se usan pesos (o se refina Ω) y la simulación sirve para comprobar.</p></div>'; }
+    function enSubOut() { const o = $('#sub-out'); if (!o) return; const pr = EN.pri / 100, a = EN.pEH / 100, b = EN.pEN / 100, pe = pr * a + (1 - pr) * b, post = pe > 0 ? pr * a / pe : 0;
+      o.innerHTML = `<div class="meter mb-2"><span style="background:#adb5bd;--w:${(100 * pr).toFixed(1)}%">antes ${(100 * pr).toFixed(0)}%</span></div><div class="meter mb-2"><span style="background:#7048e8;--w:${(100 * post).toFixed(1)}%">después ${(100 * post).toFixed(1)}%</span></div>`
+        + fd(R`P(H \mid E)=\frac{P(H)\,P(E \mid H)}{P(H)\,P(E \mid H)+P(H^{c})\,P(E \mid H^{c})}`) + fd(`=\\frac{${pr.toFixed(2)} \\cdot ${a.toFixed(2)}}{${pr.toFixed(2)} \\cdot ${a.toFixed(2)} + ${(1 - pr).toFixed(2)} \\cdot ${b.toFixed(2)}} = ${post.toFixed(3)}`)
+        + `<div class="small text-muted">${a > b ? 'La evidencia es más probable si H es cierta, así que tu creencia <b>sube</b>.' : a < b ? 'La evidencia es más probable si H es falsa, así que tu creencia <b>baja</b>.' : 'La evidencia no distingue entre H y no H: tu creencia no cambia.'}</div>`; }
+    function enSub() { return `<div class="row g-3"><div class="col-lg-5"><div class="lesson"><h5>Enfoque subjetivo</h5><p>Algunos eventos <b>no se repiten</b> ni tienen casos simétricos: «¿lloverá mañana?», «¿ganará mi equipo el domingo?», «¿aprobaré el examen?». Ahí la probabilidad es un <b>grado de creencia</b> entre 0 y 1 de una persona con cierta información.</p>
+      <ul class="mb-2"><li>Debe ser <b>coherente</b>: cumplir los axiomas (si no, se pueden armar apuestas perdedoras).</li><li>Se <b>actualiza</b> con nueva evidencia mediante el teorema de Bayes.</li><li>Personas con información distinta pueden dar valores distintos.</li></ul>
+      <div class="small text-muted">Piensa: ¿qué probabilidad le das a «lloverá mañana»? ¿Qué información te haría cambiarla?</div></div></div>
+      <div class="col-lg-7"><div class="demo"><div class="demo-t"><i class="bi bi-arrow-repeat"></i>Actualiza tu creencia con evidencia</div>
+        <label class="small fw-bold d-flex justify-content-between"><span>Creencia inicial P(H)</span><b id="sl-a">${EN.pri}%</b></label><input type="range" class="form-range" min="1" max="99" value="${EN.pri}" id="sub-pri">
+        <label class="small fw-bold d-flex justify-content-between"><span>P(evidencia | H cierta)</span><b id="sl-b">${EN.pEH}%</b></label><input type="range" class="form-range" min="1" max="99" value="${EN.pEH}" id="sub-eh">
+        <label class="small fw-bold d-flex justify-content-between"><span>P(evidencia | H falsa)</span><b id="sl-c">${EN.pEN}%</b></label><input type="range" class="form-range" min="1" max="99" value="${EN.pEN}" id="sub-en">
+        <div id="sub-out"></div></div></div></div>`; }
+    function enR() { $('#en-tabs').innerHTML = tabsP(EN_TABS, EN.tab); const b = $('#en-body'); b.innerHTML = EN.tab === 'cla' ? enCla() : EN.tab === 'fre' ? enFre() : EN.tab === 'dos' ? enDos() : enSub(); math(b); if (EN.tab === 'fre') enTen(); if (EN.tab === 'sub') enSubOut(); }
+    function enSetup() { const sec = $('#sE1');
+      sec.addEventListener('click', e => { const t = e.target.closest('[data-t]'); if (t && t.parentElement.id === 'en-tabs') { EN.tab = t.dataset.t; enR(); return; }
+        const u = e.target.closest('[data-u]'); if (u) { EN.pick = +u.dataset.u; enR(); return; }
+        if (e.target.closest('[data-ureset]')) { EN.pick = null; EN.usim = [null, null, null]; enR(); return; }
+        const us = e.target.closest('[data-us]'); if (us) { const i = +us.dataset.us, p = URNS[i][0] / (URNS[i][0] + URNS[i][1]); let c = 0; for (let k = 0; k < 200; k++) if (Math.random() < p) c++; EN.usim[i] = c; enR(); return; }
+        const n = e.target.closest('#fr-n [data-n]'); if (n) { EN.n = +n.dataset.n; EN.runs = null; enR(); return; }
+        if (e.target.closest('#fr-run')) { enRun(); enR(); return; }
+        if (e.target.closest('#ten-go')) { EN.ten.push(Array.from({ length: 10 }, () => Math.random() < .5)); enTen(); return; } if (e.target.closest('#ten-clr')) { EN.ten = []; enTen(); return; }
+        const tw = e.target.closest('[data-two]'); if (tw) { const n = +tw.dataset.two, c = [0, 0, 0]; for (let i = 0; i < n; i++) c[(Math.random() < .5) + (Math.random() < .5)]++; EN.two = { n, c }; enR(); } });
+      sec.addEventListener('change', e => { if (e.target.id === 'fr-exp') { EN.exp = e.target.value; EN.runs = null; enR(); } });
+      sec.addEventListener('input', e => { const t = e.target; if (t.id === 'sub-pri') EN.pri = +t.value; else if (t.id === 'sub-eh') EN.pEH = +t.value; else if (t.id === 'sub-en') EN.pEN = +t.value; else return; $('#sl-a').textContent = EN.pri + '%'; $('#sl-b').textContent = EN.pEH + '%'; $('#sl-c').textContent = EN.pEN + '%'; enSubOut(); });
+      enR(); }
+
+    /* ---------- 4. Tablas de contingencia ---------- */
+    const TC = { tab: 'tab', v: [[85, 12, 43], [103, 17, 40]], x: 'H', y: 'N', op: 'and', sel: 'A' };
+    const TC_TABS = [['tab', 'Tabaquismo (300 estudiantes)', 'bi-table', '#1c7ed6'], ['eq', 'Equipo de 6: 20 casos', 'bi-people-fill', '#e8590c']];
+    const TCE = { H: ['Hombre', 'r', 0], M: ['Mujer', 'r', 1], N: ['Nunca ha fumado', 'c', 0], D: ['Dejó de fumar', 'c', 1], F: ['Fuma', 'c', 2] };
+    const tcCells = k => { const e = TCE[k], s = new Set(); for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) if ((e[1] === 'r' && r === e[2]) || (e[1] === 'c' && c === e[2])) s.add(r + ',' + c); return s; };
+    const tcN = s => { let n = 0; s.forEach(k => { const [r, c] = k.split(',').map(Number); n += TC.v[r][c]; }); return n; };
+    const tcTot = () => TC.v[0].concat(TC.v[1]).reduce((a, b) => a + b, 0);
+    const setI = (a, b) => new Set([...a].filter(x => b.has(x))), setU = (a, b) => new Set([...a, ...b]), setC = a => { const s = new Set(); for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) if (!a.has(r + ',' + c)) s.add(r + ',' + c); return s; };
+    const EVC = { H: '#e8590c', M: '#d6336c', N: '#1c7ed6', D: '#7048e8', F: '#e03131' };
+    function tcStats() { const T = tcTot(), X = tcCells(TC.x), Y = tcCells(TC.y), I = setI(X, Y), U = setU(X, Y); let res;
+      if (TC.op === 'x') res = X; else if (TC.op === 'xc') res = setC(X); else if (TC.op === 'and') res = I; else if (TC.op === 'or') res = U; else res = I;
+      return { T, X, Y, I, U, res, nX: tcN(X), nY: tcN(Y), nI: tcN(I), nU: tcN(U), nR: tcN(res) }; }
+    function tcTable(S) { const hd = ['Nunca ha fumado (N)', 'Dejó de fumar (D)', 'Fuma (F)']; const rt = [0, 1].map(r => TC.v[r].reduce((a, b) => a + b, 0)), ct = [0, 1, 2].map(c => TC.v[0][c] + TC.v[1][c]);
+      let h = `<table class="tcT"><thead><tr><th></th>${hd.map(x => `<th>${x}</th>`).join('')}<th>Total</th></tr></thead><tbody>`;
+      [['Hombre (H)', 0], ['Mujer (M)', 1]].forEach(([nm, r]) => { h += `<tr><th>${nm}</th>${[0, 1, 2].map(c => { const k = r + ',' + c, inX = S.X.has(k), inY = S.Y.has(k); return `<td class="${inX && inY ? 'xy' : inX ? 'x' : inY ? 'y' : ''} ${S.res.has(k) ? 'res' : ''}">${TC.v[r][c]}</td>`; }).join('')}<td class="tot">${rt[r]}</td></tr>`; });
+      return h + `<tr><th>Total</th>${ct.map(x => `<td class="tot">${x}</td>`).join('')}<td class="tot">${S.T}</td></tr></tbody></table>`; }
+    function tcRes(S) { const T = S.T; if (T <= 0) return '<div class="text-danger">La tabla debe tener al menos un dato.</div>'; const pf = (n, d) => ptex(F(n, d)), x = TC.x, y = TC.y; const A = k => k;
+      const lines = []; let big = '', note = '';
+      if (TC.op === 'x') { lines.push(['Cuenta los casos del evento ' + x, R`n(${x})=${S.nX}`]); big = R`P(${x})=\frac{n(${x})}{n(\Omega)}=\frac{${S.nX}}{${T}}=` + pf(S.nX, T); }
+      else if (TC.op === 'xc') { lines.push(['Por conteo directo', R`P(${x}^{c})=\frac{${T - S.nX}}{${T}}=` + pf(T - S.nX, T)]); lines.push(['Por la regla del complemento', R`P(${x}^{c})=1-P(${x})=1-` + pf(S.nX, T) + '=' + pf(T - S.nX, T)]); big = R`P(${x}^{c})=` + pf(T - S.nX, T); note = 'Coinciden: el complemento es «todo lo que no es el evento».'; }
+      else if (TC.op === 'and') { lines.push(['Celdas que cumplen ambos', R`n(${x} \cap ${y})=${S.nI}`]); big = R`P(${x} \cap ${y})=\frac{${S.nI}}{${T}}=` + pf(S.nI, T); if (S.nI === 0) note = '<b>Intersección vacía:</b> los eventos son <b>mutuamente excluyentes</b>.'; }
+      else if (TC.op === 'or') { lines.push(['Conteo directo (celdas coloreadas sin repetir)', R`n(${x} \cup ${y})=${S.nU}`]); lines.push(['Inclusión–exclusión con probabilidades', R`P(${x} \cup ${y})=P(${x})+P(${y})-P(${x} \cap ${y})`]); lines.push(['Sustituye', '=' + pf(S.nX, T) + '+' + pf(S.nY, T) + '-' + pf(S.nI, T) + '=' + pf(S.nU, T)]); big = R`P(${x} \cup ${y})=` + pf(S.nU, T); note = S.nI === 0 ? 'Como la intersección es vacía, basta <b>sumar</b>: regla de la suma para excluyentes.' : 'Si solo sumaras P(' + x + ') + P(' + y + ') contarías dos veces la intersección: por eso se resta.'; }
+      else { if (S.nY === 0) return '<div class="text-danger">P(' + y + ') = 0: no se puede condicionar.</div>'; lines.push(['Ω se reduce a ' + y + ': su total es ahora el denominador', R`n(${y})=${S.nY}`]); lines.push(['Casos de ' + x + ' dentro de ' + y, R`n(${x} \cap ${y})=${S.nI}`]); big = R`P(${x} \mid ${y})=\frac{n(${x} \cap ${y})}{n(${y})}=\frac{${S.nI}}{${S.nY}}=` + pf(S.nI, S.nY); note = `Compara con P(${x}) = ${ptxt(F(S.nX, T))}: ${S.nI * T === S.nX * S.nY ? 'son iguales → ' + x + ' y ' + y + ' son <b>independientes</b>.' : 'son distintas → ' + x + ' y ' + y + ' son <b>dependientes</b>.'}`; }
+      const indep = S.nI * T === S.nX * S.nY, excl = S.nI === 0;
+      return `${stepsBox(lines)}<div class="resb mt-2" style="background:#f3f0ff;border-radius:14px;padding:.4rem">${fd(big)}</div>${note ? `<div class="small mt-2">${note}</div>` : ''}
+        ${TC.op === 'x' || TC.op === 'xc' ? '' : `<div class="mt-2"><span class="sw-x" style="background:${excl ? '#e03131' : '#868e96'}">${excl ? 'Mutuamente excluyentes' : 'No son excluyentes'}</span><span class="sw-x" style="background:${indep ? '#2f9e44' : '#f08c00'}">${indep ? 'Independientes' : 'Dependientes'}</span>
+        <div class="small text-muted mt-1">Independencia: ¿${R``}P(${x}∩${y}) = P(${x})·P(${y})? &nbsp; ${ptxt(F(S.nI, T))} ${indep ? '=' : '≠'} ${ptxt(F(S.nX, T))}·${ptxt(F(S.nY, T))}</div></div>`}`; }
+    function tcOut() { const S = tcStats(); $('#tc-tab').innerHTML = tcTable(S); $('#tc-res').innerHTML = tcRes(S); math($('#tc-res'));
+      const T = S.T; if (T > 0) $('#tc-basic').innerHTML = ['H', 'M', 'N', 'D', 'F'].map(k => { const n = tcN(tcCells(k)); return `<span class="kpi" style="--c:${EVC[k]}"><span class="kl">P(${k})</span><span class="kv">${ptxt(F(n, T))}</span></span>`; }).join(' '); }
+    const EQP = ['👩', '👩', '👩', '👨', '👨', '👨'];
+    const EQC = (() => { const a = []; for (let i = 0; i < 6; i++) for (let j = i + 1; j < 6; j++) for (let k = j + 1; k < 6; k++) a.push([i, j, k]); return a; })();
+    const nW = c => c.filter(i => i < 3).length;
+    const EQE = [['A', 'A: exponen tres mujeres', c => nW(c) === 3], ['B', 'B: al menos una mujer', c => nW(c) >= 1], ['C', 'C: al menos un hombre', c => nW(c) <= 2], ['D', 'D: exponen tres hombres', c => nW(c) === 0],
+      ['AD', 'A ∩ D', c => nW(c) === 3 && nW(c) === 0], ['BC', 'B ∩ C', c => nW(c) >= 1 && nW(c) <= 2], ['AuD', 'A ∪ D', c => nW(c) === 3 || nW(c) === 0], ['Ac', 'Aᶜ (complemento de A)', c => nW(c) !== 3]];
+    function tcEq() { const sel = EQE.find(e => e[0] === TC.sel) || EQE[0], cnt = e => EQC.filter(c => e[2](c)).length;
+      let h = `<div class="row g-3"><div class="col-lg-7"><div class="lesson"><h5>Tres alumnas y tres alumnos forman un equipo</h5><p class="small">Tres del equipo preparan los materiales y los otros tres <b>exponen</b>; se reparte al azar. Cada combinación de quiénes exponen es un resultado: $\\binom{6}{3}=20$ casos <b>igualmente probables</b>. Toca un evento de la tabla para verlo marcado.</p><div>${EQC.map((c, i) => `<span class="cmb ${sel[2](c) ? 'hi' : 'dim'}">${c.map(k => EQP[k]).join('')}<sup>${i + 1}</sup></span>`).join('')}</div></div></div>
+        <div class="col-lg-5"><table class="eqt"><thead><tr><th>Evento</th><th>n</th><th>Probabilidad</th></tr></thead><tbody>${EQE.map(e => `<tr class="pk ${e[0] === sel[0] ? 'sel' : ''}" data-e="${e[0]}"><td>${e[1]}</td><td>${cnt(e)}</td><td><b>${ptxt(F(cnt(e), 20))}</b></td></tr>`).join('')}</tbody></table></div></div>`;
+      h += `<div class="demo mt-3"><div class="demo-t"><i class="bi bi-lightbulb-fill"></i>Preguntas guía</div><ol class="mb-0"><li>${R``}¿Qué significa que $P(A \\cap D)=0$? <span class="text-muted">→ A y D no pueden ocurrir juntos: son <b>mutuamente excluyentes</b> (${'A ∩ D = ∅'}).</span></li>
+        <li>¿Cómo se relaciona $P(A \\cup D)$ con $P(A)$ y $P(D)$? <span class="text-muted">→ Para excluyentes se <b>suman</b>: ${ptxt(F(1, 20))} + ${ptxt(F(1, 20))} = ${ptxt(F(2, 20))}.</span></li>
+        <li>Compara $P(B \\cap C)=${ptxt(F(18, 20))}$ con $P(B)+P(C)-P(B \\cup C)$: ${ptxt(F(19, 20))} + ${ptxt(F(19, 20))} − 1 = ${ptxt(F(18, 20))}. <span class="text-muted">B y C <b>no</b> son excluyentes: comparten los casos con mujeres y hombres mezclados.</span></li>
+        <li>Verifica el complemento: $P(A^{c})=1-P(A)=1-${ptxt(F(1, 20))}=${ptxt(F(19, 20))}$.</li></ol></div>`; return h; }
+    function tcR() { $('#tc-tabs').innerHTML = tabsP(TC_TABS, TC.tab); const b = $('#tc-body');
+      if (TC.tab === 'eq') { b.innerHTML = tcEq(); math(b); return; }
+      const opB = [['x', 'X'], ['xc', 'Xᶜ'], ['and', 'X ∩ Y'], ['or', 'X ∪ Y'], ['cond', 'X | Y']];
+      b.innerHTML = `<div class="row g-3"><div class="col-lg-7"><div class="lesson"><h5>Hábitos de tabaquismo en 300 estudiantes</h5><p class="small mb-2">Se elige un estudiante al azar. Eventos: <b>H</b> hombre, <b>M</b> mujer, <b>N</b> nunca ha fumado, <b>D</b> dejó de fumar, <b>F</b> fuma.</p><div id="tc-tab"></div>
+          <div class="mt-2 small"><span class="sw-x" style="background:#e8590c">X</span><span class="sw-x" style="background:#1c7ed6">Y</span><span class="sw-x" style="background:#7048e8">X y Y a la vez</span> · borde morado = resultado</div>
+          <details class="mt-2"><summary class="small fw-bold">Editar los datos de la tabla</summary><div class="table-responsive mt-2"><table class="table table-sm text-center align-middle mb-0"><thead><tr><th></th><th>N</th><th>D</th><th>F</th></tr></thead><tbody>${[0, 1].map(r => `<tr><th>${r ? 'M' : 'H'}</th>${[0, 1, 2].map(c => `<td><input type="number" min="0" max="9999" class="form-control form-control-sm tcin" data-r="${r}" data-c="${c}" value="${TC.v[r][c]}"></td>`).join('')}</tr>`).join('')}</tbody></table></div><button class="btn btn-sm btn-outline-secondary rounded-pill mt-2" id="tc-reset">Restaurar valores originales</button></details>
+          <div class="mt-3"><div class="small fw-bold mb-1">Probabilidades básicas (conteo directo)</div><div id="tc-basic" class="d-flex flex-wrap gap-2"></div></div></div></div>
+        <div class="col-lg-5"><div class="demo"><div class="demo-t"><i class="bi bi-calculator-fill"></i>Construye un evento</div>
+          <div class="d-flex gap-2 align-items-center flex-wrap mb-2"><span class="small fw-bold">X =</span><div class="btn-group btn-group-sm" id="tc-x">${Object.keys(TCE).map(k => `<button class="btn ${TC.x === k ? 'btn-dark' : 'btn-outline-dark'}" data-k="${k}">${k}</button>`).join('')}</div>
+          <span class="small fw-bold ms-2">Y =</span><div class="btn-group btn-group-sm" id="tc-y">${Object.keys(TCE).map(k => `<button class="btn ${TC.y === k ? 'btn-dark' : 'btn-outline-dark'}" data-k="${k}">${k}</button>`).join('')}</div></div>
+          <div class="btn-group btn-group-sm flex-wrap mb-2" id="tc-op">${opB.map(o => `<button class="btn ${TC.op === o[0] ? 'btn-warning fw-bold' : 'btn-outline-warning text-dark'}" data-op="${o[0]}">${o[1]}</button>`).join('')}</div>
+          <div class="small text-muted mb-2">Atajos del programa: <a href="#" data-pre="H,N,and">H∩N</a> · <a href="#" data-pre="M,D,or">M∪D</a> · <a href="#" data-pre="F,F,xc">Fᶜ</a> · <a href="#" data-pre="H,D,or">H∪D</a> · <a href="#" data-pre="H,M,and">H∩M</a> · <a href="#" data-pre="F,M,cond">F | M</a></div>
+          <div id="tc-res"></div></div></div></div>`; math(b); tcOut(); }
+    function tcSetup() { const sec = $('#sE2');
+      sec.addEventListener('click', e => { const t = e.target.closest('[data-t]'); if (t && t.parentElement.id === 'tc-tabs') { TC.tab = t.dataset.t; tcR(); return; }
+        const q = e.target.closest('#tc-x [data-k]'); if (q) { TC.x = q.dataset.k; tcR(); return; } const w = e.target.closest('#tc-y [data-k]'); if (w) { TC.y = w.dataset.k; tcR(); return; }
+        const o = e.target.closest('[data-op]'); if (o) { TC.op = o.dataset.op; tcR(); return; }
+        const p = e.target.closest('[data-pre]'); if (p) { e.preventDefault(); [TC.x, TC.y, TC.op] = p.dataset.pre.split(','); tcR(); return; }
+        if (e.target.closest('#tc-reset')) { TC.v = [[85, 12, 43], [103, 17, 40]]; tcR(); return; }
+        const r = e.target.closest('[data-e]'); if (r) { TC.sel = r.dataset.e; tcR(); } });
+      sec.addEventListener('input', e => { const t = e.target; if (!t.classList.contains('tcin')) return; TC.v[+t.dataset.r][+t.dataset.c] = Math.max(0, parseInt(t.value, 10) || 0); tcOut(); });
+      tcR(); }
+
+    /* ---------- 10. Independencia y paradojas ---------- */
+    const IN = { tab: 'urn', N: 2, B: 3, sim: null, A: new Set([1, 2]), Bs: new Set([3, 4, 5]), kid: 'none', m: { stage: 0, pick: null, prize: null, open: null, last: null, st: { stay: [0, 0], sw: [0, 0] } }, ms: null };
+    const IN_TABS = [['urn', 'Con y sin reemplazo', 'bi-box2-fill', '#1c7ed6'], ['exc', 'Excluyentes ≠ independientes', 'bi-intersect', '#e03131'], ['kid', 'Dos hijos', 'bi-people-fill', '#c2255c'], ['mon', 'Tres puertas (Monty Hall)', 'bi-door-open-fill', '#7c4a1e']];
+    function inUrn() { const N = IN.N, B = IN.B, T = N + B, pA = F(N, T), pB = F(B, T), pBA1 = F(B, T - 1), pAB1 = fmul(pA, pBA1), pAB2 = fmul(pA, pB);
+      const sit = (title, ic, nameB, pBA, pAB, indep) => `<div class="col-lg-6"><div class="demo h-100"><div class="demo-t"><i class="bi ${ic}"></i>${title}</div>${nameB}
+        <div class="small">${fi(R`P(A)=\frac{${N}}{${T}}=` + ptex(pA))} &nbsp; ${fi('P(B)=' + ptex(pB))}</div>
+        ${fd(R`P(B \mid A)=` + ptex(pBA) + (indep ? '' : R`\;\neq\;P(B)=` + ptex(pB)))}${fd(R`P(A \cap B)=P(A)\,P(B \mid A)=` + ptex(pAB))}
+        <div class="mt-1"><span class="sw-x" style="background:${indep ? '#2f9e44' : '#f08c00'}">${indep ? 'P(B|A) = P(B) → independientes' : 'P(B|A) ≠ P(B) → dependientes'}</span></div></div></div>`;
+      return `<div class="tip-box mb-3" style="background:#e7f5ff;border:1px solid #a5d8ff"><b>Conjetura:</b> A = «la primera bola es negra», B = «la segunda bola es blanca». ¿Saber que ocurrió A cambia la probabilidad de B? ¿Depende de si la bola se devuelve o no? Piénsalo y compara.</div>
+        <div class="d-flex gap-3 align-items-center flex-wrap mb-3"><label class="small fw-bold">Negras <input type="number" min="1" max="8" class="form-control form-control-sm d-inline-block" style="width:64px" id="un-n" value="${N}"></label><label class="small fw-bold">Blancas <input type="number" min="1" max="8" class="form-control form-control-sm d-inline-block" style="width:64px" id="un-b" value="${B}"></label><span>${ballsH(N, B)}</span></div>
+        <div class="row g-3">${sit('Situación 1: una urna, SIN reemplazo', 'bi-box-fill', '<p class="small mb-1">Se extraen dos bolas de la misma urna sin devolver la primera.</p>', pBA1, pAB1, false)}${sit('Situación 2: dos urnas iguales (o CON reemplazo)', 'bi-boxes', '<p class="small mb-1">Se extrae una bola de cada urna (equivale a devolver la primera).</p>', pB, pAB2, true)}</div>
+        <div class="demo mt-3"><div class="d-flex gap-2 align-items-center flex-wrap"><button class="btn btn-warning fw-bold rounded-pill" id="un-sim"><i class="bi bi-play-fill"></i> Simular 3,000 veces cada situación</button><span class="small text-muted">Comprueba con datos: estima P(B|A) y P(B).</span></div><div id="un-simout" class="mt-2"></div></div>
+        <div class="lesson mt-3"><p class="mb-1"><b>Conclusión:</b> A y B son <b>independientes</b> cuando $P(B \\mid A)=P(B)$ (o $P(A \\mid B)=P(A)$), es decir, cuando $P(A \\cap B)=P(A)\\,P(B)$. Sin reemplazo la composición de la urna cambia después de A, así que la probabilidad de B cambia.</p></div>`; }
+    function unSim() { const N = IN.N, T = IN.N + IN.B, n = 3000; let a1 = 0, ab1 = 0, b1 = 0, a2 = 0, ab2 = 0, b2 = 0;
+      for (let i = 0; i < n; i++) { const arr = Array.from({ length: T }, (_, k) => k < N ? 'N' : 'B'); const p = rndI(T), f = arr.splice(p, 1)[0], s = arr[rndI(T - 1)]; if (f === 'N') { a1++; if (s === 'B') ab1++; } if (s === 'B') b1++;
+        const f2 = rndI(T) < N ? 'N' : 'B', s2 = rndI(T) < N ? 'N' : 'B'; if (f2 === 'N') { a2++; if (s2 === 'B') ab2++; } if (s2 === 'B') b2++; }
+      $('#un-simout').innerHTML = `<table class="table table-sm text-center mb-0"><thead><tr><th></th><th>P̂(B | A)</th><th>P̂(B)</th><th>¿Iguales?</th></tr></thead><tbody><tr><td class="fw-bold">Sin reemplazo</td><td>${(ab1 / a1).toFixed(3)}</td><td>${(b1 / n).toFixed(3)}</td><td>${Math.abs(ab1 / a1 - b1 / n) > .05 ? '❌ no' : '≈ sí'}</td></tr><tr><td class="fw-bold">Dos urnas</td><td>${(ab2 / a2).toFixed(3)}</td><td>${(b2 / n).toFixed(3)}</td><td>${Math.abs(ab2 / a2 - b2 / n) > .05 ? '❌ no' : '≈ sí'}</td></tr></tbody></table>`; }
+    const DICE = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+    function inExc() { const A = IN.A, B = IN.Bs, nA = A.size, nB = B.size, nI = [...A].filter(x => B.has(x)).length, nU = new Set([...A, ...B]).size, excl = nI === 0, ind = nI * 6 === nA * nB;
+      const row = (nm, S, col, key) => `<div class="d-flex align-items-center gap-2 mb-2"><b style="color:${col};width:24px">${nm}</b>${[1, 2, 3, 4, 5, 6].map(v => `<button class="btn btn-sm ${S.has(v) ? '' : 'btn-outline-secondary'}" style="font-size:1.5rem;line-height:1;${S.has(v) ? `background:${col};color:#fff` : ''}" data-d="${key}${v}">${DICE[v - 1]}</button>`).join('')}</div>`;
+      const P = (n) => ptex(F(n, 6));
+      return `<div class="row g-3"><div class="col-lg-6"><div class="tip-box mb-2" style="background:#fff5f5;border:1px solid #ffc9c9"><b>Conjetura:</b> si dos eventos no pueden ocurrir a la vez (excluyentes), ¿son independientes? Elige A y B en un dado y averígualo.</div>${row('A', A, '#e8590c', 'a')}${row('B', B, '#1c7ed6', 'b')}
+        <div class="small text-muted">Ejemplos: <a href="#" data-pre2="12|345">A={1,2}, B={3,4,5}</a> · <a href="#" data-pre2="246|12">A=pares, B={1,2}</a> · <a href="#" data-pre2="246|135">pares / impares</a> · <a href="#" data-pre2="1234|456">A={1..4}, B={4,5,6}</a></div></div>
+        <div class="col-lg-6"><div class="demo"><div class="demo-t"><i class="bi bi-calculator-fill"></i>Verificación</div>
+          ${fd(R`P(A)=` + P(nA) + R`\quad P(B)=` + P(nB))}${fd(R`P(A \cap B)=` + P(nI) + R`\qquad P(A)\,P(B)=` + ptex(fmul(F(nA, 6), F(nB, 6))))}
+          <span class="sw-x" style="background:${excl ? '#e03131' : '#868e96'}">${excl ? 'Excluyentes (A∩B = ∅)' : 'No excluyentes'}</span><span class="sw-x" style="background:${ind ? '#2f9e44' : '#f08c00'}">${ind ? 'Independientes' : 'Dependientes'}</span>
+          ${excl && nA && nB ? verd(true, 'Teorema:', 'si $P(A)>0$, $P(B)>0$ y $A \\cap B=\\emptyset$, entonces $P(A \\cap B)=0 \\neq P(A)P(B)$: <b>excluyentes con probabilidad positiva son dependientes</b> (si ocurre A, B ya no puede ocurrir).') : ''}
+          ${!excl && ind ? verd(true, 'Independientes pero no excluyentes:', 'comparten resultados y aun así saber A no cambia la probabilidad de B.') : ''}
+          ${!excl && !ind ? '<div class="small mt-1">Se traslapan y además dependen: ocurrir A cambia la probabilidad de B.</div>' : ''}
+          ${nA === 0 || nB === 0 ? '<div class="small text-muted mt-1">Elige al menos un resultado en cada evento.</div>' : ''}</div></div></div>`; }
+    const KIDS = [['👧', '👧'], ['👧', '👦'], ['👦', '👧'], ['👦', '👦']], KC = { none: ['Sin información', () => true], any: ['Al menos una es niña', k => k[0] === '👧' || k[1] === '👧'], old: ['La mayor es niña', k => k[0] === '👧'], young: ['La menor es niña', k => k[1] === '👧'] };
+    function inKid() { const f = KC[IN.kid][1], inC = KIDS.map(f), nC = inC.filter(Boolean).length, nAC = KIDS.filter((k, i) => inC[i] && k[0] === '👧' && k[1] === '👧').length;
+      return `<div class="row g-3"><div class="col-lg-6"><div class="tip-box mb-2" style="background:#fff0f6;border:1px solid #fcc2d7"><b>Conjetura:</b> una familia tiene dos hijos. Sabemos que <i>al menos una es niña</i>. ¿Cuál es la probabilidad de que <b>ambas</b> sean niñas? (¿1/2 o 1/3?) ¿Y si sabemos que <i>la mayor</i> es niña?</div>
+        <div class="lesson"><h5>Espacio muestral (mayor, menor)</h5><div>${KIDS.map((k, i) => `<span class="cmb ${inC[i] ? 'hi' : 'dim'}" style="font-size:1.4rem">${k[0]}${k[1]}</span>`).join('')}</div><div class="small text-muted mt-1">Cuatro casos igualmente probables. Los atenuados quedan fuera al saber la condición.</div></div></div>
+        <div class="col-lg-6"><div class="demo"><div class="demo-t"><i class="bi bi-funnel-fill"></i>Condición conocida</div><div class="btn-group-vertical w-100 mb-2" id="kid-c">${Object.entries(KC).map(([k, v]) => `<button class="btn btn-sm ${IN.kid === k ? 'btn-dark' : 'btn-outline-dark'}" data-k="${k}">${v[0]}</button>`).join('')}</div>
+          ${fd(R`P(\text{ambas niñas} \mid \text{condición})=\frac{n(\text{ambas} \cap \text{cond.})}{n(\text{cond.})}=\frac{${nAC}}{${nC}}=` + ptex(F(nAC, nC)))}<div class="small text-muted">Ω se reduce a ${nC} resultado(s): la probabilidad condicional es contar dentro del nuevo espacio muestral.</div></div></div></div>
+        <div class="lesson mt-3"><p class="mb-0"><b>Por qué 1/3:</b> «al menos una es niña» deja {👧👧, 👧👦, 👦👧}; solo uno de los tres es ambas niñas. «La mayor es niña» deja {👧👧, 👧👦}: ahora sí 1/2. La <b>información exacta</b> que se conoce cambia el espacio muestral.</p></div>`; }
+    function monPlay(pick) { const M = IN.m; M.pick = pick; M.prize = rndI(3); const opts = [0, 1, 2].filter(d => d !== pick && d !== M.prize); M.open = opts[rndI(opts.length)]; M.stage = 1; M.last = null; }
+    function monFinish(sw) { const M = IN.m; const fin = sw ? [0, 1, 2].find(d => d !== M.pick && d !== M.open) : M.pick, win = fin === M.prize; M.stage = 2; M.fin = fin; M.last = { sw, win }; const s = M.st[sw ? 'sw' : 'stay']; s[1]++; if (win) s[0]++; }
+    function monSim() { const n = 3000; let st = 0, sw = 0; for (let i = 0; i < n; i++) { const prize = rndI(3), pick = rndI(3); if (pick === prize) st++; else sw++; } IN.ms = { n, st, sw }; }
+    function inMon() { const M = IN.m, S = M.st;
+      const door = d => { const op = M.stage >= 1 && M.open === d, end = M.stage === 2, show = end ? (d === M.prize ? '🎁' : '🐐') : op ? '🐐' : (M.stage === 1 && d === M.pick ? '🚪✋' : '🚪');
+        return `<div class="col-4"><button class="door ${M.pick === d ? 'pick' : ''} ${op || end ? 'open' : ''} ${end && d === M.prize ? 'win' : ''}" data-door="${d}" ${M.stage !== 0 ? 'disabled' : ''}>${show}</button><div class="text-center small fw-bold">Puerta ${d + 1}${M.pick === d ? ' · tu elección' : ''}${M.stage === 1 && M.open === d ? ' · abierta' : ''}</div></div>`; };
+      const pc = s => s[1] ? (100 * s[0] / s[1]).toFixed(0) + ' %' : '—';
+      return `<div class="row g-3"><div class="col-lg-7"><div class="tip-box mb-2" style="background:#fff9db;border:1px solid #ffe066"><b>Conjetura:</b> detrás de una puerta hay un regalo y detrás de las otras dos, una cabra. Eliges una puerta; el conductor (que sabe dónde está el regalo) abre <b>otra con cabra</b>. ¿Conviene <b>mantener</b> o <b>cambiar</b>? ¿O da igual (1/2 y 1/2)?</div>
+        <div class="row g-2 mb-2">${[0, 1, 2].map(door).join('')}</div>
+        <div id="mon-msg" class="mb-2">${M.stage === 0 ? '<b>Paso 1:</b> elige una puerta.' : M.stage === 1 ? `<b>Paso 2:</b> el conductor abrió la puerta ${M.open + 1} (cabra). ¿Qué haces? <div class="mt-1"><button class="btn btn-dark rounded-pill btn-sm" data-mv="stay">Mantener</button> <button class="btn btn-warning fw-bold rounded-pill btn-sm" data-mv="sw">Cambiar</button></div>` : `${M.last.win ? '🎉 <b>¡Ganaste!</b>' : '😕 <b>Perdiste.</b>'} Elegiste ${M.last.sw ? 'cambiar' : 'mantener'}. <div class="mt-1"><button class="btn btn-outline-dark rounded-pill btn-sm" data-mv="again">Jugar de nuevo</button></div>`}</div>
+        <div class="small">Tus partidas — Mantener: <b>${S.stay[0]}/${S.stay[1]}</b> (${pc(S.stay)}) · Cambiar: <b>${S.sw[0]}/${S.sw[1]}</b> (${pc(S.sw)})</div></div>
+        <div class="col-lg-5"><div class="demo"><div class="demo-t"><i class="bi bi-cpu-fill"></i>Simulación masiva</div><button class="btn btn-warning fw-bold rounded-pill w-100" id="mon-sim"><i class="bi bi-play-fill"></i> Simular 3,000 juegos</button>
+          ${IN.ms ? `<div class="mt-2"><div class="pbar" style="--c:#e03131"><span class="pl">Mantener</span><div class="pt"><i style="--w:${(100 * IN.ms.st / IN.ms.n).toFixed(1)}%"></i></div><b>${(IN.ms.st / IN.ms.n).toFixed(3)}</b></div><div class="pbar" style="--c:#2f9e44"><span class="pl">Cambiar</span><div class="pt"><i style="--w:${(100 * IN.ms.sw / IN.ms.n).toFixed(1)}%"></i></div><b>${(IN.ms.sw / IN.ms.n).toFixed(3)}</b></div></div>` : ''}</div></div></div>
+        <div class="lesson mt-3"><h5>¿Por qué cambiar gana 2/3?</h5><table class="table table-sm text-center align-middle mb-2"><thead><tr><th>El regalo está…</th><th>Probabilidad</th><th>Si mantienes</th><th>Si cambias</th></tr></thead><tbody><tr><td>en tu puerta</td><td>${ptxt(F(1, 3))}</td><td class="text-success fw-bold">gana</td><td class="text-danger fw-bold">pierde</td></tr><tr><td>en otra puerta</td><td>${ptxt(F(2, 3))}</td><td class="text-danger fw-bold">pierde</td><td class="text-success fw-bold">gana</td></tr></tbody></table>
+        <p class="mb-0">Tu primera elección acierta con probabilidad ${fi('\\frac{1}{3}')} y eso no cambia cuando el conductor abre una puerta con cabra (él <b>no abre al azar</b>: usa su información). Por la <b>probabilidad total</b>, cambiar gana con ${fi('1-\\frac{1}{3}=\\frac{2}{3}')}.</p></div>`; }
+    function inR() { $('#in-tabs').innerHTML = tabsP(IN_TABS, IN.tab); const b = $('#in-body'); b.innerHTML = IN.tab === 'urn' ? inUrn() : IN.tab === 'exc' ? inExc() : IN.tab === 'kid' ? inKid() : inMon(); math(b); }
+    function inSetup() { const sec = $('#sI');
+      sec.addEventListener('click', e => { const t = e.target.closest('[data-t]'); if (t && t.parentElement.id === 'in-tabs') { IN.tab = t.dataset.t; inR(); return; }
+        if (e.target.closest('#un-sim')) { unSim(); return; }
+        const d = e.target.closest('[data-d]'); if (d) { const k = d.dataset.d[0], v = +d.dataset.d.slice(1), S = k === 'a' ? IN.A : IN.Bs; S.has(v) ? S.delete(v) : S.add(v); inR(); return; }
+        const p = e.target.closest('[data-pre2]'); if (p) { e.preventDefault(); const [a, b] = p.dataset.pre2.split('|'); IN.A = new Set([...a].map(Number)); IN.Bs = new Set([...b].map(Number)); inR(); return; }
+        const k = e.target.closest('#kid-c [data-k]'); if (k) { IN.kid = k.dataset.k; inR(); return; }
+        const dr = e.target.closest('[data-door]'); if (dr && IN.m.stage === 0) { monPlay(+dr.dataset.door); inR(); return; }
+        const mv = e.target.closest('[data-mv]'); if (mv) { const v = mv.dataset.mv; if (v === 'again') { IN.m.stage = 0; IN.m.pick = null; } else monFinish(v === 'sw'); inR(); return; }
+        if (e.target.closest('#mon-sim')) { monSim(); inR(); } });
+      sec.addEventListener('change', e => { const t = e.target; if (t.id === 'un-n' || t.id === 'un-b') { IN[t.id === 'un-n' ? 'N' : 'B'] = Math.max(1, Math.min(8, parseInt(t.value, 10) || 1)); inR(); } });
+      inR(); }
+    RENDERS.push(enR, tcR, inR);
+
+    /* ===================== Manual de conceptos (modal): definición → teorema → fórmula → uso → ejemplo ===================== */
+    const MN = { k: 'espacio', q: '' };
+    const Pq = (n, d) => ptxt(F(n, d));
+    function manDefs() {
+      const S = tcStats(), T = S.T, tn = k => tcN(tcCells(k)), tI = (a, b) => tcN(setI(tcCells(a), tcCells(b))), tU = (a, b) => tcN(setU(tcCells(a), tcCells(b)));
+      const tcx = T > 0;
+      return [
+        { k: 'espacio', t: 'Experimento y espacio muestral Ω', c: '#2f9e44',
+          def: R`Un <b>experimento aleatorio</b> es aquel cuyo resultado no puede predecirse con certeza, aunque se conocen todos los resultados posibles y puede repetirse en condiciones similares. El <b>espacio muestral</b> $\Omega$ es el conjunto de <b>todos</b> los resultados posibles; cada resultado $\omega$ es un <b>punto muestral</b>.`,
+          thm: [R`Los resultados de $\Omega$ son <b>mutuamente excluyentes</b> (solo ocurre uno) y <b>exhaustivos</b> (siempre ocurre alguno).`, R`<b>Principio multiplicativo:</b> si un experimento tiene $k$ etapas con $n_1, n_2, \dots, n_k$ resultados cada una, $|\Omega| = n_1 \cdot n_2 \cdots n_k$.`, R`Si $\Omega$ es finito con $n$ resultados, hay $2^{n}$ eventos posibles (todos sus subconjuntos).`],
+          f: [R`\Omega = (\omega_1, \omega_2, \dots, \omega_n)`, R`p = (p_1, p_2, \dots, p_n) \qquad \sum_{i=1}^{n} p_i = 1`, R`N_{\text{eventos}} = 2^{n}`],
+          dn: [[R`\omega_i`, 'resultado número i'], ['p_i', 'probabilidad del resultado i'], ['n', 'cantidad de resultados']],
+          use: 'Lista primero los resultados posibles, comprueba que no se traslapan y que no falta ninguno; después decide si son igual de probables (enfoque clásico) o si necesitan pesos.',
+          ex: () => R`Dos monedas: $\Omega=\{SS, SA, AS, AA\}$, $|\Omega|=2\cdot 2=4$ y existen $2^{4}=16$ eventos posibles. Las probabilidades suman $${Pq(1, 4)}+${Pq(1, 4)}+${Pq(1, 4)}+${Pq(1, 4)}=1$.` },
+        { k: 'evento', t: 'Eventos y operaciones entre eventos', c: '#1c7ed6',
+          def: R`Un <b>evento</b> es un subconjunto $A \subseteq \Omega$; <b>ocurre</b> cuando el resultado del experimento pertenece a $A$. Es <b>simple</b> si tiene un solo resultado y <b>compuesto</b> si tiene varios; $\emptyset$ es el evento <b>imposible</b> y $\Omega$ el <b>seguro</b>. Operaciones: unión $A \cup B$ («A o B»), intersección $A \cap B$ («A y B»), complemento $A^{c}$ («no A»).`,
+          thm: [R`<b>Leyes de De Morgan:</b> $(A \cup B)^{c} = A^{c} \cap B^{c}$ y $(A \cap B)^{c} = A^{c} \cup B^{c}$.`, R`<b>Distributividad:</b> $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.`, R`$A$ y $B$ son <b>disjuntos</b> (mutuamente excluyentes) si $A \cap B = \emptyset$.`],
+          f: [R`(A \cup B)^{c} = A^{c} \cap B^{c}`, R`(A \cap B)^{c} = A^{c} \cup B^{c}`, R`A \cap (B \cup C) = (A \cap B) \cup (A \cap C)`],
+          dn: [[R`A^{c}`, 'complemento de A: lo que no es A'], [R`\cup`, 'unión: ocurre al menos uno'], [R`\cap`, 'intersección: ocurren ambos']],
+          use: 'Traduce las palabras a operaciones: «o» → unión, «y» → intersección, «no» → complemento, «al menos uno» → unión, «ninguno» → complemento de la unión.',
+          ex: () => R`Dado: $A$ = pares $=\{2,4,6\}$ y $B=\{4,5,6\}$. Entonces $A \cap B=\{4,6\}$, $A \cup B=\{2,4,5,6\}$ y $A^{c}=\{1,3,5\}$. «Ni A ni B» $=(A \cup B)^{c}=\{1,3\}=A^{c} \cap B^{c}$.` },
+        { k: 'enfoques', t: 'Enfoques de la probabilidad', c: '#e8590c',
+          def: R`La <b>probabilidad</b> mide qué tan posible es un evento (un número entre 0 y 1). Se interpreta de cuatro formas: <b>clásica</b> (Laplace: casos favorables entre posibles, con resultados equiprobables), <b>frecuencial</b> (von Mises: límite de la frecuencia relativa al repetir el experimento), <b>subjetiva</b> (grado de creencia de una persona con cierta información) y <b>axiomática</b> (Kolmogorov: cualquier función que cumpla tres axiomas).`,
+          thm: [R`Las tres interpretaciones <b>cumplen los axiomas de Kolmogorov</b>; por eso todas las reglas (complemento, suma, producto, Bayes) valen en cualquiera de ellas.`, R`El enfoque <b>clásico</b> exige resultados equiprobables; el <b>frecuencial</b> exige repetir el experimento en las mismas condiciones; el <b>subjetivo</b> se usa cuando ninguna de las dos se puede aplicar.`],
+          f: [R`P(A) = \frac{n(A)}{n(\Omega)}`, R`P(A) \approx \hat{p}_n = \frac{x}{n}`, R`P(H \mid E) = \frac{P(H)\,P(E \mid H)}{P(E)}`],
+          dn: [['n(A)', 'casos favorables'], [R`n(\Omega)`, 'casos posibles'], ['x', 'veces que ocurre A en n repeticiones'], ['H', 'hipótesis cuya creencia se actualiza']],
+          use: '¿Hay simetría? → clásico. ¿Se puede repetir? → frecuencial (simula). ¿Es un evento único? → subjetivo.',
+          ex: () => R`Moneda: por simetría, $P(\text{Sol})=${Pq(1, 2)}$ (clásico). Si en 100 lanzamientos salen 52 soles, $\hat{p}=0.52$ (frecuencial). «¿Lloverá mañana?» no se puede repetir: se da un valor subjetivo, p. ej. 0.30, y se actualiza al ver el pronóstico.` },
+        { k: 'clasica', t: 'Probabilidad clásica (Laplace)', c: '#2f9e44',
+          def: R`Si $\Omega$ es finito y sus $n(\Omega)$ resultados son <b>igualmente probables</b>, la probabilidad de un evento $A$ es el cociente entre los <b>casos favorables</b> $n(A)$ y los <b>casos posibles</b> $n(\Omega)$.`,
+          thm: [R`<b>Regla de Laplace:</b> $P(A)=\frac{n(A)}{n(\Omega)}$, válida <u>solo</u> si los resultados son equiprobables.`, R`Si hay <b>pesos</b> $w_i$ (resultados no equiprobables): $P(\omega_i)=\frac{w_i}{\sum w}$.`, R`Se cumple $0 \le P(A) \le 1$, porque $0 \le n(A) \le n(\Omega)$.`],
+          f: [R`P(A) = \frac{n(A)}{n(\Omega)}`, R`P(\omega_i) = \frac{w_i}{\sum w}`], dn: [['n(A)', 'casos favorables a A'], [R`n(\Omega)`, 'casos posibles'], ['w_i', 'peso del resultado i']],
+          use: 'Verifica que los casos sean igual de probables (cuenta bolas, no colores; distingue las monedas). Cuenta favorables y posibles, y divide.',
+          ex: () => R`Tres urnas (negras/blancas): 3/4, 1/2, 4/5 → P(negra) $=${Pq(3, 7)}\approx 0.4286$, $${Pq(1, 3)}\approx 0.3333$ y $${Pq(4, 9)}\approx 0.4444$. La mejor es la urna 3 aunque la urna 1 tenga más bolas negras en total.` },
+        { k: 'lgn', t: 'Frecuencia relativa y ley de los grandes números', c: '#e8590c',
+          def: R`La <b>frecuencia relativa</b> de un evento $A$ en $n$ repeticiones es $\hat{p}_n = x/n$, donde $x$ es el número de veces que ocurrió. La <b>ley de los grandes números</b> afirma que, al repetir el experimento muchas veces, $\hat{p}_n$ se <b>estabiliza</b> alrededor de la probabilidad $p$.`,
+          thm: [R`<b>Ley (débil) de los grandes números, Bernoulli:</b> para todo $\varepsilon>0$, $P\left(\,|\hat{p}_n - p| \ge \varepsilon\,\right) \to 0$ cuando $n \to \infty$.`, R`<b>Cota de Chebyshev:</b> $P\left(|\hat{p}_n - p| \ge \varepsilon\right) \le \frac{p(1-p)}{n\,\varepsilon^{2}} \le \frac{1}{4n\varepsilon^{2}}$.`, R`<b>Falacia del apostador:</b> la <i>proporción</i> converge, pero las desviaciones absolutas $x-np$ no se «compensan»; los lanzamientos pasados no cambian los futuros (son independientes).`],
+          f: [R`\hat{p}_n = \frac{x}{n} \;\to\; p`, R`P\left(|\hat{p}_n - p| \ge \varepsilon\right) \le \frac{p(1-p)}{n\,\varepsilon^{2}}`], dn: [[R`\hat{p}_n`, 'frecuencia relativa con n repeticiones'], ['p', 'probabilidad verdadera'], [R`\varepsilon`, 'error tolerado']],
+          use: 'Para aproximar una probabilidad por simulación usa muchas repeticiones (≥ 500); con pocas, la frecuencia varía demasiado. Repite la simulación varias veces para ver la variación.',
+          ex: () => { const b1 = 0.25 / (500 * 0.0025), b2 = 0.25 / (5000 * 0.0025); return R`Moneda, $\varepsilon=0.05$: con $n=500$ la cota es $\frac{0.25}{500\cdot 0.0025}=${b1.toFixed(2)}$ (a lo más 20 % de las corridas se alejan más de 0.05); con $n=5000$ baja a $${b2.toFixed(3)}$.`; } },
+        { k: 'axiomas', t: 'Axiomas de Kolmogorov y propiedades', c: '#7048e8',
+          def: R`Una <b>probabilidad</b> es una función $P$ que asigna a cada evento $A \subseteq \Omega$ un número real y cumple los tres <b>axiomas de Kolmogorov</b> (1933).`,
+          thm: [R`<b>Axioma 1 (no negatividad):</b> $P(A) \ge 0$.`, R`<b>Axioma 2 (normalización):</b> $P(\Omega)=1$.`, R`<b>Axioma 3 (aditividad):</b> si $A_1, A_2, \dots$ son disjuntos, $P(A_1 \cup A_2 \cup \cdots)=P(A_1)+P(A_2)+\cdots$.`, R`<b>Consecuencias:</b> $P(\emptyset)=0$; $0 \le P(A) \le 1$; si $A \subseteq B$ entonces $P(A) \le P(B)$ (monotonía).`],
+          f: [R`P(A) \ge 0 \qquad P(\Omega) = 1`, R`A_i \cap A_j = \emptyset \;\Rightarrow\; P\left(\bigcup A_i\right) = \sum P(A_i)`], dn: [[R`A_i`, 'eventos disjuntos de dos en dos']],
+          use: 'Sirve para validar una asignación: ninguna probabilidad negativa, el total debe ser 1 y la de una unión disjunta es la suma.',
+          ex: () => R`Dado: $P(\{2\})+P(\{4\})+P(\{6\})=${Pq(1, 6)}+${Pq(1, 6)}+${Pq(1, 6)}=${Pq(1, 2)}=P(\text{par})$, y todas las probabilidades suman $6\cdot ${Pq(1, 6)}=1$.` },
+        { k: 'complemento', t: 'Regla del complemento', c: '#868e96',
+          def: R`El <b>complemento</b> de $A$, $A^{c}$, contiene todos los resultados de $\Omega$ que <b>no</b> están en $A$.`,
+          thm: [R`<b>Regla del complemento:</b> $P(A^{c})=1-P(A)$. <i>Demostración:</i> $A$ y $A^{c}$ son disjuntos y $A \cup A^{c}=\Omega$, así que $P(A)+P(A^{c})=P(\Omega)=1$.`, R`<b>Al menos uno:</b> $P(\text{al menos uno})=1-P(\text{ninguno})$; para eventos independientes, $1-\prod (1-P(E_i))$.`],
+          f: [R`P(A^{c}) = 1 - P(A)`, R`P(E_1 \cup \dots \cup E_n) = 1 - \prod_{i=1}^{n} \left(1 - P(E_i)\right)`], dn: [[R`A^{c}`, 'no ocurre A']],
+          use: 'Cuando «al menos…» es difícil de contar, calcula lo contrario («ninguno») y réstalo de 1.',
+          ex: () => R`3 monedas, al menos un sol: $1-(${Pq(1, 2)})^{3}=${Pq(7, 8)}$. En el equipo de 6: $P(A^{c})=1-${Pq(1, 20)}=${Pq(19, 20)}$.` },
+        { k: 'union', t: 'Unión de eventos (inclusión–exclusión)', c: '#e8590c',
+          def: R`La <b>unión</b> $A \cup B$ ocurre cuando ocurre $A$, $B$ o ambos.`,
+          thm: [R`<b>Regla de la suma (caso general):</b> $P(A \cup B)=P(A)+P(B)-P(A \cap B)$. <i>Idea:</i> $P(A)+P(B)$ cuenta dos veces la intersección; se resta una vez.`, R`<b>Tres eventos:</b> se suman los individuales, se restan las intersecciones por pares y se suma la triple.`],
+          f: [R`P(A \cup B) = P(A) + P(B) - P(A \cap B)`, R`P(A \cup B \cup C) = \sum P(\cdot) - P(A \cap B) - P(A \cap C) - P(B \cap C) + P(A \cap B \cap C)`], dn: [[R`P(A \cap B)`, 'probabilidad de que ocurran ambos']],
+          use: 'Calcula P(A), P(B) y P(A∩B) (tabla, árbol o Venn) y aplica la fórmula; verifica contando directamente las celdas de la unión.',
+          ex: () => tcx ? R`En la tabla de tabaquismo: $P(H \cup D)=\frac{${tn('H')}}{${T}}+\frac{${tn('D')}}{${T}}-\frac{${tI('H', 'D')}}{${T}}=\frac{${tU('H', 'D')}}{${T}}=${Pq(tU('H', 'D'), T)}$.` : 'Escribe datos en la tabla de contingencia.' },
+        { k: 'excluyentes', t: 'Eventos mutuamente excluyentes y regla de la suma', c: '#e03131',
+          def: R`$A$ y $B$ son <b>mutuamente excluyentes</b> (disjuntos) si <b>no pueden ocurrir a la vez</b>: $A \cap B=\emptyset$, es decir, $P(A \cap B)=0$.`,
+          thm: [R`<b>Regla de la suma:</b> si $A \cap B=\emptyset$, entonces $P(A \cup B)=P(A)+P(B)$ (es el caso particular del axioma 3).`, R`<b>Generalización:</b> para $A_1,\dots,A_k$ disjuntos de dos en dos, $P(\bigcup A_i)=\sum P(A_i)$.`, R`Una <b>partición</b> de $\Omega$ es una familia de eventos excluyentes y exhaustivos: sus probabilidades suman 1.`],
+          f: [R`A \cap B = \emptyset \;\Rightarrow\; P(A \cup B) = P(A) + P(B)`, R`\sum_{i=1}^{k} P(A_i) = 1 \quad \text{(partición)}`], dn: [[R`\emptyset`, 'conjunto vacío (evento imposible)']],
+          use: 'Pregunta: ¿pueden pasar juntos? Si no, suma directamente; si sí, resta la intersección.',
+          ex: () => R`Equipo de 6: $A$ (tres mujeres exponen) y $D$ (tres hombres exponen) no pueden ocurrir juntos: $P(A \cap D)=0$ y $P(A \cup D)=${Pq(1, 20)}+${Pq(1, 20)}=${Pq(2, 20)}$.` },
+        { k: 'contingencia', t: 'Tablas de contingencia', c: '#1c7ed6',
+          def: R`Una <b>tabla de contingencia</b> (de doble entrada) cuenta cuántos elementos presentan cada combinación de dos características. Las celdas internas son las frecuencias <b>conjuntas</b>; las sumas de filas y columnas (márgenes) son las frecuencias <b>marginales</b>; el total es $n(\Omega)$.`,
+          thm: [R`<b>Probabilidad conjunta:</b> $P(A \cap B)=\frac{n(A \cap B)}{n(\Omega)}$ (una celda).`, R`<b>Probabilidad marginal:</b> $P(A)=\sum_j P(A \cap B_j)$ (suma de una fila o columna), si los $B_j$ forman una partición.`, R`<b>Probabilidad condicional:</b> $P(A \mid B)=\frac{n(A \cap B)}{n(B)}$: se divide entre el total del <i>margen</i> de la condición.`],
+          f: [R`P(A \cap B) = \frac{n(A \cap B)}{n(\Omega)}`, R`P(A) = \sum_{j} P(A \cap B_j)`, R`P(A \mid B) = \frac{n(A \cap B)}{n(B)}`], dn: [[R`n(A \cap B)`, 'número de elementos de la celda'], [R`n(B)`, 'total de la fila o columna de B']],
+          use: 'Identifica qué celdas forman cada evento; para «y» toma la celda común, para «o» todas las celdas sin repetir, para «dado que» cambia el denominador al total de la condición.',
+          ex: () => tcx ? R`300 estudiantes: $P(H)=\frac{${tn('H')}}{${T}}=${Pq(tn('H'), T)}$, $P(F)=${Pq(tn('F'), T)}$, $P(H \cap F)=${Pq(tI('H', 'F'), T)}$ y $P(F \mid H)=\frac{${tI('H', 'F')}}{${tn('H')}}=${Pq(tI('H', 'F'), tn('H'))}$.`.replace(/300 estudiantes/, T + ' estudiantes') : 'Escribe datos en la tabla.' },
+        { k: 'condicional', t: 'Probabilidad condicional', c: '#c2255c',
+          def: R`La <b>probabilidad condicional</b> de $A$ dado $B$ es la probabilidad de $A$ sabiendo que $B$ <b>ya ocurrió</b>. El espacio muestral <b>se reduce</b> a $B$.`,
+          thm: [R`<b>Definición:</b> $P(A \mid B)=\frac{P(A \cap B)}{P(B)}$, con $P(B)>0$.`, R`$P(\cdot \mid B)$ es una probabilidad: cumple los tres axiomas dentro del nuevo espacio $B$ (por eso también $P(A^{c} \mid B)=1-P(A \mid B)$).`, R`<b>Regla del producto:</b> despejando, $P(A \cap B)=P(B)\,P(A \mid B)$.`],
+          f: [R`P(A \mid B) = \frac{P(A \cap B)}{P(B)}, \quad P(B)>0`], dn: [[R`P(A \mid B)`, 'probabilidad de A dado B'], [R`P(B)`, 'no puede ser 0']],
+          use: 'Pregúntate: «¿entre cuáles casos me muevo ahora?». Cuenta solo dentro de B, o divide la intersección entre P(B).',
+          ex: () => tcx && tn('M') > 0 ? R`Entre las mujeres, ¿cuál es la probabilidad de que fume? $P(F \mid M)=\frac{${tI('F', 'M')}}{${tn('M')}}=${Pq(tI('F', 'M'), tn('M'))}$, distinta de $P(F)=${Pq(tn('F'), T)}$. Dos hijos: $P(\text{ambas niñas} \mid \text{al menos una niña})=${Pq(1, 3)}$.` : R`Dos hijos: $P(\text{ambas niñas} \mid \text{al menos una niña})=${Pq(1, 3)}$.` },
+        { k: 'producto', t: 'Regla del producto (multiplicación)', c: '#7048e8',
+          def: R`La <b>regla del producto</b> da la probabilidad de que ocurran varios eventos a la vez (intersección) a partir de condicionales: se multiplica la probabilidad del primero por la del segundo <b>dado</b> el primero, etc. En un diagrama de árbol equivale a multiplicar las ramas.`,
+          thm: [R`<b>Dos eventos:</b> $P(A \cap B)=P(A)\,P(B \mid A)$ (siempre válida).`, R`<b>Regla de la cadena:</b> $P(A \cap B \cap C)=P(A)\,P(B \mid A)\,P(C \mid A \cap B)$.`, R`Si son independientes, cada condicional se reduce a la probabilidad simple y queda $\prod P(E_i)$.`],
+          f: [R`P(A \cap B) = P(A)\,P(B \mid A)`, R`P(A \cap B \cap C) = P(A)\,P(B \mid A)\,P(C \mid A \cap B)`], dn: [[R`P(B \mid A)`, 'probabilidad de B una vez ocurrido A']],
+          use: 'Ordena los eventos en el tiempo, multiplica a lo largo de la rama y recuerda actualizar la composición (sin reemplazo).',
+          ex: () => R`Urna con 2 negras y 3 blancas, sin reemplazo: $P(N \text{ y luego } B)=\frac{2}{5}\cdot\frac{3}{4}=${Pq(3, 10)}$. Con reemplazo sería $\frac{2}{5}\cdot\frac{3}{5}=${Pq(6, 25)}$.` },
+        { k: 'independencia', t: 'Independencia de eventos', c: '#1098ad',
+          def: R`Dos eventos son <b>independientes</b> cuando la ocurrencia de uno <b>no modifica</b> la probabilidad del otro.`,
+          thm: [R`<b>Caracterización:</b> $A$ y $B$ son independientes $\iff P(A \cap B)=P(A)\,P(B) \iff P(B \mid A)=P(B)$ (con $P(A)>0$) $\iff P(A \mid B)=P(A)$.`.replace('\\iff', '\\Leftrightarrow').replace('\\iff', '\\Leftrightarrow').replace('\\iff', '\\Leftrightarrow'), R`<b>Complementos:</b> si $A$ y $B$ son independientes, también lo son $A$ y $B^{c}$, $A^{c}$ y $B$, y $A^{c}$ y $B^{c}$.`, R`<b>Excluyentes ≠ independientes:</b> si $P(A)>0$, $P(B)>0$ y $A \cap B=\emptyset$, entonces $P(A \cap B)=0 \ne P(A)P(B)$: son <u>dependientes</u>.`, R`<b>Reemplazo:</b> con reemplazo (o urnas distintas) las extracciones son independientes; sin reemplazo son dependientes.`, R`<b>Independencia mutua</b> de $n$ eventos: la regla del producto debe valer para <i>toda</i> subcolección.`],
+          f: [R`P(A \cap B) = P(A)\,P(B)`, R`P(B \mid A) = P(B)`], dn: [[R`P(A)`, 'probabilidad de A'], [R`P(B \mid A)`, 'probabilidad de B dado A']],
+          use: 'Comprueba con números: ¿P(A∩B) = P(A)·P(B)? ¿P(B|A) = P(B)? Si no se cumple, los eventos son dependientes.',
+          ex: () => R`Urna 2N/3B: sin reemplazo $P(B \mid A)=${Pq(3, 4)} \ne P(B)=${Pq(3, 5)}$ → dependientes. Con dos urnas: $P(B \mid A)=${Pq(3, 5)}=P(B)$ → independientes. Dado: «par» y «≤ 2» son independientes ($\frac{1}{6}=\frac{1}{2}\cdot\frac{1}{3}$).` },
+        { k: 'total', t: 'Partición y probabilidad total', c: '#f08c00',
+          def: R`Una <b>partición</b> de $\Omega$ es un conjunto de eventos $H_1, \dots, H_m$ <b>disjuntos</b>, <b>exhaustivos</b> ($\bigcup H_i=\Omega$) y con $P(H_i)>0$. Cada $H_i$ es una «causa» o «hipótesis».`,
+          thm: [R`<b>Teorema de la probabilidad total:</b> $P(E)=\sum_{i=1}^{m} P(H_i)\,P(E \mid H_i)$.`, R`<i>Demostración:</i> $E=\bigcup (E \cap H_i)$ (disjuntos) y $P(E \cap H_i)=P(H_i)P(E \mid H_i)$.`],
+          f: [R`P(E) = \sum_{i=1}^{m} P(H_i)\,P(E \mid H_i)`], dn: [[R`H_i`, 'hipótesis (partición de Ω)'], [R`P(E \mid H_i)`, 'probabilidad de E si H_i es cierta']],
+          use: 'Dibuja el árbol: una rama por hipótesis, multiplica a lo largo de cada rama que termina en E y suma esas ramas.',
+          ex: () => R`Máquinas A, B, C producen 50 %, 30 % y 20 % con 2 %, 3 % y 5 % defectuosas: $P(D)=0.5\cdot 0.02+0.3\cdot 0.03+0.2\cdot 0.05=0.010+0.009+0.010=0.029$.` },
+        { k: 'bayes', t: 'Teorema de Bayes', c: '#e8590c',
+          def: R`El <b>teorema de Bayes</b> invierte una condicional: pasa de $P(E \mid H)$ (<b>verosimilitud</b>) a $P(H \mid E)$ (<b>probabilidad posterior</b>), usando la creencia inicial $P(H)$ (<b>a priori</b>).`,
+          thm: [R`<b>Bayes:</b> $P(H_i \mid E)=\frac{P(H_i)\,P(E \mid H_i)}{P(E)}$. <i>Demostración:</i> $P(H_i \cap E)=P(H_i)P(E \mid H_i)=P(E)P(H_i \mid E)$; se despeja y se usa la probabilidad total en $P(E)$.`, R`<b>Forma en razones (odds):</b> posterior = a priori × razón de verosimilitudes.`],
+          f: [R`P(H_i \mid E) = \frac{P(H_i)\,P(E \mid H_i)}{\sum_{j} P(H_j)\,P(E \mid H_j)}`, R`\frac{P(H \mid E)}{P(H^{c} \mid E)} = \frac{P(H)}{P(H^{c})} \cdot \frac{P(E \mid H)}{P(E \mid H^{c})}`], dn: [[R`P(H_i)`, 'a priori'], [R`P(E \mid H_i)`, 'verosimilitud'], [R`P(H_i \mid E)`, 'posterior']],
+          use: 'Pasos: (1) a priori de cada hipótesis, (2) verosimilitud de la evidencia, (3) multiplica, (4) divide entre la suma (probabilidad total).',
+          ex: () => { const pr = .01, a = .9, b = .05, pe = pr * a + (1 - pr) * b; return R`Prueba médica: prevalencia 1 %, sensibilidad 90 %, falsos positivos 5 %. $P(+)=0.01\cdot 0.90+0.99\cdot 0.05=${pe.toFixed(4)}$ y $P(\text{enfermo} \mid +)=\frac{0.009}{${pe.toFixed(4)}}=${(pr * a / pe).toFixed(3)}$: solo ≈ ${(100 * pr * a / pe).toFixed(1)} % aunque la prueba parezca buena.`; } },
+        { k: 'subjetiva', t: 'Probabilidad subjetiva', c: '#7048e8',
+          def: R`La <b>probabilidad subjetiva</b> (o bayesiana) es el <b>grado de creencia</b> racional de una persona en que un evento ocurra, dada su información. Se usa en eventos únicos o no repetibles.`,
+          thm: [R`<b>Coherencia (de Finetti):</b> si las probabilidades asignadas violan los axiomas, existe un conjunto de apuestas que garantiza pérdida (libro holandés).`, R`<b>Actualización:</b> la creencia se modifica con Bayes al llegar evidencia; con suficiente evidencia común, creencias iniciales distintas tienden a coincidir.`],
+          f: [R`P(H \mid E) = \frac{P(H)\,P(E \mid H)}{P(H)\,P(E \mid H) + P(H^{c})\,P(E \mid H^{c})}`], dn: [[R`P(H)`, 'creencia inicial'], [R`P(H \mid E)`, 'creencia después de la evidencia']],
+          use: 'Asigna un valor inicial honesto, estima cuán probable es la evidencia con y sin H y actualiza.',
+          ex: () => { const pr = .3, a = .8, b = .3, pe = pr * a + (1 - pr) * b; return R`Creencia inicial 30 %; la evidencia es 80 % probable si H es cierta y 30 % si es falsa: $P(H \mid E)=\frac{0.30\cdot 0.80}{0.30\cdot 0.80+0.70\cdot 0.30}=${(pr * a / pe).toFixed(3)}$ → sube a ≈ ${(100 * pr * a / pe).toFixed(1)} %.`; } },
+        { k: 'conteo', t: 'Técnicas de conteo', c: '#1c7ed6',
+          def: R`Las <b>técnicas de conteo</b> calculan $n(A)$ y $n(\Omega)$ sin listar todos los casos. Dependen de si <b>importa el orden</b> y de si hay <b>reemplazo</b>.`,
+          thm: [R`<b>Principio multiplicativo:</b> $n_1 \cdot n_2 \cdots n_k$. Con reemplazo y $k$ etapas iguales: $n^{k}$.`, R`<b>Permutaciones</b> (orden importa, sin reemplazo): $P(n,k)=\frac{n!}{(n-k)!}$.`, R`<b>Combinaciones</b> (orden no importa): $C(n,k)=\binom{n}{k}=\frac{n!}{k!\,(n-k)!}$ y $\binom{n}{k}=\binom{n}{n-k}$.`],
+          f: [R`|\Omega| = n^{k}`, R`P(n,k) = \frac{n!}{(n-k)!}`, R`\binom{n}{k} = \frac{n!}{k!\,(n-k)!}`], dn: [['n!', 'factorial: n·(n−1)·…·1'], ['n', 'elementos disponibles'], ['k', 'elementos que se toman']],
+          use: 'Pregunta: ¿importa el orden? ¿se repiten elementos? Elige la fórmula y simplifica antes de calcular.',
+          ex: () => R`Equipo de 6 (3 exponen): $|\Omega|=\binom{6}{3}=\frac{720}{6\cdot 6}=20$ y $P(\text{tres mujeres})=\frac{1}{20}=${Pq(1, 20)}$. Baraja: $\binom{52}{5}=${fmtN(comb(52, 5))}$.` },
+        { k: 'montyhall', t: 'Juego de las tres puertas (Monty Hall)', c: '#7c4a1e',
+          def: R`Un regalo está tras una de tres puertas. Eliges una; el conductor, que <b>sabe</b> dónde está, abre otra con cabra y te deja <b>mantener</b> o <b>cambiar</b>. Es un problema de probabilidad condicional donde la información del conductor no es aleatoria.`,
+          thm: [R`<b>Resultado:</b> mantener gana con $\frac{1}{3}$; cambiar gana con $\frac{2}{3}$.`, R`<i>Razón (probabilidad total):</i> tu elección inicial acierta con $\frac{1}{3}$ (entonces cambiar pierde) y falla con $\frac{2}{3}$ (entonces el conductor deja solo la puerta ganadora y cambiar gana).`],
+          f: [R`P(\text{ganar} \mid \text{mantener}) = \frac{1}{3}`, R`P(\text{ganar} \mid \text{cambiar}) = 1 - \frac{1}{3} = \frac{2}{3}`], dn: [['mantener', 'quedarte con tu puerta'], ['cambiar', 'pasar a la otra puerta cerrada']],
+          use: 'Enumera los 3 casos igualmente probables (dónde está el regalo) y revisa qué pasa con cada estrategia; después simula.',
+          ex: () => R`Si eliges la puerta 1: regalo en 1 → cambiar pierde; regalo en 2 → el conductor abre 3 y cambiar gana; regalo en 3 → abre 2 y cambiar gana. Cambiar gana en 2 de 3 casos: ${Pq(2, 3)}.` },
+        { k: 'variable', t: 'Variable aleatoria, esperanza y binomial', c: '#2f9e44',
+          def: R`Una <b>variable aleatoria</b> $X$ asigna un número a cada resultado de $\Omega$. Su <b>esperanza</b> $E[X]$ es el promedio ponderado por probabilidades y la <b>varianza</b> mide la dispersión.`,
+          thm: [R`<b>Linealidad:</b> $E[aX+b]=aE[X]+b$.`, R`<b>Varianza:</b> $Var(X)=E[X^{2}]-(E[X])^{2}$.`, R`<b>Binomial:</b> si hay $k$ intentos independientes con éxito $p$, $P(X=r)=\binom{k}{r}p^{r}(1-p)^{k-r}$, con $E[X]=kp$.`],
+          f: [R`E[X] = \sum_{i} x_i\,p_i`, R`Var(X) = E[X^{2}] - \left(E[X]\right)^{2}`, R`P(X = r) = \binom{k}{r}\,p^{r}(1-p)^{k-r}`], dn: [[R`x_i`, 'valor posible'], [R`p_i`, 'su probabilidad'], ['k', 'intentos'], ['r', 'éxitos']],
+          use: 'Construye la tabla de x y P(x), multiplica y suma; si hay intentos independientes con dos resultados usa la binomial.',
+          ex: () => R`Dado: $E[X]=\frac{1+2+\cdots+6}{6}=\frac{7}{2}=3.5$ y $Var(X)=\frac{91}{6}-\left(\frac{7}{2}\right)^{2}=\frac{35}{12}\approx 2.92$. Tres monedas, 2 soles: $\binom{3}{2}(${Pq(1, 2)})^{3}=${Pq(3, 8)}$.` }
+      ]; }
+    const manEl = () => $('#man-body');
+    function manR() { const m = $('#manualModal'); if (!m) return; const D = manDefs(), q = MN.q.trim().toLowerCase();
+      const items = D.filter(c => !q || c.t.toLowerCase().includes(q)); $('#man-nav').innerHTML = `<button style="--c:#0f172a" class="${MN.k === 'todo' ? 'on' : ''}" data-mk="todo"><i class="bi bi-grid-fill me-1"></i>Formulario completo</button>` + items.map(c => `<button style="--c:${c.c}" class="${MN.k === c.k ? 'on' : ''}" data-mk="${c.k}">${c.t}</button>`).join('');
+      const b = manEl();
+      if (MN.k === 'todo') { b.innerHTML = `<div class="man-h" style="--c:#0f172a">Formulario completo</div><div class="small text-muted mb-2">Toca un tema para abrir su ficha con definición, teorema y ejemplo.</div><div class="row g-2">${D.map(c => `<div class="col-md-6"><div class="fm" style="--c:${c.c}"><div class="ft" role="button" data-mk="${c.k}">${c.t}</div><div class="ff">${c.f.map(fd).join('')}</div></div></div>`).join('')}</div>`; return; }
+      const c = D.find(x => x.k === MN.k) || D[0];
+      b.innerHTML = `<div style="--c:${c.c}"><div class="man-h">${c.t}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-bookmark-fill me-1"></i>Definición</div>${c.def}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-patch-check-fill me-1"></i>Teorema / regla / propiedad</div>${c.thm.map(t => `<div class="man-thm">${t}</div>`).join('')}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-calculator-fill me-1"></i>Fórmula</div>${c.f.map(fd).join('')}${leg(c.dn)}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-compass-fill me-1"></i>Cómo se usa</div>${c.use}</div>
+        <div class="man-sec man-ex"><div class="man-lb"><i class="bi bi-lightbulb-fill me-1"></i>Ejemplo</div>${c.ex()}</div></div>`; math(b); }
+    function openManual(k) { if (k) MN.k = k; const el = $('#manualModal'); manR(); if (window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show(); }
+    function manSetup() {
+      document.addEventListener('click', e => { const b = e.target.closest('[data-man]'); if (b) { e.preventDefault(); openManual(b.dataset.man || MN.k); return; } const k = e.target.closest('#manualModal [data-mk]'); if (k) { MN.k = k.dataset.mk; manR(); const mb = $('#manualModal .modal-body'); if (mb) mb.scrollTo({ top: 0, behavior: 'smooth' }); } });
+      $('#man-q').addEventListener('input', e => { MN.q = e.target.value; manR(); });
+      const MAP = { s1: 'espacio', s2: 'clasica', s3: 'producto', s4: 'conteo', s5: 'union', s6: 'independencia', s7: 'bayes' };
+      Object.entries(MAP).forEach(([id, k]) => { const h = $('#' + id + ' .sec-h'); if (h && !h.querySelector('[data-man]')) h.insertAdjacentHTML('beforeend', `<button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="${k}"><i class="bi bi-book-half me-1"></i>Manual</button>`); }); }
+    RENDERS.push(() => { const m = $('#manualModal'); if (m && m.classList.contains('show')) manR(); });
+
     /* ===================== Navegación, interruptores y arranque ===================== */
-    const GROUPS = [['b', 'Básico', '#2f9e44', 'bi-1-circle-fill'], ['t', 'Árbol y fórmulas', '#1c7ed6', 'bi-diagram-3-fill'], ['v', 'Venn', '#7048e8', 'bi-circle-half'], ['a', 'Avanzado', '#e03131', 'bi-3-circle-fill'], ['m', 'Manual', '#f08c00', 'bi-mortarboard-fill'], ['f', 'Formulario', '#c2255c', 'bi-journal-richtext'], ['all', 'Todo', '#0f172a', 'bi-grid-fill']];
+    const GROUPS = [['b', 'Básico', '#2f9e44', 'bi-1-circle-fill'], ['e', 'Enfoques y tablas', '#0ca678', 'bi-table'], ['t', 'Árbol y fórmulas', '#1c7ed6', 'bi-diagram-3-fill'], ['v', 'Venn', '#7048e8', 'bi-circle-half'], ['a', 'Avanzado', '#e03131', 'bi-3-circle-fill'], ['m', 'Manual', '#f08c00', 'bi-mortarboard-fill'], ['f', 'Formulario', '#c2255c', 'bi-journal-richtext'], ['all', 'Todo', '#0f172a', 'bi-grid-fill']];
     let curGrp = 'b';
     function setGroup(g, scroll) { curGrp = g; store.set('prob-grp', g);
       $$('section.sec').forEach(s => { s.hidden = !(g === 'all' || s.dataset.g === g); }); $$('#sec-nav a').forEach(a => { a.hidden = !(g === 'all' || a.dataset.g === g); });
@@ -1100,7 +1510,7 @@
       const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .15 }); els.forEach(r => io.observe(r)); }
 
     (function boot() {
-      s1cards(); s2setup(); trSetup(); f4Setup(); vnSetup(); advSetup(); bySetup(); mmSetup(); fmSetup(); menuInit(); customInit(); switchesInit();
+      s1cards(); s2setup(); trSetup(); f4Setup(); vnSetup(); advSetup(); bySetup(); mmSetup(); fmSetup(); enSetup(); tcSetup(); inSetup(); manSetup(); menuInit(); customInit(); switchesInit();
       setSpace('dado'); navInit(); math(document.body); revealInit();
       $$('section.sec:not([hidden]) .reveal').forEach(r => r.classList.add('in'));
     })();
