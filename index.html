@@ -19,6 +19,8 @@
     .section-card { border:0; border-radius:16px; box-shadow:0 6px 18px rgba(15,23,42,.08); transition:transform .2s, box-shadow .2s; }
     .section-card:hover { transform:translateY(-5px); box-shadow:0 14px 30px rgba(15,23,42,.16); }
     .icon-circle { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,.2); }
+    .lock-btn { font-weight:700; border-radius:999px; }
+    .lock-card { border:2px dashed #cbd5e1; border-radius:16px; background:#fff; }
     .c-mat { background:#6f42c1; } .c-cib { background:#0d6efd; } .c-est { background:#198754; }
   </style>
 </head>
@@ -58,11 +60,11 @@
       {
         "id": "matematicas", "label": "Matemáticas", "icon": "bi-calculator", "color": "c-mat",
         "items": [
-          { "label": "Los Numeros", "href": "los_numeros.html", "icon": "bi-superscript" },
+          { "label": "Los Números", "href": "los_numeros.html", "icon": "bi-hash" },
           { "label": "Fracciones", "href": "fracciones.html", "icon": "bi-pie-chart-fill" },
-          { "label": "Variación directamente proporcional", "href": "variacion_proporcional.html", "icon": "bi-pie-chart-fill" },
+          { "label": "Variación directamente proporcional", "href": "variacion_proporcional.html", "icon": "bi-graph-up-arrow" },
           { "label": "Exponentes y Radicales", "href": "exponentes_radicales.html", "icon": "bi-superscript" },
-          { "label": "Ángulos", "href": "angulos.html", "icon": "bi-superscript" },
+          { "label": "Ángulos", "href": "angulos.html", "icon": "bi-compass" },
           { "label": "Teorema de Pitágoras", "href": "pitagoras.html", "icon": "bi-triangle-half" }
         ]
       },
@@ -82,19 +84,51 @@
           { "label": "Distribución Muestral", "href": "distribucion_muestral.html", "icon": "bi-bar-chart-line-fill" },
           { "label": "Medidas de Dispersión", "href": "medidas_dispersion.html", "icon": "bi-arrows-expand" },
           { "label": "Amplitudes", "href": "amplitudes.html", "icon": "bi-distribute-horizontal" },
-          { "label": "Cuartiles y Percentiles", "href": "cuartiles_percentiles.html", "icon": "bi-distribute-horizontal" },
-          { "label": "Correlación Lineal", "href": "correlacion_lineal.html", "icon": "bi-distribute-horizontal" },
-          { "label": "Probabilidad", "href": "probabilidad.html", "icon": "bi-dice-5-fill" }
+          { "label": "Cuartiles y Percentiles", "href": "cuartiles_percentiles.html", "icon": "bi-percent" },
+          { "label": "Correlación Lineal", "href": "correlacion_lineal.html", "icon": "bi-graph-up" },
+          { "label": "Probabilidad", "href": "probabilidad.html", "icon": "bi-dice-5-fill" },
+          { "label": "Distribución Binomial", "href": "distribucion_binomial.html", "icon": "bi-bar-chart-steps" }
         ]
       }
     ]
   }
   </script>
 
+
+  <!-- Modal de contraseña -->
+  <div class="modal fade" id="unlockModal" tabindex="-1" aria-labelledby="unlockTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
+      <form id="unlockForm" autocomplete="off">
+        <div class="modal-header"><h5 class="modal-title fw-bold" id="unlockTitle"><i class="bi bi-lock-fill me-2 text-primary"></i>Desbloquear</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body">
+          <label for="unlockPass" class="form-label small fw-bold">Contraseña</label>
+          <div class="input-group"><input type="password" class="form-control" id="unlockPass" inputmode="numeric" autocomplete="off"><button class="btn btn-outline-secondary" type="button" id="unlockEye" aria-label="Mostrar u ocultar"><i class="bi bi-eye"></i></button></div>
+          <div class="text-danger small fw-bold mt-2" id="unlockErr" hidden></div>
+        </div>
+        <div class="modal-footer"><button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-unlock-fill me-1"></i>Entrar</button></div>
+      </form></div></div>
+  </div>
+
+  <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    /* ---------- Renderizador del header (misma función en todas las páginas) ---------- */
-    function renderHeader(menu, container, currentPage) {
+    /* ---------- Estado de bloqueo (la contraseña vive en auth-config.js) ---------- */
+    const AUTH_KEY = 'aula-unlocked';
+    const isUnlocked = () => { try { return sessionStorage.getItem(AUTH_KEY) === '1'; } catch (e) { return false; } };
+    const setUnlocked = v => { try { v ? sessionStorage.setItem(AUTH_KEY, '1') : sessionStorage.removeItem(AUTH_KEY); } catch (e) { } };
+    const MENU = JSON.parse(document.getElementById('menu-config').textContent);
+    const PAGE = location.pathname.split('/').pop() || 'index.html';
+
+    /* ---------- Renderizador del header ---------- */
+    function renderHeader(menu, container, currentPage, unlocked) {
+      const brand = `<a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>`;
+      if (!unlocked) {
+        container.innerHTML = `
+          <nav class="navbar navbar-dark app-navbar sticky-top"><div class="container">${brand}
+            <button class="btn btn-outline-light lock-btn" type="button" data-unlock><i class="bi bi-lock-fill me-1"></i>Desbloquear</button>
+          </div></nav>`;
+        return;
+      }
       const groups = menu.groups.map(g => {
         const hasActive = g.items.some(i => i.href === currentPage);
         const items = g.items.map(i => `
@@ -108,28 +142,28 @@
             <ul class="dropdown-menu">${items}</ul>
           </li>`;
       }).join('');
-
       container.innerHTML = `
         <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
-          <div class="container">
-            <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+          <div class="container">${brand}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú">
               <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainMenu">
-              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul>
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}
+                <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-outline-light lock-btn" type="button" data-lock><i class="bi bi-unlock-fill me-1"></i>Bloquear</button></li>
+              </ul>
             </div>
           </div>
         </nav>`;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const menu = JSON.parse(document.getElementById('menu-config').textContent);
-      const page = location.pathname.split('/').pop() || 'index.html';
-      renderHeader(menu, document.getElementById('app-header'), page);
-
-      // Tarjetas de inicio generadas desde el mismo menú
-      document.getElementById('home-cards').innerHTML = menu.groups.map(g => {
+    function renderCards(menu, unlocked) {
+      const box = document.getElementById('home-cards');
+      if (!unlocked) {
+        box.innerHTML = `<div class="col-12"><div class="lock-card text-center p-5"><i class="bi bi-lock-fill display-4 text-secondary"></i><h4 class="fw-bold mt-2">Contenido bloqueado</h4><p class="text-muted mb-3">Pulsa «Desbloquear» e ingresa la contraseña para ver los temas.</p><button class="btn btn-primary rounded-pill px-4 lock-btn" type="button" data-unlock><i class="bi bi-lock-fill me-1"></i>Desbloquear</button></div></div>`;
+        return;
+      }
+      box.innerHTML = menu.groups.map(g => {
         const links = g.items.map(i => i.disabled
           ? `<li class="list-group-item text-muted"><i class="bi ${i.icon} me-2"></i>${i.label}</li>`
           : `<a class="list-group-item list-group-item-action" href="${i.href}"><i class="bi ${i.icon} me-2 text-primary"></i><strong>${i.label}</strong>${i.desc ? `<br><small class="text-muted">${i.desc}</small>` : ''}</a>`
@@ -145,6 +179,28 @@
             </div>
           </div>`;
       }).join('');
+    }
+
+    function refresh() { const u = isUnlocked(); renderHeader(MENU, document.getElementById('app-header'), PAGE, u); renderCards(MENU, u); }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      refresh();
+      const el = document.getElementById('unlockModal'), form = document.getElementById('unlockForm'), inp = document.getElementById('unlockPass'), err = document.getElementById('unlockErr');
+      const modal = () => bootstrap.Modal.getOrCreateInstance(el);
+      el.addEventListener('shown.bs.modal', () => inp.focus());
+      el.addEventListener('hidden.bs.modal', () => { inp.value = ''; err.hidden = true; });
+      document.addEventListener('click', e => {
+        if (e.target.closest('[data-unlock]')) modal().show();
+        if (e.target.closest('[data-lock]')) { setUnlocked(false); refresh(); }
+      });
+      document.getElementById('unlockEye').addEventListener('click', () => { inp.type = inp.type === 'password' ? 'text' : 'password'; });
+      form.addEventListener('submit', ev => {
+        ev.preventDefault();
+        const cfg = window.AULA_CONFIG;
+        if (!cfg || !cfg.password) { err.textContent = 'No se encontró auth-config.js.'; err.hidden = false; return; }
+        if (inp.value === String(cfg.password)) { setUnlocked(true); modal().hide(); refresh(); }
+        else { err.textContent = 'Contraseña incorrecta.'; err.hidden = false; inp.select(); }
+      });
     });
   </script>
 </body>
