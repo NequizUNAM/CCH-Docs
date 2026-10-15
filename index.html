@@ -95,68 +95,12 @@
   </script>
 
 
-  <!-- Modal de contraseña -->
-  <div class="modal fade" id="unlockModal" tabindex="-1" aria-labelledby="unlockTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
-      <form id="unlockForm" autocomplete="off">
-        <div class="modal-header"><h5 class="modal-title fw-bold" id="unlockTitle"><i class="bi bi-lock-fill me-2 text-primary"></i>Desbloquear</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
-        <div class="modal-body">
-          <label for="unlockPass" class="form-label small fw-bold">Contraseña</label>
-          <div class="input-group"><input type="password" class="form-control" id="unlockPass" inputmode="numeric" autocomplete="off"><button class="btn btn-outline-secondary" type="button" id="unlockEye" aria-label="Mostrar u ocultar"><i class="bi bi-eye"></i></button></div>
-          <div class="text-danger small fw-bold mt-2" id="unlockErr" hidden></div>
-        </div>
-        <div class="modal-footer"><button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-unlock-fill me-1"></i>Entrar</button></div>
-      </form></div></div>
-  </div>
-
-  <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="auth-config.js"></script>
+  <script src="aula-header.js"></script>
   <script>
-    /* ---------- Estado de bloqueo (la contraseña vive en auth-config.js) ---------- */
-    const AUTH_KEY = 'aula-unlocked';
-    const isUnlocked = () => { try { return sessionStorage.getItem(AUTH_KEY) === '1'; } catch (e) { return false; } };
-    const setUnlocked = v => { try { v ? sessionStorage.setItem(AUTH_KEY, '1') : sessionStorage.removeItem(AUTH_KEY); } catch (e) { } };
+    /* El header, el modal y el bloqueo viven en aula-header.js. Aquí solo se dibujan las tarjetas de inicio. */
     const MENU = JSON.parse(document.getElementById('menu-config').textContent);
-    const PAGE = location.pathname.split('/').pop() || 'index.html';
-
-    /* ---------- Renderizador del header ---------- */
-    function renderHeader(menu, container, currentPage, unlocked) {
-      const brand = `<a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>`;
-      if (!unlocked) {
-        container.innerHTML = `
-          <nav class="navbar navbar-dark app-navbar sticky-top"><div class="container">${brand}
-            <button class="btn btn-outline-light lock-btn" type="button" data-unlock><i class="bi bi-lock-fill me-1"></i>Desbloquear</button>
-          </div></nav>`;
-        return;
-      }
-      const groups = menu.groups.map(g => {
-        const hasActive = g.items.some(i => i.href === currentPage);
-        const items = g.items.map(i => `
-          <li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}">
-            <i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
-        return `
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi ${g.icon} me-1"></i>${g.label}
-            </a>
-            <ul class="dropdown-menu">${items}</ul>
-          </li>`;
-      }).join('');
-      container.innerHTML = `
-        <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
-          <div class="container">${brand}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="mainMenu">
-              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}
-                <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-outline-light lock-btn" type="button" data-lock><i class="bi bi-unlock-fill me-1"></i>Bloquear</button></li>
-              </ul>
-            </div>
-          </div>
-        </nav>`;
-    }
-
     function renderCards(menu, unlocked) {
       const box = document.getElementById('home-cards');
       if (!unlocked) {
@@ -180,28 +124,7 @@
           </div>`;
       }).join('');
     }
-
-    function refresh() { const u = isUnlocked(); renderHeader(MENU, document.getElementById('app-header'), PAGE, u); renderCards(MENU, u); }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      refresh();
-      const el = document.getElementById('unlockModal'), form = document.getElementById('unlockForm'), inp = document.getElementById('unlockPass'), err = document.getElementById('unlockErr');
-      const modal = () => bootstrap.Modal.getOrCreateInstance(el);
-      el.addEventListener('shown.bs.modal', () => inp.focus());
-      el.addEventListener('hidden.bs.modal', () => { inp.value = ''; err.hidden = true; });
-      document.addEventListener('click', e => {
-        if (e.target.closest('[data-unlock]')) modal().show();
-        if (e.target.closest('[data-lock]')) { setUnlocked(false); refresh(); }
-      });
-      document.getElementById('unlockEye').addEventListener('click', () => { inp.type = inp.type === 'password' ? 'text' : 'password'; });
-      form.addEventListener('submit', ev => {
-        ev.preventDefault();
-        const cfg = window.AULA_CONFIG;
-        if (!cfg || !cfg.password) { err.textContent = 'No se encontró auth-config.js.'; err.hidden = false; return; }
-        if (inp.value === String(cfg.password)) { setUnlocked(true); modal().hide(); refresh(); }
-        else { err.textContent = 'Contraseña incorrecta.'; err.hidden = false; inp.select(); }
-      });
-    });
+    document.addEventListener('aula-auth', e => renderCards(MENU, e.detail.unlocked));
   </script>
 </body>
 </html>
