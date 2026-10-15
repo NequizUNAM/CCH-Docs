@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadística - Distribución binomial</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root { --c1:#e03131; --c2:#1c7ed6; --c3:#2f9e44; --c4:#f08c00; --c5:#7048e8; --ok:#2f9e44; --bad:#e03131;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18); }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; } .mono { font-family:'Courier New',monospace; font-weight:700; }
+
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; } .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3rem 1rem 2.6rem; border-bottom:5px solid #e8590c; box-shadow:var(--shadow-md); }
+    .hero-header .sym { position:absolute; font-weight:800; color:#fff; opacity:.1; animation:floaty 7s ease-in-out infinite; pointer-events:none; user-select:none; }
+    @keyframes floaty { 50% { transform:translateY(-14px) rotate(4deg); } }
+    .hero-header .container { position:relative; z-index:1; }
+
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.1rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.8rem 1rem; font-size:.92rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    .manual-bar { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:.8rem 1rem; margin-bottom:1rem; border:1px solid #f1f5f9; }
+    .nav-pills .nav-link { color:#334155; font-weight:700; border-radius:12px; background:#fff; box-shadow:var(--shadow-sm); margin:0 .35rem .5rem 0; }
+    .nav-pills .nav-link.active { background:#0f172a; color:#fff; box-shadow:var(--shadow-md); }
+    .tab-pane { animation:pop .35s both; } @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .intro-box { background:linear-gradient(135deg,#f1ecff,#fff); border:1px solid #ddd2ff; border-left:5px solid #7048e8; border-radius:14px; padding:.8rem 1rem; margin-bottom:1rem; }
+
+    /* Leyes (acordeón) */
+    .law-item { border:0; border-radius:16px !important; box-shadow:var(--shadow-sm); margin-bottom:.7rem; overflow:hidden; }
+    .law-item .accordion-button { gap:.7rem; flex-wrap:wrap; font-weight:700; }
+    .law-item .accordion-button:not(.collapsed) { background:#efeafc; color:#5130b9; }
+    .law-num { width:30px; height:30px; border-radius:50%; background:#7048e8; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; flex:0 0 auto; }
+    .law-f { margin-left:auto; font-weight:400; color:#1e293b; }
+    .pinput { width:78px; font-family:'Courier New',monospace; font-weight:700; text-align:center; }
+    .tk { display:inline-block; width:18px; height:18px; border-radius:50%; margin:2px; animation:tkIn .35s both; box-shadow:inset 0 -2px 0 rgba(0,0,0,.18); }
+    .tk.cut { opacity:.25; text-decoration:line-through; position:relative; } .tk.cut::after { content:"×"; position:absolute; inset:0; text-align:center; line-height:18px; font-size:.8rem; color:#000; }
+    @keyframes tkIn { from { transform:scale(0); } to { transform:scale(1); } }
+    .tkgrp { display:inline-flex; flex-wrap:wrap; border:2px dashed var(--c,#94a3b8); border-radius:10px; padding:2px 4px; margin:3px; background:color-mix(in srgb,var(--c,#94a3b8) 8%,#fff); }
+    .tkgrp.out { border-style:solid; background:color-mix(in srgb,var(--c) 18%,#fff); }
+    .dot { width:30px; height:30px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-size:.8rem; font-weight:800; color:#64748b; transition:all .2s; }
+    .dot.on { background:var(--c,#7048e8); border-color:var(--c,#7048e8); color:#fff; transform:scale(1.15); } .dot.done { border-color:var(--c,#7048e8); color:var(--c,#7048e8); }
+    .stepcard { background:#f8fafc; border-radius:14px; padding:.8rem 1rem; border-left:5px solid #7048e8; animation:pop .3s both; }
+    .ln { background:#fff; border-left:4px solid #94a3b8; border-radius:0 10px 10px 0; padding:.05rem .6rem; margin:.35rem 0; overflow-x:auto; opacity:0; animation:lnIn .5s forwards; }
+    @keyframes lnIn { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }
+    .badge-ok { display:inline-block; padding:.12rem .6rem; border-radius:999px; color:#fff; font-weight:800; font-size:.8rem; background:var(--ok); } .badge-ok.no { background:var(--bad); } .badge-ok.na { background:#868e96; }
+
+    /* Jerarquía */
+    .lvl { display:inline-flex; align-items:center; gap:.35rem; border-radius:999px; padding:.15rem .7rem; font-size:.8rem; font-weight:800; color:#fff; margin:.1rem; }
+    .l1{background:#7048e8} .l2{background:#e03131} .l3{background:#1c7ed6} .l4{background:#2f9e44}
+    .solver-in { font-family:'Courier New',monospace; font-weight:700; font-size:1.15rem; }
+    .key { min-width:42px; font-weight:800; }
+    .big-expr { overflow-x:auto; text-align:center; font-size:1.25rem; padding:.4rem 0; }
+    .res-box { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:14px; padding:.7rem 1rem; text-align:center; font-size:1.3rem; }
+
+    /* Ejercicios */
+    .ex-card { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid #f1f5f9; border-top:5px solid var(--c,#94a3b8); padding:1rem; height:100%; transition:transform .2s, box-shadow .2s; }
+    .ex-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); } .ex-card.done { background:#f0fbf3; }
+    .lv1{--c:#2f9e44} .lv2{--c:#f08c00} .lv3{--c:#e03131}
+    .lvb { display:inline-block; padding:.1rem .6rem; border-radius:999px; background:var(--c); color:#fff; font-size:.75rem; font-weight:800; }
+    .chip-law { cursor:pointer; display:inline-block; border:1.5px solid #7048e8; color:#5130b9; background:#f1ecff; border-radius:999px; padding:0 .55rem; font-size:.75rem; font-weight:700; margin:.1rem; }
+    .chip-law:hover { background:#7048e8; color:#fff; }
+
+    /* Manual (modal) */
+    .mm-dot { width:32px; height:32px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-weight:800; font-size:.8rem; color:#64748b; transition:all .2s; }
+    .mm-dot.done { border-color:var(--c); color:var(--c); background:color-mix(in srgb,var(--c) 14%,#fff); } .mm-dot.on { background:var(--c); border-color:var(--c); color:#fff; transform:scale(1.15); box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent); }
+    .mm-visual { background:#fff; border-radius:16px; border:1px solid #e2e8f0; box-shadow:var(--shadow-sm); padding:1rem; position:sticky; top:0; min-height:240px; }
+    .mm-kicker { font-weight:800; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+    .mm-say { line-height:1.6; margin-bottom:.5rem; }
+    /* ===== Fórmulas estilo calculadora (reemplaza al LaTeX) ===== */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.1em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; letter-spacing:.01em; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.22em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-family:inherit; font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; }
+    .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; }
+    .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; }
+    .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; line-height:1.3; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; z-index:1; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; }
+    .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; }
+    .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.55rem 1rem; min-height:3.6rem; overflow-x:auto; font-size:1.3rem; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); display:flex; align-items:center; }
+    .keypad { display:grid; gap:6px; } .keypad.k5 { grid-template-columns:repeat(5,52px); } .keypad.k4 { grid-template-columns:repeat(4,52px); }
+    .kb { border:0; border-radius:12px; padding:.55rem 0; font-weight:700; font-size:1.05rem; box-shadow:0 3px 0 rgba(0,0,0,.2); background:#e2e8f0; color:#0f172a; transition:transform .08s, box-shadow .08s; }
+    .kb:hover { filter:brightness(.97); } .kb:active { transform:translateY(3px); box-shadow:none; } .kb sup { font-size:.62em; position:relative; top:-.1em; }
+    .kb.fn { background:#dbe7ff; color:#1c4fd7; } .kb.op { background:#ffe3c2; color:#9a4b00; } .kb.ct { background:#ffd6d6; color:#b01818; } .kb.eq { background:#0f172a; color:#fff; } .kb.w2 { grid-column:span 2; }
+    .chip-sx { border:1.5px solid #1c7ed6; background:#eef5ff; border-radius:999px; padding:.1rem .8rem; margin:0 .3rem .3rem 0; color:#0f172a; }
+    .chip-sx:hover { background:#dbe9ff; }
+    /* Formulario tipo imagen */
+    .sheet-view { overflow-x:auto; border-radius:16px; box-shadow:var(--shadow-md); background:#fff; }
+    #sheet-wrap, .sheet-clone { min-width:1000px; background:#fff; }
+    .sheet { background:#fff; border-bottom:6px solid var(--c); }
+    .sh-head { background:linear-gradient(135deg,var(--c),#0f172a); color:#fff; padding:1.2rem 1.6rem; display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+    .sh-t { font-size:2rem; font-weight:800; letter-spacing:.14em; } .sh-s { font-size:1.15rem; opacity:.92; }
+    .sh-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:1.2rem 1.4rem; }
+    .sh-card { position:relative; border:2px solid var(--cb); border-radius:14px; padding:.8rem 1rem .8rem 3.1rem; background:var(--cs); }
+    .sh-n { position:absolute; left:.8rem; top:.8rem; width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .sh-name { font-weight:800; color:var(--c); font-size:.95rem; }
+    .sh-f .cx.d { font-size:1.4em; overflow:visible; white-space:normal; } .sh-f .cx.d .fr, .sh-f .cx.d .rd { white-space:nowrap; }
+    .sh-card.wide { grid-column:1/-1; } .sh-card.wide .cx.d { white-space:nowrap; overflow:visible; }
+    .sh-ex { font-size:.95rem; color:#475569; border-top:1px dashed #94a3b8; margin-top:.3rem; padding-top:.35rem; }
+    .sh-ex b { color:var(--c); }
+    .sh-foot { margin:0 1.4rem; padding:.7rem 1rem; background:#0f172a; color:#fff; border-radius:12px; font-weight:600; text-align:center; }
+    footer small { font-size:.85rem; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-header .sym,.tk,.ln,.tab-pane,.stepcard{animation:none;opacity:1} }
+
+    /* ===== Fracciones: estructura ===== */
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem .9rem; font-size:.86rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#e8590c; color:#e8590c; }
+    section.sec { scroll-margin-top:110px; margin-bottom:2.4rem; } .sec-h h2, .lesson h5 { color:#0f172a; }
+    .sec-h { display:flex; align-items:center; gap:.8rem; margin-bottom:.9rem; flex-wrap:wrap; }
+    .sec-h .num { width:44px; height:44px; border-radius:14px; background:linear-gradient(135deg,#e8590c,#f08c00); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; box-shadow:var(--shadow-md); }
+    .sec-h h2 { margin:0; font-size:1.55rem; font-weight:800; } .lvtag { font-size:.75rem; font-weight:800; padding:.15rem .65rem; border-radius:999px; color:#fff; }
+    .lt1{background:#2f9e44} .lt2{background:#f08c00} .lt3{background:#e03131} .lt4{background:#7048e8}
+    .lesson { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid #f1f5f9; padding:1.1rem; margin-bottom:1rem; }
+    .lesson h5 { font-weight:800; } .lesson p { margin-bottom:.5rem; }
+    .demo { background:linear-gradient(135deg,#fff7ed,#fff); border:1px solid #fed7aa; border-left:6px solid #e8590c; border-radius:16px; padding:1rem; margin-bottom:1rem; box-shadow:var(--shadow-sm); }
+    .demo-t { font-weight:800; color:#c2410c; margin-bottom:.5rem; } .demo-t i { margin-right:.4rem; }
+    .kc { border-radius:14px; padding:.7rem .9rem; border:2px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); height:100%; }
+    .kc .kt { font-weight:800; color:var(--c); } .kc .ktx { font-size:.88rem; color:#475569; }
+    .pill { display:inline-block; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:.15rem .8rem; font-size:.85rem; box-shadow:var(--shadow-sm); }
+    .tb { display:inline-block; padding:.1rem .65rem; border-radius:999px; font-size:.78rem; font-weight:800; color:#fff; margin:.1rem .15rem .1rem 0; }
+
+    /* Entrada de fracción apilada */
+    .fin { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .35rem; }
+    .fin input { width:66px; text-align:center; font-weight:800; font-size:1.15rem; border:2px solid #cbd5e1; border-radius:10px; padding:.1rem .2rem; background:#fff; font-family:'Segoe UI',sans-serif; }
+    .fin input:focus { border-color:#e8590c; outline:none; box-shadow:0 0 0 3px rgba(232,89,12,.2); }
+    .fin .bar { width:78px; height:3px; background:#0f172a; border-radius:2px; margin:3px 0; }
+    .fin.wh input.w { width:52px; margin-right:.4rem; }
+    .fin.c1 input { border-color:#e8590c; } .fin.c2 input { border-color:#1c7ed6; } .fin.c3 input { border-color:#2f9e44; }
+    .opb { font-size:1.6rem; font-weight:800; color:#334155; margin:0 .3rem; vertical-align:middle; }
+    .opsel .btn { font-weight:800; min-width:42px; }
+    .row-fr { display:flex; align-items:center; flex-wrap:wrap; gap:.2rem; }
+
+    /* Visuales */
+    .vis { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:.6rem; box-shadow:var(--shadow-sm); }
+    .vis svg { max-width:100%; height:auto; display:block; margin:0 auto; } .vis .cap { font-size:.78rem; color:#64748b; text-align:center; margin-top:.2rem; }
+    .pies { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; }
+    .wall { background:#fff; border-radius:14px; padding:.6rem; box-shadow:var(--shadow-sm); border:1px solid #e2e8f0; overflow-x:auto; }
+    .wrow { display:flex; height:28px; margin-bottom:3px; min-width:620px; align-items:stretch; } .wlab { width:34px; font-size:.75rem; font-weight:800; display:flex; align-items:center; justify-content:flex-end; padding-right:6px; color:#475569; flex:0 0 auto; }
+    .wbar { flex:1; display:flex; gap:2px; } .wc { flex:1; border-radius:5px; background:var(--wc,#ffd8a8); cursor:pointer; font-size:.68rem; display:flex; align-items:center; justify-content:center; color:#7c2d12; font-weight:700; transition:filter .15s, transform .15s; border:1px solid rgba(0,0,0,.08); }
+    .wc:hover { filter:brightness(.92); transform:scaleY(1.1); } .wc.on { background:#e8590c; color:#fff; } .wc.eq { background:#2f9e44; color:#fff; box-shadow:0 0 0 2px #b2f2bb; } .wc.part { background:#ffc078; }
+    .ba { display:inline-flex; align-items:center; gap:.3rem; font-weight:800; }
+    .cmpsym { font-size:3rem; font-weight:800; line-height:1; color:#e8590c; }
+
+    /* Pasos */
+    .stp { background:#fff; border-radius:14px; border:1px solid #e2e8f0; border-left:6px solid var(--c,#94a3b8); box-shadow:var(--shadow-sm); padding:.55rem .8rem; margin:.55rem 0; animation:pop .35s both; }
+    .stp .sh { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; font-weight:700; font-size:.88rem; }
+    .stp .sn { width:26px; height:26px; border-radius:50%; background:var(--c,#94a3b8); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:800; flex:0 0 auto; }
+    .stp details { margin-top:.25rem; } .stp summary { cursor:pointer; font-size:.82rem; color:#1c7ed6; font-weight:700; }
+    .opc { background:#f8fafc; border-radius:12px; padding:.4rem .7rem; margin:.4rem 0; border:1px dashed #cbd5e1; }
+    .opc .on { font-weight:800; font-size:.82rem; color:#334155; }
+    .opc .cl { font-size:.82rem; color:#475569; margin-top:.2rem; } .opc .cx.d { font-size:1.12em; }
+    .stbar { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin:.5rem 0; }
+    .prog { height:8px; border-radius:6px; background:#e2e8f0; overflow:hidden; flex:1; min-width:100px; } .prog > i { display:block; height:100%; background:linear-gradient(90deg,#e8590c,#f08c00); transition:width .3s; }
+    .resb { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:14px; padding:.7rem 1rem; display:flex; flex-wrap:wrap; gap:.6rem 1.4rem; align-items:center; justify-content:center; }
+    .resb .rl { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; opacity:.7; text-align:center; } .resb .cx { font-size:1.25rem; }
+    .per { text-decoration:overline; text-decoration-thickness:2px; }
+    .ldiv { border-collapse:collapse; font-family:'Courier New',monospace; font-weight:700; } .ldiv td { padding:.1rem .5rem; border:1px solid #e2e8f0; text-align:center; }
+    .ldiv tr.rep td { background:#fff3bf; }
+
+    /* Ejercicios */
+    .ex-card.ok { background:#f0fbf3; border-top-color:#2f9e44; } .ex-card.no { animation:shake .35s; }
+    @keyframes shake { 25% { transform:translateX(-6px); } 75% { transform:translateX(6px); } }
+    .ans-in { width:96px; font-family:'Courier New',monospace; font-weight:800; text-align:center; }
+    .ex-n { font-weight:800; color:var(--c); }
+    .fb { font-weight:700; font-size:.88rem; min-height:1.3rem; }
+    .ex-steps { margin-top:.5rem; max-height:560px; overflow:auto; }
+    .tagN { display:inline-block; padding:.05rem .55rem; border-radius:6px; font-size:.72rem; font-weight:800; background:#0f172a; color:#fff; margin-right:.2rem; }
+    .ex20 { border:0; border-radius:16px !important; box-shadow:var(--shadow-sm); margin-bottom:.7rem; overflow:hidden; border-left:6px solid var(--c) !important; }
+    .ex20 .accordion-button { gap:.7rem; flex-wrap:wrap; font-weight:700; } .ex20 .accordion-button:not(.collapsed) { background:color-mix(in srgb,var(--c) 10%,#fff); }
+    .ex20 .nn { width:32px; height:32px; border-radius:50%; background:var(--c); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:800; flex:0 0 auto; }
+    .ex20 .ex-f { margin-left:auto; font-weight:400; color:#1e293b; }
+    .nxn { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.6rem; }
+    .hl-n { outline:3px solid #e8590c; outline-offset:2px; border-radius:6px; } .hl-d { outline:3px solid #1c7ed6; outline-offset:2px; border-radius:6px; }
+    .cplx { display:inline-block; padding:.7rem 1rem; background:#fff; border-radius:14px; border:2px dashed #cbd5e1; }
+    .cplx .blk-n { border:2px solid #e8590c; border-radius:10px; padding:.1rem .5rem; background:#fff4e6; } .cplx .blk-d { border:2px solid #1c7ed6; border-radius:10px; padding:.1rem .5rem; background:#e7f5ff; }
+    .tl-k { cursor:pointer; }
+    .toast-lite { position:fixed; right:1rem; bottom:1rem; background:#0f172a; color:#fff; padding:.6rem 1rem; border-radius:12px; z-index:2000; box-shadow:var(--shadow-lg); animation:pop .3s both; }
+    @media (max-width:576px) { .fin input { width:54px; } .fin .bar { width:62px; } .sec-h h2 { font-size:1.25rem; } }
+
+    /* ===== Barra de control (grupos + interruptor de círculos) ===== */
+    .sec-nav { position:static; box-shadow:none; background:transparent; }
+    .ctl { position:sticky; top:56px; z-index:1020; background:rgba(255,255,255,.97); backdrop-filter:blur(6px); box-shadow:var(--shadow-sm); border-bottom:1px solid #e2e8f0; }
+    .ctl-row { display:flex; align-items:center; gap:.6rem 1rem; flex-wrap:wrap; padding:.5rem 0 .2rem; }
+    .grp-bar { display:flex; gap:.35rem; flex-wrap:wrap; }
+    .grp-bar button { border:0; border-radius:999px; padding:.3rem .9rem; font-size:.84rem; font-weight:800; background:#f1f5f9; color:#334155; transition:all .2s; display:inline-flex; align-items:center; gap:.3rem; }
+    .grp-bar button:hover { background:#e2e8f0; } .grp-bar button.active { background:var(--g,#0f172a); color:#fff; box-shadow:0 4px 10px rgba(15,23,42,.25); transform:translateY(-1px); }
+    .pie-sw { margin-left:auto; display:flex; align-items:center; gap:.5rem; font-size:.84rem; font-weight:700; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:999px; padding:.2rem .8rem .2rem .5rem; }
+    .pie-sw .form-check-input { width:2.4em; height:1.25em; margin:0; cursor:pointer; } .pie-sw .form-check-input:checked { background-color:#e8590c; border-color:#e8590c; }
+    .sec-nav a[hidden], section.sec[hidden] { display:none !important; }
+    section.sec { margin-bottom:3.2rem; } .demo, .lesson { margin-bottom:1.3rem; }
+    .nextbar { display:flex; justify-content:space-between; align-items:center; gap:.6rem; flex-wrap:wrap; margin-top:1.4rem; padding-top:1rem; border-top:2px dashed #cbd5e1; }
+    .nextbar .btn { font-weight:700; }
+    .stepfold { margin-top:.4rem; } .stepfold > summary { cursor:pointer; font-weight:800; font-size:.85rem; color:#1c7ed6; list-style:none; padding:.25rem 0; } .stepfold > summary::before { content:"▸ "; } .stepfold[open] > summary::before { content:"▾ "; }
+    .no-pies .pie-g, .no-pies .pies, .no-pies div:has(> .pies) { display:none !important; }
+    .to-top { position:fixed; right:1rem; bottom:1rem; z-index:1030; width:44px; height:44px; border-radius:50%; border:0; background:#0f172a; color:#fff; box-shadow:var(--shadow-lg); opacity:0; pointer-events:none; transition:opacity .25s; }
+    .to-top.on { opacity:1; pointer-events:auto; }
+    .hero-btns .btn { font-weight:800; }
+
+    /* ===== Formulario (tipos de fracciones, animado) ===== */
+    .fchips { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+    .fchip { border:2px solid var(--c); color:var(--c); background:#fff; border-radius:999px; padding:.15rem .75rem; font-weight:800; font-size:.82rem; transition:all .2s; }
+    .fchip:hover { background:var(--c); color:#fff; transform:translateY(-2px); }
+    .fcard { background:#fff; border-radius:18px; box-shadow:var(--shadow-sm); border:1px solid #eef2f6; border-top:6px solid var(--c); padding:1rem 1.1rem 1.1rem; height:100%; display:flex; flex-direction:column; gap:.7rem; transition:box-shadow .25s, transform .25s; scroll-margin-top:170px; }
+    .fcard:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); } .fcard.flash { animation:flash 1.1s; }
+    @keyframes flash { 0%,100% { box-shadow:var(--shadow-sm); } 40% { box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 35%,transparent); } }
+    .fc-h { display:flex; align-items:center; gap:.7rem; }
+    .fc-n { width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; flex:0 0 auto; }
+    .fc-t { font-weight:800; font-size:1.08rem; color:var(--c); line-height:1.15; } .fc-s { font-size:.8rem; color:#64748b; }
+    .fc-ex { margin-left:auto; font-size:1.35em; background:color-mix(in srgb,var(--c) 10%,#fff); border-radius:12px; padding:.15rem .7rem; }
+    .fv { background:linear-gradient(180deg,color-mix(in srgb,var(--c) 6%,#fff),#fff); border:1px dashed color-mix(in srgb,var(--c) 45%,#fff); border-radius:14px; padding:.9rem .8rem; display:flex; flex-direction:column; gap:.55rem; align-items:center; justify-content:center; min-height:150px; }
+    .frow { display:flex; align-items:center; gap:.6rem; width:100%; justify-content:center; flex-wrap:wrap; } .frow .fbar { max-width:170px; }
+    .fbar { --c:#adb5bd; display:flex; gap:3px; width:100%; max-width:360px; }
+    .fcell { flex:1; height:34px; border-radius:7px; background:#e9ecef; border:1px solid rgba(0,0,0,.08); transform-origin:bottom; }
+    .fcell.on { background:var(--c); box-shadow:inset 0 -4px 0 rgba(0,0,0,.14); }
+    .fv.play .fcell.on { animation:fcIn .6s cubic-bezier(.2,.9,.3,1.35) both; animation-delay:calc(var(--i)*.13s); }
+    @keyframes fcIn { from { transform:scaleY(0); opacity:0; } to { transform:none; opacity:1; } }
+    .fcell.pulse { animation:fpulse 1.3s ease-in-out infinite; } @keyframes fpulse { 50% { transform:scale(1.14); filter:brightness(1.18); box-shadow:0 0 0 4px rgba(240,140,0,.28); } }
+    .plus { font-size:1.7rem; font-weight:800; color:var(--c); }
+    .fcap { font-size:.82rem; color:#475569; text-align:center; } .fcap .cx { font-size:1.05em; }
+    .bigeq { font-size:2rem; font-weight:800; color:var(--c); }
+    .fv.play .bigeq { animation:popIn .7s 1.3s cubic-bezier(.2,.9,.3,1.6) both; } @keyframes popIn { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
+    .scanwrap { position:relative; width:100%; max-width:360px; display:flex; flex-direction:column; gap:6px; }
+    .scanwrap .fbar { max-width:none; }
+    .scan { position:absolute; top:-6px; bottom:-6px; width:4px; border-radius:3px; background:#0f172a; left:0; animation:scan 3.2s ease-in-out infinite; box-shadow:0 0 0 3px rgba(15,23,42,.12); }
+    @keyframes scan { 0%,10% { left:0; } 55%,100% { left:calc(50% - 2px); } }
+    .chipseq { display:inline-block; padding:.1rem .65rem; border-radius:999px; font-weight:800; font-size:.8rem; background:#f1f3f5; color:#c92a2a; border:1px solid #ffc9c9; }
+    .chipseq.ok { background:#d3f9d8; color:#2b8a3e; border-color:#8ce99a; }
+    .fv.play .chipseq { animation:chipIn .45s both; animation-delay:calc(var(--i)*.75s + .9s); } @keyframes chipIn { from { transform:translateY(8px) scale(.6); opacity:0; } to { transform:none; opacity:1; } }
+    .g100 { display:grid; grid-template-columns:repeat(10,1fr); gap:2px; width:100%; max-width:210px; }
+    .g100 i { aspect-ratio:1; border-radius:3px; background:#e9ecef; display:block; } .g100 i.on { background:var(--c); }
+    .fv.play .g100 i.on { animation:fcIn .5s both; animation-delay:calc(var(--i)*.22s); }
+    .nl svg { width:100%; max-width:380px; height:auto; } .nl .dot { fill:var(--c); } .nl .seg { fill:color-mix(in srgb,var(--c) 40%,transparent); transform-box:fill-box; transform-origin:right center; }
+    .fv.play .nl .dot { animation:negMove 3.4s ease-in-out infinite; } .fv.play .nl .seg { animation:segGrow 3.4s ease-in-out infinite; }
+    @keyframes negMove { 0%,10% { transform:translateX(0); } 60%,100% { transform:translateX(var(--dx)); } } @keyframes segGrow { 0%,10% { transform:scaleX(0); } 60%,100% { transform:scaleX(1); } }
+    .cxs { display:inline-flex; flex-direction:column; align-items:center; font-size:1.25em; }
+    .cxs .b { border:2px solid; border-radius:10px; padding:.05rem .6rem; background:#fff; } .cxs .b.n { border-color:#e8590c; } .cxs .b.d { border-color:#1c7ed6; }
+    .cxs .ml { height:4px; width:100%; background:#0f172a; margin:5px 0; border-radius:2px; }
+    .fv.play .cxs .b.n { animation:bpulse 3s infinite; } .fv.play .cxs .b.d { animation:bpulse 3s 1s infinite; } .fv.play .cxs .ml { animation:bpulse 3s 2s infinite; }
+    @keyframes bpulse { 0%,25%,100% { transform:none; box-shadow:none; } 10% { transform:scale(1.1); box-shadow:0 0 0 5px rgba(232,89,12,.2); } }
+    .fc-rule { background:#f8fafc; border-left:5px solid var(--c); border-radius:0 10px 10px 0; padding:.35rem .7rem; font-size:.9rem; } .fc-rule .lb { font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--c); margin-right:.5rem; }
+    .fc-list { margin:0; padding-left:1.1rem; font-size:.86rem; color:#334155; } .fc-list li { margin-bottom:.15rem; }
+    .fc-re { align-self:flex-start; margin-top:auto; font-weight:700; }
+    @media (prefers-reduced-motion:reduce) { .fv.play .fcell.on, .fv.play .chipseq, .fv.play .g100 i.on, .fv.play .bigeq, .fcell.pulse, .scan, .fv.play .nl .dot, .fv.play .nl .seg, .fv.play .cxs * { animation:none !important; opacity:1; } }
+    @media (max-width:576px) { .pie-sw { margin-left:0; } .grp-bar button { padding:.25rem .65rem; font-size:.78rem; } }
+  
+    /* ===== Probabilidad ===== */
+    .hero-header { border-bottom-color:#4c6ef5; }
+    .sec-h .num { background:linear-gradient(135deg,#4c6ef5,#7048e8); }
+    .demo { background:linear-gradient(135deg,#f3f0ff,#fff); border-color:#d0bfff; border-left-color:#7048e8; }
+    .demo-t { color:#5f3dc4; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#7048e8; color:#5f3dc4; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; } .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before { content:'^'; position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    .cx .fr.bn .nu { border-bottom:0; } .cx .fr.bn { margin:0 .05em; }
+    .tools .btn.sp-btn { background:#fff; border:2px solid #7048e8; color:#2b1f6e; font-weight:800; border-radius:999px; padding:.22rem .9rem; font-size:.88rem; }
+    .tools .btn.sp-btn:hover, .tools .btn.sp-btn.show { background:#f3f0ff; }
+    .sp-menu { min-width:300px; max-height:70vh; overflow:auto; border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.5rem; }
+    .sp-menu .dropdown-header { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
+    .sp-menu button { display:flex; align-items:center; gap:.6rem; width:100%; border:0; background:transparent; border-radius:10px; padding:.4rem .6rem; font-weight:600; text-align:left; }
+    .sp-menu button:hover { background:#f3f0ff; } .sp-menu button.on { background:#7048e8; color:#fff; } .sp-menu .ic { font-size:1.3rem; width:1.8rem; text-align:center; } .sp-menu .n { margin-left:auto; font-size:.75rem; opacity:.7; }
+    .no-anim *, .no-anim *::before, .no-anim *::after { animation:none !important; transition:none !important; }
+    .no-anim .reveal { opacity:1 !important; transform:none !important; }
+
+    /* chips de resultados */
+    .chips { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .och { --c:#7048e8; display:inline-flex; align-items:center; gap:.3rem; border:2px solid var(--c); color:#1e293b; background:#fff; border-radius:999px; padding:.15rem .7rem; font-weight:700; font-size:.88rem; transition:transform .15s, background .2s, box-shadow .2s; animation:chipPop .45s both; animation-delay:calc(var(--k,0)*22ms); }
+    .och .oi { font-size:1.1em; } .och sup { font-size:.68em; font-weight:800; color:var(--c); }
+    @keyframes chipPop { from { transform:scale(.3); opacity:0; } to { transform:scale(1); opacity:1; } }
+    button.och { cursor:pointer; } button.och:hover { transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,.15); }
+    .och.sel { background:var(--c); color:#fff; } .och.sel sup { color:#fff; }
+    .och.sA { background:#ffd8a8; border-color:#e8590c; } .och.sB { background:#a5d8ff; border-color:#1c7ed6; } .och.sAB { background:linear-gradient(90deg,#ffd8a8 50%,#a5d8ff 50%); border-color:#7048e8; } .och.s0 { background:#f1f3f5; border-color:#ced4da; color:#868e96; }
+    .och.dim { opacity:.35; }
+    .och.sm { font-size:.74rem; padding:.05rem .4rem; border-width:1.5px; }
+    .vecm { display:inline-flex; align-items:center; gap:.7rem; padding:.3rem .9rem; border-left:3px solid #334155; border-right:3px solid #334155; border-radius:12px; margin:.2rem 0; max-width:100%; overflow-x:auto; }
+    .vecm .vc { display:flex; flex-direction:column; align-items:center; min-width:34px; animation:chipPop .45s both; animation-delay:calc(var(--k,0)*40ms); }
+    .vecrow { display:flex; align-items:center; gap:.5rem; flex-wrap:nowrap; } .vecrow .vn { font-weight:800; color:#5f3dc4; white-space:nowrap; }
+    .pbar { display:flex; align-items:center; gap:.5rem; margin:.25rem 0; font-size:.85rem; } .pbar .pl { width:90px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .pbar .pt { flex:1; height:16px; background:#e9ecef; border-radius:8px; overflow:hidden; } .pbar .pt i { display:block; height:100%; width:0; background:var(--c); border-radius:8px; animation:grow 1s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:calc(var(--k,0)*40ms); }
+    @keyframes grow { to { width:var(--w); } } .pbar .pv { width:64px; text-align:right; }
+    .meter { height:34px; border-radius:12px; overflow:hidden; display:flex; background:#e9ecef; box-shadow:inset 0 2px 5px rgba(0,0,0,.12); }
+    .meter > span { display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:.85rem; width:0; animation:grow 1.1s cubic-bezier(.2,.8,.2,1) forwards; white-space:nowrap; overflow:hidden; }
+    .anim-in { animation:slideIn .5s both; animation-delay:calc(var(--k,0)*110ms); } @keyframes slideIn { from { opacity:0; transform:translateX(-14px); } to { opacity:1; transform:none; } }
+    .reveal { opacity:0; transform:translateY(16px); transition:opacity .6s, transform .6s; } .reveal.in { opacity:1; transform:none; }
+    .cc { border-radius:16px; background:#fff; border:1px solid #e2e8f0; border-top:5px solid var(--c); padding:.8rem .9rem; height:100%; box-shadow:var(--shadow-sm); transition:transform .25s, box-shadow .25s; }
+    .cc:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); } .cc .ct { font-weight:800; color:var(--c); } .cc .ci { font-size:2rem; display:inline-block; animation:floaty2 3.2s ease-in-out infinite; } @keyframes floaty2 { 50% { transform:translateY(-6px) rotate(6deg); } }
+    .cc p { font-size:.88rem; margin:.2rem 0 0; color:#475569; }
+    .big-p { font-size:1.15em; }
+    .step-pr { margin:.35rem 0; } .opc .cl b { color:#334155; }
+    .kpi { display:inline-flex; flex-direction:column; align-items:center; background:#fff; border:2px solid var(--c,#7048e8); border-radius:14px; padding:.35rem .9rem; min-width:96px; box-shadow:var(--shadow-sm); animation:chipPop .5s both; animation-delay:calc(var(--k,0)*80ms); }
+    .kpi .kl { font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; font-weight:800; color:var(--c,#7048e8); } .kpi .kv { font-size:1.2rem; font-weight:800; }
+    .badge-s { display:inline-block; padding:.12rem .7rem; border-radius:999px; font-weight:800; font-size:.78rem; color:#fff; margin:.1rem; }
+
+    /* Árbol */
+    .tree-wrap { overflow:auto; max-height:640px; background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; }
+    .tree-wrap svg { display:block; min-width:100%; }
+    .te { fill:none; stroke:#94a3b8; stroke-width:2; stroke-dasharray:1; stroke-dashoffset:1; animation:draw .7s forwards; animation-delay:var(--d,0s); transition:stroke .2s, stroke-width .2s; }
+    @keyframes draw { to { stroke-dashoffset:0; } } .no-draw .te { animation:none; stroke-dashoffset:0; }
+    .te.hl { stroke:#e8590c; stroke-width:4; }
+    .tn { transform-box:fill-box; transform-origin:center; animation:nodePop .45s both; animation-delay:var(--d,0s); } @keyframes nodePop { from { transform:scale(0); } to { transform:scale(1); } }
+    .tt { font-size:11px; font-weight:700; fill:#334155; paint-order:stroke; stroke:#fff; stroke-width:4px; opacity:0; animation:fadeIn .4s forwards; animation-delay:var(--d,0s); } @keyframes fadeIn { to { opacity:1; } }
+    .lf { cursor:pointer; } .lf:hover .tl { fill:#e8590c; } .tl { font-size:12px; font-weight:800; fill:#1e293b; }
+
+    /* Venn */
+    .venn-wrap { background:#fff; border:1px solid #e2e8f0; border-radius:16px; box-shadow:var(--shadow-sm); padding:.4rem; } .venn-wrap svg { width:100%; height:auto; display:block; }
+    .vhl { animation:vpulse 1.6s ease-in-out infinite; } @keyframes vpulse { 0%,100% { opacity:.55; } 50% { opacity:.95; } }
+    .vin { animation:vin .6s both; transform-box:fill-box; transform-origin:center; } @keyframes vin { from { opacity:0; transform:scale(.8); } to { opacity:1; transform:none; } }
+    .vlab { font-size:17px; font-weight:800; } .vcnt { font-size:19px; font-weight:800; }
+    .rgn-btns { display:flex; flex-wrap:wrap; gap:.4rem; } .rgn-btns .btn { font-weight:800; border-radius:999px; }
+    .tabx .nav-link { font-weight:800; }
+
+    /* Avanzado */
+    .erow { background:#fff; border:1px solid #e2e8f0; border-left:7px solid var(--c); border-radius:14px; padding:.7rem .9rem; margin-bottom:.7rem; box-shadow:var(--shadow-sm); animation:slideIn .45s both; }
+    .erow .eh { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; margin-bottom:.4rem; }
+    .erow .en { width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .erow select { width:auto; font-weight:700; } .erow .ep { margin-left:auto; }
+    .opx { font-size:1.3rem; font-weight:800; color:#7048e8; text-align:center; margin:-.2rem 0 .3rem; }
+    .funnel { display:flex; flex-direction:column; gap:.3rem; }
+    .funnel .fb { display:flex; align-items:center; gap:.5rem; } .funnel .fb .bb { height:26px; border-radius:8px; background:var(--c); width:0; animation:grow 1s forwards; animation-delay:calc(var(--k,0)*220ms); min-width:4px; display:flex; align-items:center; padding-left:.5rem; color:#fff; font-weight:800; font-size:.78rem; white-space:nowrap; }
+    .funnel .fb .fl { width:130px; font-size:.78rem; font-weight:700; text-align:right; }
+    .hyp-row { display:grid; grid-template-columns:34px 1fr 1fr; gap:.6rem; align-items:center; margin-bottom:.5rem; } .hyp-row .hn { width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .hyp-row label { font-size:.75rem; font-weight:800; color:#64748b; margin:0; }
+
+    /* Manual */
+    .mm-card { background:#fff; border-radius:18px; box-shadow:var(--shadow-md); border:1px solid #e2e8f0; overflow:hidden; }
+    .mm-top { background:linear-gradient(135deg,var(--c),#0f172a); color:#fff; padding:.8rem 1.1rem; display:flex; align-items:center; gap:.8rem; }
+    .mm-top .mi { font-size:2rem; } .mm-top .mt { font-weight:800; font-size:1.15rem; } .mm-top .mk { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; opacity:.85; font-weight:800; }
+    .mm-body { padding:1rem 1.1rem; min-height:330px; } .mm-vis { background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:.7rem; min-height:230px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; }
+    .mm-say { line-height:1.6; } .mm-say b { color:var(--c); } .mm-def { background:color-mix(in srgb,var(--c) 9%,#fff); border-left:5px solid var(--c); border-radius:0 12px 12px 0; padding:.45rem .8rem; margin:.5rem 0; font-size:.92rem; }
+    .mm-dots { display:flex; gap:.35rem; flex-wrap:wrap; justify-content:center; padding:.6rem; background:#f8fafc; border-top:1px solid #e2e8f0; }
+    .mm-dot { width:30px; height:30px; border-radius:50%; border:2px solid #cbd5e1; background:#fff; font-weight:800; font-size:.78rem; color:#64748b; transition:all .2s; } .mm-dot.done { border-color:var(--c); color:var(--c); } .mm-dot.on { background:var(--c); border-color:var(--c); color:#fff; transform:scale(1.15); }
+    .coin { width:64px; height:64px; border-radius:50%; background:radial-gradient(circle at 30% 30%,#ffe066,#f59f00); display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:1.5rem; box-shadow:0 4px 10px rgba(0,0,0,.25); animation:flip 1.6s ease-in-out infinite; }
+    @keyframes flip { 0%,100% { transform:rotateY(0); } 50% { transform:rotateY(540deg); } }
+    .die { width:60px; height:60px; border-radius:14px; background:#fff; border:3px solid #1e293b; display:inline-flex; align-items:center; justify-content:center; font-size:2.6rem; animation:roll 1.8s ease-in-out infinite; } @keyframes roll { 0%,100% { transform:rotate(0); } 50% { transform:rotate(360deg) scale(1.1); } }
+    .gl { width:100%; border-collapse:separate; border-spacing:0 .35rem; font-size:.9rem; } .gl td { background:#fff; padding:.45rem .7rem; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; } .gl td:first-child { border-left:5px solid var(--c); border-radius:10px 0 0 10px; font-weight:800; } .gl td:last-child { border-right:1px solid #e2e8f0; border-radius:0 10px 10px 0; }
+
+    /* Formulario */
+    .fcat { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+    .fm { background:#fff; border-radius:16px; border:1px solid #e2e8f0; border-top:6px solid var(--c); padding:.8rem 1rem; height:100%; box-shadow:var(--shadow-sm); transition:transform .25s, box-shadow .25s; display:flex; flex-direction:column; gap:.4rem; } .fm:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+    .fm .ft { font-weight:800; color:var(--c); } .fm .ff { background:color-mix(in srgb,var(--c) 7%,#fff); border-radius:12px; padding:.4rem .6rem; text-align:center; overflow-x:auto; } .fm .fe { font-size:.84rem; color:#475569; } .fm .fx { font-size:.82rem; border-top:1px dashed #cbd5e1; padding-top:.35rem; color:#334155; }
+    .fm.hide { display:none; } .fcol[hidden] { display:none; }
+    @media (max-width:576px) { .tools .sp-btn { font-size:.8rem; } .mm-body { padding:.7rem; } }
+
+    .leg { font-size:.8rem; color:#475569; background:#f8fafc; border-left:4px solid #cbd5e1; border-radius:0 10px 10px 0; padding:.4rem .7rem; margin-top:.5rem; line-height:1.9; } .leg > span { display:inline-block; margin-right:1rem; } .leg .cx { font-size:.95em; }
+    .sgm { border-collapse:separate; border-spacing:4px; margin:.3rem auto; } .sgm th { font-size:.78rem; font-weight:800; text-align:center; padding:.2rem .4rem; color:#64748b; white-space:nowrap; } .sgm th.on1, .sgm th.on2 { color:var(--hc); } .sgm th.corner { font-size:.68rem; color:#94a3b8; }
+    .sgm td.c { min-width:52px; text-align:center; border-radius:9px; font-size:.78rem; font-weight:700; padding:.4rem .35rem; background:#f1f5f9; color:#94a3b8; animation:chipPop .5s both; animation-delay:var(--d,0ms); } .sgm td.hit { background:var(--hc); color:#fff; box-shadow:0 3px 10px color-mix(in srgb,var(--hc) 45%,transparent); } .sgm td.hit:hover, .sgm td.no:hover { transform:scale(1.12); }
+    .no-anim .sgm td.c { animation:none; }
+    .sgm td.all { background:color-mix(in srgb,var(--hc) 14%,#fff); color:#334155; }
+
+    .pl { fill:none; stroke:#7048e8; stroke-width:2.5; stroke-dasharray:1; stroke-dashoffset:1; animation:draw 1.6s forwards; }
+      /* ===== Enfoques, tablas de contingencia, independencia y Manual de conceptos ===== */
+    .tabp { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; } .tabp button { border-radius:999px; font-weight:800; font-size:.85rem; padding:.3rem .9rem; border:2px solid var(--c); background:#fff; color:var(--c); transition:all .2s; }
+    .tabp button:hover { background:color-mix(in srgb,var(--c) 12%,#fff); } .tabp button.on { background:var(--c); color:#fff; box-shadow:0 4px 10px color-mix(in srgb,var(--c) 40%,transparent); }
+    .urn { background:#fff; border:2px solid #e2e8f0; border-radius:16px; padding:.8rem; text-align:center; height:100%; transition:all .25s; } .urn.sel { border-color:#2f9e44; box-shadow:0 0 0 4px rgba(47,158,68,.18); } .urn.best { border-color:#f08c00; }
+    .balls { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; margin:.4rem 0; min-height:30px; } .bl { width:24px; height:24px; border-radius:50%; display:inline-block; box-shadow:inset -3px -3px 5px rgba(0,0,0,.25); animation:chipPop .45s both; } .bl.n { background:#1e293b; } .bl.b { background:#fff; border:2px solid #94a3b8; box-shadow:inset -3px -3px 5px rgba(0,0,0,.08); }
+    .trl { fill:none; stroke-width:2; stroke-linejoin:round; animation:drw 1.8s ease-out both; } @keyframes drw { from { stroke-dasharray:1; stroke-dashoffset:1; } to { stroke-dasharray:1; stroke-dashoffset:0; } }
+    .tcT { border-collapse:separate; border-spacing:4px; width:100%; text-align:center; } .tcT th { font-size:.8rem; color:#475569; font-weight:800; padding:.25rem .4rem; } .tcT td { border-radius:10px; padding:.55rem .3rem; font-weight:800; font-size:1.05rem; background:#f1f5f9; border:2px solid transparent; transition:all .25s; }
+    .tcT td.tot { background:#e2e8f0; color:#334155; } .tcT td.x { background:#ffd8a8; } .tcT td.y { background:#a5d8ff; } .tcT td.xy { background:linear-gradient(135deg,#ffd8a8 50%,#a5d8ff 50%); } .tcT td.res { border-color:#7048e8; box-shadow:0 0 0 3px rgba(112,72,232,.25); transform:scale(1.04); }
+    .tcin { width:64px; text-align:center; font-weight:700; }
+    .evsel .btn { font-weight:800; } .evsel .btn.on { color:#fff; }
+    .cmb { cursor:pointer; display:inline-flex; align-items:center; gap:.1rem; border:2px solid #cbd5e1; background:#fff; border-radius:999px; padding:.05rem .55rem; font-size:.95rem; margin:.15rem; transition:all .2s; } .cmb sup { font-size:.62rem; font-weight:800; color:#64748b; margin-left:.2rem; }
+    .cmb.hi { background:#7048e8; border-color:#7048e8; color:#fff; } .cmb.hi sup { color:#fff; } .cmb.dim { opacity:.28; }
+    .eqt { width:100%; border-collapse:collapse; font-size:.9rem; } .eqt td, .eqt th { padding:.3rem .5rem; border-bottom:1px solid #e2e8f0; } .eqt tr.pk { cursor:pointer; } .eqt tr.pk:hover, .eqt tr.sel { background:#f3f0ff; }
+    .door { width:100%; border:3px solid #7c4a1e; background:linear-gradient(#c58b4e,#a8692f); color:#fff; border-radius:14px 14px 4px 4px; font-size:2.4rem; font-weight:800; padding:.6rem 0; min-height:110px; transition:all .3s; } .door:hover:not(:disabled) { transform:translateY(-3px); } .door.pick { box-shadow:0 0 0 4px #f08c00; } .door.open { background:#f1f5f9; color:#1e293b; border-color:#94a3b8; } .door.win { background:#d3f9d8; border-color:#2f9e44; } .door:disabled { cursor:default; }
+    .sw-x { display:inline-block; padding:.1rem .7rem; border-radius:999px; font-weight:800; font-size:.8rem; color:#fff; margin:.1rem; }
+    .manb { white-space:nowrap; } .man-nav { display:flex; flex-direction:column; gap:.3rem; max-height:68vh; overflow-y:auto; padding-right:.3rem; }
+    .man-nav button { text-align:left; border:2px solid transparent; background:#f8fafc; border-radius:12px; padding:.35rem .7rem; font-weight:700; font-size:.86rem; color:#334155; border-left:6px solid var(--c); transition:all .2s; } .man-nav button:hover { background:#eef2ff; } .man-nav button.on { background:var(--c); color:#fff; }
+    .man-h { font-weight:800; font-size:1.35rem; color:var(--c); } .man-sec { border-radius:14px; padding:.65rem .9rem; margin:.6rem 0; border-left:6px solid var(--c); background:color-mix(in srgb,var(--c) 7%,#fff); }
+    .man-lb { font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; font-weight:800; color:var(--c); margin-bottom:.25rem; } .man-thm { margin:.3rem 0; padding:.35rem .6rem; background:#fff; border-radius:10px; border:1px solid #e2e8f0; }
+    .man-ex { background:#fffbe6; border-left-color:#f59f00; } .man-ex .man-lb { color:#b45309; }
+
+    /* ===== Tema: distribución binomial ===== */
+    .hero-header { border-bottom-color:#0ca678; }
+    .sec-h .num { background:linear-gradient(135deg,#0ca678,#1c7ed6); }
+    .demo { background:linear-gradient(135deg,#e6fcf5,#fff); border-color:#96f2d7; border-left-color:#0ca678; }
+    .demo-t { color:#087f5b; }
+    .intro-box { background:linear-gradient(135deg,#e6fcf5,#fff); border-color:#96f2d7; border-left-color:#0ca678; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#0ca678; color:#087f5b; }
+    .no-anim *, .no-anim *::before, .no-anim *::after { animation:none !important; transition:none !important; }
+    .no-anim .reveal { opacity:1 !important; transform:none !important; }
+    .tkn { --c:#7048e8; display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; font-size:.92rem; box-shadow:inset -3px -3px 5px rgba(0,0,0,.22); animation:chipPop .4s both; flex:0 0 auto; }
+    .tkn.s { width:22px; height:22px; font-size:.68rem; box-shadow:inset -2px -2px 3px rgba(0,0,0,.22); }
+    button.tkn { border:0; cursor:pointer; transition:transform .15s, opacity .2s; } button.tkn:hover:not(:disabled) { transform:translateY(-3px) scale(1.1); } button.tkn:disabled { opacity:.18; cursor:default; }
+    .tks { display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; }
+    .slots { display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; margin:.4rem 0; }
+    .slotw { text-align:center; }
+    .slot { width:54px; height:54px; border:3px dashed #adb5bd; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#adb5bd; font-size:1.2rem; background:#fff; transition:all .25s; }
+    .slot.f { border-style:solid; border-color:#0ca678; background:#e6fcf5; } .slot.cur { border-color:#f08c00; background:#fff4e6; animation:slotP 1.2s infinite; }
+    @keyframes slotP { 50% { box-shadow:0 0 0 6px rgba(240,140,0,.25); } }
+    .slotn { font-weight:800; font-size:1rem; margin-top:.15rem; }
+    .slotl { font-size:.65rem; color:#868e96; font-weight:700; text-transform:uppercase; }
+    .seqc { display:inline-flex; gap:2px; padding:2px 4px; border-radius:8px; background:#fff; border:1px solid #e2e8f0; margin:2px; align-items:center; animation:chipPop .35s both; transition:all .2s; }
+    .seqc.hi { border-color:#0ca678; background:#d3f9d8; } .seqc.dim { opacity:.22; } .seqc.found { background:#d3f9d8; border-color:#2f9e44; } .seqc.pick { box-shadow:0 0 0 3px #f08c00; }
+    .seqc.cl { cursor:pointer; } .seqc.cl:hover { transform:translateY(-2px); box-shadow:0 4px 8px rgba(0,0,0,.15); }
+    .seqc.cmbc { padding:3px 8px; border-width:2px; border-radius:999px; gap:3px; } .seqc.cmbc.sel { background:#7048e8; border-color:#7048e8; }
+    .sq { width:20px; height:20px; border-radius:5px; display:inline-flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:800; color:#fff; } .sq.s { background:#2f9e44; } .sq.f { background:#e03131; }
+    .emo { font-size:1.9rem; display:inline-block; margin:0 .1rem; animation:chipPop .4s both; }
+    .stg { border:2px solid var(--c); border-radius:14px; padding:.6rem .8rem; background:color-mix(in srgb,var(--c) 7%,#fff); text-align:center; transition:opacity .3s; height:100%; } .stg.off { opacity:.35; }
+    .stg-t { font-weight:800; color:var(--c); margin-bottom:.3rem; }
+    .cmbo { display:inline-block; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:0 .35rem; margin:2px; font-size:1.1rem; animation:chipPop .35s both; }
+    .stcard { border-radius:14px; border:2px solid var(--c); background:color-mix(in srgb,var(--c) 7%,#fff); padding:.6rem .8rem; height:100%; transition:opacity .3s, transform .3s; } .stcard.off { opacity:.25; filter:grayscale(1); } .stcard .stn { font-weight:800; color:var(--c); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; }
+    .bignum { font-size:2rem; font-weight:800; color:var(--c); line-height:1.1; }
+    .ftb { width:100%; border-collapse:separate; border-spacing:0 3px; font-size:.88rem; } .ftb td { background:#fff; padding:.2rem .5rem; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; } .ftb tr { cursor:pointer; } .ftb tr.sel td { background:#fff4e6; border-color:#f08c00; font-weight:700; }
+    .ftb tr:hover td { background:#f1f5f9; } .ftb .lg { width:34%; } .ftb .lg i { display:block; height:12px; border-radius:6px; background:linear-gradient(90deg,#0ca678,#1c7ed6); }
+    .pas { overflow-x:auto; padding:.4rem 0; } .pasr { display:flex; justify-content:center; gap:3px; margin-bottom:3px; min-width:max-content; }
+    .pc { min-width:42px; height:32px; border-radius:9px; background:#f1f5f9; border:2px solid transparent; font-weight:700; font-size:.82rem; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; padding:0 .2rem; }
+    .pc:hover { background:#dbe4ff; } .pc.row { background:#e6fcf5; } .pc.sel { background:#7048e8; color:#fff; border-color:#7048e8; transform:scale(1.12); } .pc.twin { background:#ffd8a8; border-color:#e8590c; } .pc.par { background:#a5d8ff; border-color:#1c7ed6; }
+    .hist { position:relative; display:flex; align-items:flex-end; gap:3px; height:250px; padding-top:6px; border-bottom:2px solid #94a3b8; }
+    .hb { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; position:relative; }
+    .hb.clk { cursor:pointer; } .hb.clk:hover .th { filter:brightness(.9); }
+    .hv { font-size:.6rem; color:#475569; height:14px; line-height:14px; white-space:nowrap; font-weight:700; }
+    .hc { position:relative; width:100%; flex:1 1 auto; display:flex; align-items:flex-end; justify-content:center; min-height:0; }
+    .hc .th { display:block; width:100%; height:var(--h); background:#ced4da; border-radius:4px 4px 0 0; animation:growY .7s both; transition:background .2s; }
+    .hb.on .th { background:#1c7ed6; } .hb.pk .th { background:#f08c00; }
+    .hc .em { position:absolute; bottom:0; width:100%; height:var(--h); background:#1c7ed6; border-radius:4px 4px 0 0; opacity:.9; transition:height .4s; }
+    .hc .tm { position:absolute; left:15%; right:15%; bottom:var(--h); height:4px; background:#f08c00; border-radius:2px; box-shadow:0 0 0 2px #fff; }
+    .hx { position:absolute; bottom:-22px; font-size:.7rem; font-weight:700; color:#475569; }
+    .hwrap { padding-bottom:26px; }
+    .mline { position:absolute; top:0; bottom:0; width:0; border-left:2px dashed #e03131; pointer-events:none; } .mline span { position:absolute; top:-2px; left:3px; font-size:.7rem; font-weight:800; color:#e03131; background:rgba(255,255,255,.85); padding:0 3px; border-radius:4px; }
+    @keyframes growY { from { height:0; } }
+    .rsb { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; border-radius:14px; padding:.7rem 1rem; text-align:center; } .rsb .bg { font-size:2.1rem; font-weight:800; color:#63e6be; } .rsb small { opacity:.8; }
+    .ok-t { color:#2f9e44; font-weight:800; } .no-t { color:#e03131; font-weight:800; }
+    .cond { display:inline-flex; align-items:center; gap:.25rem; padding:.1rem .6rem; border-radius:999px; font-size:.78rem; font-weight:700; margin:.1rem; border:1.5px solid; } .cond.y { color:#2b8a3e; background:#ebfbee; border-color:#8ce99a; } .cond.n { color:#c92a2a; background:#fff5f5; border-color:#ffa8a8; }
+    .qcard { background:#fff; border:2px solid #e2e8f0; border-radius:16px; padding:1rem; box-shadow:var(--shadow-sm); }
+    .flowc { display:flex; flex-wrap:wrap; gap:.5rem; align-items:stretch; margin-bottom:1rem; } .flowc > div { flex:1 1 200px; border-radius:12px; padding:.5rem .8rem; font-size:.88rem; border:2px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); } .flowc b { color:var(--c); }
+    .exc { cursor:pointer; background:#fff; border:2px solid #e2e8f0; border-top:5px solid var(--c); border-radius:16px; padding:.8rem; height:100%; transition:all .25s; box-shadow:var(--shadow-sm); text-align:left; width:100%; } .exc:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); } .exc.sel { border-color:var(--c); background:color-mix(in srgb,var(--c) 7%,#fff); }
+    .exc .ei { font-size:2rem; } .exc .et { font-weight:800; color:var(--c); }
+    .prog2 { height:10px; background:#e2e8f0; border-radius:6px; overflow:hidden; } .prog2 > i { display:block; height:100%; width:var(--w); background:linear-gradient(90deg,#0ca678,#1c7ed6); transition:width .4s; }
+    .ans-in2 { width:140px; font-weight:800; text-align:center; font-family:'Courier New',monospace; }
+    .fm .fe b { color:var(--c); }
+    @media (max-width:576px) { .hist { height:200px; } .slot { width:44px; height:44px; } }
+  </style>
+</head><body>
+  <div id="app-header"></div>
+  <main>
+    <header class="hero-header text-center mb-0">
+      <span class="sym" style="left:6%;top:18%;font-size:4.5rem">🪙</span><span class="sym" style="left:20%;bottom:6%;font-size:3.2rem;animation-delay:1s">n!</span>
+      <span class="sym" style="right:8%;top:14%;font-size:4rem;animation-delay:2s">🎯</span><span class="sym" style="right:22%;bottom:8%;font-size:3.2rem;animation-delay:3s">C(n,r)</span>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-bar-chart-steps text-info me-2"></i>Distribución binomial</h1>
+        <p class="lead mb-1">Principio de conteo · permutaciones · combinaciones · ensayos de Bernoulli · modelo binomial</p>
+        <p class="mb-0 text-light opacity-75">Primero aprendes a <b>contar</b> (jugando con fichas, lugares y grupos) y después usas ese conteo para construir la fórmula binomial paso a paso</p>
+        <div class="hero-btns mt-3 d-flex gap-2 justify-content-center flex-wrap"><a class="btn btn-info rounded-pill px-4" href="#s1" data-go="c"><i class="bi bi-rocket-takeoff-fill me-1"></i>Empezar a contar</a><a class="btn btn-outline-light rounded-pill px-4" href="#s8" data-go="m"><i class="bi bi-diagram-3-fill me-1"></i>Deducir la fórmula</a><button class="btn btn-warning rounded-pill px-4 fw-bold" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual de teoremas</button><a class="btn btn-outline-light rounded-pill px-4" href="#s12" data-go="f"><i class="bi bi-journal-richtext me-1"></i>Formulario</a></div>
+      </div>
+    </header>
+
+    <div class="ctl" id="ctl"><div class="container">
+      <div class="ctl-row"><div class="grp-bar" id="grp-bar"></div>
+        <button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="" title="Definiciones, teoremas y fórmulas"><i class="bi bi-book-half me-1"></i>Manual</button>
+        <label class="pie-sw" title="Activar o desactivar las animaciones" style="margin-left:0"><span class="form-check form-switch m-0 p-0"><input class="form-check-input" type="checkbox" role="switch" id="anim-sw" checked></span><span><i class="bi bi-stars me-1" style="color:#e8590c"></i>Animaciones</span></label></div>
+      <nav class="sec-nav" id="sec-nav"><a href="#s1" data-g="c">1 Principios de conteo</a><a href="#s2" data-g="c">2 Factorial</a><a href="#s3" data-g="c">3 Permutaciones</a><a href="#s4" data-g="c">4 Combinaciones</a><a href="#s5" data-g="c">5 ¿P o C?</a><a href="#s6" data-g="c">6 Pascal y Newton</a><a href="#s7" data-g="m">7 Bernoulli</a><a href="#s8" data-g="m">8 Deducción</a><a href="#s9" data-g="m">9 Función de probabilidad</a><a href="#s10" data-g="a">10 Simulación</a><a href="#s11" data-g="a">11 Ejemplos y práctica</a><a href="#s12" data-g="f">12 Formulario</a></nav>
+    </div></div>
+
+    <div class="container mt-4 mb-5" id="content">
+
+      <!-- ============ CONTEO ============ -->
+      <section class="sec" id="s1" data-g="c"><div class="sec-h"><span class="num">1</span><h2>Principios de conteo: multiplicar y sumar</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="multiplicativo"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-lightbulb-fill text-warning me-1"></i>Antes de la binomial hay que saber contar.</b> Si algo se hace en <b>etapas</b> (primero esto <b>y</b> luego aquello) se <b>multiplica</b>; si se puede hacer de una <b>u</b> otra manera (excluyentes) se <b>suma</b>. Arma un combo y mira cómo crece el conteo.</div>
+        <div class="demo"><div class="demo-t"><i class="bi bi-basket2-fill"></i>Arma tu combo: etapa por etapa</div>
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-2"><span class="small fw-bold">Etapas:</span><div class="btn-group btn-group-sm" id="s1-k"></div></div>
+          <div class="row g-3 mb-2" id="s1-stg"></div>
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-2" id="s1-nav"></div>
+          <div id="s1-out"></div></div>
+        <div class="demo"><div class="demo-t"><i class="bi bi-signpost-split-fill"></i>¿Multiplicar o sumar? «Y» contra «O»</div>
+          <div class="row g-3 align-items-center"><div class="col-lg-4"><div class="small fw-bold mb-1">Rutas en camión: <b id="ad-av"></b></div><input type="range" class="form-range" min="1" max="5" value="3" data-in="adA"><div class="small fw-bold mb-1">Rutas en metro: <b id="ad-bv"></b></div><input type="range" class="form-range" min="1" max="5" value="2" data-in="adB"></div>
+            <div class="col-lg-8" id="ad-out"></div></div></div>
+      </section>
+
+      <section class="sec" id="s2" data-g="c"><div class="sec-h"><span class="num">2</span><h2>Factorial: ordenar n elementos</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="factorial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-people-fill text-warning me-1"></i>Fila de fotografía:</b> ¿de cuántas maneras se pueden formar n personas en una fila? Llena los lugares <b>uno por uno</b>: en cada lugar anota cuántas fichas te quedan por elegir. <i>Primero predice cuántas hay.</i></div>
+        <div class="demo"><div class="d-flex flex-wrap gap-2 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-grid-3x2-gap-fill"></i>Número de personas n</div><div class="btn-group btn-group-sm" id="s2-n"></div></div>
+          <div id="sb2"></div></div>
+        <div class="demo"><div class="demo-t"><i class="bi bi-graph-up-arrow"></i>Crecimiento del factorial (toca una fila)</div><div id="s2-tab"></div></div>
+      </section>
+
+      <section class="sec" id="s3" data-g="c"><div class="sec-h"><span class="num">3</span><h2>Permutaciones: el orden importa</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="permutaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-trophy-fill text-warning me-1"></i>Podio de una carrera:</b> de n corredores se premian r lugares. «ABC» y «CBA» son podios <b>distintos</b>: si el orden importa, es una <b>permutación</b>. También verás qué pasa cuando hay elementos <b>repetidos</b> (anagramas).</div>
+        <div class="tabp" id="s3-tabs"></div><div id="s3-body"></div>
+      </section>
+
+      <section class="sec" id="s4" data-g="c"><div class="sec-h"><span class="num">4</span><h2>Combinaciones: el orden NO importa</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="combinaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-people-fill text-warning me-1"></i>Comité en vez de podio:</b> elegir 2 personas de 5 para un comité; «A y B» es el <b>mismo</b> comité que «B y A». Descubre por qué se divide entre <b>r!</b>: cada grupo se cuenta r! veces cuando miramos el orden.</div>
+        <div class="demo"><div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-sliders"></i>Elige n y r</div>
+          <div class="d-flex align-items-center gap-2"><b class="small">n =</b><div class="btn-group btn-group-sm" id="s4-n"></div></div><div class="d-flex align-items-center gap-2"><b class="small">r =</b><div class="btn-group btn-group-sm" id="s4-r"></div></div></div>
+          <div id="s4-body"></div></div>
+      </section>
+
+      <section class="sec" id="s5" data-g="c"><div class="sec-h"><span class="num">5</span><h2>¿Permutación o combinación? Tú decides</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="combinaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-question-circle-fill text-warning me-1"></i>La pregunta clave:</b> «si cambio el orden, ¿obtengo algo distinto?». <b>Sí → permutación; No → combinación.</b> Practica con problemas: elige el tipo y luego calcula.</div>
+        <div id="s5-body"></div>
+      </section>
+
+      <section class="sec" id="s6" data-g="c"><div class="sec-h"><span class="num">6</span><h2>Triángulo de Pascal y binomio de Newton</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="newton"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-triangle-fill text-warning me-1"></i>Las combinaciones forman un triángulo.</b> Cada número es la suma de los dos de arriba y sirve de coeficiente en $(a+b)^n$. Es el puente hacia la binomial: si $a=p$ y $b=q$, ¡los términos son probabilidades!</div>
+        <div class="demo"><div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-hand-index-thumb-fill"></i>Toca un número</div><div class="d-flex align-items-center gap-2"><b class="small">Fila n:</b><input type="range" min="0" max="12" value="6" data-in="paN" style="width:180px"><b id="pa-nv"></b></div></div>
+          <div id="s6-body"></div></div>
+      </section>
+
+      <!-- ============ MODELO BINOMIAL ============ -->
+      <section class="sec" id="s7" data-g="m"><div class="sec-h"><span class="num">7</span><h2>Ensayo de Bernoulli y las 4 condiciones</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="bernoulli"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-toggle2-on text-warning me-1"></i>Un ensayo, dos resultados:</b> éxito (probabilidad p) o fracaso (q = 1 − p). Repite ensayos y verifica después si el experimento cumple las <b>4 condiciones</b> de la binomial.</div>
+        <div class="tabp" id="s7-tabs"></div><div id="s7-body"></div>
+      </section>
+
+      <section class="sec" id="s8" data-g="m"><div class="sec-h"><span class="num">8</span><h2>Deducción de la fórmula, paso a paso</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-diagram-3-fill text-warning me-1"></i>Combinaciones + regla del producto.</b> Cuenta las secuencias de éxitos y fracasos con exactamente x éxitos (<b>combinaciones</b>), calcula la probabilidad de <b>una</b> (producto) y <b>suma</b>. Cambia n, p y x.</div>
+        <div class="demo"><div class="row g-3 align-items-end mb-2">
+          <div class="col-auto"><div class="small fw-bold mb-1">Ensayos n</div><div class="btn-group btn-group-sm" id="dd-n"></div></div>
+          <div class="col-auto"><div class="small fw-bold mb-1">Éxitos x</div><div class="btn-group btn-group-sm" id="dd-x"></div></div>
+          <div class="col-auto"><div class="small fw-bold mb-1">Probabilidad de éxito p</div><div class="btn-group btn-group-sm flex-wrap" id="dd-p"></div></div>
+          <div class="col-auto"><div class="small fw-bold mb-1">o escribe p = </div><span class="fin"><input type="number" min="1" max="11" value="1" data-in="ddPn" id="dd-pn"><span class="bar"></span><input type="number" min="2" max="12" value="2" data-in="ddPd" id="dd-pd"></span></div></div>
+          <div class="stbar mt-3"><div class="d-flex gap-1 flex-wrap" id="dd-dots"></div></div>
+          <div id="dd-body"></div>
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" data-a="ddPrev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" data-a="ddNext">Siguiente<i class="bi bi-chevron-right ms-1"></i></button></div><span class="small text-muted" id="dd-count"></span><button class="btn btn-warning rounded-pill fw-semibold" data-a="ddPlay" id="dd-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button></div></div>
+      </section>
+
+      <section class="sec" id="s9" data-g="m"><div class="sec-h"><span class="num">9</span><h2>Función de probabilidad y calculadora binomial</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="fmp"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-sliders text-warning me-1"></i>Mueve n y p y mira cómo cambia la forma.</b> Toca una barra para elegir x. Elige el tipo de pregunta (=, ≤, ≥, entre) y obtén la probabilidad con la sustitución <b>paso a paso</b>, la media, la varianza y la desviación estándar.</div>
+        <div class="demo"><div class="row g-3"><div class="col-lg-4"><div class="small fw-bold">n = <span id="c-nv"></span> <span class="text-muted fw-normal">(ensayos)</span></div><input type="range" class="form-range bn-n" min="1" max="30" value="10" data-in="bnN">
+          <div class="small fw-bold">p = <span id="c-pv"></span> <span class="text-muted fw-normal">(éxito)</span></div><input type="range" class="form-range bn-p" min="1" max="99" value="50" data-in="bnP">
+          <div class="small fw-bold mb-1">Pregunta</div><div class="btn-group-vertical btn-group-sm w-100 mb-2" id="c-mode"></div><div id="c-xs"></div></div>
+          <div class="col-lg-8"><div id="c-hist"></div><div class="small text-muted text-center" id="c-shape"></div></div></div></div>
+        <div class="row g-3"><div class="col-lg-7"><div id="c-steps"></div></div><div class="col-lg-5"><div id="c-stats"></div><details class="mt-2"><summary class="fw-bold small" style="cursor:pointer;color:#1c7ed6">Tabla completa de P(X = k) y F(k)</summary><div id="c-tab" class="mt-2" style="max-height:380px;overflow:auto"></div></details></div></div>
+      </section>
+
+      <!-- ============ APLICACIONES ============ -->
+      <section class="sec" id="s10" data-g="a"><div class="sec-h"><span class="num">10</span><h2>Simulación: la teoría contra la realidad</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="ley"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-dice-5-fill text-warning me-1"></i>Haz el experimento muchas veces.</b> Cada repetición son n ensayos de Bernoulli y se anota el número de éxitos. Las barras <span style="color:#1c7ed6;font-weight:800">azules</span> son lo observado; los marcadores <span style="color:#f08c00;font-weight:800">naranjas</span>, la probabilidad teórica. <i>Conjetura: ¿se parecerán más con 10 o con 1 000 repeticiones?</i></div>
+        <div class="demo"><div class="row g-3 mb-2"><div class="col-md-4"><div class="small fw-bold">n = <span id="sm-nv"></span></div><input type="range" class="form-range bn-n" min="1" max="30" value="10" data-in="bnN"></div><div class="col-md-4"><div class="small fw-bold">p = <span id="sm-pv"></span></div><input type="range" class="form-range bn-p" min="1" max="99" value="50" data-in="bnP"></div>
+          <div class="col-md-4 d-flex align-items-end gap-1 flex-wrap"><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="1">+1</button><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="10">+10</button><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="100">+100</button><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="1000">+1 000</button><button class="btn btn-sm btn-outline-dark rounded-pill" data-a="smReset"><i class="bi bi-arrow-counterclockwise"></i></button></div></div>
+          <div id="sm-last" class="mb-2"></div><div id="sm-hist"></div><div id="sm-stats" class="mt-2"></div></div>
+      </section>
+
+      <section class="sec" id="s11" data-g="a"><div class="sec-h"><span class="num">11</span><h2>Ejemplos resueltos y práctica</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-journal-check text-warning me-1"></i>Del problema al resultado.</b> Elige un ejemplo y resuélvelo en 5 pasos: <i>identificar → verificar condiciones → plantear → sustituir → interpretar</i>. Abajo, genera problemas nuevos y comprueba tu respuesta.</div>
+        <div class="row g-3 mb-3" id="s11-cards"></div>
+        <div id="s11-sol"></div>
+        <div class="demo mt-4"><div class="demo-t"><i class="bi bi-pencil-square"></i>Práctica con problemas nuevos</div><div id="s11-prac"></div></div>
+      </section>
+
+      <section class="sec" id="s12" data-g="f"><div class="sec-h"><span class="num">12</span><h2>Formulario de conteo y binomial</h2><span class="lvtag lt4">Referencia</span></div>
+        <div class="intro-box"><b><i class="bi bi-journal-richtext text-warning me-1"></i>Todas las fórmulas</b> agrupadas por tema, con un ejemplo. Filtra por tema o abre la ficha completa (definición, teorema, uso) en el Manual.</div>
+        <div class="fcat" id="fm-cat"></div><div class="row g-3" id="fm-grid"></div>
+      </section>
+    </div>
+  </main>
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Distribución binomial</small></footer>
+  <button class="to-top" id="to-top" aria-label="Subir"><i class="bi bi-arrow-up"></i></button>
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-labelledby="manualTitle" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" id="manualTitle"><i class="bi bi-book-half me-2 text-warning"></i>Manual: conteo y distribución binomial</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+    <div class="modal-body"><div class="row g-3"><div class="col-md-3"><input class="form-control form-control-sm mb-2" id="man-q" placeholder="Buscar concepto…" autocomplete="off"><div class="man-nav" id="man-nav"></div></div><div class="col-md-9" id="man-body"></div></div></div></div></div></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const FALLBACK_MENU = {
+      brand: { label: "Aula Digital", icon: "bi-mortarboard-fill", href: "index.html" },
+      groups: [
+        { id: "matematicas", label: "Matemáticas", icon: "bi-calculator", items: [ { label: "Pitágoras y Trigonometría", href: "pitagoras.html", icon: "bi-triangle-fill" }, { label: "Exponentes y Radicales", href: "exponentes_radicales.html", icon: "bi-superscript" }, { label: "Fracciones", href: "fracciones.html", icon: "bi-pie-chart-fill" } ] },
+        { id: "cibernetica", label: "Cibernética", icon: "bi-cpu", items: [
+          { label: "Conversiones numéricas", href: "conversiones.html", icon: "bi-arrow-left-right" }, { label: "Circuitos eléctricos", href: "circuitos.html", icon: "bi-lightning-charge-fill" },
+          { label: "Protoboard e Interconexiones", href: "protoboard.html", icon: "bi-grid-3x3-gap-fill" }, { label: "Compuertas lógicas", href: "compuertas_logicas.html", icon: "bi-diagram-3" }, { label: "Precursores de la computación", href: "precursores.html", icon: "bi-clock-history" } ] },
+        { id: "estadistica", label: "Estadística", icon: "bi-bar-chart-line", items: [ { label: "Distribución muestral", href: "distribucion_muestral.html", icon: "bi-bar-chart-line-fill" }, { label: "Probabilidad", href: "probabilidad.html", icon: "bi-dice-5-fill" }, { label: "Distribución binomial", href: "distribucion_binomial.html", icon: "bi-bar-chart-steps" } ] }
+      ]
+    };
+    function renderHeader(menu, container, currentPage) {
+      const groups = menu.groups.map(g => {
+        const hasActive = g.items.some(i => i.href === currentPage);
+        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === currentPage ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
+        return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi ${g.icon} me-1"></i>${g.label}</a><ul class="dropdown-menu">${items}</ul></li>`;
+      }).join('');
+      container.innerHTML = `<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top"><div class="container">
+        <a class="navbar-brand fw-bold" href="${menu.brand.href}"><i class="bi ${menu.brand.icon} me-2"></i>${menu.brand.label}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="mainMenu"><ul class="navbar-nav ms-auto mb-2 mb-lg-0">${groups}</ul></div></div></nav>`;
+    }
+    (async function initHeader() {
+      const container = document.getElementById('app-header'), page = location.pathname.split('/').pop() || 'distribucion_binomial.html';
+      renderHeader(FALLBACK_MENU, container, page);
+      if (location.protocol === 'file:') return;
+      try { const res = await fetch('index.html', { cache: 'no-store' }); if (!res.ok) throw 0;
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html'); renderHeader(JSON.parse(doc.getElementById('menu-config').textContent), container, page); } catch (e) {}
+    })();
+  </script>
+
+<script>
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    const escH = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        /*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { Omega: 'Ω', omega: 'ω', mu: 'μ', sigma: 'σ', lambda: 'λ', cap: '∩', cup: '∪', emptyset: '∅', setminus: '∖', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', land: '∧', lor: '∨', lnot: '¬', triangle: '△', mid: '∣', vee: '∨', wedge: '∧', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', bigcup: '⋃', bigcap: '⋂', varepsilon: 'ε', epsilon: 'ε', delta: 'δ', ne: '≠', iff: '⇔', rightarrow: '→',  ldots: '…', sim: '∼', Phi: 'Φ', ln: 'ln', lfloor: '⌊', rfloor: '⌋', dots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['cap', 'cup', 'setminus', 'in', 'notin', 'subset', 'subseteq', 'land', 'lor', 'mid', 'triangle', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'ne', 'iff', 'rightarrow', 'pm', 'mp', 'le', 'ge', 'leq', 'geq', 'sim']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': case 'tfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'overline': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name === 'hat' ? 'hat' : 'bar'}">${x}</span>`; }
+          case 'sum': case 'prod': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">${name === 'sum' ? '∑' : '∏'}</span><span class="sl">${lo}</span></span>`; }
+          case 'binom': { const a = arg(), b = arg(); last = 'val'; return `<span class="gp tall"><span class="pg">(</span><span class="fr bn"><span class="nu">${a}</span><span class="de">${b}</span></span><span class="pg">)</span></span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    
+    function math(root) {
+      root = root || document.body;
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes('$') && !n.parentElement.closest('.cx,script,style,textarea,input,code') ? 1 : 2 }), nodes = [];
+      while (w.nextNode()) nodes.push(w.currentNode);
+      nodes.forEach(n => { const t = n.nodeValue, re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$/g; let m, at = 0, html = '', found = false;
+        while ((m = re.exec(t))) { found = true; html += escH(t.slice(at, m.index)) + (m[1] !== undefined ? `<div class="cx d">${fx(m[1])}</div>` : `<span class="cx">${fx(m[2])}</span>`); at = re.lastIndex; }
+        if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
+    }
+    /*ENDFX*/
+
+    /* ===================== Utilidades ===================== */
+    const R = String.raw;
+    const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
+    const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; };
+    const fred = (n, d) => { if (d === 0) return { n: 0, d: 1 }; const g = gcd(n, d) || 1; let N = n / g, D = d / g; if (D < 0) { N = -N; D = -D; } return { n: N, d: D }; };
+    const fmul = (a, b) => fred(a.n * b.n, a.d * b.d), fadd = (a, b) => fred(a.n * b.d + b.n * a.d, a.d * b.d);
+    const F = (n, d = 1) => fred(n, d), fval = f => f.n / f.d;
+    const fpow = (f, k) => { let r = F(1); for (let i = 0; i < k; i++) r = fmul(r, f); return r; };
+    const ftx = f => f.d === 1 ? String(f.n) : `\\frac{${f.n}}{${f.d}}`;
+    const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { } } };
+    /* BigInt para conteos exactos */
+    const bF = n => { let r = 1n; for (let i = 2n; i <= BigInt(n); i++) r *= i; return r; };
+    const bP = (n, r) => { if (r < 0 || r > n) return 0n; let x = 1n; for (let i = 0; i < r; i++) x *= BigInt(n - i); return x; };
+    const bC = (n, r) => { if (r < 0 || r > n) return 0n; r = Math.min(r, n - r); let x = 1n; for (let i = 1; i <= r; i++) x = x * BigInt(n - r + i) / BigInt(i); return x; };
+    const fB = b => String(b).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const fmtN = n => Number(n).toLocaleString('es-MX', { maximumFractionDigits: 0 });
+    /* Fichas */
+    const TKC = ['#e8590c', '#1c7ed6', '#2f9e44', '#7048e8', '#e03131', '#f08c00', '#0ca678', '#d6336c', '#4263eb', '#74b816'], LET = 'ABCDEFGHIJ';
+    const tkn = (i, s = '') => `<span class="tkn ${s}" style="--c:${TKC[i % 10]}">${LET[i]}</span>`;
+    function permsOf(arr, r) { const out = []; (function rec(cur, used) { if (cur.length === r) { out.push(cur.slice()); return; } for (let i = 0; i < arr.length; i++) { if (used[i]) continue; used[i] = 1; cur.push(arr[i]); rec(cur, used); cur.pop(); used[i] = 0; } })([], []); return out; }
+    function combsOf(n, r) { const out = []; (function rec(s, cur) { if (cur.length === r) { out.push(cur.slice()); return; } for (let i = s; i < n; i++) { cur.push(i); rec(i + 1, cur); cur.pop(); } })(0, []); return out; }
+    const facStr = (n, r) => { const a = Array.from({ length: r }, (_, i) => n - i); return a.length <= 5 ? a.join(' \\cdot ') : `${a[0]} \\cdot ${a[1]} \\cdots ${a[a.length - 1]}`; };
+    const colF = (txt, c) => `\\textcolor{${c}}{${txt}}`;
+    /* Binomial numérica */
+    const lnT = [0, 0]; for (let i = 2; i <= 400; i++) lnT[i] = lnT[i - 1] + Math.log(i);
+    const pmf = (n, x, p) => { if (x < 0 || x > n) return 0; if (p <= 0) return x === 0 ? 1 : 0; if (p >= 1) return x === n ? 1 : 0; return Math.exp(lnT[n] - lnT[x] - lnT[n - x] + x * Math.log(p) + (n - x) * Math.log(1 - p)); };
+    const pArr = (n, p) => Array.from({ length: n + 1 }, (_, x) => pmf(n, x, p));
+    const f4 = v => v === 0 ? '0.0000' : v < 0.00005 ? v.toExponential(2) : v.toFixed(4);
+    const f4t = v => { if (v !== 0 && v < 0.00005) { const [m, e] = v.toExponential(2).split('e'); return `${m} \\times 10^{${e.replace('+', '')}}`; } return f4(v); };
+    const pctS = v => (v * 100 < 0.01 && v > 0 ? '< 0.01' : (v * 100).toFixed(2)) + ' %';
+    const BN = { n: 10, p: 0.5, x: 5, mode: 'eq', a: 3, b: 6 };
+    const MODES = [['eq', 'P(X = x)', 'Exactamente x'], ['le', 'P(X ≤ x)', 'A lo más x'], ['lt', 'P(X < x)', 'Menos de x'], ['ge', 'P(X ≥ x)', 'Al menos x'], ['gt', 'P(X > x)', 'Más de x'], ['bt', 'P(a ≤ X ≤ b)', 'Entre a y b']];
+    function spec(n, p, mode, x, a, b) {
+      const inc = k => mode === 'eq' ? k === x : mode === 'le' ? k <= x : mode === 'lt' ? k < x : mode === 'ge' ? k >= x : mode === 'gt' ? k > x : (k >= a && k <= b);
+      const ks = []; for (let k = 0; k <= n; k++) if (inc(k)) ks.push(k);
+      const tex = { eq: `P(X = ${x})`, le: `P(X \\le ${x})`, lt: `P(X < ${x})`, ge: `P(X \\ge ${x})`, gt: `P(X > ${x})`, bt: `P(${a} \\le X \\le ${b})` }[mode];
+      const txt = { eq: `exactamente ${x}`, le: `a lo más ${x}`, lt: `menos de ${x}`, ge: `al menos ${x}`, gt: `más de ${x}`, bt: `entre ${a} y ${b} (incluidos)` }[mode];
+      const total = ks.reduce((s, k) => s + pmf(n, k, p), 0);
+      return { ks, tex, txt, mode, total: Math.min(1, total), set: new Set(ks) };
+    }
+    /* Gráfica de barras */
+    function histHTML(vals, o = {}) {
+      const inc = o.inc || new Set(), max = Math.max(...vals, ...(o.emp || [0]), 1e-9), n = vals.length;
+      const bars = vals.map((v, k) => { const h = v > 0 ? Math.max(v / max * 100, 1.5) : 0, e = o.emp ? Math.max(o.emp[k] / max * 100, o.emp[k] > 0 ? 1.5 : 0) : 0;
+        const lab = n <= 14 ? (o.emp ? (o.emp[k] ? (o.emp[k]).toFixed(2).replace(/^0/, '') : '') : (v < 0.0005 ? '' : v.toFixed(3).replace(/^0/, ''))) : '';
+        return `<div class="hb ${o.click ? 'clk' : ''} ${inc.has(k) ? 'on' : ''} ${o.pk === k ? 'pk' : ''}" ${o.click ? `data-a="hbar" data-k="${k}"` : ''} title="X = ${k}: ${f4(v)}"><div class="hv">${lab}</div><div class="hc">${o.emp ? `<i class="em" style="--h:${e}%"></i><i class="tm" style="--h:${h}%"></i>` : `<i class="th" style="--h:${h}%"></i>`}</div><div class="hx">${k}</div></div>`; }).join('');
+      const ml = o.mean !== undefined ? `<div class="mline" style="left:${(o.mean + 0.5) / n * 100}%"><span>μ</span></div>` : '';
+      return `<div class="hwrap"><div class="hist">${bars}${ml}</div></div>`;
+    }
+    const ACT = {}, INP = {};
+    const RENDERS = []; const renderAll = () => RENDERS.forEach(f => { try { f(); } catch (e) { console.error(e); } });
+    const seqHTML = (bits, cls = '', attrs = '') => `<span class="seqc ${cls}" ${attrs}>${bits.map(b => `<span class="sq ${b ? 's' : 'f'}">${b ? 'S' : 'F'}</span>`).join('')}</span>`;
+    const kpi = (l, v, c, k = 0) => `<span class="kpi" style="--c:${c};--k:${k}"><span class="kl">${l}</span><span class="kv">${v}</span></span>`;
+    const stp = (n, c, title, body) => `<div class="stp" style="--c:${c}"><div class="sh"><span class="sn">${n}</span>${title}</div><div>${body}</div></div>`;
+
+    /* ===================== 1. Principios de conteo ===================== */
+    const PR1 = { c: [3, 2, 2], k: 3, step: 3 };
+    const PR1S = [['Platillo', ['🍔', '🌮', '🍕', '🥪'], '#e8590c'], ['Bebida', ['🥤', '🧃', '☕', '🥛'], '#1c7ed6'], ['Postre', ['🍰', '🍦', '🍎', '🍪'], '#2f9e44']];
+    const AD = { a: 3, b: 2 };
+    function s1R() {
+      const k = PR1.k, c = PR1.c.slice(0, k), st = Math.min(PR1.step, k);
+      $('#s1-k').innerHTML = [2, 3].map(v => `<button class="btn btn-outline-dark ${v === k ? 'active' : ''}" data-a="s1k" data-v="${v}">${v} etapas</button>`).join('');
+      $('#s1-stg').innerHTML = c.map((n, i) => { const S = PR1S[i]; return `<div class="col-${k === 2 ? 6 : 12} col-md-${12 / k}"><div class="stg ${i < st ? '' : 'off'}" style="--c:${S[2]}"><div class="stg-t">Etapa ${i + 1}: ${S[0]} · <span class="cx">n<sub>${i + 1}</sub> = ${n}</span></div><div class="btn-group btn-group-sm mb-2">${[1, 2, 3, 4].map(v => `<button class="btn btn-outline-dark ${v === n ? 'active' : ''}" data-a="s1n" data-i="${i}" data-v="${v}">${v}</button>`).join('')}</div><div>${S[1].slice(0, n).map(e => `<span class="emo">${e}</span>`).join('')}</div></div></div>`; }).join('');
+      $('#s1-nav').innerHTML = `<button class="btn btn-sm btn-outline-dark rounded-pill" data-a="s1s" data-v="-1" ${st <= 1 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i> Quitar etapa</button><button class="btn btn-sm btn-dark rounded-pill px-3" data-a="s1s" data-v="1" ${st >= k ? 'disabled' : ''}>Agregar etapa ${Math.min(st + 1, k)} <i class="bi bi-chevron-right"></i></button><span class="small text-muted">Mostrando ${st} de ${k} etapas</span>`;
+      let combos = [[]]; for (let i = 0; i < st; i++) combos = combos.flatMap(a => PR1S[i][1].slice(0, c[i]).map(e => [...a, e]));
+      const prod = c.slice(0, st).reduce((a, b) => a * b, 1), cols = ['#e8590c', '#1c7ed6', '#2f9e44'];
+      const sym = Array.from({ length: st }, (_, i) => colF(`n_{${i + 1}}`, cols[i])).join(' \\cdot '), num = c.slice(0, st).map((n, i) => colF(String(n), cols[i])).join(' \\cdot ');
+      const story = Array.from({ length: st }, (_, i) => i === 0 ? `Hay <b>${c[0]}</b> ${PR1S[0][0].toLowerCase()}s.` : `Con cada una de las <b>${c.slice(0, i).reduce((a, b) => a * b, 1)}</b> opciones anteriores puedes combinar <b>${c[i]}</b> ${PR1S[i][0].toLowerCase()}s → <b>${c.slice(0, i + 1).reduce((a, b) => a * b, 1)}</b>.`).join(' ');
+      $('#s1-out').innerHTML = `<div class="row g-3"><div class="col-lg-7"><div class="small fw-bold text-muted mb-1">Todas las combinaciones posibles (${prod})</div><div>${combos.slice(0, 64).map((cb, j) => `<span class="cmbo" style="animation-delay:${Math.min(j, 40) * 15}ms">${cb.join('')}</span>`).join('')}${combos.length > 64 ? '<span class="small text-muted"> … y más</span>' : ''}</div></div>
+        <div class="col-lg-5"><div class="resb flex-column"><div class="rl">Principio multiplicativo</div>${fd(`N = ${sym} = ${num} = ${colF(String(prod), '#63e6be')}`)}</div><div class="small mt-2">${story}</div></div></div>`;
+      /* aditivo */
+      const a = AD.a, b = AD.b; $('#ad-av').textContent = a; $('#ad-bv').textContent = b;
+      const rt = (n, e, col) => Array.from({ length: n }, (_, i) => `<span class="cmbo" style="border-color:${col}">${e}${i + 1}</span>`).join('');
+      $('#ad-out').innerHTML = `<div class="row g-2"><div class="col-md-6"><div class="stcard" style="--c:#e8590c"><div class="stn">«O» · una u otra → se SUMA</div><div class="small mb-1">Para ir a la escuela eliges <b>una</b> forma: camión <b>o</b> metro.</div><div>${rt(a, '🚌', '#e8590c')}${rt(b, '🚇', '#1c7ed6')}</div>${fd(`${a} + ${b} = ${a + b}`)}</div></div>
+        <div class="col-md-6"><div class="stcard" style="--c:#7048e8"><div class="stn">«Y» · ida y vuelta → se MULTIPLICA</div><div class="small mb-1">Vas en camión <b>y</b> regresas en metro (dos etapas).</div><div>${Array.from({ length: Math.min(a * b, 12) }, (_, i) => `<span class="cmbo">🚌${Math.floor(i / b) + 1}→🚇${i % b + 1}</span>`).join('')}${a * b > 12 ? '…' : ''}</div>${fd(`${a} \\cdot ${b} = ${a * b}`)}</div></div></div>`;
+    }
+    ACT.s1k = el => { PR1.k = +el.dataset.v; PR1.step = Math.min(PR1.step, PR1.k); s1R(); };
+    ACT.s1n = el => { PR1.c[+el.dataset.i] = +el.dataset.v; s1R(); };
+    ACT.s1s = el => { PR1.step = Math.max(1, Math.min(PR1.k, PR1.step + +el.dataset.v)); s1R(); };
+    INP.adA = el => { AD.a = +el.value; s1R(); }; INP.adB = el => { AD.b = +el.value; s1R(); };
+    RENDERS.push(s1R);
+
+    /* ===================== Constructor de ordenaciones (secciones 2 y 3) ===================== */
+    const SB = {};
+    function sbInit(id, n, r, o = {}) { const old = SB[id]; SB[id] = Object.assign({ n, r, placed: [], found: (old && old.n === n && old.r === r) ? old.found : new Set() }, o); }
+    function sbR(id) {
+      const s = SB[id], el = $('#' + id); if (!el) return; const { n, r, placed } = s, done = placed.length === r, tot = bP(n, r);
+      const slots = Array.from({ length: r }, (_, i) => { const f = i < placed.length, cur = i === placed.length;
+        return `<div class="slotw"><div class="slotl">${s.medal ? 'Lugar ' + (i + 1) : 'Pos. ' + (i + 1)}</div><div class="slot ${f ? 'f' : ''} ${cur ? 'cur' : ''}">${f ? tkn(placed[i]) : (s.medal && i < 3 ? ['🥇', '🥈', '🥉'][i] : '?')}</div><div class="slotn" style="color:${f || cur ? TKC[i % 10] : '#adb5bd'}">${n - i}</div></div>`; }).join('');
+      const toks = Array.from({ length: n }, (_, i) => `<button class="tkn" style="--c:${TKC[i % 10]}" data-a="sbp" data-id="${id}" data-t="${i}" ${placed.includes(i) || done ? 'disabled' : ''}>${LET[i]}</button>`).join('');
+      const fac = Array.from({ length: r }, (_, i) => colF(String(n - i), i <= placed.length && (i < placed.length || !done) ? TKC[i % 10] : '#ced4da')).join(' \\cdot ');
+      const key = placed.join(','), isNew = done && !s.found.has(key); if (done) s.found.add(key);
+      const msg = done ? `<b class="ok-t"><i class="bi bi-check-circle-fill"></i> Ordenación completa:</b> ${placed.map(t => tkn(t, 's')).join('')} ${isNew ? '<span class="badge-s" style="background:#2f9e44">¡nueva!</span>' : '<span class="badge-s" style="background:#868e96">ya la tenías</span>'}`
+        : `Lugar <b>${placed.length + 1}</b>: ya usaste ${placed.length}, te quedan <b>${n - placed.length}</b> elementos → hay <b style="color:${TKC[placed.length % 10]}">${n - placed.length}</b> opciones para este lugar.`;
+      let list = ''; if (tot <= 120n) { const all = permsOf([...Array(n).keys()], r); list = `<details class="mt-2"><summary class="fw-bold small" style="cursor:pointer;color:#1c7ed6">Ver las ${fB(tot)} ordenaciones (en verde las que ya construiste)</summary><div class="mt-1">${all.map(a => `<span class="seqc ${s.found.has(a.join(',')) ? 'found' : ''}">${a.map(t => tkn(t, 's')).join('')}</span>`).join('')}</div></details>`; }
+      else list = `<div class="small text-muted mt-2">Hay ${fB(tot)} ordenaciones: ¡demasiadas para listarlas una por una!</div>`;
+      const prog = Number(tot) ? Math.min(100, s.found.size / Number(tot) * 100) : 0;
+      el.innerHTML = `<div class="small fw-bold text-muted text-center mb-1">${s.medal ? 'Toca los corredores en el orden en que llegan a la meta' : 'Toca las fichas en el orden en que se forman'}</div>
+        <div class="slots">${slots}</div><div class="tks my-2">${toks}</div>
+        <div class="text-center mb-2">${msg}</div>
+        <div class="resb flex-column"><div class="rl">Opciones por lugar multiplicadas</div>${fd(`${fac}${done ? ' = ' + colF(fB(tot), '#63e6be') : ' = ?'}`)}</div>
+        <div class="d-flex flex-wrap gap-2 align-items-center mt-2"><button class="btn btn-sm btn-outline-dark rounded-pill" data-a="sbu" data-id="${id}" ${placed.length ? '' : 'disabled'}><i class="bi bi-arrow-90deg-left"></i> Deshacer</button><button class="btn btn-sm btn-outline-dark rounded-pill" data-a="sbr" data-id="${id}"><i class="bi bi-arrow-counterclockwise"></i> Nueva</button><button class="btn btn-sm btn-primary rounded-pill" data-a="sba" data-id="${id}"><i class="bi bi-shuffle"></i> Completar al azar</button>
+          <div class="ms-auto small" style="min-width:210px">Ordenaciones distintas construidas: <b>${s.found.size}</b> de <b>${fB(tot)}</b><div class="prog2"><i style="--w:${prog}%"></i></div></div></div>${list}`;
+    }
+    ACT.sbp = el => { const s = SB[el.dataset.id]; if (s.placed.length < s.r) { s.placed.push(+el.dataset.t); sbR(el.dataset.id); } };
+    ACT.sbu = el => { SB[el.dataset.id].placed.pop(); sbR(el.dataset.id); };
+    ACT.sbr = el => { SB[el.dataset.id].placed = []; sbR(el.dataset.id); };
+    ACT.sba = el => { const s = SB[el.dataset.id]; if (s.placed.length === s.r) s.placed = []; const rest = [...Array(s.n).keys()].filter(i => !s.placed.includes(i)); while (s.placed.length < s.r) s.placed.push(rest.splice(Math.floor(Math.random() * rest.length), 1)[0]); sbR(el.dataset.id); };
+
+    /* ===================== 2. Factorial ===================== */
+    const F2 = { n: 4 };
+    function s2R() {
+      $('#s2-n').innerHTML = [2, 3, 4, 5, 6].map(v => `<button class="btn btn-outline-dark ${v === F2.n ? 'active' : ''}" data-a="s2n" data-v="${v}">${v}</button>`).join('');
+      sbR('sb2');
+      const mx = Math.log10(Number(bF(12)) + 1);
+      $('#s2-tab').innerHTML = `<table class="ftb"><tbody>${Array.from({ length: 13 }, (_, n) => { const f = bF(n), w = n === 0 ? 3 : Math.log10(Number(f) + 1) / mx * 100;
+        return `<tr class="${n === F2.n ? 'sel' : ''}" data-a="s2n" data-v="${Math.max(2, Math.min(6, n))}" data-t="${n}"><td><b>${n}!</b></td><td>${n === 0 ? '1 (por definición: una sola manera de ordenar «nada»)' : Array.from({ length: n }, (_, i) => n - i).join(' · ')}</td><td class="lg"><i style="width:${w}%"></i></td><td class="text-end"><b>${fB(f)}</b></td></tr>`; }).join('')}</tbody></table>
+        <div class="small text-muted mt-1">La barra usa escala logarítmica: 12! ya supera los 479 millones. Recurrencia: <span class="cx">n! = n \cdot (n-1)!</span></div>`;
+      math($('#s2-tab'));
+    }
+    ACT.s2n = el => { F2.n = +el.dataset.v; sbInit('sb2', F2.n, F2.n); s2R(); };
+    RENDERS.push(s2R);
+
+    /* ===================== 3. Permutaciones ===================== */
+    const P3 = { tab: 'pr', n: 6, r: 3 }, WR = { w: 'BANANA' };
+    const subN = i => '₀₁₂₃₄₅₆₇₈₉'[i];
+    function s3R() {
+      $('#s3-tabs').innerHTML = [['pr', 'Permutaciones P(n, r)', '#e8590c'], ['rep', 'Con elementos repetidos (anagramas)', '#7048e8']].map(t => `<button style="--c:${t[2]}" class="${P3.tab === t[0] ? 'on' : ''}" data-a="s3t" data-v="${t[0]}">${t[1]}</button>`).join('');
+      if (P3.tab === 'pr') { const { n, r } = P3, tot = bP(n, r);
+        const cancel = n - r;
+        const form = r === n ? `P(${n},${n}) = \\frac{${n}!}{0!} = ${n}! = ${facStr(n, r)} = ${colF(fB(tot), '#e8590c')}` : `P(${n},${r}) = \\frac{${n}!}{(${n}-${r})!} = \\frac{${n}!}{${cancel}!} = \\frac{${facStr(n, r)} \\cdot ${colF(cancel + '!', '#adb5bd')}}{${colF(cancel + '!', '#adb5bd')}} = ${facStr(n, r)} = ${colF(fB(tot), '#e8590c')}`;
+        $('#s3-body').innerHTML = `<div class="demo"><div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="d-flex align-items-center gap-2"><b class="small">Corredores n =</b><div class="btn-group btn-group-sm">${[3, 4, 5, 6, 7, 8, 10].map(v => `<button class="btn btn-outline-dark ${v === n ? 'active' : ''}" data-a="s3n" data-v="${v}">${v}</button>`).join('')}</div></div>
+          <div class="d-flex align-items-center gap-2"><b class="small">Lugares premiados r =</b><div class="btn-group btn-group-sm">${Array.from({ length: Math.min(n, 6) }, (_, i) => i + 1).map(v => `<button class="btn btn-outline-dark ${v === r ? 'active' : ''}" data-a="s3r" data-v="${v}">${v}</button>`).join('')}</div></div></div>
+          <div id="sb3"></div></div>
+          <div class="demo"><div class="demo-t"><i class="bi bi-calculator-fill"></i>De la idea a la fórmula</div>
+          <div class="row g-3"><div class="col-lg-6">${stp(1, '#e8590c', 'Lugar por lugar', `Para el 1.er lugar hay <b>${n}</b> opciones; ya elegido, para el 2.º hay <b>${n - 1}</b>… y así hasta el lugar ${r}, que tiene <b>${n - r + 1}</b>. Por el principio multiplicativo: ${fd(facStr(n, r))}`)}${stp(2, '#1c7ed6', 'Escribirlo con factoriales', `Multiplicar y dividir entre <span class="cx">${n - r}!</span> completa el factorial de n; así aparece la fórmula general.`)}</div>
+          <div class="col-lg-6"><div class="resb flex-column"><div class="rl">Fórmula de permutaciones</div>${fd(form)}</div><div class="small text-muted mt-2">Los factores en gris se <b>cancelan</b>. El orden importa: <b>ABC ≠ CBA</b>.</div></div></div></div>`;
+        if (!SB.sb3 || SB.sb3.n !== n || SB.sb3.r !== r) sbInit('sb3', n, r, { medal: true }); sbR('sb3');
+      } else {
+        const w = WR.w, cnt = {}; [...w].forEach(ch => cnt[ch] = (cnt[ch] || 0) + 1);
+        const keys = Object.keys(cnt), n = w.length, den = keys.reduce((a, k) => a * bF(cnt[k]), 1n), tot = bF(n) / den, colOf = k => TKC[keys.indexOf(k) % 10];
+        const facs = keys.map(k => `${cnt[k]}!`).join(' \\cdot '), facv = keys.map(k => bF(cnt[k]).toString()).join(' \\cdot ');
+        let listH = ''; if (n <= 7 && tot <= 120n) { const set = new Set(); permsOf([...w], n).forEach(a => set.add(a.join(''))); listH = `<details class="mt-2" open><summary class="fw-bold small" style="cursor:pointer;color:#1c7ed6">Las ${set.size} palabras distintas</summary><div>${[...set].map(x => `<span class="seqc">${[...x].map(ch => `<span class="tkn s" style="--c:${colOf(ch)}">${ch}</span>`).join('')}</span>`).join('')}</div></details>`; } else listH = `<div class="small text-muted mt-2">Son ${fB(tot)} palabras distintas (demasiadas para listarlas).</div>`;
+        const mark = (() => { const seen = {}; return [...w].map(ch => { seen[ch] = (seen[ch] || 0) + 1; return cnt[ch] > 1 ? `${ch}${subN(seen[ch])}` : ch; }).join(' '); })();
+        $('#s3-body').innerHTML = `<div class="demo"><div class="d-flex flex-wrap gap-2 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-fonts"></i>Escribe una palabra (3 a 12 letras)</div><input class="form-control form-control-sm" style="width:170px;font-weight:800;text-transform:uppercase" maxlength="12" value="${w}" data-in="wr"><div class="d-flex gap-1 flex-wrap">${['MAMA', 'CASA', 'ANA', 'BANANA', 'ESTADISTICA', 'MATEMATICAS'].map(x => `<button class="btn btn-sm btn-outline-secondary rounded-pill" data-a="wrp" data-v="${x}">${x}</button>`).join('')}</div></div>
+          <div class="mb-2">${[...w].map(ch => `<span class="tkn" style="--c:${colOf(ch)}">${ch}</span>`).join(' ')}</div>
+          <div class="row g-3"><div class="col-lg-6">${stp(1, '#7048e8', 'Cuenta las repeticiones', keys.map(k => `<span class="tkn s" style="--c:${colOf(k)}">${k}</span> aparece <b>${cnt[k]}</b>`).join(' · '))}
+          ${stp(2, '#e03131', 'Si todas fueran distintas…', `Marcaría las repetidas (<b>${mark}</b>) y habría <span class="cx">${n}! = ${fB(bF(n))}</span> ordenaciones.`)}
+          ${stp(3, '#2f9e44', 'Pero intercambiar letras iguales no cambia la palabra', `Las ${keys.filter(k => cnt[k] > 1).map(k => `${cnt[k]} ${k}`).join(' y ') || 'letras'} se pueden reordenar de ${keys.filter(k => cnt[k] > 1).length ? keys.filter(k => cnt[k] > 1).map(k => cnt[k] + '!').join(' · ') : '1'} formas sin efecto: <b>dividimos</b> entre eso.`)}</div>
+          <div class="col-lg-6"><div class="resb flex-column"><div class="rl">Permutaciones con repetición</div>${fd(`\\frac{${n}!}{${facs}} = \\frac{${fB(bF(n))}}{${facv}} = ${colF(fB(tot), '#63e6be')}`)}</div>${listH}</div></div></div>`;
+      }
+      math($('#s3-body'));
+    }
+    ACT.s3t = el => { P3.tab = el.dataset.v; s3R(); };
+    ACT.s3n = el => { P3.n = +el.dataset.v; P3.r = Math.min(P3.r, P3.n, 6); s3R(); };
+    ACT.s3r = el => { P3.r = +el.dataset.v; s3R(); };
+    ACT.wrp = el => { WR.w = el.dataset.v; s3R(); };
+    INP.wr = el => { const v = el.value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ]/g, '').slice(0, 12); if (v.length >= 3) { WR.w = v; const pos = el.selectionStart; s3R(); const ne = $('#s3-body [data-in="wr"]'); if (ne) { ne.focus(); ne.setSelectionRange(pos, pos); } } };
+    RENDERS.push(s3R);
+
+    /* ===================== 4. Combinaciones ===================== */
+    const C4 = { n: 5, r: 2, sel: 0, step: 1, grp: false };
+    function s4R() {
+      if (C4.r > C4.n) C4.r = C4.n; const { n, r } = C4;
+      $('#s4-n').innerHTML = [4, 5, 6, 7, 8].map(v => `<button class="btn btn-outline-dark ${v === n ? 'active' : ''}" data-a="s4n" data-v="${v}">${v}</button>`).join('');
+      $('#s4-r').innerHTML = Array.from({ length: Math.min(n, 5) }, (_, i) => i + 1).map(v => `<button class="btn btn-outline-dark ${v === r ? 'active' : ''}" data-a="s4r" data-v="${v}">${v}</button>`).join('');
+      const combs = combsOf(n, r), tot = combs.length; if (C4.sel >= tot) C4.sel = 0;
+      const P = bP(n, r), rf = bF(r), C = bC(n, r), st = C4.step, sel = combs[C4.sel];
+      const ords = permsOf(sel, r), people = [...Array(n).keys()];
+      const cardS = (i, c, t, big, sub) => `<div class="col-md-4"><div class="stcard ${i > st ? 'off' : ''}" style="--c:${c}"><div class="stn">Paso ${i}</div><div class="fw-bold">${t}</div><div class="bignum">${big}</div><div class="small text-muted">${sub}</div></div></div>`;
+      const grouped = C4.grp && P <= 72n ? `<div class="mt-2">${combs.map((cb, j) => `<div class="d-flex align-items-center gap-2 flex-wrap border-bottom py-1"><span class="seqc cmbc" style="min-width:90px"><b class="small me-1">${j + 1}.</b>${cb.map(t => tkn(t, 's')).join('')}</span><span class="small text-muted">→</span><span>${permsOf(cb, r).map(o => `<span class="seqc">${o.map(t => tkn(t, 's')).join('')}</span>`).join('')}</span></div>`).join('')}</div>` : '';
+      $('#s4-body').innerHTML = `<div class="tks mb-2">${people.map(i => tkn(i)).join('')}</div>
+        <div class="row g-3 mb-2">${cardS(1, '#e8590c', 'Cuenta las permutaciones P(n, r) (el orden importa)', fB(P), fi(facStr(n, r)))}${cardS(2, '#e03131', 'Cada grupo de r personas aparece r! veces', fB(rf), `r! = ${r}! = ${r > 1 ? Array.from({ length: r }, (_, i) => r - i).join(' · ') : '1'}`)}${cardS(3, '#7048e8', 'Divide: cada grupo se cuenta UNA vez', fB(C), `C(n, r) = P(n, r) / r! = ${fB(P)} / ${fB(rf)}`)}</div>
+        <div class="d-flex gap-2 mb-3 flex-wrap"><button class="btn btn-sm btn-dark rounded-pill px-3" data-a="s4s" data-v="1" ${st >= 3 ? 'disabled' : ''}>Siguiente paso <i class="bi bi-chevron-right"></i></button><button class="btn btn-sm btn-outline-dark rounded-pill" data-a="s4s" data-v="0"><i class="bi bi-arrow-counterclockwise"></i> Volver al paso 1</button>${P <= 72n ? `<button class="btn btn-sm btn-outline-primary rounded-pill ms-auto" data-a="s4g">${C4.grp ? 'Ocultar' : 'Ver'} las ${fB(P)} permutaciones agrupadas por combinación</button>` : ''}</div>
+        ${grouped}
+        <div class="row g-3"><div class="col-lg-7"><div class="small fw-bold text-muted mb-1">Las ${fB(C)} combinaciones posibles (toca una)</div><div>${combs.slice(0, 80).map((cb, j) => `<span class="seqc cmbc cl ${j === C4.sel ? 'sel' : ''}" data-a="s4c" data-i="${j}">${cb.map(t => tkn(t, 's')).join('')}</span>`).join('')}${combs.length > 80 ? '…' : ''}</div></div>
+        <div class="col-lg-5"><div class="small fw-bold mb-1">La combinación ${sel.map(t => tkn(t, 's')).join('')} contiene <b>${fB(rf)}</b> orden${rf === 1n ? '' : 'es'} distinto${rf === 1n ? '' : 's'}:</div><div>${ords.slice(0, 24).map(o => `<span class="seqc">${o.map(t => tkn(t, 's')).join('')}</span>`).join('')}${ords.length > 24 ? '…' : ''}</div><div class="small text-muted mt-1">Como permutaciones son ${fB(rf)}; como combinación, <b>una sola</b>.</div></div></div>
+        <div class="resb flex-column mt-3"><div class="rl">Fórmula de combinaciones</div>${fd(`\\binom{${n}}{${r}} = \\frac{${n}!}{${r}!\\,(${n}-${r})!} = \\frac{P(${n},${r})}{${r}!} = \\frac{${fB(P)}}{${fB(rf)}} = ${colF(fB(C), '#63e6be')}`)}</div>
+        <div class="row g-2 mt-2"><div class="col-md-6"><div class="stcard" style="--c:#e8590c"><div class="stn">🏆 Podio (el orden importa)</div>Elegir ${r} de ${n} <b>y ordenarlos</b>: <b>${fB(P)}</b> podios</div></div><div class="col-md-6"><div class="stcard" style="--c:#7048e8"><div class="stn">👥 Comité (el orden no importa)</div>Elegir ${r} de ${n}: <b>${fB(C)}</b> comités <span class="text-muted">(${fB(P)} ÷ ${fB(rf)})</span></div></div></div>`;
+      math($('#s4-body'));
+    }
+    ACT.s4n = el => { C4.n = +el.dataset.v; C4.sel = 0; C4.step = 1; s4R(); };
+    ACT.s4r = el => { C4.r = +el.dataset.v; C4.sel = 0; C4.step = 1; s4R(); };
+    ACT.s4s = el => { C4.step = el.dataset.v === '0' ? 1 : Math.min(3, C4.step + 1); s4R(); };
+    ACT.s4c = el => { C4.sel = +el.dataset.i; s4R(); };
+    ACT.s4g = () => { C4.grp = !C4.grp; s4R(); };
+    RENDERS.push(s4R);
+
+    /* ===================== 5. ¿Permutación o combinación? ===================== */
+    const QB = [
+      { q: 'Elegir al presidente, al secretario y al tesorero de un club de 8 personas.', t: 'P', n: 8, r: 3, why: 'Los cargos son distintos: Ana-presidenta y Ana-secretaria son resultados diferentes, así que el orden importa.' },
+      { q: 'Formar un comité de 3 personas a partir de un grupo de 8.', t: 'C', n: 8, r: 3, why: 'En un comité nadie tiene cargo: {Ana, Beto, Carla} es el mismo comité en cualquier orden.' },
+      { q: 'Una clave de 4 dígitos distintos usando los dígitos 0 al 9 (sin repetir).', t: 'P', n: 10, r: 4, why: 'La clave 1234 es distinta de 4321: el orden cambia el resultado.' },
+      { q: 'Elegir 5 cartas de una baraja de 52 para formar una mano de póker.', t: 'C', n: 52, r: 5, why: 'Una mano es el conjunto de cartas recibidas; no importa en qué orden llegaron.' },
+      { q: 'Acomodar 5 libros distintos en un estante.', t: 'P', n: 5, r: 5, why: 'Cada acomodo es una fila distinta: usamos todos los elementos y importa su posición (r = n, es n!).' },
+      { q: 'Escoger 4 preguntas de 10 para contestarlas en un examen (todas valen lo mismo).', t: 'C', n: 10, r: 4, why: 'Solo importa cuáles preguntas elegiste, no el orden en que las elegiste.' },
+      { q: '¿De cuántas formas pueden ocupar los 3 primeros lugares 12 corredores en una carrera?', t: 'P', n: 12, r: 3, why: 'El 1.er, 2.º y 3.er lugar son posiciones distintas: el orden importa.' },
+      { q: 'En un grupo de 20 estudiantes, elegir 2 representantes sin cargos distintos.', t: 'C', n: 20, r: 2, why: 'Dos representantes iguales: {Luis, Marta} = {Marta, Luis}.' },
+      { q: 'Elegir 2 sabores distintos de helado de entre 6 para un mismo vaso.', t: 'C', n: 6, r: 2, why: 'Fresa + vainilla es el mismo vaso que vainilla + fresa.' },
+      { q: 'Formar una fila para una fotografía con 6 de 9 estudiantes.', t: 'P', n: 9, r: 6, why: 'Las posiciones en la fila son distintas, así que cambiar de lugar a dos personas da otra foto.' }
+    ];
+    const Q5 = { i: 0, phase: 0, msg: '', ok: 0, tipoOk: 0, tot: 0, order: [], pos: 0 };
+    const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    function q5new() { if (!Q5.order.length || Q5.pos >= Q5.order.length) { Q5.order = shuffle(QB.map((_, i) => i)); Q5.pos = 0; } Q5.i = Q5.order[Q5.pos++]; Q5.phase = 0; Q5.msg = ''; }
+    function s5R() {
+      const q = QB[Q5.i], sol = q.t === 'P' ? `P(${q.n},${q.r}) = \\frac{${q.n}!}{(${q.n}-${q.r})!} = ${facStr(q.n, q.r)} = ${fB(bP(q.n, q.r))}` : `\\binom{${q.n}}{${q.r}} = \\frac{${q.n}!}{${q.r}!\\,(${q.n}-${q.r})!} = \\frac{${facStr(q.n, q.r)}}{${q.r}!} = ${fB(bC(q.n, q.r))}`;
+      const flow = `<div class="flowc"><div style="--c:#0ca678"><b>1.</b> ¿Cuántos elementos tengo (<b>n</b>) y cuántos elijo (<b>r</b>)?</div><div style="--c:#e8590c"><b>2.</b> ¿Cambiar el orden da un resultado <b>distinto</b>? <br><b>Sí → P(n, r)</b> (cargos, podios, claves, filas)</div><div style="--c:#7048e8"><b>3.</b> ¿El resultado es solo un <b>grupo</b>? <br><b>No → C(n, r)</b> (comités, manos, equipos)</div></div>`;
+      $('#s5-body').innerHTML = `${flow}<div class="qcard"><div class="d-flex flex-wrap gap-2 align-items-center mb-2"><span class="badge-s" style="background:#0f172a">Problema</span><span class="small text-muted ms-auto">Tipo acertado: <b>${Q5.tipoOk}</b> / ${Q5.tot} · Cálculo correcto: <b>${Q5.ok}</b></span></div>
+        <div class="fs-5 fw-bold mb-2">${q.q}</div><div class="small text-muted mb-2">Datos: n = ${q.n}, r = ${q.r}</div>
+        ${Q5.phase === 0 ? `<div class="small fw-bold mb-1">Paso 1 · ¿Importa el orden?</div><div class="d-flex gap-2 flex-wrap"><button class="btn btn-lg btn-outline-danger rounded-pill" data-a="q5t" data-v="P"><i class="bi bi-list-ol me-1"></i>Sí importa → Permutación</button><button class="btn btn-lg btn-outline-primary rounded-pill" data-a="q5t" data-v="C"><i class="bi bi-people me-1"></i>No importa → Combinación</button></div>`
+          : `<div class="mb-2"><span class="badge-s" style="background:${q.t === 'P' ? '#e8590c' : '#7048e8'}">${q.t === 'P' ? 'Permutación' : 'Combinación'}</span> <span class="ok-t">¡Bien!</span> ${q.why}</div><div class="small fw-bold mb-1">Paso 2 · Calcula el resultado</div>
+            <div class="d-flex gap-2 align-items-center flex-wrap"><input class="form-control ans-in2" inputmode="numeric" placeholder="Tu respuesta" id="q5-in" data-enter="q5c"><button class="btn btn-success rounded-pill" data-a="q5c">Comprobar</button><button class="btn btn-outline-secondary rounded-pill" data-a="q5n">Siguiente problema <i class="bi bi-arrow-right"></i></button></div>`}
+        ${Q5.msg ? `<div class="mt-2 fw-bold">${Q5.msg}</div>` : ''}
+        ${Q5.phase === 1 ? `<details class="mt-2"><summary class="small fw-bold" style="cursor:pointer;color:#1c7ed6">Ver la solución paso a paso</summary>${fd(sol)}</details>` : ''}</div>`;
+      math($('#s5-body'));
+    }
+    ACT.q5t = el => { const q = QB[Q5.i]; Q5.tot++; if (el.dataset.v === q.t) { Q5.tipoOk++; Q5.phase = 1; Q5.msg = ''; } else { Q5.msg = `<span class="no-t"><i class="bi bi-x-circle-fill"></i> Piensa otra vez.</span> ${q.t === 'P' ? 'Aquí cambiar el orden sí produce un resultado distinto.' : 'Aquí cambiar el orden NO produce un resultado distinto: solo importa el grupo.'} <span class="text-muted fw-normal">${q.why}</span>`; Q5.tot--; Q5.tot++; } s5R(); };
+    ACT.q5c = () => { const q = QB[Q5.i], v = ($('#q5-in').value || '').replace(/[,\s]/g, ''), real = q.t === 'P' ? bP(q.n, q.r) : bC(q.n, q.r);
+      if (v !== '' && /^\d+$/.test(v) && BigInt(v) === real) { Q5.ok++; Q5.msg = `<span class="ok-t"><i class="bi bi-check-circle-fill"></i> ¡Correcto! ${fB(real)}</span>`; } else Q5.msg = `<span class="no-t"><i class="bi bi-x-circle-fill"></i> No coincide.</span> Revisa los factores: ${q.t === 'P' ? 'n·(n−1)·…, r factores' : 'P(n, r) dividido entre r!'}.`; const old = $('#q5-in').value; s5R(); $('#q5-in').value = old; };
+    ACT.q5n = () => { q5new(); s5R(); };
+    RENDERS.push(s5R);
+
+    /* ===================== 6. Pascal y Newton ===================== */
+    const PA = { n: 6, k: 2 };
+    function s6R() {
+      const { n, k } = PA; $('#pa-nv').textContent = n;
+      const rows = Array.from({ length: 13 }, (_, i) => `<div class="pasr">${Array.from({ length: i + 1 }, (_, j) => { const cl = (i === n && j === k) ? 'sel' : (i === n && j === n - k) ? 'twin' : (i === n - 1 && (j === k - 1 || j === k)) ? 'par' : i === n ? 'row' : '';
+        return `<div class="pc ${cl}" data-a="pac" data-i="${i}" data-j="${j}" title="C(${i},${j})">${Number(bC(i, j))}</div>`; }).join('')}</div>`).join('');
+      const c = bC(n, k), pr = (n > 0 && k > 0 && k < n) ? `\\binom{${n}}{${k}} = \\binom{${n - 1}}{${k - 1}} + \\binom{${n - 1}}{${k}} = ${bC(n - 1, k - 1)} + ${bC(n - 1, k)} = ${colF(String(c), '#7048e8')}` : `\\binom{${n}}{${k}} = ${colF(String(c), '#7048e8')} \\quad (\\text{extremo del triángulo: siempre } 1)`;
+      const row = Array.from({ length: n + 1 }, (_, j) => bC(n, j));
+      const term = j => { const co = row[j], a = n - j, b = j; return (co === 1n ? '' : String(co)) + (a === 0 ? '' : a === 1 ? 'a' : `a^{${a}}`) + (b === 0 ? '' : b === 1 ? 'b' : `b^{${b}}`) || '1'; };
+      const exp = row.map((_, j) => term(j)).join(' + ');
+      $('#s6-body').innerHTML = `<div class="row g-3"><div class="col-lg-7"><div class="pas">${rows}</div><div class="small text-muted">Azul: los dos de arriba (se suman) · Morado: el elegido · Naranja: su simétrico C(n, n−k) · Verde claro: la fila n.</div></div>
+        <div class="col-lg-5">${stp(1, '#7048e8', 'Identidad de Pascal', fd(pr))}${stp(2, '#e8590c', 'Simetría', fd(`\\binom{${n}}{${k}} = \\binom{${n}}{${n - k}} = ${c}`) + '<div class="small">Elegir quién entra es lo mismo que elegir quién se queda fuera.</div>')}${stp(3, '#2f9e44', 'Suma de la fila', fd(`\\sum_{j=0}^{${n}} \\binom{${n}}{j} = ${row.join(' + ')} = ${bF(0) * 0n + (1n << BigInt(n))} = 2^{${n}}`) + '<div class="small">Cada elemento está o no está en el subconjunto: 2·2·…·2 subconjuntos.</div>')}
+          ${stp(4, '#1c7ed6', 'Binomio de Newton', fd(`(a+b)^{${n}} = ${exp}`) + '<div class="small">Los coeficientes son la fila n del triángulo.</div>')}
+          ${stp(5, '#0ca678', 'Puente a la probabilidad', fd(`(p+q)^{${n}} = \\sum_{x=0}^{${n}} \\binom{${n}}{x}\\,p^{x}\\,q^{${n}-x} = 1`) + '<div class="small">Si <b>a = p</b> y <b>b = q = 1 − p</b>, cada término es P(X = x) de una binomial y todos suman 1.</div>')}</div></div>`;
+      math($('#s6-body'));
+    }
+    ACT.pac = el => { PA.n = +el.dataset.i; PA.k = +el.dataset.j; $('[data-in="paN"]').value = PA.n; s6R(); };
+    INP.paN = el => { PA.n = +el.value; PA.k = Math.min(PA.k, PA.n); s6R(); };
+    RENDERS.push(s6R);
+
+    /* ===================== 7. Bernoulli y condiciones ===================== */
+    const CTX = [['🏀 Tiro libre', '🏀 Encesta', '❌ Falla', 0.7], ['🌱 Semilla', '🌱 Germina', '🥀 No germina', 0.8], ['💉 Vacuna', '🛡️ Protege', '⚠️ No protege', 0.9], ['📝 Pregunta de opción múltiple', '✅ Acierta', '❌ Falla', 0.25]];
+    const BE = { tab: 'bern', ctx: 0, p: 0.7, hist: [], s: 0, f: 0 };
+    const SC = [
+      { t: 'Lanzar una moneda 10 veces y contar cuántos soles salen.', c: [1, 1, 1, 1], why: 'Cumple todo: n = 10 fijo, dos resultados, p = 0.5 constante y los volados son independientes. X ~ Bin(10, 0.5).' },
+      { t: 'De una urna con 10 bolas (6 rojas) extraer 5 SIN reemplazo y contar las rojas.', c: [1, 1, 0, 0], why: 'Al no devolver la bola, p cambia en cada extracción (6/10, 5/9, …) y los ensayos dependen entre sí. Es una distribución hipergeométrica.' },
+      { t: 'Preguntar a 20 personas elegidas al azar de una ciudad enorme si están a favor de una propuesta (40 % a favor).', c: [1, 1, 1, 1], why: 'Aunque no se repitan personas, la población es enorme (n es menos del 5 % de N): p casi no cambia y se acepta el modelo binomial.' },
+      { t: 'Lanzar un dado hasta que salga un 6 y contar cuántos lanzamientos hizo falta.', c: [0, 1, 1, 1], why: 'El número de ensayos NO está fijo: se detiene al primer éxito. Es una distribución geométrica.' },
+      { t: 'Lanzar un dado 12 veces y contar cuántas veces sale cada una de las 6 caras.', c: [1, 0, 1, 1], why: 'Hay 6 resultados posibles por ensayo, no dos. Es una distribución multinomial. (Si solo cuentas los 6, sí sería binomial).' },
+      { t: 'Un tirador que va mejorando: con cada disparo su probabilidad de acertar aumenta. Cuenta aciertos en 8 disparos.', c: [1, 1, 0, 1], why: 'La probabilidad de éxito p no es constante: cambia de disparo a disparo.' },
+      { t: 'Revisar 15 focos de un lote muy grande donde el 3 % es defectuoso y contar los defectuosos.', c: [1, 1, 1, 1], why: 'n = 15, defectuoso/bueno, p = 0.03 y lote grande: modelo binomial.' },
+      { t: 'Preguntar a 5 hermanos, que suelen opinar igual que el mayor, si prefieren una marca y contar los que dicen «sí».', c: [1, 1, 1, 0], why: 'Las respuestas no son independientes: lo que dice uno influye en los demás.' }
+    ];
+    const CN = ['n fijo', 'dos resultados', 'p constante', 'independientes'], BC = { ans: {} };
+    function s7R() {
+      $('#s7-tabs').innerHTML = [['bern', 'Ensayo de Bernoulli', '#0ca678'], ['cond', '¿Es binomial? Clasifica', '#e8590c']].map(t => `<button style="--c:${t[2]}" class="${BE.tab === t[0] ? 'on' : ''}" data-a="s7t" data-v="${t[0]}">${t[1]}</button>`).join('');
+      if (BE.tab === 'bern') {
+        $('#s7-body').innerHTML = `<div class="demo"><div class="row g-3"><div class="col-lg-5"><div class="small fw-bold mb-1">Situación</div><div class="btn-group-vertical btn-group-sm w-100 mb-2">${CTX.map((c, i) => `<button class="btn btn-outline-dark ${i === BE.ctx ? 'active' : ''}" data-a="s7c" data-v="${i}">${c[0]}</button>`).join('')}</div>
+          <div class="small fw-bold">Probabilidad de éxito p = <span id="be-pv"></span></div><input type="range" class="form-range" min="5" max="95" value="${Math.round(BE.p * 100)}" data-in="beP">
+          <div class="d-flex gap-1 flex-wrap"><button class="btn btn-primary rounded-pill" data-a="beRun" data-v="1">1 ensayo</button><button class="btn btn-primary rounded-pill" data-a="beRun" data-v="10">+10</button><button class="btn btn-primary rounded-pill" data-a="beRun" data-v="100">+100</button><button class="btn btn-outline-dark rounded-pill" data-a="beReset"><i class="bi bi-arrow-counterclockwise"></i></button></div></div>
+          <div class="col-lg-7" id="be-dyn"></div></div></div>
+          <div class="lesson"><h5>Las 4 condiciones de un experimento binomial</h5><div class="row g-2">${[['1', 'n ensayos fijos', 'El número de repeticiones se decide antes.', '#e8590c'], ['2', 'Dos resultados', 'Éxito o fracaso en cada ensayo.', '#2f9e44'], ['3', 'p constante', 'La probabilidad de éxito no cambia.', '#1c7ed6'], ['4', 'Independencia', 'Un ensayo no influye en otro.', '#7048e8']].map(c => `<div class="col-md-3"><div class="stcard" style="--c:${c[3]}"><div class="stn">Condición ${c[0]}</div><b>${c[1]}</b><div class="small">${c[2]}</div></div></div>`).join('')}</div></div>`;
+        beDyn();
+      } else {
+        const done = Object.keys(BC.ans).length, good = SC.filter((s, i) => BC.ans[i] !== undefined && BC.ans[i] === (s.c.every(x => x) ? 1 : 0)).length;
+        $('#s7-body').innerHTML = `<div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="small text-muted">Lee cada situación y decide si se modela con una binomial. Después se muestran las 4 condiciones.</div><span class="ms-auto pill">Aciertos: <b>${good}</b> de ${done} respondidas (${SC.length} en total)</span></div>
+          <div class="row g-3">${SC.map((s, i) => { const a = BC.ans[i], ok = s.c.every(x => x) ? 1 : 0, ans = a !== undefined;
+            return `<div class="col-lg-6"><div class="qcard h-100"><div class="fw-bold mb-2"><span class="badge-s" style="background:#0f172a">${i + 1}</span> ${s.t}</div>
+              ${ans ? `<div>${s.c.map((x, j) => `<span class="cond ${x ? 'y' : 'n'}"><i class="bi bi-${x ? 'check' : 'x'}-circle-fill"></i>${CN[j]}</span>`).join('')}</div><div class="mt-1">${a === ok ? '<span class="ok-t">¡Correcto!</span>' : '<span class="no-t">Revisa:</span>'} Esta situación <b>${ok ? 'SÍ' : 'NO'}</b> es binomial. <span class="small">${s.why}</span></div>`
+              : `<div class="d-flex gap-2"><button class="btn btn-outline-success rounded-pill" data-a="bcA" data-i="${i}" data-v="1"><i class="bi bi-check-lg"></i> Sí es binomial</button><button class="btn btn-outline-danger rounded-pill" data-a="bcA" data-i="${i}" data-v="0"><i class="bi bi-x-lg"></i> No es binomial</button></div>`}</div></div>`; }).join('')}</div>
+          <button class="btn btn-sm btn-outline-secondary rounded-pill mt-2" data-a="bcR"><i class="bi bi-arrow-counterclockwise"></i> Reiniciar</button>`;
+      }
+      math($('#s7-body'));
+    }
+    function beDyn() {
+      const el = $('#be-dyn'); if (!el) return; const c = CTX[BE.ctx], N = BE.s + BE.f, p = BE.p, q = 1 - p; $('#be-pv').textContent = p.toFixed(2);
+      const last = BE.hist.slice(-60), rel = N ? BE.s / N : 0;
+      el.innerHTML = `<div class="small fw-bold mb-1">Resultados (1 = éxito: ${c[1]}, 0 = fracaso: ${c[2]})</div><div style="min-height:34px">${last.length ? last.map(b => `<span class="sq ${b ? 's' : 'f'}" style="margin:1px">${b}</span>`).join('') : '<span class="text-muted small">Aún no hay ensayos. Pulsa «1 ensayo».</span>'}${BE.hist.length > 60 ? ' <span class="small text-muted">…(últimos 60)</span>' : ''}</div>
+        <div class="row g-2 mt-1"><div class="col-sm-6"><table class="gl"><tr><td style="--c:#2f9e44">x = 1 (éxito)</td><td>${fi(`P(X=1) = p = ${p.toFixed(2)}`)}</td></tr><tr><td style="--c:#e03131">x = 0 (fracaso)</td><td>${fi(`P(X=0) = q = 1 - p = ${q.toFixed(2)}`)}</td></tr></table></div>
+        <div class="col-sm-6">${kpi('Éxitos', BE.s, '#2f9e44')} ${kpi('Fracasos', BE.f, '#e03131', 1)} ${kpi('Frec. relativa', N ? rel.toFixed(3) : '—', '#1c7ed6', 2)}</div></div>
+        <div class="mt-2 small">${fi(`E(X) = p = ${p.toFixed(2)} \\qquad Var(X) = p\\,q = ${(p * q).toFixed(4)}`)}</div>
+        <div class="mt-1"><div class="small">Frecuencia observada <b>${N ? (rel * 100).toFixed(1) : '—'} %</b> contra p = <b>${(p * 100).toFixed(0)} %</b></div><div class="prog2"><i style="--w:${rel * 100}%"></i></div></div>`;
+      math(el);
+    }
+    ACT.s7t = el => { BE.tab = el.dataset.v; s7R(); };
+    ACT.s7c = el => { BE.ctx = +el.dataset.v; BE.p = CTX[BE.ctx][3]; BE.hist = []; BE.s = BE.f = 0; s7R(); };
+    ACT.beRun = el => { const k = +el.dataset.v; for (let i = 0; i < k; i++) { const b = Math.random() < BE.p ? 1 : 0; BE.hist.push(b); if (b) BE.s++; else BE.f++; } beDyn(); };
+    ACT.beReset = () => { BE.hist = []; BE.s = BE.f = 0; beDyn(); };
+    INP.beP = el => { BE.p = +el.value / 100; BE.hist = []; BE.s = BE.f = 0; beDyn(); };
+    ACT.bcA = el => { BC.ans[+el.dataset.i] = +el.dataset.v; s7R(); };
+    ACT.bcR = () => { BC.ans = {}; s7R(); };
+    RENDERS.push(s7R);
+
+    /* ===================== Términos de una probabilidad binomial (compartido) ===================== */
+    const num4 = v => v === 0 ? '0' : String(+v.toPrecision(4));
+    function termsHTML(n, p, sp) {
+      const q = 1 - p, pf = x => (+x.toFixed(4)).toString(), m = sp.ks.length;
+      const comp = []; for (let k = 0; k <= n; k++) if (!sp.set.has(k)) comp.push(k);
+      const one = k => `\\binom{${n}}{${k}}\\,(${pf(p)})^{${k}}\\,(${pf(q)})^{${n - k}}`;
+      if (sp.mode === 'eq' || m === 1) { const k = sp.ks[0]; return fd(`P(X=${k}) = \\binom{${n}}{${k}}\\,p^{${k}}\\,q^{${n - k}} = ${one(k)} = ${bC(n, k)} \\cdot ${num4(Math.pow(p, k))} \\cdot ${num4(Math.pow(q, n - k))} = ${colF(f4t(pmf(n, k, p)), '#1c7ed6')}`); }
+      const useComp = m > 12 && comp.length > 0 && comp.length < m && comp.length <= 12;
+      const list = useComp ? comp : sp.ks;
+      let rows = list.map(k => ({ k })); if (rows.length > 12) rows = [...rows.slice(0, 7), { gap: true }, ...rows.slice(-3)];
+      const tb = `<div class="table-responsive"><table class="table table-sm align-middle mb-1" style="font-size:.85rem"><thead><tr class="small text-muted"><th>k</th><th>${fi(R`\binom{n}{k}`)}</th><th>${fi(R`p^{k}\,q^{n-k}`)}</th><th>${fi(R`P(X=k)`)}</th></tr></thead><tbody>${rows.map(r => r.gap ? `<tr><td colspan="4" class="text-center text-muted">⋯ (${list.length - 10} términos más) ⋯</td></tr>` : `<tr><td><b>${r.k}</b></td><td>${bC(n, r.k)}</td><td>${num4(Math.pow(p, r.k) * Math.pow(q, n - r.k))}</td><td><b>${num4(pmf(n, r.k, p))}</b></td></tr>`).join('')}</tbody></table></div>`;
+      const sumP = list.reduce((s, k) => s + pmf(n, k, p), 0);
+      const sumTex = list.length <= 6 ? list.map(k => `P(${k})`).join(' + ') : `P(${list[0]}) + P(${list[1]}) + \\cdots + P(${list[list.length - 1]})`;
+      if (useComp) return `<div class="small mb-1"><b>Atajo (complemento):</b> hay menos términos fuera del evento; se calcula lo que NO se pide y se resta de 1.</div>${fd(`${sp.tex} = 1 - \\left[${sumTex}\\right]`)}${tb}${fd(`${colF('1', '#adb5bd')} - ${num4(sumP)} = ${colF(f4t(sp.total), '#1c7ed6')}`)}`;
+      return `${fd(`${sp.tex} = ${sumTex}`)}${tb}${fd(`${list.map(k => num4(pmf(n, k, p))).slice(0, 4).join(' + ')}${list.length > 4 ? ' + \\cdots' : ''} = ${colF(f4t(sp.total), '#1c7ed6')}`)}`;
+    }
+
+    /* ===================== 8. Deducción paso a paso ===================== */
+    const DD = { n: 3, x: 2, pn: 1, pd: 2, step: 0, pick: 0, timer: null };
+    const DPRE = [[1, 2], [1, 3], [1, 4], [1, 6], [2, 3], [3, 4]];
+    const ddSeqs = n => { const out = []; for (let t = 0; t < (1 << n); t++) { const v = (1 << n) - 1 - t; out.push(Array.from({ length: n }, (_, j) => (v >> (n - 1 - j)) & 1)); } return out; };
+    function ddCtl() {
+      $('#dd-n').innerHTML = [2, 3, 4, 5].map(v => `<button class="btn btn-outline-dark ${v === DD.n ? 'active' : ''}" data-a="ddn" data-v="${v}">${v}</button>`).join('');
+      $('#dd-x').innerHTML = Array.from({ length: DD.n + 1 }, (_, v) => `<button class="btn btn-outline-dark ${v === DD.x ? 'active' : ''}" data-a="ddx" data-v="${v}">${v}</button>`).join('');
+      $('#dd-p').innerHTML = DPRE.map(p => `<button class="btn btn-outline-dark ${p[0] === DD.pn && p[1] === DD.pd ? 'active' : ''}" data-a="ddp" data-a1="${p[0]}" data-a2="${p[1]}">${p[0]}/${p[1]}</button>`).join('');
+      const a = $('#dd-pn'), b = $('#dd-pd'); if (+a.value !== DD.pn) a.value = DD.pn; if (+b.value !== DD.pd) b.value = DD.pd;
+      $('#dd-dots').innerHTML = ['Secuencias', 'Con x éxitos', 'Una secuencia', 'Sumar', 'Fórmula'].map((t, i) => `<button class="mm-dot ${i === DD.step ? 'on' : i < DD.step ? 'done' : ''}" style="--c:#0ca678;width:auto;padding:0 .7rem;border-radius:999px" data-a="ddGo" data-v="${i}">${i + 1}. ${t}</button>`).join('');
+    }
+    function ddR() {
+      ddCtl(); const { n, x } = DD, p = F(DD.pn, DD.pd), q = F(DD.pd - DD.pn, DD.pd), all = ddSeqs(n), mt = all.filter(s => s.reduce((a, b) => a + b, 0) === x), C = mt.length;
+      if (DD.pick >= C) DD.pick = 0; const pk = mt[DD.pick], one = fmul(fpow(p, x), fpow(q, n - x)), tot = fmul(F(C), one), dec = f => fval(f).toFixed(4);
+      const pc = '#2f9e44', qc = '#e03131', lp = colF(ftx(p), pc), lq = colF(ftx(q), qc), g = (f, k) => k === 0 ? '1' : `\\left(${ftx(f)}\\right)^{${k}}`;
+      let h = '';
+      if (DD.step === 0) h = stp(1, '#0ca678', 'Todas las secuencias de n ensayos', `<div class="mb-2">Cada ensayo termina en <span class="sq s">S</span> (éxito, probabilidad ${fi(ftx(p))}) o <span class="sq f">F</span> (fracaso, probabilidad ${fi(ftx(q))}). Con ${n} ensayos, por el principio multiplicativo hay: ${fd(`${Array(n).fill(2).join(' \\cdot ')} = 2^{${n}} = ${1 << n}`)}</div><div>${all.map((s, i) => seqHTML(s, '', `style="animation-delay:${i * 25}ms"`)).join('')}</div>`);
+      else if (DD.step === 1) h = stp(2, '#1c7ed6', `¿Cuáles tienen exactamente x = ${x} éxitos?`, `<div class="mb-2">Elegir qué <b>posiciones</b> (de las ${n}) llevan <span class="sq s">S</span> es una <b>combinación</b>: el orden en que las elijo no importa. ${fd(`\\binom{${n}}{${x}} = \\frac{${n}!}{${x}!\\,${n - x}!} = ${colF(String(bC(n, x)), '#1c7ed6')}`)}</div><div>${all.map(s => { const m = s.reduce((a, b) => a + b, 0) === x, ix = m ? mt.indexOf(s) : -1; return seqHTML(s, m ? 'hi cl ' + (ix === DD.pick ? 'pick' : '') : 'dim', m ? `data-a="ddPick" data-i="${ix}"` : ''); }).join('')}</div><div class="small mt-2">Contamos <b>${C}</b> secuencias verdes. Coincide con ${fi(`\\binom{${n}}{${x}} = ${bC(n, x)}`)} ✔</div>`);
+      else if (DD.step === 2) { const fac = pk.map(b => b ? lp : lq).join(' \\cdot '); h = stp(3, '#7048e8', 'Probabilidad de UNA secuencia (ensayos independientes)', `<div class="mb-2">Elige una secuencia verde: ${mt.map((s, i) => seqHTML(s, 'cl ' + (i === DD.pick ? 'pick' : ''), `data-a="ddPick" data-i="${i}"`)).join('')}</div>Por independencia se <b>multiplican</b> las probabilidades (regla del producto):${fd(`P(${pk.map(b => b ? 'S' : 'F').join('')}) = ${fac} = ${g(p, x)} \\cdot ${g(q, n - x)} = ${colF(ftx(one), '#7048e8')}`)}<div class="small">Todas las secuencias con ${x} éxito${x === 1 ? '' : 's'} y ${n - x} fracaso${n - x === 1 ? '' : 's'} valen lo mismo: <b>${fi(`p^{${x}}\\,q^{${n - x}}`)}</b> (cambia el orden de los factores, no el producto). ≈ ${dec(one)}</div>`); }
+      else if (DD.step === 3) { const terms = C <= 6 ? Array(C).fill(ftx(one)).join(' + ') : `${ftx(one)} + ${ftx(one)} + \\cdots + ${ftx(one)}`; h = stp(4, '#e8590c', 'Sumar: las secuencias son eventos excluyentes', `<div class="mb-1">Dos secuencias distintas no pueden ocurrir a la vez, así que sus probabilidades se <b>suman</b> (${C} sumandos iguales):</div>${fd(`P(X=${x}) = ${terms} = ${C} \\cdot ${ftx(one)} = ${colF(ftx(tot), '#e8590c')}`)}${fd(`P(X=${x}) = \\binom{${n}}{${x}}\\,p^{${x}}\\,q^{${n - x}}`)}<div class="small">Resultado: ${fi(ftx(tot))} ≈ <b>${dec(tot)}</b></div>`); }
+      else { const rows = Array.from({ length: n + 1 }, (_, k) => { const ck = Number(bC(n, k)), pr = fmul(F(ck), fmul(fpow(p, k), fpow(q, n - k))); return { k, ck, pr }; }), sum = rows.reduce((a, r) => fadd(a, r.pr), F(0)), mx = Math.max(...rows.map(r => fval(r.pr)));
+        h = stp(5, '#c2255c', 'Fórmula general y distribución completa', `${fd(`P(X=x) = \\binom{n}{x}\\,p^{x}\\,q^{n-x}, \\quad x = 0, 1, \\ldots, n`)}<div class="table-responsive"><table class="table table-sm align-middle" style="font-size:.88rem"><thead><tr><th>x</th><th>${fi(R`\binom{n}{x}`)}</th><th>${fi(R`p^{x}q^{n-x}`)}</th><th>P(X = x)</th><th style="width:30%"></th></tr></thead><tbody>${rows.map(r => `<tr style="${r.k === x ? 'background:#fff4e6;font-weight:800' : ''}"><td>${r.k}</td><td>${r.ck}</td><td>${fi(ftx(fmul(fpow(p, r.k), fpow(q, n - r.k))))}</td><td>${fi(ftx(r.pr))} ≈ ${dec(r.pr)}</td><td><div class="prog2"><i style="--w:${fval(r.pr) / mx * 100}%"></i></div></td></tr>`).join('')}</tbody></table></div>
+          <div class="resb"><div><div class="rl">Suma de todas las probabilidades</div>${fi(`${rows.map(r => ftx(r.pr)).join(' + ')} = ${colF(ftx(sum), '#63e6be')}`)}</div></div><div class="small mt-1">Que sumen 1 no es casualidad: ${fi(R`(p+q)^{n}=1`)} (binomio de Newton).</div>`); }
+      $('#dd-body').innerHTML = h; $('#dd-count').textContent = `Paso ${DD.step + 1} de 5`; math($('#dd-body'));
+    }
+    ACT.ddn = el => { DD.n = +el.dataset.v; DD.x = Math.min(DD.x, DD.n); DD.pick = 0; ddR(); };
+    ACT.ddx = el => { DD.x = +el.dataset.v; DD.pick = 0; ddR(); };
+    ACT.ddp = el => { DD.pn = +el.dataset.a1; DD.pd = +el.dataset.a2; ddR(); };
+    INP.ddPn = el => { const v = Math.round(+el.value); if (v >= 1 && v < DD.pd) { DD.pn = v; ddR(); } };
+    INP.ddPd = el => { const v = Math.round(+el.value); if (v >= 2 && v <= 12) { DD.pd = v; if (DD.pn >= v) DD.pn = v - 1; ddR(); } };
+    ACT.ddGo = el => { DD.step = +el.dataset.v; ddR(); };
+    ACT.ddNext = () => { DD.step = Math.min(4, DD.step + 1); ddR(); }; ACT.ddPrev = () => { DD.step = Math.max(0, DD.step - 1); ddR(); };
+    ACT.ddPick = el => { DD.pick = +el.dataset.i; ddR(); };
+    ACT.ddPlay = () => { if (DD.timer) { clearInterval(DD.timer); DD.timer = null; $('#dd-play').innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; return; } DD.step = 0; ddR(); $('#dd-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar';
+      DD.timer = setInterval(() => { if (DD.step >= 4) { clearInterval(DD.timer); DD.timer = null; $('#dd-play').innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; return; } DD.step++; ddR(); }, 3200); };
+    RENDERS.push(ddR);
+
+    /* ===================== 9. Función de probabilidad y calculadora ===================== */
+    const sync = () => { $$('.bn-n').forEach(e => e.value = BN.n); $$('.bn-p').forEach(e => e.value = Math.round(BN.p * 100)); ['c', 'sm'].forEach(k => { const a = $('#' + k + '-nv'), b = $('#' + k + '-pv'); if (a) a.textContent = BN.n; if (b) b.textContent = BN.p.toFixed(2); }); };
+    function s9Ctl() {
+      BN.x = Math.min(BN.x, BN.n); BN.a = Math.min(BN.a, BN.n); BN.b = Math.min(Math.max(BN.b, BN.a), BN.n);
+      $('#c-mode').innerHTML = MODES.map(m => `<button class="btn btn-outline-primary text-start ${m[0] === BN.mode ? 'active' : ''}" data-a="bnm" data-v="${m[0]}"><b>${m[1]}</b> <span class="small">· ${m[2]}</span></button>`).join('');
+      $('#c-xs').innerHTML = BN.mode === 'bt' ? `<div class="small fw-bold">a = <span id="c-av">${BN.a}</span></div><input type="range" class="form-range" min="0" max="${BN.n}" value="${BN.a}" data-in="bnA"><div class="small fw-bold">b = <span id="c-bv">${BN.b}</span></div><input type="range" class="form-range" min="0" max="${BN.n}" value="${BN.b}" data-in="bnB">`
+        : `<div class="small fw-bold">x = <span id="c-xv">${BN.x}</span></div><input type="range" class="form-range" min="0" max="${BN.n}" value="${BN.x}" data-in="bnX">`;
+    }
+    function s9Out() {
+      sync(); const { n, p } = BN, q = 1 - p, sp = spec(n, p, BN.mode, BN.x, BN.a, BN.b), vals = pArr(n, p), mu = n * p, v = n * p * q, sd = Math.sqrt(v);
+      $('#c-hist').innerHTML = histHTML(vals, { inc: sp.set, click: true, mean: mu });
+      $('#c-shape').innerHTML = `Forma: ${Math.abs(p - 0.5) < 0.005 ? '<b>simétrica</b> (p = 0.5)' : p < 0.5 ? '<b>sesgada a la derecha</b> (p &lt; 0.5: pocos éxitos son lo más probable)' : '<b>sesgada a la izquierda</b> (p &gt; 0.5: muchos éxitos)'} · Barras azules = valores incluidos en la pregunta · línea roja = media μ`;
+      const moda0 = (n + 1) * p, modas = Number.isInteger(+moda0.toFixed(9)) && moda0 > 0 && moda0 <= n ? [moda0 - 1, moda0] : [Math.floor(moda0)];
+      $('#c-steps').innerHTML = stp(1, '#0ca678', 'Datos', fd(`n = ${n} \\qquad p = ${p.toFixed(2)} \\qquad q = 1 - p = ${q.toFixed(2)}`)) + stp(2, '#1c7ed6', 'Modelo', `${fi(`X \\sim Bin(${n},\\, ${p.toFixed(2)})`)}: X = número de éxitos en ${n} ensayos independientes de Bernoulli.`) + stp(3, '#7048e8', 'Qué se pide', `${fi(sp.tex)}: la probabilidad de <b>${sp.txt}</b> éxitos${sp.ks.length > 1 ? ` (X = ${sp.ks.length <= 8 ? sp.ks.join(', ') : sp.ks[0] + ', …, ' + sp.ks[sp.ks.length - 1]})` : ''}.`) + stp(4, '#e8590c', 'Fórmula y sustitución', termsHTML(n, p, sp))
+        + stp(5, '#c2255c', 'Resultado e interpretación', `<div class="rsb"><small>${fi(sp.tex)}</small><div class="bg">${f4(sp.total)}</div><small>${pctS(sp.total)}${sp.total > 0 && sp.total < 1 ? ` · aproximadamente 1 de cada ${Math.round(1 / sp.total).toLocaleString('es-MX')} repeticiones` : ''}</small></div><div class="small mt-1">Si repites el experimento muchas veces, en cerca de <b>${pctS(sp.total)}</b> de ellas obtendrás ${sp.txt} éxitos.</div>`);
+      $('#c-stats').innerHTML = `<div class="demo mb-0"><div class="demo-t"><i class="bi bi-rulers"></i>Media, varianza y desviación</div><div>${kpi('Media μ', mu.toFixed(2), '#e03131')} ${kpi('Varianza σ²', v.toFixed(3), '#1c7ed6', 1)} ${kpi('Desviación σ', sd.toFixed(3), '#7048e8', 2)} ${kpi('Moda', modas.join(' y '), '#2f9e44', 3)}</div>
+        ${fd(`\\mu = np = ${n} \\cdot ${p.toFixed(2)} = ${mu.toFixed(2)}`)}${fd(`\\sigma^{2} = npq = ${n} \\cdot ${p.toFixed(2)} \\cdot ${q.toFixed(2)} = ${v.toFixed(3)}`)}${fd(`\\sigma = \\sqrt{npq} = \\sqrt{${v.toFixed(3)}} = ${sd.toFixed(3)}`)}<div class="small">Moda = ⌊(n+1)p⌋ = ⌊${moda0.toFixed(2)}⌋. Lo más común: entre ${Math.max(0, mu - sd).toFixed(1)} y ${Math.min(n, mu + sd).toFixed(1)} éxitos (μ ± σ).</div></div>`;
+      let cum = 0; $('#c-tab').innerHTML = `<table class="table table-sm" style="font-size:.85rem"><thead><tr><th>k</th><th>P(X = k)</th><th>F(k) = P(X ≤ k)</th></tr></thead><tbody>${vals.map((pv, k) => { cum += pv; return `<tr style="${sp.set.has(k) ? 'background:#e7f5ff;font-weight:700' : ''}"><td>${k}</td><td>${f4(pv)}</td><td>${f4(Math.min(1, cum))}</td></tr>`; }).join('')}</tbody></table>`;
+      math($('#c-steps')); math($('#c-stats'));
+    }
+    const s9R = () => { sync(); s9Ctl(); s9Out(); };
+    ACT.bnm = el => { BN.mode = el.dataset.v; s9Ctl(); s9Out(); };
+    ACT.hbar = el => { const k = +el.dataset.k; if (BN.mode === 'bt') { if (k < BN.a) BN.a = k; else if (k > BN.b) BN.b = k; else if (k - BN.a <= BN.b - k) BN.a = k; else BN.b = k; } else BN.x = k; s9Ctl(); s9Out(); };
+    INP.bnN = el => { BN.n = +el.value; smReset(); sync(); s9Ctl(); s9Out(); s10R(); };
+    INP.bnP = el => { BN.p = +el.value / 100; smReset(); sync(); s9Out(); s10R(); };
+    INP.bnX = el => { BN.x = +el.value; $('#c-xv').textContent = BN.x; s9Out(); };
+    INP.bnA = el => { BN.a = Math.min(+el.value, BN.b); $('#c-av').textContent = BN.a; s9Out(); };
+    INP.bnB = el => { BN.b = Math.max(+el.value, BN.a); $('#c-bv').textContent = BN.b; s9Out(); };
+    RENDERS.push(s9R);
+
+    /* ===================== 10. Simulación ===================== */
+    const SM = { counts: [], reps: 0, sum: 0, sq: 0, last: null };
+    function smReset() { SM.counts = Array(BN.n + 1).fill(0); SM.reps = 0; SM.sum = 0; SM.sq = 0; SM.last = null; }
+    function s10R() {
+      sync(); if (SM.counts.length !== BN.n + 1) smReset(); const { n, p } = BN, th = pArr(n, p), N = SM.reps, emp = SM.counts.map(c => N ? c / N : 0), mu = n * p, v = mu * (1 - p);
+      $('#sm-last').innerHTML = SM.last ? `<div class="small fw-bold mb-1">Última repetición (${n} ensayos): X = <b>${SM.last.reduce((a, b) => a + b, 0)}</b> éxitos</div>${SM.last.map(b => `<span class="sq ${b ? 's' : 'f'}" style="margin:1px">${b ? 'S' : 'F'}</span>`).join('')}` : '<div class="small text-muted">Pulsa «+1» para hacer la primera repetición (n ensayos) o «+1 000» para muchas.</div>';
+      $('#sm-hist').innerHTML = histHTML(th, { emp, mean: mu });
+      const m = N ? SM.sum / N : 0, vv = N ? SM.sq / N - m * m : 0, md = N ? Math.max(...emp.map((e, k) => Math.abs(e - th[k]))) : 0;
+      $('#sm-stats').innerHTML = `${kpi('Repeticiones', fmtN(N), '#0f172a')} ${kpi('Media observada', N ? m.toFixed(3) : '—', '#e03131', 1)} ${kpi('Media teórica', mu.toFixed(3), '#e03131', 2)} ${kpi('Var. observada', N ? vv.toFixed(3) : '—', '#1c7ed6', 3)} ${kpi('Var. teórica', v.toFixed(3), '#1c7ed6', 4)} ${kpi('Máx. diferencia', N ? md.toFixed(3) : '—', '#f08c00', 5)}
+        <div class="small mt-2">${N >= 1000 ? '<b class="ok-t">Ley de los grandes números:</b> con muchas repeticiones la frecuencia observada se acerca a la probabilidad teórica (la «máxima diferencia» se reduce).' : 'Con pocas repeticiones la forma observada es irregular. Aumenta el número de repeticiones y compara.'}</div>`;
+    }
+    ACT.smRun = el => { const k = +el.dataset.v, { n, p } = BN; if (SM.counts.length !== n + 1) smReset(); if (SM.reps + k > 200000) return;
+      for (let r = 0; r < k; r++) { const bits = Array.from({ length: n }, () => Math.random() < p ? 1 : 0), c = bits.reduce((a, b) => a + b, 0); SM.counts[c]++; SM.reps++; SM.sum += c; SM.sq += c * c; if (r === k - 1) SM.last = bits; } s10R(); };
+    ACT.smReset = () => { smReset(); s10R(); };
+    RENDERS.push(s10R);
+
+    /* ===================== 11. Ejemplos y práctica ===================== */
+    const EXS = [
+      { ic: '📝', t: 'Examen al azar', c: '#1c7ed6', n: 10, p: 0.25, mode: 'eq', x: 3, txt: 'Un examen tiene 10 preguntas de opción múltiple con 4 opciones (solo 1 correcta). Contestas todas al azar. ¿Cuál es la probabilidad de acertar exactamente 3?', ex: 'acertar una pregunta (1 de 4 opciones: p = 1/4)' },
+      { ic: '🎓', t: 'Aprobar adivinando', c: '#7048e8', n: 10, p: 0.25, mode: 'ge', x: 6, txt: 'En el mismo examen, se aprueba con 6 o más aciertos. ¿Qué tan probable es aprobar contestando al azar?', ex: 'acertar una pregunta (p = 0.25)' },
+      { ic: '💡', t: 'Control de calidad', c: '#e8590c', n: 12, p: 0.05, mode: 'ge', x: 1, txt: 'En un lote grande de focos el 5 % sale defectuoso. Se revisan 12 focos. ¿Cuál es la probabilidad de encontrar al menos un defectuoso?', ex: 'que un foco sea defectuoso (p = 0.05)' },
+      { ic: '🪙', t: 'Volados', c: '#f08c00', n: 8, p: 0.5, mode: 'eq', x: 5, txt: 'Se lanza 8 veces una moneda justa. ¿Cuál es la probabilidad de obtener exactamente 5 soles?', ex: 'que salga sol (p = 1/2)' },
+      { ic: '💉', t: 'Efectividad de una vacuna', c: '#2f9e44', n: 15, p: 0.9, mode: 'ge', x: 14, txt: 'Una vacuna protege al 90 % de las personas. Se vacunan 15 personas. ¿Cuál es la probabilidad de que al menos 14 queden protegidas?', ex: 'que una persona quede protegida (p = 0.9)' },
+      { ic: '🏀', t: 'Tiros libres', c: '#d6336c', n: 6, p: 0.7, mode: 'le', x: 4, txt: 'Una basquetbolista encesta el 70 % de sus tiros libres. Si tira 6 veces, ¿cuál es la probabilidad de encestar a lo más 4?', ex: 'encestar un tiro (p = 0.7)' },
+      { ic: '🌱', t: 'Germinación', c: '#0ca678', n: 10, p: 0.8, mode: 'bt', a: 7, b: 9, x: 7, txt: 'Cada semilla germina con probabilidad 0.8. Se siembran 10. ¿Cuál es la probabilidad de que germinen entre 7 y 9 (incluidos)?', ex: 'que una semilla germine (p = 0.8)' },
+      { ic: '📊', t: 'Encuesta', c: '#4263eb', n: 20, p: 0.4, mode: 'eq', x: 8, txt: 'El 40 % de los estudiantes de una escuela grande usa transporte público. Se elige al azar a 20. ¿Cuál es la probabilidad de que exactamente 8 lo usen?', ex: 'que un estudiante use transporte público (p = 0.4)' }
+    ];
+    const EX = { i: 0, step: 0 };
+    function s11R() {
+      $('#s11-cards').innerHTML = EXS.map((e, i) => `<div class="col-6 col-lg-3"><button class="exc ${i === EX.i ? 'sel' : ''}" style="--c:${e.c}" data-a="exSel" data-i="${i}"><div class="ei">${e.ic}</div><div class="et">${e.t}</div><div class="small text-muted">n = ${e.n}, p = ${e.p}</div></button></div>`).join('');
+      const e = EXS[EX.i], n = e.n, p = e.p, q = 1 - p, sp = spec(n, p, e.mode, e.x, e.a, e.b), st = EX.step;
+      const S = [
+        stp(1, '#0ca678', 'Identifica los datos', `<div class="small mb-1">${e.txt}</div><div><b>Éxito:</b> ${e.ex}.</div>${fd(`n = ${n} \\qquad p = ${p} \\qquad q = 1 - p = ${q.toFixed(2).replace(/0$/, '')} \\qquad X = \\text{número de éxitos}`)}`),
+        stp(2, '#1c7ed6', '¿Cumple las 4 condiciones?', `<span class="cond y"><i class="bi bi-check-circle-fill"></i>n = ${n} ensayos fijos</span><span class="cond y"><i class="bi bi-check-circle-fill"></i>éxito / fracaso</span><span class="cond y"><i class="bi bi-check-circle-fill"></i>p = ${p} constante</span><span class="cond y"><i class="bi bi-check-circle-fill"></i>ensayos independientes</span><div class="mt-1">Entonces ${fi(`X \\sim Bin(${n},\\, ${p})`)}.</div>`),
+        stp(3, '#7048e8', 'Plantea lo que se pide', `${fi(sp.tex)} = probabilidad de <b>${sp.txt}</b> éxitos${e.mode !== 'eq' ? `, es decir X ∈ {${sp.ks.length <= 8 ? sp.ks.join(', ') : sp.ks[0] + ', …, ' + sp.ks[sp.ks.length - 1]}}` : ''}.`),
+        stp(4, '#e8590c', 'Sustituye en la fórmula', termsHTML(n, p, sp)),
+        stp(5, '#c2255c', 'Interpreta', `<div class="rsb"><small>${fi(sp.tex)}</small><div class="bg">${f4(sp.total)}</div><small>${pctS(sp.total)}</small></div><div class="small mt-1">En ${e.ic} ${e.t.toLowerCase()}: la probabilidad de ${sp.txt} éxitos es de <b>${pctS(sp.total)}</b>${sp.total > 0 && sp.total < 1 ? `, algo así como 1 de cada ${Math.round(1 / sp.total).toLocaleString('es-MX')} veces` : ''}.</div>`)];
+      $('#s11-sol').innerHTML = `<div class="d-flex flex-wrap gap-2 align-items-center mb-2"><b style="color:${e.c}">${e.ic} ${e.t}</b><button class="btn btn-sm btn-dark rounded-pill" data-a="exNext" ${st >= 4 ? 'disabled' : ''}>Siguiente paso <i class="bi bi-chevron-right"></i></button><button class="btn btn-sm btn-outline-dark rounded-pill" data-a="exAll">Mostrar todo</button><button class="btn btn-sm btn-outline-primary rounded-pill ms-auto" data-a="exCalc"><i class="bi bi-sliders me-1"></i>Abrir en la calculadora</button></div>${S.slice(0, st + 1).join('')}`;
+      math($('#s11-sol'));
+    }
+    ACT.exSel = el => { EX.i = +el.dataset.i; EX.step = 0; s11R(); };
+    ACT.exNext = () => { EX.step = Math.min(4, EX.step + 1); s11R(); };
+    ACT.exAll = () => { EX.step = 4; s11R(); };
+    ACT.exCalc = () => { const e = EXS[EX.i]; BN.n = e.n; BN.p = e.p; BN.mode = e.mode; BN.x = e.x; BN.a = e.a !== undefined ? e.a : BN.a; BN.b = e.b !== undefined ? e.b : BN.b; smReset(); s9R(); s10R(); setGroup('m', false); setTimeout(() => $('#s9').scrollIntoView({ behavior: 'smooth' }), 60); };
+    RENDERS.push(s11R);
+
+    /* Práctica */
+    const PCX = [[(n, p) => `Un tirador acierta al blanco con probabilidad ${p}. Dispara ${n} veces.`, 'aciertos'], [(n, p) => `Una máquina produce piezas y el ${Math.round(p * 100)} % salen defectuosas. Se inspeccionan ${n} piezas.`, 'piezas defectuosas'], [(n, p) => `Cada semilla germina con probabilidad ${p}. Se siembran ${n} semillas.`, 'semillas que germinan'], [(n, p) => `Un vendedor logra una venta en el ${Math.round(p * 100)} % de sus visitas. Hace ${n} visitas.`, 'ventas'], [(n, p) => `Una vacuna protege al ${Math.round(p * 100)} % de las personas. Se vacunan ${n} personas.`, 'personas protegidas']];
+    const PRC = { cur: null, ok: 0, tot: 0, msg: '', show: false };
+    const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+    function prNew() { const n = ri(4, 12), p = [0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9][ri(0, 9)], c = PCX[ri(0, PCX.length - 1)], mode = ['eq', 'eq', 'le', 'ge', 'bt'][ri(0, 4)]; let x = ri(0, n), a = 0, b = 0; if (mode === 'bt') { a = ri(0, n - 1); b = ri(a + 1, n); } if (mode === 'ge' && x === 0) x = 1; if (mode === 'le' && x === n) x = n - 1;
+      PRC.cur = { n, p, c, mode, x, a, b }; PRC.msg = ''; PRC.show = false; }
+    function prR() { const u = PRC.cur, sp = spec(u.n, u.p, u.mode, u.x, u.a, u.b);
+      $('#s11-prac').innerHTML = `<div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="pill">Correctos: <b>${PRC.ok}</b> de ${PRC.tot}</span></div><div class="qcard"><div class="mb-1">${u.c[0](u.n, u.p)}</div><div class="fw-bold mb-2">¿Cuál es la probabilidad de obtener <u>${sp.txt}</u> ${u.c[1]}? <span class="small text-muted fw-normal">(4 decimales)</span></div>
+        <div class="d-flex gap-2 flex-wrap align-items-center"><span class="small">${fi(sp.tex)} =</span><input class="form-control ans-in2" id="pr-in" inputmode="decimal" placeholder="0.0000" data-enter="prC"><button class="btn btn-success rounded-pill" data-a="prC">Comprobar</button><button class="btn btn-outline-secondary rounded-pill" data-a="prS">Ver solución</button><button class="btn btn-outline-dark rounded-pill" data-a="prN"><i class="bi bi-shuffle"></i> Otro problema</button></div>
+        ${PRC.msg ? `<div class="mt-2 fw-bold">${PRC.msg}</div>` : ''}${PRC.show ? `<div class="mt-2">${stp(1, '#0ca678', 'Datos', fd(`n = ${u.n} \\qquad p = ${u.p} \\qquad q = ${(1 - u.p).toFixed(2)}`))}${stp(2, '#e8590c', 'Sustitución', termsHTML(u.n, u.p, sp))}</div>` : ''}</div>`; math($('#s11-prac')); }
+    ACT.prC = () => { const u = PRC.cur, sp = spec(u.n, u.p, u.mode, u.x, u.a, u.b); let t = ($('#pr-in').value || '').trim().replace(',', '.'); if (!t) return; let v = parseFloat(t); if (t.includes('%')) v /= 100; const old = $('#pr-in').value; PRC.tot++;
+      if (!isNaN(v) && Math.abs(v - sp.total) <= 0.0006) { PRC.ok++; PRC.msg = `<span class="ok-t"><i class="bi bi-check-circle-fill"></i> ¡Correcto! ${f4(sp.total)}</span>`; } else PRC.msg = `<span class="no-t"><i class="bi bi-x-circle-fill"></i> Todavía no.</span> <span class="small fw-normal text-muted">Revisa n, p y qué valores de X entran. Pulsa «Ver solución».</span>`; prR(); $('#pr-in').value = old; };
+    ACT.prS = () => { PRC.show = true; prR(); }; ACT.prN = () => { prNew(); prR(); };
+    RENDERS.push(prR);
+
+    /* ===================== Manual de conceptos (modal): definición → teorema → fórmula → uso → ejemplo ===================== */
+    const MN = { k: 'binomial', q: '' };
+    const leg = a => `<div class="leg"><b>Donde:</b> ${a.map(x => `<span>${fi(x[0])} = ${x[1]}</span>`).join('')}</div>`;
+    function manDefs() {
+      const n = BN.n, p = BN.p, q = 1 - p, x = BN.x, pm = pmf(n, x, p);
+      return [
+        /* ---------- CONTEO ---------- */
+        { k: 'multiplicativo', cat: 'c', t: 'Principio multiplicativo', c: '#0ca678',
+          def: R`Si una actividad se realiza en $k$ <b>etapas sucesivas</b> y la etapa $i$ puede hacerse de $n_i$ maneras (sin importar cómo se hicieron las anteriores), la actividad completa puede hacerse de $n_1 \cdot n_2 \cdots n_k$ maneras.`,
+          thm: [R`<b>Principio fundamental del conteo (regla del producto):</b> $N = n_1 \cdot n_2 \cdots n_k$. Se usa cuando las etapas se enlazan con «<b>y</b>» (primero esto <b>y</b> luego aquello).`, R`<b>Corolario (con repetición):</b> si en cada una de las $k$ etapas hay las mismas $n$ opciones, hay $n^{k}$ resultados. Las secuencias de éxito/fracaso de $k$ ensayos son $2^{k}$.`],
+          f: [R`N = n_1 \cdot n_2 \cdots n_k`, R`N = n^{k}`], dn: [[R`n_i`, 'maneras de realizar la etapa i'], ['k', 'número de etapas'], ['n', 'opciones iguales en cada etapa']],
+          use: 'Divide la actividad en etapas, cuenta las opciones de cada etapa y multiplica. Pregúntate: ¿las etapas ocurren una tras otra (y)?',
+          ex: () => { const c = PR1.c.slice(0, PR1.k); return `Combo con ${PR1.k} etapas (platillo, bebida${PR1.k === 3 ? ', postre' : ''}): $N = ${c.join(' \\cdot ')} = ${c.reduce((a, b) => a * b, 1)}$ combos. Cuatro volados: $2^{4} = 16$ secuencias.`; } },
+        { k: 'aditivo', cat: 'c', t: 'Principio aditivo', c: '#0ca678',
+          def: R`Si una actividad puede realizarse de la manera A (de $a$ formas) <b>o</b> de la manera B (de $b$ formas), y las dos maneras no pueden ocurrir a la vez, entonces puede realizarse de $a+b$ formas.`,
+          thm: [R`<b>Regla de la suma:</b> con $k$ maneras mutuamente excluyentes, $N = n_1 + n_2 + \cdots + n_k$. Se usa con «<b>o</b>».`, R`<b>Con traslape</b> (inclusión–exclusión): $N = a + b - n(A \cap B)$, para no contar dos veces lo que está en ambas.`],
+          f: [R`N = n_1 + n_2 + \cdots + n_k`, R`N = a + b - n(A \cap B)`], dn: [['a, b', 'formas de cada manera'], [R`n(A \cap B)`, 'formas comunes (traslape)']],
+          use: 'Si las opciones son alternativas (una u otra) y no se combinan, suma. Si se combinan (primero una y luego otra), multiplica.',
+          ex: () => `${AD.a} rutas en camión <b>o</b> ${AD.b} en metro: $${AD.a} + ${AD.b} = ${AD.a + AD.b}$ formas de ir. Ida en camión <b>y</b> regreso en metro: $${AD.a} \\cdot ${AD.b} = ${AD.a * AD.b}$.` },
+        { k: 'factorial', cat: 'c', t: 'Factorial n!', c: '#0ca678',
+          def: R`El <b>factorial</b> de un entero $n \ge 0$ es el producto de los enteros positivos desde 1 hasta $n$: $n! = n(n-1)(n-2)\cdots 2\cdot 1$. Por definición, $0! = 1$.`,
+          thm: [R`<b>Teorema (ordenaciones):</b> hay exactamente $n!$ maneras de ordenar $n$ objetos distintos en fila (principio multiplicativo: $n$ opciones para el 1.er lugar, $n-1$ para el 2.º, …).`, R`<b>Recurrencia:</b> $n! = n\,(n-1)!$. De aquí se justifica $0!=1$: $1! = 1\cdot 0!$.`, R`<b>Crecimiento (Stirling):</b> $n! \approx \sqrt{2\pi n}\left(\frac{n}{e}\right)^{n}$ para $n$ grande.`],
+          f: [R`n! = n \cdot (n-1) \cdots 2 \cdot 1`, R`n! = n\,(n-1)!`, R`0! = 1`], dn: [['n', 'entero no negativo']],
+          use: 'Es el número de formas de ordenar todos los elementos de un conjunto. Aparece en el denominador de las combinaciones para «deshacer» el orden.',
+          ex: () => `Con ${F2.n} personas en fila: $${F2.n}! = ${Array.from({ length: F2.n }, (_, i) => F2.n - i).join(' \\cdot ')} = ${bF(F2.n)}$ filas distintas. $10! = ${fB(bF(10))}$.` },
+        { k: 'permutaciones', cat: 'c', t: 'Permutaciones P(n, r)', c: '#e8590c',
+          def: R`Una <b>permutación</b> de $r$ elementos tomados de $n$ distintos es una <b>lista ordenada</b> de $r$ de ellos, sin repetir. Dos listas con los mismos elementos en distinto orden son permutaciones <b>distintas</b>. Notaciones: $P(n,r)$, $_{n}P_{r}$, $P_{r}^{n}$.`,
+          thm: [R`<b>Teorema:</b> el número de permutaciones de $r$ elementos tomados de $n$ es $P(n,r)=n(n-1)\cdots(n-r+1)=\frac{n!}{(n-r)!}$.`, R`<i>Demostración:</i> el 1.er lugar tiene $n$ opciones, el 2.º tiene $n-1$, …, el lugar $r$ tiene $n-r+1$; se multiplican por el principio fundamental y se completa el factorial.`, R`<b>Caso particular:</b> si $r=n$, $P(n,n)=n!$.`],
+          f: [R`P(n,r) = \frac{n!}{(n-r)!}`, R`P(n,r) = n(n-1)\cdots(n-r+1)`, R`P(n,n) = n!`], dn: [['n', 'elementos disponibles'], ['r', 'elementos que se ordenan']],
+          use: 'Úsala si «ABC» y «CBA» son resultados distintos: cargos, podios, claves sin repetir, filas.',
+          ex: () => `${P3.n} corredores, ${P3.r} lugares: $P(${P3.n},${P3.r}) = \\frac{${P3.n}!}{${P3.n - P3.r}!} = ${facStr(P3.n, P3.r)} = ${fB(bP(P3.n, P3.r))}$ podios distintos.` },
+        { k: 'permrep', cat: 'c', t: 'Permutaciones con elementos repetidos', c: '#e8590c',
+          def: R`Si de $n$ objetos hay $n_1$ iguales de un tipo, $n_2$ de otro, …, $n_k$ del último ($n_1+\cdots+n_k=n$), una <b>permutación con repetición</b> es una ordenación en la que los objetos iguales no se distinguen entre sí.`,
+          thm: [R`<b>Teorema (coeficiente multinomial):</b> el número de ordenaciones distintas es $\dfrac{n!}{n_1!\,n_2!\cdots n_k!}$.`, R`<i>Razón:</i> si todos fueran distintos habría $n!$; pero permutar entre sí los $n_i$ objetos iguales no cambia el resultado y se cuenta $n_i!$ veces, así que se divide entre cada $n_i!$.`],
+          f: [R`\frac{n!}{n_1!\,n_2!\cdots n_k!}`], dn: [['n', 'total de objetos'], [R`n_i`, 'cuántos hay iguales del tipo i']],
+          use: 'Anagramas de una palabra, filas de fichas de colores repetidos, secuencias con éxitos y fracasos idénticos.',
+          ex: () => { const w = WR.w, cnt = {}; [...w].forEach(ch => cnt[ch] = (cnt[ch] || 0) + 1); const ks = Object.keys(cnt), d = ks.reduce((a, k) => a * bF(cnt[k]), 1n); return `«${w}»: $\\frac{${w.length}!}{${ks.map(k => cnt[k] + '!').join(' \\cdot ')}} = \\frac{${fB(bF(w.length))}}{${fB(d)}} = ${fB(bF(w.length) / d)}$ palabras distintas.`; } },
+        { k: 'circular', cat: 'c', t: 'Permutaciones circulares', c: '#e8590c',
+          def: R`Son las ordenaciones de $n$ objetos alrededor de un círculo, donde dos arreglos se consideran <b>iguales</b> si uno se obtiene del otro por un giro.`,
+          thm: [R`<b>Teorema:</b> hay $(n-1)!$ ordenaciones circulares de $n$ objetos distintos.`, R`<i>Razón:</i> como los giros no cuentan, se fija un objeto como referencia y los otros $n-1$ se ordenan libremente.`],
+          f: [R`PC_n = (n-1)!`], dn: [['n', 'objetos distintos']], use: 'Personas sentadas en una mesa redonda sin lugar especial.',
+          ex: () => `5 personas en una mesa redonda: $(5-1)! = 4! = 24$ (y no $5! = 120$).` },
+        { k: 'combinaciones', cat: 'c', t: 'Combinaciones C(n, r)', c: '#7048e8',
+          def: R`Una <b>combinación</b> de $r$ elementos tomados de $n$ distintos es un <b>subconjunto</b> de $r$ elementos: solo importa <b>cuáles</b> se eligen, no el orden. Notaciones: $\binom{n}{r}$, $C(n,r)$, $_{n}C_{r}$ (se lee «n sobre r»).`,
+          thm: [R`<b>Teorema:</b> $\binom{n}{r}=\dfrac{n!}{r!\,(n-r)!}=\dfrac{P(n,r)}{r!}$.`, R`<i>Demostración:</i> cada subconjunto de $r$ elementos puede ordenarse de $r!$ maneras, así que $P(n,r)=r!\cdot\binom{n}{r}$. Despejando se obtiene la fórmula.`, R`<b>Diferencia clave:</b> permutación = combinación × $r!$.`],
+          f: [R`\binom{n}{r} = \frac{n!}{r!\,(n-r)!}`, R`\binom{n}{r} = \frac{P(n,r)}{r!}`, R`P(n,r) = r! \cdot \binom{n}{r}`], dn: [['n', 'elementos disponibles'], ['r', 'elementos que se eligen (0 ≤ r ≤ n)']],
+          use: 'Úsala si «ABC» y «CBA» son el mismo resultado: comités, manos de cartas, equipos, elegir preguntas.',
+          ex: () => { const P = bP(C4.n, C4.r), rf = bF(C4.r); return `Elegir ${C4.r} de ${C4.n}: $\\binom{${C4.n}}{${C4.r}} = \\frac{${fB(P)}}{${fB(rf)}} = ${fB(bC(C4.n, C4.r))}$. Una mano de póker: $\\binom{52}{5} = ${fB(bC(52, 5))}$.`; } },
+        { k: 'propcomb', cat: 'c', t: 'Propiedades de las combinaciones', c: '#7048e8',
+          def: R`Identidades que cumplen los números $\binom{n}{r}$ y que permiten calcularlos y simplificarlos.`,
+          thm: [R`<b>Valores extremos:</b> $\binom{n}{0}=\binom{n}{n}=1$ y $\binom{n}{1}=n$.`, R`<b>Simetría:</b> $\binom{n}{r}=\binom{n}{n-r}$ (elegir lo que entra equivale a elegir lo que se queda fuera).`, R`<b>Identidad de Pascal:</b> $\binom{n}{r}=\binom{n-1}{r-1}+\binom{n-1}{r}$ (el elemento «n» está dentro o está fuera).`, R`<b>Suma de la fila:</b> $\sum_{r=0}^{n}\binom{n}{r}=2^{n}$ (número total de subconjuntos).`],
+          f: [R`\binom{n}{r} = \binom{n}{n-r}`, R`\binom{n}{r} = \binom{n-1}{r-1} + \binom{n-1}{r}`, R`\sum_{r=0}^{n} \binom{n}{r} = 2^{n}`], dn: [['n, r', 'enteros con 0 ≤ r ≤ n']],
+          use: 'Simetría: calcula con el r más pequeño. Pascal: construye el triángulo sin factoriales grandes.',
+          ex: () => `$\\binom{10}{8}=\\binom{10}{2}=45$. $\\binom{6}{2}=\\binom{5}{1}+\\binom{5}{2}=5+10=15$. Fila 6: $1+6+15+20+15+6+1=64=2^{6}$.` },
+        { k: 'newton', cat: 'c', t: 'Triángulo de Pascal y binomio de Newton', c: '#7048e8',
+          def: R`El <b>triángulo de Pascal</b> acomoda los números $\binom{n}{r}$ en filas ($n=0,1,2,\ldots$); cada número es la suma de los dos que tiene encima. Son los coeficientes de la expansión de un binomio.`,
+          thm: [R`<b>Teorema del binomio (Newton):</b> para todo entero $n\ge 0$, $(a+b)^{n}=\sum_{k=0}^{n}\binom{n}{k}a^{n-k}b^{k}$.`, R`<i>Idea de la prueba:</i> al multiplicar $n$ factores $(a+b)$, un término $a^{n-k}b^{k}$ se forma escogiendo $b$ en exactamente $k$ de los $n$ factores: hay $\binom{n}{k}$ formas.`, R`<b>Casos útiles:</b> $a=b=1$ da $2^{n}$; $a=p$, $b=q$ con $p+q=1$ da $(p+q)^{n}=1$ — de ahí que las probabilidades binomiales sumen 1.`],
+          f: [R`(a+b)^{n} = \sum_{k=0}^{n} \binom{n}{k}\,a^{n-k}\,b^{k}`, R`(p+q)^{n} = 1`], dn: [['a, b', 'números o expresiones'], ['n', 'exponente entero ≥ 0']],
+          use: 'Expande potencias de binomios sin multiplicar a mano y justifica por qué la distribución binomial es una distribución de probabilidad.',
+          ex: () => `$(a+b)^{4}=a^{4}+4a^{3}b+6a^{2}b^{2}+4ab^{3}+b^{4}$ (fila 4: 1, 4, 6, 4, 1). Con $p=${p.toFixed(2)}$, $q=${q.toFixed(2)}$: $(p+q)^{${n}}=1$.` },
+        /* ---------- BINOMIAL ---------- */
+        { k: 'bernoulli', cat: 'b', t: 'Ensayo y variable de Bernoulli', c: '#2f9e44',
+          def: R`Un <b>ensayo de Bernoulli</b> es un experimento aleatorio con exactamente <b>dos resultados</b> mutuamente excluyentes: <i>éxito</i> (probabilidad $p$) y <i>fracaso</i> (probabilidad $q=1-p$). La <b>variable de Bernoulli</b> $X$ vale 1 si hay éxito y 0 si hay fracaso: $X\sim Ber(p)$.`,
+          thm: [R`<b>Función de probabilidad:</b> $P(X=x)=p^{x}q^{1-x}$ para $x\in\{0,1\}$.`, R`<b>Momentos:</b> $E[X]=p$ y $Var(X)=pq$ (máxima cuando $p=\tfrac12$).`],
+          f: [R`P(X=x) = p^{x}\,q^{1-x}, \quad x = 0, 1`, R`E[X] = p \qquad Var(X) = p\,q`], dn: [['p', 'probabilidad de éxito'], ['q', '1 − p, probabilidad de fracaso']],
+          use: 'Define con claridad qué es «éxito» (lo que quieres contar; no significa algo bueno) y su probabilidad p.',
+          ex: () => `Tiro libre con $p=0.7$: $P(X=1)=0.7$, $P(X=0)=0.3$, $E[X]=0.7$, $Var(X)=0.7\\cdot 0.3=0.21$.` },
+        { k: 'condiciones', cat: 'b', t: 'Experimento binomial: las 4 condiciones', c: '#2f9e44',
+          def: R`Un <b>experimento binomial</b> es una serie de ensayos de Bernoulli que cumple: (1) hay un número <b>fijo n</b> de ensayos; (2) cada ensayo tiene <b>dos resultados</b> (éxito/fracaso); (3) la probabilidad de éxito <b>p es constante</b>; (4) los ensayos son <b>independientes</b>.`,
+          thm: [R`<b>Si falla (1):</b> el número de ensayos no es fijo → geométrica (ensayos hasta el primer éxito).`, R`<b>Si falla (3) o (4)</b> por muestreo <b>sin reemplazo</b> en población finita → hipergeométrica.`, R`<b>Regla práctica del 5 %:</b> si $n\le 0.05\,N$ (muestra pequeña frente a la población), el muestreo sin reemplazo se aproxima bien con la binomial.`, R`<b>Si falla (2):</b> con más de dos resultados → multinomial.`],
+          f: [R`X = \text{número de éxitos en } n \text{ ensayos}`, R`n \le 0.05\,N`], dn: [['N', 'tamaño de la población'], ['n', 'tamaño de la muestra']],
+          use: 'Antes de usar la fórmula verifica las 4 condiciones por escrito: es el paso que más se olvida.',
+          ex: () => `10 volados ✓ binomial. Sacar 5 bolas SIN reemplazo de una urna de 10 ✗ (p cambia). Encuestar a 20 de una ciudad enorme ✓ ($20\\le 0.05N$).` },
+        { k: 'binomial', cat: 'b', t: 'Distribución binomial (definición formal)', c: '#1c7ed6',
+          def: R`Sea $X$ el número de éxitos en $n$ ensayos de Bernoulli independientes, cada uno con probabilidad de éxito $p$. Se dice que $X$ tiene <b>distribución binomial</b> de parámetros $n$ y $p$: $X\sim Bin(n,p)$, con soporte $\{0,1,\ldots,n\}$.`,
+          thm: [R`<b>Función de probabilidad (masa):</b> $P(X=x)=\binom{n}{x}p^{x}q^{n-x}$, $x=0,1,\ldots,n$.`, R`<i>Deducción en 3 pasos:</i> (i) una secuencia concreta con $x$ éxitos y $n-x$ fracasos tiene probabilidad $p^{x}q^{n-x}$ (regla del producto, por independencia); (ii) hay $\binom{n}{x}$ secuencias así (se eligen las posiciones de los éxitos); (iii) son eventos excluyentes, así que se suman.`, R`<b>Caso $n=1$:</b> $Bin(1,p)=Ber(p)$.`],
+          f: [R`P(X=x) = \binom{n}{x}\,p^{x}\,q^{n-x}`, R`q = 1 - p`], dn: [['n', 'número de ensayos'], ['x', 'número de éxitos (0 a n)'], ['p', 'probabilidad de éxito en cada ensayo'], ['q', '1 − p']],
+          use: 'Identifica n, p y x; verifica las condiciones; sustituye en la fórmula (combinación × p^x × q^(n−x)).',
+          ex: () => `Con $n=${n}$, $p=${p.toFixed(2)}$, $x=${x}$: $P(X=${x})=\\binom{${n}}{${x}}(${p.toFixed(2)})^{${x}}(${q.toFixed(2)})^{${n - x}}=${bC(n, x)}\\cdot ${num4(Math.pow(p, x))}\\cdot ${num4(Math.pow(q, n - x))}=${f4(pm)}$.` },
+        { k: 'fmp', cat: 'b', t: 'Función de probabilidad y su validez', c: '#1c7ed6',
+          def: R`La <b>función de probabilidad</b> (o de masa) de $X$ asigna a cada valor posible $x$ la probabilidad $P(X=x)$. Es válida si todas las probabilidades son no negativas y suman 1.`,
+          thm: [R`<b>(i)</b> $P(X=x)\ge 0$ para todo $x$.`, R`<b>(ii)</b> $\sum_{x=0}^{n}\binom{n}{x}p^{x}q^{n-x}=(p+q)^{n}=1^{n}=1$ <i>(binomio de Newton con $p+q=1$)</i>.`, R`<b>Simetría especular:</b> $P(X=x;\,n,p)=P(X=n-x;\,n,1-p)$.`],
+          f: [R`\sum_{x=0}^{n} P(X=x) = (p+q)^{n} = 1`, R`P(x+1) = P(x)\cdot\frac{n-x}{x+1}\cdot\frac{p}{q}`], dn: [['P(x+1)', 'probabilidad siguiente (fórmula recursiva)']],
+          use: 'Sirve para comprobar una tabla de probabilidades (¿suman 1?) y para calcular valores consecutivos sin recalcular combinaciones.',
+          ex: () => { const v = pArr(n, p), s = v.reduce((a, b) => a + b, 0); return `Para $n=${n}$, $p=${p.toFixed(2)}$: $\\sum P(X=x) = ${s.toFixed(4)}$ ✔. Recursión: $P(${x + 1}) = P(${x})\\cdot\\frac{${n - x}}{${x + 1}}\\cdot\\frac{${p.toFixed(2)}}{${q.toFixed(2)}}$ (si $x&lt;n$).`; } },
+        { k: 'acumulada', cat: 'b', t: 'Función de distribución acumulada', c: '#1c7ed6',
+          def: R`La <b>función de distribución acumulada</b> de $X$ es $F(x)=P(X\le x)$: la probabilidad de obtener <b>a lo más</b> $x$ éxitos.`,
+          thm: [R`<b>Cálculo:</b> $F(x)=\sum_{k=0}^{x}\binom{n}{k}p^{k}q^{n-k}$.`, R`<b>Reglas de traducción:</b> $P(X>x)=1-F(x)$; $P(X\ge x)=1-F(x-1)$; $P(X&lt;x)=F(x-1)$; $P(a\le X\le b)=F(b)-F(a-1)$.`, R`<b>Propiedades:</b> $F$ es no decreciente, $F(n)=1$.`],
+          f: [R`F(x) = P(X \le x) = \sum_{k=0}^{x} \binom{n}{k}\,p^{k}\,q^{n-k}`, R`P(X \ge x) = 1 - F(x-1)`, R`P(a \le X \le b) = F(b) - F(a-1)`], dn: [['F(x)', 'probabilidad acumulada hasta x'], ['a, b', 'extremos del intervalo (incluidos)']],
+          use: 'Traduce las palabras: «al menos» (≥), «a lo más» (≤), «más de» (>), «menos de» (<), «entre» (intervalo) y escoge el atajo con menos términos.',
+          ex: () => { const A = spec(n, p, 'le', x), G = spec(n, p, 'ge', x); return `Con $n=${n}$, $p=${p.toFixed(2)}$: $F(${x})=P(X\\le ${x})=${f4(A.total)}$ y $P(X\\ge ${x})=1-F(${x - 1})=${f4(G.total)}$.`; } },
+        { k: 'esperanza', cat: 'b', t: 'Media, varianza y desviación estándar', c: '#e03131',
+          def: R`La <b>media</b> (esperanza) $\mu=E[X]$ es el número promedio de éxitos a la larga; la <b>varianza</b> $\sigma^{2}=Var(X)$ mide qué tanto se dispersan los valores alrededor de la media y la <b>desviación estándar</b> es $\sigma=\sqrt{\sigma^{2}}$.`,
+          thm: [R`<b>Teorema:</b> si $X\sim Bin(n,p)$, entonces $E[X]=np$ y $Var(X)=npq$.`, R`<i>Demostración:</i> $X=X_1+\cdots+X_n$ con $X_i\sim Ber(p)$ independientes. La esperanza es aditiva: $E[X]=n\cdot p$. Por independencia las varianzas se suman: $Var(X)=n\cdot pq$.`, R`<b>Observación:</b> para $n$ fijo, la varianza es máxima en $p=\tfrac12$.`],
+          f: [R`\mu = E[X] = n\,p`, R`\sigma^{2} = Var(X) = n\,p\,q`, R`\sigma = \sqrt{n\,p\,q}`], dn: [['n', 'ensayos'], ['p', 'prob. de éxito'], ['q', '1 − p']],
+          use: 'La media indica cuántos éxitos esperar; μ ± σ da el rango «usual» (aprox. 2/3 de los casos si la forma es acampanada).',
+          ex: () => `$n=${n}$, $p=${p.toFixed(2)}$: $\\mu=${n}\\cdot ${p.toFixed(2)}=${(n * p).toFixed(2)}$; $\\sigma^{2}=${n}\\cdot ${p.toFixed(2)}\\cdot ${q.toFixed(2)}=${(n * p * q).toFixed(3)}$; $\\sigma=${Math.sqrt(n * p * q).toFixed(3)}$.` },
+        { k: 'moda', cat: 'b', t: 'Moda y forma de la distribución', c: '#e03131',
+          def: R`La <b>moda</b> es el valor de $X$ con mayor probabilidad. La <b>forma</b> describe la simetría del histograma de $P(X=x)$.`,
+          thm: [R`<b>Moda:</b> es $\lfloor (n+1)p\rfloor$. Si $(n+1)p$ es entero hay dos modas: $(n+1)p-1$ y $(n+1)p$.`, R`<b>Simetría:</b> si $p=\tfrac12$ la distribución es simétrica respecto de $n/2$.`, R`<b>Sesgo:</b> si $p&lt;\tfrac12$ hay sesgo a la derecha (cola larga hacia muchos éxitos); si $p&gt;\tfrac12$, a la izquierda.`],
+          f: [R`\text{moda} = ⌊(n+1)\,p⌋`], dn: [['⌊ ⌋', 'parte entera (se redondea hacia abajo)']],
+          use: 'Antes de calcular, dibuja la forma esperada para detectar errores (por ejemplo, un resultado grande en una cola lejana).',
+          ex: () => { const m = (n + 1) * p; return `$n=${n}$, $p=${p.toFixed(2)}$: $(n+1)p=${m.toFixed(2)}$ → moda $=${Math.floor(m + 1e-9)}$. ${Math.abs(p - 0.5) < 0.005 ? 'Como p = 0.5 es simétrica.' : p < 0.5 ? 'Como p < 0.5 tiene sesgo a la derecha.' : 'Como p > 0.5 tiene sesgo a la izquierda.'}`; } },
+        { k: 'complemento', cat: 'b', t: 'Complemento y «al menos uno»', c: '#c2255c',
+          def: R`La <b>regla del complemento</b> dice que $P(A)=1-P(A')$. En la binomial, «al menos un éxito» es el complemento de «ningún éxito».`,
+          thm: [R`<b>Teorema:</b> $P(X\ge 1)=1-P(X=0)=1-q^{n}$.`, R`<b>Tamaño de muestra:</b> para lograr al menos un éxito con probabilidad $\ge P_0$ se necesita $n\ge\dfrac{\ln(1-P_0)}{\ln q}$.`],
+          f: [R`P(X \ge 1) = 1 - q^{n}`, R`n \ge \frac{\ln(1-P_0)}{\ln q}`], dn: [[R`P_0`, 'probabilidad deseada'], ['q', 'prob. de fracaso']],
+          use: 'Cuando la pregunta es «al menos», calcula lo contrario (pocos términos) y resta de 1.',
+          ex: () => { const e = EXS[2]; return `Focos: $n=12$, $p=0.05$: $P(X\\ge 1)=1-0.95^{12}=${(1 - Math.pow(0.95, 12)).toFixed(4)}$. Para llegar a 90 %: $n\\ge\\frac{\\ln 0.1}{\\ln 0.95}=${Math.ceil(Math.log(0.1) / Math.log(0.95))}$.`; } },
+        { k: 'aprox', cat: 'b', t: 'Aproximaciones: Poisson y normal', c: '#868e96',
+          def: R`Cuando $n$ es grande, calcular la binomial exacta es laborioso y se usan aproximaciones con otras distribuciones.`,
+          thm: [R`<b>Poisson (eventos raros):</b> si $n$ es grande y $p$ pequeña ($n\ge 20$, $p\le 0.05$), $Bin(n,p)\approx Poisson(\lambda=np)$.`, R`<b>Teorema de De Moivre–Laplace (normal):</b> si $np\ge 5$ y $nq\ge 5$, $Bin(n,p)\approx N(\mu=np,\ \sigma^{2}=npq)$.`, R`<b>Corrección por continuidad:</b> $P(X\le x)\approx P\!\left(Z\le\frac{x+0.5-np}{\sqrt{npq}}\right)$.`],
+          f: [R`P(X=x) \approx \frac{e^{-\lambda}\lambda^{x}}{x!}, \quad \lambda = np`, R`Z = \frac{x + 0.5 - np}{\sqrt{npq}}`], dn: [[R`\lambda`, 'media de la Poisson'], ['Z', 'normal estándar']],
+          use: 'Verifica las condiciones antes de aproximar; con n pequeño usa siempre la fórmula exacta.',
+          ex: () => `$n=100$, $p=0.5$, $P(X\\le 55)$: $Z=\\frac{55.5-50}{5}=1.10$ → $\\Phi(1.10)=0.8643$ (el valor exacto es 0.8644).` },
+        { k: 'ley', cat: 'b', t: 'Ley de los grandes números (Bernoulli)', c: '#868e96',
+          def: R`Si $X\sim Bin(n,p)$, la <b>frecuencia relativa</b> de éxitos es $\hat p=X/n$. La ley de los grandes números afirma que $\hat p$ se acerca a la probabilidad verdadera $p$ cuando $n$ crece.`,
+          thm: [R`<b>Ley débil (J. Bernoulli, 1713):</b> para todo $\varepsilon>0$, $P\left(|\hat p-p|\ge\varepsilon\right)\to 0$ cuando $n\to\infty$.`, R`<b>Cota de Chebyshev:</b> $P\left(|\hat p-p|\ge\varepsilon\right)\le\dfrac{pq}{n\varepsilon^{2}}$.`],
+          f: [R`\hat p = \frac{X}{n} \to p`, R`P\left(|\hat p - p| \ge \varepsilon\right) \le \frac{pq}{n\,\varepsilon^{2}}`], dn: [[R`\varepsilon`, 'error tolerado'], [R`\hat p`, 'frecuencia relativa']],
+          use: 'Justifica estimar probabilidades por simulación: usa muchas repeticiones (≥ 1 000).',
+          ex: () => `Moneda, $\\varepsilon=0.05$: con $n=500$ la cota es $\\frac{0.25}{500\\cdot 0.0025}=0.20$; con $n=5000$ baja a $0.02$.` },
+        { k: 'relacionadas', cat: 'b', t: 'Distribuciones relacionadas', c: '#868e96',
+          def: R`La binomial es parte de una familia de modelos para conteos; elegir el correcto depende de qué se fija y qué se cuenta.`,
+          thm: [R`<b>Hipergeométrica:</b> éxitos en $n$ extracciones <b>sin reemplazo</b> de $N$ elementos con $K$ éxitos: $P(X=x)=\dfrac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}$.`, R`<b>Geométrica:</b> número de ensayos hasta el <b>primer éxito</b>: $P(X=x)=q^{x-1}p$.`, R`<b>Multinomial:</b> $n$ ensayos con más de dos resultados: $\dfrac{n!}{n_1!\cdots n_k!}p_1^{n_1}\cdots p_k^{n_k}$.`],
+          f: [R`\frac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}`, R`P(X=x) = q^{x-1}\,p`], dn: [['N', 'población'], ['K', 'éxitos en la población'], ['n', 'tamaño de la muestra']],
+          use: '¿n fijo y p constante? Binomial. ¿Sin reemplazo y población pequeña? Hipergeométrica. ¿Hasta el primer éxito? Geométrica.',
+          ex: () => `Urna con 10 bolas (6 rojas), 5 extracciones sin reemplazo, 3 rojas: $\\frac{\\binom{6}{3}\\binom{4}{2}}{\\binom{10}{5}}=\\frac{20\\cdot 6}{252}=0.4762$ (no es binomial).` }
+      ];
+    }
+    const manEl = () => $('#man-body');
+    function manR() {
+      const m = $('#manualModal'); if (!m) return; const D = manDefs(), qq = MN.q.trim().toLowerCase(), items = D.filter(c => !qq || c.t.toLowerCase().includes(qq));
+      const sect = (lab, cat) => { const it = items.filter(c => c.cat === cat); return it.length ? `<div class="small fw-bold text-muted mt-2">${lab}</div>` + it.map(c => `<button style="--c:${c.c}" class="${MN.k === c.k ? 'on' : ''}" data-mk="${c.k}">${c.t}</button>`).join('') : ''; };
+      $('#man-nav').innerHTML = `<button style="--c:#0f172a" class="${MN.k === 'todo' ? 'on' : ''}" data-mk="todo"><i class="bi bi-grid-fill me-1"></i>Formulario completo</button>` + sect('CONTEO', 'c') + sect('MODELO BINOMIAL', 'b');
+      const b = manEl();
+      if (MN.k === 'todo') { b.innerHTML = `<div class="man-h" style="--c:#0f172a">Formulario completo</div><div class="small text-muted mb-2">Toca un tema para abrir su ficha con definición, teorema y ejemplo.</div><div class="row g-2">${D.map(c => `<div class="col-md-6"><div class="fm" style="--c:${c.c}"><div class="ft" role="button" data-mk="${c.k}">${c.t}</div><div class="ff">${c.f.map(fd).join('')}</div></div></div>`).join('')}</div>`; math(b); return; }
+      const c = D.find(x => x.k === MN.k) || D[0];
+      b.innerHTML = `<div style="--c:${c.c}"><div class="man-h">${c.t}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-bookmark-fill me-1"></i>Definición</div>${c.def}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-patch-check-fill me-1"></i>Teorema / regla / propiedad</div>${c.thm.map(t => `<div class="man-thm">${t}</div>`).join('')}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-calculator-fill me-1"></i>Fórmula</div>${c.f.map(fd).join('')}${leg(c.dn)}</div>
+        <div class="man-sec"><div class="man-lb"><i class="bi bi-compass-fill me-1"></i>Cómo se usa</div>${c.use}</div>
+        <div class="man-sec man-ex"><div class="man-lb"><i class="bi bi-lightbulb-fill me-1"></i>Ejemplo con los datos actuales</div>${c.ex()}</div></div>`; math(b);
+    }
+    function openManual(k) { if (k) MN.k = k; manR(); const el = $('#manualModal'); if (window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show(); }
+    RENDERS.push(() => { const m = $('#manualModal'); if (m && m.classList.contains('show')) manR(); });
+
+    /* ===================== 12. Formulario ===================== */
+    const FM = { cat: 'all' };
+    function fmR() {
+      const D = manDefs(), cats = [['all', 'Todos', '#0f172a'], ['c', 'Conteo', '#0ca678'], ['b', 'Modelo binomial', '#1c7ed6']];
+      $('#fm-cat').innerHTML = cats.map(c => `<button class="fchip" style="--c:${c[2]};${FM.cat === c[0] ? `background:${c[2]};color:#fff` : ''}" data-a="fmc" data-v="${c[0]}">${c[1]}</button>`).join('');
+      $('#fm-grid').innerHTML = D.filter(c => FM.cat === 'all' || c.cat === FM.cat).map(c => `<div class="col-md-6 col-lg-4"><div class="fm" style="--c:${c.c}"><div class="ft">${c.t}</div><div class="ff">${c.f.slice(0, 2).map(fd).join('')}</div><div class="fe">${c.use}</div><div class="fx"><b>Ejemplo:</b> ${c.ex()}</div><button class="btn btn-sm btn-outline-dark rounded-pill align-self-start mt-auto" data-man="${c.k}"><i class="bi bi-book-half me-1"></i>Ficha completa</button></div></div>`).join('');
+      math($('#fm-grid'));
+    }
+    ACT.fmc = el => { FM.cat = el.dataset.v; fmR(); };
+    RENDERS.push(fmR);
+
+    /* ===================== Navegación y arranque ===================== */
+    const GROUPS = [['c', 'Conteo', '#0ca678', 'bi-grid-3x3-gap-fill'], ['m', 'Modelo binomial', '#1c7ed6', 'bi-bar-chart-steps'], ['a', 'Aplicaciones', '#e8590c', 'bi-trophy-fill'], ['f', 'Formulario', '#c2255c', 'bi-journal-richtext'], ['all', 'Todo', '#0f172a', 'bi-grid-fill']];
+    let curGrp = 'c';
+    function setGroup(g, scroll) { curGrp = g; store.set('bin-grp', g);
+      $$('section.sec').forEach(s => { s.hidden = !(g === 'all' || s.dataset.g === g); }); $$('#sec-nav a').forEach(a => { a.hidden = !(g === 'all' || a.dataset.g === g); });
+      $$('#grp-bar button').forEach(b => b.classList.toggle('active', b.dataset.g === g)); const act = GROUPS.find(x => x[0] === g); $('#grp-bar').style.setProperty('--g', act ? act[2] : '#0f172a');
+      if (scroll) window.scrollTo({ top: Math.max(0, $('#content').offsetTop - 70), behavior: 'smooth' }); spy(); }
+    function spy() { const links = $$('#sec-nav a:not([hidden])'), y = window.scrollY + 190; let k = -1; links.forEach((a, i) => { const s = $(a.getAttribute('href')); if (s && !s.hidden && s.offsetTop <= y) k = i; }); $$('#sec-nav a').forEach(a => a.classList.remove('active')); if (links[Math.max(k, 0)]) links[Math.max(k, 0)].classList.add('active'); $('#to-top').classList.toggle('on', window.scrollY > 700); }
+    function navInit() {
+      $('#grp-bar').innerHTML = GROUPS.map(g => `<button data-g="${g[0]}" style="--g:${g[2]}"><i class="bi ${g[3]}"></i>${g[1]}</button>`).join('');
+      $('#grp-bar').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGroup(b.dataset.g, true); });
+      const secs = $$('section.sec'); secs.forEach((s, i) => { const nx = secs[i + 1], title = nx ? nx.querySelector('h2').textContent : null;
+        const bar = document.createElement('div'); bar.className = 'nextbar'; bar.innerHTML = `<span class="small text-muted">Sección ${i + 1} de ${secs.length}</span>${nx ? `<button class="btn btn-dark rounded-pill px-3">Siguiente: ${title} <i class="bi bi-arrow-right ms-1"></i></button>` : `<button class="btn btn-outline-dark rounded-pill px-3"><i class="bi bi-arrow-up me-1"></i>Volver al inicio</button>`}`;
+        bar.querySelector('button').addEventListener('click', () => { if (!nx) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; } if (curGrp !== 'all' && nx.dataset.g !== curGrp) setGroup(nx.dataset.g, false); setTimeout(() => nx.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); }); s.appendChild(bar); });
+      let g = store.get('bin-grp'); if (!GROUPS.some(x => x[0] === g)) g = 'c'; const h = location.hash && $(location.hash); if (h && h.matches && h.matches('section.sec')) g = h.dataset.g;
+      setGroup(g, false); if (h && h.matches && h.matches('section.sec')) setTimeout(() => h.scrollIntoView(), 50);
+      window.addEventListener('scroll', spy, { passive: true }); $('#to-top').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      $$('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); setGroup(a.dataset.go, false); setTimeout(() => $(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth', block: 'start' }), 40); })); }
+    function eventsInit() {
+      document.addEventListener('click', e => {
+        const m = e.target.closest('[data-man]'); if (m) { e.preventDefault(); openManual(m.dataset.man || MN.k); return; }
+        const k = e.target.closest('#manualModal [data-mk]'); if (k) { MN.k = k.dataset.mk; manR(); const mb = $('#manualModal .modal-body'); if (mb) mb.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        const b = e.target.closest('[data-a]'); if (b && ACT[b.dataset.a]) ACT[b.dataset.a](b, e); });
+      document.addEventListener('input', e => { const t = e.target.closest('[data-in]'); if (t && INP[t.dataset.in]) INP[t.dataset.in](t); });
+      document.addEventListener('keydown', e => { if (e.key === 'Enter') { const t = e.target.closest('[data-enter]'); if (t && ACT[t.dataset.enter]) ACT[t.dataset.enter](t); } });
+      $('#man-q').addEventListener('input', e => { MN.q = e.target.value; manR(); });
+      const a = $('#anim-sw'); const applyAn = () => { document.body.classList.toggle('no-anim', !a.checked); store.set('bin-anim', a.checked ? '1' : '0'); };
+      a.checked = store.get('bin-anim') !== '0'; applyAn(); a.addEventListener('change', applyAn); }
+
+    (function boot() {
+      sbInit('sb2', F2.n, F2.n); q5new(); prNew(); smReset();
+      eventsInit(); navInit(); renderAll(); math(document.body);
+    })();
+
+</script>
+</body>
+</html>
