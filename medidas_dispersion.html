@@ -173,7 +173,9 @@
     .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
     /* Tabla: columnas coloreadas por medida */
     #tbl-wrap { --mc:var(--m-mean); }
-    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
+    #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); } #tbl-wrap[data-m="med"] { --mc:#c26e00; } #tbl-wrap[data-m="mode"] { --mc:#5130b9; }
+    .freq-table tr.ct-sel td { box-shadow:inset 0 2px 0 var(--mc), inset 0 -2px 0 var(--mc); font-weight:800; } .freq-table tr.ct-sel td:first-child { box-shadow:inset 4px 0 0 var(--mc), inset 0 2px 0 var(--mc), inset 0 -2px 0 var(--mc); }
+    .det-btn[aria-expanded="true"] .det-chev { transform:rotate(180deg); } .det-chev { transition:transform .3s; display:inline-block; }
     .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
     .freq-table th.cb-fi { background:#d6336c; } .freq-table th.cb-x { background:#2f9e44; }
     .freq-table td.mc { background:color-mix(in srgb,var(--mc) 16%,#fff); font-weight:700; }
@@ -234,7 +236,7 @@
 
   <div id="app-header"></div>
   <nav class="sec-nav" id="sec-nav">
-    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla de cálculo</a><a href="#s4">4. Resultados</a><a href="#s4b">4b. Media, mediana y moda</a><a href="#s6">5. Gráfica</a><a href="#" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</a>
+    <a href="#s1">1. Datos</a><a href="#s2">2. Tamaño del intervalo</a><a href="#s3">3. Tabla y resultados</a><a href="#s6">5. Gráfica</a><a href="#" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</a>
   </nav>
 
   <main>
@@ -309,7 +311,7 @@
       <!-- 3. TABLA -->
       <section class="lesson mb-5" id="s3">
         <div class="card lesson-card">
-          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Tabla de cálculo por columnas</h2><small>Elige la medida: la tabla muestra y colorea solo las columnas que esa fórmula necesita</small></div>
+          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Tabla de cálculo y resultados</h2><small>Elige media, mediana, moda, desviación… : la tabla cambia sus columnas y abajo ves el resultado</small></div>
             <button class="btn btn-sm btn-light rounded-pill" data-manual="mean"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
           <div class="card-body">
             <div class="tbl-bar">
@@ -331,36 +333,13 @@
             </div>
             <div class="col-legend" id="col-legend"></div>
             <div class="tip-box s-volt mt-3 small"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i><strong>Toca cualquier número o encabezado</strong> (subrayado punteado): se abre un popover con la operación paso a paso. Cada dato cae en <strong>[Li, Ls)</strong>; el último intervalo incluye su límite superior. Los cálculos usan precisión completa y se muestran a <strong>2 decimales</strong>.</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. RESULTADOS -->
-      <section class="lesson mb-5" id="s4">
-        <div class="card lesson-card">
-          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Resultados: media, desviación media, varianza y desviación estándar</h2><small>Fórmula → qué usamos de la tabla → sustitución → resultado (2 decimales)</small></div><button class="btn btn-sm btn-light rounded-pill" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button></div>
-          <div class="card-body">
-            <div class="row g-3 mb-3" id="tiles"></div>
+            <h3 class="h6 fw-bold mt-4 mb-2"><i class="bi bi-flag-fill text-danger me-1"></i>Resultados <small class="text-muted fw-normal">· toca una medida para cambiar la tabla de arriba</small></h3>
+            <div class="row g-2 mb-3" id="tiles"></div>
             <div class="measure" id="m-detail"></div>
           </div>
         </div>
       </section>
 
-      <section class="lesson mb-5" id="s4b">
-        <div class="card lesson-card">
-          <div class="lesson-head h-2" role="button" data-bs-toggle="collapse" data-bs-target="#ct-collapse" aria-expanded="false" aria-controls="ct-collapse" style="cursor:pointer">
-            <div class="num">4b</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Media, mediana y moda</h2><small>Las medidas de tendencia central con la misma tabla · haz clic para desplegar</small></div>
-            <i class="bi bi-chevron-down ct-chev fs-4"></i>
-          </div>
-          <div class="collapse" id="ct-collapse">
-            <div class="card-body">
-              <div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><span class="fw-bold small text-muted me-1">Elige qué calcular con los botones ↓</span><span id="ct-btns" class="d-none"></span>
-                <a href="#" class="small ms-auto" data-manual="median"><i class="bi bi-book me-1"></i>Mediana</a><a href="#" class="small" data-manual="mode"><i class="bi bi-book me-1"></i>Moda</a></div>
-              <div id="ct-body"></div>
-            </div>
-          </div>
-        </div>
-      </section>
       </div>
 
       <!-- 6. GRÁFICA -->
@@ -496,8 +475,8 @@
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
     /* ---------- Colores y fórmulas (una sola definición, muestra y población) ---------- */
-    const CL = { n: '#343a40', xi: '#2f9e44', fi: '#d6336c', c: '#0ca678', sup: '#e03131', inf: '#1c7ed6', mean: '#1864ab', dm: '#0c8599', var: '#e8590c', sd: '#7048e8' };
-    const MC = { mean: CL.mean, dm: CL.dm, var: CL.var, sd: CL.sd };
+    const CL = { n: '#343a40', xi: '#2f9e44', fi: '#d6336c', c: '#0ca678', sup: '#e03131', inf: '#1c7ed6', mean: '#1864ab', dm: '#0c8599', var: '#e8590c', sd: '#7048e8', med: '#c26e00', mode: '#5130b9', Lc: '#0c8599' };
+    const MC = { mean: CL.mean, dm: CL.dm, var: CL.var, sd: CL.sd, med: CL.med, mode: CL.mode };
     const K = (c, s) => T`\textcolor{${c}}{${s}}`;
     const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
     const SY = pop => ({ mu: pop ? 'μ' : '\\bar{x}', muH: pop ? 'μ' : 'x̄', N: pop ? 'N' : 'n', v: pop ? 'σ^2' : 's^2', vH: pop ? 'σ²' : 's²', sd: pop ? 'σ' : 's' });
@@ -509,7 +488,9 @@
         dm:   T`${K(CL.dm, 'DM')} = \frac{${SUM} ${f} \, |${x} - ${mu}|}{${N}}`,
         var:  T`${K(CL.var, y.v)} = \frac{${SUM} ${f} (${x} - ${mu})^2}{${den}}`,
         sd:   T`${K(CL.sd, y.sd)} = \sqrt{\frac{${SUM} ${f} (${x} - ${mu})^2}{${den}}}`,
-        alt:  T`${K(CL.var, y.v)} = \frac{${SUM} ${f} ${x}^2 - ${N} \, ${mu}^2}{${den}}`
+        alt:  T`${K(CL.var, y.v)} = \frac{${SUM} ${f} ${x}^2 - ${N} \, ${mu}^2}{${den}}`,
+        med:  F0.med,
+        mode: F0.mode
       };
     }
     const F0 = {
@@ -539,6 +520,8 @@
         dm: [['DM', 'Desviación media', CL.dm], B.sum, B.fi, B.xi, B.mu, B.abs, B.n],
         var: [[y.v, pop ? 'Varianza poblacional' : 'Varianza muestral', CL.var], B.sum, B.fi, B.xi, B.mu, B.dev2, den],
         sd: [[y.sd, pop ? 'Desviación estándar poblacional' : 'Desviación estándar muestral', CL.sd], ['\\sqrt{\\;}', 'Raíz cuadrada: regresa la varianza a las unidades de los datos', '#495057'], B.sum, B.fi, B.xi, B.mu, den],
+        med: [['Me', 'Mediana', CL.med], ['L', 'Límite inferior de la clase mediana (frontera real si activas «Fronteras reales»)', CL.Lc], ['n', 'Total de datos', CL.n], ['F_{ant}', 'Frecuencia acumulada de la clase anterior a la mediana', CL.inf], ['f', 'Frecuencia de la clase mediana', CL.fi], ['c', 'Tamaño (ancho) de clase', CL.c]],
+        mode: [['Mo', 'Moda', CL.mode], ['L', 'Límite inferior de la clase modal', CL.Lc], ['d_1', 'Frecuencia modal menos la de la clase anterior', CL.mode], ['d_2', 'Frecuencia modal menos la de la clase siguiente', CL.mode], ['c', 'Tamaño (ancho) de clase', CL.c]],
         alt: [[y.v, pop ? 'Varianza poblacional' : 'Varianza muestral', CL.var], B.sum, ['f_i x_i^2', 'Frecuencia por la marca de clase al cuadrado', CL.xi], B.n, B.mu, den]
       };
       return L[m];
@@ -618,12 +601,14 @@
       rows.forEach(r => { r.fx = r.x * r.fi; });
       const sfx = rows.reduce((a, r) => a + r.fx, 0), mean = n ? sfx / n : NaN;
       rows.forEach(r => { r.d = r.x - mean; r.ad = Math.abs(r.d); r.sq = r.d * r.d; r.fad = r.fi * r.ad; r.fsq = r.fi * r.sq; });
+      let acc = 0; rows.forEach((r, j) => { acc += r.fi; r.F = acc; r.d1 = r.fi - (j ? rows[j - 1].fi : 0); r.d2 = r.fi - (j < k - 1 ? rows[j + 1].fi : 0); });
       const sad = rows.reduce((a, r) => a + r.fad, 0), ss = rows.reduce((a, r) => a + r.fsq, 0);
       const dm = n ? sad / n : NaN, varS = n > 1 ? ss / (n - 1) : NaN, varP = n ? ss / n : NaN;
       const s = { lo, hi, R, k, c, u, step: { raw, trunc, prod, pure }, rows, n, sfx, mean, sad, ss, dm, varS, varP, sdS: Math.sqrt(varS), sdP: Math.sqrt(varP), real, closedEnd,
         fine: [lo, hi].some(v => Math.abs(v * p - Math.round(v * p)) > 1e-7) };
       s.v = S.pop ? varP : varS; s.sd = S.pop ? s.sdP : s.sdS;
-      s.val = { mean, dm, var: s.v, sd: s.sd };
+      s.md = cMed(s); s.mo = cMode(s);
+      s.val = { mean, dm, var: s.v, sd: s.sd, med: s.md.val, mode: s.mo.val };
       return s;
     }
 
@@ -632,7 +617,9 @@
       { k: 'mean', name: 'Media', ic: 'bi-graph-up' },
       { k: 'dm', name: 'Desviación media', ic: 'bi-arrows-expand' },
       { k: 'var', name: 'Varianza', ic: 'bi-bounding-box-circles' },
-      { k: 'sd', name: 'Desviación estándar', ic: 'bi-distribute-horizontal' }
+      { k: 'sd', name: 'Desviación estándar', ic: 'bi-distribute-horizontal' },
+      { k: 'med', name: 'Mediana', ic: 'bi-distribute-vertical' },
+      { k: 'mode', name: 'Moda', ic: 'bi-bar-chart-fill' }
     ];
     const MAN = {
       sturges: { t: 'Regla de Sturges', ic: 'bi-magic', f: () => [F0.sturges], leg: () => [[['k', 'Número de clases sugerido (se redondea al entero más cercano)', '#0c8599'], ['n', 'Tamaño de la muestra', CL.n]]],
@@ -720,85 +707,42 @@
     };
     for (const [k, v] of Object.entries(MX)) { if (MAN[k]) Object.assign(MAN[k], v); else MAN[k] = v; }
 
-    /* ---------- Media, mediana y moda (sección colapsada) ---------- */
-    Object.assign(CL, { med: '#c26e00', mode: '#5130b9', Lc: '#0c8599' });
+    /* ---------- Mediana y moda (datos agrupados, misma tabla) ---------- */
     Object.assign(F0, {
       med: T`${K(CL.med, 'Me')} = ${K(CL.Lc, 'L')} + \frac{n/2 - ${K(CL.inf, 'F_{ant}')}}{${K(CL.fi, 'f')}} \cdot ${K(CL.c, 'c')}`,
       mode: T`${K(CL.mode, 'Mo')} = ${K(CL.Lc, 'L')} + \frac{d_1}{d_1 + d_2} \cdot ${K(CL.c, 'c')} \qquad d_1 = f - f_{ant} \quad d_2 = f - f_{post}`,
       rel: T`\text{Sesgo a la derecha: } Mo < Me < \bar{x} \qquad \text{Simétrica: } \bar{x} \approx Me \approx Mo \qquad \text{Sesgo a la izquierda: } \bar{x} < Me < Mo`
     });
     function cMed(s) {
-      const half = s.n / 2; let i = s.rows.findIndex(r => cumF(s, r.j) >= half); if (i < 0) i = s.rows.length - 1;
-      const r = s.rows[i], Fa = i ? cumF(s, i - 1) : 0, L = r10(r.Li - s.u / 2), val = r.fi ? L + (half - Fa) / r.fi * s.c : L;
-      return { half, i, Fa, f: r.fi, L, val };
+      const half = s.n / 2; let i = s.rows.findIndex(r => r.F >= half); if (i < 0) i = s.rows.length - 1;
+      const r = s.rows[i], Fa = i ? s.rows[i - 1].F : 0, val = r.fi ? r.L + (half - Fa) / r.fi * r.w : r.L;
+      return { half, i, Fa, f: r.fi, L: r.L, w: r.w, val };
     }
-    const cumF = (s, j) => s.rows.slice(0, j + 1).reduce((a, r) => a + r.fi, 0);
     function cMode(s) {
-      const mx = Math.max(...s.rows.map(r => r.fi)), idx = s.rows.map((r, j) => r.fi === mx ? j : -1).filter(j => j >= 0), i = idx[0];
-      const r = s.rows[i], fa = i ? s.rows[i - 1].fi : 0, fp = i < s.rows.length - 1 ? s.rows[i + 1].fi : 0, d1 = r.fi - fa, d2 = r.fi - fp, L = r10(r.Li - s.u / 2);
-      const val = d1 + d2 > 0 ? L + d1 / (d1 + d2) * s.c : L + s.c / 2;
-      return { i, idx, f: r.fi, fa, fp, d1, d2, L, val, multi: idx.length > 1, flat: s.rows.every(q => q.fi === mx) };
+      const mx = Math.max(...s.rows.map(r => r.fi)), idx = s.rows.map((r, j) => r.fi === mx ? j : -1).filter(j => j >= 0), i = idx[0], r = s.rows[i];
+      const fa = i ? s.rows[i - 1].fi : 0, fp = i < s.rows.length - 1 ? s.rows[i + 1].fi : 0, d1 = r.fi - fa, d2 = r.fi - fp;
+      const val = d1 + d2 > 0 ? r.L + d1 / (d1 + d2) * r.w : r.L + r.w / 2;
+      return { i, idx, f: r.fi, fa, fp, d1, d2, L: r.L, w: r.w, val, multi: idx.length > 1 };
     }
-    const CT = { m: 'med', A: false };
-    const CTM = [['mean', 'Media', CL.mean, 'bi-graph-up'], ['med', 'Mediana', CL.med, 'bi-distribute-vertical'], ['mode', 'Moda', CL.mode, 'bi-bar-chart-fill']];
-    function renderCentral(s) {
-      const box = $('#ct-body'); if (!box) return;
-      if (!s || !(s.n >= 2)) { box.innerHTML = '<div class="text-muted">Escribe límites válidos y frecuencias para ver estas medidas.</div>'; return; }
-      const m = CT.m, A = CT.A, md = cMed(s), mo = cMode(s), f = fmt, col = Object.fromEntries(CTM.map(q => [q[0], q[2]]))[m];
-      $('#ct-btns').innerHTML = CTM.map(([k, n, c, ic]) => `<button class="mbtn ${m === k ? 'on' : ''}" data-ctm="${k}" style="--c:${c}"><i class="bi ${ic} me-1"></i>${n}</button>`).join('');
-      const an = i => A ? `style="animation:ctIn .45s ${i * .07}s both"` : '';
-      const H = (t, c) => `<th style="background:${c}">${t}</th>`;
-      let head, body, foot, steps;
-      if (m === 'mean') {
-        head = H('Clase', '#364fc7') + H('x<sub>i</sub>', CL.xi) + H('f<sub>i</sub>', CL.fi) + H('f<sub>i</sub> · x<sub>i</sub>', CL.mean);
-        body = s.rows.map((r, j) => `<tr ${an(j)}><td>${lab(r)}</td><td>${f(r.x)}</td><td>${r.fi}</td><td style="background:#e7f5ff;font-weight:700">${f(r.fx, 3)}</td></tr>`).join('');
-        foot = `<tr><td>Σ</td><td></td><td>${s.n}</td><td>${f(s.sfx, 3)}</td></tr>`;
-        steps = `<div class="usebox" style="--c:${CL.mean}"><strong>1.</strong> Cada clase se resume con su marca $x_i$ y se multiplica por su frecuencia.</div><div class="usebox" style="--c:${CL.mean}"><strong>2.</strong> Se suman los productos y se divide entre $n$:${fd(T`\bar{x} = \frac{\sum f_i x_i}{n} = \frac{${f(s.sfx, 3)}}{${s.n}} = ${K(CL.mean, f2(s.mean))}`)}</div>`;
-      } else if (m === 'med') {
-        head = H('Clase', '#364fc7') + H('f<sub>i</sub>', CL.fi) + H('F (acumulada)', CL.med);
-        body = s.rows.map((r, j) => `<tr ${an(j)} class="${j === md.i ? 'ct-sel' : ''}"><td>${lab(r)}${j === md.i ? ` <span class="badge" style="background:${CL.med}">clase mediana</span>` : ''}</td><td ${j === md.i ? 'style="background:#ffe8cc;font-weight:800"' : ''}>${r.fi}${j === md.i ? '<div class="small" style="color:#c2410c">f</div>' : ''}</td><td ${j === md.i - 1 ? 'style="background:#d0ebff;font-weight:800"' : ''}>${cumF(s, j)}${j === md.i - 1 ? '<div class="small" style="color:#1864ab">F<sub>ant</sub></div>' : ''}</td></tr>`).join('');
-        foot = `<tr><td>Total</td><td>${s.n}</td><td>${s.n}</td></tr>`;
-        steps = `<div class="usebox" style="--c:${CL.n}"><strong>1. Posición:</strong> la mediana deja la mitad de los datos a cada lado.${fd(T`\frac{n}{2} = \frac{${s.n}}{2} = ${f(md.half, 3)}`)}</div>
-          <div class="usebox" style="--c:${CL.Lc}"><strong>2. Clase mediana:</strong> es la primera cuya $F$ es $\\ge ${f(md.half, 3)}$ → <strong>${lab(s.rows[md.i])}</strong>. Con fronteras reales: $L = ${f(s.rows[md.i].Li)} - ${f(s.u / 2)} = ${f(md.L)}$, $F_{ant} = ${md.Fa}$, $f = ${md.f}$, $c = ${f(s.c)}$.</div>
-          <div class="usebox" style="--c:${CL.med}"><strong>3. Sustituir:</strong>${fd(T`Me = ${f(md.L)} + \frac{${f(md.half, 3)} - ${md.Fa}}{${md.f}} \cdot ${f(s.c)} = ${K(CL.med, f2(md.val))}`)}</div>`;
-      } else {
-        head = H('Clase', '#364fc7') + H('f<sub>i</sub>', CL.fi) + H('f − f<sub>ant</sub>', CL.mode) + H('f − f<sub>post</sub>', CL.mode);
-        body = s.rows.map((r, j) => { const on = j === mo.i, fa = j ? s.rows[j - 1].fi : 0, fp = j < s.rows.length - 1 ? s.rows[j + 1].fi : 0; return `<tr ${an(j)} class="${on ? 'ct-sel' : ''}"><td>${lab(r)}${on ? ` <span class="badge" style="background:${CL.mode}">clase modal</span>` : mo.idx.includes(j) ? ' <span class="badge bg-secondary">también modal</span>' : ''}</td><td ${on ? 'style="background:#e5dbff;font-weight:800"' : ''}>${r.fi}</td><td ${on ? 'style="background:#f3f0ff;font-weight:800"' : ''}>${on ? r.fi - fa : '·'}</td><td ${on ? 'style="background:#f3f0ff;font-weight:800"' : ''}>${on ? r.fi - fp : '·'}</td></tr>`; }).join('');
-        foot = `<tr><td>Total</td><td>${s.n}</td><td></td><td></td></tr>`;
-        steps = `<div class="usebox" style="--c:${CL.mode}"><strong>1. Clase modal:</strong> la de mayor frecuencia ($f = ${mo.f}$) → <strong>${lab(s.rows[mo.i])}</strong>.${mo.multi ? ' <em>Hay más de una clase con esa frecuencia (distribución multimodal); se desarrolla la primera.</em>' : ''}</div>
-          <div class="usebox" style="--c:${CL.Lc}"><strong>2. Diferencias:</strong> $d_1 = f - f_{ant} = ${mo.f} - ${mo.fa} = ${mo.d1}$ y $d_2 = f - f_{post} = ${mo.f} - ${mo.fp} = ${mo.d2}$. Frontera real $L = ${f(mo.L)}$.</div>
-          <div class="usebox" style="--c:${CL.mode}"><strong>3. Sustituir:</strong>${mo.d1 + mo.d2 > 0 ? fd(T`Mo = ${f(mo.L)} + \frac{${mo.d1}}{${mo.d1} + ${mo.d2}} \cdot ${f(s.c)} = ${K(CL.mode, f2(mo.val))}`) : `<div class="small">Las dos diferencias valen 0 (hay una meseta): se toma la marca de clase ${f2(mo.val)}.</div>`}${mo.flat ? '<div class="small text-danger">Todas las clases tienen la misma frecuencia: no hay una moda única.</div>' : ''}</div>`;
-      }
-      const sk = Math.abs(s.mean - md.val) < 0.1 * Math.max(s.sdS, 1e-9) ? 'simétrica (media ≈ mediana)' : s.mean > md.val ? 'sesgada a la derecha (media > mediana)' : 'sesgada a la izquierda (media < mediana)';
-      const chips = [['mean', 'x̄', s.mean, CL.mean], ['med', 'Me', md.val, CL.med], ['mode', 'Mo', mo.val, CL.mode]].map(([k, l, v, c]) => `<button class="mbtn ${m === k ? 'on' : ''}" data-ctm="${k}" style="--c:${c}">${l} = ${f2(v)}</button>`).join('');
-      box.innerHTML = `<div class="d-flex flex-wrap gap-2 mb-3">${chips}</div>
-        <div class="table-responsive rounded-3 border mb-3"><table class="table table-bordered freq-table mb-0"><thead><tr>${head}</tr></thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table></div>
-        <div class="row g-3"><div class="col-lg-6">${steps}</div><div class="col-lg-6"><div class="panel p-2">${ctPlot(s, md, mo)}</div>
-        <div class="tip-box s-amp small mt-2"><i class="bi bi-compass-fill me-1"></i><strong>Forma:</strong> ${sk}. <div class="mt-1 text-muted">Con fronteras reales las fórmulas de mediana y moda usan $L = L_i - u/2$ (u = ${f(s.u)}).</div></div></div></div>`;
-      math(box); CT.A = false;
+    function skewTxt(s) {
+      const me = s.val.med, d = s.mean - me, tol = 0.1 * Math.max(s.sdS || 0, 1e-9);
+      return Math.abs(d) < tol ? 'distribución aproximadamente <strong>simétrica</strong> (x̄ ≈ Me).' : d > 0 ? 'sesgo a la <strong>derecha</strong> (x̄ &gt; Me): la cola larga está hacia los valores altos.' : 'sesgo a la <strong>izquierda</strong> (x̄ &lt; Me): la cola larga está hacia los valores bajos.';
     }
-    function ctPlot(s, md, mo) {
-      const n = s.rows.length, W = 640, H = 250, ml = 38, mr = 14, mt = 58, mb = 38, x0 = s.rows[0].Li - s.u / 2, x1 = s.rows[n - 1].Ls - s.u / 2, mx = Math.max(...s.rows.map(r => r.fi), 1) * 1.12, sx = v => ml + (v - x0) / (x1 - x0) * (W - ml - mr), sy = v => H - mb - v / mx * (H - mt - mb);
-      let g = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img">`;
-      s.rows.forEach((r, j) => { const a = r10(r.Li - s.u / 2), b = r10(r.Ls - s.u / 2), on = (CT.m === 'med' && j === md.i) || (CT.m === 'mode' && j === mo.i); g += `<rect class="ct-bar" style="--i:${j}" x="${sx(a) + 1}" y="${sy(r.fi)}" width="${sx(b) - sx(a) - 2}" height="${sy(0) - sy(r.fi)}" rx="3" fill="${on ? (CT.m === 'med' ? '#ffa94d' : '#b197fc') : '#a5d8ff'}" stroke="${on ? (CT.m === 'med' ? CL.med : CL.mode) : '#74c0fc'}" stroke-width="${on ? 2.4 : 1}"/><text x="${(sx(a) + sx(b)) / 2}" y="${sy(r.fi) - 5}" text-anchor="middle" font-size="11" font-weight="800" fill="#334155">${r.fi}</text><text x="${(sx(a) + sx(b)) / 2}" y="${H - mb + 14}" text-anchor="middle" font-size="9.5" fill="#64748b">${fmt(a)}</text>`; });
-      g += `<line x1="${ml}" x2="${W - mr}" y1="${sy(0)}" y2="${sy(0)}" stroke="#334155" stroke-width="1.8"/>`;
-      const L = [['mean', 'x̄', s.mean, CL.mean], ['med', 'Me', md.val, CL.med], ['mode', 'Mo', mo.val, CL.mode]].sort((p, q) => p[2] - q[2]);
-      L.forEach(([k, l, v, c], i) => { const on = CT.m === k; g += `<g class="ct-vl" style="--i:${i}"><line x1="${sx(v)}" x2="${sx(v)}" y1="${mt - 10 - (2 - i) * 14}" y2="${sy(0)}" stroke="${c}" stroke-width="${on ? 4 : 2.2}" stroke-dasharray="${on ? '0' : '6 4'}"/><text x="${sx(v)}" y="${mt - 14 - (2 - i) * 14}" text-anchor="middle" font-size="12" font-weight="800" fill="${c}" paint-order="stroke" stroke="#fff" stroke-width="3">${l}=${f2(v)}</text></g>`; });
-      return g + '</svg>';
-    }
-    document.addEventListener('click', e => { const b = e.target.closest('[data-ctm]'); if (b) { CT.m = b.dataset.ctm; CT.A = true; renderCentral(ST); } });
+    const DET = { open: false };
+    document.addEventListener('shown.bs.collapse', e => { if (e.target.id === 'det-c') DET.open = true; });
+    document.addEventListener('hidden.bs.collapse', e => { if (e.target.id === 'det-c') DET.open = false; });
     /* manual */
     Object.assign(MAN, {
-      median: { t: 'Mediana', ic: 'bi-distribute-vertical', f: () => [F0.med], leg: () => [[['L', 'Frontera real inferior de la clase mediana ($L_i - u/2$)', CL.Lc], ['n', 'Total de datos', CL.n], ['F_{ant}', 'Frecuencia acumulada de la clase anterior a la mediana', CL.inf], ['f', 'Frecuencia de la clase mediana', CL.fi], ['c', 'Tamaño (ancho) de clase', CL.c]]],
+      median: { t: 'Mediana', ic: 'bi-distribute-vertical', f: () => [F0.med], leg: () => [[['L', 'Límite inferior de la clase mediana (frontera real si activas «Fronteras reales»)', CL.Lc], ['n', 'Total de datos', CL.n], ['F_{ant}', 'Frecuencia acumulada de la clase anterior a la mediana', CL.inf], ['f', 'Frecuencia de la clase mediana', CL.fi], ['c', 'Tamaño (ancho) de clase', CL.c]]],
         def: 'La <strong>mediana</strong> es el valor que deja <strong>la mitad de los datos por debajo y la otra mitad por encima</strong>: es el dato «de en medio» cuando están ordenados. Con datos agrupados se estima por interpolación dentro de la <em>clase mediana</em>.',
         thmT: 'Mínimo de la desviación absoluta y resistencia', thm: 'La mediana es el valor $c$ que hace <strong>mínima</strong> la suma $\\sum f_i |x_i - c|$ (por eso aparece junto a la desviación media). Además es <strong>resistente</strong>: un dato extremo casi no la mueve, mientras que la media sí. Es igual a $Q_2$, $D_5$ y $P_{50}$.',
         how: ['Calcula $n/2$.', 'Acumula las frecuencias ($F$) y busca la primera clase con $F \\ge n/2$: es la clase mediana.', 'Toma su frontera real inferior $L$, la $F$ anterior, su frecuencia $f$ y el ancho $c$.', 'Sustituye en $Me = L + \\frac{n/2 - F_{ant}}{f}\\,c$.'],
-        ex: s => { const d = cMed(s); return fd(T`Me = ${fmt(d.L)} + \frac{${fmt(d.half, 3)} - ${d.Fa}}{${d.f}} \cdot ${fmt(s.c)} = ${f2(d.val)}`); } },
-      mode: { t: 'Moda', ic: 'bi-bar-chart-fill', f: () => [F0.mode, F0.rel], leg: () => [[['L', 'Frontera real inferior de la clase modal', CL.Lc], ['d_1', 'Frecuencia modal menos la de la clase anterior', CL.mode], ['d_2', 'Frecuencia modal menos la de la clase siguiente', CL.mode], ['c', 'Tamaño de clase', CL.c]]],
+        ex: s => { const d = cMed(s); return fd(T`Me = ${fmt(d.L)} + \frac{${fmt(d.half, 3)} - ${d.Fa}}{${d.f}} \cdot ${fmt(d.w)} = ${f2(d.val)}`); } },
+      mode: { t: 'Moda', ic: 'bi-bar-chart-fill', f: () => [F0.mode, F0.rel], leg: () => [[['L', 'Límite inferior de la clase modal (frontera real si activas «Fronteras reales»)', CL.Lc], ['d_1', 'Frecuencia modal menos la de la clase anterior', CL.mode], ['d_2', 'Frecuencia modal menos la de la clase siguiente', CL.mode], ['c', 'Tamaño de clase', CL.c]]],
         def: 'La <strong>moda</strong> es el valor que <strong>más se repite</strong>; en datos agrupados es el punto de la <em>clase modal</em> (la de mayor frecuencia) donde se estima el máximo del histograma. Una distribución puede tener una moda (unimodal), dos (bimodal) o varias.',
         thmT: 'Posición de la moda dentro de la clase', thm: 'La moda se ubica más cerca de la clase vecina que tiene <strong>mayor</strong> frecuencia: si $d_1 < d_2$ (la anterior es más alta) se corre hacia la izquierda; si $d_1 > d_2$, hacia la derecha. Para distribuciones unimodales poco sesgadas se cumple la relación empírica $\\bar{x} - Mo \\approx 3\\,(\\bar{x} - Me)$.',
         how: ['Encuentra la clase con mayor frecuencia (clase modal).', 'Calcula $d_1 = f - f_{ant}$ y $d_2 = f - f_{post}$ (0 si no hay vecina).', 'Toma la frontera real inferior $L$ y el ancho $c$.', 'Sustituye en $Mo = L + \\frac{d_1}{d_1+d_2}\\,c$.', 'Compara con la media y la mediana para describir la forma.'],
-        ex: s => { const d = cMode(s); return d.d1 + d.d2 > 0 ? fd(T`Mo = ${fmt(d.L)} + \frac{${d.d1}}{${d.d1} + ${d.d2}} \cdot ${fmt(s.c)} = ${f2(d.val)}`) : '<div class="small">Meseta: se toma la marca de clase.</div>'; } }
+        ex: s => { const d = cMode(s); return d.d1 + d.d2 > 0 ? fd(T`Mo = ${fmt(d.L)} + \frac{${d.d1}}{${d.d1} + ${d.d2}} \cdot ${fmt(d.w)} = ${f2(d.val)}`) : '<div class="small">Meseta: se toma la marca de clase.</div>'; } }
     });
     function showManual(key) {
       hideAllPops();
@@ -857,6 +801,9 @@
         return {
           ivl: reg(`${t}: intervalo`, ivl, '#fcc419'),
           xi: reg(`${t}: marca de clase`, mid, CL.xi),
+          F: reg(`${t}: frecuencia acumulada`, [['Suma de las frecuencias hasta esta clase', T`F = ${sumList(s.rows.slice(0, j + 1), q => q.fi)} = ${r.F}`, 'res'], 'La clase mediana es la primera cuya F llega a n/2.'], CL.med),
+          d1: reg(`${t}: f − f anterior`, [['Frecuencia de la clase menos la anterior', T`f - f_{ant} = ${r.fi} - ${j ? s.rows[j - 1].fi : 0} = ${r.d1}`, 'res'], ...(j ? [] : ['No hay clase anterior: se toma 0.'])], CL.mode),
+          d2: reg(`${t}: f − f siguiente`, [['Frecuencia de la clase menos la siguiente', T`f - f_{post} = ${r.fi} - ${j < s.k - 1 ? s.rows[j + 1].fi : 0} = ${r.d2}`, 'res'], ...(j < s.k - 1 ? [] : ['No hay clase siguiente: se toma 0.'])], CL.mode),
           fx: reg(`${t}: xi · fi`, [['Marca de clase por frecuencia', T`x_i \cdot f_i = ${ngx(r.x)} \cdot ${r.fi} = ${f2(r.fx)}`, 'res']], CL.mean),
           d: reg(`${t}: desviación`, [['Marca de clase menos la media', T`x_i - ${y.mu} = ${ngx(r.x)} - ${mu} = ${f2(r.d)}`, 'res'], r.d < 0 ? 'Es negativa: la clase está a la izquierda de la media.' : 'Es positiva: la clase está a la derecha de la media.'], CL.var),
           ad: reg(`${t}: valor absoluto`, [['Se quita el signo de la desviación', T`|x_i - ${y.mu}| = |{${f2(r.d)}}| = ${f2(r.ad)}`, 'res']], CL.dm),
@@ -874,6 +821,9 @@
       };
       const M = y.muH, mm = S.pop ? 'poblacional' : 'muestral';
       HP = {
+        F: reg('Columna F (acumulada)', [['Se van sumando las frecuencias', T`F_j = f_1 + f_2 + \cdots + f_j`], ['La última vale el total', T`F_k = ${y.N}`, 'res']], CL.med),
+        d1: reg('Columna f − f anterior', [['Diferencia con la clase de la izquierda', T`d_1 = f - f_{ant}`, 'res'], 'Solo importa en la clase modal (la de mayor f).'], CL.mode),
+        d2: reg('Columna f − f siguiente', [['Diferencia con la clase de la derecha', T`d_2 = f - f_{post}`, 'res'], 'Solo importa en la clase modal (la de mayor f).'], CL.mode),
         ivl: reg(R ? 'Fronteras reales' : 'Intervalos', [['Límite inferior de cada clase', T`L_i = X_{inf} + (j-1) \cdot c`], ['Límite superior = inferior + c', T`L_s = L_i + c`], ...(R ? [['Fronteras reales', T`F_{inf} = L_i - \frac{u}{2}`, 'res'], ['', T`F_{sup} = L_s - \frac{u}{2}`, 'res'], `Aquí u = ${f(s.u)}.`] : [])], '#fcc419'),
         fi: reg('Frecuencia fi', [['Número de observaciones de la clase', T`f_i`], 'Escríbela en la columna rosa: la suma de todas es el tamaño n.'], CL.fi),
         xi: reg(R ? 'Marca de clase real' : 'Marca de clase', [['Punto medio de la clase', R ? T`x_i = \frac{F_{inf} + F_{sup}}{2}` : T`x_i = \frac{L_i + L_s}{2}`, 'res']], CL.xi),
@@ -887,26 +837,27 @@
     }
 
     /* ---------- Tabla por columnas ---------- */
-    const COLS = { mean: ['fx'], dm: ['fx', 'ad', 'fad'], var: ['fx', 'd', 'sq', 'fsq'], sd: ['fx', 'd', 'sq', 'fsq'] };
+    const COLS = { mean: ['fx'], dm: ['fx', 'ad', 'fad'], var: ['fx', 'd', 'sq', 'fsq'], sd: ['fx', 'd', 'sq', 'fsq'], med: ['F'], mode: ['d1', 'd2'] };
     function renderTable(s) {
       const R = s.real, f = fmt, y = SY(S.pop), M = y.muH, cols = COLS[S.m], lastC = cols[cols.length - 1];
-      const TH = { fx: 'x<sub>i</sub> · f<sub>i</sub>', d: `x<sub>i</sub> − ${M}`, ad: `|x<sub>i</sub> − ${M}|`, fad: `f<sub>i</sub> · |x<sub>i</sub> − ${M}|`, sq: `(x<sub>i</sub> − ${M})²`, fsq: `f<sub>i</sub> · (x<sub>i</sub> − ${M})²` };
+      const TH = { fx: 'x<sub>i</sub> · f<sub>i</sub>', d: `x<sub>i</sub> − ${M}`, ad: `|x<sub>i</sub> − ${M}|`, fad: `f<sub>i</sub> · |x<sub>i</sub> − ${M}|`, F: 'F<sub>i</sub><small>frec. acumulada</small>', d1: 'f − f<sub>ant</sub><small>d<sub>1</sub></small>', d2: 'f − f<sub>post</sub><small>d<sub>2</sub></small>', sq: `(x<sub>i</sub> − ${M})²`, fsq: `f<sub>i</sub> · (x<sub>i</sub> − ${M})²` };
       const TT = { fx: s.sfx, fad: s.sad, fsq: s.ss }, TK = { fx: 'fx', fad: 'fad', fsq: 'fsq' };
       $('#tbl-wrap').dataset.m = S.m;
       $('#tbl thead').innerHTML = `<tr><th>Clase</th><th class="pp" data-pop="${HP.ivl}" tabindex="0" role="button">${R ? 'Fronteras reales<small>Li − u/2 , Ls − u/2</small>' : 'Intervalos<small>Li – Ls</small>'} <i class="bi bi-question-circle"></i></th>`
         + `<th class="cb-fi pp" data-pop="${HP.fi}" tabindex="0" role="button">Frecuencia<small>f<sub>i</sub> (editable)</small></th><th class="cb-x pp" data-pop="${HP.xi}" tabindex="0" role="button">${R ? 'Marca real' : 'Marca de clase'}<small>x<sub>i</sub></small></th>`
         + cols.map((c, ci) => `<th class="mc pp${c === lastC ? ' last' : ''}" style="--ci:${ci}" data-pop="${HP[c]}" tabindex="0" role="button">${TH[c]} <i class="bi bi-question-circle"></i></th>`).join('') + '</tr>';
       const td = (id, inner, c = '', st = '') => `<td class="pp ${c}" ${st ? `style="${st}"` : ''} data-pop="${id}" tabindex="0" role="button">${inner}</td>`;
-      $('#tbl tbody').innerHTML = s.rows.map((r, j) => `<tr data-j="${j}"><td>${j + 1}</td>
+      const hl = S.m === 'med' ? s.md.i : S.m === 'mode' ? s.mo.i : -1;
+      $('#tbl tbody').innerHTML = s.rows.map((r, j) => `<tr data-j="${j}" class="${j === hl ? 'ct-sel' : ''}"><td>${j + 1}</td>
         ${td(RP[j].ivl, `<span class="mono">${R ? labF(r) : lab(r)}</span>`)}
         <td class="cb-fi"><input class="fi-in" type="text" inputmode="numeric" autocomplete="off" data-j="${j}" value="${r.fi}" aria-label="Frecuencia de la clase ${j + 1}"></td>
         ${td(RP[j].xi, f(r.x), 'cb-x')}
-        ${cols.map((c, ci) => td(RP[j][c], f2(r[c]), 'mc' + (c === lastC ? ' last' : ''), `--ci:${ci};--ri:${j}`)).join('')}</tr>`).join('');
+        ${cols.map((c, ci) => td(RP[j][c], ['F', 'd1', 'd2'].includes(c) ? r[c] : f2(r[c]), 'mc' + (c === lastC ? ' last' : ''), `--ci:${ci};--ri:${j}`)).join('')}</tr>`).join('');
       $('#tbl tfoot').innerHTML = `<tr><td colspan="2">Total</td>${td(TOT.fi, s.n, 'cb-fi')}<td class="cb-x">—</td>${cols.map((c, ci) => TT[c] !== undefined ? td(TOT[TK[c]], f2(TT[c]), 'mc', `--ci:${ci};--ri:${s.k}`) : `<td class="mc" style="--ci:${ci}">—</td>`).join('')}</tr>`;
       const names = cols.map(c => TH[c]);
       $('#col-legend').innerHTML = `<span><i style="background:${CL.fi}"></i>f<sub>i</sub> (la escribes tú)</span><span><i style="background:${CL.xi}"></i>x<sub>i</sub> (marca de clase)</span>`
         + names.map((t, i) => `<span><i style="background:${MC[S.m]}"></i>${i + 1 + 0 ? t : t}</span>`).join('')
-        + (cols.length > 1 ? `<span class="fw-bold" style="color:${CL.mean}">${M} = ${f2(s.mean)} (sale de Σ x<sub>i</sub>·f<sub>i</sub> / ${y.N})</span>` : '');
+        + (['dm', 'var', 'sd'].includes(S.m) ? `<span class="fw-bold" style="color:${CL.mean}">${M} = ${f2(s.mean)} (sale de Σ x<sub>i</sub>·f<sub>i</sub> / ${y.N})</span>` : '');
       const t = $('#tbl'); t.classList.remove('anim'); if (ANIM) { void t.offsetWidth; t.classList.add('anim'); }
     }
 
@@ -927,8 +878,8 @@
     const use = (c, h) => `<div class="usebox" style="--c:${c}">${h}</div>`;
     const chip = (c, s) => `<span class="vchip" style="--c:${c}">${s}</span>`;
     function renderTiles(s) {
-      const y = SY(S.pop), sym = { mean: y.muH, dm: 'DM', var: y.vH, sd: y.sd };
-      $('#tiles').innerHTML = MS.map(m => `<div class="col-6 col-lg-3"><div class="tile ${S.m === m.k ? 'on' : ''}" data-mm="${m.k}" style="--c:${MC[m.k]}" tabindex="0" role="button" title="Ver el procedimiento de ${m.name.toLowerCase()}"><div class="tl"><i class="bi ${m.ic} me-1"></i>${m.name}</div><div class="tv">${f2(s.val[m.k])}</div><div class="ts">${sym[m.k]} · ${S.pop ? 'población' : 'muestra'}</div></div></div>`).join('');
+      const y = SY(S.pop), sym = { mean: y.muH, dm: 'DM', var: y.vH, sd: y.sd, med: 'Me', mode: 'Mo' };
+      $('#tiles').innerHTML = MS.map(m => `<div class="col-6 col-md-4 col-xl-2"><div class="tile ${S.m === m.k ? 'on' : ''}" data-mm="${m.k}" style="--c:${MC[m.k]}" tabindex="0" role="button" title="Ver el procedimiento de ${m.name.toLowerCase()}"><div class="tl"><i class="bi ${m.ic} me-1"></i>${m.name}</div><div class="tv">${f2(s.val[m.k])}</div><div class="ts">${sym[m.k]} · ${m.k === 'med' || m.k === 'mode' ? 'datos agrupados' : S.pop ? 'población' : 'muestra'}</div></div></div>`).join('');
     }
     function renderDetail(s) {
       const m = S.m, c = MC[m], y = SY(S.pop), F = FF(S.pop), f = fmt, meta = MS.find(q => q.k === m);
@@ -963,6 +914,21 @@
         sub = [T`${y.v} = \frac{${tSq}}{${dd}}`, T`${y.v} = \frac{${pp(ssId, f2(s.ss))}}{${ddv}}`];
         res = reg('Resultado', [['Suma entre ' + (S.pop ? 'N' : 'n − 1'), T`${y.v} = \frac{${f2(s.ss)}}{${dv}} = ${f(s.v, 6)}`], ['A 2 decimales', T`${y.v} = ${f2(s.v)}`, 'res'], 'Está en unidades al cuadrado.'], CL.var);
         resTex = T`${y.v} = ${pp(res, f2(s.v))}`;
+      } else if (m === 'med') {
+        const d = s.md, rr = s.rows[d.i], part = (d.half - d.Fa) / d.f * d.w;
+        const hId = reg('Posición de la mediana', [['Mitad de los datos', T`\frac{n}{2} = \frac{${nV}}{2} = ${f(d.half, 3)}`, 'res'], 'La clase mediana es la primera cuya frecuencia acumulada F llega a ese valor.'], CL.n);
+        ttl = 'Mediana (Me)';
+        tab = `${chip(CL.n, `$\\frac{n}{2} = ${f(d.half, 3)}$`)} y la <strong>clase mediana</strong> <span class="mono">${s.real ? labF(rr) : lab(rr)}</span> (la primera con $F \\ge ${f(d.half, 3)}$, columna <strong>F</strong>): ${chip(CL.Lc, `$L = ${f(d.L)}$`)}, ${chip(CL.inf, `$F_{ant} = ${d.Fa}$`)}, ${chip(CL.fi, `$f = ${d.f}$`)} y ${chip(CL.c, `$c = ${f(d.w)}$`)}.`;
+        sub = [T`Me = ${f(d.L)} + \frac{${pp(hId, f(d.half, 3))} - ${d.Fa}}{${d.f}} \cdot ${f(d.w)}`, T`Me = ${f(d.L)} + \frac{${f(d.half - d.Fa, 3)}}{${d.f}} \cdot ${f(d.w)} = ${f(d.L)} + ${f(part, 4)}`];
+        res = reg('Resultado', [['Se suma a L la parte proporcional', T`Me = ${f(d.L)} + ${f(part, 6)} = ${f(d.val, 6)}`], ['A 2 decimales', T`Me = ${f2(d.val)}`, 'res'], 'La mediana coincide con Q₂, D₅ y P₅₀.'], CL.med);
+        resTex = T`Me = ${pp(res, f2(d.val))}`;
+      } else if (m === 'mode') {
+        const d = s.mo, rr = s.rows[d.i], q = d.d1 + d.d2 > 0, part = q ? d.d1 / (d.d1 + d.d2) * d.w : d.w / 2;
+        ttl = 'Moda (Mo)';
+        tab = `La <strong>clase modal</strong> <span class="mono">${s.real ? labF(rr) : lab(rr)}</span> (mayor frecuencia, $f = ${d.f}$): ${chip(CL.Lc, `$L = ${f(d.L)}$`)}, ${chip(CL.mode, `$d_1 = ${d.f} - ${d.fa} = ${d.d1}$`)}, ${chip(CL.mode, `$d_2 = ${d.f} - ${d.fp} = ${d.d2}$`)} (columnas <strong>f − f<sub>ant</sub></strong> y <strong>f − f<sub>post</sub></strong>) y ${chip(CL.c, `$c = ${f(d.w)}$`)}.${d.multi ? ' <em>Hay varias clases con la frecuencia máxima (distribución multimodal): se desarrolla la primera.</em>' : ''}`;
+        sub = q ? [T`Mo = ${f(d.L)} + \frac{${d.d1}}{${d.d1} + ${d.d2}} \cdot ${f(d.w)}`, T`Mo = ${f(d.L)} + \frac{${d.d1}}{${d.d1 + d.d2}} \cdot ${f(d.w)} = ${f(d.L)} + ${f(part, 4)}`] : [T`d_1 + d_2 = 0 \;\Rightarrow\; Mo = ${f(d.L)} + \frac{${f(d.w)}}{2}`];
+        res = reg('Resultado', [['Se suma a L la parte proporcional', T`Mo = ${f(d.L)} + ${f(part, 6)} = ${f(d.val, 6)}`], ['A 2 decimales', T`Mo = ${f2(d.val)}`, 'res'], ...(q ? [] : ['Meseta: se toma el centro de la clase.'])], CL.mode);
+        resTex = T`Mo = ${pp(res, f2(d.val))}`;
       } else {
         ttl = S.pop ? 'Desviación estándar poblacional (σ)' : 'Desviación estándar muestral (s)';
         const vId = reg('Varianza', [['Suma entre ' + (S.pop ? 'N' : 'n − 1'), T`${y.v} = \frac{${f2(s.ss)}}{${dv}} = ${f(s.v, 6)}`, 'res']], CL.var);
@@ -971,26 +937,28 @@
         res = reg('Resultado', [['Raíz de la varianza', T`${y.sd} = \sqrt{${f(s.v, 6)}} = ${f(s.sd, 6)}`], ['A 2 decimales', T`${y.sd} = ${f2(s.sd)}`, 'res'], 'Está en las mismas unidades que los datos.'], CL.sd);
         resTex = T`${y.sd} = ${pp(res, f2(s.sd))}`;
       }
-      const diff = m === 'var' || m === 'sd', other = m === 'var' ? [s.varS, s.varP] : m === 'sd' ? [s.sdS, s.sdP] : [s.val[m], s.val[m]];
-      const cmp = diff ? [['Muestra (÷ n − 1)', f2(other[0]), !S.pop], ['Población (÷ N)', f2(other[1]), S.pop]] : [['Muestra', f2(other[0]), !S.pop], ['Población', f2(other[1]), S.pop]];
+      const diff = m === 'var' || m === 'sd', cen = m === 'med' || m === 'mode', other = m === 'var' ? [s.varS, s.varP] : m === 'sd' ? [s.sdS, s.sdP] : [s.val[m], s.val[m]];
+      let cmp = diff ? [['Muestra (÷ n − 1)', f2(other[0]), !S.pop], ['Población (÷ N)', f2(other[1]), S.pop]] : [['Muestra', f2(other[0]), !S.pop], ['Población', f2(other[1]), S.pop]];
+      if (cen) cmp = [['x̄', f2(s.mean), false], ['Me', f2(s.val.med), m === 'med'], ['Mo', f2(s.val.mode), m === 'mode']];
+      const skew = cen ? `<div class="tip-box s-amp small mt-2"><i class="bi bi-compass-fill me-1"></i><strong>Forma:</strong> ${skewTxt(s)}</div>` : '';
       $('#m-detail').innerHTML = `<div class="measure-head" style="background:${c}"><i class="bi ${meta.ic} fs-4"></i><h5 class="fw-bold mb-0 me-auto">${ttl}</h5>
-        <a class="btn btn-sm btn-light rounded-pill" href="#s3"><i class="bi bi-table me-1"></i>Ver columnas</a>
-        <button class="btn btn-sm btn-outline-light rounded-pill" data-manual="${m}"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
-        <div class="p-3"><div class="row g-3"><div class="col-lg-5"><div class="small fw-bold text-muted">Fórmula</div>${fd(F[m])}<div class="small fw-bold text-muted mt-2">Dónde</div>${legRows(LEGD(m, S.pop))}</div>
+        <button class="btn btn-sm btn-outline-light rounded-pill" data-manual="${m === 'med' ? 'median' : m}"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="p-3"><div class="calc-screen" style="--c:${c}">${fi(resTex)}</div>
+        <div class="cmp-chips">${cmp.map(([t, v, on]) => `<span class="cmp-chip ${on ? 'on' : ''}">${t}: <b>${v}</b></span>`).join('')}</div>${skew}
+        <button class="btn btn-sm rounded-pill mt-3 fw-bold det-btn" style="border:2px solid ${c};color:${c}" data-bs-toggle="collapse" data-bs-target="#det-c" aria-expanded="${DET.open}" aria-controls="det-c"><i class="bi bi-chevron-down det-chev me-1"></i>Ver detalle: fórmula y sustitución</button>
+        <div class="collapse ${DET.open ? 'show' : ''}" id="det-c"><div class="row g-3 mt-1"><div class="col-lg-5"><div class="small fw-bold text-muted">Fórmula</div>${fd(F[m])}<div class="small fw-bold text-muted mt-2">Dónde</div>${legRows(LEGD(m, S.pop))}</div>
         <div class="col-lg-7">${use(c, `<strong>De la tabla usamos:</strong> ${tab}`)}
         <div class="small fw-bold text-muted">Sustitución <span class="fw-normal">(toca cualquier número)</span></div>${sub.map(fd).join('')}
-        <div class="calc-screen mt-2" style="--c:${c}">${fi(resTex)}</div>
-        <div class="cmp-chips">${cmp.map(([t, v, on]) => `<span class="cmp-chip ${on ? 'on' : ''}">${t}: <b>${v}</b></span>`).join('')}</div>
-        <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Se calcula con precisión completa y se muestra a <strong>2 decimales</strong>${diff ? '' : '.'}${diff ? `. ${S.pop ? 'Con la población completa se divide entre $N$.' : 'Con una muestra se divide entre $n - 1$.'}` : ''}</div></div></div></div>`;
+        <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Se calcula con precisión completa y se muestra a <strong>2 decimales</strong>${diff ? `. ${S.pop ? 'Con la población completa se divide entre $N$.' : 'Con una muestra se divide entre $n - 1$.'}` : cen && s.real ? '. Con fronteras reales activas, $L$ es la frontera real inferior.' : '.'}</div></div></div></div></div>`;
     }
 
     /* ---------- Formulario (hoja de referencia) ---------- */
     function renderForm() {
-      const T2 = { mean: 'Media', dm: 'Desviación media', var: 'Varianza', sd: 'Desviación estándar' };
+      const T2 = { mean: 'Media', dm: 'Desviación media', var: 'Varianza', sd: 'Desviación estándar', med: 'Mediana (datos agrupados)', mode: 'Moda (datos agrupados)' };
       const row = (pop, key, leg, tag) => `<tr class="${pop ? 'vp' : 'vm'}"><td class="fl"><span class="badge-v">${tag || (pop ? 'Población' : 'Muestra')}</span><div class="pt-3">${fd(FF(pop)[key])}</div></td>
         <td class="fr2"><div class="fw-bold">Donde:</div>${leg.map(([t, d, c]) => `<div class="dw"><span class="vchip" style="--c:${c}">${fi(t)}</span> = ${d}</div>`).join('')}</td></tr>`;
       $('#form-wrap').innerHTML = MS.map((m, i) => `<div class="sheet-title" style="color:${MC[m.k]}"><i class="bi ${m.ic} me-1"></i>${T2[m.k]}</div>
-        <div class="table-responsive"><table class="form-tbl" style="animation-delay:${i * 80}ms">${row(false, m.k, LEGD(m.k, false))}${row(true, m.k, LEGD(m.k, true))}
+        <div class="table-responsive"><table class="form-tbl" style="animation-delay:${i * 80}ms">${m.k === 'med' || m.k === 'mode' ? row(false, m.k, LEGD(m.k, false), 'Muestra y población') : row(false, m.k, LEGD(m.k, false)) + row(true, m.k, LEGD(m.k, true))}
         ${m.k === 'var' ? row(false, 'alt', LEGD('alt', false), 'Muestra · abreviada') + row(true, 'alt', LEGD('alt', true), 'Población · abreviada') : ''}</table></div>`).join('')
         + `<div class="tip-box s-volt small"><i class="bi bi-diagram-3-fill text-warning me-1"></i><strong>Relaciones:</strong> $s = \\sqrt{s^2}$ y $\\sigma = \\sqrt{\\sigma^2}$; $s^2 = \\sigma^2 \\cdot \\frac{N}{n-1}$ cuando se usan los mismos datos; la media y la desviación media se calculan igual en muestra y población. Todos los resultados se muestran a <strong>2 decimales</strong>.</div>`;
     }
@@ -1022,8 +990,9 @@
         g += `<path class="poly-l" pathLength="1" d="M${pts.map(([x, v]) => `${X(x)} ${Y(v)}`).join(' L')}"/>` + pts.slice(1, -1).map(([x, v]) => `<circle cx="${X(x)}" cy="${Y(v)}" r="4.5" fill="#e03131" class="band-r"/>`).join('');
       }
       if ($('#g-mean').checked && isFinite(s.mean)) g += `<g class="band-r"><line class="vline" x1="${X(s.mean)}" x2="${X(s.mean)}" y1="${mt}" y2="${mt + ph}" stroke="${CL.mean}" stroke-width="2.8"/><text x="${X(s.mean)}" y="${mt - 8}" text-anchor="middle" font-size="13" font-weight="800" fill="${CL.mean}">${SY(S.pop).muH} = ${f2(s.mean)}</text></g>`;
+      if (S.m === 'med' || S.m === 'mode') { const v = s.val[S.m], c = CL[S.m]; g += `<g class="band-r"><line class="vline" x1="${X(v)}" x2="${X(v)}" y1="${mt}" y2="${mt + ph}" stroke="${c}" stroke-width="3.2" stroke-dasharray="7 4"/><text x="${X(v)}" y="${mt - 22}" text-anchor="middle" font-size="13" font-weight="800" fill="${c}">${S.m === 'med' ? 'Me' : 'Mo'} = ${f2(v)}</text></g>`; }
       box.innerHTML = `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Histograma con polígono de frecuencias">${g}</svg>`;
-      const note = { mean: 'La línea azul marca la media: el punto de equilibrio del histograma.', dm: 'La banda verde-azulada muestra la media ± la desviación media: la distancia promedio de los datos a la media.', var: 'La varianza está en unidades al cuadrado, por eso se dibuja su raíz: la banda morada es la media ± la desviación estándar.', sd: 'La banda morada abarca la media ± la desviación estándar; en una distribución en forma de campana contiene cerca del 68 % de los datos.' }[S.m];
+      const note = { med: 'La línea punteada naranja es la mediana: deja la mitad de los datos a cada lado. La azul sigue siendo la media.', mode: 'La línea punteada morada marca la moda: el punto más alto estimado del histograma, dentro de la clase más frecuente.', mean: 'La línea azul marca la media: el punto de equilibrio del histograma.', dm: 'La banda verde-azulada muestra la media ± la desviación media: la distancia promedio de los datos a la media.', var: 'La varianza está en unidades al cuadrado, por eso se dibuja su raíz: la banda morada es la media ± la desviación estándar.', sd: 'La banda morada abarca la media ± la desviación estándar; en una distribución en forma de campana contiene cerca del 68 % de los datos.' }[S.m];
       $('#chart-note').innerHTML = `<i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>¿Por qué esta gráfica?</strong> Los datos están agrupados en clases (cuantitativos continuos): lo más adecuado es un <strong>histograma</strong> (barras pegadas) con su <strong>polígono de frecuencias</strong>. ${note} Pasa el cursor sobre una barra para ver sus datos.`;
     }
     const tip = $('#chart-tip');
@@ -1055,7 +1024,7 @@
       if (n < 2) { err.classList.remove('d-none'); err.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>La suma de frecuencias es ${n}: necesitas al menos 2 observaciones para calcular la dispersión.`; } else err.classList.add('d-none');
       $('#results').classList.remove('d-none');
       $('#data-stats').innerHTML = [['Rango R', fmt(s.R)], ['Clases k', s.k], ['Tamaño c', fmt(s.c)], ['n (suma de fi)', n]].map(([a, b]) => `<span class="stat-pill">${a}: <b>${b}</b></span>`).join('');
-      buildPops(s); renderSteps(s); renderTable(s); renderReal(s); renderTiles(s); renderDetail(s); renderCentral(s); drawChart(); math(); initPops();
+      buildPops(s); renderSteps(s); renderTable(s); renderReal(s); renderTiles(s); renderDetail(s); drawChart(); math(); initPops();
       ANIM = false;
       if (keep) { const el = $(`.fi-in[data-j="${keep.j}"]`); if (el) { el.focus(); try { el.setSelectionRange(keep.a, keep.b); } catch (e) {} } }
     }
