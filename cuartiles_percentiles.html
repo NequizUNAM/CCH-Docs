@@ -383,13 +383,18 @@
     #formModal .nav-link.active { background:#0c8599; color:#fff; }
     #formModal .box { background:#f1f3f5; border-radius:10px; padding:.4rem .7rem; font-size:.9rem; }
 
+    .tg-bar { transform-box:fill-box; transform-origin:bottom; animation:grow .6s calc(var(--i)*70ms) both; }
+    .tg-vl { animation:fadeB .7s .5s both; } .tg-fd { animation:fadeB .8s .3s both; }
+    #st .freq-table tr.tr-sel td { background:#fff4e0; } #st .freq-table td { min-width:64px; }
+    #st .mbtn { margin:0; } #st .freq-table td:first-child { white-space:nowrap; } #st .sstep .cx.d { font-size:1.02em; }
+    @media (prefers-reduced-motion:reduce) { .tg-bar,.tg-vl,.tg-fd { animation:none !important; } }
   </style>
 </head>
 <body>
 
   <div id="app-header"></div>
   <nav class="sec-nav" id="sec-nav">
-    <a href="#s0">0. Ruta</a><a href="#s1">1. Posición</a><a href="#s2">2. Cuartiles</a><a href="#s3">3. Deciles y percentiles</a><a href="#s4">4. Agrupados</a><a href="#s5">5. Caja</a><a href="#s6">6. Regla empírica</a><a href="#s7">7. Inferencias</a><a href="#s8">8. Comparar</a><a href="#s9">9. Docencia</a>
+    <a href="#s0">0. Ruta</a><a href="#s1">1. Posición</a><a href="#s2">2. Cuartiles</a><a href="#s3">3. Deciles y percentiles</a><a href="#s4">4. Agrupados</a><a href="#st">4b. Tabla interactiva</a><a href="#s5">5. Caja</a><a href="#s6">6. Regla empírica</a><a href="#s7">7. Inferencias</a><a href="#s8">8. Comparar</a><a href="#s9">9. Docencia</a>
   </nav>
 
   <main>
@@ -405,7 +410,7 @@
       </div>
     </header>
     <div class="container mb-5" id="secs">
-      <section class="lesson mb-5" id="s0"></section><section class="lesson mb-5" id="s1"></section><section class="lesson mb-5" id="s2"></section><section class="lesson mb-5" id="s3"></section><section class="lesson mb-5" id="s4"></section><section class="lesson mb-5" id="s5"></section><section class="lesson mb-5" id="s6"></section><section class="lesson mb-5" id="s7"></section><section class="lesson mb-5" id="s8"></section><section class="lesson mb-5" id="s9"></section>
+      <section class="lesson mb-5" id="s0"></section><section class="lesson mb-5" id="s1"></section><section class="lesson mb-5" id="s2"></section><section class="lesson mb-5" id="s3"></section><section class="lesson mb-5" id="s4"></section><section class="lesson mb-5" id="st"></section><section class="lesson mb-5" id="s5"></section><section class="lesson mb-5" id="s6"></section><section class="lesson mb-5" id="s7"></section><section class="lesson mb-5" id="s8"></section><section class="lesson mb-5" id="s9"></section>
     </div>
   </main>
 
@@ -953,7 +958,7 @@
       } else if (FTAB === 2) {
         const g = GR[G4], N = g.f.reduce((a, b) => a + b, 0), F = []; g.f.reduce((a, v, i) => (F[i] = a + v), 0);
         const val = (den, k) => { const pos = k * N / den; let i = F.findIndex(v => v >= pos); if (i < 0) i = g.f.length - 1; return g.L + i * g.c + (pos - (i ? F[i - 1] : 0)) / g.f[i] * g.c; };
-        body = `<table class="form-tbl">${frow('Medida de posición', T`M = L + \frac{pos - F_{ant}}{f}\cdot c`, 'L: límite inferior de la clase que contiene la posición; F<sub>ant</sub>: frecuencia acumulada anterior; f: frecuencia de la clase; c: ancho de clase.', COL.F)}${frow('Posición', T`pos = \frac{k\,N}{4} \;\; \text{(cuartil)} \qquad \frac{k\,N}{10} \;\; \text{(decil)} \qquad \frac{k\,N}{100} \;\; \text{(percentil)}`, 'N = suma de las frecuencias. La clase es la primera cuya frecuencia acumulada F es ≥ pos.', COL.Q2)}${frow('Ejemplo con «' + g.n + '»', T`Q_1 = ${ft(val(4, 1), 2)} \quad Q_2 = ${ft(val(4, 2), 2)} \quad Q_3 = ${ft(val(4, 3), 2)}`, `N = ${N}. Cambia la distribución en la sección 4 para ver otros ejemplos.`, COL.D)}</table>
+        body = `<table class="form-tbl">${frow('Medida de posición', T`M = L + \frac{pos - F_{ant}}{f}\cdot c`, 'L: límite inferior de la clase que contiene la posición; F<sub>ant</sub>: frecuencia acumulada anterior; f: frecuencia de la clase; c: ancho de clase.', COL.F)}${frow('Posición', T`pos = \frac{k\,N}{4} \;\; \text{(cuartil)} \qquad \frac{k\,N}{10} \;\; \text{(decil)} \qquad \frac{k\,N}{100} \;\; \text{(percentil)}`, 'N = suma de las frecuencias. La clase es la primera cuya frecuencia acumulada F es ≥ pos.', COL.Q2)}${frow('Ejemplo con «' + g.n + '»', T`Q_1 = ${ft(val(4, 1), 2)} \quad Q_2 = ${ft(val(4, 2), 2)} \quad Q_3 = ${ft(val(4, 3), 2)}`, `N = ${N}. Cambia la distribución en la sección 4 para ver otros ejemplos.`, COL.D)}${frow('Mediana agrupada', T`Me = L + \frac{N/2 - F_{ant}}{f}\cdot c`, 'Es el caso particular k = 2 de los cuartiles (Q₂ = D₅ = P₅₀ = Me).', COL.Q2, 'Con «' + g.n + '»: Me = ' + ft(val(2, 1), 2))}${frow('Media agrupada', T`\bar{x} = \frac{\sum f\cdot x}{N} \qquad x = \frac{L_i + L_s}{2}`, 'x es la marca de clase (punto medio).', '#1864ab')}${frow('Varianza y desviación estándar', T`s^2 = \frac{\sum f\,(x-\bar{x})^2}{N-1} \qquad s = \sqrt{s^2} \qquad (\text{población: } ÷ N)`, 'Se calculan con las marcas de clase; la sección 4b las resuelve sobre la misma tabla.', '#7048e8')}</table>
           <div class="tip-box s-amp small"><strong>Supuesto:</strong> dentro de cada clase los datos se reparten de manera uniforme; por eso el resultado es una <em>aproximación</em>.</div>`;
       } else if (FTAB === 3) {
         const f = five(x, QM);
@@ -1007,11 +1012,153 @@
       else if (id === 'f-v') { const v = parseFloat(t.value); if (isFinite(v)) { FZ.x = v; keep(renderForm); } }
       else if (id === 'z-x' || id === 'z-mu' || id === 'z-sd') { const v = parseFloat(t.value); if (isFinite(v) && (id !== 'z-sd' || v > 0)) { FZ[id === 'z-x' ? 'x' : id === 'z-mu' ? 'mu' : 'sd'] = v; keep(renderForm); } }
     });
+
+    /* ---------- 4b. Tabla de frecuencias interactiva: ¿qué quieres obtener? ---------- */
+    const TGP = {
+      gen: { n: 'Calificaciones (ejemplo genérico)', u: 'pts', L: 50, c: 10, f: [4, 9, 16, 21, 14, 6] },
+      est: { n: 'Estaturas (cm)', u: 'cm', L: 150, c: 5, f: [4, 8, 14, 13, 7, 4] },
+      red: { n: 'Horas en redes por semana', u: 'h', L: 0, c: 5, f: [6, 12, 18, 9, 5] }
+    };
+    const TG = { g: 'gen', u: 'pts', L: 50, c: 10, f: [4, 9, 16, 21, 14, 6], m: 'med', kQ: 1, kD: 1, kP: 90, pop: false, A: true };
+    const TGM = [['med', 'Mediana', COL.Q2, 'bi-distribute-vertical'], ['Q', 'Cuartil', COL.Q1, 'bi-layout-three-columns'], ['D', 'Decil', COL.D, 'bi-list-ol'], ['P', 'Percentil', COL.P, 'bi-percent'], ['mean', 'Media', '#1864ab', 'bi-graph-up'], ['var', 'Varianza', '#d9480f', 'bi-bounding-box-circles'], ['sd', 'Desviación estándar', '#7048e8', 'bi-distribute-horizontal']];
+    const tgColor = m => TGM.find(x => x[0] === m)[2];
+    function tgCalc() {
+      const { L, c, f } = TG, N = f.reduce((a, b) => a + b, 0), F = []; f.reduce((a, v, i) => (F[i] = a + v), 0);
+      const rows = f.map((fi, j) => { const Li = L + j * c, Ls = Li + c, x = (Li + Ls) / 2; return { j, Li, Ls, x, f: fi, F: F[j], fx: x * fi }; });
+      const sfx = rows.reduce((a, r) => a + r.fx, 0), mean = N ? sfx / N : NaN;
+      rows.forEach(r => { r.d = r.x - mean; r.d2 = r.d * r.d; r.fd2 = r.f * r.d2; });
+      const ss = rows.reduce((a, r) => a + r.fd2, 0), varP = N ? ss / N : NaN, varS = N > 1 ? ss / (N - 1) : NaN, v = TG.pop ? varP : varS;
+      const posV = (den, k) => { const pos = k * N / den; let i = rows.findIndex(r => r.F >= pos); if (i < 0) i = rows.length - 1; const Fa = i ? rows[i - 1].F : 0, r = rows[i], val = r.f ? r.Li + (pos - Fa) / r.f * c : r.Li; return { pos, i, Fa, f: r.f, Lc: r.Li, val, den, k }; };
+      return { N, rows, F, sfx, mean, ss, varP, varS, v, sd: Math.sqrt(v), posV };
+    }
+    function tgSel(s) {
+      const m = TG.m; if (m === 'med') return { ...s.posV(2, 1), sym: 'Me', name: 'Mediana', c: COL.Q2, pct: 50 };
+      if (m === 'Q') return { ...s.posV(4, TG.kQ), sym: 'Q' + sub(TG.kQ), name: 'Cuartil ' + TG.kQ, c: COL.Q1, pct: TG.kQ * 25 };
+      if (m === 'D') return { ...s.posV(10, TG.kD), sym: 'D' + sub(TG.kD), name: 'Decil ' + TG.kD, c: COL.D, pct: TG.kD * 10 };
+      if (m === 'P') return { ...s.posV(100, TG.kP), sym: 'P' + sub(TG.kP), name: 'Percentil ' + TG.kP, c: COL.P, pct: TG.kP };
+      return null;
+    }
+    const sub = k => String(k).replace(/\d/g, d => '₀₁₂₃₄₅₆₇₈₉'[d]);
+    const isPos = m => ['med', 'Q', 'D', 'P'].includes(m);
+    function renderST() {
+      const el = $('#st'); if (!el) return;
+      el.innerHTML = lesson('4b', 'Tabla de frecuencias: ¿qué quieres obtener?', 'Mediana, cuartiles, deciles, percentiles, media, varianza y desviación estándar sobre la misma tabla', COL.F, `
+        <div class="setdef mb-2" style="--c:${COL.F}">Una sola tabla de frecuencias, muchas medidas<small>Elige un botón: la tabla cambia de columnas (con animación) y se resuelve paso a paso lo que pediste</small></div>
+        <div class="d-flex flex-wrap gap-2 mb-2" id="tg-pre"></div>
+        <details class="mb-3"><summary class="fw-bold small" style="cursor:pointer;color:${COL.F}"><i class="bi bi-pencil-square me-1"></i>Editar la tabla (límite inferior, ancho de clase y frecuencias)</summary><div class="mt-2" id="tg-ed"></div></details>
+        <div class="small fw-bold text-muted mb-1">¿Qué quieres obtener?</div>
+        <div class="d-flex flex-wrap gap-2 mb-2" id="tg-btns"></div>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3" id="tg-sub"></div>
+        <div class="table-responsive rounded-3 border" id="tg-tbl"></div><div class="d-flex flex-wrap gap-2 mt-2" id="tg-chips"></div>
+        <div class="row g-3 mt-1"><div class="col-lg-6"><div id="tg-steps"></div></div>
+        <div class="col-lg-6"><div class="viz-card mt-2"><div id="tg-plot"></div></div><div class="small text-muted mt-1" id="tg-note"></div></div></div>`);
+      tgPre(); tgEditor(); tgView();
+    }
+    function tgPre() {
+      $('#tg-pre').innerHTML = Object.entries(TGP).map(([k, g]) => `<button class="mbtn ${TG.g === k ? 'on' : ''}" data-tgp="${k}" style="--c:${COL.F}">${g.n}</button>`).join('');
+    }
+    function tgEditor() {
+      $('#tg-ed').innerHTML = `<div class="row g-2 align-items-end mb-2"><div class="col-6 col-md-3"><label class="small fw-bold">Límite inferior L</label><input type="number" step="any" class="form-control form-control-sm" id="tg-L" value="${TG.L}"></div><div class="col-6 col-md-3"><label class="small fw-bold">Ancho de clase c</label><input type="number" step="any" min="0.1" class="form-control form-control-sm" id="tg-c" value="${TG.c}"></div>
+        <div class="col-12 col-md-6"><label class="small fw-bold d-block">Número de clases: ${TG.f.length}</label><div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" data-tgk="-1">− clase</button><button class="btn btn-outline-secondary" data-tgk="1">+ clase</button></div></div></div>
+        <div class="d-flex flex-wrap gap-2">${TG.f.map((v, j) => `<div class="text-center"><div class="small text-muted tg-lab">${ft(TG.L + j * TG.c)}–${ft(TG.L + (j + 1) * TG.c)}</div><input type="number" min="0" max="999" class="form-control form-control-sm text-center tg-fin" data-j="${j}" value="${v}" style="width:78px"></div>`).join('')}</div>`;
+    }
+    const tgLab = () => $$('.tg-lab').forEach((e, j) => { e.textContent = ft(TG.L + j * TG.c) + '–' + ft(TG.L + (j + 1) * TG.c); });
+    function tgView(keepSub) {
+      const s = tgCalc(), m = TG.m, A = TG.A, col = tgColor(m), sel = tgSel(s);
+      $('#tg-btns').innerHTML = TGM.map(([k, n, c, ic]) => `<button class="mbtn ${m === k ? 'on' : ''}" data-tgm="${k}" style="--c:${c}"><i class="bi ${ic} me-1"></i>${n}</button>`).join('');
+      let sb = '';
+      if (m === 'Q') sb = `<span class="small fw-bold">k =</span>` + [1, 2, 3].map(k => `<button class="mbtn ${TG.kQ === k ? 'on' : ''}" data-tgk2="Q${k}" style="--c:${COL.Q1}">Q${sub(k)}</button>`).join('');
+      else if (m === 'D') sb = `<span class="small fw-bold">k =</span>` + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => `<button class="mbtn ${TG.kD === k ? 'on' : ''}" data-tgk2="D${k}" style="--c:${COL.D}">D${sub(k)}</button>`).join('');
+      else if (m === 'P') sb = `<span class="small fw-bold">k =</span><input type="range" min="1" max="99" value="${TG.kP}" id="tg-kP" style="width:240px"><b id="tg-kPv" style="color:${COL.P}">P${sub(TG.kP)}</b>` + [10, 25, 50, 75, 90].map(k => `<button class="mbtn" data-tgk2="P${k}" style="--c:${COL.P}">${k}</button>`).join('');
+      else if (m === 'var' || m === 'sd') sb = `<span class="small fw-bold">Se calcula para…</span><div class="btn-group btn-group-sm"><button class="btn btn-outline-dark ${!TG.pop ? 'active' : ''}" data-tgpop="0">Muestra (n − 1)</button><button class="btn btn-outline-dark ${TG.pop ? 'active' : ''}" data-tgpop="1">Población (N)</button></div>`;
+      if (keepSub) { const lb = $('#tg-kPv'); if (lb) lb.textContent = 'P' + sub(TG.kP); } else $('#tg-sub').innerHTML = sb;
+      /* ---- tabla ---- */
+      const cl = `animation:pop .45s calc(var(--i)*70ms) both`, an = A ? '' : 'animation:none;';
+      let head, body, foot;
+      const H = (t, c) => `<th style="background:${c}">${t}</th>`;
+      const sty = (i, extra = '') => `style="${A ? `animation:pop .45s ${i * .07}s both;` : ''}${extra}"`;
+      if (isPos(m)) {
+        head = H('Clase', '#364fc7') + H('f', COL.X) + H('F (acumulada)', COL.F) + H('% acum.', '#868e96');
+        body = s.rows.map((r, j) => `<tr class="${j === sel.i ? 'tr-sel' : ''}" ${sty(j)}><td>${ft(r.Li)} – ${ft(r.Ls)}${j === sel.i ? ` <span class="badge" style="background:${col}">clase de ${sel.sym}</span>` : ''}</td><td ${j === sel.i ? `style="background:#ffe8cc;font-weight:800"` : ''}>${r.f}${j === sel.i ? '<div class="small" style="color:#c2410c">f</div>' : ''}</td><td ${j === sel.i - 1 ? `style="background:#d0ebff;font-weight:800"` : j === sel.i ? `style="font-weight:800"` : ''}>${r.F}${j === sel.i - 1 ? '<div class="small" style="color:#1864ab">F<sub>ant</sub></div>' : ''}</td><td>${ft(r.F / s.N * 100, 1)}</td></tr>`).join('');
+        foot = `<tr><td>Total</td><td>${s.N}</td><td>${s.N}</td><td>100</td></tr>`;
+      } else if (m === 'mean') {
+        head = H('Clase', '#364fc7') + H('x (marca)', '#2f9e44') + H('f', COL.X) + H('f · x', '#1864ab');
+        body = s.rows.map((r, j) => `<tr ${sty(j)}><td>${ft(r.Li)} – ${ft(r.Ls)}</td><td>${ft(r.x)}</td><td>${r.f}</td><td style="background:#e7f5ff;font-weight:700">${ft(r.fx, 3)}</td></tr>`).join('');
+        foot = `<tr><td>Σ</td><td></td><td>${s.N}</td><td>${ft(s.sfx, 3)}</td></tr>`;
+      } else {
+        head = H('Clase', '#364fc7') + H('x (marca)', '#2f9e44') + H('f', COL.X) + H('f · x', '#1864ab') + H('x − x̄', '#0c8599') + H('(x − x̄)²', '#d9480f') + H('f · (x − x̄)²', '#7048e8');
+        const cs = (i, c, v, extra = '') => `<td style="background:${c};font-weight:700;${A ? `animation:pop .5s ${.25 + i * .22}s both;` : ''}${extra}">${v}</td>`;
+        body = s.rows.map((r, j) => `<tr ${sty(j, 'animation-delay:' + (j * .05) + 's')}><td>${ft(r.Li)} – ${ft(r.Ls)}</td><td>${ft(r.x)}</td><td>${r.f}</td>${cs(0, '#e7f5ff', ft(r.fx, 3))}${cs(1, '#e3fafc', fz(r.d, 3))}${cs(2, '#fff4e6', ft(r.d2, 3))}${cs(3, '#f3f0ff', ft(r.fd2, 3))}</tr>`).join('');
+        foot = `<tr><td>Σ</td><td></td><td>${s.N}</td><td>${ft(s.sfx, 3)}</td><td>≈ 0</td><td></td><td style="color:#7048e8">${ft(s.ss, 3)}</td></tr>`;
+      }
+      $('#tg-tbl').innerHTML = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr>${head}</tr></thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
+      /* ---- resultados clicables ---- */
+      const P = (den, k) => s.posV(den, k).val;
+      const chips = [['med', null, 'Me', P(2, 1), COL.Q2], ['Q', 1, 'Q₁', P(4, 1), COL.Q1], ['Q', 3, 'Q₃', P(4, 3), COL.Q1], ['D', TG.kD, 'D' + sub(TG.kD), P(10, TG.kD), COL.D], ['P', TG.kP, 'P' + sub(TG.kP), P(100, TG.kP), COL.P], ['mean', null, 'x̄', s.mean, '#1864ab'], ['var', null, TG.pop ? 'σ²' : 's²', s.v, '#d9480f'], ['sd', null, TG.pop ? 'σ' : 's', s.sd, '#7048e8']];
+      $('#tg-chips').innerHTML = chips.map(([mm, k, l, v, c], i) => `<button class="mbtn" data-tgchip="${mm}|${k}" style="--c:${c};${A ? `animation:pop .4s ${i * .05}s both;` : ''}">${l} = ${ft(v, 2)}</button>`).join('');
+      /* ---- pasos ---- */
+      const st = (i, c, t, b) => `<div class="sstep" style="--i:${i};--sc:${c}"><div class="sn">${i + 1}</div><div class="sb"><div class="st">${t}</div>${b}</div></div>`;
+      let steps, note;
+      if (sel) {
+        const sym = sel.sym, den = sel.den, k = sel.k, kk = m === 'med' ? 1 : k;
+        const posTex = m === 'med' ? T`pos = \frac{N}{2} = \frac{${s.N}}{2} = ${ft(sel.pos, 4)}` : T`pos = \frac{k\,N}{${den}} = \frac{${kk}\cdot ${s.N}}{${den}} = ${ft(sel.pos, 4)}`;
+        steps = st(0, COL.X, 'Posición', fd(posTex) + (m === 'med' ? '<div class="sx">La mediana deja la mitad de los datos a cada lado: es Q₂ = D₅ = P₅₀.</div>' : ''))
+          + st(1, COL.F, 'Clase que contiene la posición', `<div class="sx">Se busca la primera frecuencia acumulada F ≥ ${ft(sel.pos, 3)}: es <strong>${s.rows[sel.i].F}</strong> → clase <strong>${ft(sel.Lc)} – ${ft(sel.Lc + TG.c)}</strong>. Entonces L = ${ft(sel.Lc)}, F<sub>ant</sub> = ${sel.Fa}, f = ${sel.f}, c = ${ft(TG.c)}.</div>`)
+          + st(2, sel.c, 'Sustituir en la fórmula', fd(T`${sym} = L + \frac{pos - F_{ant}}{f}\cdot c = ${ft(sel.Lc)} + \frac{${ft(sel.pos, 4)} - ${sel.Fa}}{${sel.f}}\cdot ${ft(TG.c)} = ${ft(sel.val, 3)}`))
+          + st(3, COL.R, 'Interpretación', `<div class="sx"><strong>${sym} ≈ ${ft(sel.val, 2)} ${TG.u}</strong>: aproximadamente el <strong>${ft(sel.pct, 2)} %</strong> de los datos es menor o igual a ese valor.</div>`);
+        note = 'Se supone que los datos se reparten parejo dentro de cada clase (interpolación lineal), por eso el resultado es una aproximación.';
+      } else if (m === 'mean') {
+        steps = st(0, '#2f9e44', 'Marca de clase', fd(T`x = \frac{L_i + L_s}{2}`) + `<div class="sx">Cada clase se representa con su punto medio (${ft(s.rows[0].x)}, ${ft(s.rows[1] ? s.rows[1].x : s.rows[0].x)}, …).</div>`)
+          + st(1, '#1864ab', 'Multiplicar y sumar', fd(T`\sum f\cdot x = ${s.rows.slice(0, 3).map(r => `${r.f}\\cdot ${ft(r.x)}`).join(' + ')}${s.rows.length > 3 ? ' + \\cdots' : ''} = ${ft(s.sfx, 3)}`))
+          + st(2, COL.R, 'Dividir entre N', fd(T`\bar{x} = \frac{\sum f\,x}{N} = \frac{${ft(s.sfx, 3)}}{${s.N}} = ${ft(s.mean, 3)}`) + `<div class="sx">Es el punto de equilibrio de la distribución.</div>`);
+        note = 'La media agrupada usa las marcas de clase; puede diferir un poco de la media de los datos originales.';
+      } else {
+        const sq = m === 'sd', dv = TG.pop ? s.N : s.N - 1, y = TG.pop ? 'σ' : 's';
+        steps = st(0, '#1864ab', 'Media', fd(T`\bar{x} = \frac{${ft(s.sfx, 3)}}{${s.N}} = ${ft(s.mean, 3)}`))
+          + st(1, '#0c8599', 'Desviación de cada marca', fd(T`x - \bar{x}`) + `<div class="sx">Ejemplo: ${ft(s.rows[0].x)} − ${ft(s.mean, 3)} = ${fz(s.rows[0].d, 3)}. Se elevan al cuadrado y se multiplican por f.</div>`)
+          + st(2, '#d9480f', 'Suma de cuadrados', fd(T`\sum f\,(x-\bar{x})^2 = ${ft(s.ss, 3)}`))
+          + st(3, '#7048e8', TG.pop ? 'Dividir entre N' : 'Dividir entre n − 1', fd(T`${y}^2 = \frac{${ft(s.ss, 3)}}{${TG.pop ? s.N : s.N + ' - 1'}} = ${colF(ft(s.v, 3), '#d9480f')}`) + `<div class="sx">${TG.pop ? 'Población: se divide entre N.' : 'Muestra: se divide entre n − 1 (corrección de Bessel).'}</div>`);
+        if (sq) steps += st(4, COL.R, 'Raíz cuadrada', fd(T`${y} = \sqrt{${ft(s.v, 3)}} = ${colF(ft(s.sd, 3), '#7048e8')}`) + `<div class="sx">Interpretación: los datos se alejan en promedio unos <strong>${ft(s.sd, 2)} ${TG.u}</strong> de la media (${ft(s.mean, 2)}).</div>`);
+        note = sq ? 'La desviación estándar vuelve la dispersión a las unidades de los datos.' : 'La varianza se mide en unidades al cuadrado; por eso se suele sacar la raíz (desviación estándar).';
+      }
+      $('#tg-steps').innerHTML = steps; $('#tg-note').textContent = note;
+      tgPlot(s, sel);
+      math($('#st')); TG.A = false;
+    }
+    const colF = (v, c) => T`\textcolor{${c}}{${v}}`;
+    function tgPlot(s, sel) {
+      const m = TG.m, n = s.rows.length, W = 700, H = 270, ml = 46, mr = 18, mt = 22, mb = 40, x0 = TG.L, x1 = TG.L + n * TG.c, mx = Math.max(...TG.f, 1) * 1.18, sx = v => ml + (v - x0) / (x1 - x0) * (W - ml - mr), sy = v => H - mb - v / mx * (H - mt - mb);
+      let g = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
+      niceTicks(0, mx, 5).ticks.forEach(t => { g += `<line x1="${ml}" x2="${W - mr}" y1="${sy(t)}" y2="${sy(t)}" stroke="#e9ecef"/><text x="${ml - 6}" y="${sy(t) + 4}" text-anchor="end" font-size="11" fill="#64748b">${ft(t, 1)}</text>`; });
+      const cut = sel ? sel.val : null;
+      if (cut !== null) g += `<rect class="tg-fd" x="${ml}" y="${mt}" width="${sx(cut) - ml}" height="${H - mt - mb}" fill="${sel.c}" opacity=".10"/>`;
+      if (m === 'sd' || m === 'var') g += `<rect class="tg-fd" x="${sx(s.mean - s.sd)}" y="${mt}" width="${Math.max(1, sx(s.mean + s.sd) - sx(s.mean - s.sd))}" height="${H - mt - mb}" fill="#7048e8" opacity=".14"/>`;
+      s.rows.forEach((r, j) => { const hi = sel && j === sel.i; g += `<rect class="tg-bar" style="--i:${j}" x="${sx(r.Li) + 1}" y="${sy(r.f)}" width="${sx(r.Ls) - sx(r.Li) - 2}" height="${sy(0) - sy(r.f)}" rx="3" fill="${hi ? '#ffa94d' : '#a5d8ff'}" stroke="${hi ? '#e8590c' : '#74c0fc'}" stroke-width="${hi ? 2.5 : 1}"/><text x="${(sx(r.Li) + sx(r.Ls)) / 2}" y="${sy(r.f) - 5}" text-anchor="middle" font-size="11" font-weight="800" fill="#334155">${r.f}</text><text x="${(sx(r.Li) + sx(r.Ls)) / 2}" y="${H - mb + 14}" text-anchor="middle" font-size="10" fill="#64748b">${ft(r.Li)}–${ft(r.Ls)}</text>`; });
+      g += `<line x1="${ml}" x2="${W - mr}" y1="${sy(0)}" y2="${sy(0)}" stroke="#334155" stroke-width="1.8"/>`;
+      const vl = (v, c, l, dy = 0) => `<g class="tg-vl"><line x1="${sx(v)}" x2="${sx(v)}" y1="${mt - 4}" y2="${sy(0)}" stroke="${c}" stroke-width="3" stroke-dasharray="6 4"/><text x="${sx(v)}" y="${mt - 8 + dy}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${c}" paint-order="stroke" stroke="#fff" stroke-width="3">${l}</text></g>`;
+      if (cut !== null) g += vl(cut, sel.c, `${sel.sym} ≈ ${ft(cut, 2)}`);
+      else { g += vl(s.mean, '#1864ab', `x̄ = ${ft(s.mean, 2)}`); if (m !== 'mean') g += `<text x="${sx(s.mean)}" y="${sy(0) - 6}" text-anchor="middle" font-size="12" font-weight="800" fill="#7048e8">± ${ft(s.sd, 2)}</text>`; }
+      $('#tg-plot').innerHTML = g + '</svg>';
+    }
+    on('[data-tgp]', 'click', t => { const p = TGP[t.dataset.tgp]; TG.g = t.dataset.tgp; TG.L = p.L; TG.c = p.c; TG.f = p.f.slice(); TG.u = p.u; TG.A = true; tgPre(); tgEditor(); tgView(); });
+    on('[data-tgm]', 'click', t => { TG.m = t.dataset.tgm; TG.A = true; tgView(); });
+    on('[data-tgk2]', 'click', t => { const v = t.dataset.tgk2, k = +v.slice(1); if (v[0] === 'Q') TG.kQ = k; else if (v[0] === 'D') TG.kD = k; else TG.kP = k; TG.A = true; tgView(); });
+    on('[data-tgpop]', 'click', t => { TG.pop = t.dataset.tgpop === '1'; TG.A = true; tgView(); });
+    on('[data-tgchip]', 'click', t => { const [mm, k] = t.dataset.tgchip.split('|'); TG.m = mm; if (mm === 'Q' && k !== 'null') TG.kQ = +k; TG.A = true; tgView(); });
+    on('[data-tgk]', 'click', t => { const d = +t.dataset.tgk, n = TG.f.length + d; if (n < 3 || n > 10) return; if (d > 0) TG.f.push(Math.max(1, Math.round(TG.f[TG.f.length - 1] / 2))); else TG.f.pop(); TG.A = true; tgEditor(); tgView(); });
+    document.addEventListener('input', e => {
+      const t = e.target;
+      if (t.classList && t.classList.contains('tg-fin')) { TG.f[+t.dataset.j] = Math.max(0, Math.min(999, parseInt(t.value, 10) || 0)); tgView(); }
+      else if (t.id === 'tg-L') { const v = parseFloat(t.value); if (isFinite(v)) { TG.L = v; tgLab(); tgView(); } }
+      else if (t.id === 'tg-c') { const v = parseFloat(t.value); if (isFinite(v) && v > 0) { TG.c = v; tgLab(); tgView(); } }
+      else if (t.id === 'tg-kP') { TG.kP = +t.value; tgView(true); }
+    });
+
     const navLinks = $$('#sec-nav a'), io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
 
     /* ---------- Arranque ---------- */
     $('#hero-bars').innerHTML = [30, 55, 80, 100, 80, 55, 30].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
-    renderS0(); renderS1(); renderS2(); renderS3(); renderS4(); renderS5(); renderS6(); renderS7(); renderS8(); renderS9();
+    renderS0(); renderS1(); renderS2(); renderS3(); renderS4(); renderST(); renderS5(); renderS6(); renderS7(); renderS8(); renderS9();
     renderAllData(); $$('[data-g4]').length; renderForm();
     math(document.body); $$('section.lesson').forEach(s => io.observe(s));
 
