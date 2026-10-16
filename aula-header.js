@@ -4,27 +4,42 @@
    - Estado DESBLOQUEADO: desplegables con todas las páginas + botón «Bloquear».
    - La contraseña está en auth-config.js. El desbloqueo se guarda en sessionStorage,
      así que vale para todas las páginas de la pestaña hasta que se cierre.
-   - El menú sale del #menu-config de index.html (si la página no lo tiene, se lee de index.html).
+   - El menú vive aquí (constante MENU): es la fuente única para el header y las tarjetas del index.
    Uso en cada página:  <script src="auth-config.js"></script><script src="aula-header.js"></script>
    ============================================================ */
 (function () {
   const KEY = 'aula-unlocked';
-  const FALLBACK = {
+  /* ===== FUENTE ÚNICA DEL MENÚ =====
+     Para agregar una página, añade una línea en "items" del grupo que corresponda.
+     Todas las páginas y las tarjetas del index leen este objeto. */
+  const MENU = {
     brand: { label: 'Aula Digital', icon: 'bi-mortarboard-fill', href: 'index.html' },
     groups: [
       { id: 'matematicas', label: 'Matemáticas', icon: 'bi-calculator', color: 'c-mat', items: [
-        { label: 'Los Números', href: 'los_numeros.html', icon: 'bi-hash' }, { label: 'Fracciones', href: 'fracciones.html', icon: 'bi-pie-chart-fill' },
-        { label: 'Variación directamente proporcional', href: 'variacion_proporcional.html', icon: 'bi-graph-up-arrow' }, { label: 'Exponentes y Radicales', href: 'exponentes_radicales.html', icon: 'bi-superscript' },
-        { label: 'Ángulos', href: 'angulos.html', icon: 'bi-compass' }, { label: 'Teorema de Pitágoras', href: 'pitagoras.html', icon: 'bi-triangle-half' } ] },
+        { label: 'Los Números', href: 'los_numeros.html', icon: 'bi-hash' },
+        { label: 'Fracciones', href: 'fracciones.html', icon: 'bi-pie-chart-fill' },
+        { label: 'Variación directamente proporcional', href: 'variacion_proporcional.html', icon: 'bi-graph-up-arrow' },
+        { label: 'Exponentes y Radicales', href: 'exponentes_radicales.html', icon: 'bi-superscript' },
+        { label: 'Ángulos', href: 'angulos.html', icon: 'bi-compass' },
+        { label: 'Teorema de Pitágoras', href: 'pitagoras.html', icon: 'bi-triangle-half' } ] 
+      },
       { id: 'cibernetica', label: 'Cibernética', icon: 'bi-cpu', color: 'c-cib', items: [
-        { label: 'Precursores', href: 'precursores.html', icon: 'bi-clock-history' }, { label: 'Circuitos eléctricos', href: 'circuitos.html', icon: 'bi-lightning-charge-fill' },
-        { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' }, { label: 'Conversiones numéricas', href: 'conversiones.html', icon: 'bi-123' },
-        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' } ] },
+        { label: 'Precursores', href: 'precursores.html', icon: 'bi-clock-history' },
+        { label: 'Circuitos eléctricos', href: 'circuitos.html', icon: 'bi-lightning-charge-fill' },
+        { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' },
+        { label: 'Conversiones numéricas', href: 'conversiones.html', icon: 'bi-123' },
+        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' } ] 
+      },
       { id: 'estadistica', label: 'Estadística', icon: 'bi-bar-chart-line', color: 'c-est', items: [
-        { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-bar-chart-line-fill' }, { label: 'Medidas de Dispersión', href: 'medidas_dispersion.html', icon: 'bi-arrows-expand' },
-        { label: 'Amplitudes', href: 'amplitudes.html', icon: 'bi-distribute-horizontal' }, { label: 'Cuartiles y Percentiles', href: 'cuartiles_percentiles.html', icon: 'bi-percent' },
-        { label: 'Correlación Lineal', href: 'correlacion_lineal.html', icon: 'bi-graph-up' }, { label: 'Probabilidad', href: 'probabilidad.html', icon: 'bi-dice-5-fill' },
-        { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' } ] }
+        { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-bar-chart-line-fill' },
+        { label: 'Medidas de Dispersión', href: 'medidas_dispersion.html', icon: 'bi-arrows-expand' },
+        { label: 'Amplitudes', href: 'amplitudes.html', icon: 'bi-distribute-horizontal' },
+        { label: 'Cuartiles y Percentiles', href: 'cuartiles_percentiles.html', icon: 'bi-percent' },
+        { label: 'Correlación Lineal', href: 'correlacion_lineal.html', icon: 'bi-graph-up' },
+        { label: 'Probabilidad', href: 'probabilidad.html', icon: 'bi-dice-5-fill' },
+        { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' },
+        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ] 
+      }
     ]
   };
   const store = {
@@ -32,28 +47,18 @@
     set: v => { try { v ? sessionStorage.setItem(KEY, '1') : sessionStorage.removeItem(KEY); } catch (e) { } }
   };
   const PAGE = location.pathname.split('/').pop() || 'index.html';
-  let menuCache = null;
-
-  async function getMenu() {
-    if (menuCache) return menuCache;
-    const el = document.getElementById('menu-config');
-    if (el) { try { return (menuCache = JSON.parse(el.textContent)); } catch (e) { } }
-    if (location.protocol !== 'file:') {
-      try { const r = await fetch('index.html', { cache: 'no-store' }); if (r.ok) { const d = new DOMParser().parseFromString(await r.text(), 'text/html'); return (menuCache = JSON.parse(d.getElementById('menu-config').textContent)); } } catch (e) { }
-    }
-    return (menuCache = FALLBACK);
-  }
+  const getMenu = () => MENU;
 
   const brandHTML = b => `<a class="navbar-brand fw-bold" href="${b.href}"><i class="bi ${b.icon} me-2"></i>${b.label}</a>`;
 
-  async function render() {
+  function render() {
     const box = document.getElementById('app-header'); if (!box) return;
     const unlocked = store.get();
     if (!unlocked) {
-      box.innerHTML = `<nav class="navbar navbar-dark app-navbar sticky-top"><div class="container">${brandHTML(FALLBACK.brand)}
+      box.innerHTML = `<nav class="navbar navbar-dark app-navbar sticky-top"><div class="container">${brandHTML(MENU.brand)}
         <button class="btn btn-outline-light rounded-pill fw-bold" type="button" data-unlock><i class="bi bi-lock-fill me-1"></i>Desbloquear</button></div></nav>`;
     } else {
-      const menu = await getMenu(); if (!store.get()) return;
+      const menu = MENU;
       const groups = menu.groups.map(g => {
         const hasActive = g.items.some(i => i.href === PAGE);
         const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === PAGE ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" href="${i.href}"><i class="bi ${i.icon || 'bi-dot'} me-2"></i>${i.label}</a></li>`).join('');
