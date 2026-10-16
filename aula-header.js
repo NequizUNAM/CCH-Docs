@@ -21,15 +21,14 @@
         { label: 'Variación directamente proporcional', href: 'variacion_proporcional.html', icon: 'bi-graph-up-arrow' },
         { label: 'Exponentes y Radicales', href: 'exponentes_radicales.html', icon: 'bi-superscript' },
         { label: 'Ángulos', href: 'angulos.html', icon: 'bi-compass' },
-        { label: 'Teorema de Pitágoras', href: 'pitagoras.html', icon: 'bi-triangle-half' } ] 
-      },
+        { label: 'Teorema de Pitágoras', href: 'pitagoras.html', icon: 'bi-triangle-half' } ] },
       { id: 'cibernetica', label: 'Cibernética', icon: 'bi-cpu', color: 'c-cib', items: [
         { label: 'Precursores', href: 'precursores.html', icon: 'bi-clock-history' },
         { label: 'Circuitos eléctricos', href: 'circuitos.html', icon: 'bi-lightning-charge-fill' },
         { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' },
         { label: 'Conversiones numéricas', href: 'conversiones.html', icon: 'bi-123' },
-        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' } ] 
-      },
+        { label: 'Conversión y aritmética binaria', href: 'conversion_binarios.html', icon: 'bi-calculator-fill' },
+        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' } ] },
       { id: 'estadistica', label: 'Estadística', icon: 'bi-bar-chart-line', color: 'c-est', items: [
         { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-bar-chart-line-fill' },
         { label: 'Medidas de Dispersión', href: 'medidas_dispersion.html', icon: 'bi-arrows-expand' },
@@ -38,8 +37,7 @@
         { label: 'Correlación Lineal', href: 'correlacion_lineal.html', icon: 'bi-graph-up' },
         { label: 'Probabilidad', href: 'probabilidad.html', icon: 'bi-dice-5-fill' },
         { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' },
-        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ] 
-      }
+        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ] }
     ]
   };
   const store = {
