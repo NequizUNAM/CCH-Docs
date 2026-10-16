@@ -464,6 +464,28 @@
     .wd { display:inline-block; font-weight:800; font-family:'Courier New',monospace; padding:0 .3rem; margin:2px; border-radius:8px; background:#fff; border:1px solid #e2e8f0; } .wd .la { color:#e8590c; } .wd .lb { color:#1c7ed6; }
     .wgrp { display:flex; flex-wrap:wrap; align-items:center; gap:.2rem .5rem; padding:.25rem .5rem; border-radius:10px; border:2px solid transparent; margin-bottom:3px; } .wgrp.cur { background:#fff4e6; border-color:#f08c00; }
     .stchips { display:flex; flex-wrap:wrap; gap:.3rem; } .stchips button { border:0; border-radius:999px; padding:.2rem .7rem; font-size:.78rem; font-weight:700; background:#e2e8f0; color:#334155; } .stchips button.on { background:#7048e8; color:#fff; } .stchips button.done { background:#d0bfff; }
+    .ch { width:100%; height:auto; display:block; background:#fff; border-radius:12px; border:1px solid #e2e8f0; }
+    .axl { stroke:#475569; stroke-width:1.5; } .axt { stroke:#475569; } .axx { font-size:11px; fill:#475569; text-anchor:middle; font-weight:700; } .axy { font-size:10px; fill:#64748b; text-anchor:end; } .grd { stroke:#e2e8f0; stroke-dasharray:3 3; }
+    .cv.play { animation:cvDraw 1.5s ease-out both; } @keyframes cvDraw { from { stroke-dasharray:1; stroke-dashoffset:1; } to { stroke-dasharray:1; stroke-dashoffset:0; } }
+    .ar.play { animation:arIn .9s .15s both; } @keyframes arIn { from { opacity:0; } }
+    .bar.play { transform-box:fill-box; transform-origin:bottom; animation:barUp .7s both; animation-delay:calc(var(--i,0)*14ms); } @keyframes barUp { from { transform:scaleY(0); } }
+    .sweep.play { transform-box:fill-box; transform-origin:left; animation:sweepX 1.2s ease-out both; } @keyframes sweepX { from { transform:scaleX(0); } }
+    .pop.play { transform-box:fill-box; transform-origin:center; animation:popS .55s both; animation-delay:var(--d,0s); } @keyframes popS { from { transform:scale(0); opacity:0; } }
+    .drop.play { transform-box:fill-box; transform-origin:bottom; animation:dropL .9s ease-out both; } @keyframes dropL { from { transform:scaleY(0); } }
+    .fdn.play { animation:arIn .8s both; animation-delay:var(--d,0s); }
+    .bl { font-size:10px; font-weight:800; fill:#334155; text-anchor:middle; }
+    .muln { stroke:#e03131; stroke-width:2; stroke-dasharray:5 4; } .mut { font-size:11px; font-weight:800; fill:#e03131; }
+    .arl { font-size:15px; font-weight:800; fill:#9c3d00; paint-order:stroke; stroke:#fff; stroke-width:4px; }
+    .exc.ok { border-color:#2f9e44; background:#ebfbee; } .exc.bad { border-color:#e03131; background:#fff5f5; opacity:.85; }
+    .ntb td.nin, .ntb th.nin { animation-name:chipPop; }
+    .no-anim .bar, .no-anim .cv, .no-anim .ar, .no-anim .sweep, .no-anim .pop { animation:none !important; }
+    .stchips button.done { background:#d3f9d8; color:#2b8a3e; }
+    .tabp button.on { color:#fff; }
+    .grp-desc { background:#fff; border:2px dashed var(--gc,#0ca678); border-radius:14px; padding:.55rem 1rem; margin-bottom:1.1rem; font-size:.9rem; color:#334155; } .grp-desc b { color:var(--gc,#0ca678); }
+    #ar-info .stcard, #ct-body .stcard { height:auto; }
+    .ntb th.rl { text-transform:none; }
+    .kpi .kl { text-transform:none; }
+    .intro-box .cx.d { overflow-x:auto; overflow-y:hidden; }
   </style>
 </head><body>
   <div id="app-header"></div>
@@ -473,7 +495,7 @@
       <span class="sym" style="right:8%;top:14%;font-size:4rem;animation-delay:2s">🎯</span><span class="sym" style="right:22%;bottom:8%;font-size:3.2rem;animation-delay:3s">C(n,r)</span>
       <div class="container">
         <h1 class="display-5 fw-bold"><i class="bi bi-bar-chart-steps text-info me-2"></i>Distribución binomial</h1>
-        <p class="lead mb-1">Principio de conteo · permutaciones · combinaciones · ensayos de Bernoulli · modelo binomial</p>
+        <p class="lead mb-1">Conteo · variables aleatorias · esperanza y desviación · ensayos de Bernoulli · modelo binomial · variables continuas</p>
         <p class="mb-0 text-light opacity-75">Primero aprendes a <b>contar</b> (jugando con fichas, lugares y grupos) y después usas ese conteo para construir la fórmula binomial paso a paso</p>
         <div class="hero-btns mt-3 d-flex gap-2 justify-content-center flex-wrap"><a class="btn btn-info rounded-pill px-4" href="#s1" data-go="c"><i class="bi bi-rocket-takeoff-fill me-1"></i>Empezar a contar</a><a class="btn btn-outline-light rounded-pill px-4" href="#s8" data-go="m"><i class="bi bi-diagram-3-fill me-1"></i>Deducir la fórmula</a><button class="btn btn-warning rounded-pill px-4 fw-bold" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual de teoremas</button><a class="btn btn-outline-light rounded-pill px-4" href="#s12" data-go="f"><i class="bi bi-journal-richtext me-1"></i>Formulario</a></div>
       </div>
@@ -487,9 +509,10 @@
     </div></div>
 
     <div class="container mt-4 mb-5" id="content">
+      <div class="grp-desc" id="grp-desc"></div>
 
       <!-- ============ CONTEO ============ -->
-      <section class="sec" id="s1" data-g="c"><div class="sec-h"><span class="num">1</span><h2>Principios de conteo: multiplicar y sumar</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="multiplicativo"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s1" data-g="c" data-s="Principios de conteo"><div class="sec-h"><span class="num">1</span><h2>Principios de conteo: multiplicar y sumar</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="multiplicativo"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-lightbulb-fill text-warning me-1"></i>Antes de la binomial hay que saber contar.</b> Si algo se hace en <b>etapas</b> (primero esto <b>y</b> luego aquello) se <b>multiplica</b>; si se puede hacer de una <b>u</b> otra manera (excluyentes) se <b>suma</b>. Arma un combo y mira cómo crece el conteo.</div>
         <div class="demo"><div class="demo-t"><i class="bi bi-basket2-fill"></i>Arma tu combo: etapa por etapa</div>
           <div class="d-flex flex-wrap gap-2 align-items-center mb-2"><span class="small fw-bold">Etapas:</span><div class="btn-group btn-group-sm" id="s1-k"></div></div>
@@ -501,31 +524,31 @@
             <div class="col-lg-8" id="ad-out"></div></div></div>
       </section>
 
-      <section class="sec" id="s2" data-g="c"><div class="sec-h"><span class="num">2</span><h2>Factorial: ordenar n elementos</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="factorial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s2" data-g="c" data-s="Factorial"><div class="sec-h"><span class="num">2</span><h2>Factorial: ordenar n elementos</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="factorial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-people-fill text-warning me-1"></i>Fila de fotografía:</b> ¿de cuántas maneras se pueden formar n personas en una fila? Llena los lugares <b>uno por uno</b>: en cada lugar anota cuántas fichas te quedan por elegir. <i>Primero predice cuántas hay.</i></div>
         <div class="demo"><div class="d-flex flex-wrap gap-2 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-grid-3x2-gap-fill"></i>Número de personas n</div><div class="btn-group btn-group-sm" id="s2-n"></div></div>
           <div id="sb2"></div></div>
         <div class="demo"><div class="demo-t"><i class="bi bi-graph-up-arrow"></i>Crecimiento del factorial (toca una fila)</div><div id="s2-tab"></div></div>
       </section>
 
-      <section class="sec" id="s3" data-g="c"><div class="sec-h"><span class="num">3</span><h2>Permutaciones: el orden importa</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="permutaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s3" data-g="c" data-s="Permutaciones"><div class="sec-h"><span class="num">3</span><h2>Permutaciones: el orden importa</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="permutaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-trophy-fill text-warning me-1"></i>Podio de una carrera:</b> de n corredores se premian r lugares. «ABC» y «CBA» son podios <b>distintos</b>: si el orden importa, es una <b>permutación</b>. También verás qué pasa cuando hay elementos <b>repetidos</b> (anagramas).</div>
         <div class="tabp" id="s3-tabs"></div><div id="s3-body"></div>
       </section>
 
-      <section class="sec" id="s4" data-g="c"><div class="sec-h"><span class="num">4</span><h2>Combinaciones: el orden NO importa</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="combinaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s4" data-g="c" data-s="Combinaciones"><div class="sec-h"><span class="num">4</span><h2>Combinaciones: el orden NO importa</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="combinaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-people-fill text-warning me-1"></i>Comité en vez de podio:</b> elegir 2 personas de 5 para un comité; «A y B» es el <b>mismo</b> comité que «B y A». Descubre por qué se divide entre <b>r!</b>: cada grupo se cuenta r! veces cuando miramos el orden.</div>
         <div class="demo"><div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-sliders"></i>Elige n y r</div>
           <div class="d-flex align-items-center gap-2"><b class="small">n =</b><div class="btn-group btn-group-sm" id="s4-n"></div></div><div class="d-flex align-items-center gap-2"><b class="small">r =</b><div class="btn-group btn-group-sm" id="s4-r"></div></div></div>
           <div id="s4-body"></div></div>
       </section>
 
-      <section class="sec" id="s5" data-g="c"><div class="sec-h"><span class="num">5</span><h2>¿Permutación o combinación? Tú decides</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="combinaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s5" data-g="c" data-s="¿P o C?"><div class="sec-h"><span class="num">5</span><h2>¿Permutación o combinación? Tú decides</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="combinaciones"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-question-circle-fill text-warning me-1"></i>La pregunta clave:</b> «si cambio el orden, ¿obtengo algo distinto?». <b>Sí → permutación; No → combinación.</b> Practica con problemas: elige el tipo y luego calcula.</div>
         <div id="s5-body"></div>
       </section>
 
-      <section class="sec" id="s6" data-g="c"><div class="sec-h"><span class="num">6</span><h2>Triángulo de Pascal y binomio de Newton</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="newton"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s6" data-g="c" data-s="Pascal y Newton"><div class="sec-h"><span class="num">6</span><h2>Triángulo de Pascal y binomio de Newton</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="newton"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-triangle-fill text-warning me-1"></i>Las combinaciones forman un triángulo.</b> Cada número es la suma de los dos de arriba y sirve de coeficiente en $(a+b)^n$. Es el puente hacia la binomial: si $a=p$ y $b=q$, ¡los términos son probabilidades!</div>
         <div class="demo"><div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-hand-index-thumb-fill"></i>Toca un número</div><div class="d-flex align-items-center gap-2"><b class="small">Fila n:</b><input type="range" min="0" max="12" value="6" data-in="paN" style="width:180px"><b id="pa-nv"></b></div></div>
           <div id="s6-body"></div></div>
@@ -540,13 +563,33 @@
           <div id="nw-body"></div></div>
       </section>
 
+      <section class="sec" id="sd1" data-g="d" data-s="Variable aleatoria"><div class="sec-h"><span class="num">0</span><h2>Variable aleatoria discreta y su distribución</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="vadiscreta"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-123 text-warning me-1"></i>Convertir resultados en números.</b> Una <b>variable aleatoria</b> $X$ asigna un número a cada resultado del experimento; es <b>discreta</b> si sus valores se pueden contar. Su <b>distribución</b> es la lista de pares $x$ y $P(X=x)$: cada probabilidad es $\ge 0$ y todas suman <b>1</b>. Elige una tabla y comprueba si es una distribución válida.</div>
+        <div class="tabp" id="sd1-tabs"></div><div id="sd1-body"></div>
+      </section>
+      <section class="sec" id="sd2" data-g="d" data-s="Esperanza y desviación"><div class="sec-h"><span class="num">0</span><h2>Valor esperado y desviación estándar (por definición)</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="espdef"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-bullseye text-warning me-1"></i>El punto de equilibrio y qué tan lejos se reparten los datos.</b> La <b>esperanza</b> $\mu=\sum x\,P(x)$ es el punto donde la distribución «se equilibra» como una balanza; la <b>varianza</b> $\sigma^{2}=\sum (x-\mu)^{2}P(x)$ promedia los cuadrados de las distancias a $\mu$. Recorre el cálculo columna por columna con cualquiera de las tablas.</div>
+        <div class="tabp" id="sd2-tabs"></div>
+        <div class="stchips mb-2" id="sd2-chips"></div><div id="sd2-body"></div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" data-a="sdPrev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" data-a="sdNext">Siguiente<i class="bi bi-chevron-right ms-1"></i></button><button class="btn btn-outline-primary rounded-pill" data-a="sdPlay" id="sd-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button></div></div>
+      </section>
+
+
       <!-- ============ MODELO BINOMIAL ============ -->
-      <section class="sec" id="s7" data-g="m"><div class="sec-h"><span class="num">7</span><h2>Ensayo de Bernoulli y las 4 condiciones</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="bernoulli"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s7" data-g="m" data-s="Bernoulli"><div class="sec-h"><span class="num">7</span><h2>Ensayo de Bernoulli y las 4 condiciones</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="bernoulli"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-toggle2-on text-warning me-1"></i>Un ensayo, dos resultados:</b> éxito (probabilidad p) o fracaso (q = 1 − p). Repite ensayos y verifica después si el experimento cumple las <b>4 condiciones</b> de la binomial.</div>
         <div class="tabp" id="s7-tabs"></div><div id="s7-body"></div>
       </section>
 
-      <section class="sec" id="s8" data-g="m"><div class="sec-h"><span class="num">8</span><h2>Deducción de la fórmula, paso a paso</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="sm1" data-g="m" data-s="4 volados"><div class="sec-h"><span class="num">0</span><h2>Caso guía: águilas en 4 volados</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-coin text-warning me-1"></i>Deduce la fórmula, no la memorices.</b> $X$ = número de águilas en <b>4 volados</b>. Verifica que es un experimento binomial, <b>enumera</b> los 16 resultados, calcula la probabilidad de cada uno con la <b>regla del producto</b>, cuenta con <b>combinaciones</b> y al final descubre la fórmula general para $n$ repeticiones y $x$ éxitos.</div>
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-2"><span class="small fw-bold">Moneda:</span><div class="btn-group btn-group-sm" id="vo-p"></div><span class="small text-muted">éxito = águila (S) · fracaso = sol (F)</span></div>
+        <div class="stchips mb-2" id="vo-chips"></div><div id="vo-body"></div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" data-a="voPrev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" data-a="voNext">Siguiente<i class="bi bi-chevron-right ms-1"></i></button><button class="btn btn-outline-primary rounded-pill" data-a="voPlay" id="vo-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button></div></div>
+      </section>
+
+
+      <section class="sec" id="s8" data-g="m" data-s="Deducción"><div class="sec-h"><span class="num">8</span><h2>Deducción de la fórmula, paso a paso</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-diagram-3-fill text-warning me-1"></i>Combinaciones + regla del producto.</b> Cuenta las secuencias de éxitos y fracasos con exactamente x éxitos (<b>combinaciones</b>), calcula la probabilidad de <b>una</b> (producto) y <b>suma</b>. Cambia n, p y x.</div>
         <div class="demo"><div class="row g-3 align-items-end mb-2">
           <div class="col-auto"><div class="small fw-bold mb-1">Ensayos n</div><div class="btn-group btn-group-sm" id="dd-n"></div></div>
@@ -558,7 +601,7 @@
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" data-a="ddPrev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" data-a="ddNext">Siguiente<i class="bi bi-chevron-right ms-1"></i></button></div><span class="small text-muted" id="dd-count"></span><button class="btn btn-warning rounded-pill fw-semibold" data-a="ddPlay" id="dd-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button></div></div>
       </section>
 
-      <section class="sec" id="s9" data-g="m"><div class="sec-h"><span class="num">9</span><h2>Función de probabilidad y calculadora binomial</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="fmp"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s9" data-g="m" data-s="Función de probabilidad"><div class="sec-h"><span class="num">9</span><h2>Función de probabilidad y calculadora binomial</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="fmp"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-sliders text-warning me-1"></i>Mueve n y p y mira cómo cambia la forma.</b> Toca una barra para elegir x. Elige el tipo de pregunta (=, ≤, ≥, entre) y obtén la probabilidad con la sustitución <b>paso a paso</b>, la media, la varianza y la desviación estándar.</div>
         <div class="demo"><div class="row g-3"><div class="col-lg-4"><div class="small fw-bold">n = <span id="c-nv"></span> <span class="text-muted fw-normal">(ensayos)</span></div><input type="range" class="form-range bn-n" min="1" max="30" value="10" data-in="bnN">
           <div class="small fw-bold">p = <span id="c-pv"></span> <span class="text-muted fw-normal">(éxito)</span></div><input type="range" class="form-range bn-p" min="1" max="99" value="50" data-in="bnP">
@@ -567,22 +610,69 @@
         <div class="row g-3"><div class="col-lg-7"><div id="c-steps"></div></div><div class="col-lg-5"><div id="c-stats"></div><details class="mt-2"><summary class="fw-bold small" style="cursor:pointer;color:#1c7ed6">Tabla completa de P(X = k) y F(k)</summary><div id="c-tab" class="mt-2" style="max-height:380px;overflow:auto"></div></details></div></div>
       </section>
 
+      <section class="sec" id="sm2" data-g="m" data-s="Forma según n y p"><div class="sec-h"><span class="num">0</span><h2>Forma de la distribución: ¿qué cambian n y p?</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="moda"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-graph-up text-warning me-1"></i>Compara simuladores lado a lado.</b> Con el mismo <b>p</b> y distintos <b>n</b>, o con el mismo <b>n</b> y distintos <b>p</b>, observa el <b>centro</b> ($np$), la <b>dispersión</b> ($\sqrt{npq}$) y la <b>simetría</b>. <i>Conjetura antes de mover: ¿con p = 0.05 la forma es simétrica? ¿Y cuando n crece?</i></div>
+        <div class="demo"><div class="row g-3 align-items-end"><div class="col-auto"><div class="small fw-bold mb-1">¿Qué varía?</div><div class="btn-group btn-group-sm" id="fo-mode"></div></div>
+          <div class="col-md-4" id="fo-c1"><div class="small fw-bold">p = <span id="fo-pv"></span></div><input type="range" class="form-range" min="1" max="99" value="5" data-in="foP"></div>
+          <div class="col-md-4 d-none" id="fo-c2"><div class="small fw-bold">n = <span id="fo-nv"></span></div><input type="range" class="form-range" min="2" max="150" value="20" data-in="foN"></div>
+          <div class="col-auto"><div class="small fw-bold mb-1">Atajos</div><div class="btn-group btn-group-sm" id="fo-pre"></div></div></div>
+          <div class="row g-3 mt-1" id="fo-grid"></div><div class="intro-box mt-3 mb-0" id="fo-note"></div></div>
+      </section>
+
+      <section class="sec" id="sm3" data-g="m" data-s="E(X) y σ"><div class="sec-h"><span class="num">0</span><h2>Esperanza y desviación estándar de la binomial</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="esperanza"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-calculator text-warning me-1"></i>De $\sum x\,P(x)$ a $np$.</b> Primero calcula $\mu$ y $\sigma$ <b>con la definición</b> para los 4 volados; luego entiende por qué sale $np$ y $\sqrt{npq}$ al sumar <b>ensayos de Bernoulli</b>; por último comprueba las fórmulas y mira cuánta probabilidad cae en $\mu\pm\sigma$.</div>
+        <div class="tabp" id="es-tabs"></div><div id="es-body"></div>
+      </section>
+
+
       <!-- ============ APLICACIONES ============ -->
-      <section class="sec" id="s10" data-g="a"><div class="sec-h"><span class="num">10</span><h2>Simulación: la teoría contra la realidad</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="ley"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s10" data-g="a" data-s="Simulación"><div class="sec-h"><span class="num">10</span><h2>Simulación: la teoría contra la realidad</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="ley"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-dice-5-fill text-warning me-1"></i>Haz el experimento muchas veces.</b> Cada repetición son n ensayos de Bernoulli y se anota el número de éxitos. Las barras <span style="color:#1c7ed6;font-weight:800">azules</span> son lo observado; los marcadores <span style="color:#f08c00;font-weight:800">naranjas</span>, la probabilidad teórica. <i>Conjetura: ¿se parecerán más con 10 o con 1 000 repeticiones?</i></div>
         <div class="demo"><div class="row g-3 mb-2"><div class="col-md-4"><div class="small fw-bold">n = <span id="sm-nv"></span></div><input type="range" class="form-range bn-n" min="1" max="30" value="10" data-in="bnN"></div><div class="col-md-4"><div class="small fw-bold">p = <span id="sm-pv"></span></div><input type="range" class="form-range bn-p" min="1" max="99" value="50" data-in="bnP"></div>
           <div class="col-md-4 d-flex align-items-end gap-1 flex-wrap"><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="1">+1</button><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="10">+10</button><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="100">+100</button><button class="btn btn-sm btn-primary rounded-pill" data-a="smRun" data-v="1000">+1 000</button><button class="btn btn-sm btn-outline-dark rounded-pill" data-a="smReset"><i class="bi bi-arrow-counterclockwise"></i></button></div></div>
           <div id="sm-last" class="mb-2"></div><div id="sm-hist"></div><div id="sm-stats" class="mt-2"></div></div>
       </section>
 
-      <section class="sec" id="s11" data-g="a"><div class="sec-h"><span class="num">11</span><h2>Ejemplos resueltos y práctica</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+      <section class="sec" id="s11" data-g="a" data-s="Ejemplos y práctica"><div class="sec-h"><span class="num">11</span><h2>Ejemplos resueltos y práctica</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="binomial"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-journal-check text-warning me-1"></i>Del problema al resultado.</b> Elige un ejemplo y resuélvelo en 5 pasos: <i>identificar → verificar condiciones → plantear → sustituir → interpretar</i>. Abajo, genera problemas nuevos y comprueba tu respuesta.</div>
         <div class="row g-3 mb-3" id="s11-cards"></div>
         <div id="s11-sol"></div>
         <div class="demo mt-4"><div class="demo-t"><i class="bi bi-pencil-square"></i>Práctica con problemas nuevos</div><div id="s11-prac"></div></div>
       </section>
 
-      <section class="sec" id="s12" data-g="f"><div class="sec-h"><span class="num">12</span><h2>Formulario de conteo y binomial</h2><span class="lvtag lt4">Referencia</span></div>
+      <section class="sec" id="sa3" data-g="a" data-s="Problemas con E y σ"><div class="sec-h"><span class="num">0</span><h2>Problemas contextualizados: interpreta μ y σ</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="inusual"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-chat-square-text-fill text-warning me-1"></i>Los números no son el final: hay que interpretarlos.</b> En cada situación identifica el modelo, calcula $\mu$ y $\sigma$, escribe qué <b>significan</b> en el contexto y decide si un resultado observado es <b>usual</b> o <b>inusual</b> (fuera de $\mu\pm 2\sigma$).</div>
+        <div class="tabp" id="ct-tabs"></div><div id="ct-body"></div>
+      </section>
+
+      <section class="sec" id="sv1" data-g="v" data-s="De lo discreto a lo continuo"><div class="sec-h"><span class="num">0</span><h2>De lo discreto a lo continuo: refinar la medición</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="continua"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-rulers text-warning me-1"></i>Una llamada de 15 minutos.</b> La policía intercepta la línea en un instante al azar $x$ entre 0 y 15 min. Si medimos el instante en <b>celdas</b> cada vez más finas, cada celda pierde probabilidad, pero un <b>intervalo</b> conserva la suya. Ahí nace la variable <b>continua</b>.</div>
+        <div class="demo"><div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-zoom-in"></i>Celdas por minuto</div><div class="btn-group btn-group-sm" id="ds-m"></div>
+          <div class="btn-group btn-group-sm ms-auto" id="ds-view"></div></div><div id="ds-body"></div></div>
+      </section>
+      <section class="sec" id="sv2" data-g="v" data-s="Llamada telefónica"><div class="sec-h"><span class="num">0</span><h2>Probabilidad geométrica: la llamada telefónica</h2><span class="lvtag lt2">Intermedio</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="uniforme"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-telephone-fill text-warning me-1"></i>Cambiamos «contar» por «medir longitudes».</b> El delincuente habla de información comprometedora entre el minuto <b>3 y el 5</b> de una llamada de <b>15 min</b>. La policía se conecta en un instante $x$ al azar y escucha desde ahí. ¿En qué intervalo debe caer $x$ para oír <b>todo</b>? ¿Para oír <b>parte</b>? ¿Qué pasa si se conecta <b>exactamente</b> al inicio del mensaje?</div>
+        <div class="demo"><div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="demo-t m-0"><i class="bi bi-sliders2"></i>Instante de conexión x</div>
+          <input type="range" min="0" max="15" step="0.1" value="2" data-in="phX" style="width:min(380px,90%)"><b id="ph-xv"></b><button class="btn btn-sm btn-primary rounded-pill" data-a="phRand"><i class="bi bi-shuffle me-1"></i>Al azar</button></div>
+          <div id="ph-line"></div></div>
+        <div class="stchips my-2" id="ph-chips"></div><div id="ph-body"></div><div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2"><div class="d-flex gap-2"><button class="btn btn-outline-dark rounded-pill" data-a="phPrev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-dark rounded-pill px-4" data-a="phNext">Siguiente<i class="bi bi-chevron-right ms-1"></i></button></div></div>
+        <div class="demo mt-3"><div class="demo-t"><i class="bi bi-dice-5-fill"></i>Simula muchas interceptaciones</div>
+          <div class="d-flex gap-1 flex-wrap mb-2"><button class="btn btn-sm btn-primary rounded-pill" data-a="phSim" data-v="1">+1</button><button class="btn btn-sm btn-primary rounded-pill" data-a="phSim" data-v="10">+10</button><button class="btn btn-sm btn-primary rounded-pill" data-a="phSim" data-v="100">+100</button><button class="btn btn-sm btn-primary rounded-pill" data-a="phSim" data-v="1000">+1000</button><button class="btn btn-sm btn-outline-secondary rounded-pill" data-a="phReset"><i class="bi bi-arrow-counterclockwise"></i></button></div>
+          <div id="ph-sim"></div></div>
+      </section>
+      <section class="sec" id="sv3" data-g="v" data-s="Área bajo la densidad"><div class="sec-h"><span class="num">0</span><h2>Probabilidad = área bajo la función de densidad</h2><span class="lvtag lt3">Avanzado</span><button class="btn btn-sm btn-warning rounded-pill fw-bold ms-auto manb" data-man="area"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-bar-chart-fill text-warning me-1"></i>En una variable continua la probabilidad vive en los intervalos.</b> $P(a\le X\le b)$ es el <b>área</b> bajo la curva de densidad $f(x)$ entre $a$ y $b$. Mueve los extremos, cambia la densidad y comprueba: el área total es 1 y un punto no tiene área.</div>
+        <div class="demo"><div class="row g-3 align-items-end"><div class="col-auto"><div class="small fw-bold mb-1">Densidad</div><div class="btn-group btn-group-sm" id="ar-d"></div></div>
+          <div class="col-md-3"><div class="small fw-bold">a = <span id="ar-av"></span></div><input type="range" class="form-range" min="0" max="15" step="0.1" value="3" data-in="arA"></div>
+          <div class="col-md-3"><div class="small fw-bold">b = <span id="ar-bv"></span></div><input type="range" class="form-range" min="0" max="15" step="0.1" value="5" data-in="arB"></div>
+          <div class="col-auto"><div class="small fw-bold mb-1">Atajos</div><div class="btn-group btn-group-sm" id="ar-pre"></div></div></div>
+          <div class="row g-3 mt-1"><div class="col-lg-7" id="ar-chart"></div><div class="col-lg-5" id="ar-info"></div></div></div>
+        <div class="row g-3 mt-1" id="ar-props"></div>
+        <div class="demo mt-3"><div class="demo-t"><i class="bi bi-table"></i>La misma ventana [3, 5] con tres densidades distintas</div><div id="ar-cmp"></div></div>
+      </section>
+
+
+      <section class="sec" id="s12" data-g="f" data-s="Formulario"><div class="sec-h"><span class="num">12</span><h2>Formulario de conteo y binomial</h2><span class="lvtag lt4">Referencia</span></div>
         <div class="intro-box"><b><i class="bi bi-journal-richtext text-warning me-1"></i>Todas las fórmulas</b> agrupadas por tema, con un ejemplo. Filtra por tema o abre la ficha completa (definición, teorema, uso) en el Manual.</div>
         <div class="fcat" id="fm-cat"></div><div class="row g-3" id="fm-grid"></div>
       </section>
@@ -590,7 +680,7 @@
   </main>
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Distribución binomial</small></footer>
   <button class="to-top" id="to-top" aria-label="Subir"><i class="bi bi-arrow-up"></i></button>
-  <div class="modal fade" id="manualModal" tabindex="-1" aria-labelledby="manualTitle" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" id="manualTitle"><i class="bi bi-book-half me-2 text-warning"></i>Manual: conteo y distribución binomial</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-labelledby="manualTitle" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" id="manualTitle"><i class="bi bi-book-half me-2 text-warning"></i>Manual: conteo, variables aleatorias y distribución binomial</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
     <div class="modal-body"><div class="row g-3"><div class="col-md-3"><input class="form-control form-control-sm mb-2" id="man-q" placeholder="Buscar concepto…" autocomplete="off"><div class="man-nav" id="man-nav"></div></div><div class="col-md-9" id="man-body"></div></div></div></div></div></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="auth-config.js"></script>
@@ -606,7 +696,7 @@
       const s = String(src); let i = 0, last = 'start';
       const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
       const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
-      const SYM = { Omega: 'Ω', omega: 'ω', mu: 'μ', sigma: 'σ', lambda: 'λ', cap: '∩', cup: '∪', emptyset: '∅', setminus: '∖', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', land: '∧', lor: '∨', lnot: '¬', triangle: '△', mid: '∣', vee: '∨', wedge: '∧', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', bigcup: '⋃', bigcap: '⋂', varepsilon: 'ε', epsilon: 'ε', delta: 'δ', ne: '≠', iff: '⇔', rightarrow: '→',  ldots: '…', sim: '∼', Phi: 'Φ', ln: 'ln', lfloor: '⌊', rfloor: '⌋', dots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const SYM = { Omega: 'Ω', omega: 'ω', mu: 'μ', sigma: 'σ', lambda: 'λ', cap: '∩', cup: '∪', emptyset: '∅', setminus: '∖', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', land: '∧', lor: '∨', lnot: '¬', triangle: '△', mid: '∣', vee: '∨', wedge: '∧', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', bigcup: '⋃', bigcap: '⋂', varepsilon: 'ε', epsilon: 'ε', delta: 'δ', ne: '≠', iff: '⇔', rightarrow: '→',  ldots: '…', sim: '∼', Phi: 'Φ', ln: 'ln', lfloor: '⌊', rfloor: '⌋', dots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π', phi: 'φ', varphi: 'φ', int: '∫', Delta: 'Δ', rho: 'ρ', Sigma: 'Σ', leftrightarrow: '↔', propto: '∝' };
       const OPS = new Set(['cap', 'cup', 'setminus', 'in', 'notin', 'subset', 'subseteq', 'land', 'lor', 'mid', 'triangle', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'ne', 'iff', 'rightarrow', 'pm', 'mp', 'le', 'ge', 'leq', 'geq', 'sim']);
       const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
       const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
@@ -1183,7 +1273,8 @@
     /* ===================== Manual de conceptos (modal): definición → teorema → fórmula → uso → ejemplo ===================== */
     const MN = { k: 'binomial', q: '' };
     const leg = a => `<div class="leg"><b>Donde:</b> ${a.map(x => `<span>${fi(x[0])} = ${x[1]}</span>`).join('')}</div>`;
-    function manDefs() {
+    function manDefs() { return manDefs0().concat(manDefsX()); }
+    function manDefs0() {
       const n = BN.n, p = BN.p, q = 1 - p, x = BN.x, pm = pmf(n, x, p);
       return [
         /* ---------- CONTEO ---------- */
@@ -1313,7 +1404,7 @@
     function manR() {
       const m = $('#manualModal'); if (!m) return; const D = manDefs(), qq = MN.q.trim().toLowerCase(), items = D.filter(c => !qq || c.t.toLowerCase().includes(qq));
       const sect = (lab, cat) => { const it = items.filter(c => c.cat === cat); return it.length ? `<div class="small fw-bold text-muted mt-2">${lab}</div>` + it.map(c => `<button style="--c:${c.c}" class="${MN.k === c.k ? 'on' : ''}" data-mk="${c.k}">${c.t}</button>`).join('') : ''; };
-      $('#man-nav').innerHTML = `<button style="--c:#0f172a" class="${MN.k === 'todo' ? 'on' : ''}" data-mk="todo"><i class="bi bi-grid-fill me-1"></i>Formulario completo</button>` + sect('CONTEO', 'c') + sect('MODELO BINOMIAL', 'b');
+      $('#man-nav').innerHTML = `<button style="--c:#0f172a" class="${MN.k === 'todo' ? 'on' : ''}" data-mk="todo"><i class="bi bi-grid-fill me-1"></i>Formulario completo</button>` + sect('CONTEO', 'c') + sect('VARIABLES ALEATORIAS', 'd') + sect('MODELO BINOMIAL', 'b') + sect('APLICACIONES', 'a') + sect('VARIABLE CONTINUA', 'v');
       const b = manEl();
       if (MN.k === 'todo') { b.innerHTML = `<div class="man-h" style="--c:#0f172a">Formulario completo</div><div class="small text-muted mb-2">Toca un tema para abrir su ficha con definición, teorema y ejemplo.</div><div class="row g-2">${D.map(c => `<div class="col-md-6"><div class="fm" style="--c:${c.c}"><div class="ft" role="button" data-mk="${c.k}">${c.t}</div><div class="ff">${c.f.map(fd).join('')}</div></div></div>`).join('')}</div>`; math(b); return; }
       const c = D.find(x => x.k === MN.k) || D[0];
@@ -1330,7 +1421,7 @@
     /* ===================== 12. Formulario ===================== */
     const FM = { cat: 'all' };
     function fmR() {
-      const D = manDefs(), cats = [['all', 'Todos', '#0f172a'], ['c', 'Conteo', '#0ca678'], ['b', 'Modelo binomial', '#1c7ed6']];
+      const D = manDefs(), cats = [['all', 'Todos', '#0f172a'], ['c', 'Conteo', '#0ca678'], ['d', 'Variables aleatorias', '#e8590c'], ['b', 'Modelo binomial', '#1c7ed6'], ['a', 'Aplicaciones', '#c2255c'], ['v', 'Variable continua', '#7048e8']];
       $('#fm-cat').innerHTML = cats.map(c => `<button class="fchip" style="--c:${c[2]};${FM.cat === c[0] ? `background:${c[2]};color:#fff` : ''}" data-a="fmc" data-v="${c[0]}">${c[1]}</button>`).join('');
       $('#fm-grid').innerHTML = D.filter(c => FM.cat === 'all' || c.cat === FM.cat).map(c => `<div class="col-md-6 col-lg-4"><div class="fm" style="--c:${c.c}"><div class="ft">${c.t}</div><div class="ff">${c.f.slice(0, 2).map(fd).join('')}</div><div class="fe">${c.use}</div><div class="fx"><b>Ejemplo:</b> ${c.ex()}</div><button class="btn btn-sm btn-outline-dark rounded-pill align-self-start mt-auto" data-man="${c.k}"><i class="bi bi-book-half me-1"></i>Ficha completa</button></div></div>`).join('');
       math($('#fm-grid'));
@@ -1339,14 +1430,17 @@
     RENDERS.push(fmR);
 
     /* ===================== Navegación y arranque ===================== */
-    const GROUPS = [['c', 'Conteo', '#0ca678', 'bi-grid-3x3-gap-fill'], ['m', 'Modelo binomial', '#1c7ed6', 'bi-bar-chart-steps'], ['a', 'Aplicaciones', '#e8590c', 'bi-trophy-fill'], ['f', 'Formulario', '#c2255c', 'bi-journal-richtext'], ['all', 'Todo', '#0f172a', 'bi-grid-fill']];
+    const GROUPS = [['c', 'Conteo', '#0ca678', 'bi-grid-3x3-gap-fill'], ['d', 'Variables aleatorias', '#e8590c', 'bi-123'], ['m', 'Modelo binomial', '#1c7ed6', 'bi-bar-chart-steps'], ['a', 'Aplicaciones', '#c2255c', 'bi-trophy-fill'], ['v', 'Variable continua', '#7048e8', 'bi-activity'], ['f', 'Formulario', '#0f172a', 'bi-journal-richtext'], ['all', 'Todo', '#495057', 'bi-grid-fill']];
     let curGrp = 'c';
     function setGroup(g, scroll) { curGrp = g; store.set('bin-grp', g);
       $$('section.sec').forEach(s => { s.hidden = !(g === 'all' || s.dataset.g === g); }); $$('#sec-nav a').forEach(a => { a.hidden = !(g === 'all' || a.dataset.g === g); });
       $$('#grp-bar button').forEach(b => b.classList.toggle('active', b.dataset.g === g)); const act = GROUPS.find(x => x[0] === g); $('#grp-bar').style.setProperty('--g', act ? act[2] : '#0f172a');
+      const gd = $('#grp-desc'); if (gd) { gd.innerHTML = GDESC[g] || ''; gd.style.setProperty('--gc', act ? act[2] : '#495057'); gd.hidden = !GDESC[g]; }
       if (scroll) window.scrollTo({ top: Math.max(0, $('#content').offsetTop - 70), behavior: 'smooth' }); spy(); }
     function spy() { const links = $$('#sec-nav a:not([hidden])'), y = window.scrollY + 190; let k = -1; links.forEach((a, i) => { const s = $(a.getAttribute('href')); if (s && !s.hidden && s.offsetTop <= y) k = i; }); $$('#sec-nav a').forEach(a => a.classList.remove('active')); if (links[Math.max(k, 0)]) links[Math.max(k, 0)].classList.add('active'); $('#to-top').classList.toggle('on', window.scrollY > 700); }
     function navInit() {
+      $$('section.sec').forEach((sc, i) => { const nb = sc.querySelector('.num'); if (nb) nb.textContent = i + 1; });
+      $('#sec-nav').innerHTML = $$('section.sec').map((sc, i) => `<a href="#${sc.id}" data-g="${sc.dataset.g}">${i + 1} ${sc.dataset.s || sc.querySelector('h2').textContent}</a>`).join('');
       $('#grp-bar').innerHTML = GROUPS.map(g => `<button data-g="${g[0]}" style="--g:${g[2]}"><i class="bi ${g[3]}"></i>${g[1]}</button>`).join('');
       $('#grp-bar').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGroup(b.dataset.g, true); });
       const secs = $$('section.sec'); secs.forEach((s, i) => { const nx = secs[i + 1], title = nx ? nx.querySelector('h2').textContent : null;
@@ -1366,6 +1460,499 @@
       $('#man-q').addEventListener('input', e => { MN.q = e.target.value; manR(); });
       const a = $('#anim-sw'); const applyAn = () => { document.body.classList.toggle('no-anim', !a.checked); store.set('bin-anim', a.checked ? '1' : '0'); };
       a.checked = store.get('bin-anim') !== '0'; applyAn(); a.addEventListener('change', applyAn); }
+
+
+    /* ===================== AMPLIACIÓN: utilidades ===================== */
+    const SQ2PI = Math.sqrt(2 * Math.PI), phi = z => Math.exp(-z * z / 2) / SQ2PI;
+    function Phi(z) { if (z < -9) return 0; if (z > 9) return 1; let s = z, t = z; for (let k = 1; k < 400; k++) { t *= z * z / (2 * k + 1); s += t; if (Math.abs(t) < 1e-18) break; } return Math.min(1, Math.max(0, 0.5 + phi(z) * s)); }
+    function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    function CH(o) {
+      const W = o.W || 640, H = o.H || 270, l = o.l === undefined ? 46 : o.l, r = o.r || 16, t = o.t || 16, b = o.b === undefined ? 36 : o.b, x0 = o.x0, x1 = o.x1, y1 = o.y1;
+      const sx = x => l + (x - x0) / (x1 - x0) * (W - l - r), sy = y => H - b - y / y1 * (H - t - b);
+      const pth = (f, a, c, n = 180) => { let d = ''; for (let i = 0; i <= n; i++) { const x = a + (c - a) * i / n; d += (i ? 'L' : 'M') + sx(x).toFixed(1) + ' ' + sy(f(x)).toFixed(1); } return d; };
+      const area = (f, a, c, n = 140) => pth(f, a, c, n) + `L${sx(c).toFixed(1)} ${sy(0)}L${sx(a).toFixed(1)} ${sy(0)}Z`;
+      const axis = (ticks, fmt = String, yo = 0) => `<line class="axl" x1="${sx(x0)}" x2="${sx(x1)}" y1="${sy(0) + yo}" y2="${sy(0) + yo}"/>` + ticks.map(k => `<line class="axt" x1="${sx(k)}" x2="${sx(k)}" y1="${sy(0) + yo}" y2="${sy(0) + yo + 5}"/><text class="axx" x="${sx(k)}" y="${sy(0) + yo + 18}">${fmt(k)}</text>`).join('');
+      const yax = (ticks, fmt) => ticks.map(k => `<line class="grd" x1="${l}" x2="${W - r}" y1="${sy(k)}" y2="${sy(k)}"/><text class="axy" x="${l - 6}" y="${sy(k) + 4}">${fmt(k)}</text>`).join('');
+      const txt = (x, y, s, cls = '', anc = 'middle') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${anc}">${s}</text>`;
+      return { W, H, l, r, t, b, x0, x1, y1, sx, sy, pth, area, axis, yax, txt, svg: (inner, cls = '') => `<svg class="ch ${cls}" viewBox="0 0 ${W} ${H}" role="img">${inner}</svg>` };
+    }
+    const tickSet = (a, b, step) => { const o = []; for (let v = Math.ceil(a / step - 1e-9) * step; v <= b + 1e-9; v += step) o.push(+v.toFixed(6)); return o; };
+    const niceStep = (span, max = 10) => { const raw = span / max, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p; };
+    const KEEP = {}; const play = k => KEEP[k] ? 'play' : '';
+    const tr = (v, d = 4) => String(+Number(v).toFixed(d));
+    /* barras con etiquetas de categoría (x puede ser cualquier lista de valores) */
+    function catBars(labs, vals, o = {}) {
+      const n = vals.length, mx = Math.max(...vals, 1e-9), c = CH({ W: 640, H: o.H || 250, x0: -0.5, x1: n - 0.5, y1: mx * 1.2, l: 46, b: 34 }), bw = Math.max(2, (c.sx(1) - c.sx(0)) * (n > 40 ? 0.9 : 0.78)), pl = play(o.k || '');
+      let s = c.yax(tickSet(0, mx, niceStep(mx, 4)), v => tr(v, 3));
+      if (o.band) s += `<rect class="ar ${pl}" x="${c.sx(o.band[0])}" y="${c.t}" width="${Math.max(0, c.sx(o.band[1]) - c.sx(o.band[0]))}" height="${c.sy(0) - c.t}" fill="rgba(240,140,0,.16)"/>`;
+      vals.forEach((v, i) => { const y = c.sy(v), col = o.col ? o.col(i) : '#1c7ed6';
+        s += `<rect class="bar ${pl}" style="--i:${i}" x="${(c.sx(i) - bw / 2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0, c.sy(0) - y).toFixed(1)}" rx="${n > 40 ? 0 : 3}" fill="${col}"/>`;
+        if (n <= 14 && v > 0) s += c.txt(c.sx(i), y - 5, o.vl ? o.vl(v, i) : tr(v, 3), 'bl');
+        if (n <= 18 || i % Math.ceil(n / 16) === 0) s += c.txt(c.sx(i), c.sy(0) + 16, labs[i], 'axx'); });
+      s += `<line class="axl" x1="${c.sx(-0.5)}" x2="${c.sx(n - 0.5)}" y1="${c.sy(0)}" y2="${c.sy(0)}"/>`;
+      if (o.mu !== undefined) s += `<line class="muln" x1="${c.sx(o.mu)}" x2="${c.sx(o.mu)}" y1="${c.t}" y2="${c.sy(0)}"/>` + c.txt(c.sx(o.mu) + 4, c.t + 10, 'μ = ' + (o.muT || tr(o.mu, 2)), 'mut', 'start');
+      return c.svg(s);
+    }
+    ACT.go = el => { const t = $('#' + el.dataset.v); if (!t) return; setGroup(t.dataset.g, false); setTimeout(() => t.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40); };
+
+    /* ===================== Variable aleatoria discreta: tablas ===================== */
+    const SDI = { tab: 'F', Bc: false, sm: { col: 'fuma', row: 't', n: 3 }, U: [0.1, 0.4, 0.3, 0.2], q: {}, ds: 'A', st: 0, timer: null };
+    const SMK = { h: { nunca: 85, dejo: 12, fuma: 43 }, m: { nunca: 103, dejo: 17, fuma: 40 } };
+    const SMN = { nunca: 'Nunca ha fumado', dejo: 'Dejó de fumar', fuma: 'Fuma' }, SMR = { t: 'Todas las personas', h: 'Solo hombres', m: 'Solo mujeres' };
+    const smCnt = (c, r) => r === 't' ? SMK.h[c] + SMK.m[c] : SMK[r][c], smTot = r => r === 't' ? 300 : r === 'h' ? 140 : 160;
+    const BDIST = { A: { xs: [15, 16, 17, 18], ps: [0.2, 0.3, 0.2, 0.3], t: 'Tabla A', sub: 'x = 15, 16, 17, 18' }, B: { xs: [15, 15.5], ps: [0.04, 0.12], t: 'Tabla B', sub: 'x = 15, 15.5' } };
+    function distOf(k, comp) {
+      if (k === 'A') return { xs: [15, 16, 17, 18], ps: [0.2, 0.3, 0.2, 0.3], lab: 'Tabla A' };
+      if (k === 'B') return comp ? { xs: [15, 15.5, 16], ps: [0.04, 0.12, 0.84], lab: 'Tabla B (completa)' } : { xs: [15, 15.5], ps: [0.04, 0.12], lab: 'Tabla B' };
+      if (k === 'U') return { xs: [1, 2, 3, 4], ps: SDI.U.slice(), lab: 'Tu tabla' };
+      if (k === 'F') { const p = 83 / 300; return { xs: [0, 1], ps: [1 - p, p], lab: 'Fuma (Bernoulli)', frac: ['217/300', '83/300'] }; }
+      if (k === 'V') { const a = Array.from({ length: 5 }, (_, x) => Number(bC(4, x)) / 16); return { xs: [0, 1, 2, 3, 4], ps: a, lab: 'Águilas en 4 volados', frac: a.map((v, x) => bC(4, x) + '/16') }; }
+    }
+    const sumP = ps => Math.round(ps.reduce((a, b) => a + b, 0) * 1e9) / 1e9;
+    function validBox(d) { const s = sumP(d.ps), neg = d.ps.some(v => v < 0), ok = !neg && Math.abs(s - 1) < 1e-9;
+      return `<div class="d-flex flex-wrap gap-2 align-items-center my-2"><span class="cond ${neg ? 'n' : 'y'}">${neg ? '✗' : '✓'} Todas las P(x) ≥ 0</span><span class="cond ${Math.abs(s - 1) < 1e-9 ? 'y' : 'n'}">${Math.abs(s - 1) < 1e-9 ? '✓' : '✗'} Suma = ${fi(colF(tr(s, 4), Math.abs(s - 1) < 1e-9 ? '#2f9e44' : '#e03131'))}</span><b class="${ok ? 'ok-t' : 'no-t'}">${ok ? '¡Es una distribución de probabilidad válida!' : `No es válida: ${s < 1 - 1e-9 ? `faltan ${tr(1 - s, 4)} de probabilidad` : s > 1 + 1e-9 ? `sobran ${tr(s - 1, 4)}` : 'hay probabilidades negativas'}.`}</b></div>`; }
+    const distTab = (d, hi = new Set(), o = {}) => `<table class="ntb"><tr><th>x</th>${d.xs.map((x, i) => `<th style="color:#1c7ed6;font-size:.95rem">${tr(x)}</th>`).join('')}<th>Σ</th></tr><tr><th>P(X = x)</th>${d.ps.map((p, i) => `<td class="${hi.has(i) ? 'cur' : ''} nin" style="--i:${i}">${d.frac && o.fr ? fi(R`\frac{${d.frac[i].split('/')[0]}}{${d.frac[i].split('/')[1]}}`) : tr(p)}</td>`).join('')}<td><b>${tr(sumP(d.ps), 4)}</b></td></tr></table>`;
+    const SDQ = [['eq', 'P(X = x)'], ['le', 'P(X ≤ x)'], ['ge', 'P(X ≥ x)']];
+    function sdR() {
+      const T = [['F', 'Fumadores (tabla de contingencia)'], ['A', 'Tabla A'], ['B', 'Tabla B'], ['U', 'Arma la tuya']];
+      $('#sd1-tabs').innerHTML = T.map(t => `<button class="${SDI.tab === t[0] ? 'on' : ''}" style="--c:#0ca678" data-a="sdTab" data-v="${t[0]}">${t[1]}</button>`).join('');
+      const b = $('#sd1-body'), k = SDI.tab;
+      if (k === 'F') {
+        const s = SDI.sm, cnt = smCnt(s.col, s.row), tot = smTot(s.row), p = cnt / tot, q = 1 - p;
+        const cell = (c, r, v) => `<td class="${s.col === c && s.row === r ? 'cur' : ''}" role="button" data-a="smSel" data-c="${c}" data-r="${r}" style="cursor:pointer">${v}</td>`;
+        const row = (lab, r) => `<tr><th class="rl" style="text-align:left">${lab}</th>${['nunca', 'dejo', 'fuma'].map(c => cell(c, r, smCnt(c, r))).join('')}<td><b>${smTot(r)}</b></td></tr>`;
+        const d = { xs: [0, 1], ps: [q, p] };
+        b.innerHTML = `<div class="row g-3"><div class="col-lg-6"><div class="demo mb-0 h-100"><div class="demo-t"><i class="bi bi-table"></i>Tabla de contingencia (300 personas)</div>
+          <table class="ntb"><tr><th></th>${['nunca', 'dejo', 'fuma'].map(c => `<th>${SMN[c]}</th>`).join('')}<th>Total</th></tr>${row('Hombre', 'h')}${row('Mujer', 'm')}${row('Total', 't')}</table>
+          <div class="small text-muted mt-2">Toca una celda: eliges la <b>característica</b> (columna) y el <b>grupo</b> (fila) del que se elige una persona al azar.</div></div></div>
+          <div class="col-lg-6"><div class="stcard" style="--c:#0ca678"><div class="small fw-bold mb-1">Se elige UNA persona de «${SMR[s.row]}» al azar</div>
+          <div class="mb-2">Sea ${fi('X')} = 1 si <b>${SMN[s.col]}</b> y ${fi('X')} = 0 si no. Probabilidad clásica: casos favorables ÷ casos posibles</div>
+          ${fd(R`P(X=1)=\frac{${colF(String(cnt), '#2f9e44')}}{${tot}}=${colF(tr(p, 4), '#2f9e44')}`)}
+          <div class="small fw-bold mt-2">Distribución de X (una variable de <b>Bernoulli</b>)</div>${distTab(d)}${validBox(d)}</div></div></div>
+          <div class="demo mt-3"><div class="demo-t"><i class="bi bi-people-fill"></i>Ahora elige n personas al azar (con reemplazo): ¿cuántas cumplen?</div>
+          <div class="d-flex gap-2 align-items-center flex-wrap mb-2"><b class="small">n =</b><div class="btn-group btn-group-sm">${[1, 2, 3, 5, 8, 10].map(n => `<button class="btn btn-outline-primary ${s.n === n ? 'active' : ''}" data-a="smN" data-v="${n}">${n}</button>`).join('')}</div><span class="small text-muted">Y = número de personas (de las n) que ${SMN[s.col].toLowerCase()}: <b>Y ~ Bin(${s.n}, ${tr(p, 3)})</b></span></div>
+          ${catBars(Array.from({ length: s.n + 1 }, (_, i) => i), pArr(s.n, p), { H: 200, k: 'sd1' })}
+          <div class="small mt-1">Cada persona es un ensayo de Bernoulli (éxito = «${SMN[s.col].toLowerCase()}», p = ${tr(p, 3)}). La suma de n ensayos independientes es la <b>binomial</b>: ${fi(R`E(Y)=np=${tr(s.n * p, 3)}`)}. Cambia la celda y mira cómo se mueve p.</div></div>`;
+      } else if (k === 'U') {
+        const d = distOf('U');
+        b.innerHTML = `<div class="demo"><div class="demo-t"><i class="bi bi-pencil-fill"></i>Escribe las probabilidades (x = 1, 2, 3, 4)</div><div class="d-flex flex-wrap gap-3 align-items-end mb-2">${SDI.U.map((v, i) => `<div class="text-center"><div class="small fw-bold" style="color:#1c7ed6">x = ${i + 1}</div><input type="number" step="0.05" class="form-control form-control-sm ans-in2" style="width:90px" value="${v}" data-in="sdU" data-i="${i}"></div>`).join('')}<button class="btn btn-sm btn-outline-secondary rounded-pill" data-a="sdUfix">Ajustar a suma 1</button></div><div id="sd1-uout"></div></div>`;
+        sdUout();
+      } else {
+        const d = distOf(k, SDI.Bc), idx = SDI.q[k] === undefined ? 1 : SDI.q[k], op = (SDI.qo || {})[k] || 'le', hi = new Set(d.xs.map((_, i) => i).filter(i => op === 'eq' ? i === idx : op === 'le' ? i <= idx : i >= idx));
+        const val = d.ps.filter((_, i) => hi.has(i)).reduce((a, b) => a + b, 0), lab = { eq: '=', le: '\\le', ge: '\\ge' }[op];
+        b.innerHTML = `<div class="row g-3"><div class="col-lg-6"><div class="demo mb-0 h-100"><div class="demo-t"><i class="bi bi-table"></i>${d.lab}</div>${distTab(d, hi)}${validBox(d)}
+          ${k === 'B' && !SDI.Bc ? `<button class="btn btn-sm btn-warning rounded-pill" data-a="sdBc"><i class="bi bi-plus-circle me-1"></i>Completar la tabla con x = 16</button><div class="small text-muted mt-1">La probabilidad que falta debe repartirse en otros valores de X.</div>` : ''}
+          ${k === 'B' && SDI.Bc ? `<button class="btn btn-sm btn-outline-secondary rounded-pill" data-a="sdBc"><i class="bi bi-arrow-counterclockwise me-1"></i>Quitar x = 16</button>` : ''}
+          <div class="small fw-bold mt-3 mb-1">Pregunta: ${fi('P(X ' + lab + ' x)')} con x =</div><div class="d-flex gap-2 flex-wrap"><div class="btn-group btn-group-sm">${SDQ.map(o => `<button class="btn btn-outline-dark ${op === o[0] ? 'active' : ''}" data-a="sdOp" data-v="${o[0]}">${o[1]}</button>`).join('')}</div><div class="btn-group btn-group-sm">${d.xs.map((x, i) => `<button class="btn btn-outline-primary ${idx === i ? 'active' : ''}" data-a="sdX" data-v="${i}">${tr(x)}</button>`).join('')}</div></div>
+          <div class="mt-2">${fd(`P(X ${lab} ${tr(d.xs[idx])}) = ${[...hi].map(i => tr(d.ps[i])).join(' + ')} = ${colF(tr(val, 4), '#2f9e44')}`)}</div></div></div>
+          <div class="col-lg-6">${catBars(d.xs.map(tr), d.ps, { H: 260, k: 'sd1', col: i => hi.has(i) ? '#1c7ed6' : '#ced4da' })}<div class="small text-muted text-center">Las barras azules son los valores incluidos en la pregunta. ${k === 'A' ? 'La altura de cada barra es P(X = x).' : ''}</div></div></div>`;
+      }
+      math(b); KEEP.sd1 = false;
+    }
+    function sdUout() { const d = distOf('U'), b = $('#sd1-uout'); if (!b) return; b.innerHTML = validBox(d) + catBars(d.xs.map(tr), d.ps.map(v => Math.max(0, v)), { H: 220 }); math(b); }
+    ACT.sdTab = el => { SDI.tab = el.dataset.v; KEEP.sd1 = true; sdR(); };
+    ACT.smSel = el => { SDI.sm.col = el.dataset.c; SDI.sm.row = el.dataset.r; KEEP.sd1 = true; sdR(); };
+    ACT.smN = el => { SDI.sm.n = +el.dataset.v; KEEP.sd1 = true; sdR(); };
+    ACT.sdBc = () => { SDI.Bc = !SDI.Bc; SDI.q.B = 1; sdR(); };
+    ACT.sdOp = el => { (SDI.qo = SDI.qo || {})[SDI.tab] = el.dataset.v; sdR(); };
+    ACT.sdX = el => { SDI.q[SDI.tab] = +el.dataset.v; sdR(); };
+    INP.sdU = el => { SDI.U[+el.dataset.i] = parseFloat(el.value) || 0; sdUout(); };
+    ACT.sdUfix = () => { const s = sumP(SDI.U); if (s > 0) SDI.U = SDI.U.map(v => Math.round(v / s * 1000) / 1000); const d = Math.round((1 - sumP(SDI.U)) * 1000) / 1000; SDI.U[SDI.U.length - 1] = Math.round((SDI.U[SDI.U.length - 1] + d) * 1000) / 1000; sdR(); };
+    RENDERS.push(sdR);
+
+    /* ===================== Esperanza y desviación por definición (tablas) ===================== */
+    const SDT = [['A', 'Tabla A'], ['B', 'Tabla B'], ['F', 'Fuma (Bernoulli)'], ['V', '4 volados']], SDS = ['La tabla', 'Multiplicar x·P(x)', 'El punto de equilibrio', 'Distancias al cuadrado', 'Varianza y desviación'];
+    function sd2Calc(d) { const mu = d.xs.reduce((s, x, i) => s + x * d.ps[i], 0), dv = d.xs.map(x => (x - mu) ** 2), v = dv.reduce((s, y, i) => s + y * d.ps[i], 0); return { mu, dv, v, sg: Math.sqrt(v) }; }
+    function sd2Stop() { if (SDI.timer) { clearInterval(SDI.timer); SDI.timer = null; } const b = $('#sdPlay-b') || $('#sd-play'); if (b) b.innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; }
+    function sd2R() {
+      $('#sd2-tabs').innerHTML = SDT.map(t => `<button class="${SDI.ds === t[0] ? 'on' : ''}" style="--c:#e8590c" data-a="sd2Ds" data-v="${t[0]}">${t[1]}</button>`).join('');
+      $('#sd2-chips').innerHTML = SDS.map((t, i) => `<button class="${i === SDI.st ? 'on' : i < SDI.st ? 'done' : ''}" data-a="sd2Go" data-v="${i}">${i + 1}. ${t}</button>`).join('');
+      const d = distOf(SDI.ds, true), st = SDI.st, c = sd2Calc(d), n = d.xs.length, step = n > 1 ? d.xs[1] - d.xs[0] : 1, mi = (c.mu - d.xs[0]) / step;
+      const rows = [['x', i => `<b style="color:#1c7ed6">${tr(d.xs[i])}</b>`, 0], ['P(x)', i => tr(d.ps[i]), 0], ['x · P(x)', i => tr(d.xs[i] * d.ps[i]), 1], ['(x − μ)²', i => tr(c.dv[i]), 3], ['(x − μ)² · P(x)', i => tr(c.dv[i] * d.ps[i]), 3]].filter(r => st >= r[2]);
+      const NAMES = ['x', 'P(x)', 'x · P(x)', '(x − μ)²', '(x − μ)² · P(x)'];
+      const tab = `<table class="ntb">${rows.map(r => { const si = NAMES.indexOf(r[0]); return `<tr class="${(st === 1 && si === 2) || (st === 3 && si >= 3) || (st === 4 && si === 4) ? 'cur' : ''}"><th class="rl" style="text-align:left">${r[0]}</th>${d.xs.map((x, i) => `<td class="${st === r[2] && r[2] > 0 ? 'nin' : ''}" style="--i:${i}">${r[1](i)}</td>`).join('')}<td>${si === 1 ? '<b>' + tr(sumP(d.ps)) + '</b>' : si === 2 ? '<b>' + tr(c.mu, 4) + '</b>' : si === 4 ? '<b>' + tr(c.v, 4) + '</b>' : ''}</td></tr>`; }).join('')}</table>`;
+      const mx = d.xs.map((x, i) => `${tr(x)}\\cdot ${tr(d.ps[i])}`).join(' + '), vx = d.xs.map((x, i) => `${tr(c.dv[i])}\\cdot ${tr(d.ps[i])}`).join(' + ');
+      const txt = [
+        `Esta es la distribución de ${fi('X')} (${d.lab}). Comprobamos que las ${d.xs.length} probabilidades suman ${fi('1')}. Pulsa «Siguiente».`,
+        `<b>Media o esperanza:</b> multiplica cada valor por su probabilidad y suma. ${fd(R`\mu=\sum x\,P(x)=${mx}=${colF(tr(c.mu, 4), '#e03131')}`)}`,
+        `La línea roja marca ${fi(`\\mu=${tr(c.mu, 4)}`)}: es el <b>punto de equilibrio</b>. Si las barras fueran pesos sobre una regla, ahí apoyarías el dedo para que no se incline.`,
+        `Para medir la dispersión, calcula cuánto se aleja cada valor de ${fi(R`\mu`)} y <b>elévalo al cuadrado</b> (así no se cancelan los negativos con los positivos). Luego pondéralo con ${fi('P(x)')}.`,
+        `<b>Varianza:</b> ${fd(R`\sigma^{2}=\sum (x-\mu)^{2}P(x)=${vx}=${colF(tr(c.v, 4), '#7048e8')}`)}<b>Desviación estándar:</b> ${fi(R`\sigma=\sqrt{${tr(c.v, 4)}}=${colF(tr(c.sg, 4), '#7048e8')}`)}, en las mismas unidades que ${fi('X')}. La banda naranja es ${fi(R`\mu\pm\sigma`)}.`];
+      let extra = ''; if (SDI.ds === 'V' && st >= 4) extra = `<div class="intro-box mt-2 mb-0">Para 4 volados ${fi('X\\sim Bin(4,\\tfrac12)')}: ${fi(R`np=4\cdot\tfrac12=2`)} y ${fi(R`npq=4\cdot\tfrac12\cdot\tfrac12=1`)}. ¡Coincide con la definición! Más adelante verás por qué.</div>`;
+      if (SDI.ds === 'F' && st >= 4) extra = `<div class="intro-box mt-2 mb-0">Para una Bernoulli: ${fi(R`\mu=p=${tr(83 / 300, 4)}`)} y ${fi(R`\sigma^{2}=pq=${tr(83 / 300 * 217 / 300, 4)}`)}.</div>`;
+      $('#sd2-body').innerHTML = `<div class="row g-3"><div class="col-lg-6"><div class="intro-box mb-2">${txt[st]}</div><div class="pbtab">${tab}</div>${extra}${st >= 4 ? `<div class="d-flex flex-wrap gap-2 mt-2">${kpi('μ', tr(c.mu, 4), '#e03131', 0)}${kpi('σ²', tr(c.v, 4), '#7048e8', 1)}${kpi('σ', tr(c.sg, 4), '#7048e8', 2)}</div>` : ''}</div>
+        <div class="col-lg-6">${catBars(d.xs.map(tr), d.ps, { H: 270, k: 'sd2', mu: st >= 2 ? mi : undefined, muT: tr(c.mu, 3), band: st >= 4 ? [mi - c.sg / step, mi + c.sg / step] : undefined })}</div></div>`;
+      math($('#sd2-body')); KEEP.sd2 = false;
+    }
+    ACT.sd2Ds = el => { sd2Stop(); SDI.ds = el.dataset.v; SDI.st = 0; KEEP.sd2 = true; sd2R(); };
+    ACT.sd2Go = el => { sd2Stop(); SDI.st = +el.dataset.v; KEEP.sd2 = true; sd2R(); };
+    ACT.sdNext = () => { sd2Stop(); SDI.st = Math.min(4, SDI.st + 1); KEEP.sd2 = true; sd2R(); }; ACT.sdPrev = () => { sd2Stop(); SDI.st = Math.max(0, SDI.st - 1); KEEP.sd2 = true; sd2R(); };
+    ACT.sdPlay = () => { if (SDI.timer) { sd2Stop(); return; } SDI.st = 0; KEEP.sd2 = true; sd2R(); $('#sd-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar'; SDI.timer = setInterval(() => { if (SDI.st >= 4) { sd2Stop(); return; } SDI.st++; KEEP.sd2 = true; sd2R(); }, 3000); };
+    RENDERS.push(sd2R);
+
+    /* ===================== Caso guía: águilas en 4 volados ===================== */
+    const VO = { step: 0, p: F(1, 2), pick: 2, timer: null, ans: null, flip: null };
+    const VOP = [[F(1, 2), 'Justa · p = ½'], [F(1, 3), 'Cargada · p = ⅓'], [F(3, 4), 'Cargada · p = ¾']];
+    const VOS = ['Condiciones', 'Los 16 resultados', 'Agrupar por águilas', 'Probabilidad de cada resultado', 'Contar con combinaciones', 'La distribución', 'Tu turno: fórmula general'];
+    const bits4 = i => [3, 2, 1, 0].map(k => (i >> k) & 1);
+    function voStop() { if (VO.timer) { clearInterval(VO.timer); VO.timer = null; } const b = $('#vo-play'); if (b) b.innerHTML = '<i class="bi bi-play-fill me-1"></i>Reproducir'; }
+    function voR() {
+      $('#vo-p').innerHTML = VOP.map((o, i) => `<button class="btn btn-outline-primary ${VO.p.n === o[0].n && VO.p.d === o[0].d ? 'active' : ''}" data-a="voP" data-v="${i}">${o[1]}</button>`).join('');
+      $('#vo-chips').innerHTML = VOS.map((t, i) => `<button class="${i === VO.step ? 'on' : i < VO.step ? 'done' : ''}" data-a="voGo" data-v="${i}">${i + 1}. ${t}</button>`).join('');
+      const st = VO.step, p = VO.p, q = fadd(F(1), fmul(F(-1), p)), n = 4, pt = ftx(p), qt = ftx(q), pp = `${p.n}/${p.d}`, even = p.n * 2 === p.d;
+      const one = x => fmul(fpow(p, x), fpow(q, n - x)), tot = x => fmul(F(Number(bC(n, x))), one(x));
+      const A = Array.from({ length: 16 }, (_, i) => bits4(i)), gx = x => A.filter(b => b.reduce((a, c) => a + c, 0) === x);
+      const xc = x => TKC[x % 10];
+      let h = '';
+      if (st === 0) {
+        const cd = [['bi-123', 'Número fijo de ensayos', `n = 4 volados (lo decidimos antes de empezar)`], ['bi-toggles', 'Dos resultados posibles', `águila (éxito, S) o sol (fracaso, F)`], ['bi-percent', 'Probabilidad constante', `p = ${pp} de águila en cada volado`], ['bi-link-45deg', 'Ensayos independientes', `el resultado de un volado no cambia el siguiente`]];
+        const fl = VO.flip;
+        h = `<div class="row g-2 mb-2">${cd.map((c, i) => `<div class="col-sm-6 col-lg-3"><div class="stcard nin" style="--c:#2f9e44;--i:${i}"><div class="fw-bold" style="color:#2f9e44"><i class="bi ${c[0]} me-1"></i>${i + 1}. ${c[1]} <i class="bi bi-check-circle-fill"></i></div><div class="small">${c[2]}</div></div></div>`).join('')}</div>
+          <div class="intro-box mb-2">Se cumplen las 4 condiciones, así que <b>X = número de águilas en 4 volados</b> tiene distribución <b>binomial</b>: ${fi(`X\\sim Bin(4,\\,${pt})`)}.</div>
+          <div class="demo mb-0"><div class="demo-t"><i class="bi bi-hand-index-thumb"></i>Lanza los 4 volados</div><button class="btn btn-sm btn-primary rounded-pill" data-a="voFlip"><i class="bi bi-coin me-1"></i>Lanzar</button>
+          ${fl ? `<span class="ms-3">${seqHTML(fl)} → <b>x = ${fl.reduce((a, b) => a + b, 0)}</b> águilas</span>` : '<span class="small text-muted ms-2">Cada lanzamiento es una de las secuencias posibles. ¿Cuántas hay?</span>'}</div>`;
+      } else if (st === 1) {
+        h = `<div class="intro-box mb-2">Cada volado tiene 2 resultados y son 4 volados: por el principio multiplicativo hay ${fi(R`2\cdot2\cdot2\cdot2=2^{4}=\textcolor{#e8590c}{16}`)} secuencias distintas. Aquí están todas (S = águila, F = sol):</div>
+          <div class="d-flex flex-wrap gap-1 justify-content-center">${A.map((b, i) => seqHTML(b, '', `style="animation-delay:${i * 60}ms"`)).join('')}</div>`;
+      } else if (st === 2) {
+        h = `<div class="intro-box mb-2">Ahora <b>clasifícalas por número de águilas</b>: cuenta cuántas secuencias tienen 0, 1, 2, 3 y 4 águilas.</div><div class="row g-2">${[0, 1, 2, 3, 4].map(x => `<div class="col-6 col-lg"><div class="stcard nin" style="--c:${xc(x)};--i:${x}"><div class="fw-bold" style="color:${xc(x)}">x = ${x} águila${x === 1 ? '' : 's'}</div><div class="d-flex flex-wrap justify-content-center">${gx(x).map(b => seqHTML(b)).join('')}</div><div class="bignum text-center" style="--c:${xc(x)}">${gx(x).length}</div><div class="small text-center text-muted">secuencia${gx(x).length === 1 ? '' : 's'}</div></div></div>`).join('')}</div>
+          <div class="text-center mt-2">${fi(R`1+4+6+4+1=16`)} ✓</div>`;
+      } else if (st === 3) {
+        h = `<div class="intro-box mb-2">La probabilidad de <b>una</b> secuencia sale de la regla del producto (los volados son independientes): cada S multiplica ${fi('p=' + pt)} y cada F multiplica ${fi('q=' + qt)}. ${even ? 'Como <b>p = q</b>, las 16 secuencias valen lo mismo; fíjate de todos modos en el patrón de exponentes.' : 'Como p ≠ q, el valor <b>depende de cuántas S</b> tenga la secuencia, no del orden en que aparezcan.'}</div>
+          <div class="row g-2">${[0, 1, 2, 3, 4].map(x => { const b = gx(x)[0]; return `<div class="col-6 col-lg"><div class="stcard nin" style="--c:${xc(x)};--i:${x}"><div class="text-center">${seqHTML(b)}</div><div class="small mt-1 text-center">${fi(b.map(v => v ? colF('p', '#2f9e44') : colF('q', '#e03131')).join(R`\cdot `))}</div><div class="text-center">${fi(R`=${colF('p^{' + x + '}', '#2f9e44')}${colF('q^{' + (n - x) + '}', '#e03131')}`)}</div><div class="text-center">${fi('=' + ftx(one(x)))}</div></div></div>`; }).join('')}</div>
+          <div class="small text-muted mt-2">Cualquier otra secuencia con el mismo número de águilas vale igual (cambia el orden de los factores, no el producto).</div>`;
+      } else if (st === 4) {
+        const x = VO.pick, ps = combsOf(n, x);
+        h = `<div class="intro-box mb-2">¿Cuántas secuencias tienen exactamente <b>x águilas</b>? Es elegir <b>en cuáles x de los 4 volados</b> caen las águilas: el orden de elección no importa, así que es una <b>combinación</b> ${fi(R`\binom{4}{x}`)}. Toca un valor de x:</div>
+          <div class="btn-group btn-group-sm mb-2">${[0, 1, 2, 3, 4].map(k => `<button class="btn btn-outline-dark ${k === x ? 'active' : ''}" data-a="voPick" data-v="${k}">x = ${k}</button>`).join('')}</div>
+          <div class="row g-3"><div class="col-lg-6"><div class="stcard" style="--c:${xc(x)}"><div class="fw-bold mb-1" style="color:${xc(x)}">Posiciones de las ${x} águila${x === 1 ? '' : 's'} (entre los 4 volados)</div><div class="d-flex flex-wrap justify-content-center">${ps.map((c, i) => `<span class="seqc cmbc nin" style="--i:${i}">${[0, 1, 2, 3].map(j => `<span class="sq ${c.includes(j) ? 's' : 'f'}">${j + 1}</span>`).join('')}</span>`).join('')}</div></div></div>
+          <div class="col-lg-6"><div class="stcard" style="--c:${xc(x)}">${fd(R`\binom{4}{${x}}=\frac{4!}{${x}!\,(4-${x})!}=\frac{${bF(4)}}{${bF(x)}\cdot ${bF(4 - x)}}=${colF(String(bC(4, x)), xc(x))}`)}<div class="small">Coincide con las <b>${bC(4, x)}</b> secuencias del paso 3. Los números ${fi('1,4,6,4,1')} son la fila 4 del triángulo de Pascal.</div></div></div></div>`;
+      } else if (st === 5) {
+        const vals = [0, 1, 2, 3, 4].map(x => fval(tot(x)));
+        h = `<div class="intro-box mb-2">Para cada x: ${fi(R`P(X=x)=\textcolor{#7048e8}{(\text{n.º de secuencias})}\cdot\textcolor{#2f9e44}{(\text{prob. de una})}`)}</div>
+          <div class="row g-3"><div class="col-lg-7"><div class="pbtab"><table><tr><th class="rl">x águilas</th>${[0, 1, 2, 3, 4].map(x => `<th style="color:#1c7ed6">${x}</th>`).join('')}</tr>
+            <tr><th class="rl">Secuencias</th>${[0, 1, 2, 3, 4].map(x => `<td class="nin" style="--i:${x}">${fi(colF(String(bC(n, x)), '#7048e8'))}</td>`).join('')}</tr>
+            <tr><th class="rl">Prob. de una</th>${[0, 1, 2, 3, 4].map(x => `<td class="nin" style="--i:${x + 1}">${fi(colF(ftx(one(x)), '#2f9e44'))}</td>`).join('')}</tr>
+            <tr><th class="rl">P(X = x)</th>${[0, 1, 2, 3, 4].map(x => `<td class="nin" style="--i:${x + 2}">${fi(ftx(tot(x)))}</td>`).join('')}</tr></table></div>
+            <div class="mt-2">${fd(`\\sum P(x)=${[0, 1, 2, 3, 4].map(x => ftx(tot(x))).join('+')}=${colF('1', '#2f9e44')}`)}</div></div>
+            <div class="col-lg-5">${catBars(['0', '1', '2', '3', '4'], vals, { H: 230, k: 'vo', col: x => xc(x) })}</div></div>`;
+      } else {
+        const opts = [['a', R`P(X=x)=p^{x}\,q^{n-x}`, 'Falta contar cuántas secuencias hay con x éxitos.'], ['b', R`P(X=x)=\binom{n}{x}\,p^{x}\,q^{x}`, 'Los fracasos son n − x, no x: cada secuencia tiene n ensayos.'], ['c', R`P(X=x)=\binom{n}{x}\,p^{x}\,q^{\,n-x}`, 'Correcto: C(n, x) secuencias × la probabilidad de cada una.'], ['d', R`P(X=x)=\binom{n}{x}\,p^{n}\,q^{x}`, 'Los exponentes están al revés: p va con los x éxitos.']];
+        h = `<div class="intro-box mb-2"><b>Tu turno.</b> Con 4 volados vimos: <i>secuencias</i> = ${fi(R`\binom{4}{x}`)} y <i>probabilidad de una</i> = ${fi(R`p^{x}q^{4-x}`)}. Ahora generaliza: para <b>n</b> repeticiones y <b>x</b> éxitos, ¿cuál es la fórmula de ${fi('P(X=x)')}?</div>
+          <div class="row g-2">${opts.map(o => `<div class="col-md-6"><button class="exc w-100 ${VO.ans === o[0] ? (o[0] === 'c' ? 'ok' : 'bad') : ''}" style="--c:${o[0] === 'c' ? '#2f9e44' : '#868e96'}" data-a="voAns" data-v="${o[0]}"><div class="et">Opción ${o[0].toUpperCase()}</div>${fd(o[1])}${VO.ans === o[0] ? `<div class="small fw-bold ${o[0] === 'c' ? 'ok-t' : 'no-t'}">${o[0] === 'c' ? '✓ ' : '✗ '}${o[2]}</div>` : ''}</button></div>`).join('')}</div>
+          ${VO.ans === 'c' ? `<div class="stcard mt-2" style="--c:#2f9e44"><div class="fw-bold" style="color:#2f9e44">¡Fórmula de la distribución binomial!</div>${fd(R`P(X=x)=\textcolor{#7048e8}{\binom{n}{x}}\\,\textcolor{#2f9e44}{p^{x}q^{n-x}},\qquad x=0,1,2,\dots,n`)}<div class="small mb-2"><b style="color:#7048e8">Morado:</b> cuántas secuencias tienen x éxitos · <b style="color:#2f9e44">verde:</b> probabilidad de cada una.</div><button class="btn btn-sm btn-dark rounded-pill" data-a="go" data-v="s8">Probar con otros n, x y p <i class="bi bi-arrow-right"></i></button></div>` : ''}`;
+      }
+      $('#vo-body').innerHTML = h; math($('#vo-body')); KEEP.vo = false;
+    }
+    ACT.voP = el => { VO.p = VOP[+el.dataset.v][0]; voR(); };
+    ACT.voGo = el => { voStop(); VO.step = +el.dataset.v; KEEP.vo = true; voR(); };
+    ACT.voNext = () => { voStop(); VO.step = Math.min(6, VO.step + 1); KEEP.vo = true; voR(); }; ACT.voPrev = () => { voStop(); VO.step = Math.max(0, VO.step - 1); KEEP.vo = true; voR(); };
+    ACT.voPlay = () => { if (VO.timer) { voStop(); return; } VO.step = 0; KEEP.vo = true; voR(); $('#vo-play').innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pausar'; VO.timer = setInterval(() => { if (VO.step >= 5) { voStop(); return; } VO.step++; KEEP.vo = true; voR(); }, 3400); };
+    ACT.voPick = el => { VO.pick = +el.dataset.v; voR(); }; ACT.voAns = el => { VO.ans = el.dataset.v; voR(); };
+    ACT.voFlip = () => { const r = Math.random; VO.flip = Array.from({ length: 4 }, () => r() < fval(VO.p) ? 1 : 0); voR(); };
+    RENDERS.push(voR);
+
+    /* ===================== Forma de la distribución: n y p ===================== */
+    const FO = { mode: 'n', p: 5, n: 20 };
+    const foShape = (n, p) => { const q = 1 - p, sk = (q - p) / Math.sqrt(n * p * q); return { sk, lab: Math.abs(p - 0.5) < 0.005 ? 'Simétrica' : p < 0.5 ? 'Sesgo a la derecha' : 'Sesgo a la izquierda', bell: n * p >= 5 && n * q >= 5 }; };
+    function foPanel(n, p, k) {
+      const q = 1 - p, mu = n * p, sg = Math.sqrt(n * p * q), mo = Math.floor((n + 1) * p + 1e-9), sh = foShape(n, p), vals = pArr(n, p);
+      return `<div class="col-md-6"><div class="stcard" style="--c:${sh.bell ? '#2f9e44' : '#e8590c'}"><div class="fw-bold small mb-1">${fi(`X\\sim Bin(${n},\\,${tr(p, 2)})`)}</div>
+        ${catBars(Array.from({ length: n + 1 }, (_, i) => i), vals, { H: 190, k: 'fo', mu: mu, muT: tr(mu, 1), col: () => sh.bell ? '#2f9e44' : '#e8590c' })}
+        <div class="small mt-1">${fi(`\\mu=${tr(mu, 2)}`)} · ${fi(`\\sigma=${tr(sg, 2)}`)} · moda ${mo}</div>
+        <div class="d-flex flex-wrap gap-1 mt-1"><span class="cond ${sh.lab === 'Simétrica' ? 'y' : 'n'}" style="font-size:.7rem">${sh.lab}</span><span class="cond ${sh.bell ? 'y' : 'n'}" style="font-size:.7rem">${sh.bell ? '≈ campana (np, nq ≥ 5)' : 'forma irregular'}</span></div></div></div>`;
+    }
+    function foR() {
+      $('#fo-mode').innerHTML = [['n', 'El tamaño n'], ['p', 'La probabilidad p']].map(m => `<button class="btn btn-outline-primary ${FO.mode === m[0] ? 'active' : ''}" data-a="foMode" data-v="${m[0]}">${m[1]}</button>`).join('');
+      $('#fo-c1').classList.toggle('d-none', FO.mode !== 'n'); $('#fo-c2').classList.toggle('d-none', FO.mode !== 'p');
+      $('#fo-pv').textContent = tr(FO.p / 100, 2); $('#fo-nv').textContent = FO.n;
+      $('#fo-pre').innerHTML = FO.mode === 'n' ? [5, 30, 50, 70, 95].map(v => `<button class="btn btn-outline-secondary ${FO.p === v ? 'active' : ''}" data-a="foPre" data-v="${v}">p=${v / 100}</button>`).join('') : [5, 10, 25, 50, 100].map(v => `<button class="btn btn-outline-secondary ${FO.n === v ? 'active' : ''}" data-a="foPre" data-v="${v}">n=${v}</button>`).join('');
+      const p = FO.p / 100, n = FO.n;
+      const cfg = FO.mode === 'n' ? [5, 10, 25, 100].map(m => [m, p]) : [0.1, 0.3, 0.5, 0.9].map(pp => [n, pp]);
+      $('#fo-grid').innerHTML = cfg.map(c => foPanel(c[0], c[1])).join('');
+      const note = FO.mode === 'n'
+        ? `<b>Con p = ${tr(p, 2)} fijo:</b> el centro ${fi('np')} se desplaza a la derecha al crecer n y la dispersión ${fi(R`\sqrt{npq}`)} crece, pero <b>más despacio</b> que n. ${Math.abs(p - 0.5) < 0.005 ? 'La forma es siempre simétrica.' : p < 0.5 ? `Con p pequeña la cola derecha es larga para n chica (n = 5 casi no tiene forma de campana)`: `Con p grande la cola izquierda es larga para n chica`}; cuando ${fi(R`np\ge 5`)} y ${fi(R`nq\ge 5`)} (barras verdes) la distribución se vuelve <b>simétrica y acampanada</b>: es el puente hacia la distribución normal.`
+        : `<b>Con n = ${n} fijo:</b> si ${fi(R`p<\tfrac12`)} hay sesgo a la derecha, si ${fi(R`p>\tfrac12`)} sesgo a la izquierda y si ${fi(R`p=\tfrac12`)} es simétrica. <b>Espejo:</b> ${fi(R`Bin(n,p)`)} y ${fi(R`Bin(n,1-p)`)} son imágenes especulares (cambia x por n − x). La dispersión es máxima en p = 0.5.`;
+      $('#fo-note').innerHTML = note; math($('#fo-grid')); math($('#fo-note')); KEEP.fo = false;
+    }
+    ACT.foMode = el => { FO.mode = el.dataset.v; KEEP.fo = true; foR(); };
+    ACT.foPre = el => { if (FO.mode === 'n') FO.p = +el.dataset.v; else FO.n = +el.dataset.v; $$('[data-in="foP"]')[0].value = FO.p; $$('[data-in="foN"]')[0].value = FO.n; KEEP.fo = true; foR(); };
+    INP.foP = el => { FO.p = +el.value; foR(); }; INP.foN = el => { FO.n = +el.value; foR(); };
+    RENDERS.push(foR);
+
+    /* ===================== E(X) y σ de la binomial ===================== */
+    const ES = { tab: 'def', n: 4, pp: 0, bn: 5, bp: 50, bvals: null, acc: { c: 0, s: 0, q: 0 }, cn: 20, cp: 40 };
+    const ESP = [F(1, 2), F(1, 4), F(3, 4)];
+    function esStats(n, p) { const v = pArr(n, p), mu = v.reduce((s, x, k) => s + k * x, 0), va = v.reduce((s, x, k) => s + (k - mu) ** 2 * x, 0); return { v, mu, va }; }
+    function esR() {
+      const T = [['def', '1. Con la definición'], ['ber', '2. Suma de ensayos de Bernoulli'], ['cmp', '3. Comprueba y usa μ ± σ']];
+      $('#es-tabs').innerHTML = T.map(t => `<button class="${ES.tab === t[0] ? 'on' : ''}" style="--c:#e03131" data-a="esTab" data-v="${t[0]}">${t[1]}</button>`).join('');
+      const b = $('#es-body'); let h = '';
+      if (ES.tab === 'def') {
+        const n = ES.n, pf = ESP[ES.pp], p = fval(pf), q = 1 - p, { v, mu, va } = esStats(n, p), xs = Array.from({ length: n + 1 }, (_, i) => i);
+        h = `<div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="d-flex align-items-center gap-2"><b class="small">n =</b><div class="btn-group btn-group-sm">${[2, 3, 4, 5, 6, 8].map(k => `<button class="btn btn-outline-primary ${n === k ? 'active' : ''}" data-a="esN" data-v="${k}">${k}</button>`).join('')}</div></div><div class="d-flex align-items-center gap-2"><b class="small">p =</b><div class="btn-group btn-group-sm">${ESP.map((f, i) => `<button class="btn btn-outline-primary ${ES.pp === i ? 'active' : ''}" data-a="esPp" data-v="${i}">${ftx(f).replace(/\\frac\{(\d+)\}\{(\d+)\}/, '$1/$2')}</button>`).join('')}</div></div></div>
+          <div class="row g-3"><div class="col-lg-7"><div class="pbtab"><table class="ntb"><tr><th class="rl">x</th>${xs.map(x => `<th style="color:#1c7ed6">${x}</th>`).join('')}<th>Σ</th></tr>
+            <tr><th class="rl">P(x)</th>${xs.map(x => `<td>${tr(v[x], 4)}</td>`).join('')}<td><b>${tr(sumP(v), 4)}</b></td></tr>
+            <tr class="cur"><th class="rl">x·P(x)</th>${xs.map(x => `<td>${tr(x * v[x], 4)}</td>`).join('')}<td><b style="color:#e03131">${tr(mu, 4)}</b></td></tr>
+            <tr><th class="rl">(x−μ)²·P(x)</th>${xs.map(x => `<td>${tr((x - mu) ** 2 * v[x], 4)}</td>`).join('')}<td><b style="color:#7048e8">${tr(va, 4)}</b></td></tr></table></div>
+            <div class="row g-2 mt-2"><div class="col-sm-6"><div class="stcard" style="--c:#e03131"><div class="fw-bold small" style="color:#e03131">Media</div>${fd(R`\sum xP(x)=${colF(tr(mu, 4), '#e03131')}`)}${fd(R`np=${n}\cdot ${tr(p, 4)}=${colF(tr(n * p, 4), '#e03131')}`)}<div class="small ${Math.abs(mu - n * p) < 1e-9 ? 'ok-t' : 'no-t'}">${Math.abs(mu - n * p) < 1e-9 ? '✓ Son iguales' : '✗'}</div></div></div>
+            <div class="col-sm-6"><div class="stcard" style="--c:#7048e8"><div class="fw-bold small" style="color:#7048e8">Varianza</div>${fd(R`\sum (x-\mu)^{2}P(x)=${colF(tr(va, 4), '#7048e8')}`)}${fd(R`npq=${n}\cdot ${tr(p, 4)}\cdot ${tr(q, 4)}=${colF(tr(n * p * q, 4), '#7048e8')}`)}<div class="small ${Math.abs(va - n * p * q) < 1e-9 ? 'ok-t' : 'no-t'}">${Math.abs(va - n * p * q) < 1e-9 ? '✓ Son iguales' : '✗'}</div></div></div></div></div>
+            <div class="col-lg-5">${catBars(xs, v, { H: 250, k: 'es', mu: mu, muT: tr(mu, 3), band: [mu - Math.sqrt(va), mu + Math.sqrt(va)] })}</div></div>
+          <div class="intro-box mt-2 mb-0">Calcular con la definición es largo. ¿Habrá un atajo? Sí: en el siguiente apartado verás que ${fi(R`\mu=np`)} y ${fi(R`\sigma^{2}=npq`)}. Cambia n y p y comprueba que siempre coinciden.</div>`;
+      } else if (ES.tab === 'ber') {
+        const n = ES.bn, p = ES.bp / 100, q = 1 - p, ac = ES.acc, em = ac.c ? ac.s / ac.c : 0, ev = ac.c ? ac.q / ac.c - em * em : 0, xs = ES.bvals || Array(n).fill(null);
+        h = `<div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="d-flex align-items-center gap-2"><b class="small">n ensayos =</b><div class="btn-group btn-group-sm">${[2, 3, 4, 5, 6, 8, 10].map(k => `<button class="btn btn-outline-primary ${n === k ? 'active' : ''}" data-a="esBn" data-v="${k}">${k}</button>`).join('')}</div></div><div class="d-flex align-items-center gap-2"><b class="small">p =</b><div class="btn-group btn-group-sm">${[20, 50, 80].map(k => `<button class="btn btn-outline-primary ${ES.bp === k ? 'active' : ''}" data-a="esBp" data-v="${k}">${k / 100}</button>`).join('')}</div></div></div>
+          <div class="row g-3"><div class="col-lg-6"><div class="stcard" style="--c:#2f9e44"><div class="fw-bold mb-1" style="color:#2f9e44">X = X₁ + X₂ + … + X<sub>n</sub> (cada X<sub>i</sub> vale 1 si hay éxito y 0 si no)</div>
+            <div class="d-flex flex-wrap gap-2 justify-content-center mb-2">${xs.map((v, i) => `<div class="text-center"><div class="small text-muted">X<sub>${i + 1}</sub></div><span class="tkn ${v === null ? '' : 'nin'}" style="--c:${v === 1 ? '#2f9e44' : v === 0 ? '#e03131' : '#adb5bd'}">${v === null ? '?' : v}</span></div>`).join('')}</div>
+            <div class="text-center mb-2"><button class="btn btn-sm btn-primary rounded-pill" data-a="esFlip" data-v="1"><i class="bi bi-dice-5 me-1"></i>Una vez</button> <button class="btn btn-sm btn-outline-primary rounded-pill" data-a="esFlip" data-v="200">+200 veces</button> <button class="btn btn-sm btn-outline-secondary rounded-pill" data-a="esFlip" data-v="0"><i class="bi bi-arrow-counterclockwise"></i></button></div>
+            ${ES.bvals ? `<div class="text-center fw-bold">X = ${ES.bvals.join(' + ')} = <span style="color:#1c7ed6;font-size:1.3rem">${ES.bvals.reduce((a, c) => a + c, 0)}</span> éxitos</div>` : '<div class="text-center small text-muted">Pulsa «Una vez» para lanzar los n ensayos.</div>'}
+            ${ac.c ? `<hr class="my-2"><div class="small"><b>${ac.c}</b> repeticiones: media observada ${fi(R`\bar{x}=${tr(em, 3)}`)} (teoría ${fi('np=' + tr(n * p, 3))}) · varianza observada ${tr(ev, 3)} (teoría ${fi('npq=' + tr(n * p * q, 3))})</div>` : ''}</div></div>
+          <div class="col-lg-6"><div class="stcard" style="--c:#e03131"><div class="fw-bold mb-1" style="color:#e03131">Un solo ensayo X<sub>i</sub> (Bernoulli)</div>
+            ${fd(R`E[X_i]=0\cdot q+1\cdot p=${colF('p', '#e03131')}`)}${fd(R`Var(X_i)=(0-p)^{2}q+(1-p)^{2}p=${colF('pq', '#7048e8')}`)}
+            <div class="fw-bold mt-2 mb-1" style="color:#e03131">Suma de n ensayos</div>
+            ${fd(R`E[X]=p+p+\cdots+p=${colF('np', '#e03131')}=${n}\cdot ${tr(p, 2)}=${colF(tr(n * p, 3), '#e03131')}`)}
+            ${fd(R`Var(X)=pq+pq+\cdots+pq=${colF('npq', '#7048e8')}=${tr(n * p * q, 4)}`)}
+            <div class="small">La esperanza siempre se suma. Las varianzas se suman porque los ensayos son <b>independientes</b>.</div></div></div></div>`;
+      } else {
+        h = `<div class="demo"><div class="row g-3"><div class="col-lg-4"><div class="small fw-bold">n = <span id="es-nv"></span></div><input type="range" class="form-range" min="1" max="60" value="${ES.cn}" data-in="esCn">
+          <div class="small fw-bold">p = <span id="es-pv"></span></div><input type="range" class="form-range" min="1" max="99" value="${ES.cp}" data-in="esCp"><div id="es-kp" class="mt-2"></div></div><div class="col-lg-8"><div id="es-hist"></div></div></div><div id="es-rng" class="mt-2"></div></div>`;
+      }
+      b.innerHTML = h; math(b); if (ES.tab === 'cmp') esCmp(); KEEP.es = false;
+    }
+    function esCmp() {
+      const n = ES.cn, p = ES.cp / 100, q = 1 - p, mu = n * p, sg = Math.sqrt(n * p * q), { v, mu: m2 } = esStats(n, p);
+      $('#es-nv').textContent = n; $('#es-pv').textContent = tr(p, 2);
+      const inR = k => { const a = mu - k * sg, bb = mu + k * sg; let s = 0; for (let i = 0; i <= n; i++) if (i >= a - 1e-9 && i <= bb + 1e-9) s += v[i]; return s; };
+      const inc = new Set(); for (let i = 0; i <= n; i++) if (Math.abs(i - mu) <= sg + 1e-9) inc.add(i);
+      $('#es-kp').innerHTML = `<div class="d-flex flex-wrap gap-2">${kpi('μ = np', tr(mu, 3), '#e03131', 0)}${kpi('σ = √npq', tr(sg, 3), '#7048e8', 1)}${kpi('Σ x·P(x)', tr(m2, 3), '#868e96', 2)}</div>`;
+      $('#es-hist').innerHTML = catBars(v.map((_, i) => i), v, { H: 250, mu: mu, muT: tr(mu, 2), band: [mu - sg, mu + sg], col: i => inc.has(i) ? '#1c7ed6' : '#ced4da' });
+      $('#es-rng').innerHTML = `<div class="small fw-bold mb-1">Probabilidad que cae cerca de la media (las barras azules son μ ± σ):</div><table class="ntb" style="max-width:640px"><tr><th>Intervalo</th><th>Valores de X</th><th>Probabilidad exacta</th><th>Regla empírica</th></tr>${[1, 2, 3].map(k => { const a = Math.max(0, Math.ceil(mu - k * sg - 1e-9)), bb = Math.min(n, Math.floor(mu + k * sg + 1e-9)); return `<tr><td>${fi(`\\mu\\pm ${k}\\sigma`)}</td><td>${a} a ${bb}</td><td><b>${(inR(k) * 100).toFixed(1)} %</b></td><td>${['68 %', '95 %', '99.7 %'][k - 1]}</td></tr>`; }).join('')}</table>
+        <div class="small text-muted mt-1">${n * p >= 5 && n * q >= 5 ? 'La forma es acampanada: la regla empírica funciona muy bien.' : 'La forma es sesgada: la regla empírica solo es aproximada (pero al menos 75 % siempre cae en μ ± 2σ, por Chébyshev).'}</div>`;
+      math($('#es-rng'));
+    }
+    ACT.esTab = el => { ES.tab = el.dataset.v; KEEP.es = true; esR(); };
+    ACT.esN = el => { ES.n = +el.dataset.v; KEEP.es = true; esR(); }; ACT.esPp = el => { ES.pp = +el.dataset.v; KEEP.es = true; esR(); };
+    ACT.esBn = el => { ES.bn = +el.dataset.v; ES.bvals = null; ES.acc = { c: 0, s: 0, q: 0 }; esR(); }; ACT.esBp = el => { ES.bp = +el.dataset.v; ES.bvals = null; ES.acc = { c: 0, s: 0, q: 0 }; esR(); };
+    ACT.esFlip = el => { const k = +el.dataset.v, n = ES.bn, p = ES.bp / 100, one = () => Array.from({ length: n }, () => Math.random() < p ? 1 : 0);
+      if (k === 0) { ES.bvals = null; ES.acc = { c: 0, s: 0, q: 0 }; } else { for (let i = 0; i < k; i++) { ES.bvals = one(); const s = ES.bvals.reduce((a, c) => a + c, 0); ES.acc.c++; ES.acc.s += s; ES.acc.q += s * s; } } esR(); };
+    INP.esCn = el => { ES.cn = +el.value; esCmp(); }; INP.esCp = el => { ES.cp = +el.value; esCmp(); };
+    RENDERS.push(esR);
+
+    /* ===================== Problemas contextualizados: interpretar μ y σ ===================== */
+    const CTS = [
+      { ic: '🏭', t: 'Control de calidad', n: 20, p: 0.04, pt: '0.04', X: 'piezas defectuosas', S: 'la pieza sale defectuosa', un: 'piezas inspeccionadas', ind: 'las piezas se toman al azar de una producción muy grande', q: { mode: 'ge', x: 2 }, qq: 'encontrar al menos 2 defectuosas', obs: 4,
+        txt: 'Una fábrica sabe que el <b>4 %</b> de sus piezas sale defectuosa. Se inspeccionan <b>20 piezas</b> elegidas al azar de la línea de producción.' },
+      { ic: '📝', t: 'Examen de opción múltiple', n: 12, p: 0.25, pt: '0.25', X: 'preguntas acertadas', S: 'la respuesta elegida es correcta', un: 'preguntas', ind: 'se contesta cada pregunta al azar, sin que una influya en otra', q: { mode: 'ge', x: 6 }, qq: 'aprobar (6 o más aciertos) contestando totalmente al azar', obs: 7,
+        txt: 'Un examen tiene <b>12 preguntas</b> con <b>4 opciones</b> cada una. Un estudiante no estudió y contesta <b>al azar</b>.' },
+      { ic: '💉', t: 'Tratamiento médico', n: 15, p: 0.8, pt: '0.80', X: 'pacientes que se recuperan', S: 'el paciente se recupera', un: 'pacientes', ind: 'los pacientes son independientes entre sí', q: { mode: 'le', x: 10 }, qq: 'que se recuperen a lo más 10', obs: 8,
+        txt: 'Un tratamiento tiene una efectividad del <b>80 %</b>. Se aplica a <b>15 pacientes</b> no relacionados entre sí.' },
+      { ic: '🏀', t: 'Tiros libres', n: 10, p: 0.7, pt: '0.70', X: 'tiros encestados', S: 'el tiro entra', un: 'tiros', ind: 'cada tiro es independiente del anterior (sin «racha»)', q: { mode: 'eq', x: 7 }, qq: 'encestar exactamente 7', obs: 3,
+        txt: 'Una jugadora encesta el <b>70 %</b> de sus tiros libres. Lanza <b>10 tiros</b> en un partido.' },
+      { ic: '✈️', t: 'Sobreventa de boletos', n: 52, p: 0.9, pt: '0.90', X: 'pasajeros que se presentan', S: 'el pasajero se presenta', un: 'boletos vendidos', ind: 'los pasajeros deciden por separado', q: { mode: 'gt', x: 50 }, qq: 'que se presenten más de 50 (el avión tiene 50 asientos)', obs: 51,
+        txt: 'Una aerolínea vende <b>52 boletos</b> para un vuelo de <b>50 asientos</b>, porque en promedio el <b>90 %</b> de los pasajeros se presenta.' },
+      { ic: '🚬', t: 'Encuesta (tabla de fumadores)', n: 20, p: 83 / 300, pt: '83/300 ≈ 0.277', X: 'fumadores en la muestra', S: 'la persona fuma', un: 'personas encuestadas', ind: 'la población es grande o se elige con reemplazo', q: { mode: 'bt', a: 4, b: 8 }, qq: 'que haya entre 4 y 8 fumadores', obs: 12,
+        txt: 'En la tabla de contingencia de <b>300 personas</b>, <b>83 fuman</b>. Se eligen al azar <b>20 personas</b> (con reemplazo) y se cuenta cuántas fuman.' }];
+    const CT = { k: 0, x: CTS[0].obs };
+    function ctR() {
+      $('#ct-tabs').innerHTML = CTS.map((c, i) => `<button class="${CT.k === i ? 'on' : ''}" style="--c:#c2255c" data-a="ctTab" data-v="${i}">${c.ic} ${c.t}</button>`).join('');
+      const c = CTS[CT.k], { n, p } = c, q = 1 - p, mu = n * p, sg = Math.sqrt(n * p * q), lo = Math.max(0, Math.ceil(mu - 2 * sg - 1e-9)), hi = Math.min(n, Math.floor(mu + 2 * sg + 1e-9));
+      const sp = spec(n, p, c.q.mode, c.q.x, c.q.a, c.q.b), vals = pArr(n, p), pt = (k) => fi(`P(X=${k})=${f4t(pmf(n, k, p))}`);
+      let prob; const ks = sp.ks, nk = n + 1 - ks.length;
+      if (ks.length <= 4) prob = fd(`${sp.tex}=${ks.map(k => `P(${k})`).join('+')}=${ks.map(k => f4(pmf(n, k, p))).join('+')}=${colF(f4(sp.total), '#2f9e44')}`);
+      else if (nk <= 4) { const cm = []; for (let k = 0; k <= n; k++) if (!sp.set.has(k)) cm.push(k); prob = fd(`${sp.tex}=1-(${cm.map(k => f4(pmf(n, k, p))).join('+')})=${colF(f4(sp.total), '#2f9e44')}`); }
+      else prob = fd(`${sp.tex}=\\sum_{k}\\binom{${n}}{k}p^{k}q^{${n}-k}=${colF(f4(sp.total), '#2f9e44')}`);
+      const ph = sp.total < 0.05 ? 'muy poco probable' : sp.total < 0.2 ? 'poco probable' : sp.total < 0.5 ? 'plausible' : 'bastante probable';
+      $('#ct-body').innerHTML = `<div class="row g-3"><div class="col-lg-6">
+        <div class="stcard" style="--c:#c2255c"><div class="fw-bold mb-1" style="color:#c2255c">${c.ic} Situación</div>${c.txt}<div class="mt-1"><b>Pregunta:</b> ¿probabilidad de ${c.qq}?</div></div>
+        <div class="mt-2">${stp(1, '#0ca678', 'Identifica el modelo', `<div class="d-flex flex-wrap">${[['n fijo', `n = ${n} ${c.un}`], ['2 resultados', `éxito: ${c.S}`], ['p constante', `p = ${c.pt}`], ['Independencia', c.ind]].map(x => `<span class="cond y">✓ <b>${x[0]}:</b> ${x[1]}</span>`).join('')}</div>Entonces ${fi(`X`)} = ${c.X} cumple ${fi(`X\\sim Bin(${n},\\,${tr(p, 3)})`)}.`)}
+        ${stp(2, '#e03131', 'Media y desviación estándar', `${fd(R`\mu=np=${n}\cdot ${tr(p, 3)}=${colF(tr(mu, 3), '#e03131')}\qquad \sigma=\sqrt{npq}=${colF(tr(sg, 3), '#7048e8')}`)}<div class="small"><b>Interpretación:</b> en promedio se esperan <b>${tr(mu, 2)}</b> ${c.X} de cada ${n}; el resultado típico se aparta unos <b>${tr(sg, 2)}</b> de esa media.</div>`)}
+        ${stp(3, '#f08c00', 'Rango usual: μ ± 2σ', `${fd(R`\mu\pm 2\sigma=${tr(mu, 2)}\pm ${tr(2 * sg, 2)}\;\Rightarrow\;[${tr(mu - 2 * sg, 2)},\,${tr(mu + 2 * sg, 2)}]`)}<div class="small">Lo usual: de <b>${lo}</b> a <b>${hi}</b> ${c.X}. Fuera de ese rango sería un resultado <b>inusual</b>.</div>`)}
+        ${stp(4, '#1c7ed6', 'Calcula lo que se pide', `${prob}<div class="small"><b>Interpretación:</b> es <b>${ph}</b> (${(sp.total * 100).toFixed(2)} %) ${c.qq}.</div>`)}</div></div>
+        <div class="col-lg-6">${catBars(vals.map((_, i) => i), vals, { H: 250, k: 'ct', mu: mu, muT: tr(mu, 2), col: i => sp.set.has(i) ? '#1c7ed6' : '#ced4da' })}<div class="small text-muted text-center mb-2">Barras azules: el evento pedido · línea roja: μ</div>
+          <div class="stcard" style="--c:#7048e8"><div class="fw-bold mb-1" style="color:#7048e8">¿Es inusual lo que observamos?</div><div class="small fw-bold">Observamos x = <span id="ct-xv"></span> ${c.X}</div><input type="range" class="form-range" min="0" max="${n}" value="${Math.min(CT.x, n)}" data-in="ctX"><div id="ct-obs"></div></div></div></div>`;
+      math($('#ct-body')); ctObs();
+    }
+    function ctObs() {
+      const c = CTS[CT.k], { n, p } = c, q = 1 - p, mu = n * p, sg = Math.sqrt(n * p * q), x = Math.min(CT.x, n), z = (x - mu) / sg, odd = Math.abs(z) > 2, ex = x >= mu ? spec(n, p, 'ge', x).total : spec(n, p, 'le', x).total;
+      $('#ct-xv').textContent = x;
+      $('#ct-obs').innerHTML = `${fd(R`z=\frac{x-\mu}{\sigma}=\frac{${x}-${tr(mu, 2)}}{${tr(sg, 2)}}=${colF(tr(z, 2).replace('-', '−'), odd ? '#e03131' : '#2f9e44')}`)}
+        <div class="rsb" style="${odd ? 'background:linear-gradient(135deg,#7f1d1d,#b91c1c)' : ''}"><div class="bg" style="${odd ? 'color:#ffc9c9' : ''}">${odd ? 'INUSUAL' : 'USUAL'}</div><small>está a ${tr(Math.abs(z), 2)} desviaciones estándar de la media ${odd ? '(fuera de μ ± 2σ)' : '(dentro de μ ± 2σ)'}</small></div>
+        <div class="small mt-2">Probabilidad de obtener ${x >= mu ? 'x o más' : 'x o menos'}: ${fi(`P(X${x >= mu ? '\\ge' : '\\le'}${x})=${f4t(ex)}`)}${odd ? '. Si el modelo es correcto, esto casi no ocurre: conviene dudar del modelo (¿cambió p?).' : '.'}</div>`;
+      math($('#ct-obs'));
+    }
+    ACT.ctTab = el => { CT.k = +el.dataset.v; CT.x = Math.round(CTS[CT.k].obs); ctR(); };
+    INP.ctX = el => { CT.x = +el.value; ctObs(); };
+    RENDERS.push(ctR);
+
+    /* ===================== De lo discreto a lo continuo ===================== */
+    const DSV = { m: 1, view: 'prob' }, DSM = [1, 2, 5, 10, 30, 100];
+    function dsR() {
+      $('#ds-m').innerHTML = DSM.map(m => `<button class="btn btn-outline-primary ${DSV.m === m ? 'active' : ''}" data-a="dsM" data-v="${m}">${m}</button>`).join('');
+      $('#ds-view').innerHTML = [['prob', 'Altura = probabilidad'], ['dens', 'Altura = probabilidad ÷ ancho']].map(v => `<button class="btn btn-outline-dark ${DSV.view === v[0] ? 'active' : ''}" data-a="dsV" data-v="${v[0]}">${v[1]}</button>`).join('');
+      const m = DSV.m, N = 15 * m, pc = 1 / N, w = 1 / m, c = CH({ W: 700, H: 250, x0: 0, x1: 15, y1: 0.1, l: 52, b: 38 }), pl = play('ds');
+      let s = c.yax([0, 0.025, 0.05, 0.075, 0.1], v => tr(v, 3)) + c.axis(tickSet(0, 15, 1));
+      for (let i = 0; i < N; i++) { const a = i * w, h = DSV.view === 'prob' ? pc : pc / w, inb = a >= 3 - 1e-9 && a + w <= 5 + 1e-9;
+        s += `<rect class="bar ${pl}" style="--i:${Math.floor(i * 24 / N)}" x="${(c.sx(a) + (m >= 30 ? 0 : 1)).toFixed(2)}" y="${c.sy(h).toFixed(2)}" width="${Math.max(0.6, c.sx(a + w) - c.sx(a) - (m >= 30 ? 0 : 2)).toFixed(2)}" height="${(c.sy(0) - c.sy(h)).toFixed(2)}" fill="${inb ? '#f08c00' : '#74c0fc'}"/>`; }
+      s += c.txt(c.sx(7.5), 244, 'minuto de la llamada en que se conecta la policía', 'axx');
+      $('#ds-body').innerHTML = `<div class="row g-3"><div class="col-lg-8">${c.svg(s)}<div class="small text-muted text-center">Cada barra es una celda de ${m === 1 ? '1 minuto' : fi(`\\frac{1}{${m}}`) + ' de minuto'}. Las naranjas cubren el intervalo [3, 5].</div></div>
+        <div class="col-lg-4"><div class="d-flex flex-wrap gap-2 mb-2">${kpi('Celdas', N, '#1c7ed6', 0)}${kpi('P(una celda)', `1/${N}`, '#e03131', 1)}${kpi('P(3 ≤ T ≤ 5)', m === 1 ? '2/15' : `${2 * m}/${N} = 2/15`, '#e8590c', 2)}${kpi('Densidad', '1/15 ≈ 0.0667', '#2f9e44', 3)}</div>
+        <div class="intro-box mb-0">${DSV.view === 'prob' ? `Al afinar la medición cada barra <b>se aplasta</b>: ${fi(R`P(\text{una celda})=\frac{1}{${N}}\to 0`)}. Pero las ${2 * m} celdas naranjas siguen sumando ${fi(R`\frac{2}{15}`)}.` : `Si divides la probabilidad entre el ancho de la celda, la altura <b>ya no se aplasta</b>: ${fi(R`\frac{1/${N}}{1/${m}}=\frac{1}{15}`)} siempre. Esa altura constante es la <b>densidad</b> ${fi(R`f(t)=\tfrac{1}{15}`)}.`}</div></div></div>
+        <div class="pbtab mt-3"><table class="ntb"><tr><th>Celdas por minuto</th><th>Ancho</th><th>P(una celda)</th><th>Celdas en [3,5]</th><th>P(3 ≤ T ≤ 5)</th></tr>${DSM.map(k => `<tr class="${k === m ? 'cur' : ''}"><td><b>${k}</b></td><td>${tr(1 / k, 4)}</td><td>${tr(1 / (15 * k), 5)}</td><td>${2 * k}</td><td><b>${tr(2 / 15, 4)}</b></td></tr>`).join('')}<tr><td><b>∞</b></td><td>0</td><td style="color:#e03131"><b>0</b></td><td>∞</td><td><b>${tr(2 / 15, 4)}</b></td></tr></table></div>
+        <div class="intro-box mt-3 mb-0"><b>Conclusión para la clase:</b> en una variable <b>continua</b> los valores no se pueden contar, así que ${fi(R`P(T=t)=0`)} para cada instante. La probabilidad se asigna a <b>intervalos</b> y se obtiene como el <b>área</b> bajo la densidad: ${fi(R`P(3\le T\le 5)=2\cdot\tfrac{1}{15}`)} (base 2 × altura ${fi(R`\tfrac{1}{15}`)}).</div>`;
+      math($('#ds-body')); KEEP.ds = false;
+    }
+    ACT.dsM = el => { DSV.m = +el.dataset.v; KEEP.ds = true; dsR(); }; ACT.dsV = el => { DSV.view = el.dataset.v; KEEP.ds = true; dsR(); };
+    RENDERS.push(dsR);
+
+    /* ===================== Probabilidad geométrica: la llamada ===================== */
+    const PH = { x: 2, st: 0, sim: { c: [0, 0, 0], dots: [] } };
+    const PHS = ['Espacio muestral', 'Escuchar todo', 'Escuchar parte', 'Escuchar algo', 'No escuchar nada', 'Un instante exacto'];
+    const phCat = x => x <= 3 ? 0 : x < 5 ? 1 : 2, PHC = [['#2f9e44', 'Escuchas TODA la información'], ['#f08c00', 'Escuchas PARTE de la información'], ['#e03131', 'No escuchas NADA de la información']];
+    function phLine() {
+      const x = PH.x, c = CH({ W: 700, H: 150, x0: 0, x1: 15, y1: 1, l: 24, r: 24, t: 10, b: 30 }), k = phCat(x), tk = 38;
+      let s = c.axis(tickSet(0, 15, 1), String, 28 - 0).replace(/y1="([\d.]+)"/g, (m, v) => m);   /* eje */
+      const y0 = 56, hh = 26;
+      s = `<rect x="${c.sx(0)}" y="${y0}" width="${c.sx(15) - c.sx(0)}" height="${hh}" rx="8" fill="#e9ecef"/>`
+        + `<rect class="ar" x="${c.sx(x)}" y="${y0}" width="${c.sx(15) - c.sx(x)}" height="${hh}" rx="0" fill="rgba(28,126,214,.35)"/>`
+        + `<rect x="${c.sx(3)}" y="${y0}" width="${c.sx(5) - c.sx(3)}" height="${hh}" fill="#e03131" opacity=".92"/>`
+        + `<text x="${c.sx(4)}" y="${y0 + 17}" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">información</text>`
+        + `<rect x="${c.sx(Math.max(x, 3))}" y="${y0 + hh + 4}" width="${Math.max(0, c.sx(Math.min(5, Math.max(x, 3))) === c.sx(Math.max(x, 3)) ? 0 : c.sx(5) - c.sx(Math.max(x, 3)))}" height="6" rx="3" fill="${PHC[k][0]}"/>`
+        + [0, 3, 5, 15].map(v => `<line x1="${c.sx(v)}" x2="${c.sx(v)}" y1="${y0 - 6}" y2="${y0 + hh + 12}" stroke="#495057" stroke-dasharray="3 3"/>`).join('')
+        + `<line x1="${c.sx(x)}" x2="${c.sx(x)}" y1="${y0 - 22}" y2="${y0 + hh + 14}" stroke="#1971c2" stroke-width="3"/><polygon points="${c.sx(x) - 8},${y0 - 24} ${c.sx(x) + 8},${y0 - 24} ${c.sx(x)},${y0 - 10}" fill="#1971c2"/><text x="${c.sx(x)}" y="${y0 - 28}" text-anchor="middle" font-size="12" font-weight="800" fill="#1971c2">x = ${tr(x, 1)}</text>`
+        + `<text x="${c.sx(15)}" y="${y0 + hh + 28}" text-anchor="end" font-size="11" fill="#1971c2" font-weight="700">escuchas desde x hasta 15 →</text>`
+        + [0, 3, 5, 15].map(v => `<text x="${c.sx(v)}" y="${y0 + hh + 28}" text-anchor="middle" font-size="12" font-weight="800" fill="#495057" ${v === 15 ? 'opacity="0"' : ''}>${v}</text>`).join('');
+      return c.svg(s);
+    }
+    function phR() {
+      const x = PH.x, k = phCat(x); $('#ph-xv').textContent = tr(x, 1) + ' min';
+      const heard = k === 0 ? 'los 2 min completos del mensaje' : k === 1 ? `${tr(5 - x, 1)} de los 2 min (te pierdes ${tr(x - 3, 1)})` : '0 min del mensaje';
+      $('#ph-line').innerHTML = phLine() + `<div class="text-center mt-1"><span class="cond ${k === 0 ? 'y' : 'n'}" style="font-size:.95rem;border-color:${PHC[k][0]};color:${PHC[k][0]};background:${PHC[k][0]}15"><b>${PHC[k][1]}</b> — ${heard}</span></div>`;
+      $('#ph-chips').innerHTML = PHS.map((t, i) => `<button class="${i === PH.st ? 'on' : i < PH.st ? 'done' : ''}" data-a="phGo" data-v="${i}">${i + 1}. ${t}</button>`).join('');
+      const st = PH.st, P = (a, b, t, col) => `<div class="stcard" style="--c:${col}">${fd(R`P(${t})=\frac{\text{longitud favorable}}{\text{longitud total}}=\frac{${b}}{15}=${colF(a, col)}`)}</div>`;
+      const c = CH({ W: 700, H: 90, x0: 0, x1: 15, y1: 1, l: 24, r: 24, t: 6, b: 24 });
+      const reg = [[0, 15, '#868e96', '[0, 15]'], [0, 3, '#2f9e44', '[0, 3]'], [3, 5, '#f08c00', '(3, 5)'], [0, 5, '#7048e8', '[0, 5)'], [5, 15, '#e03131', '[5, 15]'], [3, 3.04, '#2f9e44', 'x = 3']][st];
+      const band = `${c.svg(`<rect x="${c.sx(0)}" y="30" width="${c.sx(15) - c.sx(0)}" height="18" rx="6" fill="#e9ecef"/><rect class="sweep ${play('ph')}" x="${c.sx(reg[0])}" y="26" width="${c.sx(reg[1]) - c.sx(reg[0])}" height="26" rx="${st === 5 ? 3 : 6}" fill="${reg[2]}" opacity=".85"/>${st === 5 ? `<circle class="pop ${play('ph')}" cx="${c.sx(3)}" cy="39" r="9" fill="#2f9e44"/>` : ''}<text x="${(c.sx(reg[0]) + c.sx(reg[1])) / 2}" y="20" text-anchor="middle" font-size="13" font-weight="800" fill="${reg[2]}">x ∈ ${reg[3]}${st !== 5 ? ` · longitud ${tr(reg[1] - reg[0], 0)}` : ' · longitud 0'}</text>` + c.axis(tickSet(0, 15, 1)).replace(/y1="[\d.]+"/g, m => m))}`;
+      const txt = [
+        `<div class="intro-box mb-2">El instante de conexión puede ser <b>cualquier</b> número real entre 0 y 15 con la misma «oportunidad». Ya no podemos listar resultados (son infinitos): el espacio muestral es el <b>segmento [0, 15]</b>, de longitud <b>15</b>. En lugar de contar casos, <b>medimos longitudes</b>: ${fd(R`P(A)=\frac{\text{longitud de }A}{\text{longitud de }\Omega}`)}</div>`,
+        `<div class="intro-box mb-2"><b>Oír todo</b> el mensaje: hay que conectarse <b>antes de que empiece</b> (o justo cuando empieza): ${fi(R`0\le x\le 3`)}.</div>${P('1/5 = 0.20', 3, '\\text{todo}', '#2f9e44')}`,
+        `<div class="intro-box mb-2"><b>Oír parte</b>: la conexión cae <b>durante</b> el mensaje: ${fi(R`3<x<5`)}. Mientras más tarde llegas, menos oyes.</div>${P('2/15 ≈ 0.1333', 2, '\\text{parte}', '#f08c00')}`,
+        `<div class="intro-box mb-2"><b>Oír algo</b> (todo o parte): ${fi(R`0\le x<5`)}. Como «todo» y «parte» no pueden ocurrir juntas se <b>suman</b>: ${fi(R`\frac{3}{15}+\frac{2}{15}=\frac{5}{15}`)}.</div>${P('1/3 ≈ 0.3333', 5, '\\text{algo}', '#7048e8')}`,
+        `<div class="intro-box mb-2"><b>No oír nada:</b> conectarse cuando el mensaje ya terminó: ${fi(R`5\le x\le 15`)}. Es el complemento de «oír algo».</div>${P('2/3 ≈ 0.6667', 10, '\\text{nada}', '#e03131')}<div class="text-center small mt-1">${fi(R`\frac{3}{15}+\frac{2}{15}+\frac{10}{15}=1`)} ✓</div>`,
+        `<div class="intro-box mb-2"><b>¿Y si la policía se conecta <u>exactamente</u> en el instante x = 3?</b> Ese conjunto es un solo punto: su longitud es <b>0</b>. ${fd(R`P(X=3)=\frac{0}{15}=${colF('0', '#2f9e44')}`)}Esa probabilidad es <b>cero</b>, pero <b>no significa «imposible»</b>: conectarse justo en 3.000000… minutos es posible, solo que «no cabe» en la medición. Por eso, en variables continuas, ${fi(R`P(3\le X\le 5)=P(3<X<5)`)}: incluir o no los extremos no cambia nada.</div>`][st];
+      $('#ph-body').innerHTML = `<div class="row g-3 align-items-start"><div class="col-lg-7">${band}</div><div class="col-lg-5">${txt}</div></div>`;
+      math($('#ph-body')); phSimR(); KEEP.ph = false;
+    }
+    function phSimR() {
+      const S = PH.sim, tot = S.c.reduce((a, b) => a + b, 0), th = [3 / 15, 2 / 15, 10 / 15], c = CH({ W: 700, H: 90, x0: 0, x1: 15, y1: 1, l: 24, r: 24, t: 6, b: 24 });
+      const dots = S.dots.map((d, i) => `<circle cx="${c.sx(d.x).toFixed(1)}" cy="${(14 + (i * 37) % 44).toFixed(0)}" r="3.4" fill="${PHC[phCat(d.x)][0]}" opacity=".8"/>`).join('');
+      const bar = i => { const f = tot ? S.c[i] / tot : 0; return `<div class="d-flex align-items-center gap-2 mb-1"><div style="width:110px;font-size:.8rem;font-weight:700;color:${PHC[i][0]}">${['Todo', 'Parte', 'Nada'][i]}</div><div class="flex-grow-1 position-relative" style="height:20px;background:#f1f3f5;border-radius:6px"><div style="width:${f * 100}%;height:100%;background:${PHC[i][0]};border-radius:6px;transition:width .4s"></div><div style="position:absolute;top:-2px;bottom:-2px;left:${th[i] * 100}%;border-left:3px solid #212529" title="teoría"></div></div><div style="width:170px;font-size:.8rem">${tot ? tr(f, 3) : '—'} <span class="text-muted">(teoría ${tr(th[i], 3)})</span></div></div>`; };
+      $('#ph-sim').innerHTML = `${c.svg(`<rect x="${c.sx(3)}" y="0" width="${c.sx(5) - c.sx(3)}" height="66" fill="rgba(224,49,49,.12)"/>${dots}` + c.axis(tickSet(0, 15, 1)))}<div class="small mb-2 mt-1"><b>${tot}</b> interceptaciones (puntos = últimas ${S.dots.length}). La raya negra es la probabilidad teórica.</div>${bar(0)}${bar(1)}${bar(2)}<div class="small text-muted">Con pocas repeticiones hay ruido; con miles, las frecuencias relativas se acercan a ${fi(R`\tfrac{3}{15},\,\tfrac{2}{15},\,\tfrac{10}{15}`)}.</div>`;
+      math($('#ph-sim'));
+    }
+    INP.phX = el => { PH.x = +el.value; phR(); };
+    ACT.phRand = () => { PH.x = Math.round(Math.random() * 150) / 10; $$('[data-in="phX"]')[0].value = PH.x; phR(); };
+    ACT.phGo = el => { PH.st = +el.dataset.v; KEEP.ph = true; phR(); };
+    ACT.phNext = () => { PH.st = Math.min(5, PH.st + 1); KEEP.ph = true; phR(); }; ACT.phPrev = () => { PH.st = Math.max(0, PH.st - 1); KEEP.ph = true; phR(); };
+    ACT.phSim = el => { const k = +el.dataset.v, S = PH.sim; for (let i = 0; i < k; i++) { const x = Math.random() * 15; S.c[phCat(x)]++; S.dots.push({ x }); if (S.dots.length > 150) S.dots.shift(); } phSimR(); };
+    ACT.phReset = () => { PH.sim = { c: [0, 0, 0], dots: [] }; phSimR(); };
+    RENDERS.push(phR);
+
+    /* ===================== Probabilidad = área bajo la densidad ===================== */
+    const AR = { d: 'u', a: 3, b: 5, all: false };
+    const ARD = {
+      u: { t: 'Uniforme (la llamada)', c: '#1c7ed6', f: x => x >= 0 && x <= 15 ? 1 / 15 : 0, F: x => Math.min(1, Math.max(0, x / 15)), fx: R`f(x)=\frac{1}{15},\quad 0\le x\le 15` },
+      t: { t: 'Triangular (moda en 5)', c: '#7048e8', f: x => x < 0 || x > 15 ? 0 : x <= 5 ? 2 * x / 75 : (15 - x) / 75, F: x => x <= 0 ? 0 : x <= 5 ? x * x / 75 : x < 15 ? 1 - (15 - x) ** 2 / 150 : 1, fx: R`f(x)=\frac{2x}{75}\quad\text{si }0\le x\le 5`, fx2: R`f(x)=\frac{15-x}{75}\quad\text{si }5<x\le 15` },
+      n: { t: 'Campana (μ = 7.5, σ = 2.5)', c: '#2f9e44', f: x => phi((x - 7.5) / 2.5) / 2.5, F: x => Phi((x - 7.5) / 2.5), fx: R`f(x)=\frac{1}{2.5\sqrt{2\pi}}\,e^{-\frac{(x-7.5)^{2}}{2\cdot 2.5^{2}}}` }
+    };
+    function arR() {
+      $('#ar-d').innerHTML = Object.entries(ARD).map(([k, d]) => `<button class="btn btn-outline-dark ${AR.d === k ? 'active' : ''}" data-a="arD" data-v="${k}">${d.t}</button>`).join('');
+      $('#ar-pre').innerHTML = [[3, 5, '[3, 5]'], [0, 3, '[0, 3]'], [5, 15, '[5, 15]'], [3, 3, 'punto x = 3']].map(p => `<button class="btn btn-outline-secondary" data-a="arPre" data-a2="${p[0]}" data-b2="${p[1]}">${p[2]}</button>`).join('');
+      $('#ar-props').innerHTML = [['#1c7ed6', 'bi-arrow-up-circle', 'f(x) ≥ 0', 'La curva nunca baja del eje: no hay probabilidades negativas.'], ['#2f9e44', 'bi-bullseye', 'Área total = 1', R`$\int f(x)\,dx = 1$ sobre todos los valores posibles.`], ['#e8590c', 'bi-rulers', 'P(a ≤ X ≤ b) = área', R`$P(a\le X\le b)=\int_a^b f(x)\,dx$: la probabilidad de un intervalo es el área sobre él.`], ['#e03131', 'bi-dash-circle', 'P(X = a) = 0', 'Un punto es un segmento de ancho 0: no tiene área. Por eso ≤ y < dan lo mismo.']].map((p, i) => `<div class="col-md-6 col-xl-3"><div class="stcard nin" style="--c:${p[0]};--i:${i}"><div class="fw-bold" style="color:${p[0]}"><i class="bi ${p[1]} me-1"></i>${p[2]}</div><div class="small">${p[3]}</div></div></div>`).join('');
+      const cmp = ['u', 't', 'n'].map(k => { const d = ARD[k], v = d.F(5) - d.F(3); return `<tr class="${AR.d === k ? 'cur' : ''}" style="cursor:pointer" data-a="arD" data-v="${k}"><td><b style="color:${d.c}">${d.t}</b></td><td>${fi(k === 'u' ? R`\frac{5-3}{15}` : k === 't' ? R`\frac{25}{75}-\frac{9}{75}` : R`\Phi(-1)-\Phi(-1.8)`)}</td><td><b>${tr(v, 4)}</b> (${(v * 100).toFixed(1)} %)</td></tr>`; }).join('');
+      $('#ar-cmp').innerHTML = `<table class="ntb" style="max-width:720px"><tr><th>Densidad</th><th>P(3 ≤ X ≤ 5)</th><th>Valor</th></tr>${cmp}</table><div class="small text-muted mt-1">El intervalo es el mismo; cambia la forma de la curva, y por eso cambia el área. Toca una fila para verla arriba.</div>`;
+      math($('#ar-props')); math($('#ar-cmp')); arChart();
+    }
+    function arChart() {
+      const d = ARD[AR.d], a = AR.a, b = AR.b, mx = Math.max(...Array.from({ length: 151 }, (_, i) => d.f(i / 10))), c = CH({ W: 660, H: 290, x0: 0, x1: 15, y1: mx * 1.3, l: 52, b: 38 }), pl = play('ar'), pr = d.F(b) - d.F(a);
+      let s = c.yax(tickSet(0, mx * 1.3, niceStep(mx * 1.3, 4)), v => tr(v, 3)) + c.axis(tickSet(0, 15, 1));
+      if (AR.all) s += `<path class="ar ${pl}" d="${c.area(d.f, 0, 15)}" fill="${d.c}" opacity=".18"/>`;
+      if (b > a) s += `<path class="ar ${pl}" d="${c.area(d.f, a, b)}" fill="#f08c00" opacity=".6"/>`;
+      s += `<path class="cv ${pl}" pathLength="1" d="${c.pth(d.f, 0, 15, 200)}" fill="none" stroke="${d.c}" stroke-width="3" stroke-linecap="round"/>`;
+      [a, b].forEach((v, i) => { s += `<line x1="${c.sx(v)}" x2="${c.sx(v)}" y1="${c.sy(0)}" y2="${c.sy(d.f(v)) - 0}" stroke="#e8590c" stroke-width="${b === a ? 4 : 2}" stroke-dasharray="${b === a ? '0' : '4 3'}"/>`; });
+      s += c.txt(c.sx(a), c.sy(0) + 32, a === b ? 'a = b = ' + tr(a, 1) : 'a=' + tr(a, 1), 'axx') + (a === b ? '' : c.txt(c.sx(b), c.sy(0) + 32, 'b=' + tr(b, 1), 'axx'));
+      if (b > a) s += c.txt(c.sx((a + b) / 2), c.sy(Math.max(d.f(a), d.f(b)) / 2), tr(pr, 3), 'arl');
+      $('#ar-chart').innerHTML = c.svg(s) + `<div class="small text-muted text-center">Área naranja = P(a ≤ X ≤ b)</div>`;
+      $('#ar-av').textContent = tr(a, 1); $('#ar-bv').textContent = tr(b, 1);
+      const zA = (a - 7.5) / 2.5, zB = (b - 7.5) / 2.5;
+      const calc = AR.d === 'u' ? fd(R`P=\text{base}\cdot\text{altura}=(${tr(b, 1)}-${tr(a, 1)})\cdot\frac{1}{15}=${colF(tr(pr, 4), '#e8590c')}`)
+        : AR.d === 't' ? fd(R`P=F(${tr(b, 1)})-F(${tr(a, 1)})=${tr(d.F(b), 4)}-${tr(d.F(a), 4)}=${colF(tr(pr, 4), '#e8590c')}`)
+          : fd(R`P=\Phi(${tr(zB, 2)})-\Phi(${tr(zA, 2)})=${tr(d.F(b), 4)}-${tr(d.F(a), 4)}=${colF(tr(pr, 4), '#e8590c')}`);
+      $('#ar-info').innerHTML = `<div class="stcard" style="--c:${d.c}"><div class="fw-bold mb-1" style="color:${d.c}">${d.t}</div>${fd(d.fx)}${d.fx2 ? fd(d.fx2) : ''}</div>
+        <div class="stcard mt-2" style="--c:#e8590c"><div class="fw-bold" style="color:#e8590c">Probabilidad del intervalo</div>${a === b ? `<div class="mb-1">Los extremos coinciden: el «área» tiene <b>ancho 0</b>.</div>${fd(R`P(X=${tr(a, 1)})=${colF('0', '#e8590c')}`)}` : calc}
+        <div class="d-flex flex-wrap gap-2">${kpi('P(a ≤ X ≤ b)', tr(pr, 4), '#e8590c', 0)}${kpi('en %', (pr * 100).toFixed(2) + ' %', '#7048e8', 1)}</div></div>
+        <div class="d-flex gap-2 flex-wrap mt-2"><button class="btn btn-sm ${AR.all ? 'btn-dark' : 'btn-outline-dark'} rounded-pill" data-a="arAll"><i class="bi bi-layers me-1"></i>${AR.all ? 'Área total = 1.000' : 'Mostrar el área total'}</button></div>
+        <div class="small mt-2">${fi(R`P(a<X<b)=P(a\le X\le b)`)}: como un punto no tiene área, no importa si los extremos se incluyen.</div>`;
+      math($('#ar-info')); KEEP.ar = false;
+    }
+    ACT.arD = el => { AR.d = el.dataset.v; KEEP.ar = true; arR(); };
+    ACT.arAll = () => { AR.all = !AR.all; KEEP.ar = true; arChart(); };
+    ACT.arPre = el => { AR.a = +el.dataset.a2; AR.b = +el.dataset.b2; $$('[data-in="arA"]')[0].value = AR.a; $$('[data-in="arB"]')[0].value = AR.b; KEEP.ar = true; arChart(); };
+    INP.arA = el => { AR.a = +el.value; if (AR.a > AR.b) { AR.b = AR.a; $$('[data-in="arB"]')[0].value = AR.b; } arChart(); };
+    INP.arB = el => { AR.b = +el.value; if (AR.b < AR.a) { AR.a = AR.b; $$('[data-in="arA"]')[0].value = AR.a; } arChart(); };
+    RENDERS.push(arR);
+
+    /* ===================== Descripción de cada categoría ===================== */
+    const GDESC = {
+      c: '<b>Conteo.</b> Principios multiplicativo y aditivo, factorial, permutaciones, combinaciones, triángulo de Pascal y binomio de Newton: las herramientas para contar «de cuántas maneras».',
+      d: '<b>Variables aleatorias.</b> Cómo convertir resultados en números, escribir su distribución en una tabla y calcular su <b>esperanza</b> y su <b>desviación estándar</b>.',
+      m: '<b>Modelo binomial.</b> Proceso de Bernoulli y sus condiciones, la <b>deducción</b> de la fórmula con 4 volados, la calculadora, la <b>forma</b> según n y p, y E(X) y σ.',
+      a: '<b>Aplicaciones.</b> Simulación, ejemplos resueltos en 5 pasos y problemas contextualizados donde hay que <b>interpretar</b> μ y σ.',
+      v: '<b>Variable continua.</b> De lo discreto a lo continuo, probabilidad geométrica (la llamada telefónica) y probabilidad como <b>área bajo la densidad</b>. Prepara el paso a la distribución normal.',
+      f: '<b>Formulario.</b> Todas las fórmulas agrupadas por tema, con ejemplo y ficha completa en el Manual.',
+      all: '<b>Todo el material</b> en un solo recorrido, en el orden pedagógico: contar → variables aleatorias → binomial → aplicaciones → continuas → formulario.' };
+
+    /* ===================== Manual: conceptos nuevos ===================== */
+    function manDefsX() {
+      const d = distOf('A'), cA = sd2Calc(d);
+      return [
+        { k: 'vadiscreta', cat: 'd', t: 'Variable aleatoria discreta y distribución', c: '#e8590c',
+          def: R`Una <b>variable aleatoria</b> $X$ es una regla que asigna un número real a cada resultado de un experimento aleatorio. Es <b>discreta</b> si sus valores posibles se pueden listar (finitos o contables). Su <b>distribución de probabilidad</b> es la lista de pares $x$ y $P(X=x)$.`,
+          thm: [R`<b>Condiciones de validez:</b> (1) $P(X=x)\ge 0$ para todo $x$; (2) $\sum_x P(X=x)=1$.`, R`<b>Probabilidad de un evento:</b> se suman las probabilidades de los valores incluidos: $P(X\le x)=\sum_{k\le x}P(X=k)$.`, R`<b>Ejemplo clave:</b> la variable de Bernoulli toma el valor 1 (éxito) con probabilidad $p$ y 0 con probabilidad $q=1-p$.`],
+          f: [R`P(X=x)\ge 0`, R`\sum_x P(X=x)=1`, R`P(a\le X\le b)=\sum_{a\le x\le b}P(X=x)`], dn: [['X', 'variable aleatoria'], ['x', 'valor que toma X'], ['P(X=x)', 'probabilidad de que X valga x']],
+          use: 'Escribe los valores en una tabla, comprueba que no haya negativos y que la suma sea 1. Si falta probabilidad, hay valores sin listar. Para probabilidades de intervalos, suma las filas correspondientes.',
+          ex: () => `Tabla A: $P(X=16)=0.3$; $P(X\\le 16)=0.2+0.3=0.5$; suma total $0.2+0.3+0.2+0.3=1$ ✓. Tabla B ($x=15$ y $15.5$ con $0.04$ y $0.12$) suma $0.16$: <b>no</b> es distribución completa; faltan $0.84$.` },
+        { k: 'espdef', cat: 'd', t: 'Esperanza, varianza y desviación estándar', c: '#e8590c',
+          def: R`La <b>esperanza</b> (valor esperado o media) $\mu=E[X]$ es el promedio ponderado de los valores de $X$ con sus probabilidades. La <b>varianza</b> $\sigma^{2}$ es el promedio ponderado de los cuadrados de las distancias a $\mu$, y la <b>desviación estándar</b> es $\sigma=\sqrt{\sigma^{2}}$.`,
+          thm: [R`<b>Punto de equilibrio:</b> $\mu$ es el punto donde la distribución se equilibra; $\sum (x-\mu)P(x)=0$.`, R`<b>Fórmula de cálculo:</b> $\sigma^{2}=E[X^{2}]-\mu^{2}=\sum x^{2}P(x)-\mu^{2}$.`, R`<b>Linealidad:</b> $E[aX+b]=a\,E[X]+b$ y $Var(aX+b)=a^{2}\,Var(X)$.`],
+          f: [R`\mu=E[X]=\sum x\,P(x)`, R`\sigma^{2}=\sum (x-\mu)^{2}P(x)`, R`\sigma=\sqrt{\sigma^{2}}`], dn: [['x', 'valores de X'], ['P(x)', 'su probabilidad'], [R`\mu`, 'media'], [R`\sigma^{2}`, 'varianza']],
+          use: 'Multiplica cada x por su P(x) y suma para la media; luego eleva al cuadrado cada distancia a la media, pondera y suma para la varianza. σ está en las mismas unidades que X.',
+          ex: () => `Tabla A: $\\mu=15(0.2)+16(0.3)+17(0.2)+18(0.3)=${tr(cA.mu, 3)}$; $\\sigma^{2}=${tr(cA.v, 4)}$; $\\sigma=${tr(cA.sg, 4)}$.` },
+        { k: 'inusual', cat: 'a', t: 'Interpretar μ y σ: valores inusuales', c: '#c2255c',
+          def: R`<b>Interpretar</b> es traducir $\mu$ y $\sigma$ al contexto: $\mu$ es el valor que se espera <b>a la larga</b> y $\sigma$ el tamaño típico de la desviación. Un resultado es <b>inusual</b> cuando está a más de 2 desviaciones estándar de la media.`,
+          thm: [R`<b>Rango usual:</b> $\mu-2\sigma\le X\le \mu+2\sigma$.`, R`<b>Chébyshev:</b> para cualquier distribución, al menos $1-\tfrac{1}{k^{2}}$ de la probabilidad está a menos de $k\sigma$ de $\mu$ (75 % con $k=2$).`, R`<b>Puntuación z:</b> $z=\dfrac{x-\mu}{\sigma}$ mide a cuántas desviaciones está $x$ de la media.`],
+          f: [R`\mu\pm 2\sigma`, R`z=\frac{x-\mu}{\sigma}`], dn: [['z', 'distancia a la media en desviaciones estándar']],
+          use: 'Calcula μ y σ, escribe el rango usual y compara el dato observado. Si |z| > 2, sospecha: ¿cambió p? ¿se violó alguna condición del modelo?',
+          ex: () => `Con $n=52$, $p=0.9$: $\\mu=46.8$, $\\sigma=2.17$; ver $x=40$ da $z=-3.1$: <b>inusual</b>.` },
+        { k: 'continua', cat: 'v', t: 'Variable continua y función de densidad', c: '#7048e8',
+          def: R`Una variable aleatoria es <b>continua</b> si puede tomar cualquier valor de un intervalo (no se pueden listar). Su probabilidad se describe con una <b>función de densidad</b> $f(x)$: la probabilidad de un intervalo es el <b>área</b> bajo $f$ sobre él.`,
+          thm: [R`<b>Propiedades de $f$:</b> $f(x)\ge 0$ y el área total bajo la curva es 1.`, R`<b>Un punto no tiene probabilidad:</b> $P(X=a)=0$ para todo $a$. No significa que sea imposible, sino que su «ancho» es 0.`, R`<b>Consecuencia:</b> $P(a\le X\le b)=P(a&lt;X&lt;b)=P(a\le X&lt;b)=P(a&lt;X\le b)$.`],
+          f: [R`P(a\le X\le b)=\int_a^b f(x)\,dx`, R`\int_{-\infty}^{\infty} f(x)\,dx=1`, R`P(X=a)=0`], dn: [['f(x)', 'densidad (no es una probabilidad)'], ['a, b', 'extremos del intervalo']],
+          use: 'Ya no preguntes «¿cuál es la probabilidad de que valga exactamente?», sino «¿en qué intervalo cae?». Dibuja f y sombrea la región.',
+          ex: () => `Instante de conexión en una llamada de 15 min: $f(x)=\\tfrac{1}{15}$; $P(3\\le X\\le 5)=2\\cdot\\tfrac{1}{15}=\\tfrac{2}{15}$; $P(X=3)=0$.` },
+        { k: 'uniforme', cat: 'v', t: 'Distribución uniforme y probabilidad geométrica', c: '#7048e8',
+          def: R`Si todos los puntos de un intervalo $[c,d]$ son «igualmente posibles», $X$ tiene <b>distribución uniforme</b> $U(c,d)$. La <b>probabilidad geométrica</b> de un evento $A$ es el cociente entre su longitud (o área) y la del espacio muestral completo.`,
+          thm: [R`<b>Densidad:</b> $f(x)=\dfrac{1}{d-c}$ en $[c,d]$ (y 0 fuera): un rectángulo de área 1.`, R`<b>Probabilidad:</b> si $[a,b]\subseteq[c,d]$, entonces $P(a\le X\le b)=\dfrac{b-a}{d-c}$.`, R`<b>Media y varianza:</b> $\mu=\dfrac{c+d}{2}$ y $\sigma^{2}=\dfrac{(d-c)^{2}}{12}$.`],
+          f: [R`P(A)=\frac{\text{longitud de }A}{\text{longitud de }\Omega}`, R`f(x)=\frac{1}{d-c}`, R`\mu=\frac{c+d}{2}`], dn: [['c, d', 'extremos del intervalo'], ['A', 'evento (un subintervalo)']],
+          use: 'Cuando el azar «reparte» el punto de forma pareja sobre un segmento, cambia contar casos por medir longitudes.',
+          ex: () => `Llamada de 15 min con mensaje entre 3 y 5: oír todo $=\\tfrac{3}{15}$; oír parte $=\\tfrac{2}{15}$; no oír nada $=\\tfrac{10}{15}$; $\\mu=7.5$ min.` },
+        { k: 'area', cat: 'v', t: 'Probabilidad como área bajo la curva', c: '#7048e8',
+          def: R`Para una variable continua con densidad $f$, la probabilidad de que $X$ caiga en $[a,b]$ es el <b>área de la región</b> limitada por la curva $y=f(x)$, el eje $x$ y las rectas $x=a$ y $x=b$.`,
+          thm: [R`<b>Aditividad:</b> si dos intervalos no se traslapan, $P(A\cup B)=P(A)+P(B)$.`, R`<b>Complemento:</b> $P(X>b)=1-P(X\le b)$.`, R`<b>Función acumulada:</b> $F(x)=P(X\le x)$ y $P(a\le X\le b)=F(b)-F(a)$.`, R`<b>Relación con la binomial:</b> en el histograma de una binomial, $P(X=x)$ es el área de la barra (ancho 1); al crecer $n$ la silueta se aproxima a una curva suave (la normal).`],
+          f: [R`P(a\le X\le b)=F(b)-F(a)`, R`P(X>b)=1-F(b)`], dn: [['F(x)', 'probabilidad acumulada hasta x']],
+          use: 'Dibuja la curva, sombrea el intervalo y calcula el área: rectángulo (uniforme), trapecio/triángulo (triangular) o tabla/calculadora (normal).',
+          ex: () => `Ventana [3, 5]: uniforme $\\tfrac{2}{15}=0.1333$; triangular $\\tfrac{16}{75}=0.2133$; campana $\\Phi(-1)-\\Phi(-1.8)=0.1228$.` }
+      ];
+    }
 
     (function boot() {
       sbInit('sb2', F2.n, F2.n); q5new(); prNew(); smReset();
