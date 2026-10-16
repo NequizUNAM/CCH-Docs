@@ -46,61 +46,13 @@
 
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • pedro.nequizmedina@cch.unam.mx</small></footer>
 
-  <!--
-    ============================================================
-    FUENTE ÚNICA DEL MENÚ
-    Para agregar una página nueva, solo añade un objeto en "items".
-    Todas las páginas leen esta configuración y dibujan el header.
-    ============================================================
-  -->
-  <script type="application/json" id="menu-config">
-  {
-    "brand": { "label": "Aula Digital", "icon": "bi-mortarboard-fill", "href": "index.html" },
-    "groups": [
-      {
-        "id": "matematicas", "label": "Matemáticas", "icon": "bi-calculator", "color": "c-mat",
-        "items": [
-          { "label": "Los Números", "href": "los_numeros.html", "icon": "bi-hash" },
-          { "label": "Fracciones", "href": "fracciones.html", "icon": "bi-pie-chart-fill" },
-          { "label": "Variación directamente proporcional", "href": "variacion_proporcional.html", "icon": "bi-graph-up-arrow" },
-          { "label": "Exponentes y Radicales", "href": "exponentes_radicales.html", "icon": "bi-superscript" },
-          { "label": "Ángulos", "href": "angulos.html", "icon": "bi-compass" },
-          { "label": "Teorema de Pitágoras", "href": "pitagoras.html", "icon": "bi-triangle-half" }
-        ]
-      },
-      {
-        "id": "cibernetica", "label": "Cibernética", "icon": "bi-cpu", "color": "c-cib",
-        "items": [
-          { "label": "Precursores", "href": "precursores.html", "icon": "bi-clock-history" },
-          { "label": "Circuitos eléctricos", "href": "circuitos.html", "icon": "bi-lightning-charge-fill" },
-          { "label": "Protoboard e Interconexiones", "href": "protoboard.html", "icon": "bi-grid-3x3-gap-fill" },
-          { "label": "Conversiones numéricas", "href": "conversiones.html", "icon": "bi-123" },
-          { "label": "Compuertas lógicas", "href": "compuertas_logicas.html", "icon": "bi-toggles" }
-        ]
-      },
-      {
-        "id": "estadistica", "label": "Estadística", "icon": "bi-bar-chart-line", "color": "c-est",
-        "items": [
-          { "label": "Distribución Muestral", "href": "distribucion_muestral.html", "icon": "bi-bar-chart-line-fill" },
-          { "label": "Medidas de Dispersión", "href": "medidas_dispersion.html", "icon": "bi-arrows-expand" },
-          { "label": "Amplitudes", "href": "amplitudes.html", "icon": "bi-distribute-horizontal" },
-          { "label": "Cuartiles y Percentiles", "href": "cuartiles_percentiles.html", "icon": "bi-percent" },
-          { "label": "Correlación Lineal", "href": "correlacion_lineal.html", "icon": "bi-graph-up" },
-          { "label": "Probabilidad", "href": "probabilidad.html", "icon": "bi-dice-5-fill" },
-          { "label": "Distribución Binomial", "href": "distribucion_binomial.html", "icon": "bi-bar-chart-steps" }
-        ]
-      }
-    ]
-  }
-  </script>
-
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
   <script>
     /* El header, el modal y el bloqueo viven en aula-header.js. Aquí solo se dibujan las tarjetas de inicio. */
-    const MENU = JSON.parse(document.getElementById('menu-config').textContent);
+    const MENU = AulaHeader.getMenu();
     function renderCards(menu, unlocked) {
       const box = document.getElementById('home-cards');
       if (!unlocked) {
