@@ -37,6 +37,7 @@
 
     /* Navegación de la página */
     .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a.iv-nav { color:#7048e8; font-weight:800; }
     .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
     .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
 
@@ -302,7 +303,7 @@
 
   <div id="app-header"></div>
   <nav class="sec-nav" id="sec-nav">
-    <a href="#s1">1. Datos</a><a href="#s2">2. Tabla</a><a href="#s3">3. Intervalos</a><a href="#s4">4. Amplitud</a><a href="#s5">5. Media, mediana y moda</a><a href="#s6">6. Manual</a><a href="#s7">7. Ejercicios</a>
+    <a href="#s1">1. Datos</a><a href="#s2">2. Tabla</a><a href="#s4">3. Amplitud</a><a href="#s5">4. Media, mediana y moda</a><a href="#s6">5. Manual</a><a href="#s7">6. Ejercicios</a><a href="#" data-iv-open class="iv-nav"><i class="bi bi-record-circle me-1"></i>Intervalos</a>
   </nav>
 
   <main>
@@ -313,7 +314,7 @@
         <p class="lead mb-1">Qué mide el intervalo, cómo se calcula y qué significa que sea <strong>abierto</strong> o <strong>cerrado</strong></p>
         <p class="mb-3 text-light opacity-75">Primero la tabla de datos • luego los intervalos animados • amplitudes iguales o <strong>diferentes</strong> • media, mediana y moda</p>
         <a class="btn btn-warning rounded-pill px-4 fw-semibold me-1 mb-1" href="#s2"><i class="bi bi-table me-1"></i>Ir a la tabla</a>
-        <a class="btn btn-info text-white rounded-pill px-4 fw-semibold me-1 mb-1" href="#s3"><i class="bi bi-play-circle-fill me-1"></i>Intervalos animados</a>
+        <button class="btn btn-info text-white rounded-pill px-4 fw-semibold me-1 mb-1" data-iv-open><i class="bi bi-record-circle me-1"></i>Intervalos abiertos y cerrados</button>
         <button class="btn btn-light rounded-pill px-4 fw-semibold me-1 mb-1" data-man="amplitud"><i class="bi bi-book-half me-1"></i>Manual</button>
         <a class="btn btn-outline-light rounded-pill px-4 fw-semibold mb-1" href="#s7"><i class="bi bi-pencil-square me-1"></i>Ejercicios</a>
       </div>
@@ -389,51 +390,20 @@
             <div id="real-info" class="mb-3 d-none"></div>
             <div class="table-responsive rounded-3 border" id="tbl-wrap" data-m="mean"><table class="table table-bordered freq-table mb-0" id="tbl"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
             <div class="col-legend" id="col-legend"></div>
-            <div class="tip-box s-volt mt-3 small"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i><strong>Toca cualquier número o encabezado</strong> (subrayado punteado) para ver la operación. Toca el número de clase para dibujarla en la sección 3 (Intervalos).</div>
+            <div class="tip-box s-volt mt-3 small"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i><strong>Toca cualquier número o encabezado</strong> (subrayado punteado) para ver la operación. Toca el número de clase para dibujarla en la ventana de <strong>Intervalos</strong>.</div>
           </div>
         </div>
       </section>
 
 
       <!-- 3. VISUALIZADOR -->
-      <section class="lesson mb-5" id="s3">
-        <div class="card lesson-card">
-          <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Intervalos abiertos y cerrados, dibujados</h2><small>Elige una clase y un tipo de intervalo: se dibuja sobre la recta numérica</small></div>
-            <button class="btn btn-sm btn-light rounded-pill man-btn" data-man="intervalo"><i class="bi bi-book-half me-1"></i>Manual</button>
-            <button class="btn btn-sm btn-light rounded-pill ms-1" id="v-play"><i class="bi bi-arrow-repeat me-1"></i>Repetir animación</button></div>
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-lg-4">
-                <div class="panel mb-3">
-                  <div class="small fw-bold text-muted mb-2"><i class="bi bi-hand-index-thumb me-1"></i>1. Elige la clase</div>
-                  <div class="d-flex flex-wrap gap-1" id="cls-chips"></div>
-                </div>
-                <div class="panel mb-3">
-                  <div class="small fw-bold text-muted mb-2"><i class="bi bi-code-square me-1"></i>2. Tipo de intervalo</div>
-                  <div class="type-grid" id="type-sw"></div>
-                </div>
-                <div class="real-switch" id="real-switch-v"><div class="form-check form-switch m-0 p-0 d-flex align-items-center gap-2"><input class="form-check-input m-0 sw-real" type="checkbox" role="switch" id="sw-real-v"><label for="sw-real-v"><i class="bi bi-rulers me-1"></i>Fronteras reales</label></div></div>
-              </div>
-              <div class="col-lg-8">
-                <div class="viz-card"><div id="v-svg"></div></div>
-                <div id="v-expl" class="mt-3"></div>
-              </div>
-            </div>
-            <h6 class="fw-bold mt-4 mb-2"><i class="bi bi-layout-three-columns me-1"></i>Todas las clases en la recta <small class="text-muted fw-normal">(toca una para seleccionarla)</small></h6>
-            <div class="viz-card"><div id="v-strip"></div></div>
-            <div class="row g-3 mt-1">
-              <div class="col-lg-6"><div class="tip-box s-volt h-100"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Convención de la tabla:</strong> cada clase es <strong class="mono">[Li, Ls)</strong>: <em>incluye</em> el límite inferior y <em>no incluye</em> el superior, que pertenece a la clase siguiente. Así ningún dato queda en dos clases. La <strong>última clase</strong> se cierra <strong class="mono">[Li, Ls]</strong> cuando el dato mayor coincide con su límite superior.</div></div>
-              <div class="col-lg-6"><div class="tip-box s-amp h-100" id="open-ended"></div></div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
 
       <!-- 4. AMPLITUD -->
       <section class="lesson mb-5" id="s4">
         <div class="card lesson-card">
-          <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Amplitud: fórmula y cómo calcularla</h2><small>La amplitud (o tamaño de clase) es el ancho de cada intervalo</small></div><button class="btn btn-sm btn-light rounded-pill man-btn" data-man="amplitud"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+          <div class="lesson-head h-4"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Amplitud: fórmula y cómo calcularla</h2><small>La amplitud (o tamaño de clase) es el ancho de cada intervalo</small></div><button class="btn btn-sm btn-light rounded-pill man-btn" data-man="amplitud"><i class="bi bi-book-half me-1"></i>Manual</button></div>
           <div class="card-body">
             <div class="row g-3 align-items-start mb-3">
               <div class="col-lg-6">
@@ -472,7 +442,7 @@
       <!-- 5. RESULTADOS -->
       <section class="lesson mb-5" id="s5">
         <div class="card lesson-card">
-          <div class="lesson-head h-5"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Media, mediana y moda con la amplitud</h2><small>La mediana y la moda usan la amplitud $A$ de la clase donde se ubican</small></div><button class="btn btn-sm btn-light rounded-pill man-btn" data-man="media"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+          <div class="lesson-head h-5"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Media, mediana y moda con la amplitud</h2><small>La mediana y la moda usan la amplitud $A$ de la clase donde se ubican</small></div><button class="btn btn-sm btn-light rounded-pill man-btn" data-man="media"><i class="bi bi-book-half me-1"></i>Manual</button></div>
           <div class="card-body">
             <div class="row g-3 mb-3" id="tiles"></div>
             <div class="measure" id="m-detail"></div>
@@ -484,7 +454,7 @@
       <!-- 6. MANUAL -->
       <section class="lesson mb-5" id="s6">
         <div class="card lesson-card">
-          <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Manual</h2><small>Definición, teorema o regla, fórmula y ejemplo de cada concepto</small></div>
+          <div class="lesson-head h-6"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Manual</h2><small>Definición, teorema o regla, fórmula y ejemplo de cada concepto</small></div>
             <button class="btn btn-sm btn-light rounded-pill" data-man="todo"><i class="bi bi-journal-richtext me-1"></i>Formulario completo</button></div>
           <div class="card-body">
             <p class="small text-muted mb-3"><i class="bi bi-hand-index-thumb me-1"></i>Toca un concepto para abrir su ficha. También puedes abrirla desde el botón <strong>Manual</strong> de cada sección.</p>
@@ -496,7 +466,7 @@
       <!-- 7. EJERCICIOS -->
       <section class="lesson mb-5" id="s7">
         <div class="card lesson-card">
-          <div class="lesson-head h-7"><div class="num">7</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ejercicios resueltos paso a paso</h2><small>Resuelve, comprueba tu respuesta y mira la solución animada</small></div>
+          <div class="lesson-head h-7"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ejercicios resueltos paso a paso</h2><small>Resuelve, comprueba tu respuesta y mira la solución animada</small></div>
             <button class="btn btn-sm btn-light rounded-pill me-1" id="g-int"><i class="bi bi-plus-circle me-1"></i>Otro de intervalos</button>
             <button class="btn btn-sm btn-light rounded-pill" id="g-tab"><i class="bi bi-plus-circle me-1"></i>Otro de tabla</button></div>
           <div class="card-body"><div id="ex-list"></div></div>
@@ -504,6 +474,44 @@
       </section>
     </div>
   </main>
+
+  <div class="modal fade" id="ivModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#7048e8"><h5 class="modal-title fw-bold text-white"><i class="bi bi-record-circle me-2"></i>Intervalos abiertos y cerrados · círculo vacío ○ y relleno ●</h5><button class="btn btn-sm btn-light rounded-pill ms-auto me-2" data-iv-man><i class="bi bi-book-half me-1"></i>Manual</button><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+        <div class="modal-body bg-light">
+          <div class="d-flex flex-wrap gap-2 mb-3" id="iv-tabs"></div>
+          <div id="iv-pane-t"><div class="d-flex justify-content-between align-items-center mb-2"><small class="text-muted">Elige una clase y un tipo de intervalo: se dibuja sobre la recta numérica</small><button class="btn btn-sm btn-outline-secondary rounded-pill" id="v-play"><i class="bi bi-arrow-repeat me-1"></i>Repetir animación</button></div>
+            <div class="row g-3">
+              <div class="col-lg-4">
+                <div class="panel mb-3">
+                  <div class="small fw-bold text-muted mb-2"><i class="bi bi-hand-index-thumb me-1"></i>1. Elige la clase</div>
+                  <div class="d-flex flex-wrap gap-1" id="cls-chips"></div>
+                </div>
+                <div class="panel mb-3">
+                  <div class="small fw-bold text-muted mb-2"><i class="bi bi-code-square me-1"></i>2. Tipo de intervalo</div>
+                  <div class="type-grid" id="type-sw"></div>
+                </div>
+                <div class="real-switch" id="real-switch-v"><div class="form-check form-switch m-0 p-0 d-flex align-items-center gap-2"><input class="form-check-input m-0 sw-real" type="checkbox" role="switch" id="sw-real-v"><label for="sw-real-v"><i class="bi bi-rulers me-1"></i>Fronteras reales</label></div></div>
+              </div>
+              <div class="col-lg-8">
+                <div class="viz-card"><div id="v-svg"></div></div>
+                <div id="v-expl" class="mt-3"></div>
+              </div>
+            </div>
+            <h6 class="fw-bold mt-4 mb-2"><i class="bi bi-layout-three-columns me-1"></i>Todas las clases en la recta <small class="text-muted fw-normal">(toca una para seleccionarla)</small></h6>
+            <div class="viz-card"><div id="v-strip"></div></div>
+            <div class="row g-3 mt-1">
+              <div class="col-lg-6"><div class="tip-box s-volt h-100"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Convención de la tabla:</strong> cada clase es <strong class="mono">[Li, Ls)</strong>: <em>incluye</em> el límite inferior y <em>no incluye</em> el superior, que pertenece a la clase siguiente. Así ningún dato queda en dos clases. La <strong>última clase</strong> se cierra <strong class="mono">[Li, Ls]</strong> cuando el dato mayor coincide con su límite superior.</div></div>
+              <div class="col-lg-6"><div class="tip-box s-amp h-100" id="open-ended"></div></div>
+            </div>
+          </div>
+          <div id="iv-pane-n" hidden><div id="iv-body"></div></div>
+        </div>
+        <div class="modal-footer bg-light border-0"><button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button></div>
+      </div>
+    </div>
+  </div>
 
   <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
@@ -693,7 +701,7 @@
     /* ---------- Estado ---------- */
     const S = { lo: 55, hi: 100, d: 0, n: 60, k: 9, fi: [], dist: 'bell', real: false, m: 'mean', sel: 2, vt: 'auto', var: false, ws: [], wKey: '', wVer: 0 };
     let ST = null, RP = [], HP = {}, TOT = {}, ANIM = false, VKEY = '', SELPOP = null;
-    const lab = r => `${fmt(r.Li)}-${fmt(r.Ls)}`, labF = r => `${fmt(r.lb)}-${fmt(r.ub)}`;
+    const lab = r => `[${fmt(r.Li)}, ${fmt(r.Ls)}${r.closed ? ']' : ')'}`, labF = r => `[${fmt(r.lb)}, ${fmt(r.ub)}${r.closed ? ']' : ')'}`;
     const sumList = (a, f = x => x) => a.length > 6 ? [...a.slice(0, 3).map(f), '\\cdots', f(a[a.length - 1])].join(' + ') : a.map(f).join(' + ');
 
     function alloc(w, n) {
@@ -811,7 +819,7 @@
       $('#amp-tbl thead').innerHTML = `<tr><th>Clase</th><th>Intervalo<small>notación</small></th><th>Amplitud<small>A = Ls − Li</small></th>${s.var ? '<th>Frecuencia<small>f</small></th><th>Densidad<small>h = f / A</small></th>' : ''}<th>Fronteras reales<small>Li − u/2 , Ls − u/2</small></th><th>Amplitud real<small>Fsup − Finf</small></th></tr>`;
       $('#amp-tbl tbody').innerHTML = s.rows.map(r => {
         const t = TYPES[typeOf(s, r)], fl = r10(r.Li - u / 2), fu = r.closed ? r10(r.Ls + u / 2) : r10(r.Ls - u / 2);
-        return `<tr class="${r.j === S.sel ? 'r-sel' : ''}" data-sel="${r.j}" style="cursor:pointer"><td class="cl-n">${r.j + 1}</td><td class="mono">${notation(r.Li, r.Ls, t)}</td><td class="mc" style="background:#d3f9d8">${f(r10(r.Ls - r.Li))}</td>${s.var ? `<td>${r.fi}</td><td class="mono">${f(r.h, 4)}</td>` : ''}<td class="mono">${f(fl)} – ${f(fu)}</td><td>${f(r10(fu - fl))}${r.closed ? ' <small class="text-muted">(cerrada: A + u)</small>' : ''}</td></tr>`;
+        return `<tr class="${r.j === S.sel ? 'r-sel' : ''}" data-sel="${r.j}" style="cursor:pointer"><td class="cl-n">${r.j + 1}</td><td class="mono">${notation(r.Li, r.Ls, t)}</td><td class="mc" style="background:#d3f9d8">${f(r10(r.Ls - r.Li))}</td>${s.var ? `<td>${r.fi}</td><td class="mono">${f(r.h, 4)}</td>` : ''}<td class="mono">[${f(fl)}, ${f(fu)}${r.closed ? ']' : ')'}</td><td>${f(r10(fu - fl))}${r.closed ? ' <small class="text-muted">(cerrada: A + u)</small>' : ''}</td></tr>`;
       }).join('');
     }
 
@@ -858,7 +866,7 @@
       $('#tbl-wrap').dataset.m = S.m;
       const TH = { h: 'Densidad<small>h = f / A</small>', fx: 'x<sub>i</sub> · f<sub>i</sub>', fr: 'Frec. relativa<small>f<sub>r</sub></small>', fa: 'Acumulada<small>Fa</small>' };
       const thc = (k, extra = '') => `<th class="pp ${cols.includes(k) ? 'mc' : ''} ${extra}" ${cols.includes(k) ? `style="--ci:${cols.indexOf(k)}"` : ''} data-pop="${HP[k]}" tabindex="0" role="button">${TH[k]} <i class="bi bi-question-circle"></i></th>`;
-      $('#tbl thead').innerHTML = `<tr><th>Clase</th><th class="pp" data-pop="${HP.ivl}" tabindex="0" role="button">${R ? 'Fronteras reales<small>Li − u/2 , Ls − u/2</small>' : 'Intervalos<small>Li – Ls</small>'} <i class="bi bi-question-circle"></i></th><th class="cb-fi pp" data-pop="${HP.fi}" tabindex="0" role="button">Frecuencia<small>f<sub>i</sub> (editable)</small></th><th class="cb-x pp" data-pop="${HP.xi}" tabindex="0" role="button">${R ? 'Marca real' : 'Marca de clase'}<small>x<sub>i</sub></small></th>${thc('fx')}${thc('fr')}${thc('fa')}${s.var ? thc('h') : ''}</tr>`;
+      $('#tbl thead').innerHTML = `<tr><th>Clase</th><th class="pp" data-pop="${HP.ivl}" tabindex="0" role="button">${R ? 'Fronteras reales<small>[Li − u/2 , Ls − u/2)</small>' : 'Intervalos<small>[Li, Ls)</small>'} <i class="bi bi-question-circle"></i></th><th class="cb-fi pp" data-pop="${HP.fi}" tabindex="0" role="button">Frecuencia<small>f<sub>i</sub> (editable)</small></th><th class="cb-x pp" data-pop="${HP.xi}" tabindex="0" role="button">${R ? 'Marca real' : 'Marca de clase'}<small>x<sub>i</sub></small></th>${thc('fx')}${thc('fr')}${thc('fa')}${s.var ? thc('h') : ''}</tr>`;
       const td = (id, inner, c = '', st = '') => `<td class="pp ${c}" ${st ? `style="${st}"` : ''} data-pop="${id}" tabindex="0" role="button">${inner}</td>`;
       const cls = r => S.m === 'median' ? (r.j < s.mi ? 'r-before' : r.j === s.mi ? 'r-med' : '') : S.m === 'mode' ? (r.j === s.oi ? 'r-mode' : (r.j === s.oi - 1 || r.j === s.oi + 1) ? 'r-near' : '') : '';
       const mcc = (k, r) => cols.includes(k) ? `mc${k === cols[cols.length - 1] ? ' last' : ''}` : '';
@@ -1073,9 +1081,9 @@
 
     /* ---------- Manual: definición, teorema o regla, fórmula y ejemplo ---------- */
     const MAN = [
-      { k: 'intervalo', g: 'Datos y clases', t: 'Intervalo de clase', ic: 'bi-code-square', c: '#087f5b', sec: ['s3', 'Intervalos animados'],
+      { k: 'intervalo', g: 'Datos y clases', t: 'Intervalo de clase', ic: 'bi-code-square', c: '#087f5b', sec: ['iv', 'Intervalos abiertos y cerrados (ventana animada)'],
         def: 'Un <strong>intervalo de clase</strong> es el conjunto de valores comprendidos entre un límite inferior $L_i$ y un límite superior $L_s$; agrupa los datos que caen entre esos extremos. Según incluya o no sus extremos es <em>cerrado</em> <span class="mono">[a, b]</span>, <em>semiabierto</em> <span class="mono">[a, b)</span> o <span class="mono">(a, b]</span>, o <em>abierto</em> <span class="mono">(a, b)</span>.',
-        thmT: 'Regla de pertenencia (convención de la tabla)', thm: 'Para que cada dato quede en <strong>una sola clase</strong>, las clases se escriben <span class="mono">[Li, Ls)</span>: incluyen el límite inferior y excluyen el superior, que pertenece a la clase siguiente. Solo la última clase se cierra <span class="mono">[Li, Ls]</span> cuando el dato mayor coincide con su límite superior. Así las clases son una <em>partición</em> de los datos: no se traslapan y entre todas los cubren.',
+        thmT: 'Regla de pertenencia (convención de la tabla)', thm: 'Para que cada dato quede en <strong>una sola clase</strong>, las clases se escriben <span class="mono">[Li, Ls)</span>: incluyen el límite inferior y excluyen el superior, que pertenece a la clase siguiente. Solo la última clase se cierra <span class="mono">[Li, Ls]</span> cuando el dato mayor coincide con su límite superior. Así las clases son una <em>partición</em> de los datos: no se traslapan y entre todas los cubren. <strong>En la gráfica:</strong> extremo incluido = <strong>círculo relleno ●</strong> con corchete; extremo no incluido = <strong>círculo vacío ○</strong> con paréntesis. Los signos <strong>&lt;</strong> y <strong>&gt;</strong> dan intervalos abiertos; <strong>≤</strong> y <strong>≥</strong> los cierran, así que x ≤ 3 es (−∞, 3] (corchete, círculo relleno), mientras que (x, 3) con paréntesis lleva círculo vacío.',
         form: ['interval', 'amp'],
         ex: s => { const r = s.rows[S.sel], t = TYPES[typeOf(s, r)], f = fmt; return `Tu clase ${r.j + 1} es <span class="mono fw-bold">${notation(r.Li, r.Ls, t)}</span>: contiene el ${f(r.Li)} y ${t.rc ? 'también contiene' : '<strong>no</strong> contiene'} el ${f(r.Ls)}${t.rc ? '' : ' (ese dato pasa a la clase siguiente)'}.` + fd(T`${f(r.Li)} \le x ${t.rc ? '\\le' : '<'} ${f(r.Ls)}`); } },
       { k: 'rango', g: 'Datos y clases', t: 'Rango', ic: 'bi-arrows-expand', c: '#495057', sec: ['s1', 'Datos'],
@@ -1139,7 +1147,7 @@
         + `<div class="man-sec thm" style="--c:#e67700"><h6><i class="bi bi-patch-check-fill me-1"></i>${m.thmT}</h6><div>${m.thm}</div></div>`
         + `<div class="man-sec" style="--c:${m.c}"><h6><i class="bi bi-calculator-fill me-1"></i>Fórmula${m.form.length > 1 ? 's' : ''}</h6>${m.form.map(q => fd(F[q])).join('')}<div class="small fw-bold text-muted mt-2">Dónde</div>${legRows(leg)}</div>`
         + `<div class="man-sec" style="--c:#2f9e44"><h6><i class="bi bi-lightning-charge-fill me-1"></i>Ejemplo con tus datos</h6><div>${ST ? m.ex(ST) : exNo}</div></div>`
-        + (m.sec ? `<a class="btn btn-sm btn-outline-secondary rounded-pill" href="#${m.sec[0]}" data-bs-dismiss="modal"><i class="bi bi-box-arrow-up-right me-1"></i>Ir a la sección: ${m.sec[1]}</a>` : '');
+        + (m.sec ? (m.sec[0] === 'iv' ? `<button class="btn btn-sm btn-outline-secondary rounded-pill" data-iv-open><i class="bi bi-record-circle me-1"></i>Abrir: ${m.sec[1]}</button>` : `<a class="btn btn-sm btn-outline-secondary rounded-pill" href="#${m.sec[0]}" data-bs-dismiss="modal"><i class="bi bi-box-arrow-up-right me-1"></i>Ir a la sección: ${m.sec[1]}</a>`) : '');
       math($('#man-body'));
     }
     function openManual(k) {
@@ -1263,7 +1271,7 @@
       if (e.target.closest('#b-unreal')) { S.real = false; ANIM = true; update(); return; }
       const mm = e.target.closest('[data-mm]'); if (mm) { S.m = mm.dataset.mm; ANIM = true; update(); return; }
       const vt = e.target.closest('[data-vt]'); if (vt) { S.vt = vt.dataset.vt; update(); return; }
-      const sl = e.target.closest('[data-sel]'); if (sl && !e.target.closest('input')) { S.sel = +sl.dataset.sel; update(); if (sl.closest('#tbl') || sl.closest('#amp-tbl')) $('#s3').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      const sl = e.target.closest('[data-sel]'); if (sl && !e.target.closest('input')) { S.sel = +sl.dataset.sel; update(); if (sl.closest('#tbl') || sl.closest('#amp-tbl')) window.openIv && window.openIv('t'); return; }
       const ck = e.target.closest('[data-chk]'); if (ck) { checkEx(+ck.dataset.chk); return; }
       const so = e.target.closest('[data-sol]'); if (so) { const box = $('#sl-' + so.dataset.sol); if (box.innerHTML) box.innerHTML = ''; else showSol(+so.dataset.sol); return; }
       const rp = e.target.closest('[data-rep]'); if (rp) { showSol(+rp.dataset.rep); return; }
@@ -1281,6 +1289,71 @@
     renderManIndex();
     S.fi = genFi('bell');
     update(true);
+  </script>
+
+  <script>
+  /* ===== Modal de intervalos: círculo vacío/relleno, < ≤ > ≥ y números 1–10 ===== */
+  (() => {
+    const IV = { tab: 't', op: '<', a: 5, b: 8, ty: 'oo', k: 10, timer: null }, PUR = '#7048e8';
+    const OPS = { '<': { n: a => `(−∞, ${a})`, cl: false, side: 'L', w: 'menor que' }, '≤': { n: a => `(−∞, ${a}]`, cl: true, side: 'L', w: 'menor o igual que' }, '>': { n: a => `(${a}, ∞)`, cl: false, side: 'R', w: 'mayor que' }, '≥': { n: a => `[${a}, ∞)`, cl: true, side: 'R', w: 'mayor o igual que' } };
+    const TYS = { oo: { l: '(a, b)', ineq: 'a < x < b', lc: false, rc: false, w: 'abierto' }, cc: { l: '[a, b]', ineq: 'a ≤ x ≤ b', lc: true, rc: true, w: 'cerrado' }, oc: { l: '(a, b]', ineq: 'a < x ≤ b', lc: false, rc: true, w: 'semiabierto por la izquierda' }, co: { l: '[a, b)', ineq: 'a ≤ x < b', lc: true, rc: false, w: 'semiabierto por la derecha' } };
+    const inIv = n => { if (IV.tab === 'n1') { const o = IV.op, a = IV.a; return o === '<' ? n < a : o === '≤' ? n <= a : o === '>' ? n > a : n >= a; } const t = TYS[IV.ty]; return (t.lc ? n >= IV.a : n > IV.a) && (t.rc ? n <= IV.b : n < IV.b); };
+    const X = v => 40 + v / 11 * 680;
+    const circ = (x, closed) => `<g class="vz-fade"><circle cx="${x}" cy="90" r="11" fill="${closed ? PUR : '#fff'}" stroke="${PUR}" stroke-width="4"/></g><text x="${x}" y="128" text-anchor="middle" font-size="14" font-weight="800" fill="${PUR}">${closed ? 'relleno ●' : 'vacío ○'}</text>`;
+    function line() {
+      const a = IV.a, b = IV.b; let s = `<defs><marker id="ivh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker></defs><line x1="20" x2="745" y1="90" y2="90" stroke="#334155" stroke-width="2.5" marker-start="url(#ivh)" marker-end="url(#ivh)"/><text x="14" y="70" font-size="13" fill="#64748b">−∞</text><text x="742" y="70" text-anchor="end" font-size="13" fill="#64748b">∞</text>`;
+      for (let n = 1; n <= 10; n++) s += `<line x1="${X(n)}" x2="${X(n)}" y1="84" y2="96" stroke="#334155" stroke-width="2"/><text x="${X(n)}" y="156" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">${n}</text>`;
+      if (IV.tab === 'n1') { const o = OPS[IV.op], x = X(a); s += `<line x1="${x}" x2="${o.side === 'L' ? 24 : 741}" y1="90" y2="90" stroke="${PUR}" stroke-width="9" opacity=".55"/>` + circ(x, o.cl) + `<text x="${x}" y="66" text-anchor="middle" font-size="15" font-weight="800" fill="${PUR}">a = ${a}</text>`; }
+      else { const t = TYS[IV.ty]; s += `<line x1="${X(a)}" x2="${X(b)}" y1="90" y2="90" stroke="${PUR}" stroke-width="9" opacity=".55"/>` + circ(X(a), t.lc) + circ(X(b), t.rc) + `<text x="${X(a)}" y="66" text-anchor="middle" font-size="15" font-weight="800" fill="${PUR}">a = ${a}</text><text x="${X(b)}" y="66" text-anchor="middle" font-size="15" font-weight="800" fill="${PUR}">b = ${b}</text>`; }
+      for (let n = 1; n <= 10; n++) if (n <= IV.k && n !== a && !(IV.tab === 'n2' && n === b)) { const ok = inIv(n); s += `<circle cx="${X(n)}" cy="90" r="${ok ? 6 : 4}" fill="${ok ? '#2f9e44' : '#adb5bd'}" stroke="#fff" stroke-width="1.5"/>`; }
+      return `<svg viewBox="0 0 760 175" role="img" style="width:100%">${s}</svg>`;
+    }
+    function row(n) {
+      const ok = inIv(n); let ex, t;
+      if (IV.tab === 'n1') { const o = IV.op, a = IV.a, eq = n === a; ex = eq ? (OPS[o].cl ? `es igual a ${a} y «${o}» <b>sí incluye</b> el igual` : `es igual a ${a} y «${o}» <b>no incluye</b> el igual`) : ok ? `${n} es ${OPS[o].w} ${a}` : `${n} no es ${OPS[o].w} ${a}`; return [`${n} ${o} ${a}`, ok, ex, eq]; }
+      t = TYS[IV.ty]; const a = IV.a, b = IV.b, eq = n === a || n === b;
+      ex = eq ? (n === a ? (t.lc ? 'extremo izquierdo: <b>incluido</b> (corchete)' : 'extremo izquierdo: <b>excluido</b> (paréntesis)') : (t.rc ? 'extremo derecho: <b>incluido</b> (corchete)' : 'extremo derecho: <b>excluido</b> (paréntesis)')) : ok ? `queda entre ${a} y ${b}` : `queda fuera de ${a} y ${b}`;
+      return [`${a} ${t.lc ? '≤' : '<'} ${n} ${t.rc ? '≤' : '<'} ${b}`, ok, ex, eq];
+    }
+    const stp = (n, c, t, b) => `<div class="panel mb-2" style="border-left:5px solid ${c}"><div class="fw-bold mb-1"><span class="badge rounded-pill me-1" style="background:${c}">${n}</span>${t}</div>${b}</div>`;
+    function render() {
+      $('#iv-tabs').innerHTML = [['t', 'Tus clases de la tabla'], ['n1', 'Un extremo: &lt; ≤ &gt; ≥'], ['n2', 'Dos extremos'], ['cmp', 'Comparativa ○ vs ●']].map(t => `<button class="btn btn-sm rounded-pill fw-bold ${IV.tab === t[0] ? 'text-white' : ''}" style="border:2px solid ${PUR};${IV.tab === t[0] ? 'background:' + PUR : 'color:' + PUR}" data-ivt="${t[0]}">${t[1]}</button>`).join('');
+      $('#iv-pane-t').hidden = IV.tab !== 't'; $('#iv-pane-n').hidden = IV.tab === 't'; if (IV.tab === 't') return;
+      let h = '';
+      if (IV.tab === 'cmp') {
+        h = `<div class="row g-3">${[['(a, b)  ó  x < a', false, 'Intervalo ABIERTO', 'No incluye el extremo. <b>Círculo vacío ○</b> y <b>paréntesis ( )</b>. Corresponde a los signos <b>&lt;</b> y <b>&gt;</b>.', '#e03131'], ['[a, b]  ó  x ≤ a', true, 'Intervalo CERRADO', 'Sí incluye el extremo. <b>Círculo relleno ●</b> y <b>corchetes [ ]</b>. Corresponde a <b>≤</b> y <b>≥</b> («o igual»).', '#2f9e44']].map(c => `<div class="col-md-6"><div class="panel h-100" style="border-left:5px solid ${c[4]}"><div class="fw-bold mb-1">${c[2]}</div><svg viewBox="0 0 360 70" style="width:100%"><line x1="10" x2="350" y1="35" y2="35" stroke="#334155" stroke-width="2.5"/><line x1="70" x2="350" y1="35" y2="35" stroke="${c[4]}" stroke-width="8" opacity=".5"/><circle cx="70" cy="35" r="11" fill="${c[1] ? c[4] : '#fff'}" stroke="${c[4]}" stroke-width="4"/></svg><div class="text-center fw-bold">${c[0]}</div><div class="small mt-1">${c[3]}</div></div></div>`).join('')}</div>
+        <div class="table-responsive mt-3"><table class="table table-sm table-bordered align-middle text-center bg-white"><thead><tr><th>Símbolo</th><th>Se lee</th><th>Extremo</th><th>Círculo</th><th>Intervalo</th><th>1…10 con a = 3</th></tr></thead><tbody>${[['<', 'menor que', 'no incluido', '○ vacío', '(−∞, 3)', '1, 2'], ['≤', 'menor o igual que', 'incluido', '● relleno', '(−∞, 3]', '1, 2, 3'], ['>', 'mayor que', 'no incluido', '○ vacío', '(3, ∞)', '4 … 10'], ['≥', 'mayor o igual que', 'incluido', '● relleno', '[3, ∞)', '3, 4 … 10']].map(r => `<tr><td class="fw-bold fs-5">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td class="fw-bold mono">${r[4]}</td><td>${r[5]}</td></tr>`).join('')}</tbody></table></div>
+        ${stp('!', '#e8590c', 'Aclaración sobre «(x, 3)»', '<b>≤ sí es círculo relleno, pero el relleno lo da el corchete, no el paréntesis.</b><br>• x ≤ 3 se escribe <b>(−∞, 3]</b>: corchete en el 3 → círculo <b>relleno</b>.<br>• (x, 3) con <b>paréntesis</b> es abierto: ni x ni 3 entran → círculo <b>vacío</b>.<br>• Para incluir el 3: (x, 3] o [x, 3].<br>• El infinito siempre lleva paréntesis.')}
+        ${stp('▦', '#087f5b', 'En las tablas de esta página', 'Cada clase se escribe <b class="mono">[Li, Ls)</b>: el límite inferior es <b>relleno ●</b> (sí entra) y el superior <b>vacío ○</b> (es de la clase siguiente). La última clase, si contiene al dato mayor, se cierra <b class="mono">[Li, Ls]</b>.')}`;
+      } else {
+        const sl = (id, mn, mx, v) => `<input type="range" min="${mn}" max="${mx}" step="1" value="${v}" data-ivin="${id}" style="width:110px"><b>${v}</b>`;
+        const ctl = IV.tab === 'n1'
+          ? `<div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="d-flex gap-1">${Object.keys(OPS).map(o => `<button class="btn btn-sm rounded-pill fw-bold ${IV.op === o ? 'btn-dark' : 'btn-outline-secondary'}" data-ivop="${o}">x ${o} a</button>`).join('')}</div><div class="d-flex align-items-center gap-2"><b>a =</b>${sl('a', 1, 10, IV.a)}</div><button class="btn btn-sm btn-primary rounded-pill" data-ivplay><i class="bi bi-play-fill"></i> Animar 1 → 10</button></div>`
+          : `<div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="d-flex gap-1">${Object.keys(TYS).map(k => `<button class="btn btn-sm rounded-pill fw-bold ${IV.ty === k ? 'btn-dark' : 'btn-outline-secondary'}" data-ivty="${k}">${TYS[k].l}</button>`).join('')}</div><div class="d-flex align-items-center gap-2"><b>a =</b>${sl('a', 1, 9, IV.a)}<b>b =</b>${sl('b', 2, 10, IV.b)}</div><button class="btn btn-sm btn-primary rounded-pill" data-ivplay><i class="bi bi-play-fill"></i> Animar 1 → 10</button></div>`;
+        const rows = Array.from({ length: 10 }, (_, i) => i + 1).filter(n => n <= IV.k).map(n => { const r = row(n); return `<tr class="${r[3] ? 'table-warning' : ''}"><td class="fw-bold">${n}</td><td class="mono">${r[0]}</td><td class="${r[1] ? 'text-success' : 'text-danger'} fw-bold">${r[1] ? '✓ sí' : '✗ no'}</td><td class="small">${r[2]}</td></tr>`; }).join('');
+        const yes = Array.from({ length: 10 }, (_, i) => i + 1).filter(inIv); let head, nota, cc;
+        if (IV.tab === 'n1') { const o = OPS[IV.op]; nota = o.n(IV.a); cc = o.cl ? '<b>círculo relleno ●</b> (el extremo sí entra)' : '<b>círculo vacío ○</b> (el extremo no entra)'; head = `<b>x ${IV.op} ${IV.a}</b>: «x es ${o.w} ${IV.a}»`; }
+        else { const t = TYS[IV.ty]; nota = t.l.replace('a', IV.a).replace('b', IV.b); cc = `extremo ${IV.a}: ${t.lc ? '<b>relleno ●</b>' : '<b>vacío ○</b>'}; extremo ${IV.b}: ${t.rc ? '<b>relleno ●</b>' : '<b>vacío ○</b>'}`; head = `<b>${t.ineq.replace('a', IV.a).replace('b', IV.b)}</b> (${t.w})`; }
+        h = ctl + `<div class="row g-3"><div class="col-lg-7"><div class="viz-card">${line()}</div><div class="table-responsive mt-2 bg-white rounded-3 border" style="max-height:330px;overflow:auto"><table class="table table-sm align-middle mb-0"><thead><tr><th>n</th><th>Comparación</th><th>¿Cumple?</th><th>Explicación</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+        <div class="col-lg-5">${stp(1, '#1c7ed6', 'Desigualdad', head)}${stp(2, '#e03131', 'Círculo en la gráfica', cc)}${stp(3, PUR, 'Notación de intervalo', `<div class="mono fs-4 fw-bold text-center">${nota}</div>`)}${stp(4, '#2f9e44', 'Números del 1 al 10 que cumplen', yes.length ? `<b>${yes.join(', ')}</b> (${yes.length} de 10)` : 'Ninguno')}<div class="small text-muted">${IV.tab === 'n1' ? 'Prueba a = 3: con «&lt;» el 3 queda fuera; cambia a «≤» y entra (el círculo se rellena).' : 'Compara (a, b) con [a, b]: solo cambian los extremos.'}</div></div></div>`;
+      }
+      $('#iv-body').innerHTML = h;
+    }
+    const stop = () => { if (IV.timer) { clearInterval(IV.timer); IV.timer = null; } };
+    document.addEventListener('click', e => {
+      const t = e.target.closest('[data-ivt]'); if (t) { stop(); IV.k = 10; IV.tab = t.dataset.ivt; if (IV.tab !== 't' && IV.a >= IV.b && IV.tab === 'n2') IV.a = IV.b - 1; render(); if (IV.tab === 't') update(true); return; }
+      const o = e.target.closest('[data-ivop]'); if (o) { stop(); IV.k = 10; IV.op = o.dataset.ivop; render(); return; }
+      const y = e.target.closest('[data-ivty]'); if (y) { stop(); IV.k = 10; IV.ty = y.dataset.ivty; render(); return; }
+      if (e.target.closest('[data-ivplay]')) { stop(); IV.k = 0; render(); IV.timer = setInterval(() => { IV.k++; if (IV.k >= 10) stop(); render(); }, 750); return; }
+      if (e.target.closest('[data-iv-open]')) { e.preventDefault(); const mm = $('#manualModal'); if (mm.classList.contains('show')) { mm.addEventListener('hidden.bs.modal', () => bootstrap.Modal.getOrCreateInstance($('#ivModal')).show(), { once: true }); bootstrap.Modal.getOrCreateInstance(mm).hide(); } else bootstrap.Modal.getOrCreateInstance($('#ivModal')).show(); return; }
+      if (e.target.closest('[data-iv-man]')) { const m = bootstrap.Modal.getOrCreateInstance($('#ivModal')); $('#ivModal').addEventListener('hidden.bs.modal', () => openManual('intervalo'), { once: true }); m.hide(); }
+    });
+    document.addEventListener('input', e => { const i = e.target.closest('[data-ivin]'); if (!i) return; stop(); IV.k = 10; const v = +i.value; if (i.dataset.ivin === 'a') { IV.a = v; if (IV.tab === 'n2' && IV.b <= v) IV.b = v + 1; } else { IV.b = v; if (IV.a >= v) IV.a = v - 1; } render(); });
+    $('#ivModal').addEventListener('shown.bs.modal', () => { render(); if (IV.tab === 't') update(true); });
+    $('#ivModal').addEventListener('hidden.bs.modal', () => { stop(); IV.k = 10; });
+    window.openIv = tab => { IV.tab = tab; stop(); IV.k = 10; render(); bootstrap.Modal.getOrCreateInstance($('#ivModal')).show(); };
+    render();
+  })();
   </script>
 </body>
 </html>
