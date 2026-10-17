@@ -527,6 +527,7 @@
     .allst-h { display:flex; align-items:center; gap:.6rem; font-weight:800; font-size:1.15rem; color:var(--c); margin-bottom:.6rem; } .allst-h .sn { width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; }
     .allidx { display:flex; flex-wrap:wrap; gap:.4rem; } .allchip { text-decoration:none; border:2px solid var(--c); color:var(--c); background:#fff; border-radius:999px; padding:.1rem .7rem; font-size:.82rem; font-weight:700; } .allchip:hover { background:var(--c); color:#fff; }
     .fl { font-size:15px; font-weight:700; font-family:'Segoe UI',Arial,sans-serif; } .fbig { font-size:22px; font-weight:600; font-family:'Segoe UI',Arial,sans-serif; } .fpick { cursor:pointer; } .fnsvg { max-width:900px; }
+    .route { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:.7rem .9rem; margin-bottom:1rem; box-shadow:0 2px 8px rgba(15,23,42,.05); } .rt-h { font-weight:800; color:#0f172a; margin-bottom:.4rem; } .rt-h span { font-weight:500; font-size:.78rem; color:#64748b; } .rt-c { display:flex; flex-wrap:wrap; align-items:center; gap:.3rem; } .rt-c a { display:inline-flex; align-items:center; gap:.35rem; padding:.2rem .65rem .2rem .25rem; border-radius:999px; border:2px solid var(--g); color:var(--g); font-size:.78rem; font-weight:700; text-decoration:none; background:#fff; } .rt-c a b { background:var(--g); color:#fff; border-radius:50%; width:1.4rem; height:1.4rem; display:inline-flex; align-items:center; justify-content:center; font-size:.72rem; } .rt-c a:hover { background:color-mix(in srgb,var(--g) 10%,#fff); } .rt-s { color:#94a3b8; font-size:.7rem; }
   </style>
 </head><body>
   <div id="app-header"></div>
@@ -560,6 +561,11 @@
       <section class="sec" id="sf" data-g="c" data-s="Función, dominio y rango"><div class="sec-h"><span class="num">0</span><h2>Recordando: función, dominio, codominio y rango</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="funcion"><i class="bi bi-book-half me-1"></i>Manual</button></div>
         <div class="intro-box"><b><i class="bi bi-diagram-2-fill text-warning me-1"></i>De Matemáticas IV: una función es una regla de correspondencia</b> que lleva cada elemento del <b style="color:#2f9e44">dominio</b> (conjunto A) a un único elemento del <b style="color:#1864ab">codominio</b> (conjunto B); los valores que realmente se alcanzan forman el <b style="color:#1864ab">rango o imagen</b>. Una variable aleatoria es justamente una función: $X:\Omega\toℝ$. Mueve $x$, cambia la función y compara dominio, codominio y rango.</div>
         <div class="tabp" id="fn-tabs"></div><div class="demo"><div id="fn-body"></div></div>
+      </section>
+
+      <section class="sec" id="si" data-g="c" data-s="Intervalos abiertos y cerrados"><div class="sec-h"><span class="num">0</span><h2>Intervalos abiertos y cerrados: círculo vacío ○ y relleno ●</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="intervalos"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-record-circle text-warning me-1"></i>¿El extremo cuenta o no?</b> Con «mayor que» y «menor que» el extremo <b>no entra</b> (círculo vacío ○, paréntesis). Con «≤» y «≥» el extremo <b>sí entra</b> (círculo relleno ●, corchete). Elige el signo y el valor de <b>a</b> y mira cuáles de los números del 1 al 10 cumplen.</div>
+        <div class="tabp" id="iv-tabs"></div><div class="demo"><div id="iv-body"></div></div>
       </section>
 
       <section class="sec" id="s2" data-g="c" data-s="¿Qué es una V.A.?"><div class="sec-h"><span class="num">0</span><h2>Variable aleatoria: una regla que convierte resultados en números</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="va"><i class="bi bi-book-half me-1"></i>Manual</button></div>
@@ -610,10 +616,6 @@
         <div class="fchips mb-2" id="fm-cat"></div><div class="row g-3" id="fm-grid"></div>
       </section>
 
-      <section class="sec" id="si" data-g="c" data-s="Intervalos abiertos y cerrados"><div class="sec-h"><span class="num">0</span><h2>Intervalos abiertos y cerrados: círculo vacío ○ y relleno ●</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="intervalos"><i class="bi bi-book-half me-1"></i>Manual</button></div>
-        <div class="intro-box"><b><i class="bi bi-record-circle text-warning me-1"></i>¿El extremo cuenta o no?</b> Con «mayor que» y «menor que» el extremo <b>no entra</b> (círculo vacío ○, paréntesis). Con «≤» y «≥» el extremo <b>sí entra</b> (círculo relleno ●, corchete). Elige el signo y el valor de <b>a</b> y mira cuáles de los números del 1 al 10 cumplen.</div>
-        <div class="tabp" id="iv-tabs"></div><div class="demo"><div id="iv-body"></div></div>
-      </section>
 
     </div>
   </main>
@@ -1350,6 +1352,7 @@
     const tabTx = m => `x: ${m.xs.map(xs_).join(', ')} · p(x): ${m.rows.map(r => r.p.d === 1 ? r.p.n : r.p.n + '/' + r.p.d).join(', ')}`;
     function manDefs() {
       const m = M, ex = m.ex, D = m.D, r1 = m.rows[Math.min(1, m.rows.length - 1)];
+      const ORD = ['funcion', 'reales', 'intervalos', 'espacio', 'arbol', 'condic', 'va', 'dominio', 'fdp', 'cond', 'acum', 'prob', 'esp', 'eprop', 'juego', 'lgn', 'var', 'sd', 'cheb', 'bern', 'bin', 'unif'];
       return [
         { k: 'funcion', cat: 'a', t: 'Función: dominio, codominio y rango', c: '#2f9e44',
           def: R`Una <b>función</b> $f:A\to B$ es una <b>regla de correspondencia</b> que asigna a <b>cada</b> elemento $x$ del conjunto $A$ <b>un único</b> elemento $f(x)$ del conjunto $B$. El conjunto $A$ es el <b>dominio</b>; $B$ es el <b>codominio</b> (o contradominio); y el conjunto de imágenes que realmente se alcanzan es el <b>rango</b> (o imagen).`,
@@ -1483,7 +1486,7 @@
           f: [R`p(x)=\frac{1}{n}`, R`E(X)=\frac{a+b}{2}\qquad \sigma^2=\frac{n^2-1}{12}`], dn: [['a, b', 'primer y último valor'], ['n', 'número de valores']],
           use: 'Cuando todos los valores del rango tienen la misma probabilidad (dado, ruleta numerada, elegir al azar de una lista).',
           ex: () => `Dado: $E=\\frac{1+6}{2}=\\frac{7}{2}$ y $\\sigma^2=\\frac{36-1}{12}=\\frac{35}{12}\\approx 2.92$.` }
-      ];
+      ].sort((p, q) => { const a = ORD.indexOf(p.k), b = ORD.indexOf(q.k); return (a < 0 ? 99 : a) - (b < 0 ? 99 : b); });
     }
     const MCATS = [['a', 'FUNDAMENTOS'], ['b', 'DISTRIBUCIÓN'], ['c', 'MEDIDAS'], ['d', 'MODELOS Y TEOREMAS']];
     function manR() {
@@ -1513,7 +1516,7 @@
     ACT.go = el => { const t = $('#' + el.dataset.v); if (!t) return; setGroup(t.dataset.g, false); setTimeout(() => t.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40); };
 
     /* ===================== Navegación y arranque ===================== */
-    const GROUPS = [['p', 'Problema guiado', '#e8590c', 'bi-signpost-split-fill'], ['c', 'Conceptos', '#1c7ed6', 'bi-lightbulb-fill'], ['a', 'Práctica', '#2f9e44', 'bi-pencil-square'], ['f', 'Manual y formulario', '#0f172a', 'bi-journal-richtext'], ['all', 'Todo', '#495057', 'bi-grid-fill']];
+    const GROUPS = [['p', 'Problema guiado', '#e8590c', 'bi-signpost-split-fill'], ['c', 'Conceptos', '#1c7ed6', 'bi-lightbulb-fill'], ['a', 'Práctica', '#2f9e44', 'bi-pencil-square'], ['f', 'Manual y formulario', '#0f172a', 'bi-journal-richtext']];
     let curGrp = 'p';
     function setGroup(g, scroll) { curGrp = g; store.set('fdp-grp', g);
       $$('section.sec').forEach(s => { s.hidden = !(g === 'all' || s.dataset.g === g); }); $$('#sec-nav a').forEach(a => { a.hidden = !(g === 'all' || a.dataset.g === g); });
@@ -1531,6 +1534,7 @@
       let g = store.get('fdp-grp'); if (!GROUPS.some(x => x[0] === g)) g = 'p'; const h = location.hash && $(location.hash); if (h && h.matches && h.matches('section.sec')) g = h.dataset.g;
       setGroup(g, false); if (h && h.matches && h.matches('section.sec')) setTimeout(() => h.scrollIntoView(), 50);
       window.addEventListener('scroll', spy, { passive: true }); $('#to-top').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      const rt = document.createElement('div'); rt.className = 'route'; rt.innerHTML = '<div class="rt-h"><i class="bi bi-signpost-2-fill me-1"></i>Ruta de aprendizaje sugerida <span>(toca un paso para ir a él)</span></div><div class="rt-c">' + $$('section.sec').map((sc, i) => `<a href="#${sc.id}" data-go="${sc.dataset.g}" style="--g:${(GROUPS.find(x => x[0] === sc.dataset.g) || [0, 0, '#0f172a'])[2]}"><b>${i + 1}</b>${sc.dataset.s || ''}</a>`).join('<i class="bi bi-chevron-right rt-s"></i>') + '</div>'; $('#content').prepend(rt);
       $$('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); setGroup(a.dataset.go, false); setTimeout(() => $(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth', block: 'start' }), 40); })); }
     function eventsInit() {
       document.addEventListener('click', e => {
