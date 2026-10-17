@@ -388,13 +388,22 @@
     #st .freq-table tr.tr-sel td { background:#fff4e0; } #st .freq-table td { min-width:64px; }
     #st .mbtn { margin:0; } #st .freq-table td:first-child { white-space:nowrap; } #st .sstep .cx.d { font-size:1.02em; }
     @media (prefers-reduced-motion:reduce) { .tg-bar,.tg-vl,.tg-fd { animation:none !important; } }
+    .ctx-strip { display:flex; flex-wrap:wrap; align-items:center; gap:.25rem .5rem; background:#f1f5f9; border:1px dashed #94a3b8; border-radius:12px; padding:.4rem .8rem; font-size:.85rem; margin-bottom:.8rem; color:#334155; }
+    .ctx-strip a { font-weight:700; text-decoration:none; }
+    .grp-lab { display:inline-block; font-size:.72rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:#64748b; margin-right:.4rem; }
+    .btn-grp { display:inline-flex; flex-wrap:wrap; align-items:center; gap:.4rem; padding:.35rem .6rem; border:1px solid #e2e8f0; border-radius:14px; background:#f8fafc; margin:0 .5rem .5rem 0; }
+    .res-grp { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; margin-bottom:.45rem; }
+    .pp-res .bi { font-size:.68em; opacity:.65; margin-left:.25rem; }
+    .res-panel { border:1px solid #e2e8f0; border-radius:14px; background:#fff; padding:.7rem .9rem; margin-top:.6rem; }
+    .res-panel .hint { font-size:.8rem; color:#64748b; margin-bottom:.5rem; }
+    .pp-cell { cursor:pointer; }
   </style>
 </head>
 <body>
 
   <div id="app-header"></div>
   <nav class="sec-nav" id="sec-nav">
-    <a href="#s0">0. Ruta</a><a href="#s1">1. Posición</a><a href="#s2">2. Cuartiles</a><a href="#s3">3. Deciles y percentiles</a><a href="#s4">4. Agrupados</a><a href="#st">4b. Tabla interactiva</a><a href="#s5">5. Caja</a><a href="#s6">6. Regla empírica</a><a href="#s7">7. Inferencias</a><a href="#s8">8. Comparar</a><a href="#s9">9. Docencia</a>
+    <a href="#s0">0. Ruta</a><a href="#s1">1. Posición</a><a href="#sdata">Datos y método</a><a href="#s2">2. Cuartiles</a><a href="#s3">3. Deciles y percentiles</a><a href="#s4">4. Agrupados</a><a href="#st">4b. Tabla interactiva</a><a href="#s5">5. Caja</a><a href="#s6">6. Regla empírica</a><a href="#s7">7. Inferencias</a><a href="#s8">8. Comparar</a><a href="#s9">9. Docencia</a>
   </nav>
 
   <main>
@@ -410,7 +419,7 @@
       </div>
     </header>
     <div class="container mb-5" id="secs">
-      <section class="lesson mb-5" id="s0"></section><section class="lesson mb-5" id="s1"></section><section class="lesson mb-5" id="s2"></section><section class="lesson mb-5" id="s3"></section><section class="lesson mb-5" id="s4"></section><section class="lesson mb-5" id="st"></section><section class="lesson mb-5" id="s5"></section><section class="lesson mb-5" id="s6"></section><section class="lesson mb-5" id="s7"></section><section class="lesson mb-5" id="s8"></section><section class="lesson mb-5" id="s9"></section>
+      <section class="lesson mb-5" id="s0"></section><section class="lesson mb-5" id="s1"></section><section class="lesson mb-5" id="sdata"></section><section class="lesson mb-5" id="s2"></section><section class="lesson mb-5" id="s3"></section><section class="lesson mb-5" id="s4"></section><section class="lesson mb-5" id="st"></section><section class="lesson mb-5" id="s5"></section><section class="lesson mb-5" id="s6"></section><section class="lesson mb-5" id="s7"></section><section class="lesson mb-5" id="s8"></section><section class="lesson mb-5" id="s9"></section>
     </div>
   </main>
 
@@ -516,7 +525,53 @@
         : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('') };
       return id;
     }
-    const pp = (id, tex) => T`\pop{${id}}{${tex}}`;
+    const popHtml = lines => lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
+      : l[2] === 'html' ? `<div class="pcap">${l[0]}</div><div class="pm">${l[1]}</div>` : `<div class="pcap">${l[0]}</div><div class="pf${l[2] === 'res' ? ' res' : ''}">${fi(l[1])}</div>`).join('');
+    function regK(key, title, lines, color) { POPS[key] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: popHtml(lines) }; return key; }
+    /* Popover «cómo salió»: cuantil de datos sin agrupar */
+    function popQ(x, p, sym, tex, m, color) {
+      const n = x.length, q = quant(x, p, m), lst = n > 24 ? x.slice(0, 24).map(v => ft(v)).join(', ') + ', …' : x.map(v => ft(v)).join(', ');
+      const L = [[`Datos ordenados (n = ${n})`, `<div class="small">${lst}</div>`, 'html'], ['Método', MN[m]]];
+      if (q.mid) { if (p !== .5) L.push(['Mitad utilizada', `<div class="small">${(p === .25 ? q.lo : q.hi).map(v => ft(v)).join(', ')}</div>`, 'html']); L.push([p === .5 ? 'Mediana de todos los datos' : 'Mediana de esa mitad', T`${tex}=${ft(q.val, 4)}`, 'res']); }
+      else {
+        L.push(['Posición', m === 'inc' ? T`pos=1+p\,(n-1)=1+${ft(p, 4)}\,(${n - 1})=${ft(q.pos, 4)}` : T`pos=p\,(n+1)=${ft(p, 4)}\,(${n + 1})=${ft(q.pos, 4)}`]);
+        L.push([q.f === 0 ? 'Posición entera: se lee el dato' : 'Interpolación entre los datos vecinos', q.f === 0 ? T`${tex}=x_{${q.i}}=${ft(q.a, 4)}` : T`${tex}=x_{${q.i}}+${ft(q.f, 4)}\,(x_{${q.i + 1}}-x_{${q.i}})=${ft(q.a)}+${ft(q.f, 4)}\,(${ft(q.b)}-${ft(q.a)})`]);
+        L.push(['Resultado', T`${tex}=${ft(q.val, 4)}`, 'res']);
+      }
+      L.push(`Aproximadamente el <b>${ft(p * 100, 3)} %</b> de los datos es menor o igual que <b>${ft(q.val, 3)}</b>.`);
+      return regK(`q|${m}|${p}`, `${sym}: ¿cómo salió?`, L, color);
+    }
+    /* Popover «cómo salió»: datos agrupados */
+    function popG(s, den, k, sym, tex, mm, color) {
+      const v = s.posV(den, k), r = s.rows[v.i];
+      return regK(`g|${den}|${k}`, `${sym}: ¿cómo salió?`, [
+        ['Posición', T`pos=\frac{k\,N}{${den}}=\frac{${k}\cdot ${s.N}}{${den}}=${ft(v.pos, 4)}`],
+        ['Clase que contiene la posición', `<div class="small">Primera F ≥ ${ft(v.pos, 3)}: F = <b>${r.F}</b> → clase <b>${ft(r.Li)} – ${ft(r.Ls)}</b>.<br>L = ${ft(r.Li)} · F<sub>ant</sub> = ${v.Fa} · f = ${v.f} · c = ${ft(TG.c)}</div>`, 'html'],
+        ['Fórmula', T`${tex}=L+\frac{pos-F_{ant}}{f}\cdot c`],
+        ['Sustitución', T`${tex}=${ft(r.Li)}+\frac{${ft(v.pos, 4)}-${v.Fa}}{${v.f}}\cdot ${ft(TG.c)}`],
+        ['Resultado', T`${tex}=${ft(v.val, 3)}`, 'res'],
+        `Aproximadamente el <b>${ft(k / den * 100, 3)} %</b> de los datos es menor o igual que <b>${ft(v.val, 2)} ${TG.u}</b>.`,
+        `<button class="btn btn-sm btn-dark rounded-pill" data-tgchip="${mm}|${k}"><i class="bi bi-table me-1"></i>Ver paso a paso en la tabla</button>`], color);
+    }
+    const symTex = sy => sy.replace(/[₀-₉]+/, d => '_{' + [...d].map(c => '₀₁₂₃₄₅₆₇₈₉'.indexOf(c)).join('') + '}');
+    function popRow(s, r, j, color) {
+      const y = TG.pop ? 'σ' : 's';
+      return regK(`r|${j}|${r.Li}|${r.f}`, `Intervalo ${ft(r.Li)} – ${ft(r.Ls)}`, [
+        ['Marca de clase', T`x=\frac{L_i+L_s}{2}=\frac{${ft(r.Li)}+${ft(r.Ls)}}{2}=${ft(r.x)}`],
+        ['Frecuencia y acumulada', `<div class="small">f = <b>${r.f}</b> · F = <b>${r.F}</b> (${ft(r.F / s.N * 100, 1)} % acumulado)</div>`, 'html'],
+        ['f · x', T`f\,x=${r.f}\cdot ${ft(r.x)}=${ft(r.fx, 3)}`],
+        ['Desviación', T`x-\bar{x}=${ft(r.x)}-${ft(s.mean, 3)}=${fz(r.d, 3)}`],
+        ['f · (x − x̄)²', T`f\,(x-\bar{x})^2=${r.f}\cdot ${ft(r.d2, 3)}=${ft(r.fd2, 3)}`, 'res']], color);
+    }
+    function popStat(s, kind, color) {
+      const y = TG.pop ? 'σ' : 's', dv = TG.pop ? s.N : s.N - 1, f3 = s.rows.slice(0, 3).map(r => `${r.f}\\cdot ${ft(r.x)}`).join('+') + (s.rows.length > 3 ? '+\\cdots' : '');
+      const L = [['Marca de clase', T`x=\frac{L_i+L_s}{2}`], ['Σ f·x', T`\sum f\,x=${f3}=${ft(s.sfx, 3)}`], ['Media', T`\bar{x}=\frac{${ft(s.sfx, 3)}}{${s.N}}=${ft(s.mean, 3)}`, kind === 'mean' ? 'res' : undefined]];
+      if (kind !== 'mean') { L.push(['Suma de cuadrados', T`\sum f\,(x-\bar{x})^2=${ft(s.ss, 3)}`]); L.push([TG.pop ? 'Varianza poblacional (÷ N)' : 'Varianza muestral (÷ n − 1)', T`${y}^2=\frac{${ft(s.ss, 3)}}{${dv}}=${ft(s.v, 3)}`, kind === 'var' ? 'res' : undefined]); }
+      if (kind === 'sd') L.push(['Raíz cuadrada', T`${y}=\sqrt{${ft(s.v, 3)}}=${ft(s.sd, 3)}`, 'res']);
+      L.push(`<button class="btn btn-sm btn-dark rounded-pill" data-tgchip="${kind}|null"><i class="bi bi-table me-1"></i>Ver paso a paso en la tabla</button>`);
+      return regK(`s|${kind}`, ({ mean: 'Media', var: TG.pop ? 'Varianza σ²' : 'Varianza s²', sd: TG.pop ? 'Desviación σ' : 'Desviación s' })[kind] + ': ¿cómo salió?', L, color);
+    }
+    document.addEventListener('click', e => { const el = e.target.closest && e.target.closest('[data-pop]'); if (el && !bootstrap.Popover.getInstance(el)) initPops(el.parentElement || document); }, true);
     function initPops(root) {
       (root || document).querySelectorAll('[data-pop]').forEach(el => {
         const d = POPS[el.dataset.pop]; if (!d || bootstrap.Popover.getInstance(el)) return;
@@ -607,7 +662,15 @@
     const dsData = () => srt(nums(DS));
     const presetBtns = () => Object.entries(PRE).map(([k, [n]]) => `<button class="mbtn ${DS_K === k ? 'on' : ''}" data-ds="${k}" style="--c:${COL.D}">${n}</button>`).join('');
     const methodBtns = () => Object.entries(MN).map(([k, n]) => `<button class="mbtn ${QM === k ? 'on' : ''}" data-qm="${k}" style="--c:${COL.F}">${n}</button>`).join('');
-    const dataBox = id => `<div class="row g-2 align-items-start mb-2"><div class="col-lg-8"><label class="small fw-bold">Datos (separados por coma o espacio; se ordenan solos)</label><textarea class="form-control ds-in" rows="2" id="${id}"></textarea></div><div class="col-lg-4"><label class="small fw-bold">Método de cálculo</label><div class="d-flex flex-wrap gap-1" data-methods>${methodBtns()}</div></div></div><div class="d-flex flex-wrap gap-2 mb-2" data-presets>${presetBtns()}</div>`;
+    const MDESC = { n1: 'pos = p·(n + 1) con interpolación', inc: 'pos = 1 + p·(n − 1) con interpolación', mid: 'Q₁ y Q₃ = mediana de cada mitad (solo cuartiles)' };
+    const dsName = () => DS_K ? PRE[DS_K][0].replace(/\s*\(n = \d+\)/, '') : 'Datos propios';
+    const ctxHtml = () => `<i class="bi bi-database"></i><span>Datos: <b>${dsName()}</b> · n = ${dsData().length}</span><span>· Método: <b>${MN[QM]}</b></span><a href="#sdata" class="ms-auto"><i class="bi bi-pencil-square me-1"></i>Cambiar datos o método</a>`;
+    const dataBox = () => `<div class="ctx-strip" data-ctx>${ctxHtml()}</div>`;
+    function renderDataPanel() {
+      $('#sdata').innerHTML = lesson('<i class="bi bi-database"></i>', 'Datos y método de cálculo', 'Se usan en las secciones 2, 3 y 5 · cámbialos aquí, una sola vez', COL.F, `
+        <div class="row g-3"><div class="col-lg-6"><label class="small fw-bold" for="ds-main">Datos (separados por coma o espacio; se ordenan solos)</label><textarea class="form-control ds-in" rows="3" id="ds-main"></textarea><div class="small text-muted mt-1">Escribe tus propios datos o elige un ejemplo.</div></div>
+        <div class="col-lg-6"><div class="grp-lab">Datos de ejemplo</div><div class="d-flex flex-wrap gap-1 mb-2" data-presets></div><div class="grp-lab">Método de cálculo</div><div class="d-flex flex-wrap gap-1" data-methods></div><div class="small text-muted mt-1">Fórmula: <b id="m-desc"></b></div></div></div>`);
+    }
 
     /* ---------- Gráfica: recta numérica con puntos ---------- */
     function dotLine(el, x, marks, o = {}) {
@@ -675,17 +738,17 @@
     function renderQ2() {
       const x = dsData(), n = x.length, el = $('#q2-out'); if (n < 2) { el.innerHTML = '<div class="tip-box s-res">Escribe al menos 2 datos.</div>'; return; }
       const p = K2 / 4, five3 = [1, 2, 3].map(k => quant(x, k / 4).val);
-      const tbl = `<div class="table-responsive"><table class="table table-sm table-bordered text-center align-middle mb-0 small"><thead class="table-light"><tr><th>Método</th><th style="color:${COL.Q1}">Q₁</th><th style="color:${COL.Q2}">Q₂</th><th style="color:${COL.Q3}">Q₃</th></tr></thead><tbody>${Object.entries(MN).map(([m, nm]) => `<tr class="${m === QM ? 'tr-sel' : ''}"><td class="text-start fw-bold">${nm}</td>${[1, 2, 3].map(k => `<td>${ft(quant(x, k / 4, m).val, 3)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+      const tbl = `<div class="table-responsive"><table class="table table-sm table-bordered text-center align-middle mb-0 small"><thead class="table-light"><tr><th>Método</th><th style="color:${COL.Q1}">Q₁</th><th style="color:${COL.Q2}">Q₂</th><th style="color:${COL.Q3}">Q₃</th></tr></thead><tbody>${Object.entries(MN).map(([m, nm]) => `<tr class="${m === QM ? 'tr-sel' : ''}"><td class="text-start fw-bold">${nm}</td>${[1, 2, 3].map(k => `<td class="pp" tabindex="0" role="button" data-pop="${popQ(x, k / 4, 'Q' + '₁₂₃'[k - 1], 'Q_{' + k + '}', m, [COL.Q1, COL.Q2, COL.Q3][k - 1])}">${ft(quant(x, k / 4, m).val, 3)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><div class="small text-muted mt-1"><i class="bi bi-hand-index-thumb me-1"></i>Toca un valor para ver cómo salió.</div>`;
       el.innerHTML = `<div class="d-flex gap-2 mb-2">${[1, 2, 3].map(k => `<button class="mbtn ${K2 === k ? 'on' : ''}" data-k2="${k}" style="--c:${[COL.Q1, COL.Q2, COL.Q3][k - 1]}">Q${'₁₂₃'[k - 1]}</button>`).join('')}</div>
         <div class="row g-3"><div class="col-lg-7">${stepsQ(x, p, 'Q_' + K2, '', `${K2}/4 = ${ft(p, 3)}`, K2, QM)}</div>
-        <div class="col-lg-5"><div class="viz-card"><div id="q2-line"></div></div><div class="small text-muted mt-1">Cada cuarto de la recta contiene ≈ 25 % de los datos.</div><h6 class="fw-bold mt-3" style="color:${COL.F}">¿Por qué salen resultados distintos?</h6>${tbl}<div class="small text-muted mt-1">Con pocos datos los métodos difieren un poco; con muchos datos casi coinciden. Lo importante: <strong>declarar el método</strong>. En esta página: «${MN[QM]}».</div></div></div>`;
+        <div class="col-lg-5"><div class="viz-card"><div id="q2-line"></div></div><div class="small text-muted mt-1">Cada cuarto de la recta contiene ≈ 25 % de los datos.</div><h6 class="fw-bold mt-3" style="color:${COL.F}">Q₁, Q₂ y Q₃ según cada método</h6>${tbl}<div class="small text-muted mt-1">Con pocos datos los métodos difieren un poco; con muchos datos casi coinciden. Lo importante: <strong>declarar el método</strong>. En esta página: «${MN[QM]}».</div></div></div>`;
       dotLine($('#q2-line'), x, [1, 2, 3].map((k, i) => ({ v: five3[i], l: 'Q' + '₁₂₃'[i], c: [COL.Q1, COL.Q2, COL.Q3][i] })), { bands: true });
     }
     function renderS2() {
       $('#s2').innerHTML = lesson(2, 'Cuartiles (datos no agrupados)', 'Q₁, Q₂ y Q₃: posición, interpolación e interpretación', COL.Q2, `
         <div class="setdef mb-2" style="--c:${COL.Q2}">posición = p·(n + 1) &nbsp;→&nbsp; Qₖ con p = k/4<small>Si la posición no es entera, se interpola entre el dato anterior y el siguiente</small></div>
         <div class="row g-2 mb-3"><div class="col-md-4"><div class="theo-card" style="--c:${COL.Q1};margin:0"><h6>Q₁ · primer cuartil</h6><p class="small mb-0">Deja ≈ 25 % de los datos por debajo y ≈ 75 % por encima.</p></div></div><div class="col-md-4"><div class="theo-card" style="--c:${COL.Q2};margin:0"><h6>Q₂ · segundo cuartil</h6><p class="small mb-0">Es la <strong>mediana</strong>: 50 % por debajo y 50 % por encima.</p></div></div><div class="col-md-4"><div class="theo-card" style="--c:${COL.Q3};margin:0"><h6>Q₃ · tercer cuartil</h6><p class="small mb-0">Deja ≈ 75 % por debajo y ≈ 25 % por encima.</p></div></div></div>
-        <div id="q2-top">${dataBox('ds-2')}</div><div id="q2-out"></div>`);
+        <div id="q2-top">${dataBox()}</div><div id="q2-out"></div>`);
     }
 
     /* ---------- 3. Deciles y percentiles ---------- */
@@ -695,10 +758,16 @@
       const den = T3 === 'P' ? 100 : 10, p = K3 / den, lab = T3 + '_{' + K3 + '}', m = QM === 'mid' ? 'n1' : QM, q = quant(x, p, m), c = T3 === 'P' ? COL.P : COL.D;
       const below = x.filter(v => v < V3).length, eq = x.filter(v => v === V3).length, pr = (below + .5 * eq) / n * 100, le = x.filter(v => v <= V3).length / n * 100;
       const decs = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => quant(x, k / 10, m).val), mx = Math.max(...x), mnv = Math.min(...x);
+      const chip = (sym, tex, pc, c) => `<td class="pp pp-cell" tabindex="0" role="button" data-pop="${popQ(x, pc, sym, tex, m, c)}"><div class="small fw-bold" style="color:${c}">${sym}</div>${ft(quant(x, pc, m).val, 2)}</td>`;
+      const rowT = (lab, cells) => `<tr><th class="text-start small">${lab}</th>${cells}</tr>`;
+      const resPanel = `<div class="res-panel"><div class="hint"><i class="bi bi-hand-index-thumb me-1"></i><b>Resultados de un vistazo</b>: toca un valor de la tabla para ver cómo salió.</div><div class="table-responsive"><table class="table table-sm table-bordered text-center align-middle mb-0 small"><tbody>
+        ${rowT('Cuartiles', [1, 2, 3].map(k => chip('Q' + '₁₂₃'[k - 1], 'Q_{' + k + '}', k / 4, [COL.Q1, COL.Q2, COL.Q3][k - 1])).join(''))}
+        ${rowT('Deciles', [1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => chip('D' + '₁₂₃₄₅₆₇₈₉'[k - 1], 'D_{' + k + '}', k / 10, COL.D)).join(''))}
+        ${rowT('Percentiles', [10, 25, 50, 75, 90].map(k => chip('P' + String(k).replace(/\d/g, d => '₀₁₂₃₄₅₆₇₈₉'[d]), 'P_{' + k + '}', k / 100, COL.P)).join(''))}</tbody></table></div></div>`;
       el.innerHTML = `<div class="row g-3"><div class="col-lg-7">${QM === 'mid' ? '<div class="tip-box s-amp small mb-2">El método de mitades solo existe para cuartiles; aquí se usa Posición (n+1)·p.</div>' : ''}${stepsQ(x, p, lab, '', `${K3}/${den} = ${ft(p, 4)}`, K3, m)}</div>
         <div class="col-lg-5"><div class="viz-card"><div class="pbar"><div class="pfill" style="width:${K3 / den * 100}%;background:${c}"></div><div class="pmark" style="left:${K3 / den * 100}%;--c:${c}">${T3}${K3}</div></div><div class="small text-center mt-3">≈ <strong>${ft(K3 / den * 100, 3)} %</strong> de los datos son ≤ <strong style="color:${c}">${ft(q.val, 3)}</strong></div></div>
           <h6 class="fw-bold mt-3" style="color:${COL.D}">Los nueve deciles</h6><div class="decbars">${decs.map((v, i) => `<div class="dcol ${T3 === 'D' && K3 === i + 1 ? 'on' : ''}" data-dec="${i + 1}" style="--h:${(v - mnv) / ((mx - mnv) || 1) * 100}%;--i:${i}"><span>${ft(v, 2)}</span><i></i><b>D${'₁₂₃₄₅₆₇₈₉'[i]}</b></div>`).join('')}</div></div></div>
-        <hr><h5 class="fw-bold" style="color:${COL.P}"><i class="bi bi-arrow-left-right me-1"></i>Al revés: ¿en qué percentil está un valor?</h5>
+        ${resPanel}<hr><h5 class="fw-bold" style="color:${COL.P}"><i class="bi bi-arrow-left-right me-1"></i>Al revés: ¿en qué percentil está un valor?</h5>
         <div class="row g-2 align-items-end mb-2"><div class="col-6 col-md-3"><label class="small fw-bold">Valor v</label><input id="v3" type="number" step="any" class="form-control" value="${V3}"></div></div>
         <div class="row g-3"><div class="col-lg-7">${fd(T`PR(v) = \frac{c_{<} + 0.5\,c_{=}}{n}\cdot 100 = \frac{${below} + 0.5(${eq})}{${n}}\cdot 100 = ${ft(pr, 2)}`)}<div class="small"><span class="chipx">c&lt; = ${below} datos menores</span> <span class="chipx">c= = ${eq} iguales</span> <span class="chipx">${ft(le, 1)} % de los datos ≤ ${ft(V3)}</span></div></div>
         <div class="col-lg-5"><div class="tip-box s-ok small mb-0">Un dato con <strong>rango percentil ≈ ${ft(pr, 0)}</strong> supera a cerca del ${ft(pr, 0)} % del grupo. Hay variantes (solo «menores» o «menores o iguales»); lo que importa es decir cuál se usó.</div></div></div>
@@ -707,7 +776,7 @@
     function renderS3() {
       $('#s3').innerHTML = lesson(3, 'Deciles y percentiles', 'Dk con p = k/10 · Pk con p = k/100 · rango percentil', COL.D, `
         <div class="setdef mb-2" style="--c:${COL.D}">posición = p·(n + 1) &nbsp; con &nbsp; p = k/10 (decil) &nbsp; o &nbsp; p = k/100 (percentil)<small>Es la misma idea que los cuartiles, solo cambia la fracción p</small></div>
-        <div id="q3-top">${dataBox('ds-3')}</div>
+        <div id="q3-top">${dataBox()}</div>
         <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="d-flex gap-2">${[['D', 'Deciles'], ['P', 'Percentiles']].map(([k, n]) => `<button class="mbtn" data-t3="${k}" data-on="${T3 === k}" style="--c:${COL.D}">${n}</button>`).join('')}</div>
           <label class="small fw-bold ms-2" id="k3-lab"></label><input type="range" class="form-range" id="k3" style="max-width:340px;flex:1"><div class="d-flex gap-1 flex-wrap" id="k3-chips"></div></div>
         <div id="q3-out"></div>`);
@@ -720,7 +789,13 @@
       $('#k3-chips').innerHTML = (T3 === 'P' ? [10, 25, 50, 75, 90, 95] : [1, 3, 5, 7, 9]).map(v => `<button class="mbtn" data-k3="${v}" style="--c:${COL.D};padding:.1rem .6rem">${T3}${v}</button>`).join('');
       renderQ3();
     }
-    function renderAllData() { ['ds-2', 'ds-3', 'ds-5'].forEach(id => { const e = $('#' + id); if (e && e !== document.activeElement) e.value = DS; });['[data-presets]'].forEach(s => $$(s).forEach(e => e.innerHTML = presetBtns())); $$('[data-methods]').forEach(e => e.innerHTML = methodBtns()); renderQ2(); renderQ3(); renderB5(); }
+    function renderAllData() {
+      $$('.popover').forEach(p => p.remove());
+      const e = $('#ds-main'); if (e && e !== document.activeElement) e.value = DS;
+      $$('[data-presets]').forEach(e => e.innerHTML = presetBtns()); $$('[data-methods]').forEach(e => e.innerHTML = methodBtns());
+      const md = $('#m-desc'); if (md) md.textContent = MDESC[QM];
+      $$('[data-ctx]').forEach(e => e.innerHTML = ctxHtml()); renderQ2(); renderQ3(); renderB5();
+    }
 
     /* ---------- 4. Datos agrupados ---------- */
     const GR = {
@@ -732,15 +807,12 @@
     function renderS4() {
       $('#s4').innerHTML = lesson(4, 'Datos agrupados en clases', 'Qₖ, Dₖ y Pₖ a partir de una tabla de frecuencias', COL.F, `
         <div class="setdef mb-2" style="--c:${COL.F}">Medida = L + ( (posición − F<sub>ant</sub>) / f ) · c<small>posición = k·N/4 (cuartil) · k·N/10 (decil) · k·N/100 (percentil)</small></div>
-        <ul class="small" style="line-height:1.75"><li><strong>L</strong>: límite inferior de la <u>clase que contiene la posición</u> · <strong>F<sub>ant</sub></strong>: frecuencia acumulada de la clase anterior · <strong>f</strong>: frecuencia de esa clase · <strong>c</strong>: ancho de clase · <strong>N</strong>: total de datos.</li><li>Aquí <em>no</em> se usa (n+1): con clases se supone que los datos se reparten parejo dentro de cada clase (interpolación lineal) y por eso se usa <strong>k·N/…</strong>.</li></ul>
-        <div class="d-flex flex-wrap gap-2 mb-2">${Object.entries(GR).map(([k, g]) => `<button class="mbtn ${G4 === k ? 'on' : ''}" data-g4="${k}" style="--c:${COL.F}">${g.n}</button>`).join('')}</div>
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="d-flex gap-2">${[['Q', 'Cuartil'], ['D', 'Decil'], ['P', 'Percentil']].map(([k, n]) => `<button class="mbtn" data-t4="${k}" style="--c:${COL.F}">${n}</button>`).join('')}</div><label class="small fw-bold ms-2" id="k4-lab"></label><input type="range" class="form-range" id="k4" style="max-width:340px;flex:1"></div>
-        <div id="g4-out"></div>`);
-      syncK4();
+        <ul class="small" style="line-height:1.75"><li><strong>L</strong>: límite inferior de la <u>clase que contiene la posición</u> · <strong>F<sub>ant</sub></strong>: frecuencia acumulada de la clase anterior · <strong>f</strong>: frecuencia de esa clase · <strong>c</strong>: ancho de clase · <strong>N</strong>: total de datos.</li><li>Aquí <em>no</em> se usa (n+1): con clases se supone que los datos se reparten parejo dentro de cada clase (interpolación lineal) y por eso se usa <strong>k·N/…</strong>.</li><li><strong>Q₂ = D₅ = P₅₀</strong> es la mediana: se calcula con la misma fórmula con k·N/2.</li></ul>
+        <div class="tip-box s-ok small mb-0"><i class="bi bi-hand-index-thumb me-1"></i>Para practicar, ve a la <a href="#st"><b>4b. Tabla interactiva</b></a>: eliges Q, D, P, media o varianza y ves la tabla, el paso a paso, el histograma / la ojiva y un <b>popover</b> con cómo salió cada resultado.</div>`);
     }
     function syncK4() {
       const mx = T4 === 'P' ? 99 : T4 === 'D' ? 9 : 3; K4 = Math.min(Math.max(K4, 1), mx); const r = $('#k4'); r.min = 1; r.max = mx; r.value = K4;
-      $('#k4-lab').innerHTML = `k = <span style="color:${COL.F}">${K4}</span>`; $$('[data-t4]').forEach(b => b.classList.toggle('on', b.dataset.t4 === T4)); renderG4();
+      /* sección 4 fusionada con 4b */
     }
     function renderG4() {
       const g = GR[G4], N = g.f.reduce((a, b) => a + b, 0), den = T4 === 'P' ? 100 : T4 === 'D' ? 10 : 4, pos = K4 * N / den, F = []; g.f.reduce((a, v, i) => (F[i] = a + v), 0);
@@ -787,7 +859,7 @@
       else if (d1 - d2 > .25 * f.iqr || lw - uw > .5 * f.iqr) forma = 'La mediana está pegada a Q₃ y/o el bigote izquierdo es más largo: <strong>sesgo a la izquierda</strong> (cola de valores bajos); la media tiende a ser menor que la mediana.';
       const tiles = [['Mínimo', f.min, COL.G], ['Q₁', f.q1, COL.Q1], ['Q₂', f.q2, COL.Q2], ['Q₃', f.q3, COL.Q3], ['Máximo', f.max, COL.G]];
       el.innerHTML = `<div class="viz-card mb-2"><div class="d-flex flex-wrap gap-2 mb-1"><button class="mbtn ${FEN ? 'on' : ''}" id="b5-fen" style="--c:#868e96">Mostrar cercas (1.5·RIC)</button><div class="input-group input-group-sm" style="max-width:260px"><input id="b5-add" type="number" step="any" class="form-control" placeholder="Agregar un dato"><button class="btn btn-outline-dark" id="b5-addb"><i class="bi bi-plus-lg"></i></button></div><button class="btn btn-sm btn-outline-danger rounded-pill" id="b5-addout"><i class="bi bi-exclamation-triangle me-1"></i>Agregar un atípico</button></div><div id="b5-plot"></div></div>
-        <div class="row g-2 mb-3">${tiles.map(([t, v, c], i) => `<div class="col"><div class="tile" style="--c:${c};--i:${i}"><div class="tl">${t}</div><div class="fw-bold fs-5" style="color:${c}">${ft(v, 3)}</div></div></div>`).join('')}</div>
+        <div class="row g-2 mb-3">${tiles.map(([t, v, c], i) => `<div class="col"><div class="tile" style="--c:${c};--i:${i}"><div class="tl">${t}</div><div class="fw-bold fs-5" style="color:${c}">${({ 'Q₁': .25, 'Q₂': .5, 'Q₃': .75 })[t] ? `<span class="pp" tabindex="0" role="button" data-pop="${popQ(x, ({ 'Q₁': .25, 'Q₂': .5, 'Q₃': .75 })[t], t, 'Q_{' + ('₁₂₃'.indexOf(t[1]) + 1) + '}', QM, c)}">${ft(v, 3)}</span>` : ft(v, 3)}</div></div></div>`).join('')}</div>
         <div class="row g-3"><div class="col-lg-6"><div class="sstep" style="--i:0;--sc:${COL.X}"><div class="sn">1</div><div class="sb"><div class="st">Resumen de cinco números</div><div class="sx">Mín = ${ft(f.min)} · Q₁ = ${ft(f.q1, 3)} · Q₂ = ${ft(f.q2, 3)} · Q₃ = ${ft(f.q3, 3)} · Máx = ${ft(f.max)} (método: ${MN[QM]}).</div></div></div>
           <div class="sstep" style="--i:1;--sc:${COL.F}"><div class="sn">2</div><div class="sb"><div class="st">Rango intercuartílico</div>${fd(T`RIC = Q_3 - Q_1 = ${ft(f.q3, 3)} - ${ft(f.q1, 3)} = ${ft(f.iqr, 3)}`)}<div class="sx">Es el ancho de la caja: contiene al ≈ 50 % central de los datos.</div></div></div>
           <div class="sstep" style="--i:2;--sc:${COL.Y}"><div class="sn">3</div><div class="sb"><div class="st">Cercas (criterio de Tukey)</div>${fd(T`LI = Q_1 - 1.5\,RIC = ${ft(f.lf, 3)} \qquad LS = Q_3 + 1.5\,RIC = ${ft(f.uf, 3)}`)}</div></div></div>
@@ -803,7 +875,7 @@
       $('#s5').innerHTML = lesson(5, 'Diagrama de caja y bigotes', 'Cinco números, rango intercuartílico, cercas y valores atípicos', COL.Q3, `
         <div class="row g-3 mb-3"><div class="col-lg-6"><div class="setdef" style="--c:${COL.Q3}">mín · Q₁ · Q₂ · Q₃ · máx<small>La caja encierra el 50 % central; la línea es la mediana</small></div></div>
           <div class="col-lg-6"><ul class="small mb-0" style="line-height:1.7"><li><strong>Caja:</strong> de Q₁ a Q₃ (ancho = RIC).</li><li><strong>Bigotes:</strong> hasta los datos más lejanos que <u>no</u> son atípicos.</li><li><strong>Atípico:</strong> dato &lt; Q₁ − 1.5·RIC o &gt; Q₃ + 1.5·RIC.</li></ul></div></div>
-        ${dataBox('ds-5')}<div id="b5-out"></div>`);
+        ${dataBox()}<div id="b5-out"></div>`);
     }
 
     /* ---------- 6. Regla empírica ---------- */
@@ -1019,7 +1091,7 @@
       est: { n: 'Estaturas (cm)', u: 'cm', L: 150, c: 5, f: [4, 8, 14, 13, 7, 4] },
       red: { n: 'Horas en redes por semana', u: 'h', L: 0, c: 5, f: [6, 12, 18, 9, 5] }
     };
-    const TG = { g: 'gen', u: 'pts', L: 50, c: 10, f: [4, 9, 16, 21, 14, 6], m: 'med', kQ: 1, kD: 1, kP: 90, pop: false, A: true };
+    const TG = { g: 'gen', u: 'pts', L: 50, c: 10, f: [4, 9, 16, 21, 14, 6], m: 'Q', v: 'hist', kQ: 2, kD: 1, kP: 90, pop: false, A: true };
     const TGM = [['med', 'Mediana', COL.Q2, 'bi-distribute-vertical'], ['Q', 'Cuartil', COL.Q1, 'bi-layout-three-columns'], ['D', 'Decil', COL.D, 'bi-list-ol'], ['P', 'Percentil', COL.P, 'bi-percent'], ['mean', 'Media', '#1864ab', 'bi-graph-up'], ['var', 'Varianza', '#d9480f', 'bi-bounding-box-circles'], ['sd', 'Desviación estándar', '#7048e8', 'bi-distribute-horizontal']];
     const tgColor = m => TGM.find(x => x[0] === m)[2];
     function tgCalc() {
@@ -1042,16 +1114,16 @@
     const isPos = m => ['med', 'Q', 'D', 'P'].includes(m);
     function renderST() {
       const el = $('#st'); if (!el) return;
-      el.innerHTML = lesson('4b', 'Tabla de frecuencias: ¿qué quieres obtener?', 'Mediana, cuartiles, deciles, percentiles, media, varianza y desviación estándar sobre la misma tabla', COL.F, `
+      el.innerHTML = lesson('4b', 'Tabla de frecuencias: ¿qué quieres obtener?', 'Cuartiles (Q₂ = mediana), deciles, percentiles, media, varianza y desviación estándar sobre la misma tabla', COL.F, `
         <div class="setdef mb-2" style="--c:${COL.F}">Una sola tabla de frecuencias, muchas medidas<small>Elige un botón: la tabla cambia de columnas (con animación) y se resuelve paso a paso lo que pediste</small></div>
         <div class="d-flex flex-wrap gap-2 mb-2" id="tg-pre"></div>
         <details class="mb-3"><summary class="fw-bold small" style="cursor:pointer;color:${COL.F}"><i class="bi bi-pencil-square me-1"></i>Editar la tabla (límite inferior, ancho de clase y frecuencias)</summary><div class="mt-2" id="tg-ed"></div></details>
         <div class="small fw-bold text-muted mb-1">¿Qué quieres obtener?</div>
-        <div class="d-flex flex-wrap gap-2 mb-2" id="tg-btns"></div>
+        <div id="tg-btns"></div>
         <div class="d-flex flex-wrap align-items-center gap-2 mb-3" id="tg-sub"></div>
         <div class="table-responsive rounded-3 border" id="tg-tbl"></div><div class="d-flex flex-wrap gap-2 mt-2" id="tg-chips"></div>
         <div class="row g-3 mt-1"><div class="col-lg-6"><div id="tg-steps"></div></div>
-        <div class="col-lg-6"><div class="viz-card mt-2"><div id="tg-plot"></div></div><div class="small text-muted mt-1" id="tg-note"></div></div></div>`);
+        <div class="col-lg-6"><div class="viz-card mt-2"><div class="btn-group btn-group-sm mb-2" id="tg-view"></div><div id="tg-plot"></div></div><div class="small text-muted mt-1" id="tg-note"></div></div></div>`);
       tgPre(); tgEditor(); tgView();
     }
     function tgPre() {
@@ -1065,11 +1137,14 @@
     const tgLab = () => $$('.tg-lab').forEach((e, j) => { e.textContent = ft(TG.L + j * TG.c) + '–' + ft(TG.L + (j + 1) * TG.c); });
     function tgView(keepSub) {
       const s = tgCalc(), m = TG.m, A = TG.A, col = tgColor(m), sel = tgSel(s);
-      $('#tg-btns').innerHTML = TGM.map(([k, n, c, ic]) => `<button class="mbtn ${m === k ? 'on' : ''}" data-tgm="${k}" style="--c:${c}"><i class="bi ${ic} me-1"></i>${n}</button>`).join('');
+      $$('.popover').forEach(p => p.remove());
+      const tb = ([k, n, c, ic]) => `<button class="mbtn ${m === k || (k === 'Q' && m === 'med') ? 'on' : ''}" data-tgm="${k}" style="--c:${c}"><i class="bi ${ic} me-1"></i>${n}</button>`;
+      $('#tg-btns').innerHTML = `<div class="btn-grp"><span class="grp-lab">Posición</span>${TGM.filter(x => ['Q', 'D', 'P'].includes(x[0])).map(tb).join('')}</div><div class="btn-grp"><span class="grp-lab">Centro y dispersión</span>${TGM.filter(x => ['mean', 'var', 'sd'].includes(x[0])).map(tb).join('')}</div>`;
+      $('#tg-view').innerHTML = [['hist', 'Histograma'], ['oji', 'Ojiva']].map(([k, n]) => `<button class="btn btn-outline-secondary ${TG.v === k ? 'active' : ''}" data-tgv="${k}">${n}</button>`).join('');
       let sb = '';
-      if (m === 'Q') sb = `<span class="small fw-bold">k =</span>` + [1, 2, 3].map(k => `<button class="mbtn ${TG.kQ === k ? 'on' : ''}" data-tgk2="Q${k}" style="--c:${COL.Q1}">Q${sub(k)}</button>`).join('');
-      else if (m === 'D') sb = `<span class="small fw-bold">k =</span>` + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => `<button class="mbtn ${TG.kD === k ? 'on' : ''}" data-tgk2="D${k}" style="--c:${COL.D}">D${sub(k)}</button>`).join('');
-      else if (m === 'P') sb = `<span class="small fw-bold">k =</span><input type="range" min="1" max="99" value="${TG.kP}" id="tg-kP" style="width:240px"><b id="tg-kPv" style="color:${COL.P}">P${sub(TG.kP)}</b>` + [10, 25, 50, 75, 90].map(k => `<button class="mbtn" data-tgk2="P${k}" style="--c:${COL.P}">${k}</button>`).join('');
+      if (m === 'Q' || m === 'med') sb = `<span class="small fw-bold">¿Cuál cuartil?</span>` + [1, 2, 3].map(k => `<button class="mbtn ${TG.kQ === k ? 'on' : ''}" data-tgk2="Q${k}" style="--c:${[COL.Q1, COL.Q2, COL.Q3][k - 1]}">Q${sub(k)}${k === 2 ? ' · mediana' : ''}</button>`).join('');
+      else if (m === 'D') sb = `<span class="small fw-bold">¿Cuál decil?</span>` + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => `<button class="mbtn ${TG.kD === k ? 'on' : ''}" data-tgk2="D${k}" style="--c:${COL.D}">D${sub(k)}</button>`).join('');
+      else if (m === 'P') sb = `<span class="small fw-bold">¿Cuál percentil?</span><input type="range" min="1" max="99" value="${TG.kP}" id="tg-kP" style="width:240px"><b id="tg-kPv" style="color:${COL.P}">P${sub(TG.kP)}</b>` + [10, 25, 50, 75, 90].map(k => `<button class="mbtn" data-tgk2="P${k}" style="--c:${COL.P}">${k}</button>`).join('');
       else if (m === 'var' || m === 'sd') sb = `<span class="small fw-bold">Se calcula para…</span><div class="btn-group btn-group-sm"><button class="btn btn-outline-dark ${!TG.pop ? 'active' : ''}" data-tgpop="0">Muestra (n − 1)</button><button class="btn btn-outline-dark ${TG.pop ? 'active' : ''}" data-tgpop="1">Población (N)</button></div>`;
       if (keepSub) { const lb = $('#tg-kPv'); if (lb) lb.textContent = 'P' + sub(TG.kP); } else $('#tg-sub').innerHTML = sb;
       /* ---- tabla ---- */
@@ -1078,31 +1153,38 @@
       const H = (t, c) => `<th style="background:${c}">${t}</th>`;
       const sty = (i, extra = '') => `style="${A ? `animation:pop .45s ${i * .07}s both;` : ''}${extra}"`;
       if (isPos(m)) {
-        head = H('Clase', '#364fc7') + H('f', COL.X) + H('F (acumulada)', COL.F) + H('% acum.', '#868e96');
-        body = s.rows.map((r, j) => `<tr class="${j === sel.i ? 'tr-sel' : ''}" ${sty(j)}><td>${ft(r.Li)} – ${ft(r.Ls)}${j === sel.i ? ` <span class="badge" style="background:${col}">clase de ${sel.sym}</span>` : ''}</td><td ${j === sel.i ? `style="background:#ffe8cc;font-weight:800"` : ''}>${r.f}${j === sel.i ? '<div class="small" style="color:#c2410c">f</div>' : ''}</td><td ${j === sel.i - 1 ? `style="background:#d0ebff;font-weight:800"` : j === sel.i ? `style="font-weight:800"` : ''}>${r.F}${j === sel.i - 1 ? '<div class="small" style="color:#1864ab">F<sub>ant</sub></div>' : ''}</td><td>${ft(r.F / s.N * 100, 1)}</td></tr>`).join('');
+        head = H('Intervalos', '#364fc7') + H('f', COL.X) + H('F (acumulada)', COL.F) + H('% acum.', '#868e96');
+        body = s.rows.map((r, j) => `<tr class="${j === sel.i ? 'tr-sel' : ''}" ${sty(j)}><td>${ft(r.Li)} – ${ft(r.Ls)}${j === sel.i ? ` <span class="badge pp" tabindex="0" role="button" data-pop="${popG(s, sel.den, m === 'med' ? 1 : sel.k, sel.sym, symTex(sel.sym), m === 'med' ? 'Q' : m, col)}" style="background:${col}">intervalo de ${sel.sym} <i class="bi bi-info-circle ms-1"></i></span>` : ''}</td><td ${j === sel.i ? `style="background:#ffe8cc;font-weight:800"` : ''}>${r.f}${j === sel.i ? '<div class="small" style="color:#c2410c">f</div>' : ''}</td><td ${j === sel.i - 1 ? `style="background:#d0ebff;font-weight:800"` : j === sel.i ? `style="font-weight:800"` : ''}>${r.F}${j === sel.i - 1 ? '<div class="small" style="color:#1864ab">F<sub>ant</sub></div>' : ''}</td><td>${ft(r.F / s.N * 100, 1)}</td></tr>`).join('');
         foot = `<tr><td>Total</td><td>${s.N}</td><td>${s.N}</td><td>100</td></tr>`;
       } else if (m === 'mean') {
-        head = H('Clase', '#364fc7') + H('x (marca)', '#2f9e44') + H('f', COL.X) + H('f · x', '#1864ab');
-        body = s.rows.map((r, j) => `<tr ${sty(j)}><td>${ft(r.Li)} – ${ft(r.Ls)}</td><td>${ft(r.x)}</td><td>${r.f}</td><td style="background:#e7f5ff;font-weight:700">${ft(r.fx, 3)}</td></tr>`).join('');
+        head = H('Intervalos', '#364fc7') + H('x (marca)', '#2f9e44') + H('f', COL.X) + H('f · x', '#1864ab');
+        body = s.rows.map((r, j) => `<tr ${sty(j)}><td class="pp" tabindex="0" role="button" data-pop="${popRow(s, r, j, '#2f9e44')}">${ft(r.Li)} – ${ft(r.Ls)}</td><td>${ft(r.x)}</td><td>${r.f}</td><td style="background:#e7f5ff;font-weight:700">${ft(r.fx, 3)}</td></tr>`).join('');
         foot = `<tr><td>Σ</td><td></td><td>${s.N}</td><td>${ft(s.sfx, 3)}</td></tr>`;
       } else {
-        head = H('Clase', '#364fc7') + H('x (marca)', '#2f9e44') + H('f', COL.X) + H('f · x', '#1864ab') + H('x − x̄', '#0c8599') + H('(x − x̄)²', '#d9480f') + H('f · (x − x̄)²', '#7048e8');
+        head = H('Intervalos', '#364fc7') + H('x (marca)', '#2f9e44') + H('f', COL.X) + H('f · x', '#1864ab') + H('x − x̄', '#0c8599') + H('(x − x̄)²', '#d9480f') + H('f · (x − x̄)²', '#7048e8');
         const cs = (i, c, v, extra = '') => `<td style="background:${c};font-weight:700;${A ? `animation:pop .5s ${.25 + i * .22}s both;` : ''}${extra}">${v}</td>`;
-        body = s.rows.map((r, j) => `<tr ${sty(j, 'animation-delay:' + (j * .05) + 's')}><td>${ft(r.Li)} – ${ft(r.Ls)}</td><td>${ft(r.x)}</td><td>${r.f}</td>${cs(0, '#e7f5ff', ft(r.fx, 3))}${cs(1, '#e3fafc', fz(r.d, 3))}${cs(2, '#fff4e6', ft(r.d2, 3))}${cs(3, '#f3f0ff', ft(r.fd2, 3))}</tr>`).join('');
+        body = s.rows.map((r, j) => `<tr ${sty(j, 'animation-delay:' + (j * .05) + 's')}><td class="pp" tabindex="0" role="button" data-pop="${popRow(s, r, j, '#7048e8')}">${ft(r.Li)} – ${ft(r.Ls)}</td><td>${ft(r.x)}</td><td>${r.f}</td>${cs(0, '#e7f5ff', ft(r.fx, 3))}${cs(1, '#e3fafc', fz(r.d, 3))}${cs(2, '#fff4e6', ft(r.d2, 3))}${cs(3, '#f3f0ff', ft(r.fd2, 3))}</tr>`).join('');
         foot = `<tr><td>Σ</td><td></td><td>${s.N}</td><td>${ft(s.sfx, 3)}</td><td>≈ 0</td><td></td><td style="color:#7048e8">${ft(s.ss, 3)}</td></tr>`;
       }
       $('#tg-tbl').innerHTML = `<table class="table table-sm table-bordered text-center freq-table mb-0"><thead><tr>${head}</tr></thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
       /* ---- resultados clicables ---- */
       const P = (den, k) => s.posV(den, k).val;
-      const chips = [['med', null, 'Me', P(2, 1), COL.Q2], ['Q', 1, 'Q₁', P(4, 1), COL.Q1], ['Q', 3, 'Q₃', P(4, 3), COL.Q1], ['D', TG.kD, 'D' + sub(TG.kD), P(10, TG.kD), COL.D], ['P', TG.kP, 'P' + sub(TG.kP), P(100, TG.kP), COL.P], ['mean', null, 'x̄', s.mean, '#1864ab'], ['var', null, TG.pop ? 'σ²' : 's²', s.v, '#d9480f'], ['sd', null, TG.pop ? 'σ' : 's', s.sd, '#7048e8']];
-      $('#tg-chips').innerHTML = chips.map(([mm, k, l, v, c], i) => `<button class="mbtn" data-tgchip="${mm}|${k}" style="--c:${c};${A ? `animation:pop .4s ${i * .05}s both;` : ''}">${l} = ${ft(v, 2)}</button>`).join('');
+      const sym = k => 'Q' + sub(k), pl = k => 'P' + sub(k), ds = k => 'D' + sub(k);
+      const pchip = (mm, den, k, lab, tex, c, extra = '') => `<button type="button" class="mbtn ${(sel && sel.den === den && sel.k === k) ? 'on' : ''}" data-tgchip="${mm}|${k}" style="--c:${c}">${lab}${extra} = ${ft(P(den, k), 2)}</button>`;
+      const schip = (kind, lab, v, c) => `<button type="button" class="mbtn ${m === kind ? 'on' : ''}" data-tgchip="${kind}|null" style="--c:${c}">${lab} = ${ft(v, 2)}</button>`;
+      const pcs = [...new Set([10, 25, 50, 75, 90, TG.kP])].sort((p, q) => p - q);
+      $('#tg-chips').innerHTML = `<div class="res-panel w-100"><div class="hint"><i class="bi bi-hand-index-thumb me-1"></i><b>Resultados de esta tabla</b>: tócalos para verlos en la tabla. Para saber <b>cómo salió</b>, toca la etiqueta del intervalo o un intervalo de la tabla.</div>
+        <div class="res-grp"><span class="grp-lab">Cuartiles</span>${[1, 2, 3].map(k => pchip('Q', 4, k, sym(k), 'Q_{' + k + '}', [COL.Q1, COL.Q2, COL.Q3][k - 1], k === 2 ? ' (Me)' : '')).join('')}</div>
+        <div class="res-grp"><span class="grp-lab">Deciles</span>${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => pchip('D', 10, k, ds(k), 'D_{' + k + '}', COL.D)).join('')}</div>
+        <div class="res-grp"><span class="grp-lab">Percentiles</span>${pcs.map(k => pchip('P', 100, k, pl(k), 'P_{' + k + '}', COL.P)).join('')}</div>
+        <div class="res-grp"><span class="grp-lab">Centro y dispersión</span>${schip('mean', 'x̄', s.mean, '#1864ab')}${schip('var', TG.pop ? 'σ²' : 's²', s.v, '#d9480f')}${schip('sd', TG.pop ? 'σ' : 's', s.sd, '#7048e8')}</div></div>`;
       /* ---- pasos ---- */
       const st = (i, c, t, b) => `<div class="sstep" style="--i:${i};--sc:${c}"><div class="sn">${i + 1}</div><div class="sb"><div class="st">${t}</div>${b}</div></div>`;
       let steps, note;
       if (sel) {
         const sym = sel.sym, den = sel.den, k = sel.k, kk = m === 'med' ? 1 : k;
         const posTex = m === 'med' ? T`pos = \frac{N}{2} = \frac{${s.N}}{2} = ${ft(sel.pos, 4)}` : T`pos = \frac{k\,N}{${den}} = \frac{${kk}\cdot ${s.N}}{${den}} = ${ft(sel.pos, 4)}`;
-        steps = st(0, COL.X, 'Posición', fd(posTex) + (m === 'med' ? '<div class="sx">La mediana deja la mitad de los datos a cada lado: es Q₂ = D₅ = P₅₀.</div>' : ''))
+        steps = st(0, COL.X, 'Posición', fd(posTex) + (m === 'med' || (m === 'Q' && k === 2) || (m === 'D' && k === 5) || (m === 'P' && k === 50) ? '<div class="sx">La mediana deja la mitad de los datos a cada lado: es Q₂ = D₅ = P₅₀.</div>' : ''))
           + st(1, COL.F, 'Clase que contiene la posición', `<div class="sx">Se busca la primera frecuencia acumulada F ≥ ${ft(sel.pos, 3)}: es <strong>${s.rows[sel.i].F}</strong> → clase <strong>${ft(sel.Lc)} – ${ft(sel.Lc + TG.c)}</strong>. Entonces L = ${ft(sel.Lc)}, F<sub>ant</sub> = ${sel.Fa}, f = ${sel.f}, c = ${ft(TG.c)}.</div>`)
           + st(2, sel.c, 'Sustituir en la fórmula', fd(T`${sym} = L + \frac{pos - F_{ant}}{f}\cdot c = ${ft(sel.Lc)} + \frac{${ft(sel.pos, 4)} - ${sel.Fa}}{${sel.f}}\cdot ${ft(TG.c)} = ${ft(sel.val, 3)}`))
           + st(3, COL.R, 'Interpretación', `<div class="sx"><strong>${sym} ≈ ${ft(sel.val, 2)} ${TG.u}</strong>: aproximadamente el <strong>${ft(sel.pct, 2)} %</strong> de los datos es menor o igual a ese valor.</div>`);
@@ -1122,10 +1204,16 @@
         note = sq ? 'La desviación estándar vuelve la dispersión a las unidades de los datos.' : 'La varianza se mide en unidades al cuadrado; por eso se suele sacar la raíz (desviación estándar).';
       }
       $('#tg-steps').innerHTML = steps; $('#tg-note').textContent = note;
-      tgPlot(s, sel);
+      TG.v === 'oji' ? tgOji(s, sel) : tgPlot(s, sel);
       math($('#st')); TG.A = false;
     }
     const colF = (v, c) => T`\textcolor{${c}}{${v}}`;
+    function tgOji(s, sel) {
+      const N = s.N, c = sel ? sel.c : '#1864ab', segs = [], pts = [{ x: TG.L, y: 0, c: '#495057', r: 4 }]; let prev = [TG.L, 0];
+      s.rows.forEach((r, j) => { segs.push({ x1: prev[0], y1: prev[1], x2: r.Ls, y2: r.F, c: COL.X, w: 3 }); pts.push({ x: r.Ls, y: r.F, c: COL.X, r: 5 }); prev = [r.Ls, r.F]; });
+      if (sel) { segs.push({ x1: TG.L, y1: sel.pos, x2: sel.val, y2: sel.pos, c, dash: true, w: 2.4 }, { x1: sel.val, y1: sel.pos, x2: sel.val, y2: 0, c, dash: true, w: 2.4 }); pts.push({ x: sel.val, y: sel.pos, c, r: 8, l: sel.sym + ' ≈ ' + ft(sel.val, 1), dy: -12 }); }
+      plot($('#tg-plot'), { xr: [TG.L, TG.L + s.rows.length * TG.c], yr: [0, N * 1.05], segs, pts, xl: TG.u || 'x', yl: 'F', H: 270, anim: true });
+    }
     function tgPlot(s, sel) {
       const m = TG.m, n = s.rows.length, W = 700, H = 270, ml = 46, mr = 18, mt = 22, mb = 40, x0 = TG.L, x1 = TG.L + n * TG.c, mx = Math.max(...TG.f, 1) * 1.18, sx = v => ml + (v - x0) / (x1 - x0) * (W - ml - mr), sy = v => H - mb - v / mx * (H - mt - mb);
       let g = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
@@ -1144,7 +1232,8 @@
     on('[data-tgm]', 'click', t => { TG.m = t.dataset.tgm; TG.A = true; tgView(); });
     on('[data-tgk2]', 'click', t => { const v = t.dataset.tgk2, k = +v.slice(1); if (v[0] === 'Q') TG.kQ = k; else if (v[0] === 'D') TG.kD = k; else TG.kP = k; TG.A = true; tgView(); });
     on('[data-tgpop]', 'click', t => { TG.pop = t.dataset.tgpop === '1'; TG.A = true; tgView(); });
-    on('[data-tgchip]', 'click', t => { const [mm, k] = t.dataset.tgchip.split('|'); TG.m = mm; if (mm === 'Q' && k !== 'null') TG.kQ = +k; TG.A = true; tgView(); });
+    on('[data-tgchip]', 'click', t => { const [mm, k] = t.dataset.tgchip.split('|'); TG.m = mm; if (k !== 'null') { if (mm === 'Q') TG.kQ = +k; else if (mm === 'D') TG.kD = +k; else if (mm === 'P') TG.kP = +k; } TG.A = true; tgView(); $('#tg-tbl').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+    on('[data-tgv]', 'click', t => { TG.v = t.dataset.tgv; tgView(true); });
     on('[data-tgk]', 'click', t => { const d = +t.dataset.tgk, n = TG.f.length + d; if (n < 3 || n > 10) return; if (d > 0) TG.f.push(Math.max(1, Math.round(TG.f[TG.f.length - 1] / 2))); else TG.f.pop(); TG.A = true; tgEditor(); tgView(); });
     document.addEventListener('input', e => {
       const t = e.target;
@@ -1158,7 +1247,7 @@
 
     /* ---------- Arranque ---------- */
     $('#hero-bars').innerHTML = [30, 55, 80, 100, 80, 55, 30].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
-    renderS0(); renderS1(); renderS2(); renderS3(); renderS4(); renderST(); renderS5(); renderS6(); renderS7(); renderS8(); renderS9();
+    renderS0(); renderS1(); renderDataPanel(); renderS2(); renderS3(); renderS4(); renderST(); renderS5(); renderS6(); renderS7(); renderS8(); renderS9();
     renderAllData(); $$('[data-g4]').length; renderForm();
     math(document.body); $$('section.lesson').forEach(s => io.observe(s));
 
