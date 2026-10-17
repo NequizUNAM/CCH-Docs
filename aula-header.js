@@ -36,9 +36,9 @@
         { label: 'Cuartiles y Percentiles', href: 'cuartiles_percentiles.html', icon: 'bi-percent' },
         { label: 'Correlación Lineal', href: 'correlacion_lineal.html', icon: 'bi-graph-up' },
         { label: 'Probabilidad', href: 'probabilidad.html', icon: 'bi-dice-5-fill' },
-        { label: 'Función de distribución de probabilidad', href: 'funcion_distribucion_probabilidad.html', icon: 'bi-bar-chart-line-fill' },
         { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' },
-        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ] }
+        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ,
+        { label: 'Función de distribución de probabilidad', href: 'funcion_distribucion_probabilidad.html', icon: 'bi-bar-chart-line-fill' } ] }
     ]
   };
   const store = {
