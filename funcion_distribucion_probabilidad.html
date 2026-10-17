@@ -526,6 +526,7 @@
     .allst { background:#fff; border:1px solid #e2e8f0; border-top:6px solid var(--c); border-radius:16px; padding:.8rem 1rem 1rem; margin-bottom:1.2rem; box-shadow:var(--shadow-sm); scroll-margin-top:130px; }
     .allst-h { display:flex; align-items:center; gap:.6rem; font-weight:800; font-size:1.15rem; color:var(--c); margin-bottom:.6rem; } .allst-h .sn { width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; }
     .allidx { display:flex; flex-wrap:wrap; gap:.4rem; } .allchip { text-decoration:none; border:2px solid var(--c); color:var(--c); background:#fff; border-radius:999px; padding:.1rem .7rem; font-size:.82rem; font-weight:700; } .allchip:hover { background:var(--c); color:#fff; }
+    .fl { font-size:15px; font-weight:700; font-family:'Segoe UI',Arial,sans-serif; } .fbig { font-size:22px; font-weight:600; font-family:'Segoe UI',Arial,sans-serif; } .fpick { cursor:pointer; } .fnsvg { max-width:900px; }
   </style>
 </head><body>
   <div id="app-header"></div>
@@ -537,7 +538,7 @@
         <h1 class="display-5 fw-bold"><i class="bi bi-bar-chart-line-fill text-info me-2"></i>Función de distribución de probabilidad</h1>
         <p class="lead mb-1">Árbol · espacio muestral · variable aleatoria (V.A.) · FDP · acumulada · esperanza · varianza y desviación estándar</p>
         <p class="mb-0 text-light opacity-75">Del enunciado a la tabla: construye el árbol, agrupa los resultados según X y obtén la FDP, E(X) y σ <b>con fracciones exactas</b>, paso a paso</p>
-        <div class="hero-btns mt-3 d-flex gap-2 justify-content-center flex-wrap"><a class="btn btn-info rounded-pill px-4" href="#s1" data-go="p"><i class="bi bi-rocket-takeoff-fill me-1"></i>Resolver un problema</a><a class="btn btn-outline-light rounded-pill px-4" href="#s5" data-go="c"><i class="bi bi-bullseye me-1"></i>Esperanza</a><button class="btn btn-warning rounded-pill px-4 fw-bold" data-man="fdp"><i class="bi bi-book-half me-1"></i>Manual de teoremas</button><a class="btn btn-outline-light rounded-pill px-4" href="#s10" data-go="f"><i class="bi bi-journal-richtext me-1"></i>Formulario</a></div>
+        <div class="hero-btns mt-3 d-flex gap-2 justify-content-center flex-wrap"><a class="btn btn-info rounded-pill px-4" href="#s1" data-go="p"><i class="bi bi-rocket-takeoff-fill me-1"></i>Resolver un problema</a><a class="btn btn-outline-light rounded-pill px-4" href="#si" data-go="c"><i class="bi bi-record-circle me-1"></i>Intervalos</a><a class="btn btn-outline-light rounded-pill px-4" href="#s5" data-go="c"><i class="bi bi-bullseye me-1"></i>Esperanza</a><button class="btn btn-warning rounded-pill px-4 fw-bold" data-man="fdp"><i class="bi bi-book-half me-1"></i>Manual de teoremas</button><a class="btn btn-outline-light rounded-pill px-4" href="#s10" data-go="f"><i class="bi bi-journal-richtext me-1"></i>Formulario</a></div>
       </div>
     </header>
 
@@ -554,6 +555,11 @@
         <div class="row g-3 mb-3" id="ex-cards"></div>
         <div class="demo" id="lab"><div id="lab-par"></div><div class="stbar"><div id="lab-dots" class="d-flex gap-1 flex-wrap align-items-center"></div></div><div id="lab-body"></div>
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3"><div class="d-flex gap-2 flex-wrap" id="lab-nav"><button class="btn btn-outline-dark rounded-pill" id="lab-prev" data-a="prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button><button class="btn btn-outline-primary rounded-pill" id="lab-play" data-a="play"><i class="bi bi-play-fill me-1"></i>Reproducir</button><button class="btn btn-dark rounded-pill px-4" id="lab-next" data-a="next">Siguiente <i class="bi bi-chevron-right"></i></button></div><button class="btn btn-warning rounded-pill fw-bold ms-auto" id="lab-all" data-a="all"><i class="bi bi-layout-text-sidebar-reverse me-1"></i>Ver todo el proceso</button></div></div>
+      </section>
+
+      <section class="sec" id="sf" data-g="c" data-s="Función, dominio y rango"><div class="sec-h"><span class="num">0</span><h2>Recordando: función, dominio, codominio y rango</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="funcion"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-diagram-2-fill text-warning me-1"></i>De Matemáticas IV: una función es una regla de correspondencia</b> que lleva cada elemento del <b style="color:#2f9e44">dominio</b> (conjunto A) a un único elemento del <b style="color:#1864ab">codominio</b> (conjunto B); los valores que realmente se alcanzan forman el <b style="color:#1864ab">rango o imagen</b>. Una variable aleatoria es justamente una función: $X:\Omega\toℝ$. Mueve $x$, cambia la función y compara dominio, codominio y rango.</div>
+        <div class="tabp" id="fn-tabs"></div><div class="demo"><div id="fn-body"></div></div>
       </section>
 
       <section class="sec" id="s2" data-g="c" data-s="¿Qué es una V.A.?"><div class="sec-h"><span class="num">0</span><h2>Variable aleatoria: una regla que convierte resultados en números</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="va"><i class="bi bi-book-half me-1"></i>Manual</button></div>
@@ -603,6 +609,12 @@
         <div class="intro-box"><b><i class="bi bi-journal-richtext text-warning me-1"></i>Todas las fórmulas</b> agrupadas por tema, con su ejemplo con los datos del problema seleccionado. Abre la ficha completa (definición, teorema, fórmula, uso y ejemplo).</div>
         <div class="fchips mb-2" id="fm-cat"></div><div class="row g-3" id="fm-grid"></div>
       </section>
+
+      <section class="sec" id="si" data-g="c" data-s="Intervalos abiertos y cerrados"><div class="sec-h"><span class="num">0</span><h2>Intervalos abiertos y cerrados: círculo vacío ○ y relleno ●</h2><span class="lvtag lt1">Básico</span><button class="btn btn-sm btn-warning rounded-pill fw-bold manb ms-auto" data-man="intervalos"><i class="bi bi-book-half me-1"></i>Manual</button></div>
+        <div class="intro-box"><b><i class="bi bi-record-circle text-warning me-1"></i>¿El extremo cuenta o no?</b> Con «mayor que» y «menor que» el extremo <b>no entra</b> (círculo vacío ○, paréntesis). Con «≤» y «≥» el extremo <b>sí entra</b> (círculo relleno ●, corchete). Elige el signo y el valor de <b>a</b> y mira cuáles de los números del 1 al 10 cumplen.</div>
+        <div class="tabp" id="iv-tabs"></div><div class="demo"><div id="iv-body"></div></div>
+      </section>
+
     </div>
   </main>
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Función de distribución de probabilidad</small></footer>
@@ -1013,6 +1025,140 @@
     /* Selector global de ejemplo para secciones de conceptos */
     const exBar = () => `<div class="d-flex flex-wrap gap-2 align-items-center mb-2"><span class="small fw-bold">Ejemplo:</span><div class="stchips">${EXS.map((e, i) => `<button class="${S.ex === i ? 'on' : ''}" data-a="ex" data-v="${i}">${e.ico} ${e.tit}</button>`).join('')}</div></div>`;
 
+
+    /* ===================== Función: dominio, codominio y rango (SVG vectorial) ===================== */
+    const FS = { tab: 'gen', fn: 0, x: 2, sel: 0 };
+    const FNS = [
+      { t: 'f(x) = 2x + 1', tex: '2x+1', f: x => 2 * x + 1, ok: () => true, dom: 'ℝ', rng: 'ℝ', domS: [[-6, 6]], rngS: [[-6, 6]], note: 'Toda x real tiene imagen y se alcanzan todos los reales: rango = codominio.' },
+      { t: 'f(x) = x²', tex: 'x^2', f: x => x * x, ok: () => true, dom: 'ℝ', rng: '[0, ∞)', domS: [[-6, 6]], rngS: [[0, 6]], note: 'El cuadrado nunca es negativo: el rango es solo una parte del codominio ℝ.' },
+      { t: 'f(x) = √x', tex: '\\sqrt{x}', f: x => Math.sqrt(x), ok: x => x >= 0, dom: '[0, ∞)', rng: '[0, ∞)', domS: [[0, 6]], rngS: [[0, 6]], note: 'No existe la raíz real de un negativo: el dominio se restringe a x ≥ 0.' },
+      { t: 'f(x) = 1/x', tex: '\\frac{1}{x}', f: x => 1 / x, ok: x => x !== 0, dom: 'ℝ ∖ {0}', rng: 'ℝ ∖ {0}', domS: [[-6, 0, 0, 1], [0, 6, 1, 0]], rngS: [[-6, 0, 0, 1], [0, 6, 1, 0]], note: 'No se puede dividir entre 0: el 0 se excluye del dominio, y 1/x nunca vale 0.' }
+    ];
+    const GR = '#2f9e44', RD = '#e03131', BL2 = '#1864ab';
+    function fnSvg() {
+      const m = M, mode = FS.tab; let aP = [], bP = [], link = null, ruleTxt = '', bad = false, aLab = 'Conjunto<br>A';
+      const defs = `<defs><marker id="fnah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker></defs>`;
+      let s = defs + `<text x="130" y="30" text-anchor="middle" class="fl" fill="${GR}">Dominio</text><text x="130" y="50" text-anchor="middle" class="fl" fill="${GR}">de la función</text>`
+        + `<circle cx="130" cy="175" r="105" fill="#f1fbf4" stroke="${GR}" stroke-width="6"/><circle cx="130" cy="175" r="93" fill="none" stroke="${GR}" stroke-width="2" stroke-dasharray="2 7" stroke-linecap="round"/>`
+        + `<rect x="300" y="115" width="160" height="120" fill="#fff5f5" stroke="${RD}" stroke-width="1.5"/>`
+        + `<circle cx="630" cy="175" r="105" fill="#eef4ff" stroke="${BL2}" stroke-width="6"/><circle cx="630" cy="175" r="93" fill="none" stroke="${BL2}" stroke-width="2" stroke-dasharray="2 7" stroke-linecap="round"/>`
+        + `<text x="630" y="14" text-anchor="middle" class="fl" fill="${BL2}">Codominio ó</text><text x="630" y="33" text-anchor="middle" class="fl" fill="${BL2}">Contradominio</text><text x="630" y="52" text-anchor="middle" class="fl" fill="${BL2}">de la función</text>`
+        + `<line x1="240" y1="175" x2="298" y2="175" stroke="#334155" stroke-width="2.5" marker-end="url(#fnah)"/><line x1="462" y1="175" x2="522" y2="175" stroke="#334155" stroke-width="2.5" marker-end="url(#fnah)"/>`
+        + `<line x1="380" y1="292" x2="380" y2="240" stroke="#334155" stroke-width="2" marker-end="url(#fnah)"/><text x="380" y="312" text-anchor="middle" class="fl" fill="${RD}">función f(x)</text>`
+        + `<text x="630" y="318" text-anchor="middle" class="fl" fill="${BL2}">Rango ó imagen</text><line x1="630" y1="302" x2="630" y2="${mode === 'gen' ? 266 : 262}" stroke="#334155" stroke-width="2" marker-end="url(#fnah)"/>`;
+      if (mode === 'gen') {
+        const f = FNS[FS.fn], x = FS.x, ok = f.ok(x), y = ok ? f.f(x) : null;
+        s += `<text x="130" y="135" text-anchor="middle" class="fbig" fill="${GR}">Conjunto</text><text x="130" y="165" text-anchor="middle" class="fbig" fill="${GR}">A</text>`
+          + `<text x="630" y="135" text-anchor="middle" class="fbig" fill="${BL2}">Conjunto</text><text x="630" y="165" text-anchor="middle" class="fbig" fill="${BL2}">B = ℝ</text>`
+          + `<ellipse cx="630" cy="228" rx="64" ry="34" fill="#cfe0ff" stroke="${BL2}" stroke-width="2" stroke-dasharray="5 4"/>`
+          + `<text x="380" y="160" text-anchor="middle" class="fl" fill="${RD}">Regla de</text><text x="380" y="180" text-anchor="middle" class="fl" fill="${RD}">correspondencia</text><text x="380" y="210" text-anchor="middle" class="fl" fill="#0f172a">f(x) = ${f.t.slice(7)}</text>`;
+        if (ok) s += `<path class="ed fresh" pathLength="1" d="M130 228 Q300 228 380 228 T630 228" fill="none" stroke="#7048e8" stroke-width="3.5"/><circle cx="130" cy="228" r="9" fill="${GR}"/><text x="130" y="256" text-anchor="middle" class="fl" fill="${GR}">x = ${dec(x, 2)}</text><g class="nd fresh"><circle cx="630" cy="228" r="9" fill="${BL2}"/></g><text x="630" y="214" text-anchor="middle" class="fl" fill="${BL2}">y = ${dec(y, 3)}</text>`;
+        else s += `<circle cx="130" cy="228" r="9" fill="${RD}"/><text x="130" y="256" text-anchor="middle" class="fl" fill="${RD}">x = ${dec(x, 2)}</text><text x="380" y="262" text-anchor="middle" class="fl" fill="${RD}">✗ no está en el dominio</text>`;
+      } else {
+        const outs = m.outs.slice(0, 8), vals = m.rows.slice(0, 8), sel = Math.min(FS.sel, outs.length - 1), pa = i => ({ x: 95 + (i % 2) * 70, y: 140 + Math.floor(i / 2) * 36 }), pb = i => ({ x: 598 + (i % 2) * 64, y: 135 + Math.floor(i / 2) * 36 });
+        s += `<text x="130" y="108" text-anchor="middle" class="fbig" fill="${GR}">Ω</text><text x="630" y="108" text-anchor="middle" class="fbig" fill="${BL2}">ℝ</text>`
+          + `<ellipse cx="630" cy="190" rx="78" ry="62" fill="#cfe0ff" stroke="${BL2}" stroke-width="2" stroke-dasharray="5 4"/>`
+          + `<text x="380" y="160" text-anchor="middle" class="fl" fill="${RD}">Regla de</text><text x="380" y="180" text-anchor="middle" class="fl" fill="${RD}">correspondencia</text><text x="380" y="210" text-anchor="middle" class="fl" fill="#0f172a">X(ω)</text>`;
+        const pill = (p, t, c, on, attr = '') => `<g ${attr} class="${attr ? 'fpick' : ''}"><rect x="${p.x - 27}" y="${p.y - 12}" width="54" height="24" rx="12" fill="${on ? c : '#fff'}" stroke="${c}" stroke-width="2"/><text x="${p.x}" y="${p.y + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="${on ? '#fff' : c}">${t}</text></g>`;
+        const tgt = vals.findIndex(r => r.x === outs[sel].x);
+        outs.forEach((o, i) => { s += pill(pa(i), m.ex.kind === 'grid' ? `(${o.lab})` : o.lab, GR, i === sel, `data-a="fsel" data-v="${i}"`); });
+        if (m.outs.length > 8) s += `<text x="130" y="288" text-anchor="middle" class="fl" fill="${GR}">⋮ (${m.outs.length} resultados)</text>`;
+        vals.forEach((r, i) => { s += pill(pb(i), xs_(r.x), BL2, i === tgt); });
+        const A = pa(sel), Bq = pb(tgt); s += `<path class="ed fresh" pathLength="1" d="M${A.x + 27} ${A.y} Q300 ${A.y} 380 175 T${Bq.x - 27} ${Bq.y}" fill="none" stroke="#7048e8" stroke-width="3.5"/>`;
+      }
+      return `<svg class="chs fnsvg" viewBox="0 0 760 330" role="img">${s}</svg>`;
+    }
+    function nlSvg() {
+      const f = FNS[FS.fn], X = v => 60 + (v + 6) / 12 * 330, Y = v => 175 - (v + 6) / 12 * 150;
+      const seg = (S2, horiz, col) => S2.map(q => { const a = q[0], b = q[1]; return horiz ? `<line x1="${X(a)}" x2="${X(b)}" y1="100" y2="100" stroke="${col}" stroke-width="9" stroke-linecap="butt" opacity=".55"/>` + (q[2] ? `<circle cx="${X(a)}" cy="100" r="6" fill="#fff" stroke="${col}" stroke-width="3"/>` : '') + (q[3] ? `<circle cx="${X(b)}" cy="100" r="6" fill="#fff" stroke="${col}" stroke-width="3"/>` : '') : `<line y1="${Y(a)}" y2="${Y(b)}" x1="560" x2="560" stroke="${col}" stroke-width="9" opacity=".55"/>` + (q[2] ? `<circle cx="560" cy="${Y(a)}" r="6" fill="#fff" stroke="${col}" stroke-width="3"/>` : '') + (q[3] ? `<circle cx="560" cy="${Y(b)}" r="6" fill="#fff" stroke="${col}" stroke-width="3"/>` : ''); }).join('');
+      const x = FS.x, ok = f.ok(x), y = ok ? f.f(x) : null, clamp = v => Math.max(-6, Math.min(6, v));
+      return `<svg class="chs" viewBox="0 0 760 200" role="img"><defs><marker id="nlh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <text x="225" y="38" text-anchor="middle" class="fl" fill="${GR}">Dominio: ${f.dom === 'ℝ' ? 'son todos los reales' : f.dom}</text><line x1="40" x2="410" y1="100" y2="100" stroke="${GR}" stroke-width="2.5" marker-start="url(#nlh)" marker-end="url(#nlh)"/>${seg(f.domS, true, GR)}
+        <text x="40" y="128" text-anchor="middle" font-size="13" fill="${GR}">−∞</text><text x="410" y="128" text-anchor="middle" font-size="13" fill="${GR}">∞</text><text x="225" y="150" text-anchor="middle" class="fl" fill="${GR}">x ∈ ℝ</text>
+        ${ok ? `<g class="nd fresh"><circle cx="${X(clamp(x))}" cy="100" r="8" fill="${GR}"/></g>` : `<circle cx="${X(clamp(x))}" cy="100" r="8" fill="${RD}"/>`}
+        <text x="640" y="44" text-anchor="middle" class="fl" fill="${BL2}">Rango: ${f.rng === 'ℝ' ? 'son todos los reales' : f.rng}</text><line x1="560" x2="560" y1="190" y2="10" stroke="${BL2}" stroke-width="2.5" marker-start="url(#nlh)" marker-end="url(#nlh)" style="display:none"/>
+        <line x1="560" x2="560" y1="182" y2="14" stroke="${BL2}" stroke-width="2.5" marker-start="url(#nlh)" marker-end="url(#nlh)"/>${seg(f.rngS, false, BL2)}
+        <text x="535" y="22" text-anchor="end" font-size="13" fill="${BL2}">∞</text><text x="535" y="184" text-anchor="end" font-size="13" fill="${BL2}">−∞</text><text x="600" y="106" class="fl" fill="${BL2}">y ∈ ℝ</text>
+        ${ok ? `<g class="nd fresh"><circle cx="560" cy="${Y(clamp(y))}" r="8" fill="${BL2}"/></g>` : ''}</svg>`;
+    }
+    function fnR() {
+      const m = M, ex = m.ex;
+      $('#fn-tabs').innerHTML = [['gen', 'Una función cualquiera f(x)'], ['va', 'La V.A. como función X(ω)']].map(t => `<button class="${FS.tab === t[0] ? 'on' : ''}" style="--c:${GR}" data-a="fnTab" data-v="${t[0]}">${t[1]}</button>`).join('');
+      let ctl = '', txt = '', low = '';
+      if (FS.tab === 'gen') {
+        const f = FNS[FS.fn], x = FS.x, ok = f.ok(x), y = ok ? f.f(x) : null;
+        ctl = `<div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="stchips">${FNS.map((q, i) => `<button class="${FS.fn === i ? 'on' : ''}" data-a="fnPick" data-v="${i}">${q.t}</button>`).join('')}</div><div class="d-flex align-items-center gap-2"><b>x =</b><input type="range" min="-5" max="5" step="0.5" value="${x}" data-in="fnX" style="width:200px"><b>${dec(x, 1)}</b></div></div>`;
+        txt = stp(1, GR, 'Dominio', `Valores de $x$ permitidos: <b>${f.dom}</b>. ${ok ? `Aquí $x=${dec(x, 1)}$ <span class="ok-t">sí pertenece</span>.` : `Aquí $x=${dec(x, 1)}$ <span class="no-t">no pertenece</span>: no hay imagen.`}`)
+          + stp(2, RD, 'Regla de correspondencia', `${fd(`f(x)=${f.tex}`)}Dice qué hacer con cada $x$ para obtener su imagen. Cada $x$ tiene <b>una sola</b> imagen.`)
+          + stp(3, '#7048e8', 'Imagen de x', ok ? fd(`f(${dec(x, 1)})=${dec(y, 3)}`) : 'Sin imagen (fuera del dominio).')
+          + stp(4, BL2, 'Codominio y rango', `<b>Codominio:</b> el conjunto B donde «caen» las imágenes: aquí ℝ.<br><b>Rango o imagen:</b> los valores que <b>realmente</b> se alcanzan: <b>${f.rng}</b>.<div class="small text-muted mt-1">${f.note}</div>`);
+        low = nlSvg();
+      } else {
+        const o = m.outs[Math.min(FS.sel, m.outs.length - 1)];
+        ctl = `<div class="small mb-1">Problema: <b>${ex.ico} ${ex.tit}</b> (cámbialo en las pestañas de arriba). <i>Toca un resultado de Ω</i> para ver su imagen.</div>${exBar()}`;
+        txt = stp(1, GR, 'Dominio = Ω', `El espacio muestral, con <b>${m.outs.length}</b> resultados.`)
+          + stp(2, RD, 'Regla de correspondencia', `<b>${ex.rule}</b>`)
+          + stp(3, '#7048e8', 'Imagen del resultado elegido', fd(`X(${m.ex.kind === 'grid' ? '(' + o.lab + ')' : o.lab})=${xs_(o.x)}`))
+          + stp(4, BL2, 'Codominio y rango', `<b>Codominio:</b> ℝ (cualquier número real).<br><b>Rango:</b> $R_X=\\{${m.xs.map(xs_).join(',\\ ')}\\}$, solo ${m.xs.length} valores.<div class="small text-muted mt-1">Por eso la V.A. discreta tiene una tabla finita: su rango es un conjunto pequeño dentro de ℝ.</div>`);
+        const [x0, x1] = xRange(m), X = v => 40 + (v - x0) / (x1 - x0) * 680;
+        low = `<svg class="chs" viewBox="0 0 760 110" role="img"><defs><marker id="nlh2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${BL2}"/></marker></defs><text x="20" y="22" class="fl" fill="${BL2}">ℝ</text><line x1="20" x2="740" y1="60" y2="60" stroke="${BL2}" stroke-width="2.5" marker-start="url(#nlh2)" marker-end="url(#nlh2)"/>${m.rows.map(r => `<g class="nd fresh"><circle cx="${X(r.x)}" cy="60" r="8" fill="${r.x === o.x ? '#7048e8' : BL2}"/></g><text x="${X(r.x)}" y="92" text-anchor="middle" font-size="13" font-weight="700" fill="${BL2}">${xs_(r.x)}</text>`).join('')}<text x="740" y="22" text-anchor="end" class="fl" fill="${BL2}">el rango son solo estos puntos de ℝ</text></svg>`;
+      }
+      $('#fn-body').innerHTML = `${ctl}<div class="row g-3"><div class="col-lg-8">${fnSvg()}</div><div class="col-lg-4">${txt}</div></div><div class="mt-2">${low}</div>`;
+      math($('#fn-body'));
+    }
+    ACT.fnTab = el => { FS.tab = el.dataset.v; fnR(); }; ACT.fnPick = el => { FS.fn = +el.dataset.v; if (!FNS[FS.fn].ok(FS.x)) FS.x = 2; fnR(); }; ACT.fsel = el => { FS.sel = +el.dataset.v; fnR(); };
+    INP.fnX = el => { FS.x = +el.value; fnR(); };
+    RENDERS.push(fnR);
+
+    /* ===================== Intervalos abiertos y cerrados ===================== */
+    const IV = { tab: 'one', op: '<', a: 5, b: 8, ty: 'oo', k: 10, timer: null };
+    const OPS = { '<': { n: (a) => `(−∞, ${a})`, cl: false, side: 'L', w: 'menor que', ineq: 'x < a' }, '≤': { n: (a) => `(−∞, ${a}]`, cl: true, side: 'L', w: 'menor o igual que', ineq: 'x ≤ a' }, '>': { n: (a) => `(${a}, ∞)`, cl: false, side: 'R', w: 'mayor que', ineq: 'x > a' }, '≥': { n: (a) => `[${a}, ∞)`, cl: true, side: 'R', w: 'mayor o igual que', ineq: 'x ≥ a' } };
+    const TYS = { oo: { l: '(a, b)', ineq: 'a < x < b', lc: false, rc: false, w: 'abierto' }, cc: { l: '[a, b]', ineq: 'a ≤ x ≤ b', lc: true, rc: true, w: 'cerrado' }, oc: { l: '(a, b]', ineq: 'a < x ≤ b', lc: false, rc: true, w: 'semiabierto por la izquierda' }, co: { l: '[a, b)', ineq: 'a ≤ x < b', lc: true, rc: false, w: 'semiabierto por la derecha' } };
+    const ivIn = n => { if (IV.tab === 'one') { const o = IV.op, a = IV.a; return o === '<' ? n < a : o === '≤' ? n <= a : o === '>' ? n > a : n >= a; } const t = TYS[IV.ty]; return (t.lc ? n >= IV.a : n > IV.a) && (t.rc ? n <= IV.b : n < IV.b); };
+    const ivX = v => 40 + v / 11 * 680, IVC = '#7048e8';
+    function ivCircle(x, closed, c = IVC) { return `<g class="nd fresh"><circle cx="${x}" cy="90" r="11" fill="${closed ? c : '#fff'}" stroke="${c}" stroke-width="4"/></g><text x="${x}" y="${closed ? 128 : 128}" text-anchor="middle" class="fl" fill="${c}">${closed ? 'relleno' : 'vacío'}</text>`; }
+    function ivLine(w) {
+      const a = IV.a, b = IV.b; let s = `<defs><marker id="ivh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker></defs><line x1="20" x2="745" y1="90" y2="90" stroke="#334155" stroke-width="2.5" marker-start="url(#ivh)" marker-end="url(#ivh)"/><text x="14" y="70" font-size="13" fill="#64748b">−∞</text><text x="742" y="70" text-anchor="end" font-size="13" fill="#64748b">∞</text>`;
+      s += Array.from({ length: 10 }, (_, i) => i + 1).map(n => `<line x1="${ivX(n)}" x2="${ivX(n)}" y1="84" y2="96" stroke="#334155" stroke-width="2"/><text x="${ivX(n)}" y="152" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">${n}</text>`).join('');
+      if (IV.tab === 'one') { const o = OPS[IV.op], x = ivX(a), x2 = o.side === 'L' ? 24 : 741; s += `<path class="ed fresh" pathLength="1" d="M${x} 90 L${x2} 90" stroke="${IVC}" stroke-width="9" opacity=".55" fill="none"/>` + ivCircle(x, o.cl) + `<text x="${x}" y="66" text-anchor="middle" font-size="15" font-weight="800" fill="${IVC}">a = ${a}</text>`; }
+      else { const t = TYS[IV.ty], xa = ivX(a), xb = ivX(b); s += `<path class="ed fresh" pathLength="1" d="M${xa} 90 L${xb} 90" stroke="${IVC}" stroke-width="9" opacity=".55" fill="none"/>` + ivCircle(xa, t.lc) + ivCircle(xb, t.rc) + `<text x="${xa}" y="66" text-anchor="middle" font-size="15" font-weight="800" fill="${IVC}">a = ${a}</text><text x="${xb}" y="66" text-anchor="middle" font-size="15" font-weight="800" fill="${IVC}">b = ${b}</text>`; }
+      if (!w) return `<svg class="chs" viewBox="0 0 760 175" role="img">${s}</svg>`;
+      for (let n = 1; n <= 10; n++) if (n <= IV.k && n !== a && !(IV.tab === 'two' && n === b)) { const ok = ivIn(n); s += `<g class="nd fresh"><circle cx="${ivX(n)}" cy="${ok ? 90 : 90}" r="${ok ? 6 : 4}" fill="${ok ? '#2f9e44' : '#adb5bd'}" stroke="#fff" stroke-width="1.5"/></g>`; }
+      return `<svg class="chs" viewBox="0 0 760 175" role="img">${s}</svg>`;
+    }
+    function ivRow(n) {
+      const ok = ivIn(n), cur = n === IV.k && IV.timer; let ex;
+      if (IV.tab === 'one') { const o = IV.op, a = IV.a, eq = n === a; ex = eq ? (OPS[o].cl ? `es igual a ${a} y «${o}» <b>sí incluye</b> el igual` : `es igual a ${a} y «${o}» <b>no incluye</b> el igual`) : ok ? `${n} es ${OPS[o].w} ${a}` : `${n} no es ${OPS[o].w} ${a}`; return [`${n} ${o} ${a}`, ok, ex, eq]; }
+      const t = TYS[IV.ty], a = IV.a, b = IV.b, eq = n === a || n === b; ex = eq ? (n === a ? (t.lc ? 'extremo izquierdo: <b>incluido</b> (corchete)' : 'extremo izquierdo: <b>excluido</b> (paréntesis)') : (t.rc ? 'extremo derecho: <b>incluido</b> (corchete)' : 'extremo derecho: <b>excluido</b> (paréntesis)')) : ok ? `queda entre ${a} y ${b}` : `queda fuera de ${a} y ${b}`; return [`${t.lc ? a + ' ≤ ' : a + ' < '}${n}${t.rc ? ' ≤ ' : ' < '}${b}`, ok, ex, eq];
+    }
+    function ivR() {
+      $('#iv-tabs').innerHTML = [['one', 'Un extremo: &lt; ≤ &gt; ≥'], ['two', 'Dos extremos: (a,b) [a,b]'], ['cmp', 'Comparativa: círculo vacío vs relleno']].map(t => `<button class="${IV.tab === t[0] ? 'on' : ''}" style="--c:#7048e8" data-a="ivTab" data-v="${t[0]}">${t[1]}</button>`).join('');
+      let h = '';
+      if (IV.tab === 'cmp') {
+        h = `<div class="row g-3">${[['(a, b)  ó  x < a', false, 'Intervalo ABIERTO', 'No incluye el extremo. Se dibuja un <b>círculo vacío ○</b> y se escribe con <b>paréntesis ( )</b>. Corresponde a los signos <b>&lt;</b> y <b>&gt;</b>.', '#e03131'], ['[a, b]  ó  x ≤ a', true, 'Intervalo CERRADO', 'Sí incluye el extremo. Se dibuja un <b>círculo relleno ●</b> y se escribe con <b>corchetes [ ]</b>. Corresponde a los signos <b>≤</b> y <b>≥</b> («o igual»).', '#2f9e44']].map(c => `<div class="col-md-6"><div class="stp" style="--c:${c[4]}"><div class="sh">${c[2]}</div><svg class="chs" viewBox="0 0 360 70"><line x1="10" x2="350" y1="35" y2="35" stroke="#334155" stroke-width="2.5"/><line x1="70" x2="350" y1="35" y2="35" stroke="${c[4]}" stroke-width="8" opacity=".5"/><circle cx="70" cy="35" r="11" fill="${c[1] ? c[4] : '#fff'}" stroke="${c[4]}" stroke-width="4"/></svg><div class="text-center fw-bold">${c[0]}</div><div class="small mt-1">${c[3]}</div></div></div>`).join('')}</div>
+        <div class="table-responsive mt-3"><table class="table table-sm table-bordered align-middle text-center"><thead><tr><th>Símbolo</th><th>Se lee</th><th>Extremo</th><th>Círculo</th><th>Intervalo</th><th>1…10 con a = 3</th></tr></thead><tbody>${[['<', 'menor que', 'no incluido', '○ vacío', '(−∞, 3)', '1, 2'], ['≤', 'menor o igual que', 'incluido', '● relleno', '(−∞, 3]', '1, 2, 3'], ['>', 'mayor que', 'no incluido', '○ vacío', '(3, ∞)', '4 … 10'], ['≥', 'mayor o igual que', 'incluido', '● relleno', '[3, ∞)', '3, 4 … 10']].map(r => `<tr><td class="fw-bold fs-5">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td class="fw-bold">${r[4]}</td><td>${r[5]}</td></tr>`).join('')}</tbody></table></div>
+        <div class="stp" style="--c:#e8590c"><div class="sh"><span class="sn">!</span>Aclaración importante sobre «(x, 3)»</div><b>≤ sí es círculo relleno, pero el relleno lo da el corchete, no el paréntesis.</b><br>• $x\\le 3$ se escribe <b>$(-\\infty,\\,3]$</b>: corchete en el 3 → círculo <b>relleno</b>.<br>• $(x,3)$ con <b>paréntesis</b> es intervalo abierto: ni $x$ ni 3 entran → círculo <b>vacío</b>.<br>• Si quieres el 3 incluido, es $(x,3]$ o $[x,3]$ (corchete en el extremo incluido).<br>• El infinito siempre lleva paréntesis, porque no es un número alcanzable.</div>`;
+      } else {
+        let ctl = '';
+        if (IV.tab === 'one') ctl = `<div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="stchips">${Object.keys(OPS).map(o => `<button class="${IV.op === o ? 'on' : ''}" style="font-size:1.1rem" data-a="ivOp" data-v="${o}">x ${o} a</button>`).join('')}</div><div class="d-flex align-items-center gap-2"><b>a =</b><input type="range" min="1" max="10" step="1" value="${IV.a}" data-in="ivA" style="width:170px"><b>${IV.a}</b></div><button class="btn btn-sm btn-primary rounded-pill" data-a="ivPlay"><i class="bi bi-play-fill"></i> Animar 1 → 10</button></div>`;
+        else ctl = `<div class="d-flex flex-wrap gap-3 align-items-center mb-2"><div class="stchips">${Object.keys(TYS).map(k => `<button class="${IV.ty === k ? 'on' : ''}" data-a="ivTy" data-v="${k}">${TYS[k].l}</button>`).join('')}</div><div class="d-flex align-items-center gap-2"><b>a =</b><input type="range" min="1" max="9" step="1" value="${IV.a}" data-in="ivA" style="width:110px"><b>${IV.a}</b><b>b =</b><input type="range" min="2" max="10" step="1" value="${IV.b}" data-in="ivB" style="width:110px"><b>${IV.b}</b></div><button class="btn btn-sm btn-primary rounded-pill" data-a="ivPlay"><i class="bi bi-play-fill"></i> Animar 1 → 10</button></div>`;
+        const rows = Array.from({ length: 10 }, (_, i) => i + 1).filter(n => n <= IV.k).map(n => { const r = ivRow(n); return `<tr class="${r[3] ? 'table-warning' : ''}"><td class="fw-bold">${n}</td><td><span class="cx">${r[0]}</span></td><td class="${r[1] ? 'ok-t' : 'no-t'} fw-bold">${r[1] ? '✓ sí' : '✗ no'}</td><td class="small">${r[2]}</td></tr>`; }).join('');
+        const yes = Array.from({ length: 10 }, (_, i) => i + 1).filter(ivIn);
+        let head, notation, circ;
+        if (IV.tab === 'one') { const o = OPS[IV.op]; notation = o.n(IV.a); circ = o.cl ? '<b>círculo relleno ●</b> (el extremo sí entra)' : '<b>círculo vacío ○</b> (el extremo no entra)'; head = `<b>x ${IV.op} ${IV.a}</b>: «x es ${o.w} ${IV.a}»`; }
+        else { const t = TYS[IV.ty]; notation = t.l.replace('a', IV.a).replace('b', IV.b); circ = `extremo ${IV.a}: ${t.lc ? '<b>relleno ●</b>' : '<b>vacío ○</b>'}; extremo ${IV.b}: ${t.rc ? '<b>relleno ●</b>' : '<b>vacío ○</b>'}`; head = `<b>${t.ineq.replace('a', IV.a).replace('b', IV.b)}</b> (${t.w})`; }
+        h = ctl + `<div class="row g-3"><div class="col-lg-7"><div class="demo p-2">${ivLine(true)}</div><div class="table-responsive mt-2" style="max-height:340px;overflow:auto"><table class="table table-sm align-middle mb-0"><thead><tr><th>n</th><th>Comparación</th><th>¿Cumple?</th><th>Explicación</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+        <div class="col-lg-5">${stp(1, '#1c7ed6', 'Desigualdad', head)}${stp(2, '#e03131', 'Círculo en la gráfica', circ)}${stp(3, '#7048e8', 'Notación de intervalo', fd(notation.replace(/∞/g, '\\infty').replace(/−/g, '-')))}${stp(4, '#2f9e44', 'Números del 1 al 10 que cumplen', yes.length ? `<b>${yes.join(', ')}</b> (${yes.length} de 10)` : 'Ninguno')}<div class="small text-muted">${IV.tab === 'one' ? 'Prueba <b>a = 3</b>: con « &lt; » el 3 queda fuera; cambia a « ≤ » y el 3 entra (el círculo se rellena).' : 'Compara (a,b) con [a,b]: solo cambian los extremos a y b.'}</div></div></div>`;
+      }
+      $('#iv-body').innerHTML = h; math($('#iv-body'));
+    }
+    function ivStop() { if (IV.timer) { clearInterval(IV.timer); IV.timer = null; } }
+    ACT.ivTab = el => { ivStop(); IV.k = 10; IV.tab = el.dataset.v; if (IV.a >= IV.b) IV.a = IV.b - 1; ivR(); };
+    ACT.ivOp = el => { ivStop(); IV.k = 10; IV.op = el.dataset.v; ivR(); }; ACT.ivTy = el => { ivStop(); IV.k = 10; IV.ty = el.dataset.v; ivR(); };
+    INP.ivA = el => { ivStop(); IV.k = 10; IV.a = +el.value; if (IV.tab === 'two' && IV.b <= IV.a) IV.b = IV.a + 1; ivR(); };
+    INP.ivB = el => { ivStop(); IV.k = 10; IV.b = +el.value; if (IV.a >= IV.b) IV.a = IV.b - 1; ivR(); };
+    ACT.ivPlay = () => { ivStop(); IV.k = 0; ivR(); IV.timer = setInterval(() => { IV.k++; if (IV.k >= 10) ivStop(); ivR(); }, 750); };
+    RENDERS.push(() => { if (!IV.timer) ivR(); });
     /* ===================== 2. Una V.A. = una regla ===================== */
     const VAS = [
       { t: 'N.º de águilas', f: s => s.filter(c => c === 'A').length, d: 'X = cuántas águilas salieron' },
@@ -1205,6 +1351,24 @@
     function manDefs() {
       const m = M, ex = m.ex, D = m.D, r1 = m.rows[Math.min(1, m.rows.length - 1)];
       return [
+        { k: 'funcion', cat: 'a', t: 'Función: dominio, codominio y rango', c: '#2f9e44',
+          def: R`Una <b>función</b> $f:A\to B$ es una <b>regla de correspondencia</b> que asigna a <b>cada</b> elemento $x$ del conjunto $A$ <b>un único</b> elemento $f(x)$ del conjunto $B$. El conjunto $A$ es el <b>dominio</b>; $B$ es el <b>codominio</b> (o contradominio); y el conjunto de imágenes que realmente se alcanzan es el <b>rango</b> (o imagen).`,
+          thm: [R`<b>Unicidad:</b> cada $x$ del dominio tiene exactamente una imagen (prueba de la recta vertical en la gráfica). Dos $x$ distintas sí pueden tener la misma imagen.`, R`<b>Rango ⊆ codominio:</b> el rango es una parte (o todo) del codominio. Si coinciden, la función es <b>sobreyectiva</b>.`, R`<b>Restricciones del dominio en ℝ:</b> no se puede dividir entre 0 ($\frac{1}{x}$: $x\ne 0$) ni sacar raíz par de un negativo ($\sqrt{x}$: $x\ge 0$).`, R`<b>Una V.A. es una función:</b> $X:\Omega\toℝ$ tiene como dominio el espacio muestral $\Omega$, como codominio los reales y como rango $R_X$, el conjunto (finito) de valores que toma.`],
+          f: [R`f:A\to B,\qquad y=f(x)`, R`\mathrm{Dom}(f)=A`, R`R_f=\{\,f(x) : x\in A\,\}\subseteq B`], dn: [['A', 'conjunto de partida (dominio)'], ['B', 'conjunto de llegada (codominio o contradominio)'], [R`f(x)`, 'imagen de x'], [R`R_f`, 'rango o imagen de la función']],
+          use: 'Identifica de dónde salen los datos (dominio), qué regla se aplica y qué valores se obtienen realmente (rango). En probabilidad: dominio = resultados, regla = definición de X, rango = valores posibles de X.',
+          ex: () => `«${exT()}»: dominio $\\Omega$ (${m.outs.length} resultados), regla: ${ex.rule}; codominio $ℝ$; rango $R_X=\\{${m.xs.map(xs_).join(',\\ ')}\\}$.` },
+        { k: 'reales', cat: 'a', t: 'Dominio y rango en la recta real', c: '#1864ab',
+          def: R`Cuando una función real $f:ℝ\toℝ$ no tiene restricciones, su <b>dominio son todos los reales</b> (el eje $x$ completo, de $-\infty$ a $\infty$) y el codominio es $ℝ$ (el eje $y$). El <b>rango</b> puede ser todos los reales o solo una parte (un intervalo).`,
+          thm: [R`<b>Intervalos:</b> $[a,b]$ incluye los extremos (círculo lleno); $(a,b)$ no los incluye (círculo vacío); $[0,\infty)$ significa $x\ge 0$. $ℝ\setminus\{0\}$ son todos los reales menos el 0.`, R`<b>Ejemplos:</b> $f(x)=2x+1$ tiene dominio y rango $ℝ$; $f(x)=x^2$ tiene dominio $ℝ$ y rango $[0,\infty)$; $f(x)=\sqrt{x}$ tiene dominio y rango $[0,\infty)$.`],
+          f: [R`\mathrm{Dom}(f)=ℝ\quad(x\inℝ)`, R`R_f\subseteqℝ\quad(y\inℝ)`, R`[a,b]=\{x\inℝ: a\le x\le b\}`], dn: [[R`ℝ`, 'conjunto de los números reales'], [R`\infty`, 'infinito (no es un número, indica que no hay tope)']],
+          use: 'Para el dominio pregunta «¿qué x no puedo usar?»; para el rango pregunta «¿qué valores de y se alcanzan?». Dibújalos como segmentos sobre las rectas.',
+          ex: () => `«${exT()}»: la V.A. sale de $\\Omega$ hacia $ℝ$, pero solo toma ${m.xs.length} valores: $R_X=\\{${m.xs.map(xs_).join(',\\ ')}\\}\\subsetℝ$.` },
+        { k: 'intervalos', cat: 'a', t: 'Intervalos abiertos y cerrados', c: '#7048e8',
+          def: R`Un <b>intervalo</b> es el conjunto de todos los reales entre dos extremos. Es <b>abierto</b> si no incluye el extremo (se escribe con paréntesis y en la gráfica lleva <b>círculo vacío ○</b>) y <b>cerrado</b> si lo incluye (corchete y <b>círculo relleno ●</b>). Puede ser mixto (semiabierto).`,
+          thm: [R`<b>Desigualdad estricta</b> ($<$, $>$) → extremo <b>excluido</b> → paréntesis y círculo vacío. <b>Desigualdad con «igual»</b> ($\le$, $\ge$) → extremo <b>incluido</b> → corchete y círculo relleno.`, R`<b>El infinito</b> ($\infty$, $-\infty$) siempre lleva paréntesis, porque no es un número que se pueda alcanzar.`, R`<b>Cuidado:</b> $(x,3)$ con paréntesis es abierto (círculo vacío). El 3 se incluye con corchete: $(x,3]$ o $[x,3]$. Así, $x\le 3$ es $(-\infty,3]$.`, R`<b>En probabilidad:</b> $P(X<a)$ no cuenta el valor $a$, pero $P(X\le a)=F(a)$ sí lo cuenta. En una V.A. discreta la diferencia es justo $P(X=a)$.`],
+          f: [R`x<a\iff x\in(-\infty,a)\qquad x\le a\iff x\in(-\infty,a]`, R`x>a\iff x\in(a,\infty)\qquad x\ge a\iff x\in[a,\infty)`, R`a<x<b\iff x\in(a,b)\qquad a\le x\le b\iff x\in[a,b]`, R`P(X\le a)-P(X<a)=P(X=a)`], dn: [['a, b', 'extremos del intervalo'], ['( )', 'extremo no incluido: círculo vacío'], ['[ ]', 'extremo incluido: círculo relleno'], [R`F(a)`, 'FDP acumulada, P(X ≤ a)']],
+          use: 'Traduce la desigualdad del enunciado: ¿trae «o igual»? entonces corchete y círculo relleno; si no, paréntesis y círculo vacío. Luego marca qué valores de X caen en el intervalo y suma sus probabilidades.',
+          ex: () => { const xs = m.xs, v = xs[Math.min(1, xs.length - 1)], lt = m.rows.filter(r => r.x < v), le = m.rows.filter(r => r.x <= v); return `«${exT()}», con $a=${xs_(v)}$: $P(X<${xs_(v)})$ usa solo {${lt.map(r => xs_(r.x)).join(', ') || '∅'}} (círculo vacío); $P(X\\le ${xs_(v)})$ usa {${le.map(r => xs_(r.x)).join(', ')}} (círculo relleno): la diferencia es el valor ${xs_(v)} mismo.`; } },
         { k: 'va', cat: 'a', t: 'Variable aleatoria (V.A.)', c: CX,
           def: R`Una <b>variable aleatoria</b> es una función $X$ que asigna un <b>número real</b> a cada resultado $\omega$ del espacio muestral $\Omega$. Es <b>discreta</b> si solo puede tomar un número finito (o numerable) de valores.`,
           thm: [R`<b>Notación:</b> la mayúscula $X$ es la variable; la minúscula $x$ es uno de sus valores. $\{X=x\}$ es el evento formado por los resultados cuyo valor es $x$.`, R`<b>Una experiencia, muchas V.A.:</b> con 3 monedas, «n.º de águilas», «dinero ganado» o «águilas − soles» son variables distintas con FDP distintas.`],
@@ -1293,7 +1457,7 @@
           def: R`Al repetir un experimento muchas veces de forma independiente, el <b>promedio</b> de los resultados se acerca a la esperanza $\mu$.`,
           thm: [R`<b>Ley débil:</b> para todo $\varepsilon>0$, $P(|\bar X_n-\mu|>\varepsilon)\to 0$ cuando $n\to\infty$.`, R`<b>Aclaración:</b> no hay «compensación» (la moneda no «se acuerda»): el promedio converge porque los nuevos datos diluyen las desviaciones.`],
           f: [R`\bar X_n=\frac{X_1+X_2+\cdots+X_n}{n}\to\mu`], dn: [[R`\bar X_n`, 'promedio de n repeticiones']],
-          use: 'Es la justificación de la esperanza como «promedio a largo plazo». Compruébalo con el simulador de la sección 5.',
+          use: 'Es la justificación de la esperanza como «promedio a largo plazo». Compruébalo con el simulador de la sección de Esperanza.',
           ex: () => `«${exT()}»: tras muchas jugadas el promedio se acerca a $\\mu=${decT(m.E, 3)}$.` },
         { k: 'cheb', cat: 'd', t: 'Desigualdad de Chebyshev', c: '#d6336c',
           def: R`Cota <b>universal</b> (sirve para cualquier distribución con media y varianza finitas) para la probabilidad de alejarse de la media.`,
