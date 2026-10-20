@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operaciones básicas binarios</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --bit:#1864ab; --w:#0c8599; --carry:#e8590c; --borrow:#e03131; --res:#2f9e44; --dec:#6f42c1; --hex:#c25e00;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    html { scroll-behavior:smooth; }
+    body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
+    main { flex:1; }
+    section.lesson { scroll-margin-top:120px; }
+    .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
+    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
+    .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
+    .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
+    .app-navbar .dropdown-item:hover { background:#e7efff; color:#0d6efd; }
+    .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
+    .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
+    .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.2rem 1rem 2.8rem; border-bottom:5px solid #1c7ed6; border-radius:0 0 40px 40px; }
+    .hero-bits { position:absolute; inset:0; display:flex; flex-wrap:wrap; gap:.2rem .9rem; justify-content:center; align-content:center; font-family:'Courier New',monospace; font-weight:800; font-size:2.4rem; color:#4dabf7; opacity:.13; pointer-events:none; overflow:hidden; line-height:1.1; }
+    .hero-bits span { animation:bitfade 3s ease-in-out infinite alternate; animation-delay:var(--d); } @keyframes bitfade { from { opacity:.25; } to { opacity:1; } }
+    .hero-header .container { position:relative; z-index:1; }
+    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
+    .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
+    .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
+    .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .lesson-head h2 { color:#fff; }
+    .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
+    .h-1{background:linear-gradient(135deg,#0c8599,#075f6d)} .h-2{background:linear-gradient(135deg,#d97706,#b45309)} .h-3{background:linear-gradient(135deg,#1c7ed6,#1864ab)}
+    .h-4{background:linear-gradient(135deg,#7048e8,#5130b9)} .h-5{background:linear-gradient(135deg,#2f9e44,#1f6f2f)} .h-6{background:linear-gradient(135deg,#d6336c,#a61e4d)}
+    .h-7{background:linear-gradient(135deg,#495057,#212529)} .h-8{background:linear-gradient(135deg,#e8590c,#b8430a)}
+    .panel { background:#fff; border-radius:16px; box-shadow:var(--shadow-sm); padding:1.1rem; border:1px solid #f1f5f9; }
+    .tip-box { border-radius:14px; padding:.85rem 1.1rem; font-size:.93rem; box-shadow:var(--shadow-sm); }
+    .s-amp{background:#e7f1fb} .s-ok{background:#e6f6ea} .s-res{background:#fdeaea} .s-volt{background:#fff4e0} .s-watt{background:#efeafc}
+    @keyframes pop { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    @keyframes flash { 0% { background:#ffd8a8; transform:scale(1.12); } 100% { transform:none; } }
+    @keyframes pulse { 0%,100% { box-shadow:0 0 0 0 rgba(240,140,0,.55); } 50% { box-shadow:0 0 0 7px rgba(240,140,0,0); } }
+    .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
+    :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
+    .btn-chip { border:2px solid var(--c,#1864ab); color:var(--c,#1864ab); background:#fff; font-weight:800; font-size:.86rem; padding:.28rem .85rem; border-radius:999px; transition:all .25s; }
+    .btn-chip:hover { background:color-mix(in srgb,var(--c,#1864ab) 12%,#fff); }
+    .btn-chip.on { background:var(--c,#1864ab); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c,#1864ab) 45%,transparent); transform:translateY(-2px); }
+    .binput { font-family:'Courier New',monospace; font-weight:800; letter-spacing:.06em; font-size:1.15rem; border:2px solid #cbd5e1; border-radius:12px; padding:.35rem .7rem; width:100%; background:#f8fafc; }
+    .binput:focus { border-color:#1c7ed6; outline:0; box-shadow:0 0 0 3px rgba(28,126,214,.2); } .binput.bad { border-color:#e03131; background:#fff5f5; }
+    .inlab { font-size:.78rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:.03em; }
+    .errmsg { color:#e03131; font-size:.82rem; font-weight:700; min-height:1.1rem; }
+    /* fórmulas estilo calculadora */
+    .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
+    .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
+    .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
+    .cx sup { top:-.62em; } .cx sub { top:.3em; }
+    .cx .o { margin:0 .24em; } .cx .o.u { margin:0 .05em 0 0; } .cx sup .o, .cx sub .o { margin:0 .08em; }
+    .cx .tx { font-weight:500; }
+    .cx .fr { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .2em; }
+    .cx .fr > span { line-height:1.3; } .cx .nu { padding:0 .28em .12em; border-bottom:.085em solid currentColor; } .cx .de { padding:.12em .28em 0; }
+    .cx .rd { display:inline-flex; align-items:stretch; vertical-align:middle; margin:0 .12em; }
+    .cx .rs { width:.95em; min-height:1.3em; align-self:stretch; flex:0 0 auto; overflow:visible; } .cx .rx { border-top:1.6px solid currentColor; padding:.12em .2em 0 .15em; }
+    .cx sup.ix { font-size:.62em; top:0; align-self:flex-start; margin:0 -.5em 0 .15em; }
+    .cx .gp { display:inline-flex; align-items:center; vertical-align:middle; } .cx .gp .pg { font-weight:300; }
+    .cx .gp.tall .pg { font-size:2.1em; line-height:1; transform:scaleX(.8); }
+    .cx .cs { display:inline-flex; align-items:center; vertical-align:middle; } .cx .cb { font-size:3.2em; font-weight:200; line-height:1; margin-right:.1em; }
+    .cx .cr { display:flex; flex-direction:column; text-align:left; } .cx .cw > span { margin-right:1.2em; }
+    .cx .ac { position:relative; display:inline-block; font-style:normal; }
+    .cx .ac.bar { border-top:.08em solid currentColor; line-height:1.15; }
+    .cx .ac.hat::before, .cx .ac.tilde::before { position:absolute; left:50%; top:-.5em; transform:translateX(-50%) scaleX(1.35); font-weight:700; line-height:1; }
+    .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
+    .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
+    .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
+    /* Operaciones con popover */
+    .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
+    .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
+    td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
+    th.pp .bi { font-size:.7rem; opacity:.7; }
+    .popover.calc-pop { --bs-popover-max-width:430px; --bs-popover-border-radius:16px; border:0; box-shadow:var(--shadow-lg); font-family:'Segoe UI',sans-serif; }
+    .calc-pop .popover-header { background:linear-gradient(90deg,#0f172a,#1e293b); color:#fff; font-weight:700; font-size:.92rem; border-radius:16px 16px 0 0; }
+    .calc-pop .popover-body { padding:.7rem .9rem; max-height:60vh; overflow:auto; color:#1e293b; }
+    .pcap { font-size:.78rem; font-weight:700; color:#64748b; margin-top:.45rem; text-transform:uppercase; letter-spacing:.02em; } .pcap:first-child { margin-top:0; }
+    .pf { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:.25rem .6rem; overflow-x:auto; } .pf.res { background:#0f172a; color:#e0f2fe; border-color:#0f172a; }
+    .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
+    .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
+    .pm { font-size:.88rem; }
+    /* Pantalla de resultado */
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
+    /* nota del teorema */
+    .note { border-radius:14px; background:#fff; border:1px solid #e2e8f0; border-left:6px solid var(--c); padding:.8rem 1rem; box-shadow:var(--shadow-sm); height:100%; animation:pop .4s both; }
+    .note h6 { color:var(--c); font-weight:800; margin-bottom:.35rem; } .note h6 .bi { margin-right:.35rem; } .note p { margin:0; font-size:.9rem; }
+    .thm-box { background:linear-gradient(135deg,#fff8e1,#fff4e0); border:2px solid #f08c00; border-radius:16px; padding:.9rem 1.1rem; box-shadow:var(--shadow-sm); }
+    /* teorema: dígitos */
+    .thm-tbl { border-collapse:separate; border-spacing:5px; margin:0 auto; text-align:center; }
+    .thm-tbl td, .thm-tbl th { min-width:3.4rem; padding:.3rem .25rem; border-radius:10px; }
+    .thm-tbl th.rl { text-align:right; background:none; font-size:.78rem; color:#64748b; text-transform:uppercase; white-space:nowrap; padding-right:.6rem; }
+    .t-pos { background:#f1f5f9; font-weight:800; color:#475569; } .t-w { background:#d3f9f4; color:#0c8599; font-weight:800; font-family:'Courier New',monospace; }
+    .t-d { background:#e7f0ff; border:2px solid #1864ab; font-family:'Courier New',monospace; font-weight:900; font-size:1.5rem; color:#1864ab; cursor:pointer; user-select:none; }
+    .t-d.z { background:#f8fafc; border-color:#cbd5e1; color:#94a3b8; } .t-d:hover { filter:brightness(.96); transform:translateY(-2px); }
+    .t-p { background:#e6f6ea; color:#2f9e44; font-weight:800; font-family:'Courier New',monospace; } .t-p.flash, .t-d.flash { animation:flash .6s; }
+    .arw { border:0; background:#e2e8f0; border-radius:6px; font-size:.7rem; line-height:1; padding:.1rem .45rem; color:#334155; } .arw:hover { background:#cbd5e1; }
+    /* stepper */
+    .stp-top { display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1rem; margin-bottom:.8rem; }
+    .stp-ctl .btn { border-radius:999px; font-weight:700; }
+    .stp-dots { display:flex; flex-wrap:wrap; gap:5px; align-items:center; } .stp-dots i { width:11px; height:11px; border-radius:50%; background:#cbd5e1; display:inline-block; cursor:pointer; transition:all .25s; }
+    .stp-dots i.done { background:#2f9e44; } .stp-dots i.cur { background:#f08c00; transform:scale(1.5); box-shadow:0 0 0 3px rgba(240,140,0,.25); }
+    .stp-title { font-weight:800; font-size:1.05rem; margin-bottom:.5rem; } .stp-title .badge-n { display:inline-flex; width:28px; height:28px; border-radius:50%; background:#f08c00; color:#fff; align-items:center; justify-content:center; font-size:.85rem; margin-right:.4rem; }
+    .stp-note { font-size:.93rem; margin-bottom:.7rem; animation:pop .35s both; } .stp-note > * { margin-bottom:.45rem; }
+    .stp-viz { overflow-x:auto; min-height:120px; animation:pop .35s both; }
+    .bgwrap { overflow-x:auto; padding:.2rem 0; text-align:center; }
+    .bgrid { border-collapse:separate; border-spacing:4px; margin:0 auto; font-family:'Courier New',monospace; font-weight:800; font-size:1.3rem; }
+    .bgrid td { width:2.15rem; min-width:2.15rem; height:2.3rem; text-align:center; border-radius:8px; background:#e7f0ff; color:#1864ab; transition:all .3s; }
+    .bgrid td.lab { width:auto; min-width:0; background:none; color:#64748b; font-family:'Segoe UI',sans-serif; font-size:.74rem; font-weight:700; text-align:right; padding-right:.5rem; white-space:nowrap; text-transform:uppercase; }
+    .bgrid td.c { background:#fff0e1; color:var(--carry); } .bgrid td.br { background:#ffe3e3; color:var(--borrow); } .bgrid td.r { background:#e6f6ea; color:var(--res); }
+    .bgrid td.pad { background:#f8fafc; color:#cbd5e1; } .bgrid td.fut { background:#f1f5f9; color:#cbd5e1; } .bgrid td.sh { background:#f8fafc; color:#94a3b8; border:1px dashed #cbd5e1; }
+    .bgrid td.cur { outline:3px solid #f08c00; animation:pulse 1.3s infinite, pop .35s both; background:#fff4e0; color:#c25e00; }
+    .bgrid td.chg { background:#ffd8a8; color:#c2410c; } .bgrid td.pt { background:none; color:#0f172a; width:1rem; min-width:1rem; }
+    .bgrid td.dv { background:#f3e8ff; color:#6f42c1; } .bgrid td.empty { background:none; }
+    .bgrid tr.ln td:not(.lab) { border-top:3px solid #0f172a; border-radius:0 0 8px 8px; }
+    .rules { border-collapse:collapse; font-family:'Courier New',monospace; font-weight:800; font-size:.95rem; margin:.4rem auto; } .rules td { padding:.15rem .8rem; border:1px solid #e2e8f0; } .rules tr.on td { background:#fff4e0; color:#c25e00; border-color:#f08c00; }
+    .ladder { border-collapse:separate; border-spacing:0 4px; margin:0 auto; font-family:'Courier New',monospace; font-weight:800; font-size:1.1rem; }
+    .ladder td, .ladder th { padding:.25rem .8rem; text-align:center; } .ladder th { font-family:'Segoe UI',sans-serif; font-size:.74rem; color:#64748b; text-transform:uppercase; }
+    .ladder tr.cur td { background:#fff4e0; } .ladder td.rm { color:var(--bit); } .ladder td.rm b { background:#e7f0ff; border-radius:8px; padding:.1rem .55rem; } .ladder td.q { color:var(--dec); }
+    .ladder tr.cur td.rm b { outline:3px solid #f08c00; animation:pulse 1.3s infinite; }
+    .chip-row { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:.5rem 0; } .bchip { font-family:'Courier New',monospace; font-weight:900; font-size:1.25rem; min-width:2rem; text-align:center; padding:.15rem .5rem; border-radius:9px; background:#e7f0ff; color:#1864ab; transition:all .3s; }
+    .bchip.done { background:#e6f6ea; color:#2f9e44; } .bchip.cur { outline:3px solid #f08c00; background:#fff4e0; color:#c25e00; animation:pulse 1.3s infinite; } .bchip.fut { background:#f1f5f9; color:#94a3b8; } .bchip.hx { background:#fff0e1; color:#c25e00; } .bchip.oc { background:#e3f5ec; color:#198754; } .bchip.dc { background:#f3e8ff; color:#6f42c1; }
+    .bchip.grp { padding:.15rem .7rem; border:2px dashed #94a3b8; background:#fff; }
+    .lbl-row { text-align:center; font-size:.76rem; font-weight:800; color:#64748b; text-transform:uppercase; margin-top:.4rem; }
+    .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
+    .calc-screen .cx { font-size:1.35rem; } .calc-screen:empty { display:none; }
+    .calc-screen .pp { border-bottom-color:#7dd3fc; }
+    /* Ejercicios */
+    .ex-card { border-radius:16px; background:#fff; border:2px solid #e2e8f0; padding:1rem 1.1rem; box-shadow:var(--shadow-sm); height:100%; transition:border-color .3s, box-shadow .3s; animation:pop .4s both; }
+    .ex-card.ok { border-color:#2f9e44; box-shadow:0 0 0 4px rgba(47,158,68,.15); } .ex-card.bad { border-color:#e03131; box-shadow:0 0 0 4px rgba(224,49,49,.12); }
+    .ex-tag { display:inline-block; font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; border-radius:999px; padding:.12rem .6rem; background:var(--c); color:#fff; }
+    .ex-q { font-size:1.05rem; margin:.6rem 0; } .ex-sol { background:#f8fafc; border-radius:12px; padding:.7rem; margin-top:.7rem; border:1px dashed #94a3b8; animation:pop .35s both; }
+    .ex-fb { font-weight:800; font-size:.9rem; min-height:1.4rem; margin-top:.4rem; } .ex-fb.ok { color:#2f9e44; } .ex-fb.bad { color:#e03131; }
+    .score { font-weight:800; font-size:1.05rem; background:#fff; border-radius:999px; padding:.3rem 1rem; box-shadow:var(--shadow-sm); border:2px solid #e2e8f0; }
+    /* Manual */
+    .man-sec { border-left:6px solid var(--c); background:#fff; border-radius:12px; padding:.7rem 1rem; margin-bottom:.8rem; box-shadow:var(--shadow-sm); }
+    .man-sec h6 { color:var(--c); font-weight:800; text-transform:uppercase; font-size:.78rem; letter-spacing:.04em; }
+    .man-sec.thm { background:#fff8e1; }
+    .legend-row { display:flex; gap:.6rem; align-items:center; margin:.25rem 0; font-size:.9rem; } .vchip { border:1.5px solid var(--c); color:var(--c); background:color-mix(in srgb,var(--c) 10%,#fff); border-radius:10px; padding:0 .5rem; min-width:2.2rem; text-align:center; font-weight:700; }
+    #man-tabs .nav-link { font-size:.82rem; padding:.35rem .7rem; } #man-tabs { gap:.3rem; }
+    .form-tbl { width:100%; border-collapse:collapse; } .form-tbl td { border:1px solid #e2e8f0; padding:.5rem .7rem; vertical-align:middle; } .form-tbl td.nm { font-weight:800; background:#f8fafc; width:26%; } .form-tbl tr:nth-child(even) td:not(.nm) { background:#fcfdff; }
+    .modal-content { border:0; border-radius:18px; box-shadow:var(--shadow-lg); overflow:hidden; } .modal-header { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; }
+    .pwr { display:flex; flex-wrap:wrap; gap:6px; } .pwr span { background:#d3f9f4; color:#0c8599; border-radius:8px; padding:.15rem .55rem; font-family:'Courier New',monospace; font-weight:800; font-size:.88rem; }
+    .eqtbl { font-family:'Courier New',monospace; font-weight:700; font-size:.88rem; } .eqtbl td, .eqtbl th { padding:.15rem .5rem; text-align:center; }
+    /* ---- Reglas de las operaciones ---- */
+    .rl-tbl { width:100%; border-collapse:separate; border-spacing:0 3px; font-family:'Courier New',monospace; font-weight:800; text-align:center; font-size:.95rem; } .rl-tbl th { font-family:'Segoe UI',sans-serif; font-size:.74rem; color:#64748b; text-transform:none; padding:.15rem .3rem; }
+    .rl-tbl td { background:#fff; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; padding:.3rem .4rem; transition:background .25s; } .rl-tbl tr td:first-child { border-left:1px solid #e2e8f0; border-radius:10px 0 0 10px; } .rl-tbl tr td:last-child { border-right:1px solid #e2e8f0; border-radius:0 10px 10px 0; }
+    .rl-tbl tr[data-rlrow] { cursor:pointer; } .rl-tbl tr[data-rlrow]:hover td { background:#f8fafc; } .rl-tbl tr.on td { background:var(--c,#fff4e0); color:#0f172a; border-color:var(--cb,#f59f00); animation:pop .35s both; }
+    .rl-tbl .sep td { background:#f1f5f9; font-family:'Segoe UI',sans-serif; font-size:.72rem; color:#64748b; font-weight:700; padding:.1rem; border:0; border-radius:8px; }
+    .bitt { border:0; background:none; padding:0; } .bitt span { display:inline-flex; width:3.2rem; height:3.2rem; align-items:center; justify-content:center; border-radius:14px; border:3px solid var(--c,#1864ab); color:var(--c,#1864ab); background:#fff; font-family:'Courier New',monospace; font-weight:900; font-size:1.7rem; transition:all .25s; cursor:pointer; } .bitt span.on { background:var(--c,#1864ab); color:#fff; transform:translateY(-3px); box-shadow:0 8px 18px color-mix(in srgb,var(--c,#1864ab) 45%,transparent); }
+    .rl-out { display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center; margin:.6rem 0; } .rl-out .o { min-width:8.5rem; text-align:center; border-radius:14px; padding:.5rem .8rem; background:#fff; border:2px solid var(--c); animation:pop .4s both; } .rl-out .o b { display:block; font-family:'Courier New',monospace; font-size:1.8rem; color:var(--c); line-height:1.1; } .rl-out .o small { color:#64748b; font-weight:700; }
+    .rl-chip { display:inline-block; font-family:'Courier New',monospace; font-weight:800; font-size:.8rem; background:#fff; border:2px solid var(--c,#cbd5e1); border-radius:10px; padding:.15rem .5rem; margin:.15rem; animation:pop .35s both; }
+    .rl-rules { counter-reset:r; list-style:none; padding:0; margin:0; } .rl-rules li { counter-increment:r; position:relative; padding:.35rem .6rem .35rem 2.4rem; margin:.3rem 0; background:#fff; border-radius:12px; border:1px solid #e2e8f0; font-size:.92rem; } .rl-rules li:before { content:counter(r); position:absolute; left:.55rem; top:.35rem; width:1.5rem; height:1.5rem; border-radius:50%; background:var(--c,#1864ab); color:#fff; font-weight:800; font-size:.8rem; display:flex; align-items:center; justify-content:center; }
+    .rl-card { background:#fff; border-radius:16px; border:1px solid #e2e8f0; border-top:5px solid var(--c); padding:.9rem 1rem; height:100%; box-shadow:var(--shadow-sm); } .rl-card h6 { font-weight:800; color:var(--c); } .ok-t { color:#2f9e44; font-weight:800; } .no-t { color:#e03131; font-weight:800; }
+    .rl-chk div { padding:.25rem .6rem; border-radius:10px; margin:.2rem 0; background:#fff; border:1px solid #e2e8f0; font-size:.92rem; }
+    @media (max-width:576px) { .bgrid { font-size:1rem; border-spacing:2px; } .bgrid td { width:1.55rem; min-width:1.55rem; height:1.9rem; } .lesson-head { padding:1rem; } .hero-bits { font-size:1.6rem; } }
+
+  </style>
+</head>
+<body>
+  <div id="app-header"></div>
+  <nav class="sec-nav" id="sec-nav">
+    <a href="#s1">1. Teorema</a><a href="#s2">2. Conversor</a><a href="#sr">3. Reglas</a><a href="#s3">4. Suma</a><a href="#s4">5. Resta</a><a href="#s5">6. Multiplicación</a><a href="#s6">7. División</a><a href="#s7">8. Más temas</a><a href="#s8">9. Ejercicios</a><a href="#" data-manual="teorema"><i class="bi bi-journal-text me-1"></i>Manual</a>
+  </nav>
+  <main>
+    <header class="hero-header text-center mb-4">
+      <div class="hero-bits" id="hero-bits" aria-hidden="true"></div>
+      <div class="container">
+        <h1 class="display-5 fw-bold"><i class="bi bi-123 text-info me-2"></i>Operaciones básicas binarios</h1>
+        <p class="lead mb-1">Teorema fundamental de la numeración • conversiones • <b>reglas de las operaciones</b> • suma • resta • multiplicación • división</p>
+        <p class="mb-3 text-light opacity-75">Cada operación se resuelve paso a paso, con tus propios números, y al final practicas con ejercicios que se comprueban solos</p>
+        <a class="btn btn-info text-white rounded-pill fw-bold me-1" href="#sr"><i class="bi bi-ui-checks-grid me-1"></i>Reglas de las operaciones</a><button class="btn btn-warning rounded-pill fw-bold" data-manual="teorema"><i class="bi bi-journal-text me-1"></i>Abrir el Manual</button>
+      </div>
+    </header>
+    <div class="container mb-5">
+
+      <!-- 1. TEOREMA -->
+      <section class="lesson mb-5" id="s1"><div class="card lesson-card">
+        <div class="lesson-head h-1"><div class="num">1</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Teorema fundamental de la numeración</h2><small>Todo número se escribe de una sola forma con los dígitos de una base: pruébalo cambiando los dígitos</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" data-manual="teorema"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="thm-box mb-3"><div class="fw-bold mb-1"><i class="bi bi-patch-check-fill text-warning me-1"></i>Teorema</div>
+            <div class="small mb-1">Sea <strong>b ≥ 2</strong> un entero (la base). Todo entero <strong>N ≥ 0</strong> se puede escribir de <strong>una y solo una</strong> manera como</div><div id="thm-stmt"></div></div>
+          <div class="row g-3 align-items-end mb-3">
+            <div class="col-lg-5"><div class="inlab mb-1"><i class="bi bi-hash me-1"></i>Base b</div><div class="d-flex flex-wrap gap-2" id="th-bases"></div></div>
+            <div class="col-sm-6 col-lg-4"><label class="inlab mb-1" for="th-n">Escribe un decimal N (se convierte solo)</label><input id="th-n" class="binput" inputmode="numeric" autocomplete="off"><div class="errmsg" id="th-err"></div></div>
+            <div class="col-sm-6 col-lg-3 pb-3"><button class="btn btn-outline-dark rounded-pill btn-sm fw-bold" id="th-rand"><i class="bi bi-shuffle me-1"></i>Aleatorio</button> <button class="btn btn-outline-secondary rounded-pill btn-sm fw-bold" id="th-zero"><i class="bi bi-eraser me-1"></i>Ceros</button></div>
+          </div>
+          <div class="panel mb-3"><div class="small text-muted text-center mb-1"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i>Toca un dígito (o sus flechas) para cambiarlo: el número se recalcula con la fórmula del teorema</div>
+            <div class="table-responsive"><table class="thm-tbl" id="th-tbl"></table></div></div>
+          <div class="row g-3 mb-3"><div class="col-lg-7"><div class="panel h-100"><div class="inlab mb-1">Sustitución</div><div id="th-form"></div></div></div>
+            <div class="col-lg-5"><div class="calc-screen h-100 d-flex flex-column justify-content-center" id="th-screen" style="--c:#6f42c1"></div></div></div>
+          <h3 class="h6 fw-bold mb-2"><i class="bi bi-sticky-fill text-warning me-1"></i>Notas del teorema</h3>
+          <div class="row g-3" id="th-notes"></div>
+        </div></div></section>
+
+      <!-- 2. CONVERSOR -->
+      <section class="lesson mb-5" id="s2"><div class="card lesson-card">
+        <div class="lesson-head h-3"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Conversor paso a paso</h2><small>El teorema aplicado: divisiones sucesivas, suma de pesos y agrupación de bits</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" id="cv-man" data-manual="d2b"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap gap-2 mb-3" id="cv-modes"></div>
+          <div class="row g-2 align-items-end mb-3"><div class="col-sm-6 col-lg-4"><label class="inlab mb-1" for="cv-in" id="cv-lab">Número</label><input id="cv-in" class="binput" autocomplete="off" spellcheck="false"><div class="errmsg" id="cv-err"></div></div>
+            <div class="col-auto pb-3" id="cv-sub"></div><div class="col-auto pb-3"><button class="btn btn-outline-dark rounded-pill btn-sm fw-bold" id="cv-rand"><i class="bi bi-shuffle me-1"></i>Aleatorio</button></div></div>
+          <div class="stepper" id="sp-cv"><div class="stp-top"><div class="stp-ctl"></div><div class="stp-dots"></div></div><div class="row g-3"><div class="col-lg-7"><div class="panel stp-viz"></div></div><div class="col-lg-5"><div class="stp-title"></div><div class="stp-note"></div><div class="calc-screen stp-screen"></div></div></div></div>
+        </div></div></section>
+
+      <!-- 3. REGLAS DE LAS OPERACIONES -->
+      <section class="lesson mb-5" id="sr"><div class="card lesson-card">
+        <div class="lesson-head" style="background:linear-gradient(135deg,#0c8599,#1864ab)"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Reglas de las operaciones básicas</h2><small>Las tablas de cada operación, un probador de bits, atajos, propiedades y un verificador</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" data-manual="reglas"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="tip-box s-amp small mb-3"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Antes de operar números largos, domina la operación de una sola columna.</strong> Toda suma, resta, multiplicación o división binaria se reduce a repetir estas reglas bit por bit. Toca los bits del probador y mira cómo cambia la regla que se usa; después compruébalo con tus propios números.</div>
+          <div class="d-flex flex-wrap gap-2 mb-3" id="rl-tabs"></div>
+          <div id="rl-body"></div>
+        </div></div></section>
+
+      <!-- 4. SUMA -->
+      <section class="lesson mb-5" id="s3"><div class="card lesson-card">
+        <div class="lesson-head h-2"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Suma binaria</h2><small>Columna por columna, con acarreo: 1 + 1 = 10<sub>2</sub></small></div>
+          <button class="btn btn-sm btn-light rounded-pill" data-manual="suma"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="row g-2 align-items-end mb-3"><div class="col-6 col-lg-3"><label class="inlab mb-1" for="ad-a">Sumando A (binario)</label><input id="ad-a" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-6 col-lg-3"><label class="inlab mb-1" for="ad-b">Sumando B (binario)</label><input id="ad-b" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-auto pb-3"><button class="btn btn-outline-dark rounded-pill btn-sm fw-bold" data-rand="add"><i class="bi bi-shuffle me-1"></i>Aleatorio</button></div><div class="col-12 col-lg-4 errmsg" id="ad-err"></div></div>
+          <div class="stepper" id="sp-add"><div class="stp-top"><div class="stp-ctl"></div><div class="stp-dots"></div></div><div class="row g-3"><div class="col-lg-7"><div class="panel stp-viz"></div></div><div class="col-lg-5"><div class="stp-title"></div><div class="stp-note"></div><div class="calc-screen stp-screen"></div></div></div></div>
+          <div class="tip-box s-volt small mt-3"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Regla de oro:</strong> en binario solo existen 0 y 1; cuando una columna suma 2 (<span class="mono">10<sub>2</sub></span>) se escribe el 0 y se <strong>lleva 1</strong> a la columna de la izquierda, porque 2 = 1·2¹.</div>
+        </div></div></section>
+
+      <!-- 4. RESTA -->
+      <section class="lesson mb-5" id="s4"><div class="card lesson-card">
+        <div class="lesson-head h-4"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Resta binaria</h2><small>Con préstamo o con complemento a 2 (como lo hacen las computadoras)</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" id="sb-man" data-manual="resta"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap gap-2 mb-3" id="sb-modes"></div>
+          <div class="row g-2 align-items-end mb-3"><div class="col-6 col-lg-3"><label class="inlab mb-1" for="sb-a">Minuendo A (binario)</label><input id="sb-a" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-6 col-lg-3"><label class="inlab mb-1" for="sb-b">Sustraendo B (binario)</label><input id="sb-b" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-auto pb-3"><button class="btn btn-outline-dark rounded-pill btn-sm fw-bold" data-rand="sub"><i class="bi bi-shuffle me-1"></i>Aleatorio</button></div><div class="col-12 col-lg-4 errmsg" id="sb-err"></div></div>
+          <div class="stepper" id="sp-sub"><div class="stp-top"><div class="stp-ctl"></div><div class="stp-dots"></div></div><div class="row g-3"><div class="col-lg-7"><div class="panel stp-viz"></div></div><div class="col-lg-5"><div class="stp-title"></div><div class="stp-note"></div><div class="calc-screen stp-screen"></div></div></div></div>
+          <div class="tip-box s-watt small mt-3"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Idea clave:</strong> restar B equivale a sumar el <em>complemento a 2</em> de B. Así una sola unidad (el sumador) sirve para sumar y restar. Si A &lt; B el resultado es negativo.</div>
+        </div></div></section>
+
+      <!-- 5. MULTIPLICACIÓN -->
+      <section class="lesson mb-5" id="s5"><div class="card lesson-card">
+        <div class="lesson-head h-5"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Multiplicación binaria</h2><small>Desplazar y sumar: cada bit 1 del multiplicador copia al multiplicando</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" data-manual="mult"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="row g-2 align-items-end mb-3"><div class="col-6 col-lg-3"><label class="inlab mb-1" for="ml-a">Multiplicando A</label><input id="ml-a" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-6 col-lg-3"><label class="inlab mb-1" for="ml-b">Multiplicador B</label><input id="ml-b" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-auto pb-3"><button class="btn btn-outline-dark rounded-pill btn-sm fw-bold" data-rand="mul"><i class="bi bi-shuffle me-1"></i>Aleatorio</button></div><div class="col-12 col-lg-4 errmsg" id="ml-err"></div></div>
+          <div class="stepper" id="sp-mul"><div class="stp-top"><div class="stp-ctl"></div><div class="stp-dots"></div></div><div class="row g-3"><div class="col-lg-7"><div class="panel stp-viz"></div></div><div class="col-lg-5"><div class="stp-title"></div><div class="stp-note"></div><div class="calc-screen stp-screen"></div></div></div></div>
+          <div class="tip-box s-ok small mt-3"><i class="bi bi-lightbulb-fill text-warning me-1"></i>Multiplicar por <span class="mono">10<sub>2</sub></span> (= 2) desplaza todos los bits una posición a la izquierda: <em>×2 es agregar un 0</em>.</div>
+        </div></div></section>
+
+      <!-- 6. DIVISIÓN -->
+      <section class="lesson mb-5" id="s6"><div class="card lesson-card">
+        <div class="lesson-head h-6"><div class="num">7</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">División binaria</h2><small>Algoritmo de la división: D = d · q + r con 0 ≤ r &lt; d</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" data-manual="div"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="row g-2 align-items-end mb-3"><div class="col-6 col-lg-3"><label class="inlab mb-1" for="dv-a">Dividendo D (binario)</label><input id="dv-a" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-6 col-lg-3"><label class="inlab mb-1" for="dv-b">Divisor d (binario)</label><input id="dv-b" class="binput" autocomplete="off" spellcheck="false"></div>
+            <div class="col-6 col-lg-3"><label class="inlab mb-1" for="dv-f">Bits fraccionarios</label><select id="dv-f" class="form-select" style="border-radius:12px;border:2px solid #cbd5e1;font-weight:700"><option value="0">0 (cociente entero)</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+            <div class="col-auto pb-3"><button class="btn btn-outline-dark rounded-pill btn-sm fw-bold" data-rand="div"><i class="bi bi-shuffle me-1"></i>Aleatorio</button></div><div class="col-12 col-lg-4 errmsg" id="dv-err"></div></div>
+          <div class="stepper" id="sp-div"><div class="stp-top"><div class="stp-ctl"></div><div class="stp-dots"></div></div><div class="row g-3"><div class="col-lg-7"><div class="panel stp-viz"></div></div><div class="col-lg-5"><div class="stp-title"></div><div class="stp-note"></div><div class="calc-screen stp-screen"></div></div></div></div>
+          <div class="tip-box s-res small mt-3"><i class="bi bi-lightbulb-fill text-warning me-1"></i>Es la misma división larga de siempre, pero más fácil: en cada paso solo preguntas <em>«¿cabe el divisor?»</em> y el bit del cociente es 1 (cabe) o 0 (no cabe).</div>
+        </div></div></section>
+
+      <!-- 7. MÁS TEMAS -->
+      <section class="lesson mb-5" id="s7"><div class="card lesson-card">
+        <div class="lesson-head h-7"><div class="num">8</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Más temas que completan el tema</h2><small>Números con signo, desbordamiento, fracciones binarias y tablas de apoyo</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" data-manual="signo"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <ul class="nav nav-pills mb-3 flex-wrap gap-1" id="ex-tabs"></ul><div id="ex-body"></div>
+        </div></div></section>
+
+      <!-- 8. EJERCICIOS -->
+      <section class="lesson mb-5" id="s8"><div class="card lesson-card">
+        <div class="lesson-head h-8"><div class="num">9</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ejercicios</h2><small>Escribe tu respuesta, compruébala y, si quieres, mira el resultado con su procedimiento</small></div>
+          <button class="btn btn-sm btn-light rounded-pill" data-manual="formulario"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><span class="score" id="ex-score"></span>
+            <div class="btn-group" id="ex-level" role="group"><button class="btn btn-outline-dark btn-sm fw-bold active" data-lv="1">Fácil</button><button class="btn btn-outline-dark btn-sm fw-bold" data-lv="2">Medio</button><button class="btn btn-outline-dark btn-sm fw-bold" data-lv="3">Difícil</button></div>
+            <button class="btn btn-dark rounded-pill btn-sm fw-bold ms-auto" id="ex-new"><i class="bi bi-arrow-repeat me-1"></i>Nuevos ejercicios</button>
+            <button class="btn btn-outline-secondary rounded-pill btn-sm fw-bold" id="ex-all"><i class="bi bi-eye me-1"></i>Ver todos los resultados</button></div>
+          <div class="row g-3" id="ex-grid"></div>
+        </div></div></section>
+    </div>
+  </main>
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Cibernética • Operaciones básicas binarios</small></footer>
+
+  <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title fw-bold"><i class="bi bi-journal-text me-2"></i>Manual · Teoría, fórmulas y conceptos · Aritmética binaria</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+    <div class="modal-body bg-light"><ul class="nav nav-pills flex-wrap mb-3" id="man-tabs"></ul><div id="man-body"></div></div>
+    <div class="modal-footer"><button class="btn btn-dark rounded-pill" data-bs-dismiss="modal"><i class="bi bi-check2 me-1"></i>Entendido</button></div></div></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="auth-config.js"></script>
+  <script src="aula-header.js"></script>
+  <script>
+/*FX*/
+    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
+    const UNK = [];
+    function fx(src) {
+      const s = String(src); let i = 0, last = 'start';
+      const esc = c => c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c;
+      const SP = { ';': '.28em', ',': '.17em', ':': '.22em', ' ': '.3em', '!': '0', quad: '1em', qquad: '2em' };
+      const SYM = { lfloor: '⌊', rfloor: '⌋', iff: '⇔', lceil: '⌈', rceil: '⌉', Delta: 'Δ', ne: '≠', rightarrow: '→', cdot: '·', times: '×', div: '÷', Rightarrow: '⇒', Leftrightarrow: '⇔', to: '→', approx: '≈', neq: '≠', pm: '±', mp: '∓', checkmark: '✓', le: '≤', ge: '≥', leq: '≤', geq: '≥', infty: '∞', ldots: '…', cdots: '⋯', circ: '°', alpha: 'α', beta: 'β', gamma: 'γ', theta: 'θ', pi: 'π' };
+      const OPS = new Set(['ne', 'rightarrow', 'cdot', 'times', 'div', 'Rightarrow', 'Leftrightarrow', 'to', 'approx', 'neq', 'pm', 'mp', 'le', 'ge', 'leq', 'geq']);
+      const RAD = '<svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M0.6 13L2.4 11.2L4.8 19L9 0.9L10 0.9" vector-effect="non-scaling-stroke"/></svg>';
+      const spc = w => `<span class="sp" style="display:inline-block;width:${w}"></span>`;
+      function raw() { while (s[i] === ' ') i++; if (s[i] !== '{') return s[i++] || ''; let d = 0, st = ++i; for (; i < s.length; i++) { if (s[i] === '{') d++; else if (s[i] === '}') { if (!d) break; d--; } } const t = s.slice(st, i); i++; return t; }
+      function arg() { while (s[i] === ' ') i++; if (s[i] === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; } const sv = last; last = 'start'; const h = atom(); last = sv; return h; }
+      function delim() { while (s[i] === ' ') i++; let d; if (s[i] === '\\') { i++; d = s[i++]; if (/[a-zA-Z]/.test(d)) while (/[a-zA-Z]/.test(s[i] || '')) d += s[i++]; } else d = s[i++]; return d === '.' ? '' : esc(d || ''); }
+      function seq(stop) {
+        last = 'start'; let h = '';
+        while (i < s.length) { const c = s[i];
+          if (stop === '}' && c === '}') break; if (stop === 'R' && s.startsWith('\\right', i)) break;
+          if (stop === 'A' && (c === '&' || s.startsWith('\\\\', i) || s.startsWith('\\end', i))) break;
+          h += atom(); }
+        last = 'val'; return h;
+      }
+      function cmd() {
+        i++; if (s[i] === '\\') { i++; return '<br>'; }
+        if (!/[a-zA-Z]/.test(s[i] || '')) { const ch = s[i++]; if (SP[ch] !== undefined) return spc(SP[ch]); last = 'val'; return esc(ch || ''); }
+        let name = ''; while (/[a-zA-Z]/.test(s[i] || '')) name += s[i++];
+        switch (name) {
+          case 'frac': case 'dfrac': { const a = arg(), b = arg(); last = 'val'; return `<span class="fr"><span class="nu">${a}</span><span class="de">${b}</span></span>`; }
+          case 'sqrt': { let ix = ''; if (s[i] === '[') { const j = s.indexOf(']', i); ix = fx(s.slice(i + 1, j)); i = j + 1; } const x = arg(); last = 'val'; return `<span class="rd">${ix ? `<sup class="ix">${ix}</sup>` : ''}${RAD}<span class="rx">${x}</span></span>`; }
+          case 'left': { const d1 = delim(), inner = seq('R'); i += 6; const d2 = delim(); last = 'val'; const tall = /class="(fr|rd|cs)"/.test(inner); return `<span class="gp${tall ? ' tall' : ''}"><span class="pg">${d1}</span><span class="gi">${inner}</span><span class="pg">${d2}</span></span>`; }
+          case 'textcolor': { const col = raw(), h = arg(); last = 'val'; return `<span style="color:${col.replace(/[^#\w(),.%]/g, '')}">${h}</span>`; }
+          case 'text': case 'operatorname': case 'mathrm': { const t = raw(); last = 'val'; return `<span class="tx">${[...t].map(esc).join('')}</span>`; }
+          case 'bar': case 'tilde': case 'hat': { const x = arg(); last = 'val'; return `<span class="ac ${name}">${x}</span>`; }
+          case 'mathbf': { const h = arg(); last = 'val'; return `<b>${h}</b>`; }
+          case 'log': last = 'val'; return '<span class="tx">log</span>';
+          case 'sum': { let lo = '', hi = ''; while (s[i] === '_' || s[i] === '^') { const t = s[i++], h = arg(); if (t === '_') lo = h; else hi = h; } last = 'val'; return `<span class="sm"><span class="sh">${hi}</span><span class="sg">∑</span><span class="sl">${lo}</span></span>`; }
+          case 'pop': { const id = raw().replace(/[^\w-]/g, ''), h = arg(); last = 'val'; return `<span class="pp" data-pop="${id}" tabindex="0" role="button">${h}</span>`; }
+          case 'quad': case 'qquad': return spc(SP[name]);
+          case 'begin': { const j = s.indexOf('}', i); i = j + 1; const rows = []; let cells = [];
+            for (let g = 0; g < 200; g++) { cells.push(seq('A')); if (s[i] === '&') { i++; continue; } if (s.startsWith('\\\\', i)) { i += 2; rows.push(cells); cells = []; continue; } if (s.startsWith('\\end', i)) { i = s.indexOf('}', i) + 1; rows.push(cells); break; } if (i >= s.length) { rows.push(cells); break; } }
+            last = 'val'; return `<span class="cs"><span class="cb">{</span><span class="cr">${rows.map(r => `<span class="cw">${r.map(c => `<span>${c}</span>`).join('')}</span>`).join('')}</span></span>`; }
+          default: if (SYM[name]) { const op = OPS.has(name); last = op ? 'op' : 'val'; return op ? `<span class="o">${SYM[name]}</span>` : SYM[name]; } UNK.push(name); last = 'val'; return name;
+        }
+      }
+      function atom() {
+        const c = s[i];
+        if (c === ' ') { i++; return ''; }
+        if (c === '{') { i++; const h = seq('}'); i++; last = 'val'; return h; }
+        if (c === '^') { i++; const h = arg(); last = 'val'; return `<sup>${h}</sup>`; }
+        if (c === '_') { i++; const h = arg(); last = 'val'; return `<sub>${h}</sub>`; }
+        if (c === '\\') return cmd();
+        i++;
+        if (c === '+' || c === '-') { const bin = last === 'val'; last = 'op'; return `<span class="o${bin ? '' : ' u'}">${c === '-' ? '−' : '+'}</span>`; }
+        if (c === '=' || c === '<' || c === '>') { last = 'op'; return `<span class="o">${esc(c)}</span>`; }
+        if (c === '(' || c === '[') { last = 'open'; return c; }
+        if (c === '&') return '';
+        last = 'val'; return esc(c);
+      }
+      return seq();
+    }
+    /*ENDFX*/
+    /* ================= Utilidades ================= */
+    const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+    const T = String.raw;
+    const fi = t => `<span class="cx">${fx(t)}</span>`, fd = t => `<div class="cx d">${fx(t)}</div>`;
+    const K = (c, s) => T`\textcolor{${c}}{${s}}`;
+    const COL = { bit: '#1864ab', w: '#0c8599', carry: '#e8590c', borrow: '#e03131', res: '#2f9e44', dec: '#6f42c1', hex: '#c25e00' };
+    const BASECOL = { 2: '#0d6efd', 8: '#198754', 10: '#6f42c1', 16: '#fd7e14' };
+    const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+    const B2 = n => Math.floor(n).toString(2), D2 = s => parseInt(s, 2), isBin = s => /^[01]+$/.test(s);
+    const DIG = '0123456789ABCDEF', padL = (s, n) => s.padStart(n, '0'), trimZ = s => s.replace(/^0+(?=.)/, '');
+    const on = (sel, ev, fn) => document.addEventListener(ev, e => { const t = e.target.closest && e.target.closest(sel); if (t) fn(e, t); });
+    const bx = (s, b = 2) => `${s}_{${b}}`;
+    const BN = n => (n < 0 ? '-' : '') + B2(Math.abs(n));
+    const rndBin = len => { let s = '1'; for (let i = 1; i < len; i++) s += rnd(0, 1); return s; };
+    const tog = (id, k, v) => { const e = $(id); if (e) e.classList.toggle(k, v); };
+
+    /* ================= Motor de pasos (stepper) ================= */
+    const SP = {};
+    function spSet(id, steps, keep) {
+      const p = SP[id] || (SP[id] = { i: 0, t: null }); spStop(id);
+      p.steps = steps; p.i = keep ? Math.min(p.i, Math.max(0, steps.length - 1)) : 0; spPaint(id);
+    }
+    function spStop(id) { const p = SP[id]; if (p && p.t) { clearInterval(p.t); p.t = null; } }
+    function spPaint(id) {
+      const p = SP[id], r = $('#' + id), q = s => r.querySelector(s);
+      if (!p.steps || !p.steps.length) {
+        q('.stp-viz').innerHTML = '<div class="text-muted text-center p-4"><i class="bi bi-keyboard me-1"></i>Escribe números válidos arriba para ver el procedimiento paso a paso.</div>';
+        ['.stp-title', '.stp-note', '.stp-screen', '.stp-ctl', '.stp-dots'].forEach(s => q(s).innerHTML = ''); return;
+      }
+      const s = p.steps[p.i], n = p.steps.length, last = p.i === n - 1;
+      q('.stp-ctl').innerHTML = `<div class="btn-group btn-group-sm"><button class="btn btn-outline-dark" data-act="first" ${p.i ? '' : 'disabled'} title="Inicio"><i class="bi bi-skip-start-fill"></i></button><button class="btn btn-outline-dark" data-act="prev" ${p.i ? '' : 'disabled'}><i class="bi bi-caret-left-fill"></i> Anterior</button><button class="btn btn-dark" data-act="next" ${last ? 'disabled' : ''}>Siguiente <i class="bi bi-caret-right-fill"></i></button><button class="btn btn-outline-dark" data-act="last" ${last ? 'disabled' : ''} title="Resultado"><i class="bi bi-skip-end-fill"></i></button></div>
+        <button class="btn btn-sm btn-outline-warning fw-bold ms-1" data-act="play" style="border-radius:999px"><i class="bi ${p.t ? 'bi-pause-fill' : 'bi-play-fill'}"></i> ${p.t ? 'Pausa' : 'Animar'}</button><span class="small text-muted ms-2">Paso <b>${p.i + 1}</b> de ${n}</span>`;
+      q('.stp-dots').innerHTML = p.steps.map((_, k) => `<i data-act="go" data-k="${k}" class="${k < p.i ? 'done' : k === p.i ? 'cur' : ''}"></i>`).join('');
+      q('.stp-title').innerHTML = `<span class="badge-n">${p.i + 1}</span>${s.title}`;
+      q('.stp-viz').innerHTML = s.viz; q('.stp-note').innerHTML = s.note || '';
+      const sc = q('.stp-screen'); sc.innerHTML = s.calc ? fd(s.calc) : ''; sc.style.setProperty('--c', s.col || '#1864ab');
+      ['.stp-viz', '.stp-note'].forEach(c => { const e = q(c); e.style.animation = 'none'; void e.offsetWidth; e.style.animation = ''; });
+    }
+    on('[data-act]', 'click', (e, b) => {
+      const r = b.closest('.stepper'); if (!r) return; const id = r.id, p = SP[id]; if (!p || !p.steps) return; const a = b.dataset.act, n = p.steps.length;
+      if (a === 'play') { if (p.t) { spStop(id); } else { if (p.i >= n - 1) p.i = 0; p.t = setInterval(() => { if (p.i >= n - 1) { spStop(id); spPaint(id); return; } p.i++; spPaint(id); }, 1300); } spPaint(id); return; }
+      spStop(id); if (a === 'first') p.i = 0; else if (a === 'prev') p.i = Math.max(0, p.i - 1); else if (a === 'next') p.i = Math.min(n - 1, p.i + 1); else if (a === 'last') p.i = n - 1; else if (a === 'go') p.i = +b.dataset.k;
+      spPaint(id);
+    });
+
+    /* Rejilla de bits */
+    function grid(rows) { return `<div class="bgwrap"><table class="bgrid">${rows.map(r => `<tr class="${r.ln ? 'ln' : ''}"><td class="lab">${r.lab || ''}</td>${r.cells.map(c => `<td class="${c.c || ''}">${c.t === undefined ? '' : c.t}</td>`).join('')}</tr>`).join('')}</table></div>`; }
+    const cell = (t, c) => ({ t, c });
+    const bitsOf = (s, L) => padL(s, L).split('').map(Number);   // MSB primero
+
+    /* ================= 1. TEOREMA ================= */
+    const TH = { b: 2, d: [1, 0, 1, 1, 0, 1, 0, 1], last: -1 }, THLEN = { 2: 8, 8: 4, 10: 4, 16: 3 };
+    const BNAME = { 2: 'binario', 8: 'octal', 10: 'decimal', 16: 'hexadecimal' };
+    const thVal = () => TH.d.reduce((a, x) => a * TH.b + x, 0);
+    function thSet(n) { const L = THLEN[TH.b], d = []; for (let i = 0; i < L; i++) { d.unshift(n % TH.b); n = Math.floor(n / TH.b); } TH.d = d; }
+    function renderTheorem() {
+      const b = TH.b, L = TH.d.length, N = thVal(), ds = TH.d.map(x => DIG[x]).join('');
+      $('#thm-stmt').innerHTML = fd(T`N = \sum_{i=0}^{n-1} ${K(COL.bit, 'a_i')} \cdot ${K(COL.w, 'b^{i}')} = ${K(COL.bit, 'a_{n-1}')} \, ${K(COL.w, 'b^{n-1}')} + \cdots + ${K(COL.bit, 'a_1')} \, ${K(COL.w, 'b')} + ${K(COL.bit, 'a_0')} \qquad 0 \le a_i < b`)
+        + `<div class="small text-center text-muted">Los <span style="color:${COL.bit};font-weight:800">dígitos a<sub>i</sub></span> son los símbolos de la base y <span style="color:${COL.w};font-weight:800">b<sup>i</sup></span> es el peso de cada posición.</div>`;
+      $('#th-bases').innerHTML = [2, 8, 10, 16].map(x => `<button class="btn-chip ${x === b ? 'on' : ''}" style="--c:${BASECOL[x]}" data-thb="${x}">Base ${x} · ${BNAME[x]}</button>`).join('');
+      const pos = TH.d.map((_, j) => L - 1 - j);
+      let h = `<tr><th class="rl">Posición i</th>${pos.map(i => `<td class="t-pos">${i}</td>`).join('')}</tr>`
+        + `<tr><th class="rl">Peso ${b}<sup>i</sup></th>${pos.map(i => `<td class="t-w">${Math.pow(b, i)}</td>`).join('')}</tr>`
+        + `<tr><th class="rl">Dígito a<sub>i</sub></th>${TH.d.map((x, j) => `<td class="t-d ${x ? '' : 'z'} ${TH.last === j ? 'flash' : ''}" data-thd="${j}" title="Toca para cambiar">${DIG[x]}<div><button class="arw" data-thu="${j}" aria-label="subir">▲</button><button class="arw" data-thdn="${j}" aria-label="bajar">▼</button></div></td>`).join('')}</tr>`
+        + `<tr><th class="rl">a<sub>i</sub> · ${b}<sup>i</sup></th>${TH.d.map((x, j) => `<td class="t-p ${TH.last === j ? 'flash' : ''}">${x * Math.pow(b, pos[j])}</td>`).join('')}</tr>`;
+      $('#th-tbl').innerHTML = h;
+      const t1 = TH.d.map((x, j) => `(${K(COL.bit, DIG[x])})(${K(COL.w, `${b}^{${pos[j]}}`)})`).join(' + ');
+      const t2 = TH.d.map((x, j) => x * Math.pow(b, pos[j])).join(' + ');
+      $('#th-form').innerHTML = `<div style="overflow-x:auto">${fd(T`N = ${t1}`)}${fd(T`N = ${t2}`)}</div>`;
+      $('#th-screen').innerHTML = fd(T`${bx(ds, b)} = ${K('#7dd3fc', N)}_{10}`) + `<div class="small" style="color:#94a3b8">${L} dígitos en base ${b}: valores de 0 a ${Math.pow(b, L) - 1}</div>`;
+      if (document.activeElement !== $('#th-n')) $('#th-n').value = N;
+      TH.last = -1;
+    }
+    on('[data-thb]', 'click', (e, t) => { const n = thVal(); TH.b = +t.dataset.thb; thSet(Math.min(n, Math.pow(TH.b, THLEN[TH.b]) - 1)); $('#th-err').textContent = ''; $('#th-n').classList.remove('bad'); renderTheorem(); });
+    on('[data-thu]', 'click', (e, t) => { e.stopPropagation(); const j = +t.dataset.thu; TH.d[j] = (TH.d[j] + 1) % TH.b; TH.last = j; renderTheorem(); });
+    on('[data-thdn]', 'click', (e, t) => { e.stopPropagation(); const j = +t.dataset.thdn; TH.d[j] = (TH.d[j] + TH.b - 1) % TH.b; TH.last = j; renderTheorem(); });
+    on('[data-thd]', 'click', (e, t) => { if (e.target.closest('.arw')) return; const j = +t.dataset.thd; TH.d[j] = (TH.d[j] + 1) % TH.b; TH.last = j; renderTheorem(); });
+    document.addEventListener('input', e => { if (e.target.id !== 'th-n') return; const v = e.target.value.trim(), mx = Math.pow(TH.b, THLEN[TH.b]) - 1;
+      if (!/^\d+$/.test(v) || +v > mx) { e.target.classList.add('bad'); $('#th-err').textContent = v === '' ? '' : `Escribe un entero entre 0 y ${mx} (${THLEN[TH.b]} dígitos en base ${TH.b}).`; return; }
+      e.target.classList.remove('bad'); $('#th-err').textContent = ''; thSet(+v); TH.last = -1; renderTheorem(); });
+    $('#th-rand').onclick = () => { thSet(rnd(1, Math.pow(TH.b, THLEN[TH.b]) - 1)); TH.last = rnd(0, THLEN[TH.b] - 1); $('#th-n').classList.remove('bad'); $('#th-err').textContent = ''; renderTheorem(); };
+    $('#th-zero').onclick = () => { thSet(0); $('#th-n').classList.remove('bad'); $('#th-err').textContent = ''; renderTheorem(); };
+    function renderNotes() {
+      const N = [
+        ['#1864ab', 'bi-1-circle-fill', 'Enunciado', 'Dada una base b ≥ 2, los únicos dígitos permitidos son 0, 1, …, b−1. Cada dígito vale «dígito × peso», y el peso de la posición i es b<sup>i</sup>.'],
+        ['#0c8599', 'bi-check2-circle', 'Existencia', 'Se demuestra con el <strong>algoritmo de la división</strong>: N = b·q₀ + r₀, luego q₀ = b·q₁ + r₁, … Los restos r₀, r₁, … son justo los dígitos a₀, a₁, … Por eso «dividir entre 2 y leer los restos» funciona.'],
+        ['#e8590c', 'bi-fingerprint', 'Unicidad', 'No hay dos escrituras distintas para el mismo número (sin ceros a la izquierda). Por eso 10110101₂ es <em>el</em> binario de 181 y no existe otro.'],
+        ['#6f42c1', 'bi-rulers', 'Cantidad de dígitos', 'N tiene n = ⌊log<sub>b</sub>N⌋ + 1 dígitos. En binario, n bits alcanzan de 0 a 2<sup>n</sup>−1: con 8 bits, de 0 a 255.'],
+        ['#2f9e44', 'bi-lightning-charge-fill', 'Consecuencia en binario', 'Cada bit solo puede valer 0 o 1, así que el número es una <strong>suma de potencias de 2 distintas</strong>: 181 = 128 + 32 + 16 + 4 + 1. Convertir de binario a decimal es sumar los pesos de los bits encendidos.'],
+        ['#d6336c', 'bi-dash-circle-dotted', 'Fracciones y signo', 'El teorema se extiende a potencias negativas (0.1₂ = 2⁻¹ = 0.5) y, cambiando el peso del primer bit a −2<sup>n−1</sup>, a los números con signo (complemento a 2).']
+      ];
+      $('#th-notes').innerHTML = N.map(([c, ic, t, p], i) => `<div class="col-md-6 col-lg-4"><div class="note" style="--c:${c};animation-delay:${i * 70}ms"><h6><i class="bi ${ic}"></i>${t}</h6><p>${p}</p></div></div>`).join('');
+    }
+
+    /* ================= 2. CONVERSOR ================= */
+    const CV = { mode: 'd2b', sb: 16, v: { d2b: '181', b2d: '10110101', b2x8: '110101101', b2x16: '10110101', x2b8: '265', x2b16: 'B5' } };
+    const CVM = [['d2b', 'Decimal → Binario', 'bi-arrow-right-circle-fill', '#6f42c1'], ['b2d', 'Binario → Decimal', 'bi-arrow-left-circle-fill', '#0d6efd'], ['b2x', 'Binario → Octal / Hex', 'bi-collection-fill', '#fd7e14'], ['x2b', 'Octal / Hex → Binario', 'bi-collection', '#198754']];
+    const cvKey = () => CV.mode + (CV.mode === 'b2x' || CV.mode === 'x2b' ? CV.sb : '');
+    function ladder(rows, upto, fin) {
+      let h = `<table class="ladder"><tr><th>Dividendo</th><th></th><th>Cociente</th><th>Resto</th></tr>`;
+      for (let k = 0; k <= upto; k++) { const r = rows[k]; h += `<tr class="${k === upto && !fin ? 'cur' : ''}"><td>${r.a}</td><td>÷ 2 =</td><td class="q">${r.q}</td><td class="rm"><b>${r.r}</b></td></tr>`; }
+      h += '</table>';
+      if (fin) h += `<div class="lbl-row"><i class="bi bi-arrow-up"></i> leer los restos de abajo hacia arriba</div><div class="chip-row">${rows.map(r => r.r).reverse().map((b, i) => `<span class="bchip" style="animation:pop .4s ${i * 90}ms both">${b}</span>`).join('')}</div>`;
+      return h;
+    }
+    function stepsD2B(n) {
+      const rows = []; let x = n; if (n === 0) rows.push({ a: 0, q: 0, r: 0 }); while (x > 0) { const q = Math.floor(x / 2), r = x % 2; rows.push({ a: x, q, r }); x = q; }
+      const st = rows.map((r, k) => ({ title: k === 0 ? `Dividir ${r.a} entre 2` : `Seguir con el cociente: ${r.a} ÷ 2`,
+        viz: ladder(rows, k, false),
+        note: `<div>${fd(T`${r.a} = 2 \cdot ${r.q} + ${K(COL.bit, r.r)}`)}</div><div class="small">El resto <b style="color:${COL.bit}">${r.r}</b> es el dígito <b>a<sub>${k}</sub></b> (peso 2<sup>${k}</sup>). ${k === 0 ? 'Se aparta el resto y se vuelve a dividir el <b>cociente</b>.' : ''}${r.q === 0 ? ' El cociente llegó a <b>0</b>: ya terminamos de dividir.' : ''}</div>`, col: COL.bit }));
+      const bin = B2(n);
+      st.push({ title: 'Leer los restos de abajo hacia arriba', viz: ladder(rows, rows.length - 1, true), note: `<div class="small">El <b>último resto</b> es el dígito de más peso. Resultado: <span class="mono">${bin}<sub>2</sub></span> (${bin.length} bits).</div><div class="small text-muted">Comprobación con el teorema: ${n} = ${bin.split('').map((b, i) => b === '1' ? `2^${bin.length - 1 - i}` : null).filter(Boolean).map((t, i) => t).join(' + ') || '0'}.</div>`, calc: T`${n}_{10} = ${K('#7dd3fc', bin)}_{2}`, col: COL.res });
+      return st;
+    }
+    function stepsB2D(s) {
+      const L = s.length, bits = s.split('').map(Number).reverse(); let run = 0; const rows = [];
+      bits.forEach((b, i) => { const w = Math.pow(2, i); run += b * w; rows.push({ i, b, w, p: b * w, run }); });
+      const tbl = (upto, cur) => `<table class="ladder"><tr><th>i</th><th>Bit a<sub>i</sub></th><th>Peso 2<sup>i</sup></th><th>a<sub>i</sub>·2<sup>i</sup></th><th>Suma</th></tr>${rows.slice(0, upto + 1).map((r, k) => `<tr class="${k === cur ? 'cur' : ''}"><td>${r.i}</td><td class="rm"><b>${r.b}</b></td><td style="color:${COL.w}">${r.w}</td><td style="color:${COL.res}">${r.p}</td><td style="color:${COL.dec}">${r.run}</td></tr>`).join('')}</table>`;
+      const st = rows.map((r, k) => ({ title: `Bit en la posición ${r.i}`, viz: `<div class="chip-row">${s.split('').map((c, j) => `<span class="bchip ${L - 1 - j === r.i ? 'cur' : L - 1 - j < r.i ? 'done' : 'fut'}">${c}</span>`).join('')}</div><div class="lbl-row">posiciones: ${s.split('').map((c, j) => L - 1 - j).join(' · ')}</div>${tbl(k, k)}`,
+        note: `<div>${fd(T`${K(COL.bit, r.b)} \cdot ${K(COL.w, `2^{${r.i}}`)} = ${K(COL.bit, r.b)} \cdot ${K(COL.w, r.w)} = ${K(COL.res, r.p)}`)}</div><div class="small">${r.b ? 'El bit está encendido: aporta su peso.' : 'El bit es 0: no aporta nada.'} Suma acumulada: <b style="color:${COL.dec}">${r.run}</b>.</div>`, col: COL.res }));
+      const terms = rows.filter(r => r.b).reverse();
+      st.push({ title: 'Sumar los pesos de los bits encendidos', viz: `<div class="chip-row">${s.split('').map(c => `<span class="bchip done">${c}</span>`).join('')}</div>${tbl(rows.length - 1, -1)}`,
+        note: `<div class="small">Solo cuentan los bits en 1: ${fi(terms.length ? terms.map(r => `2^{${r.i}}`).join(' + ') : '0')} = ${fi(terms.length ? terms.map(r => r.w).join(' + ') : '0')}.</div>`, calc: T`${bx(s)} = ${K('#7dd3fc', run)}_{10}`, col: COL.dec });
+      return st;
+    }
+    function grpViz(groups, upto, cur, digs, base) {
+      return `<div class="chip-row" style="gap:12px;align-items:flex-start">${groups.map((g, k) => `<div class="text-center"><div class="bchip grp ${k === cur ? 'cur' : k < upto ? 'done' : ''}">${g}</div><div class="small" style="color:#94a3b8">${k < upto || k === cur ? 'valor ' + D2(g) : '·'}</div>${k < upto || k === cur ? `<div class="bchip ${base === 16 ? 'hx' : 'oc'}" style="margin-top:.25rem;animation:pop .35s both">${digs[k]}</div>` : ''}</div>`).join('')}</div>`;
+    }
+    function stepsB2X(s, base) {
+      const g = base === 16 ? 4 : 3, L = Math.ceil(s.length / g) * g, p = padL(s, L), groups = p.match(new RegExp('.{' + g + '}', 'g')), digs = groups.map(x => DIG[D2(x)]), wt = g === 4 ? [8, 4, 2, 1] : [4, 2, 1];
+      const st = [{ title: `Formar grupos de ${g} bits (desde la derecha)`, viz: `<div class="chip-row"><span class="bchip">${s}</span></div><div class="lbl-row"><i class="bi bi-arrow-down"></i></div>` + grpViz(groups, 0, -1, digs, base),
+        note: `<div class="small">${base === 16 ? 'Cada dígito hexadecimal (0–F) equivale a <b>4 bits</b> porque 16 = 2⁴.' : 'Cada dígito octal (0–7) equivale a <b>3 bits</b> porque 8 = 2³.'} Se cuentan los grupos desde la derecha y, si falta, se rellena con ceros a la izquierda${L > s.length ? ` (aquí se agregan ${L - s.length}: <b>${p}</b>)` : ''}.</div>`, col: BASECOL[base] }];
+      for (let k = groups.length - 1, c = 0; k >= 0; k--, c++) {
+        const grp = groups[k], v = D2(grp);
+        st.push({ title: `Grupo ${c + 1} (de derecha a izquierda)`, viz: grpViz(groups, 0, -1, digs, base).replace(/<div class="chip-row"/, '<div class="chip-row"') && `<div class="chip-row" style="gap:12px;align-items:flex-start">${groups.map((gg, j) => `<div class="text-center"><div class="bchip grp ${j === k ? 'cur' : j > k ? 'done' : ''}">${gg}</div>${j >= k ? `<div class="small" style="color:#94a3b8">valor ${D2(gg)}</div><div class="bchip ${base === 16 ? 'hx' : 'oc'}" style="margin-top:.25rem;animation:pop .35s both">${digs[j]}</div>` : '<div class="small">·</div>'}</div>`).join('')}</div>`,
+          note: `<div>${fd(T`${grp.split('').map((b, i) => `${K(COL.bit, b)} \\cdot ${K(COL.w, wt[i])}`).join(' + ')} = ${v}`)}</div><div class="small">${v > 9 ? `${v} se escribe <b>${DIG[v]}</b> en hexadecimal (A=10, B=11, C=12, D=13, E=14, F=15).` : `El valor ${v} es el dígito <b>${DIG[v]}</b>.`}</div>`, col: BASECOL[base] });
+      }
+      const res = trimZ(digs.join(''));
+      st.push({ title: 'Escribir los dígitos de izquierda a derecha', viz: grpViz(groups, groups.length, -1, digs, base), note: `<div class="small">Se quitan los ceros innecesarios de la izquierda.</div>`, calc: T`${bx(s)} = ${K('#7dd3fc', res)}_{${base}}`, col: BASECOL[base] });
+      return st;
+    }
+    function stepsX2B(s, base) {
+      const g = base === 16 ? 4 : 3, wt = g === 4 ? [8, 4, 2, 1] : [4, 2, 1], digs = s.toUpperCase().split(''), groups = digs.map(c => padL(B2(DIG.indexOf(c)), g));
+      const vz = (upto, cur) => `<div class="chip-row" style="gap:12px;align-items:flex-start">${digs.map((c, k) => `<div class="text-center"><div class="bchip ${base === 16 ? 'hx' : 'oc'} ${k === cur ? 'cur' : ''}">${c}</div>${k <= upto ? `<div class="bchip grp ${k === cur ? 'cur' : 'done'}" style="margin-top:.3rem;animation:pop .35s both">${groups[k]}</div>` : '<div class="small">·</div>'}</div>`).join('')}</div>`;
+      const st = digs.map((c, k) => { const v = DIG.indexOf(c); return { title: `Dígito «${c}»`, viz: vz(k, k), note: `<div>${fd(T`${K(BASECOL[base], c)} = ${v}_{10} = ${wt.map((w, i) => `${K(COL.bit, groups[k][i])} \\cdot ${K(COL.w, w)}`).join(' + ')} = ${K(COL.bit, groups[k])}_{2}`)}</div><div class="small">Cada dígito se escribe con exactamente <b>${g} bits</b> (se rellena con ceros a la izquierda).</div>`, col: COL.bit }; });
+      const res = trimZ(groups.join(''));
+      st.push({ title: 'Unir los grupos', viz: vz(digs.length - 1, -1), note: '<div class="small">Se pegan los grupos y se eliminan los ceros que sobran a la izquierda.</div>', calc: T`${bx(s.toUpperCase(), base)} = ${K('#7dd3fc', res)}_{2}`, col: COL.res });
+      return st;
+    }
+    function renderConvInputs() {
+      $('#cv-modes').innerHTML = CVM.map(([k, n, ic, c]) => `<button class="btn-chip ${CV.mode === k ? 'on' : ''}" style="--c:${c}" data-cvm="${k}"><i class="bi ${ic} me-1"></i>${n}</button>`).join('');
+      const m = CV.mode, lab = { d2b: 'Decimal (0 – 65535)', b2d: 'Binario (hasta 16 bits)', b2x: 'Binario (hasta 16 bits)', x2b: CV.sb === 16 ? 'Hexadecimal (0–9, A–F)' : 'Octal (0–7)' }[m];
+      $('#cv-lab').textContent = lab;
+      $('#cv-sub').innerHTML = (m === 'b2x' || m === 'x2b') ? `<div class="inlab mb-1">Base</div><div class="btn-group btn-group-sm">${[8, 16].map(b => `<button class="btn btn-outline-dark fw-bold ${CV.sb === b ? 'active' : ''}" data-cvb="${b}">${b === 8 ? 'Octal (8)' : 'Hexadecimal (16)'}</button>`).join('')}</div>` : '';
+      $('#sp-cv').dataset.base = CV.sb; const inp = $('#cv-in'); if (document.activeElement !== inp) inp.value = CV.v[cvKey()];
+      $('#cv-man').dataset.manual = { d2b: 'd2b', b2d: 'b2d', b2x: 'agrup', x2b: 'agrup' }[m];
+    }
+    function renderConv(keep) {
+      renderConvInputs(); const v = CV.v[cvKey()].trim(), m = CV.mode, err = $('#cv-err'), inp = $('#cv-in'); let ok = false, steps = [];
+      if (m === 'd2b') ok = /^\d{1,5}$/.test(v) && +v <= 65535; else if (m === 'b2d' || m === 'b2x') ok = /^[01]{1,16}$/.test(v); else ok = (CV.sb === 16 ? /^[0-9a-fA-F]{1,4}$/ : /^[0-7]{1,5}$/).test(v);
+      inp.classList.toggle('bad', !ok && v !== '');
+      err.textContent = ok || v === '' ? '' : { d2b: 'Escribe un entero entre 0 y 65535.', b2d: 'Solo 0 y 1, máximo 16 bits.', b2x: 'Solo 0 y 1, máximo 16 bits.', x2b: CV.sb === 16 ? 'Usa 0–9 y A–F (máx. 4 dígitos).' : 'Usa 0–7 (máx. 5 dígitos).' }[m];
+      if (ok) steps = m === 'd2b' ? stepsD2B(+v) : m === 'b2d' ? stepsB2D(v) : m === 'b2x' ? stepsB2X(v, CV.sb) : stepsX2B(v, CV.sb);
+      spSet('sp-cv', steps, keep);
+    }
+    on('[data-cvm]', 'click', (e, t) => { CV.mode = t.dataset.cvm; renderConv(); });
+    on('[data-cvb]', 'click', (e, t) => { CV.sb = +t.dataset.cvb; renderConv(); });
+    document.addEventListener('input', e => { if (e.target.id === 'cv-in') { CV.v[cvKey()] = e.target.value.replace(/\s/g, ''); renderConv(false); } });
+    $('#cv-rand').onclick = () => { const m = CV.mode; CV.v[cvKey()] = m === 'd2b' ? String(rnd(20, 999)) : m === 'b2d' || m === 'b2x' ? rndBin(rnd(5, 10)) : (CV.sb === 16 ? rnd(16, 4095).toString(16).toUpperCase() : rnd(8, 511).toString(8)); renderConv(); };
+
+    /* ================= Operaciones: suma, resta, multiplicación, división ================= */
+    const lsb = (s, L) => padL(s, L).split('').reverse().map(Number);
+    function addBits(a, b, c0 = 0) { const n = a.length, bits = [], cin = [], cout = []; let c = c0; for (let i = 0; i < n; i++) { cin[i] = c; const s = a[i] + b[i] + c; bits[i] = s % 2; c = s >> 1; cout[i] = c; } return { bits, cin, cout, carry: c }; }
+    const toS = arr => arr.slice().reverse().join('');
+    /* fila de la rejilla a partir de un arreglo LSB-primero; fn(i,v) → clase (null = celda vacía) */
+    function R(lab, arr, fn, o = {}) { const L = arr.length, cells = []; for (let i = L - 1; i >= 0; i--) { const v = arr[i], c = fn ? fn(i, v) : ''; cells.push(c === null ? cell('', 'empty') : cell(v === null || v === undefined ? '' : v, c)); } return Object.assign({ lab, cells }, o); }
+    const rulesTbl = s => `<table class="rules">${['0 + 0 = 0', '0 + 1 = 1', '1 + 1 = 10', '1 + 1 + 1 = 11'].map((t, k) => `<tr class="${k === s ? 'on' : ''}"><td>${t}</td>${k === s ? '<td>◀</td>' : '<td></td>'}</tr>`).join('')}</table>`;
+
+    /* ---------- Suma ---------- */
+    function stepsAdd(sa, sb) {
+      const L = Math.max(sa.length, sb.length) + 1, A = lsb(sa, L), Bv = lsb(sb, L), r = addBits(A, Bv), steps = [], res = trimZ(toS(r.bits));
+      const view = k => {
+        const fin = k >= L, cur = i => !fin && i === k;
+        const car = Array.from({ length: L }, (_, i) => (i === 0 ? null : (i <= k || fin ? r.cin[i] : '')));
+        const rows = [
+          R('Acarreo', car, (i, v) => v === null ? null : v === '' ? 'fut' : 'c' + (cur(i) ? ' cur' : '')),
+          R('A', A, (i, v) => (i >= sa.length ? 'pad' : '') + (cur(i) ? ' cur' : '')),
+          R('+ B', Bv, (i, v) => (i >= sb.length ? 'pad' : '') + (cur(i) ? ' cur' : ''), {}),
+          R('Resultado', r.bits.map((b, i) => (fin || i <= k ? b : '?')), (i, v) => (fin || i < k ? (i === L - 1 && v === 0 ? 'pad' : 'r') : i === k ? 'r cur' : 'fut'), { ln: true })];
+        return grid(rows);
+      };
+      for (let k = 0; k < L; k++) {
+        const a = A[k], b = Bv[k], c = r.cin[k], s = a + b + c;
+        steps.push({ title: `Columna ${k + 1} (peso 2<sup>${k}</sup>)`, viz: view(k),
+          note: `${fd(T`${K(COL.carry, c)} + ${K(COL.bit, a)} + ${K(COL.bit, b)} = ${s}_{10} = ${B2(s)}_{2}`)}<div class="small">Suma la columna con el acarreo que llega: da <b>${s}</b>, que en binario es <b>${B2(s)}</b>. Escribo <b style="color:${COL.res}">${s % 2}</b> y llevo <b style="color:${COL.carry}">${s >> 1}</b> a la siguiente columna.${k === L - 1 ? ' (Es la columna extra: solo recibe el último acarreo.)' : ''}</div>${rulesTbl(s)}`, col: COL.carry });
+      }
+      const da = D2(sa), db = D2(sb);
+      steps.push({ title: 'Resultado y comprobación', viz: view(L), note: `<div class="small">El resultado crece un bit si el último acarreo es 1. Comprobación en decimal: ${fi(T`${da} + ${db} = ${da + db}`)} y ${fi(T`${bx(res)} = ${D2(res)}_{10}`)} ✔</div>`, calc: T`${bx(sa)} + ${bx(sb)} = ${K('#7dd3fc', res)}_{2} \\ ${da}_{10} + ${db}_{10} = ${da + db}_{10}`, col: COL.res });
+      return steps;
+    }
+
+    /* ---------- Resta con préstamo ---------- */
+    function stepsSubBorrow(sa, sb) {
+      const a = D2(sa), b = D2(sb), neg = a < b, X = neg ? sb : sa, Y = neg ? sa : sb, L = Math.max(X.length, Y.length), A = lsb(X, L), Bv = lsb(Y, L);
+      const d = [], bin = [], bout = []; let br = 0; for (let i = 0; i < L; i++) { bin[i] = br; const raw = A[i] - Bv[i] - br; if (raw < 0) { d[i] = raw + 2; bout[i] = 1; } else { d[i] = raw; bout[i] = 0; } br = bout[i]; }
+      const res = trimZ(toS(d)), steps = [];
+      const view = k => { const fin = k >= L, cur = i => !fin && i === k;
+        return grid([
+          R('Préstamo', Array.from({ length: L }, (_, i) => i === 0 ? null : (i <= k || fin ? bin[i] : '')), (i, v) => v === null ? null : v === '' ? 'fut' : 'br' + (cur(i) ? ' cur' : '')),
+          R(neg ? 'Mayor (B)' : 'A', A, (i) => (i >= X.length ? 'pad' : '') + (cur(i) ? ' cur' : '')),
+          R(neg ? '− menor (A)' : '− B', Bv, (i) => (i >= Y.length ? 'pad' : '') + (cur(i) ? ' cur' : '')),
+          R('Resultado', d.map((x, i) => (fin || i <= k ? x : '?')), (i, v) => (fin || i < k ? (i >= res.length && v === 0 ? 'pad' : 'r') : i === k ? 'r cur' : 'fut'), { ln: true })]); };
+      steps.push({ title: 'Comparar A con B', viz: `<div class="chip-row"><span class="bchip">${sa}</span><span class="bchip" style="background:none">${a > b ? '>' : a < b ? '<' : '='}</span><span class="bchip">${sb}</span></div><div class="lbl-row">${a}<sub>10</sub> ${a > b ? '&gt;' : a < b ? '&lt;' : '='} ${b}<sub>10</sub></div>`,
+        note: neg ? `<div class="small"><b>A es menor que B</b>: el resultado será <b>negativo</b>. Se resta el mayor menos el menor (${sb} − ${sa}) y al final se antepone el signo <b>−</b>.</div>` : `<div class="small">A ≥ B: se puede restar directamente, columna por columna, de derecha a izquierda.</div>`, col: COL.borrow });
+      for (let k = 0; k < L; k++) {
+        const a_ = A[k], b_ = Bv[k], p = bin[k], raw = a_ - b_ - p;
+        steps.push({ title: `Columna ${k + 1} (peso 2<sup>${k}</sup>)`, viz: view(k),
+          note: `${fd(T`${K(COL.bit, a_)} - ${K(COL.bit, b_)} - ${K(COL.borrow, p)} = ${raw}${raw < 0 ? T` \;\Rightarrow\; ${raw} + 2 = ${d[k]}` : ''}`)}<div class="small">${raw < 0 ? `No se puede restar (da <b>${raw}</b>): <b>pido prestado</b> 1 a la columna de la izquierda, que aquí vale <b>2</b>. Escribo <b style="color:${COL.res}">${d[k]}</b> y marco <b style="color:${COL.borrow}">préstamo 1</b> para la siguiente columna.` : `Se puede restar sin pedir prestado: escribo <b style="color:${COL.res}">${d[k]}</b>.`}${p ? ' (El 1 de préstamo que llega ya se descuenta.)' : ''}</div>`, col: COL.borrow });
+      }
+      const rs = (neg ? '-' : '') + res;
+      steps.push({ title: 'Resultado y comprobación', viz: view(L), note: `<div class="small">${neg ? 'Se antepone el signo menos porque A &lt; B. ' : ''}Comprobación en decimal: ${fi(T`${a} - ${b} = ${a - b}`)} ✔</div>`, calc: T`${bx(sa)} - ${bx(sb)} = ${K('#7dd3fc', rs)}_{2} \\ ${a}_{10} - ${b}_{10} = ${a - b}_{10}`, col: COL.res });
+      return steps;
+    }
+
+    /* ---------- Resta con complemento a 2 ---------- */
+    function stepsSubC2(sa, sb) {
+      const n = Math.max(sa.length, sb.length), A = lsb(sa, n), Bv = lsb(sb, n), inv = Bv.map(x => 1 - x), one = lsb('1', n), c2 = addBits(inv, one), sum = addBits(A, c2.bits);
+      const a = D2(sa), b = D2(sb), steps = [];
+      steps.push({ title: `Escribir A y B con ${n} bits`, viz: grid([R('A', A, i => i >= sa.length ? 'pad' : ''), R('B', Bv, i => i >= sb.length ? 'pad' : '')]),
+        note: `<div class="small">Los dos números se escriben con el <b>mismo número de bits n = ${n}</b> (se rellenan ceros a la izquierda). Con ${n} bits se representan valores de 0 a ${Math.pow(2, n) - 1}.</div><div class="small">Idea: <b>A − B = A + (−B)</b>, y en complemento a 2 el −B se obtiene invirtiendo los bits y sumando 1.</div>`, col: COL.borrow });
+      steps.push({ title: 'Complemento a 1 de B: invertir cada bit', viz: grid([R('B', Bv, () => ''), R('Invertido', inv, (i, v) => 'chg', { ln: true })]),
+        note: `<div class="small">Cada 0 pasa a 1 y cada 1 pasa a 0: ${fi(T`\bar{b}_i = 1 - b_i`)}. El resultado se llama <b>complemento a 1</b> (C1).</div>`, calc: T`C1(${bx(padL(sb, n))}) = ${K('#7dd3fc', toS(inv))}_{2}`, col: COL.borrow });
+      steps.push({ title: 'Sumar 1: complemento a 2 de B', viz: grid([R('Acarreo', c2.cin.map((v, i) => i === 0 ? null : v), (i, v) => v === null ? null : 'c'), R('C1', inv, () => ''), R('+ 1', one, () => 'pad'), R('C2 = −B', c2.bits, () => 'r', { ln: true })]),
+        note: `<div class="small">Al complemento a 1 se le suma 1 (con sus acarreos). El resultado es el <b>complemento a 2</b>: la representación de <b>−B</b> en ${n} bits.</div>`, calc: T`C2(${bx(padL(sb, n))}) = ${K('#7dd3fc', toS(c2.bits))}_{2}`, col: COL.borrow });
+      const eff0 = (sum.carry || c2.carry) ? 1 : 0, cr = sum.cin.map((v, i) => i === 0 ? null : v); cr.push(eff0);
+      steps.push({ title: 'Sumar A + (−B)', viz: grid([R('Acarreo', cr, (i, v) => v === null ? null : 'c'), R('A', A.concat(['']), (i, v) => v === '' ? 'empty' : ''), R('+ (−B)', c2.bits.concat(['']), (i, v) => v === '' ? 'empty' : ''), R('Resultado', sum.bits.concat([eff0]), (i, v) => i === n ? 'c cur' : 'r', { ln: true })]),
+        note: `<div class="small">Se suma como siempre. Como solo disponemos de ${n} bits, el acarreo que sale por la izquierda (<b style="color:${COL.carry}">${eff0}</b>) queda <b>fuera</b> del resultado.</div>${c2.carry && !sum.carry ? '<div class="small">Caso especial: B = 0, así que C2(B) = 0 y el «+1» ya produjo el acarreo que sale; cuenta como acarreo final → resultado positivo (A − 0 = A).</div>' : ''}`, col: COL.carry });
+      const rBits = toS(sum.bits), eff = (sum.carry || c2.carry) ? 1 : 0;
+      if (eff === 1) {
+        steps.push({ title: 'Interpretar: hay acarreo final → positivo', viz: grid([R('Resultado', sum.bits, () => 'r')]), note: `<div class="small">Cuando <b>sí</b> hay acarreo final, se <b>descarta</b> y el resultado es positivo (A ≥ B): los ${n} bits son la respuesta.</div><div class="small">Comprobación: ${fi(T`${a} - ${b} = ${a - b}`)} ✔</div>`, calc: T`${bx(sa)} - ${bx(sb)} = ${K('#7dd3fc', trimZ(rBits))}_{2} \\ ${a}_{10} - ${b}_{10} = ${a - b}_{10}`, col: COL.res });
+      } else {
+        const ri = sum.bits.map(x => 1 - x), m = addBits(ri, one);
+        steps.push({ title: 'Interpretar: no hay acarreo → negativo', viz: grid([R('Resultado', sum.bits, () => 'r'), R('Invertido', ri, () => 'chg'), R('+ 1', one, () => 'pad'), R('Magnitud', m.bits, () => 'r', { ln: true })]),
+          note: `<div class="small">Cuando <b>no</b> hay acarreo final, el resultado es <b>negativo</b> y está escrito en complemento a 2. Para ver su valor se le aplica otra vez el complemento a 2 (invertir y sumar 1): magnitud <b>${trimZ(toS(m.bits))}</b>.</div><div class="small">Comprobación: ${fi(T`${a} - ${b} = ${a - b}`)} ✔</div>`, calc: T`${bx(sa)} - ${bx(sb)} = ${K('#7dd3fc', '-' + trimZ(toS(m.bits)))}_{2} \\ ${a}_{10} - ${b}_{10} = ${a - b}_{10}`, col: COL.res });
+      }
+      return steps;
+    }
+
+    /* ---------- Multiplicación ---------- */
+    function stepsMul(sa, sb) {
+      const la = sa.length, lb = sb.length, W = la + lb, A = lsb(sa, la), Bv = lsb(sb, lb), a = D2(sa), b = D2(sb), prod = a * b, res = B2(prod), steps = [];
+      const arr = (bits, sh) => { const o = []; for (let i = 0; i < W; i++) o.push(i < sh ? '0' : (i - sh < bits.length ? bits[i - sh] : null)); return o; };
+      const view = (k, fin) => {
+        const rows = [R('A', lsb(sa, W), (i) => i >= la ? null : ''), R('× B', lsb(sb, W), (i) => i >= lb ? null : '', {})];
+        rows[1].ln = false;
+        for (let j = 0; j <= Math.min(k, lb - 1); j++) { const bit = Bv[j], row = arr(bit ? A : A.map(() => 0), j); rows.push(R(`bit ${j} = ${bit}`, row, (i, v) => v === null ? null : i < j ? 'sh' : (bit ? '' : 'pad') + (j === k && !fin ? ' cur' : ''), { ln: j === 0 })); }
+        if (fin) rows.push(R('Producto', lsb(res, W), (i, v) => (i >= res.length ? 'pad' : 'r'), { ln: true }));
+        return grid(rows);
+      };
+      steps.push({ title: 'Preparar la multiplicación', viz: view(-1, false), note: `<div class="small">Se multiplica A por <b>cada bit de B</b>, de derecha a izquierda. Si el bit es <b>1</b> se copia A; si es <b>0</b> la fila vale 0. Cada fila se corre una posición más a la izquierda (peso 2<sup>j</sup>).</div>`, col: COL.res });
+      for (let j = 0; j < lb; j++) {
+        const bit = Bv[j];
+        steps.push({ title: `Bit ${j} de B = ${bit}`, viz: view(j, false), note: `${fd(T`${K(COL.bit, bit)} \cdot ${bx(sa)} \cdot 2^{${j}} = ${bit ? bx(sa + '0'.repeat(j)) : '0'}`)}<div class="small">${bit ? `El bit es 1: se copia <b>A</b> y se corre <b>${j}</b> ${j === 1 ? 'lugar' : 'lugares'} a la izquierda (se agregan ${j} ceros).` : 'El bit es 0: toda la fila es 0 (no aporta nada).'}</div>`, col: COL.res });
+      }
+      steps.push({ title: 'Sumar todas las filas', viz: view(lb, true), note: `<div class="small">Las filas se suman con la suma binaria (con acarreos). Comprobación en decimal: ${fi(T`${a} \cdot ${b} = ${prod}`)} y ${fi(T`${bx(res)} = ${prod}_{10}`)} ✔</div>`, calc: T`${bx(sa)} \times ${bx(sb)} = ${K('#7dd3fc', res)}_{2} \\ ${a}_{10} \cdot ${b}_{10} = ${prod}_{10}`, col: COL.res });
+      return steps;
+    }
+
+    /* ---------- División ---------- */
+    function stepsDiv(sa, sb, f) {
+      const D = D2(sa), d = D2(sb); if (d === 0) return null;
+      const bitsD = sa.split('').map(Number), total = bitsD.length + f; let rem = 0, q = ''; const rows = [], steps = [];
+      for (let k = 0; k < total; k++) { const bit = k < bitsD.length ? bitsD[k] : 0, cur = rem * 2 + bit, qb = cur >= d ? 1 : 0, nr = cur - qb * d; rows.push({ k, bit, prev: rem, cur, q: qb, nr, frac: k >= bitsD.length }); q += qb; rem = nr; }
+      const chips = k => `<div class="lbl-row">Dividendo ÷ divisor <span class="mono">${sb}<sub>2</sub></span></div><div class="chip-row">${Array.from({ length: total }, (_, i) => `${i === bitsD.length ? '<span class="bchip" style="background:none">.</span>' : ''}<span class="bchip ${i > k ? 'fut' : i === k ? 'cur' : 'done'} ${i >= bitsD.length ? 'dc' : ''}">${i < bitsD.length ? bitsD[i] : 0}</span>`).join('')}</div><div class="lbl-row">Cociente</div><div class="chip-row">${Array.from({ length: total }, (_, i) => `${i === bitsD.length ? '<span class="bchip" style="background:none">.</span>' : ''}<span class="bchip ${i <= k ? 'done' : 'fut'}">${i <= k ? q[i] : '·'}</span>`).join('')}</div>`;
+      const table = k => `<table class="ladder"><tr><th>Paso</th><th>Residuo → baja</th><th>Parcial</th><th>¿≥ d?</th><th>q</th><th>Nuevo residuo</th></tr>${rows.slice(0, k + 1).map((r, i) => `<tr class="${i === k ? 'cur' : ''}"><td>${i + 1}</td><td>${B2(r.prev)}<sub>(${r.bit})</sub></td><td>${B2(r.cur)}</td><td>${r.q ? 'sí' : 'no'}</td><td class="q">${r.q}</td><td class="rm"><b>${B2(r.nr)}</b></td></tr>`).join('')}</table>`;
+      rows.forEach((r, k) => steps.push({ title: r.frac ? `Bit fraccionario ${k - bitsD.length + 1} (se baja un 0)` : `Bajar el bit ${k + 1} del dividendo`, viz: chips(k) + table(k),
+        note: `<div class="small">${r.frac ? 'Ya no quedan bits del dividendo: se pone el punto y se baja un <b>0</b>.' : `Bajo el bit <b>${r.bit}</b> junto al residuo <b>${B2(r.prev)}</b>.`} Parcial = <b>${B2(r.cur)}</b> (${r.cur} en decimal).</div>${fd(T`${bx(B2(r.cur))} ${r.q ? T`\ge` : '<'} ${bx(sb)} \;\Rightarrow\; ${K(COL.dec, 'q = ' + r.q)}${r.q ? T` \qquad ${B2(r.cur)} - ${sb} = ${B2(r.nr)}` : ''}`)}<div class="small">${r.q ? `Sí cabe: el bit del cociente es <b style="color:${COL.dec}">1</b> y se resta el divisor.` : `No cabe: el bit del cociente es <b style="color:${COL.dec}">0</b> y el residuo no cambia.`}</div>`, col: COL.dec }));
+      const qi = trimZ(q.slice(0, bitsD.length)), qf = q.slice(bitsD.length), ri = rows[bitsD.length - 1].nr, rf = rem, Qd = D / d;
+      steps.push({ title: 'Cociente, residuo y comprobación', viz: chips(total - 1).replace(/cur/g, 'done') + table(total - 1).replace(/class="cur"/, ''),
+        note: `<div class="small">Se acabaron los bits. ${f ? `Cociente con ${f} bits fraccionarios: <b>${qi}.${qf}</b><sub>2</sub> ≈ ${(parseInt(qi, 2) + (f ? parseInt(qf, 2) / Math.pow(2, f) : 0)).toFixed(4)}; valor exacto ${Qd.toFixed(4)}.` : ''}</div><div class="small">Teorema de la división: ${fi(T`D = d \cdot q + r \qquad 0 \le r < d`)}</div>${fd(T`${D} = ${d} \cdot ${D2(qi || '0')} + ${D - d * D2(qi || '0')}`)}<div class="small">✔ coincide con el algoritmo.</div>`,
+        calc: T`${bx(sa)} \div ${bx(sb)} \;\Rightarrow\; q = ${K('#7dd3fc', qi)}_{2} \quad r = ${B2(ri)}_{2}${f ? T` \\ q \approx ${qi}.${qf}_{2}` : ''}`, col: COL.res });
+      return steps;
+    }
+
+    /* ---------- Estado y render de las operaciones ---------- */
+    const OP = { add: { a: '1011', b: '0111' }, sub: { a: '11010', b: '1011', m: 'borrow' }, mul: { a: '1101', b: '101' }, div: { a: '1101101', b: '101', f: 0 } };
+    const OPID = { add: ['ad-a', 'ad-b', 'ad-err', 'sp-add'], sub: ['sb-a', 'sb-b', 'sb-err', 'sp-sub'], mul: ['ml-a', 'ml-b', 'ml-err', 'sp-mul'], div: ['dv-a', 'dv-b', 'dv-err', 'sp-div'] };
+    const LIM = { add: [12, 12], sub: [12, 12], mul: [8, 8], div: [12, 8] };
+    function renderOp(k, keep) {
+      const [ia, ib, ie, sp] = OPID[k], o = OP[k], [la, lb] = LIM[k], ea = $('#' + ia), eb = $('#' + ib);
+      if (document.activeElement !== ea) ea.value = o.a; if (document.activeElement !== eb) eb.value = o.b;
+      const okA = new RegExp('^[01]{1,' + la + '}$').test(o.a), okB = new RegExp('^[01]{1,' + lb + '}$').test(o.b);
+      ea.classList.toggle('bad', !okA && o.a !== ''); eb.classList.toggle('bad', !okB && o.b !== '');
+      let msg = ''; if (!okA && o.a !== '') msg = `A: solo 0 y 1 (máx. ${la} bits). `; if (!okB && o.b !== '') msg += `B: solo 0 y 1 (máx. ${lb} bits).`;
+      let steps = [];
+      if (okA && okB) {
+        if (k === 'add') steps = stepsAdd(o.a, o.b);
+        else if (k === 'sub') steps = o.m === 'borrow' ? stepsSubBorrow(o.a, o.b) : stepsSubC2(o.a, o.b);
+        else if (k === 'mul') steps = stepsMul(o.a, o.b);
+        else { const s = stepsDiv(o.a, o.b, +o.f); if (!s) msg = 'El divisor no puede ser 0 (no se puede dividir entre cero).'; else steps = s; }
+      }
+      $('#' + ie).textContent = msg; spSet(sp, steps, keep);
+      if (k === 'sub') { $('#sb-modes').innerHTML = [['borrow', 'Con préstamo', 'bi-box-arrow-in-left', COL.borrow], ['c2', 'Con complemento a 2', 'bi-arrow-repeat', '#5130b9']].map(([m, n, ic, c]) => `<button class="btn-chip ${o.m === m ? 'on' : ''}" style="--c:${c}" data-sbm="${m}"><i class="bi ${ic} me-1"></i>${n}</button>`).join(''); $('#sb-man').dataset.manual = o.m === 'borrow' ? 'resta' : 'restac2'; }
+      if (k === 'div') $('#dv-f').value = String(o.f);
+    }
+    [['add', 'ad-a', 'a'], ['add', 'ad-b', 'b'], ['sub', 'sb-a', 'a'], ['sub', 'sb-b', 'b'], ['mul', 'ml-a', 'a'], ['mul', 'ml-b', 'b'], ['div', 'dv-a', 'a'], ['div', 'dv-b', 'b']].forEach(([k, id, f]) => { $('#' + id).addEventListener('input', e => { OP[k][f] = e.target.value.replace(/\s/g, ''); renderOp(k); }); });
+    on('[data-sbm]', 'click', (e, t) => { OP.sub.m = t.dataset.sbm; renderOp('sub'); });
+    $('#dv-f').addEventListener('change', e => { OP.div.f = +e.target.value; renderOp('div'); });
+    on('[data-rand]', 'click', (e, t) => {
+      const k = t.dataset.rand, la = rnd(4, 7), lb = rnd(3, 6);
+      if (k === 'add') { OP.add.a = rndBin(la); OP.add.b = rndBin(lb); }
+      else if (k === 'sub') { let a = rndBin(la + 1), b = rndBin(lb); if (D2(a) < D2(b) && Math.random() < .7) [a, b] = [b, a]; OP.sub.a = a; OP.sub.b = b; }
+      else if (k === 'mul') { OP.mul.a = rndBin(rnd(3, 6)); OP.mul.b = rndBin(rnd(2, 5)); }
+      else { OP.div.a = rndBin(rnd(6, 9)); OP.div.b = rndBin(rnd(2, 4)); }
+      renderOp(k);
+    });
+
+    /* ================= 7. MÁS TEMAS ================= */
+    const XS = { tab: 'sg', sg: { n: 8, bits: [1, 1, 0, 1, 1, 0, 1, 1], dec: '-37' }, ov: { n: 4, a: '5', b: '3' }, fr: { d: '0.6875', b: '0.1011' } };
+    const XT = [['sg', 'Números con signo (C2)', 'bi-plus-slash-minus'], ['ov', 'Desbordamiento', 'bi-exclamation-triangle-fill'], ['fr', 'Fracciones binarias', 'bi-percent'], ['pw', 'Tablas de apoyo', 'bi-table']];
+    const sgVal = (bits) => { const n = bits.length; return bits.reduce((a, b, j) => a + b * (j === 0 ? -Math.pow(2, n - 1) : Math.pow(2, n - 1 - j)), 0); };
+    function sgSteps(x, n) {
+      const mag = Math.abs(x), M = lsb(B2(mag), n), inv = M.map(v => 1 - v), one = lsb('1', n), c2 = addBits(inv, one);
+      if (x >= 0) return `<div class="small mb-1">${x} es <b>positivo</b>: se escribe en binario con ceros a la izquierda hasta completar ${n} bits.</div>` + grid([R('+' + x, M, () => 'r')]);
+      return `<div class="small mb-1">${x} es <b>negativo</b>: se toma el complemento a 2 de su valor absoluto (${mag}).</div>` + grid([R('|x| = ' + mag, M, () => ''), R('Invertido', inv, () => 'chg'), R('+ 1', one, () => 'pad'), R('C2 = ' + x, c2.bits, () => 'r', { ln: true })]);
+    }
+    function frSteps(txt) {
+      const m = /^0?\.(\d{1,6})$/.exec(txt.trim()); if (!m) return null; const k = m[1].length, den = Math.pow(10, k); let num = +m[1]; if (num === 0) return null;
+      const rows = [], seen = new Map(); let bits = '', rep = false;
+      while (num !== 0 && rows.length < 14) { if (seen.has(num)) { rep = true; break; } seen.set(num, rows.length); const f = num / den, p = num * 2, bit = p >= den ? 1 : 0, nn = p - bit * den; rows.push({ f: (num / den).toFixed(k), p: (p / den).toFixed(k), bit, nf: (nn / den).toFixed(k) }); bits += bit; num = nn; }
+      return { rows, bits, rep, cut: num !== 0 && !rep };
+    }
+    function renderExtras() {
+      $('#ex-tabs').innerHTML = XT.map(([k, n, ic]) => `<li class="nav-item"><button class="nav-link ${XS.tab === k ? 'active' : ''}" data-xt="${k}"><i class="bi ${ic} me-1"></i>${n}</button></li>`).join('');
+      const b = $('#ex-body'), t = XS.tab; let h = '';
+      if (t === 'sg') {
+        const { n, bits } = XS.sg, un = bits.reduce((a, v) => a * 2 + v, 0), sv = sgVal(bits), lo = -Math.pow(2, n - 1), hi = Math.pow(2, n - 1) - 1, dv = parseInt(XS.sg.dec, 10), okD = /^-?\d+$/.test(XS.sg.dec.trim()) && dv >= lo && dv <= hi;
+        h = `<div class="row g-3"><div class="col-lg-7"><div class="panel"><div class="d-flex flex-wrap gap-2 mb-2 align-items-center"><span class="inlab">Bits</span>${[4, 8].map(x => `<button class="btn-chip ${n === x ? 'on' : ''}" style="--c:#495057" data-sgn="${x}">${x} bits</button>`).join('')}</div>
+          <div class="small text-muted mb-1"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i>Toca un bit para encenderlo o apagarlo. El primer bit pesa <b style="color:${COL.borrow}">−2<sup>${n - 1}</sup></b> (negativo).</div>
+          <div class="table-responsive"><table class="thm-tbl"><tr><th class="rl">Peso</th>${bits.map((_, j) => `<td class="t-w" style="${j === 0 ? 'background:#ffe3e3;color:#e03131' : ''}">${j === 0 ? '−' : ''}${Math.pow(2, n - 1 - j)}</td>`).join('')}</tr>
+          <tr><th class="rl">Bit</th>${bits.map((v, j) => `<td class="t-d ${v ? '' : 'z'}" data-sgb="${j}">${v}</td>`).join('')}</tr>
+          <tr><th class="rl">Aporta</th>${bits.map((v, j) => `<td class="t-p" style="${j === 0 && v ? 'background:#ffe3e3;color:#e03131' : ''}">${v ? (j === 0 ? '−' : '') + Math.pow(2, n - 1 - j) : 0}</td>`).join('')}</tr></table></div>
+          <div class="row g-2 mt-2"><div class="col-6"><div class="calc-screen" style="--c:#2f9e44">${fd(T`\text{sin signo} = ${K('#7dd3fc', un)}`)}</div></div><div class="col-6"><div class="calc-screen" style="--c:#e03131">${fd(T`\text{con signo} = ${K('#7dd3fc', sv)}`)}</div></div></div>
+          <div class="small text-muted mt-2">Con ${n} bits: sin signo de 0 a ${Math.pow(2, n) - 1}; con signo (C2) de ${lo} a ${hi}.</div></div></div>
+          <div class="col-lg-5"><div class="panel h-100"><label class="inlab mb-1" for="sg-dec">O escribe un decimal (${lo} a ${hi})</label><input id="sg-dec" class="binput ${okD || XS.sg.dec === '' ? '' : 'bad'}" value="${XS.sg.dec}" autocomplete="off"><div class="mt-2" id="sg-out">${okD ? sgSteps(dv, n) : '<div class="errmsg">Escribe un entero dentro del rango.</div>'}</div></div></div></div>`;
+      } else if (t === 'ov') {
+        const { n } = XS.ov, lo = -Math.pow(2, n - 1), hi = Math.pow(2, n - 1) - 1, a = parseInt(XS.ov.a, 10), c = parseInt(XS.ov.b, 10), okA = /^-?\d+$/.test(XS.ov.a.trim()) && a >= lo && a <= hi, okB = /^-?\d+$/.test(XS.ov.b.trim()) && c >= lo && c <= hi;
+        let out = '<div class="errmsg">Escribe dos enteros dentro del rango.</div>';
+        if (okA && okB) { const ba = lsb(B2((a + Math.pow(2, n)) % Math.pow(2, n)), n), bb = lsb(B2((c + Math.pow(2, n)) % Math.pow(2, n)), n), r = addBits(ba, bb), cin = r.cin[n - 1], co = r.carry, ovf = cin !== co, tr = a + c, rv = sgVal(toS(r.bits).split('').map(Number));
+          const cr = r.cin.map((v, i) => i === 0 ? null : v); cr.push(co);
+          out = grid([R('Acarreo', cr, (i, v) => v === null ? null : (i === n ? 'c cur' : i === n - 1 ? 'c cur' : 'c')), R(a + '', ba.concat(['']), (i, v) => v === '' ? 'empty' : ''), R('+ ' + c, bb.concat(['']), (i, v) => v === '' ? 'empty' : ''), R('Resultado', r.bits.concat(['']), (i, v) => v === '' ? 'empty' : (ovf ? 'br' : 'r'), { ln: true })])
+            + `<div class="tip-box ${ovf ? 's-res' : 's-ok'} mt-2 small"><b>${ovf ? '¡Desbordamiento!' : 'Sin desbordamiento.'}</b> Acarreo hacia el último bit: <b>${cin}</b>; acarreo que sale: <b>${co}</b> → ${cin !== co ? 'son <b>distintos</b>' : 'son <b>iguales</b>'}. ${ovf ? `La suma real es <b>${tr}</b>, que no cabe en ${n} bits (rango ${lo} a ${hi}); el resultado de ${n} bits se lee como <b>${rv}</b>, que es incorrecto.` : `El resultado ${rv} = ${tr} cabe en el rango.`}</div>`; }
+        h = `<div class="row g-3"><div class="col-lg-4"><div class="panel"><div class="d-flex gap-2 mb-2 align-items-center"><span class="inlab">Bits</span>${[4, 8].map(x => `<button class="btn-chip ${n === x ? 'on' : ''}" style="--c:#e03131" data-ovn="${x}">${x}</button>`).join('')}</div>
+          <label class="inlab" for="ov-a">Sumando A (${lo} a ${hi})</label><input id="ov-a" class="binput mb-2 ${okA || XS.ov.a === '' ? '' : 'bad'}" value="${XS.ov.a}" autocomplete="off"><label class="inlab" for="ov-b">Sumando B</label><input id="ov-b" class="binput ${okB || XS.ov.b === '' ? '' : 'bad'}" value="${XS.ov.b}" autocomplete="off">
+          <div class="small text-muted mt-2">Prueba 5 + 3 con 4 bits, o 100 + 50 con 8 bits.</div></div></div><div class="col-lg-8"><div class="panel" id="ov-out">${out}</div></div></div>`;
+      } else if (t === 'fr') {
+        const f = frSteps(XS.fr.d), bf = /^0?\.([01]{1,12})$/.exec(XS.fr.b.trim());
+        let o1 = '<div class="errmsg">Escribe una fracción como 0.6875 (1 a 6 decimales, mayor que 0).</div>';
+        if (f) o1 = `<table class="ladder"><tr><th>Paso</th><th>Fracción</th><th>× 2</th><th>Bit</th><th>Nueva fracción</th></tr>${f.rows.map((r, i) => `<tr style="animation:pop .3s ${i * 60}ms both"><td>${i + 1}</td><td>${r.f}</td><td>${r.p}</td><td class="rm"><b>${r.bit}</b></td><td>${r.nf}</td></tr>`).join('')}</table>
+          <div class="calc-screen mt-2" style="--c:#6f42c1">${fd(T`${XS.fr.d.trim().replace(/^\./, '0.')}_{10} ${f.rep || f.cut ? T`\approx` : '='} ${K('#7dd3fc', '0.' + f.bits)}_{2}${f.rep || f.cut ? T` \cdots` : ''}`)}</div><div class="small text-muted mt-1">${f.rep ? 'La fracción se repite: es una fracción binaria <b>periódica</b> (no termina).' : f.cut ? 'Se detuvo a los 14 bits (aproximación).' : 'Termina cuando la nueva fracción vale 0.'}</div>`;
+        let o2 = '<div class="errmsg">Escribe una fracción binaria como 0.1011 (máx. 12 bits).</div>';
+        if (bf) { const bs = bf[1], vals = bs.split('').map((c, i) => +c * Math.pow(2, -(i + 1))), tot = vals.reduce((a, v) => a + v, 0);
+          o2 = `<div class="table-responsive"><table class="thm-tbl"><tr><th class="rl">Posición</th>${bs.split('').map((_, i) => `<td class="t-pos">2<sup>−${i + 1}</sup></td>`).join('')}</tr><tr><th class="rl">Peso</th>${bs.split('').map((_, i) => `<td class="t-w">${Math.pow(2, -(i + 1))}</td>`).join('')}</tr><tr><th class="rl">Bit</th>${bs.split('').map(c => `<td class="t-d ${c === '1' ? '' : 'z'}" style="cursor:default">${c}</td>`).join('')}</tr><tr><th class="rl">Aporta</th>${vals.map(v => `<td class="t-p">${v}</td>`).join('')}</tr></table></div>
+            <div class="calc-screen mt-2" style="--c:#2f9e44">${fd(T`${bx('0.' + bs)} = ${K('#7dd3fc', +tot.toFixed(12))}_{10}`)}</div>`; }
+        h = `<div class="row g-3"><div class="col-lg-6"><div class="panel"><h6 class="fw-bold" style="color:#6f42c1">Decimal → binario (multiplicar por 2)</h6><input id="fr-d" class="binput mb-2 ${f || XS.fr.d === '' ? '' : 'bad'}" value="${XS.fr.d}" autocomplete="off"><div id="fr-o1">${o1}</div></div></div>
+          <div class="col-lg-6"><div class="panel"><h6 class="fw-bold" style="color:#1864ab">Binario → decimal (pesos 2<sup>−i</sup>)</h6><input id="fr-b" class="binput mb-2 ${bf || XS.fr.b === '' ? '' : 'bad'}" value="${XS.fr.b}" autocomplete="off"><div id="fr-o2">${o2}</div></div></div></div>`;
+      } else {
+        h = `<div class="row g-3"><div class="col-lg-6"><div class="panel"><h6 class="fw-bold">Potencias de 2</h6><div class="pwr">${Array.from({ length: 17 }, (_, i) => `<span>2<sup>${i}</sup> = ${Math.pow(2, i)}</span>`).join('')}</div><div class="small text-muted mt-2">Memoriza hasta 2<sup>10</sup> = 1024: con ellas conviertes de cabeza.</div></div></div>
+          <div class="col-lg-6"><div class="panel"><h6 class="fw-bold">Equivalencias de 0 a 15</h6><table class="eqtbl mx-auto"><tr><th style="color:${BASECOL[10]}">Dec</th><th style="color:${BASECOL[2]}">Bin</th><th style="color:${BASECOL[8]}">Oct</th><th style="color:#c25e00">Hex</th><th style="width:20px"></th><th style="color:${BASECOL[10]}">Dec</th><th style="color:${BASECOL[2]}">Bin</th><th style="color:${BASECOL[8]}">Oct</th><th style="color:#c25e00">Hex</th></tr>${Array.from({ length: 8 }, (_, i) => `<tr>${[i, i + 8].map(v => `<td style="color:${BASECOL[10]}">${v}</td><td style="color:${BASECOL[2]}">${padL(B2(v), 4)}</td><td style="color:${BASECOL[8]}">${v.toString(8)}</td><td style="color:#c25e00">${DIG[v]}</td>`).join('<td></td>')}</tr>`).join('')}</table></div></div></div>`;
+      }
+      const keep = document.activeElement && document.activeElement.id; const pos = keep && document.activeElement.selectionStart; b.innerHTML = h;
+      if (keep && $('#' + keep)) { const el = $('#' + keep); el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) { } }
+    }
+    on('[data-xt]', 'click', (e, t) => { XS.tab = t.dataset.xt; renderExtras(); });
+    on('[data-sgn]', 'click', (e, t) => { const n = +t.dataset.sgn, v = XS.sg.bits.reduce((a, x) => a * 2 + x, 0); XS.sg.n = n; XS.sg.bits = lsb(B2(v % Math.pow(2, n)), n).reverse(); XS.sg.dec = String(sgVal(XS.sg.bits)); renderExtras(); });
+    on('[data-sgb]', 'click', (e, t) => { const j = +t.dataset.sgb; XS.sg.bits[j] ^= 1; XS.sg.dec = String(sgVal(XS.sg.bits)); renderExtras(); });
+    on('[data-ovn]', 'click', (e, t) => { XS.ov.n = +t.dataset.ovn; if (XS.ov.n === 8) { XS.ov.a = '100'; XS.ov.b = '50'; } else { XS.ov.a = '5'; XS.ov.b = '3'; } renderExtras(); });
+    document.addEventListener('input', e => { const id = e.target.id;
+      if (id === 'sg-dec') { XS.sg.dec = e.target.value; const n = XS.sg.n, v = parseInt(XS.sg.dec, 10); if (/^-?\d+$/.test(XS.sg.dec.trim()) && v >= -Math.pow(2, n - 1) && v <= Math.pow(2, n - 1) - 1) XS.sg.bits = lsb(B2((v + Math.pow(2, n)) % Math.pow(2, n)), n).reverse(); renderExtras(); }
+      else if (id === 'ov-a') { XS.ov.a = e.target.value; renderExtras(); } else if (id === 'ov-b') { XS.ov.b = e.target.value; renderExtras(); }
+      else if (id === 'fr-d') { XS.fr.d = e.target.value; renderExtras(); } else if (id === 'fr-b') { XS.fr.b = e.target.value; renderExtras(); } });
+
+    /* ================= 8. EJERCICIOS ================= */
+    const EX = { lv: 1, items: [] };
+    const EXT = { d2b: ['Decimal → binario', '#6f42c1'], b2d: ['Binario → decimal', '#0d6efd'], add: ['Suma', '#d97706'], sub: ['Resta', '#7048e8'], mul: ['Multiplicación', '#2f9e44'], div: ['División', '#d6336c'], c2: ['Complemento a 2', '#495057'], b2x: ['Binario → octal/hex', '#fd7e14'], frac: ['Fracción binaria', '#0c8599'], col: ['Regla de una columna', '#d97706'], sh: ['Desplazamientos', '#0c8599'] };
+    const solOf = st => { const l = st[st.length - 1]; return `<div class="small fw-bold mb-1">Procedimiento resumido</div>${l.viz}<div class="calc-screen mt-2" style="--c:${l.col}">${fd(l.calc)}</div>`; };
+    function genEx(type, lv) {
+      if (type === 'd2b') { const n = rnd(...[[10, 31], [32, 127], [128, 1023]][lv - 1]); return { type, q: `Convierte a binario: ${fi(T`${n}_{10}`)}`, f: [{ lab: 'Binario', ans: B2(n), kind: 'bin' }], sol: () => solOf(stepsD2B(n)) }; }
+      if (type === 'b2d') { const s = rndBin([5, 7, 10][lv - 1]); return { type, q: `Convierte a decimal: ${fi(bx(s))}`, f: [{ lab: 'Decimal', ans: String(D2(s)), kind: 'dec' }], sol: () => solOf(stepsB2D(s)) }; }
+      if (type === 'add') { const a = rndBin([4, 6, 8][lv - 1]), b = rndBin([4, 5, 7][lv - 1]); return { type, q: `Suma: ${fi(T`${bx(a)} + ${bx(b)}`)}`, f: [{ lab: 'Resultado (binario)', ans: B2(D2(a) + D2(b)), kind: 'bin' }], sol: () => solOf(stepsAdd(a, b)) }; }
+      if (type === 'sub') { let a, b; do { a = rndBin([5, 7, 9][lv - 1]); b = rndBin([4, 5, 7][lv - 1]); } while (D2(a) <= D2(b)); return { type, q: `Resta (A mayor que B): ${fi(T`${bx(a)} - ${bx(b)}`)}`, f: [{ lab: 'Resultado (binario)', ans: B2(D2(a) - D2(b)), kind: 'bin' }], sol: () => solOf(lv === 3 ? stepsSubC2(a, b) : stepsSubBorrow(a, b)) }; }
+      if (type === 'mul') { const a = rndBin([3, 4, 5][lv - 1]), b = rndBin([3, 3, 4][lv - 1]); return { type, q: `Multiplica: ${fi(T`${bx(a)} \times ${bx(b)}`)}`, f: [{ lab: 'Producto (binario)', ans: B2(D2(a) * D2(b)), kind: 'bin' }], sol: () => solOf(stepsMul(a, b)) }; }
+      if (type === 'div') { let a, b; do { a = rndBin([6, 8, 10][lv - 1]); b = rndBin([2, 3, 4][lv - 1]); } while (D2(a) < D2(b)); const D = D2(a), d = D2(b); return { type, q: `Divide: ${fi(T`${bx(a)} \div ${bx(b)}`)} (cociente entero y residuo)`, f: [{ lab: 'Cociente', ans: B2(Math.floor(D / d)), kind: 'bin' }, { lab: 'Residuo', ans: B2(D % d), kind: 'bin' }], sol: () => solOf(stepsDiv(a, b, 0)) }; }
+      if (type === 'c2') { const x = -rnd(...[[1, 20], [21, 100], [101, 127]][lv - 1]), n = 8; return { type, q: `Escribe ${fi(T`${x}`)} en complemento a 2 con 8 bits`, f: [{ lab: '8 bits', ans: B2(x + 256), kind: 'bits8' }], sol: () => sgSteps(x, n) + `<div class="calc-screen mt-2" style="--c:#2f9e44">${fd(T`${x}_{10} = ${K('#7dd3fc', B2(x + 256))}_{2}`)}</div>` }; }
+      if (type === 'b2x') { const base = lv === 1 ? 8 : 16, s = rndBin([6, 12, 16][lv - 1]), ans = base === 16 ? D2(s).toString(16).toUpperCase() : D2(s).toString(8); return { type, q: `Convierte a ${base === 16 ? 'hexadecimal' : 'octal'}: ${fi(bx(s))}`, f: [{ lab: base === 16 ? 'Hexadecimal' : 'Octal', ans, kind: base === 16 ? 'hex' : 'oct' }], sol: () => solOf(stepsB2X(s, base)) }; }
+      if (type === 'col') { const a = rnd(0, 1), b = rnd(0, 1), c = rnd(0, 1);
+        if (Math.random() < .5) { const r = fullAdd(a, b, c); return { type, q: `Suma de una columna: acarreo que entra = ${c}, bit de A = ${a}, bit de B = ${b}. ¿Qué bit se escribe y qué acarreo sale?`, f: [{ lab: 'Bit que se escribe', ans: String(r.bit), kind: 'bin' }, { lab: 'Acarreo que sale', ans: String(r.co), kind: 'bin' }], sol: () => `<div class="calc-screen" style="--c:#d97706">${fd(T`${c} + ${a} + ${b} = ${r.s}_{10} = ${B2(r.s)}_{2} \\ \text{se escribe } ${K('#7dd3fc', r.bit)} \;,\; \text{se lleva } ${K('#7dd3fc', r.co)}`)}</div>` }; }
+        const r = fullSub(a, b, c); return { type, q: `Resta de una columna: bit de A = ${a}, bit de B = ${b}, préstamo pendiente = ${c}. ¿Qué bit se escribe y qué préstamo sale?`, f: [{ lab: 'Bit que se escribe', ans: String(r.bit), kind: 'bin' }, { lab: 'Préstamo que sale', ans: String(r.bo), kind: 'bin' }], sol: () => `<div class="calc-screen" style="--c:#7048e8">${fd(T`${a} - ${b} - ${c} = ${r.raw}${r.raw < 0 ? T` \Rightarrow ${r.raw} + 2 = ${r.bit}` : ''} \\ \text{se escribe } ${K('#7dd3fc', r.bit)} \;,\; \text{se debe } ${K('#7dd3fc', r.bo)}`)}</div>` }; }
+      if (type === 'sh') { const s = rndBin([5, 6, 8][lv - 1]), k = rnd(1, [2, 3, 3][lv - 1]), A = D2(s), P = Math.pow(2, k), q = Math.floor(A / P), r = A % P, qs = s.length > k ? s.slice(0, s.length - k) : '0', rs = trimZ(s.slice(-k));
+        return { type, q: `Sin hacer la operación larga, usa desplazamientos con ${fi(bx(s))} y k = ${k}: calcula ${fi(T`A \times 2^{${k}}`)} y la división ${fi(T`A \div 2^{${k}}`)} (cociente y residuo).`, f: [{ lab: `A × 2^${k}`, ans: s + '0'.repeat(k), kind: 'bin' }, { lab: 'Cociente', ans: B2(q), kind: 'bin' }, { lab: 'Residuo', ans: B2(r), kind: 'bin' }], sol: () => `<div class="small">Multiplicar: se agregan ${k} ceros → <b class="mono">${s}${'0'.repeat(k)}</b>. Dividir: el cociente es A sin sus últimos ${k} bits → <b class="mono">${qs}</b>; el residuo son esos ${k} bits → <b class="mono">${rs}</b>.</div><div class="small text-muted">Comprobación: ${A} = ${P}·${q} + ${r} ✔</div>` }; }
+      const m = [3, 4, 5][lv - 1], k = rnd(1, Math.pow(2, m) - 1) | 1, v = k / Math.pow(2, m), bs = padL(B2(k), m).replace(/0+$/, ''), ds = String(v);
+      return { type: 'frac', q: `Convierte a binario la fracción ${fi(T`${ds}_{10}`)}`, f: [{ lab: '0.…', ans: '0.' + bs, kind: 'frac' }], sol: () => { const f = frSteps(ds); return `<table class="ladder"><tr><th>×2</th><th>Bit</th><th>Fracción</th></tr>${f.rows.map(r => `<tr><td>${r.p}</td><td class="rm"><b>${r.bit}</b></td><td>${r.nf}</td></tr>`).join('')}</table><div class="calc-screen mt-2" style="--c:#0c8599">${fd(T`${ds}_{10} = ${K('#7dd3fc', '0.' + bs)}_{2}`)}</div>`; } };
+    }
+    const normAns = (kind, s) => { s = String(s).trim().replace(/[\s_]/g, '').replace(/₂|\(2\)/g, '').replace(/^\+/, '');
+      if (kind === 'dec') return /^-?\d+$/.test(s) ? String(parseInt(s, 10)) : s;
+      if (kind === 'hex') return s.toUpperCase().replace(/^0X/, '').replace(/^0+(?=.)/, '');
+      if (kind === 'oct') return s.replace(/^0o/i, '').replace(/^0+(?=.)/, '');
+      if (kind === 'frac') { s = s.replace(/^0?\./, '0.'); return s.includes('.') ? s.replace(/0+$/, '') : s; }
+      if (kind === 'bits8') return s.replace(/^0b/i, '');
+      return s.replace(/^0b/i, '').replace(/^0+(?=.)/, ''); };
+    const HINTS = { d2b: 'Divide entre 2 y lee los restos de abajo hacia arriba.', b2d: 'Suma los pesos (2ⁱ) de los bits que valen 1.', add: 'Recuerda 1 + 1 = 10: escribe 0 y lleva 1.', sub: 'Revisa los préstamos: si no puedes restar, pides 1 que aquí vale 2.', mul: 'Copia A por cada bit 1 de B, desplazando una posición cada vez, y suma las filas.', div: 'En cada paso pregunta si el divisor cabe en el residuo parcial.', c2: 'Escribe |x| en 8 bits, invierte todos los bits y suma 1.', b2x: 'Agrupa de 3 bits (octal) o de 4 bits (hex) desde la derecha.', frac: 'Multiplica la parte fraccionaria por 2 y toma la parte entera como bit.', col: 'Suma: bit = total mod 2, acarreo = total ÷ 2. Resta: si a−b−p < 0 suma 2 y debes 1.', sh: '× 2^k agrega k ceros; ÷ 2^k quita los últimos k bits (esos bits son el residuo).' };
+    function exCard(i) {
+      const it = EX.items[i], c = EXT[it.type][1];
+      return `<div class="col-lg-6 col-xl-4" id="exc-${i}"><div class="ex-card ${it.ok ? 'ok' : it.bad ? 'bad' : ''}"><div class="d-flex align-items-center gap-2"><span class="ex-tag" style="--c:${c}">${EXT[it.type][0]}</span><span class="text-muted small ms-auto">Ejercicio ${i + 1}</span></div>
+        <div class="ex-q">${it.q}</div>${it.f.map((f, j) => `<div class="mb-2"><label class="inlab" for="exi-${i}-${j}">${f.lab}</label><input id="exi-${i}-${j}" class="binput" data-exi="${i}" data-j="${j}" value="${it.val[j] || ''}" autocomplete="off" spellcheck="false" ${it.ok ? 'readonly' : ''}></div>`).join('')}
+        <div class="d-flex flex-wrap gap-2"><button class="btn btn-sm btn-success fw-bold rounded-pill" data-exc="${i}"><i class="bi bi-check2-circle me-1"></i>Comprobar</button><button class="btn btn-sm btn-outline-dark fw-bold rounded-pill" data-exs="${i}"><i class="bi bi-eye${it.shown ? '-slash' : ''} me-1"></i>${it.shown ? 'Ocultar' : 'Ver resultado'}</button><button class="btn btn-sm btn-outline-secondary fw-bold rounded-pill" data-exn="${i}"><i class="bi bi-arrow-repeat me-1"></i>Otro</button></div>
+        <div class="ex-fb ${it.ok ? 'ok' : it.bad ? 'bad' : ''}">${it.fb || ''}</div>${it.shown ? `<div class="ex-sol"><div class="small mb-1"><b>Respuesta:</b> ${it.f.map(f => `${f.lab}: <span class="mono">${f.ans}</span>`).join(' · ')}</div>${it.sol()}</div>` : ''}</div></div>`;
+    }
+    function exScore() { const ok = EX.items.filter(x => x.ok).length; $('#ex-score').innerHTML = `<i class="bi bi-trophy-fill text-warning me-1"></i>Aciertos: <b>${ok}</b> / ${EX.items.length}${ok === EX.items.length && ok ? ' 🎉' : ''}`; }
+    function exNew() { EX.items = Object.keys(EXT).map(t => Object.assign(genEx(t, EX.lv), { val: [], ok: false, bad: false, fb: '', shown: false })); $('#ex-grid').innerHTML = EX.items.map((_, i) => exCard(i)).join(''); exScore(); }
+    function exRepaint(i) { const old = $('#exc-' + i); const t = document.createElement('div'); t.innerHTML = exCard(i); old.replaceWith(t.firstElementChild); exScore(); }
+    function exCheck(i) {
+      const it = EX.items[i]; const inputs = $$(`[data-exi="${i}"]`); it.val = inputs.map(x => x.value);
+      if (it.val.every(v => !v.trim())) { it.bad = false; it.fb = 'Escribe tu respuesta primero.'; exRepaint(i); return; }
+      const good = it.f.map((f, j) => normAns(f.kind, it.val[j] || '') === normAns(f.kind, f.ans));
+      it.ok = good.every(Boolean); it.bad = !it.ok;
+      it.fb = it.ok ? '✔ ¡Correcto!' : `✘ Aún no. ${it.f.length > 1 ? 'Revisa ' + it.f.filter((_, j) => !good[j]).map(f => f.lab.toLowerCase()).join(' y ') + '. ' : ''}${HINTS[it.type]}`;
+      exRepaint(i);
+    }
+    on('[data-exc]', 'click', (e, t) => exCheck(+t.dataset.exc));
+    on('[data-exs]', 'click', (e, t) => { const i = +t.dataset.exs, it = EX.items[i]; it.val = $$(`[data-exi="${i}"]`).map(x => x.value); it.shown = !it.shown; exRepaint(i); });
+    on('[data-exn]', 'click', (e, t) => { const i = +t.dataset.exn, ty = EX.items[i].type; EX.items[i] = Object.assign(genEx(ty, EX.lv), { val: [], ok: false, bad: false, fb: '', shown: false }); exRepaint(i); });
+    document.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.exi !== undefined) { const it = EX.items[+t.dataset.exi]; it.val[+t.dataset.j] = t.value; } });
+    document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset && e.target.dataset.exi !== undefined) { e.preventDefault(); exCheck(+e.target.dataset.exi); setTimeout(() => { const n = $(`#exi-${e.target.dataset.exi}-${e.target.dataset.j}`); if (n) n.focus(); }, 0); } });
+    $('#ex-new').onclick = exNew;
+    $('#ex-all').onclick = () => { EX.items.forEach((it, i) => { it.val = $$(`[data-exi="${i}"]`).map(x => x.value); it.shown = true; }); EX.items.forEach((_, i) => exRepaint(i)); };
+    $('#ex-level').addEventListener('click', e => { const b = e.target.closest('[data-lv]'); if (!b) return; EX.lv = +b.dataset.lv; $$('#ex-level button').forEach(x => x.classList.toggle('active', x === b)); exNew(); });
+
+    /* ================= 3. REGLAS DE LAS OPERACIONES ================= */
+    const RL = { tab: 'add', a: 1, b: 1, c: 0, R: 1, bit: 0, d: 3, vA: '1011', vB: '101', vk: 2, vop: '+', mine: '' };
+    const RLT = [['add', 'Suma', 'bi-plus-circle-fill', '#d97706'], ['sub', 'Resta', 'bi-dash-circle-fill', '#7048e8'], ['mul', 'Multiplicación', 'bi-x-circle-fill', '#2f9e44'], ['div', 'División', 'bi-slash-circle-fill', '#d6336c'], ['pro', 'Atajos y propiedades', 'bi-lightning-charge-fill', '#0c8599'], ['ver', 'Verificador', 'bi-patch-check-fill', '#495057']];
+    const bitt = (k, v, c) => `<button class="bitt" style="--c:${c}" data-rlb="${k}" title="Toca para cambiar el bit" aria-label="bit ${k}"><span class="${v ? 'on' : ''}">${v}</span></button>`;
+    const stepper = (k, v, c, lo, hi) => `<span class="btn-group btn-group-sm"><button class="btn btn-outline-dark" data-rld="${k}" data-dv="-1" ${v <= lo ? 'disabled' : ''}>−</button><span class="btn btn-light fw-bold mono" style="min-width:3.6rem;border:1px solid #adb5bd">${B2(v)}<sub>2</sub></span><button class="btn btn-outline-dark" data-rld="${k}" data-dv="1" ${v >= hi ? 'disabled' : ''}>+</button></span>`;
+    const fullAdd = (a, b, c) => { const s = a + b + c; return { s, bit: s % 2, co: s >> 1 }; };
+    const fullSub = (a, b, p) => { const raw = a - b - p; return raw < 0 ? { raw, bit: raw + 2, bo: 1 } : { raw, bit: raw, bo: 0 }; };
+    const rlRule = (title, c, items) => `<h6 class="fw-bold mt-3 mb-1" style="color:${c}"><i class="bi bi-list-check me-1"></i>${title}</h6><ol class="rl-rules" style="--c:${c}">${items.map(t => `<li>${t}</li>`).join('')}</ol>`;
+    const okN = (s, n) => new RegExp('^[01]{1,' + n + '}$').test(s);
+    function rlTable(kind) {
+      const C = kind === 'add' ? '#d97706' : '#7048e8', rows = []; let h = '';
+      if (kind === 'add') {
+        h = `<table class="rl-tbl"><tr><th>Acarreo<br>que entra</th><th>A</th><th>B</th><th>Suma</th><th>Se escribe</th><th>Acarreo<br>que sale</th></tr>`;
+        [0, 1].forEach(c => { h += `<tr class="sep"><td colspan="6">${c ? 'Con acarreo que entra' : 'Sin acarreo que entra'}</td></tr>`; [[0, 0], [0, 1], [1, 0], [1, 1]].forEach(([a, b]) => { const r = fullAdd(a, b, c), on = RL.a === a && RL.b === b && RL.c === c; h += `<tr data-rlrow="${a}${b}${c}" class="${on ? 'on' : ''}" style="--c:#fff4e0"><td style="color:${COL.carry}">${c}</td><td style="color:${COL.bit}">${a}</td><td style="color:${COL.bit}">${b}</td><td>${c} + ${a} + ${b} = ${B2(r.s)}</td><td style="color:${COL.res}">${r.bit}</td><td style="color:${COL.carry}">${r.co}</td></tr>`; }); });
+      } else {
+        h = `<table class="rl-tbl"><tr><th>Préstamo<br>que se debe</th><th>A</th><th>B</th><th>A − B − p</th><th>Se escribe</th><th>Préstamo<br>que sale</th></tr>`;
+        [0, 1].forEach(p => { h += `<tr class="sep"><td colspan="6">${p ? 'Con préstamo pendiente' : 'Sin préstamo pendiente'}</td></tr>`; [[0, 0], [0, 1], [1, 0], [1, 1]].forEach(([a, b]) => { const r = fullSub(a, b, p), on = RL.a === a && RL.b === b && RL.c === p; h += `<tr data-rlrow="${a}${b}${p}" class="${on ? 'on' : ''}" style="--c:#efeafc"><td style="color:${COL.borrow}">${p}</td><td style="color:${COL.bit}">${a}</td><td style="color:${COL.bit}">${b}</td><td>${a} − ${b} − ${p} = ${r.raw}${r.raw < 0 ? ' → +2 = ' + r.bit : ''}</td><td style="color:${COL.res}">${r.bit}</td><td style="color:${COL.borrow}">${r.bo}</td></tr>`; }); });
+      }
+      return h + '</table>';
+    }
+    function rlMine(kind) {
+      let chips = '', ok = false;
+      if (kind === 'add' && okN(OP.add.a, 12) && okN(OP.add.b, 12)) { ok = true; const L = Math.max(OP.add.a.length, OP.add.b.length), A = lsb(OP.add.a, L), Bv = lsb(OP.add.b, L); let c = 0; for (let i = 0; i < L; i++) { const r = fullAdd(A[i], Bv[i], c); chips += `<span class="rl-chip" style="--c:${COL.carry};animation-delay:${i * 70}ms">col ${i + 1}: ${c}+${A[i]}+${Bv[i]}=${B2(r.s)} → escribo ${r.bit}, llevo ${r.co}</span>`; c = r.co; } if (c) chips += `<span class="rl-chip" style="--c:${COL.res}">acarreo final ${c} → se escribe como bit nuevo</span>`; }
+      if (kind === 'sub' && okN(OP.sub.a, 12) && okN(OP.sub.b, 12)) { ok = true; const neg = D2(OP.sub.a) < D2(OP.sub.b), X = neg ? OP.sub.b : OP.sub.a, Y = neg ? OP.sub.a : OP.sub.b, L = Math.max(X.length, Y.length), A = lsb(X, L), Bv = lsb(Y, L); let p = 0; if (neg) chips += `<span class="rl-chip" style="--c:${COL.borrow}">A &lt; B → resto ${X} − ${Y} y pongo signo −</span>`; for (let i = 0; i < L; i++) { const r = fullSub(A[i], Bv[i], p); chips += `<span class="rl-chip" style="--c:${COL.borrow};animation-delay:${i * 70}ms">col ${i + 1}: ${A[i]}−${Bv[i]}−${p}=${r.raw}${r.raw < 0 ? '→+2=' + r.bit : ''} → escribo ${r.bit}, debo ${r.bo}</span>`; p = r.bo; } }
+      if (kind === 'mul' && okN(OP.mul.a, 8) && okN(OP.mul.b, 8)) { ok = true; const Bv = lsb(OP.mul.b, OP.mul.b.length); Bv.forEach((bj, j) => { chips += `<span class="rl-chip" style="--c:${COL.res};animation-delay:${j * 70}ms">bit ${j} de B = ${bj} → ${bj ? 'copio A y agrego ' + j + ' ' + (j === 1 ? 'cero' : 'ceros') + ': ' + OP.mul.a + '0'.repeat(j) : 'fila de ceros'}</span>`; }); chips += `<span class="rl-chip" style="--c:${COL.dec}">suma de filas = ${B2(D2(OP.mul.a) * D2(OP.mul.b))}</span>`; }
+      if (kind === 'div' && okN(OP.div.a, 12) && okN(OP.div.b, 8) && D2(OP.div.b) > 0) { ok = true; const d = D2(OP.div.b); let R = 0; OP.div.a.split('').forEach((c, k) => { const cur = R * 2 + +c, q = cur >= d ? 1 : 0; chips += `<span class="rl-chip" style="--c:${COL.dec};animation-delay:${k * 70}ms">bajo ${c}: parcial ${B2(cur)} ${q ? '≥' : '<'} ${OP.div.b} → q = ${q}, residuo ${B2(cur - q * d)}</span>`; R = cur - q * d; }); }
+      return `<div class="panel mt-3"><div class="fw-bold small mb-1"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i>Con tus números de la sección «${{ add: 'Suma', sub: 'Resta', mul: 'Multiplicación', div: 'División' }[kind]}» (${ok ? kind === 'add' ? `${OP.add.a} + ${OP.add.b}` : kind === 'sub' ? `${OP.sub.a} − ${OP.sub.b}` : kind === 'mul' ? `${OP.mul.a} × ${OP.mul.b}` : `${OP.div.a} ÷ ${OP.div.b}` : 'escribe números válidos allí'}) se usan estas reglas:</div>${chips || '<span class="text-muted small">Escribe números válidos en esa sección.</span>'}</div>`;
+    }
+    function renderRules() {
+      $('#rl-tabs').innerHTML = RLT.map(([k, n, ic, c]) => `<button class="btn-chip ${RL.tab === k ? 'on' : ''}" style="--c:${c}" data-rlt="${k}"><i class="bi ${ic} me-1"></i>${n}</button>`).join('');
+      const t = RL.tab; let h = '';
+      if (t === 'add') {
+        const r = fullAdd(RL.a, RL.b, RL.c);
+        h = `<div class="row g-3"><div class="col-lg-6"><div class="panel"><div class="fw-bold mb-1" style="color:#d97706">Tabla de la suma de una columna</div><div class="small text-muted mb-1">Toca una fila para cargarla en el probador.</div>${rlTable('add')}</div></div>
+          <div class="col-lg-6"><div class="panel h-100"><div class="fw-bold mb-2" style="color:#d97706">Probador de una columna</div><div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mb-2"><div class="text-center"><div class="small fw-bold" style="color:${COL.carry}">acarreo</div>${bitt('c', RL.c, COL.carry)}</div><b class="fs-3">+</b><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">bit de A</div>${bitt('a', RL.a, COL.bit)}</div><b class="fs-3">+</b><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">bit de B</div>${bitt('b', RL.b, COL.bit)}</div></div>
+          <div class="calc-screen" style="--c:#d97706">${fd(T`${K(COL.carry, RL.c)} + ${K(COL.bit, RL.a)} + ${K(COL.bit, RL.b)} = ${r.s}_{10} = ${K('#7dd3fc', B2(r.s))}_{2}`)}</div>
+          <div class="rl-out" key="${RL.a}${RL.b}${RL.c}"><div class="o" style="--c:${COL.res}"><small>Escribo en la columna</small><b>${r.bit}</b></div><div class="o" style="--c:${COL.carry}"><small>Llevo a la izquierda</small><b>${r.co}</b></div></div>
+          <div class="small text-muted text-center">Regla: <b>bit = suma mod 2</b> · <b>acarreo = ⌊suma / 2⌋</b>. Como 2 = 10₂, cada vez que la suma llega a 2 o más se «lleva 1».</div></div></div></div>
+          ${rlRule('Reglas para resolver una suma', '#d97706', ['Alinea los números a la <b>derecha</b> (por el bit de menor peso) y rellena con ceros a la izquierda el más corto.', 'Empieza por la columna de la derecha con <b>acarreo 0</b>.', 'Suma: acarreo que entra + bit de A + bit de B. El resultado va de 0 a 3.', 'Si la suma es <b>0 o 1</b> se escribe tal cual y se lleva 0. Si es <b>2 (10₂)</b> se escribe 0 y se lleva 1. Si es <b>3 (11₂)</b> se escribe 1 y se lleva 1.', 'Pasa a la columna de la izquierda con el acarreo que llevas.', 'Al terminar, si queda acarreo 1, se escribe como un <b>bit nuevo</b> a la izquierda.', 'Comprueba pasando a decimal: A + B debe coincidir.'])}${rlMine('add')}`;
+      } else if (t === 'sub') {
+        const r = fullSub(RL.a, RL.b, RL.c);
+        h = `<div class="row g-3"><div class="col-lg-6"><div class="panel"><div class="fw-bold mb-1" style="color:#7048e8">Tabla de la resta de una columna</div><div class="small text-muted mb-1">Toca una fila para cargarla en el probador.</div>${rlTable('sub')}</div></div>
+          <div class="col-lg-6"><div class="panel h-100"><div class="fw-bold mb-2" style="color:#7048e8">Probador de una columna</div><div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mb-2"><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">bit de A</div>${bitt('a', RL.a, COL.bit)}</div><b class="fs-3">−</b><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">bit de B</div>${bitt('b', RL.b, COL.bit)}</div><b class="fs-3">−</b><div class="text-center"><div class="small fw-bold" style="color:${COL.borrow}">préstamo</div>${bitt('c', RL.c, COL.borrow)}</div></div>
+          <div class="calc-screen" style="--c:#7048e8">${fd(T`${K(COL.bit, RL.a)} - ${K(COL.bit, RL.b)} - ${K(COL.borrow, RL.c)} = ${r.raw}${r.raw < 0 ? T` \;\Rightarrow\; ${r.raw} + 2 = ${K('#7dd3fc', r.bit)}` : T` = ${K('#7dd3fc', r.bit)}`}`)}</div>
+          <div class="rl-out" key="${RL.a}${RL.b}${RL.c}"><div class="o" style="--c:${COL.res}"><small>Escribo en la columna</small><b>${r.bit}</b></div><div class="o" style="--c:${COL.borrow}"><small>Debo a la izquierda</small><b>${r.bo}</b></div></div>
+          <div class="small text-muted text-center">Regla: si <b>a − b − p &lt; 0</b> se suma 2 al resultado (el 1 prestado vale 2 en esta columna) y se marca <b>préstamo 1</b>.</div></div></div></div>
+          ${rlRule('Reglas para resolver una resta', '#7048e8', ['Compara A con B. Si <b>A &lt; B</b>, resta B − A y al final pon el signo <b>−</b> (o usa complemento a 2).', 'Alinea a la derecha y rellena con ceros el sustraendo.', 'Empieza por la derecha con <b>préstamo 0</b>.', 'Calcula <b>a − b − préstamo</b>. Si da 0 o 1, ese es el bit y no debes nada.', 'Si da <b>−1</b> o <b>−2</b>, súmale <b>2</b> (porque el préstamo vale 2), escribe el resultado y <b>marca préstamo 1</b> para la columna de la izquierda.', 'Sigue hasta la última columna. El préstamo final debe ser 0 si A ≥ B.', 'Comprueba con la inversa: resultado + B = A.'])}${rlMine('sub')}`;
+      } else if (t === 'mul') {
+        const r = RL.a & RL.b;
+        h = `<div class="row g-3"><div class="col-lg-5"><div class="panel h-100"><div class="fw-bold mb-1" style="color:#2f9e44">Tabla del producto de dos bits</div><table class="rl-tbl"><tr><th>A</th><th>B</th><th>A × B</th></tr>${[[0, 0], [0, 1], [1, 0], [1, 1]].map(([a, b]) => `<tr data-rlrow="${a}${b}0" class="${RL.a === a && RL.b === b ? 'on' : ''}" style="--c:#e6f6ea"><td>${a}</td><td>${b}</td><td style="color:${COL.res}">${a & b}</td></tr>`).join('')}</table><div class="small text-muted mt-2">El producto de dos bits <b>no genera acarreo</b>: es 1 solo cuando <b>los dos</b> son 1 (operación <b>Y / AND</b>).</div></div></div>
+          <div class="col-lg-7"><div class="panel h-100"><div class="fw-bold mb-2" style="color:#2f9e44">Probador</div><div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mb-2"><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">bit de A</div>${bitt('a', RL.a, COL.bit)}</div><b class="fs-3">×</b><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">bit de B</div>${bitt('b', RL.b, COL.bit)}</div></div><div class="calc-screen" style="--c:#2f9e44">${fd(T`${K(COL.bit, RL.a)} \times ${K(COL.bit, RL.b)} = ${K('#7dd3fc', r)}`)}</div>
+          <div class="rl-out" key="${RL.a}${RL.b}"><div class="o" style="--c:${COL.res}"><small>Resultado</small><b>${r}</b></div></div><div class="small text-muted text-center">Cuando <b>B = 1</b> la fila es una copia de A; cuando <b>B = 0</b> la fila es de ceros.</div></div></div></div>
+          ${rlRule('Reglas para resolver una multiplicación', '#2f9e44', ['Escribe A (multiplicando) arriba y B (multiplicador) debajo, alineados a la derecha.', 'Toma el bit menos significativo de B (el de la derecha) y multiplícalo por A: si es <b>1</b>, copia A; si es <b>0</b>, escribe ceros.', 'Con cada bit siguiente de B, <b>desplaza la fila una posición más a la izquierda</b> (agrega un cero a la derecha: equivale a × 2<sup>j</sup>).', 'Repite para todos los bits de B. Si B tiene m bits, hay m filas (algunas pueden ser 0).', 'Suma todas las filas con las <b>reglas de la suma</b> (con acarreos).', 'El producto tiene como máximo <b>len(A) + len(B)</b> bits. Comprueba: A × B en decimal.'])}${rlMine('mul')}`;
+      } else if (t === 'div') {
+        const d = RL.d, R = Math.min(RL.R, d - 1), cur = R * 2 + RL.bit, q = cur >= d ? 1 : 0, nr = cur - q * d;
+        h = `<div class="row g-3"><div class="col-lg-6"><div class="panel h-100"><div class="fw-bold mb-2" style="color:#d6336c">Probador de un paso de la división</div><div class="d-flex flex-wrap gap-3 justify-content-center align-items-end mb-2"><div class="text-center"><div class="small fw-bold" style="color:${COL.w}">divisor d</div>${stepper('d', d, COL.w, 1, 7)}</div><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">residuo anterior (&lt; d)</div>${stepper('R', R, COL.bit, 0, d - 1)}</div><div class="text-center"><div class="small fw-bold" style="color:${COL.bit}">bit que se baja</div>${bitt('bit', RL.bit, COL.bit)}</div></div>
+          <div class="calc-screen" style="--c:#d6336c">${fd(T`\text{parcial} = 2 \cdot ${K(COL.bit, B2(R))} + ${K(COL.bit, RL.bit)} = ${B2(cur)}_{2} = ${cur}_{10} \qquad ${cur} ${q ? T`\ge` : '<'} ${d} \;\Rightarrow\; ${K(COL.dec, 'q = ' + q)}`)}</div>
+          <div class="rl-out" key="${d}${R}${RL.bit}"><div class="o" style="--c:${COL.dec}"><small>Bit del cociente</small><b>${q}</b></div><div class="o" style="--c:${COL.borrow}"><small>Nuevo residuo</small><b>${B2(nr)}</b></div></div><div class="small text-center text-muted">${q ? `Como ${cur} ≥ ${d}, el divisor <b>cabe</b>: q = 1 y se resta: ${cur} − ${d} = ${nr}.` : `Como ${cur} &lt; ${d}, el divisor <b>no cabe</b>: q = 0 y el residuo es el parcial (${nr}).`} El nuevo residuo siempre cumple <b>0 ≤ r &lt; d</b>.</div></div></div>
+          <div class="col-lg-6"><div class="panel h-100"><div class="fw-bold mb-1" style="color:#d6336c">Reglas de un paso (resumen)</div><table class="rl-tbl"><tr><th>Parcial vs divisor</th><th>q</th><th>Nuevo residuo</th></tr><tr class="${q ? '' : 'on'}" style="--c:#fdeaea"><td>parcial &lt; d</td><td>0</td><td>parcial</td></tr><tr class="${q ? 'on' : ''}" style="--c:#e6f6ea"><td>parcial ≥ d</td><td>1</td><td>parcial − d</td></tr></table>
+          <div class="fw-bold mt-3 mb-1 small">Casos especiales</div><div class="small"><span class="rl-chip">D ÷ 1 = D (r = 0)</span><span class="rl-chip">0 ÷ d = 0</span><span class="rl-chip">D &lt; d → q = 0, r = D</span><span class="rl-chip">D ÷ D = 1</span><span class="rl-chip">D ÷ 10₂ = quitar el último bit</span><span class="rl-chip" style="--c:#e03131">d = 0 → no definido</span></div></div></div></div>
+          ${rlRule('Reglas para resolver una división', '#d6336c', ['El divisor <b>no puede ser 0</b>. Empieza con residuo 0.', 'Baja el <b>primer bit</b> del dividendo: parcial = 2·residuo + bit.', 'Compara el parcial con el divisor: si el parcial <b>≥ d</b>, escribe <b>1</b> en el cociente y resta d; si no, escribe <b>0</b> y deja el parcial como residuo.', 'Baja el siguiente bit y repite hasta acabar con los bits del dividendo.', 'El último residuo es <b>r</b>. Para decimales binarios: pon el punto y sigue bajando <b>ceros</b>.', 'Comprueba: <b>D = d · q + r</b> y <b>0 ≤ r &lt; d</b>.'])}${rlMine('div')}`;
+      } else if (t === 'pro') {
+        const A = okN(RL.vA, 12) ? RL.vA : '1011', k = RL.vk, DA = D2(A), shl = A + '0'.repeat(k), L = A.length, qs = k >= L ? '0' : A.slice(0, L - k), rs = trimZ(k === 0 ? '0' : A.slice(Math.max(0, L - k)) || '0'), Bq = okN(RL.vB, 12) ? RL.vB : '101', DB = D2(Bq);
+        h = `<div class="row g-3">
+          <div class="col-lg-7"><div class="rl-card" style="--c:#0c8599"><h6><i class="bi bi-arrow-left-right me-1"></i>Multiplicar o dividir entre 2<sup>k</sup> es desplazar</h6><div class="d-flex flex-wrap gap-2 align-items-end mb-2"><div><label class="inlab mb-1" for="rl-vA">Número A (binario)</label><input id="rl-vA" class="binput ${okN(RL.vA, 12) || RL.vA === '' ? '' : 'bad'}" value="${RL.vA}" autocomplete="off" style="max-width:11rem"></div><div><div class="inlab mb-1">Desplazamiento k</div><span class="btn-group btn-group-sm"><button class="btn btn-outline-dark" data-rlk="-1" ${k <= 0 ? 'disabled' : ''}>−</button><span class="btn btn-light fw-bold mono" style="min-width:2.8rem;border:1px solid #adb5bd">${k}</span><button class="btn btn-outline-dark" data-rlk="1" ${k >= 6 ? 'disabled' : ''}>+</button></span></div></div>
+            <div class="rl-chk"><div><b>A × 2<sup>${k}</sup></b> = <span class="mono">${A}<span style="color:#e8590c">${'0'.repeat(k)}</span><sub>2</sub></span> = ${DA * Math.pow(2, k)}<sub>10</sub> ✔ <span class="text-muted small">(se agregan ${k} ${k === 1 ? 'cero' : 'ceros'} a la derecha)</span></div>
+            <div><b>A ÷ 2<sup>${k}</sup></b>: cociente = <span class="mono">${qs}<sub>2</sub></span> (${D2(qs)}), residuo = <span class="mono" style="color:#e8590c">${rs}<sub>2</sub></span> (${D2(rs)}) ✔ <span class="text-muted small">(el cociente es A sin sus últimos ${k} bits; el residuo son esos ${k} bits)</span></div>
+            <div class="small text-muted">Comprobación: ${DA} = ${Math.pow(2, k)} · ${D2(qs)} + ${D2(rs)} = ${Math.pow(2, k) * D2(qs) + D2(rs)}</div></div></div></div>
+          <div class="col-lg-5"><div class="rl-card" style="--c:#e8590c"><h6><i class="bi bi-dice-2-fill me-1"></i>Paridad: el último bit lo dice todo</h6><div class="mb-2"><label class="inlab mb-1" for="rl-vB">Número B (binario)</label><input id="rl-vB" class="binput ${okN(RL.vB, 12) || RL.vB === '' ? '' : 'bad'}" value="${RL.vB}" autocomplete="off" style="max-width:11rem"></div>
+            <div class="rl-chk"><div>A = ${A} termina en <b>${A.slice(-1)}</b> → ${DA % 2 ? 'impar' : 'par'}</div><div>B = ${Bq} termina en <b>${Bq.slice(-1)}</b> → ${DB % 2 ? 'impar' : 'par'}</div><div>A + B termina en <b>${(DA + DB) % 2}</b> = XOR de los últimos bits (${A.slice(-1)} ⊕ ${Bq.slice(-1)})</div><div>A × B termina en <b>${(DA * DB) % 2}</b> = AND de los últimos bits (${A.slice(-1)} · ${Bq.slice(-1)})</div></div><div class="small text-muted mt-1">Sirve para detectar errores rápido: si el último bit del resultado no cumple, la operación está mal.</div></div></div>
+          <div class="col-md-6"><div class="rl-card" style="--c:#2f9e44"><h6><i class="bi bi-1-circle-fill me-1"></i>Elementos neutros y absorbentes</h6><div class="rl-chk"><div>A + 0 = A &nbsp; · &nbsp; A − 0 = A &nbsp; · &nbsp; A − A = 0</div><div>A × 1 = A &nbsp; · &nbsp; A × 0 = 0</div><div>A ÷ 1 = A &nbsp; · &nbsp; 0 ÷ A = 0 &nbsp; · &nbsp; A ÷ A = 1 (A ≠ 0)</div><div>Con tu A = ${A}: ${A} + 0 = ${A} ✔ · ${A} × 1 = ${A} ✔ · ${A} − ${A} = 0 ✔</div></div></div></div>
+          <div class="col-md-6"><div class="rl-card" style="--c:#7048e8"><h6><i class="bi bi-diagram-3-fill me-1"></i>Propiedades que sí y que no se cumplen</h6><div class="rl-chk"><div><span class="ok-t">✔</span> Suma y multiplicación: <b>conmutativas</b> (A+B = B+A; A×B = B×A) y <b>asociativas</b></div><div><span class="ok-t">✔</span> <b>Distributiva</b>: A × (B + C) = A×B + A×C</div><div><span class="no-t">✘</span> Resta y división <b>no</b> son conmutativas (A−B ≠ B−A; A÷B ≠ B÷A)</div><div>Con tus números: ${A} + ${Bq} = ${B2(DA + DB)} = ${Bq} + ${A} ✔</div></div></div></div>
+          <div class="col-12"><div class="rl-card" style="--c:#1864ab"><h6><i class="bi bi-rulers me-1"></i>¿Cuántos bits necesita el resultado?</h6><div class="rl-chk"><div><b>Suma</b>: a lo más <b>máx(len A, len B) + 1</b> bits &nbsp; · &nbsp; <b>Resta</b>: a lo más máx(len A, len B) bits &nbsp; · &nbsp; <b>Producto</b>: a lo más <b>len A + len B</b> bits &nbsp; · &nbsp; <b>Cociente entero</b>: a lo más len D bits; residuo &lt; divisor</div><div>Con A = ${A} (${A.length} bits) y B = ${Bq} (${Bq.length} bits): A + B = ${B2(DA + DB)} (${B2(DA + DB).length} bits ≤ ${Math.max(A.length, Bq.length) + 1}) · A × B = ${B2(DA * DB)} (${B2(DA * DB).length} bits ≤ ${A.length + Bq.length}) ✔</div></div></div></div></div>`;
+      } else {
+        const A = RL.vA, B = RL.vB, op = RL.vop, okA = okN(A, 12), okB = okN(B, 12);
+        let out = '<div class="text-muted small">Escribe A y B en binario (máx. 12 bits).</div>';
+        if (okA && okB) { const a = D2(A), b = D2(B), lines = []; let res = null, resTxt = '', exp = '';
+          if (op === '+') { res = a + b; exp = B2(res); lines.push([(res - b === a), `(A + B) − B = ${B2(res)} − ${B} = ${B2(res - b)} → ${res - b === a ? 'vuelve a A' : 'NO vuelve a A'}`], [((a + b) % 2 === ((a % 2) ^ (b % 2))), 'El último bit coincide con la paridad (XOR)'], [B2(res).length <= Math.max(A.length, B.length) + 1, 'Longitud del resultado ≤ máx(len) + 1']); }
+          else if (op === '−') { res = a - b; exp = (res < 0 ? '-' : '') + B2(Math.abs(res)); lines.push([(res + b === a), `(A − B) + B = ${(res < 0 ? '-' : '') + B2(Math.abs(res))} + ${B} = ${B2(res + b)} → ${res + b === a ? 'vuelve a A' : 'NO vuelve a A'}`], [true, res < 0 ? 'A < B, por eso el resultado es negativo (se resta B − A y se pone −)' : 'A ≥ B, el resultado no es negativo']); }
+          else if (op === '×') { res = a * b; exp = B2(res); lines.push([(b === 0 ? res === 0 : res / b === a), b === 0 ? 'A × 0 = 0' : `(A × B) ÷ B = ${B2(res)} ÷ ${B} = ${B2(res / b)} → vuelve a A`], [((a * b) % 2 === ((a % 2) & (b % 2))), 'El último bit coincide con la paridad (AND)'], [B2(res).length <= A.length + B.length, 'Longitud del resultado ≤ len A + len B']); }
+          else if (b === 0) { lines.push([false, 'No se puede dividir entre 0: la operación no está definida']); }
+          else { const q = Math.floor(a / b), r = a % b; res = q; exp = B2(q); resTxt = ` (residuo ${B2(r)}<sub>2</sub>)`; lines.push([b * q + r === a, `d·q + r = ${B} · ${B2(q)} + ${B2(r)} = ${B2(b * q + r)} → ${b * q + r === a ? 'igual a D' : 'distinto de D'}`], [r < b, `0 ≤ r < d: ${B2(r)} < ${B}`]); }
+          const mine = RL.mine.trim().replace(/^\+/, ''); let cmp = '';
+          if (res !== null && mine) { const norm = x => x.replace(/^(-?)0+(?=.)/, '$1'); const okM = norm(mine) === exp; cmp = `<div class="mt-2 ${okM ? 'ok-t' : 'no-t'}">${okM ? '✔ ¡Tu resultado es correcto!' : '✘ Tu resultado no coincide.'}</div>`; if (!okM && /^-?[01]+$/.test(mine)) { const x = mine.replace('-', ''), y = exp.replace('-', ''), L = Math.max(x.length, y.length), xs = x.padStart(L, '0'), ys = y.padStart(L, '0'); let pos = -1; for (let i = L - 1; i >= 0; i--) { if (xs[i] !== ys[L - 1 - (L - 1 - i)]) { pos = L - 1 - i; break; } } cmp += `<div class="small text-muted">${pos >= 0 ? `Revisa desde la columna ${pos + 1} (peso 2<sup>${pos}</sup>, contando desde la derecha): ahí aparece la primera diferencia.` : 'Revisa el signo.'}</div>`; } }
+          out = `<div class="calc-screen mb-2" style="--c:#495057">${res === null ? '' : fd(T`${bx(A)} ${{ '+': '+', '−': '-', '×': T`\times`, '÷': T`\div` }[op]} ${bx(B)} = ${K('#7dd3fc', exp)}_{2} = ${res}_{10}`)}</div>${resTxt ? `<div class="small mb-2">Cociente entero${resTxt}</div>` : ''}<div class="rl-chk">${lines.map(([ok, t]) => `<div><span class="${ok ? 'ok-t' : 'no-t'}">${ok ? '✔' : '✘'}</span> ${t}</div>`).join('')}<div><span class="ok-t">✔</span> En decimal: ${a} ${op} ${b} = ${res === null ? '—' : res}</div></div>${cmp}`; }
+        h = `<div class="row g-3"><div class="col-lg-5"><div class="rl-card" style="--c:#495057"><h6><i class="bi bi-calculator-fill me-1"></i>Verificador de operaciones</h6><div class="row g-2"><div class="col-6"><label class="inlab" for="rl-vA">A (binario)</label><input id="rl-vA" class="binput ${okA || A === '' ? '' : 'bad'}" value="${A}" autocomplete="off"></div><div class="col-6"><label class="inlab" for="rl-vB">B (binario)</label><input id="rl-vB" class="binput ${okB || B === '' ? '' : 'bad'}" value="${B}" autocomplete="off"></div></div>
+          <div class="d-flex gap-1 my-2">${['+', '−', '×', '÷'].map(o => `<button class="btn-chip ${op === o ? 'on' : ''}" style="--c:#495057;min-width:2.8rem;font-size:1.1rem" data-rlop="${o}">${o}</button>`).join('')}</div>
+          <label class="inlab" for="rl-mine">Tu resultado (opcional, binario; cociente si es ÷)</label><input id="rl-mine" class="binput" value="${RL.mine}" autocomplete="off" placeholder="escribe tu respuesta y compáralo"></div></div>
+          <div class="col-lg-7"><div class="rl-card" style="--c:#2f9e44"><h6><i class="bi bi-patch-check-fill me-1"></i>Resultado y comprobaciones</h6>${out}</div></div></div>
+          ${rlRule('Cómo comprobar cualquier operación', '#495057', ['<b>Operación inversa</b>: (A + B) − B = A · (A − B) + B = A · (A × B) ÷ B = A · d·q + r = D.', '<b>Pasa a decimal</b>: convierte A, B y el resultado con el teorema y compara.', '<b>Paridad</b>: el último bit de la suma es el XOR; el del producto, el AND.', '<b>Longitud</b>: el resultado no puede tener más bits que los máximos permitidos.', '<b>Residuo</b>: en la división, siempre menor que el divisor.'])}`;
+      }
+      const keep = document.activeElement && document.activeElement.id, pos = keep && document.activeElement.selectionStart; $('#rl-body').innerHTML = h;
+      if (keep && $('#' + keep)) { const el = $('#' + keep); el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) { } }
+    }
+    on('[data-rlt]', 'click', (e, t) => { RL.tab = t.dataset.rlt; renderRules(); });
+    on('[data-rlb]', 'click', (e, t) => { const k = t.dataset.rlb; RL[k] = RL[k] ? 0 : 1; renderRules(); });
+    on('[data-rlrow]', 'click', (e, t) => { const s = t.dataset.rlrow; RL.a = +s[0]; RL.b = +s[1]; RL.c = +s[2]; renderRules(); });
+    on('[data-rld]', 'click', (e, t) => { const k = t.dataset.rld, dv = +t.dataset.dv; if (k === 'd') { RL.d = Math.max(1, Math.min(7, RL.d + dv)); RL.R = Math.min(RL.R, RL.d - 1); } else RL.R = Math.max(0, Math.min(RL.d - 1, RL.R + dv)); renderRules(); });
+    on('[data-rlk]', 'click', (e, t) => { RL.vk = Math.max(0, Math.min(6, RL.vk + +t.dataset.rlk)); renderRules(); });
+    on('[data-rlop]', 'click', (e, t) => { RL.vop = t.dataset.rlop; renderRules(); });
+    document.addEventListener('input', e => { const id = e.target.id; if (id === 'rl-vA') RL.vA = e.target.value.replace(/\s/g, ''); else if (id === 'rl-vB') RL.vB = e.target.value.replace(/\s/g, ''); else if (id === 'rl-mine') RL.mine = e.target.value.replace(/\s/g, ''); else return; renderRules(); });
+
+    /* ================= MANUAL ================= */
+    const legRows = arr => arr.map(([s, t, c]) => `<div class="legend-row"><span class="vchip" style="--c:${c}">${fi(s)}</span><span>${t}</span></div>`).join('');
+    const okBin = (s, n) => new RegExp('^[01]{1,' + n + '}$').test(s);
+    const lastOf = st => { const l = st[st.length - 1]; return `${l.viz}<div class="calc-screen mt-2" style="--c:${l.col}">${fd(l.calc)}</div>`; };
+    const MAN = {
+      sistema: { t: 'Sistema posicional', ic: 'bi-123', col: '#0c8599',
+        def: 'Un <strong>sistema de numeración posicional</strong> usa un conjunto finito de símbolos (dígitos) y el <strong>valor de cada dígito depende de la posición</strong> que ocupa. La <strong>base b</strong> es el número de símbolos distintos: binario b = 2 (0,1), octal b = 8 (0–7), decimal b = 10 (0–9) y hexadecimal b = 16 (0–9, A–F).',
+        thmT: 'Regla de posición', thm: 'Cada posición vale <strong>b veces</strong> la que está a su derecha. Los pesos son …, b³, b², b¹, b⁰. En binario: …, 8, 4, 2, 1. En octal: …, 512, 64, 8, 1. En hexadecimal: …, 4096, 256, 16, 1.',
+        f: () => [T`\text{peso de la posición } i = b^{i}`, T`\text{dígitos permitidos: } 0, 1, \cdots, b-1`], leg: () => [['b', 'Base del sistema', COL.w], ['i', 'Posición del dígito (0 es la de más a la derecha)', COL.bit]],
+        how: ['Identifica la base b del número (el subíndice).', 'Numera las posiciones de derecha a izquierda empezando en 0.', 'Calcula el peso b<sup>i</sup> de cada posición.', 'Cada dígito se multiplica por su peso.'],
+        ex: () => `${fd(T`${bx(TH.d.map(x => DIG[x]).join(''), TH.b)} \;\Rightarrow\; \text{pesos: } ${TH.d.map((_, j) => Math.pow(TH.b, TH.d.length - 1 - j)).join(' , ')}`)}` },
+      teorema: { t: 'Teorema fundamental', ic: 'bi-patch-check-fill', col: '#e67700',
+        def: 'El <strong>teorema fundamental de la numeración</strong> afirma que, fijada una base b ≥ 2, <strong>todo entero N ≥ 0 se escribe de una única manera</strong> como suma de potencias de b multiplicadas por dígitos entre 0 y b − 1.',
+        thmT: 'Enunciado y consecuencias', thm: '<strong>Existencia:</strong> se obtiene con el algoritmo de la división (N = b·q + r). <strong>Unicidad:</strong> no hay dos representaciones distintas (sin ceros a la izquierda). <strong>Dígitos:</strong> N tiene n = ⌊log<sub>b</sub> N⌋ + 1 dígitos. <strong>Rango:</strong> con n dígitos se representan los enteros de 0 a b<sup>n</sup> − 1. Extensión: con potencias negativas se representan fracciones; y con peso −2<sup>n−1</sup> en el primer bit, los enteros con signo.',
+        f: () => [T`N = \sum_{i=0}^{n-1} a_i \cdot b^{i} \qquad 0 \le a_i < b`, T`n = \lfloor \log_{b} N \rfloor + 1`, T`0 \le N \le b^{n} - 1`], leg: () => [['N', 'Número entero que se representa', COL.dec], ['a_i', 'Dígito en la posición i', COL.bit], ['b', 'Base (b ≥ 2)', COL.w], ['n', 'Cantidad de dígitos', '#495057']],
+        how: ['Elige la base b.', 'Para convertir a base b: divide N entre b varias veces; los restos son los dígitos (de a₀ hacia arriba).', 'Para convertir desde base b: multiplica cada dígito por b<sup>i</sup> y suma.', 'Comprueba que cada dígito sea menor que b.'],
+        ex: () => `${fd(T`N = ${TH.d.map((x, j) => `${K(COL.bit, DIG[x])} \\cdot ${K(COL.w, `${TH.b}^{${TH.d.length - 1 - j}}`)}`).join(' + ')} = ${K(COL.dec, thVal())}`)}` },
+      division: { t: 'Algoritmo de la división', ic: 'bi-percent', col: '#d6336c',
+        def: 'Dados dos enteros N (dividendo) y d &gt; 0 (divisor), existen <strong>únicos</strong> enteros q (cociente) y r (residuo) con N = d·q + r y 0 ≤ r &lt; d. Es la herramienta que demuestra la <em>existencia</em> en el teorema fundamental.',
+        thmT: 'Unicidad del cociente y el residuo', thm: 'El residuo siempre es menor que el divisor. Al dividir entre b, el residuo es el último dígito (a₀) de N en base b; repitiendo con el cociente se obtienen a₁, a₂, …',
+        f: () => [T`N = d \cdot q + r \qquad 0 \le r < d`, T`N = b \cdot q_0 + a_0 \;,\; q_0 = b \cdot q_1 + a_1 \;,\; \cdots`], leg: () => [['N', 'Dividendo', COL.dec], ['d', 'Divisor', COL.w], ['q', 'Cociente', COL.res], ['r', 'Residuo', COL.bit]],
+        how: ['Divide N entre d y anota cociente y residuo.', 'Verifica que 0 ≤ r &lt; d.', 'Comprueba: d·q + r debe dar N.'],
+        ex: () => { const n = /^\d{1,5}$/.test(CV.v.d2b) ? +CV.v.d2b : 181; return fd(T`${n} = 2 \cdot ${Math.floor(n / 2)} + ${K(COL.bit, n % 2)}`); } },
+      d2b: { t: 'Decimal → binario', ic: 'bi-arrow-right-circle-fill', col: '#6f42c1',
+        def: 'Convertir un decimal a binario es hallar los bits a<sub>i</sub> tales que N = Σ a<sub>i</sub>·2<sup>i</sup>.',
+        thmT: 'Divisiones sucesivas entre 2', thm: 'Si N = 2·q₀ + r₀ entonces r₀ es el bit de peso 2⁰. Repitiendo con q₀, q₁, … se obtienen los demás bits. Se detiene cuando el cociente es 0 y los restos se leen <strong>de abajo hacia arriba</strong>.',
+        f: () => [T`N = 2 \cdot q_0 + ${K(COL.bit, 'r_0')} \;,\; q_0 = 2 \cdot q_1 + ${K(COL.bit, 'r_1')} \;,\; \cdots \;,\; q_{n-1} = 2 \cdot 0 + ${K(COL.bit, 'r_{n-1}')}`, T`${bx('r_{n-1} \\cdots r_1 r_0')} = N_{10}`], leg: () => [['q_i', 'Cociente de la división número i', COL.res], ['r_i', 'Resto = bit de peso 2^i', COL.bit]],
+        how: ['Divide N entre 2: anota cociente y resto.', 'Divide el cociente entre 2 y repite hasta que el cociente sea 0.', 'Lee los restos del último al primero.', 'Comprueba sumando los pesos.'],
+        ex: () => { const v = CV.v.d2b; return /^\d{1,5}$/.test(v) && +v <= 65535 ? lastOf(stepsD2B(+v)) : '<span class="text-muted">Escribe un decimal válido en el conversor.</span>'; } },
+      b2d: { t: 'Binario → decimal', ic: 'bi-arrow-left-circle-fill', col: '#0d6efd',
+        def: 'Se obtiene aplicando directamente el teorema: se suman los pesos 2<sup>i</sup> de los bits que valen 1.',
+        thmT: 'Suma de pesos', thm: 'Los bits en 0 no aportan; los bits en 1 aportan su peso. Por eso un binario es una suma de potencias de 2 distintas.',
+        f: () => [T`N = \sum_{i=0}^{n-1} ${K(COL.bit, 'a_i')} \cdot ${K(COL.w, '2^{i}')}`], leg: () => [['a_i', 'Bit (0 o 1) en la posición i', COL.bit], ['2^i', 'Peso de la posición i', COL.w], ['n', 'Cantidad de bits', '#495057']],
+        how: ['Numera los bits de derecha a izquierda desde 0.', 'Escribe el peso 2<sup>i</sup> de cada bit.', 'Suma los pesos de los bits que valen 1.'],
+        ex: () => { const v = CV.v.b2d; return okBin(v, 16) ? lastOf(stepsB2D(v)) : '<span class="text-muted">Escribe un binario válido en el conversor.</span>'; } },
+      agrup: { t: 'Binario ↔ octal / hex', ic: 'bi-collection-fill', col: '#fd7e14',
+        def: 'Como 8 = 2³ y 16 = 2⁴, cada dígito octal equivale a <strong>3 bits</strong> y cada dígito hexadecimal a <strong>4 bits</strong>. La conversión es una agrupación, sin cálculos largos.',
+        thmT: 'Agrupación de bits', thm: 'Si b′ = b<sup>k</sup>, entonces cada grupo de k dígitos en base b es un dígito en base b′. Se agrupa <strong>desde la derecha</strong> y se rellena con ceros a la izquierda.',
+        f: () => [T`8 = 2^{3} \qquad 16 = 2^{4}`, T`\text{dígito hex} = 8 a_3 + 4 a_2 + 2 a_1 + a_0 \qquad \text{dígito oct} = 4 a_2 + 2 a_1 + a_0`], leg: () => [['a_j', 'Bits del grupo', COL.bit], ['8,4,2,1', 'Pesos dentro de cada grupo', COL.w]],
+        how: ['Agrupa los bits de 4 en 4 (hex) o de 3 en 3 (octal) desde la derecha.', 'Rellena con ceros a la izquierda el último grupo.', 'Convierte cada grupo con los pesos 8-4-2-1.', 'Para volver: cada dígito se escribe con 4 (o 3) bits.'],
+        ex: () => { const v = CV.v.b2x16; return okBin(v, 16) ? lastOf(stepsB2X(v, 16)) : ''; } },
+      suma: { t: 'Suma binaria', ic: 'bi-plus-circle-fill', col: '#d97706',
+        def: 'La <strong>suma binaria</strong> se hace columna por columna, de derecha a izquierda, sumando los dos bits y el acarreo que llega de la columna anterior.',
+        thmT: 'Tabla de la suma y acarreo', thm: '0+0=0 · 0+1=1 · 1+0=1 · 1+1=10 (escribo 0, llevo 1) · 1+1+1=11 (escribo 1, llevo 1). El acarreo sale de dividir la suma entre 2 (algoritmo de la división con b = 2): <strong>bit = s mod 2</strong>, <strong>acarreo = ⌊s/2⌋</strong>.',
+        f: () => [T`s_i = ${K(COL.bit, 'a_i')} + ${K(COL.bit, 'b_i')} + ${K(COL.carry, 'c_i')}`, T`r_i = s_i \text{ mod } 2 \qquad c_{i+1} = \lfloor s_i / 2 \rfloor \qquad c_0 = 0`], leg: () => [['a_i, b_i', 'Bits de los sumandos en la columna i', COL.bit], ['c_i', 'Acarreo que llega a la columna i', COL.carry], ['r_i', 'Bit del resultado en la columna i', COL.res]],
+        how: ['Alinea los números a la derecha.', 'Suma bit con bit + acarreo, de derecha a izquierda.', 'Escribe s mod 2 y lleva ⌊s/2⌋.', 'Si al final queda acarreo, se escribe como un bit más.'],
+        ex: () => okBin(OP.add.a, 12) && okBin(OP.add.b, 12) ? lastOf(stepsAdd(OP.add.a, OP.add.b)) : '' },
+      resta: { t: 'Resta con préstamo', ic: 'bi-dash-circle-fill', col: '#7048e8',
+        def: 'La <strong>resta binaria</strong> con préstamo se parece a la decimal: si en una columna el minuendo es menor que el sustraendo, se «pide prestado» 1 a la izquierda, que en esta columna vale <strong>2</strong>.',
+        thmT: 'Regla del préstamo', thm: '0−0=0 · 1−0=1 · 1−1=0 · 0−1=1 con préstamo (2−1). Si A &lt; B, se calcula B−A y se antepone el signo menos. El préstamo equivale a sumar la base (2) en la columna y restar 1 en la siguiente.',
+        f: () => [T`d_i = a_i - b_i - ${K(COL.borrow, 'p_i')}`, T`d_i < 0 \;\Rightarrow\; d_i = d_i + 2 \;,\; p_{i+1} = 1 \qquad \text{si no: } p_{i+1} = 0`], leg: () => [['a_i, b_i', 'Bits del minuendo y del sustraendo', COL.bit], ['p_i', 'Préstamo que se debe a la columna i', COL.borrow], ['d_i', 'Bit del resultado', COL.res]],
+        how: ['Compara A y B: si A &lt; B, intercámbialos y recuerda el signo −.', 'De derecha a izquierda calcula a − b − préstamo.', 'Si da negativo, súmale 2 y marca préstamo 1.', 'Comprueba en decimal.'],
+        ex: () => okBin(OP.sub.a, 12) && okBin(OP.sub.b, 12) ? lastOf(stepsSubBorrow(OP.sub.a, OP.sub.b)) : '' },
+      c1c2: { t: 'Complemento a 1 y a 2', ic: 'bi-arrow-repeat', col: '#5130b9',
+        def: 'El <strong>complemento a 1</strong> de un número de n bits se obtiene invirtiendo todos sus bits. El <strong>complemento a 2</strong> es el complemento a 1 más 1, y representa el <strong>negativo</strong> del número.',
+        thmT: 'Por qué funciona', thm: 'C1(B) = (2<sup>n</sup> − 1) − B y C2(B) = 2<sup>n</sup> − B. Como 2<sup>n</sup> ≡ 0 (mod 2<sup>n</sup>), sumar C2(B) equivale a restar B.',
+        f: () => [T`C1(B) = (2^{n} - 1) - B`, T`C2(B) = C1(B) + 1 = 2^{n} - B`], leg: () => [['B', 'Número de n bits', COL.bit], ['n', 'Cantidad de bits', '#495057'], ['C1, C2', 'Complemento a 1 y a 2', COL.borrow]],
+        how: ['Escribe el número en n bits.', 'Invierte cada bit (C1).', 'Suma 1 (C2).'], ex: () => sgSteps(-37, 8) },
+      restac2: { t: 'Resta con complemento a 2', ic: 'bi-arrow-repeat', col: '#5130b9',
+        def: 'Restar B equivale a sumar el complemento a 2 de B: <strong>A − B = A + C2(B)</strong> (módulo 2<sup>n</sup>). Así el mismo sumador sirve para sumar y restar.',
+        thmT: 'Acarreo final como signo', thm: 'Si hay acarreo final (se descarta) el resultado es positivo o cero (A ≥ B); si B = 0, el acarreo sale al calcular C2(B) y también cuenta. Si no hay acarreo, el resultado es negativo y está en complemento a 2: su magnitud es C2 del resultado.',
+        f: () => [T`A - B = A + C2(B) \pmod{2^{n}}`, T`C2(B) = 2^{n} - B`], leg: () => [['A, B', 'Minuendo y sustraendo en n bits', COL.bit], ['n', 'Bits (los de la mayor longitud)', '#495057']],
+        how: ['Escribe A y B con n bits.', 'Obtén C2(B): invierte y suma 1.', 'Suma A + C2(B) con n bits.', 'Acarreo final 1: descártalo (positivo). Sin acarreo: negativo, aplica C2 al resultado para ver el valor.'],
+        ex: () => okBin(OP.sub.a, 12) && okBin(OP.sub.b, 12) ? lastOf(stepsSubC2(OP.sub.a, OP.sub.b)) : '' },
+      mult: { t: 'Multiplicación binaria', ic: 'bi-x-circle-fill', col: '#2f9e44',
+        def: 'Multiplicar en binario es <strong>desplazar y sumar</strong>: por cada bit 1 del multiplicador se copia el multiplicando desplazado j posiciones; por cada bit 0, una fila de ceros.',
+        thmT: 'Distributividad', thm: 'Si B = Σ b<sub>j</sub>·2<sup>j</sup>, entonces A·B = Σ b<sub>j</sub>·(A·2<sup>j</sup>). Multiplicar por 2<sup>j</sup> es desplazar j lugares a la izquierda (agregar j ceros).',
+        f: () => [T`A \cdot B = \sum_{j=0}^{m-1} ${K(COL.bit, 'b_j')} \cdot (A \cdot 2^{j})`], leg: () => [['A', 'Multiplicando', COL.res], ['b_j', 'Bit j del multiplicador', COL.bit], ['2^j', 'Desplazamiento de j lugares', COL.w]],
+        how: ['Toma el bit menos significativo de B.', 'Si es 1, copia A; si es 0, escribe ceros.', 'Con cada bit siguiente desplaza una posición más a la izquierda.', 'Suma todas las filas.'], ex: () => okBin(OP.mul.a, 8) && okBin(OP.mul.b, 8) ? lastOf(stepsMul(OP.mul.a, OP.mul.b)) : '' },
+      div: { t: 'División binaria', ic: 'bi-slash-circle-fill', col: '#d6336c',
+        def: 'La <strong>división binaria</strong> es la división larga: se baja un bit a la vez al residuo; si el divisor cabe, el bit del cociente es 1 y se resta; si no, es 0.',
+        thmT: 'Algoritmo de la división', thm: 'Siempre se cumple D = d·q + r con 0 ≤ r &lt; d (el residuo es menor que el divisor). Para obtener decimales binarios se continúa bajando ceros después del punto.',
+        f: () => [T`D = d \cdot q + r \qquad 0 \le r < d`, T`R_{k+1} = 2 R_k + b_k - d \cdot q_k \qquad q_k = \begin{cases} 1 & 2R_k + b_k \ge d \\ 0 & \text{si no} \end{cases}`], leg: () => [['D, d', 'Dividendo y divisor', COL.w], ['q_k', 'Bit k del cociente', COL.dec], ['R_k', 'Residuo parcial', COL.bit], ['b_k', 'Bit que se baja', COL.bit]],
+        how: ['Empieza con residuo 0.', 'Baja el siguiente bit: residuo = 2·residuo + bit.', 'Si residuo ≥ d: cociente 1 y resta d; si no: cociente 0.', 'Repite con todos los bits. El último residuo es r.', 'Comprueba D = d·q + r.'],
+        ex: () => okBin(OP.div.a, 12) && okBin(OP.div.b, 8) && D2(OP.div.b) > 0 ? lastOf(stepsDiv(OP.div.a, OP.div.b, +OP.div.f)) : '' },
+      signo: { t: 'Números con signo', ic: 'bi-plus-slash-minus', col: '#495057',
+        def: 'En <strong>complemento a 2</strong> con n bits, el primer bit (el de más a la izquierda) tiene peso negativo −2<sup>n−1</sup>. Si ese bit es 1 el número es negativo.',
+        thmT: 'Rango y valor', thm: 'Con n bits se representan los enteros de −2<sup>n−1</sup> a 2<sup>n−1</sup> − 1 (8 bits: −128 a 127). Hay un solo cero y un negativo más que positivos.',
+        f: () => [T`N = -a_{n-1} \cdot 2^{n-1} + \sum_{i=0}^{n-2} a_i \cdot 2^{i}`, T`-2^{n-1} \le N \le 2^{n-1} - 1`], leg: () => [['a_{n-1}', 'Bit de signo (peso negativo)', COL.borrow], ['n', 'Bits disponibles', '#495057']],
+        how: ['Positivo: escríbelo en binario con ceros a la izquierda.', 'Negativo: escribe |N|, invierte los bits y suma 1.', 'Para leer: si el primer bit es 1, el valor es −2<sup>n−1</sup> más la suma de los demás pesos.'],
+        ex: () => { const v = parseInt(XS.sg.dec, 10), n = XS.sg.n; return /^-?\d+$/.test(XS.sg.dec) && v >= -Math.pow(2, n - 1) && v <= Math.pow(2, n - 1) - 1 ? sgSteps(v, n) : sgSteps(-37, 8); } },
+      overflow: { t: 'Desbordamiento', ic: 'bi-exclamation-triangle-fill', col: '#e03131',
+        def: 'Ocurre <strong>desbordamiento</strong> (overflow) cuando el resultado de una operación con signo no cabe en los n bits disponibles.',
+        thmT: 'Regla de detección', thm: 'En complemento a 2, hay desbordamiento si el acarreo que entra al bit de signo es <strong>distinto</strong> del acarreo que sale. También: dos positivos que suman negativo, o dos negativos que suman positivo.',
+        f: () => [T`\text{desbordamiento} \iff c_{n-1} \ne c_{n}`], leg: () => [['c_{n-1}', 'Acarreo hacia el bit de signo', COL.carry], ['c_n', 'Acarreo que sale del bit de signo', COL.carry]],
+        how: ['Suma los números en complemento a 2.', 'Compara el acarreo hacia el bit de signo con el de salida.', 'Si son distintos: el resultado es incorrecto (no cabe).'],
+        ex: () => '<div class="small">Con 4 bits: <span class="mono">0101 + 0011 = 1000</span> → 5 + 3 = 8, pero 1000 se lee como −8. Acarreo hacia el signo 1, sale 0 → desbordamiento. (Pruébalo en «Más temas».)</div>' },
+      frac: { t: 'Fracciones binarias', ic: 'bi-percent', col: '#0c8599',
+        def: 'Las posiciones a la derecha del punto binario valen potencias negativas de 2: 2<sup>−1</sup> = 0.5, 2<sup>−2</sup> = 0.25, 2<sup>−3</sup> = 0.125, …',
+        thmT: 'Multiplicar por 2', thm: 'Para convertir 0.f a binario se multiplica la parte fraccionaria por 2; la parte entera es el siguiente bit. Termina si la fracción llega a 0; si se repite, la fracción binaria es periódica (como 0.1 decimal = 0.000110011…₂).',
+        f: () => [T`N = \sum_{i=1}^{m} a_{-i} \cdot 2^{-i}`, T`f_{k+1} = 2 f_k - \lfloor 2 f_k \rfloor \qquad \text{bit}_{k} = \lfloor 2 f_k \rfloor`], leg: () => [['a_{-i}', 'Bit en la posición −i (a la derecha del punto)', COL.bit], ['f_k', 'Parte fraccionaria en el paso k', COL.dec]],
+        how: ['Multiplica la fracción por 2.', 'La parte entera (0 o 1) es el siguiente bit.', 'Quédate con la parte fraccionaria y repite.', 'Para volver a decimal: suma 2<sup>−i</sup> de los bits en 1.'],
+        ex: () => { const f = frSteps(XS.fr.d); return f ? `<div class="mono">${XS.fr.d} → 0.${f.bits}${f.rep || f.cut ? '…' : ''}<sub>2</sub></div>` : ''; } },
+      reglas: { t: 'Reglas de las operaciones', ic: 'bi-journal-check', col: '#d97706',
+        def: 'Las <strong>operaciones básicas en binario</strong> se resuelven columna por columna con reglas muy cortas, porque solo existen los dígitos 0 y 1. Todo se reduce a: 1 + 1 = 10₂ en la suma, 0 − 1 pide prestado 1 (que vale 2) en la resta, y 1 × 1 = 1 en el producto.',
+        thmT: 'Reglas por columna', thm: '<b>Suma</b>: 0+0=0 · 0+1=1 · 1+0=1 · 1+1=10 (escribe 0, lleva 1) · 1+1+1=11 (escribe 1, lleva 1).<br><b>Resta</b>: 0−0=0 · 1−0=1 · 1−1=0 · 0−1=1 (pide préstamo).<br><b>Producto</b>: 0·0=0 · 0·1=0 · 1·0=0 · 1·1=1.<br><b>División</b>: el divisor cabe (1) o no cabe (0) en el residuo parcial.',
+        f: () => [T`s_i = a_i + b_i + c_i \;;\; r_i = s_i \bmod 2 \;;\; c_{i+1} = \lfloor s_i/2 \rfloor`, T`d_i = a_i - b_i - p_i \;;\; d_i<0 \Rightarrow d_i+2,\; p_{i+1}=1`, T`A\cdot B = \sum_j b_j\,(A\cdot 2^{j})`, T`\text{parcial} = 2r + \text{bit} \;;\; q = [\text{parcial} \ge d]`],
+        leg: () => [['c_i', 'Acarreo que entra a la columna i', COL.carry], ['p_i', 'Préstamo pendiente', COL.borrow], ['r_i', 'Bit que se escribe', COL.res], ['q', 'Bit del cociente (1 si el divisor cabe)', COL.dec]],
+        how: ['Alinea los números a la derecha.', 'Trabaja de derecha a izquierda, columna por columna.', 'Aplica la regla de la operación y arrastra el acarreo o el préstamo.', 'Comprueba con la operación inversa o pasando a decimal.'],
+        ex: () => okBin(OP.add.a, 12) && okBin(OP.add.b, 12) ? lastOf(stepsAdd(OP.add.a, OP.add.b)) : '' },
+      props: { t: 'Atajos y propiedades', ic: 'bi-lightning-charge-fill', col: '#0c8599',
+        def: 'Las <strong>propiedades</strong> de las operaciones permiten resolver o comprobar sin hacer todo el procedimiento largo. Lo más útil en binario es que multiplicar o dividir entre una potencia de 2 es un <strong>desplazamiento de bits</strong>.',
+        thmT: 'Desplazamientos y paridad', thm: 'A × 2<sup>k</sup> se obtiene agregando k ceros a la derecha. A ÷ 2<sup>k</sup> quita los últimos k bits: lo que queda es el cociente y los bits quitados son el residuo. El último bit de A + B es el XOR de los últimos bits y el de A × B es el AND.',
+        f: () => [T`A \cdot 2^{k} = A\underbrace{00\cdots0}_{k}`, T`A = 2^{k} \cdot q + r \;;\; r = \text{últimos } k \text{ bits}`, T`\text{bits}(A+B) \le \max(m,n)+1 \;;\; \text{bits}(A\cdot B) \le m+n`],
+        leg: () => [['k', 'Número de lugares desplazados', COL.w], ['q, r', 'Cociente y residuo', COL.dec], ['m, n', 'Longitudes de A y B', COL.bit]],
+        how: ['Para × 2<sup>k</sup>, agrega k ceros.', 'Para ÷ 2<sup>k</sup>, separa los últimos k bits: son el residuo.', 'Usa el último bit para saber si el número es par (0) o impar (1).', 'Revisa que la longitud del resultado sea posible.'],
+        ex: () => { const A = okBin(RL.vA, 12) ? RL.vA : '1011', k = RL.vk; return `${fd(T`${bx(A)} \times 2^{${k}} = ${K('#7dd3fc', A + '0'.repeat(k))}_{2}`)}`; } },
+      verif: { t: 'Cómo comprobar una operación', ic: 'bi-patch-check-fill', col: '#495057',
+        def: 'Una operación se <strong>comprueba</strong> con otra operación que la deshaga, o pasando todo a decimal. Así se detectan errores de acarreo o de préstamo.',
+        thmT: 'Operación inversa', thm: '(A + B) − B = A · (A − B) + B = A · (A × B) ÷ B = A (B ≠ 0) · D = d·q + r con 0 ≤ r < d.',
+        f: () => [T`(A+B)-B = A \;;\; (A-B)+B = A`, T`(A\cdot B) \div B = A \;;\; D = d\,q + r`], leg: () => [['A, B', 'Operandos', COL.bit], ['D, d, q, r', 'Dividendo, divisor, cociente y residuo', COL.dec]],
+        how: ['Haz la operación en binario.', 'Aplica la inversa y verifica que regresa al dato original.', 'Convierte a decimal para una segunda comprobación.', 'Usa la paridad del último bit para una revisión rápida.'],
+        ex: () => { const a = RL.vA, b = RL.vB; return okBin(a, 12) && okBin(b, 12) ? `${fd(T`${bx(a)} + ${bx(b)} = ${K('#7dd3fc', B2(D2(a) + D2(b)))}_{2} \;\Rightarrow\; ${bx(B2(D2(a) + D2(b)))} - ${bx(b)} = ${bx(B2(D2(a)))}`)}` : ''; } },
+    };
+    const FORM = [
+      ['Representación posicional', T`N = \sum_{i=0}^{n-1} a_i \, b^{i} \qquad 0 \le a_i < b`], ['Con parte fraccionaria', T`N = \sum_{i=-m}^{n-1} a_i \, b^{i}`], ['Algoritmo de la división', T`N = b \cdot q + r \qquad 0 \le r < b`],
+      ['Cantidad de dígitos', T`n = \lfloor \log_{b} N \rfloor + 1`], ['Rango sin signo (n bits)', T`0 \le N \le 2^{n} - 1`], ['Rango con signo (C2)', T`-2^{n-1} \le N \le 2^{n-1} - 1`], ['Valor en complemento a 2', T`N = -a_{n-1} \, 2^{n-1} + \sum_{i=0}^{n-2} a_i \, 2^{i}`],
+      ['Complemento a 1 y a 2', T`C1(B) = (2^{n} - 1) - B \qquad C2(B) = C1(B) + 1 = 2^{n} - B`], ['Suma binaria', T`s_i = a_i + b_i + c_i \qquad r_i = s_i \text{ mod } 2 \qquad c_{i+1} = \lfloor s_i / 2 \rfloor`],
+      ['Resta con préstamo', T`d_i = a_i - b_i - p_i \;;\; d_i < 0 \Rightarrow d_i + 2 \,,\, p_{i+1} = 1`], ['Resta por complemento a 2', T`A - B = A + C2(B) \pmod{2^{n}}`], ['Multiplicación', T`A \cdot B = \sum_{j} b_j \, (A \cdot 2^{j})`],
+      ['División', T`D = d \cdot q + r \qquad 0 \le r < d`], ['Grupos octal / hex', T`8 = 2^{3} \quad 16 = 2^{4}`], ['Fracción → binario', T`f_{k+1} = 2 f_k - \lfloor 2 f_k \rfloor`], ['Desbordamiento', T`c_{n-1} \ne c_{n}`], ['Desplazamiento', T`A \cdot 2^{k} = A\,\underbrace{0\cdots0}_{k} \quad A = 2^{k} q + r`], ['Comprobación por inversa', T`(A+B)-B = A \;;\; D = d\,q + r`], ['Paridad del último bit', T`(A+B)_0 = a_0 \oplus b_0 \;;\; (A\cdot B)_0 = a_0 \wedge b_0`], ['Bits necesarios', T`\text{suma} \le \max(m,n)+1 \;;\; \text{producto} \le m+n`]];
+    function showManual(key) {
+      if (!MAN[key] && key !== 'formulario') key = 'teorema';
+      const tabs = Object.entries(MAN).map(([k, m]) => `<li class="nav-item"><button class="nav-link ${k === key ? 'active' : ''}" data-man="${k}"><i class="bi ${m.ic} me-1"></i>${m.t}</button></li>`).join('') + `<li class="nav-item"><button class="nav-link ${key === 'formulario' ? 'active' : ''}" data-man="formulario"><i class="bi bi-list-columns-reverse me-1"></i>Formulario completo</button></li>`;
+      $('#man-tabs').innerHTML = tabs;
+      if (key === 'formulario') $('#man-body').innerHTML = `<h5 class="fw-bold mb-3"><i class="bi bi-list-columns-reverse me-1"></i>Formulario completo</h5><div class="table-responsive"><table class="form-tbl">${FORM.map(([n, f]) => `<tr><td class="nm">${n}</td><td>${fd(f)}</td></tr>`).join('')}</table></div><div class="tip-box s-volt small mt-3"><b>Tabla rápida:</b> 2⁰…2¹⁰ = 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024. Reglas: 1+1 = 10 · 1−1 = 0 · 0−1 = 1 (préstamo) · ×2 = agregar un 0 · ÷2 = quitar el último bit.</div>`;
+      else {
+        const m = MAN[key]; let ex = ''; try { ex = m.ex ? m.ex() : ''; } catch (e) { ex = ''; }
+        const sec = (c, ic, t, inner, cls = '') => `<div class="man-sec ${cls}" style="--c:${c}"><h6><i class="bi ${ic} me-1"></i>${t}</h6>${inner}</div>`;
+        $('#man-body').innerHTML = `<h5 class="fw-bold mb-3" style="color:${m.col}"><i class="bi ${m.ic} me-1"></i>${m.t}</h5>`
+          + sec('#1c7ed6', 'bi-chat-quote-fill', 'Definición', `<div>${m.def}</div>`)
+          + sec('#e67700', 'bi-patch-check-fill', m.thmT || 'Teorema', `<div>${m.thm}</div>`, 'thm')
+          + sec('#0c8599', 'bi-calculator-fill', 'Fórmula', m.f().map(fd).join('') + `<div class="fw-bold small mt-2">Donde:</div>${legRows(m.leg())}`)
+          + sec('#5f3dc4', 'bi-list-ol', 'Cómo se usa', `<ol class="small lh-lg mb-0">${m.how.map(h => `<li>${h}</li>`).join('')}</ol>`)
+          + sec('#2f9e44', 'bi-lightning-charge-fill', 'Ejemplo con tus datos', `<div>${ex || '<span class="text-muted">Escribe valores válidos en la página para ver el ejemplo.</span>'}</div>`);
+      }
+      bootstrap.Modal.getOrCreateInstance($('#manualModal')).show();
+    }
+    on('[data-manual]', 'click', (e, t) => { e.preventDefault(); showManual(t.dataset.manual); });
+    on('[data-man]', 'click', (e, t) => showManual(t.dataset.man));
+
+    /* ================= Arranque ================= */
+    $('#hero-bits').innerHTML = Array.from({ length: 140 }, (_, i) => `<span style="--d:${(i % 17) * .17}s">${Math.random() < .5 ? 0 : 1}</span>`).join('');
+    renderTheorem(); renderNotes(); renderConv(); ['add', 'sub', 'mul', 'div'].forEach(k => renderOp(k)); renderExtras(); renderRules(); exNew();
+    const navLinks = $$('#sec-nav a[href^="#s"]');
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+    $$('section.lesson').forEach(s => io.observe(s));
+
+
+  </script>
+</body>
+</html>
