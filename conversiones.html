@@ -104,6 +104,26 @@
     .solution-box { background:#eef2f7; border-radius:10px; padding:.8rem; font-size:.9rem; }
     .solution-box table { font-size:.82rem; }
     .progress { height:14px; border-radius:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
+
+    /* ===== Método de la escalera (divisiones sucesivas) ===== */
+    .stair-box { background:#fff; border:2px solid #dbe4ff; border-radius:14px; padding:.7rem .8rem .8rem; margin-top:.5rem; }
+    .stair-ctl { display:flex; flex-wrap:wrap; gap:.4rem; align-items:center; margin-bottom:.5rem; }
+    .stair-ctl .btn { font-weight:700; }
+    .stair-scroll { overflow-x:auto; padding-bottom:.3rem; }
+    .stair { --cw:3.4rem; display:grid; grid-template-columns:repeat(var(--cols),var(--cw)); grid-auto-rows:3rem; width:max-content; font-family:'Courier New',monospace; font-weight:800; font-size:1.3rem; }
+    .stair.small { --cw:2.7rem; font-size:1.1rem; }
+    .stair > div { display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(.5); }
+    .stair > div.on { opacity:1; transform:none; }
+    .stair > div.cur { animation:stPop .55s ease; }
+    @keyframes stPop { 0% { opacity:0; transform:scale(.3) translateY(-10px); } 60% { transform:scale(1.2); } 100% { opacity:1; transform:none; } }
+    .st-q { color:#212529; } .st-q.zero { color:#adb5bd; }
+    .st-d { color:#e03131; border-left:3px solid #212529; border-bottom:3px solid #212529; }
+    .st-r span { display:inline-flex; align-items:center; justify-content:center; width:2.3rem; height:2.3rem; border:3px solid #4263eb; border-radius:50%; color:#e03131; background:#edf2ff; }
+    .st-r.cur span, .st-r.hl span { background:#4263eb; color:#fff; }
+    .stair-arrow { position:relative; height:2.2rem; } .st-ah { position:absolute; top:-.35rem; color:#1c7ed6; font-size:1.1rem; }
+    .stair-cap { background:#f1f3f5; border-radius:10px; padding:.45rem .7rem; font-size:.92rem; margin-top:.4rem; min-height:2.4rem; }
+    .stair-res { background:#212529; color:#fff; border-radius:10px; padding:.5rem 1rem; font-family:'Courier New',monospace; font-weight:700; font-size:1.2rem; margin-top:.5rem; }
+    .stair-res b { color:#74c0fc; letter-spacing:.08em; }
   </style>
 </head>
 <body>
@@ -188,7 +208,7 @@
       <!-- 3.5. SIMULADOR DE INTERRUPTORES Y FOCOS INTERACTIVOS -->
       <section class="mb-5">
         <h2 class="section-title"><i class="bi bi-toggle2-on text-info me-2"></i>3.5. Simulador de Interruptores y Focos (Bitwise Switch Panel)</h2>
-        <p class="text-muted">Haz clic en los interruptores o focos para encenderlos ($1$) o apagarlos ($0$). Observa la conversión automática a Decimal, Hexadecimal y Octal en tiempo real.</p>
+        <p class="text-muted">Haz clic en los interruptores o focos para encenderlos (1) o apagarlos (0). Observa la conversión automática a Decimal, Hexadecimal y Octal en tiempo real.</p>
         
         <div class="card switch-card">
           <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -347,6 +367,51 @@
           <div class="result-line mt-2">${terms.join(' + ')} = ${total}</div></div>`;
     }
 
+    /* ----- Método de la escalera ----- */
+    function stairData(n, b) {
+      const qs = [n], rs = [];
+      while (qs[qs.length - 1] > 0) { const q = qs[qs.length - 1]; rs.push(q % b); qs.push(Math.floor(q / b)); }
+      return { qs, rs, m: rs.length };
+    }
+    function stairInner(n, b, k) {
+      const { qs, rs, m } = stairData(n, b), done = k > m, kk = Math.min(k, m), cells = [];
+      const put = (row, col, cls, html, vis, cur) => cells.push(`<div class="${cls} ${vis ? 'on' : ''} ${cur ? 'cur' : ''}" style="grid-row:${row + 1};grid-column:${col + 1}">${html}</div>`);
+      put(0, 0, 'st-q', qs[0], true, kk === 0 && !done);
+      for (let i = 0; i < m; i++) {
+        const vis = kk >= i + 1, cur = kk === i + 1 && !done;
+        put(i, i + 1, 'st-d', b, vis, cur);
+        put(i + 1, i, 'st-r' + (done ? ' hl' : ''), `<span>${DIGITS[rs[i]]}</span>`, vis, cur);
+        put(i + 1, i + 1, 'st-q' + (qs[i + 1] === 0 ? ' zero' : ''), qs[i + 1], vis, cur);
+      }
+      const cols = m + 1, rows = m + 1, small = m > 9;
+      let cap;
+      if (kk === 0) cap = `Empieza con el número que quieres convertir: <b>${n}</b>. Lo vas a dividir entre la base <b style="color:#e03131">${b}</b> (el divisor se coloca a la derecha).`;
+      else if (!done) { const i = kk - 1, r = rs[i]; cap = `<b>${qs[i]} ÷ ${b} = ${qs[i + 1]}</b> y sobra <b>${r}</b>${r > 9 ? ` (= <b>${DIGITS[r]}</b>)` : ''}. El cociente <b>${qs[i + 1]}</b> baja a la siguiente fila y el residuo <b>${DIGITS[r]}</b> se encierra en un círculo. Comprobación: ${b} × ${qs[i + 1]} + ${r} = ${qs[i]} ✔${qs[i + 1] === 0 ? ' · el cociente llegó a 0, ¡se acabó!' : ''}`; }
+      else cap = `Con el cociente en 0 terminamos. Ahora <b>lee los residuos encerrados de abajo hacia arriba</b> (flecha azul): el último residuo es el dígito de más a la izquierda.`;
+      const cw = small ? 2.7 : 3.4, arrow = done && m > 1 ? `<div class="stair-arrow" style="width:${cols * cw}rem"><svg style="width:100%;height:100%;display:block" viewBox="0 0 ${cols} 1" preserveAspectRatio="none"><path d="M ${m - 0.5} 0.05 Q ${(m - 1) / 2 + 0.5} 1.6 0.5 0.15" fill="none" stroke="#1c7ed6" stroke-width="3" vector-effect="non-scaling-stroke"/></svg><span class="st-ah" style="left:${0.5 * cw - 0.55}rem">▲</span></div>` : '';
+      const res = done ? `<div class="stair-res">${n}<sub>10</sub> = <b>${rs.slice().reverse().map(r => DIGITS[r]).join('')}</b><sub>${b}</sub></div>` : '';
+      return `<div class="stair-ctl"><button class="btn btn-sm btn-outline-dark" data-st="first" title="Reiniciar"><i class="bi bi-skip-start-fill"></i></button><button class="btn btn-sm btn-outline-dark" data-st="prev" ${kk === 0 && !done ? 'disabled' : ''}><i class="bi bi-chevron-left"></i> Anterior</button><button class="btn btn-sm btn-primary" data-st="next" ${done ? 'disabled' : ''}>Siguiente <i class="bi bi-chevron-right"></i></button><button class="btn btn-sm btn-success" data-st="play"><i class="bi bi-play-fill"></i> Animar</button><button class="btn btn-sm btn-outline-secondary" data-st="all">Ver todo</button><span class="small text-muted ms-auto">Paso ${Math.min(k, m + 1)} de ${m + 1}</span></div>
+        <div class="stair-scroll"><div class="stair ${small ? 'small' : ''}" style="--cols:${cols}">${cells.join('')}</div>${arrow}</div><div class="stair-cap">${cap}</div>${res}`;
+    }
+    function stairHTML(n, b) {
+      const m = stairData(n, b).m;
+      return `<div class="stair-box" data-n="${n}" data-b="${b}" data-k="${m + 1}">${stairInner(n, b, m + 1)}</div>`;
+    }
+    const stairTimers = new WeakMap();
+    function stairGo(box, act) {
+      const n = +box.dataset.n, b = +box.dataset.b, m = stairData(n, b).m; let k = +box.dataset.k;
+      const stop = () => { const t = stairTimers.get(box); if (t) { clearInterval(t); stairTimers.delete(box); } };
+      const set = v => { k = Math.max(0, Math.min(m + 1, v)); box.dataset.k = k; box.innerHTML = stairInner(n, b, k); };
+      if (act === 'play') {
+        if (stairTimers.get(box)) { stop(); return; }
+        set(0);
+        stairTimers.set(box, setInterval(() => { if (!box.isConnected || k >= m + 1) { stop(); return; } set(k + 1); }, 1100));
+        return;
+      }
+      stop();
+      if (act === 'first') set(0); else if (act === 'prev') set(k - 1); else if (act === 'next') set(k + 1); else if (act === 'all') set(m + 1);
+    }
+
     function stepsFromDecimal(n, b) {
       if (n === 0) return `<div class="step-box">El cero se escribe igual en cualquier base: <strong>0</strong></div>`;
       let q = n, rows = '', rems = [];
@@ -357,10 +422,12 @@
         q = nq;
       }
       return `
-        <div class="step-box"><span class="step-num">1</span>Divide entre <strong>${b}</strong> una y otra vez hasta que el cociente sea 0. Guarda cada residuo.
+        <div class="step-box"><span class="step-num">1</span><strong>Método de la escalera:</strong> divide entre <strong>${b}</strong> una y otra vez. Cada cociente baja a la siguiente fila (debajo del divisor) y cada residuo se encierra en un círculo. Usa los botones para verlo paso a paso.
+          ${stairHTML(n, b)}</div>
+        <div class="step-box"><span class="step-num">2</span>Lo mismo en forma de tabla: se divide hasta que el cociente sea 0 y se guarda cada residuo.
           <div class="table-responsive mt-2"><table class="table table-sm table-bordered bg-white mb-0 text-center">
             <thead class="table-light"><tr><th>División</th><th>Cociente</th><th>Residuo</th></tr></thead><tbody>${rows}</tbody></table></div></div>
-        <div class="step-box"><span class="step-num">2</span>Lee los residuos <strong>de abajo hacia arriba</strong> <i class="bi bi-arrow-up-circle-fill text-primary"></i>
+        <div class="step-box"><span class="step-num">3</span>Lee los residuos <strong>de abajo hacia arriba</strong> <i class="bi bi-arrow-up-circle-fill text-primary"></i>
           <div class="result-line mt-2">${rems.slice().reverse().join('')}</div></div>`;
     }
 
@@ -761,6 +828,9 @@
         const chk = e.target.closest('[data-check]');
         if (chk) checkAnswer(chk.dataset.check);
         
+        const st = e.target.closest('[data-st]');
+        if (st) stairGo(st.closest('.stair-box'), st.dataset.st);
+
         const cp = e.target.closest('[data-copy]');
         if (cp) {
           navigator.clipboard?.writeText(cp.dataset.copy).then(() => {
