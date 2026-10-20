@@ -27,7 +27,7 @@
         { label: 'Circuitos eléctricos', href: 'circuitos.html', icon: 'bi-lightning-charge-fill' },
         { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' },
         { label: 'Conversiones numéricas', href: 'conversiones.html', icon: 'bi-123' },
-        { label: 'Conversión y aritmética binaria', href: 'conversion_binarios.html', icon: 'bi-calculator-fill' },
+        { label: 'Operaciones básicas binarios', href: 'operaciones_basicas_binarios.html', icon: 'bi-calculator-fill' },
         { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' } ] },
       { id: 'estadistica', label: 'Estadística', icon: 'bi-bar-chart-line', color: 'c-est', items: [
         { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-bar-chart-line-fill' },
@@ -36,9 +36,9 @@
         { label: 'Cuartiles y Percentiles', href: 'cuartiles_percentiles.html', icon: 'bi-percent' },
         { label: 'Correlación Lineal', href: 'correlacion_lineal.html', icon: 'bi-graph-up' },
         { label: 'Probabilidad', href: 'probabilidad.html', icon: 'bi-dice-5-fill' },
+        { label: 'Función de distribución de probabilidad', href: 'funcion_distribucion_probabilidad.html', icon: 'bi-bar-chart-line-fill' },
         { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' },
-        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ,
-        { label: 'Función de distribución de probabilidad', href: 'funcion_distribucion_probabilidad.html', icon: 'bi-bar-chart-line-fill' } ] }
+        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ] }
     ]
   };
   const store = {
