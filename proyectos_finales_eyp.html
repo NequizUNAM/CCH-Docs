@@ -18,9 +18,6 @@
   .app-navbar .dropdown-item:hover{ background:#e7efff; }
   .app-navbar .dropdown-item.active{ background:#0d6efd; }
   .app-navbar .nav-link.active-group{ color:#fff; border-bottom:2px solid #0d6efd; }
-  /* Barra superior de la página (subheader) */
-  .topbar{ background:linear-gradient(90deg,var(--azul),var(--azul-2)); color:#fff; box-shadow:0 2px 10px rgba(0,0,0,.2); position:relative; z-index:1000; }
-  .topbar small{ color:#cfd6ee; }
   /* Conceptos con definición (popover) */
   b.def{ color:var(--azul); border-bottom:2px dotted var(--oro); cursor:help; outline:none; }
   b.def:hover, b.def:focus{ background:rgba(201,162,39,.15); border-radius:.2rem; }
@@ -65,8 +62,23 @@
   .shake{ animation:shake .35s; }
   @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
   #btnArriba{ position:fixed; right:1rem; bottom:1rem; display:none; z-index:1040; }
+  /* ===== Responsivo (celular) ===== */
+  html,body{ overflow-x:hidden; }
+  .tabs-sticky .nav-pills{ scrollbar-width:none; } .tabs-sticky .nav-pills::-webkit-scrollbar{ display:none; }
+  .tabs-sticky .nav-link{ white-space:nowrap; }
+  .formula-card math{ max-width:100%; display:block; overflow-x:auto; }
+  @media (max-width:575.98px){
+    main.p-3{ padding:.75rem!important; }
+    .hero{ padding:1.1rem!important; } .hero h1{ font-size:1.35rem; }
+    .hero .btn{ flex:1 1 auto; }
+    .card.p-4{ padding:1rem!important; }
+    h2.seccion{ font-size:1.1rem; }
+    .icono-circulo{ width:40px; height:40px; font-size:1.15rem; }
+    .table{ font-size:.8rem; } .table td,.table th{ padding:.3rem .4rem; }
+    .popover{ --bs-popover-max-width:90vw; }
+  }
   @media print{
-    .topbar,#app-header,.no-print,.tabs-sticky,#btnArriba,.popover{ display:none!important; }
+    #app-header,.no-print,.tabs-sticky,#btnArriba,.popover{ display:none!important; }
     b.def{ border-bottom:0; }
     .tab-pane{ display:block!important; opacity:1!important; margin-bottom:1rem; }
     body{ background:#fff; } .card{ box-shadow:none!important; border:1px solid #ddd; }
@@ -79,14 +91,6 @@
 <!-- Header compartido (marca, menús y bloqueo) -->
 <div id="app-header"></div>
 
-<header class="topbar px-3 px-md-4 py-2 d-flex align-items-center" style="height:68px">
-  <div class="me-auto">
-    <div class="fw-bold">Proyectos finales · Estadística y Probabilidad</div>
-    <small class="d-none d-sm-inline">UNAM · Escuela Nacional Colegio de Ciencias y Humanidades</small>
-  </div>
-  <button class="btn btn-sm btn-light shadow-sm me-2" id="btnInicio" title="Inicio"><i class="bi bi-house"></i><span class="d-none d-sm-inline ms-1">Inicio</span></button>
-  <button class="btn btn-sm btn-outline-light" id="btnBloquear" title="Bloquear todo"><i class="bi bi-lock"></i><span class="d-none d-sm-inline ms-1">Bloquear</span></button>
-</header>
 
 <div class="container-fluid">
   <div class="row">
@@ -111,7 +115,7 @@
                   <div class="flex-grow-1"><small class="text-muted">5.º semestre</small><h2 class="h5 mb-0">Estadística y Probabilidad I</h2></div>
                   <span class="badge rounded-pill text-bg-light border fs-6"><i class="bi bi-lock-fill" data-lock="eyp1"></i></span>
                 </div>
-                <p class="text-muted mb-3">Investigación con tema libre: medidas de tendencia central y dispersión, coeficiente de Pearson y gráficas.</p>
+                <p class="text-muted mb-3">Estudio de muestreo: población, marco muestral, técnica de muestreo, tamaño de la muestra y sesgos.</p>
                 <span class="mt-auto text-primary fw-semibold">Entrar <i class="bi bi-arrow-right"></i></span>
               </div>
             </div>
@@ -170,7 +174,7 @@
           <div class="tabs-sticky">
             <ul class="nav nav-pills flex-nowrap overflow-auto" role="tablist">
               <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#e1-lin" type="button"><i class="bi bi-journal-text me-1"></i>Lineamientos</button></li>
-              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e1-est" type="button"><i class="bi bi-calculator me-1"></i>Elementos estadísticos</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e1-est" type="button"><i class="bi bi-diagram-3 me-1"></i>Elementos del muestreo</button></li>
               <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e1-rub" type="button"><i class="bi bi-clipboard-check me-1"></i>Rúbrica</button></li>
               <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e1-for" type="button"><i class="bi bi-file-earmark-pdf me-1"></i>Formato</button></li>
             </ul>
@@ -181,7 +185,8 @@
             <div class="tab-pane fade show active" id="e1-lin">
               <div class="card shadow bloque p-4 mb-4">
                 <h2 class="seccion"><i class="bi bi-lightbulb"></i>¿En qué consiste?</h2>
-                <p class="mb-0">Realizarán una investigación estadística sobre un tema de su elección, con datos propios recolectados por ustedes, y la entregarán como informe en PDF. El trabajo recorre los cuatro pasos de una investigación estadística: formular preguntas, recolectar datos, analizarlos e interpretar resultados.</p>
+                <p class="mb-2">Realizarán un <strong>estudio de muestreo</strong>: elegirán una población de su interés, diseñarán cómo seleccionar una muestra que la represente, la seleccionarán y recolectarán sus datos, y entregarán el informe en PDF.</p>
+                <p class="mb-0">El trabajo recorre los pasos del muestreo: definir la población y la unidad de análisis, obtener o construir el marco muestral, elegir la técnica de muestreo, calcular el tamaño de la muestra, seleccionar las unidades y analizar qué tan bien representa la muestra a la población (sesgos y limitaciones).</p>
               </div>
 
               <div class="row g-4 mb-4">
@@ -191,7 +196,7 @@
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item px-0">UNAM · CCH · Plantel <span class="blank"></span></li>
                       <li class="list-group-item px-0">Asignatura: Estadística y Probabilidad I</li>
-                      <li class="list-group-item px-0">Título de la investigación</li>
+                      <li class="list-group-item px-0">Título del estudio de muestreo</li>
                       <li class="list-group-item px-0">Nombre completo de cada integrante (apellido paterno primero, orden alfabético)</li>
                       <li class="list-group-item px-0">Grupo y nombre del profesor(a)</li>
                       <li class="list-group-item px-0">Ciclo escolar y fecha de entrega</li>
@@ -200,13 +205,13 @@
                 </div>
                 <div class="col-lg-6">
                   <div class="card shadow bloque p-4 h-100">
-                    <h2 class="seccion"><i class="bi bi-ui-checks"></i>Recolección de datos</h2>
+                    <h2 class="seccion"><i class="bi bi-ui-checks"></i>Selección de la muestra y recolección</h2>
                     <div class="alert alert-warning shadow-sm py-2 mb-3"><i class="bi bi-exclamation-triangle me-1"></i>Obligatorio: formulario en línea con <strong>URL</strong> que abra sin pedir permiso.</div>
                     <ul class="mb-0">
-                      <li>Google Forms, Microsoft Forms u otro. La URL va en la Metodología y en el Apéndice.</li>
-                      <li>Si usaron otro medio (medición, experimento, base oficial como INEGI), anexen <strong>evidencias</strong>: fotos, hojas de registro, capturas o liga.</li>
-                      <li>10 a 15 preguntas, con al menos <strong>2 cualitativas</strong> y <strong>3 cuantitativas</strong>; dos de las cuantitativas deben poder relacionarse (para Pearson).</li>
-                      <li>Mínimo <strong>50 respuestas</strong>; anexen la base de datos.</li>
+                      <li>Google Forms, Microsoft Forms u otro. La URL va en el diseño del muestreo y en el Apéndice.</li>
+                      <li>El formulario es breve: sirve para registrar a las unidades seleccionadas y las características con las que describirán la muestra.</li>
+                      <li>Si usaron otro medio (listas, conteos, base oficial como INEGI), anexen <strong>evidencias</strong>: fotos, hojas de registro, capturas o liga.</li>
+                      <li>Muestra de <strong>al menos 50 unidades</strong>; anexen la base de datos y la evidencia de cómo se seleccionaron (lista numerada, números aleatorios, intervalo de selección, etc.).</li>
                     </ul>
                   </div>
                 </div>
@@ -217,61 +222,62 @@
                 <ol class="list-group list-group-numbered list-group-flush">
                   <li class="list-group-item">Portada</li>
                   <li class="list-group-item">Índice</li>
-                  <li class="list-group-item">Introducción: tema y por qué les interesa</li>
-                  <li class="list-group-item">Planteamiento del problema: al menos 3 preguntas que se respondan con datos y sus conjeturas iniciales</li>
-                  <li class="list-group-item">Metodología: población, muestra, tamaño, fechas, URL del formulario y tabla de variables con su tipo</li>
-                  <li class="list-group-item">Análisis estadístico (ver pestaña <em>Elementos estadísticos</em>)</li>
-                  <li class="list-group-item">Conclusiones: respuesta a cada pregunta, contraste con las conjeturas y si los resultados pueden extenderse a todo el plantel (sesgos y limitaciones)</li>
+                  <li class="list-group-item">Introducción: tema y por qué es necesario muestrear</li>
+                  <li class="list-group-item">Planteamiento: pregunta que se quiere responder, objetivo y población de interés</li>
+                  <li class="list-group-item">Diseño del muestreo: población, unidad de análisis, marco muestral, técnica elegida y su justificación, tamaño de la muestra (con su cálculo), procedimiento de selección paso a paso y URL del formulario</li>
+                  <li class="list-group-item">Resultados de la selección: fechas, unidades obtenidas, tasa de respuesta y tabla que compare la composición de la muestra con la de la población</li>
+                  <li class="list-group-item">Sesgos y limitaciones: sesgo de selección, de no respuesta, error de muestreo, y si la muestra puede representar a toda la población</li>
+                  <li class="list-group-item">Conclusiones: ¿la técnica fue adecuada?, ¿qué mejorarían?</li>
                   <li class="list-group-item">Referencias en APA 7, mínimo 3 fuentes confiables</li>
-                  <li class="list-group-item">Apéndices: A) cuestionario y URL, B) base de datos, C) evidencias, D) capturas del software</li>
+                  <li class="list-group-item">Apéndices: A) cuestionario y URL, B) base de datos y marco muestral, C) evidencias de la selección, D) capturas del software</li>
                 </ol>
               </div>
             </div>
 
-            <!-- Elementos estadísticos -->
+            <!-- Elementos del muestreo -->
             <div class="tab-pane fade" id="e1-est">
               <div class="card shadow bloque p-4 mb-4">
                 <h2 class="seccion"><i class="bi bi-check2-square"></i>Elementos obligatorios</h2>
-                <p class="mb-0 text-muted">Cada medida o gráfica debe ir acompañada de una interpretación escrita en sus palabras, en el contexto de su tema. Un cálculo sin interpretación no cuenta.</p>
+                <p class="mb-0 text-muted">Cada decisión del diseño de muestreo debe justificarse por escrito, en sus palabras y en el contexto de su tema. Una elección sin justificación no cuenta.</p>
               </div>
               <div class="row g-3 mb-4">
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-table"></i></div><div><h3 class="h6 mb-1">Tabla de frecuencias</h3><small class="text-muted">Absoluta, relativa y acumulada de al menos una variable.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">x̄</div><div><h3 class="h6 mb-1">Media</h3><small class="text-muted">Promedio de una variable cuantitativa.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-distribute-vertical"></i></div><div><h3 class="h6 mb-1">Mediana</h3><small class="text-muted">Valor central de los datos ordenados.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-trophy"></i></div><div><h3 class="h6 mb-1">Moda</h3><small class="text-muted">Valor o categoría más frecuente.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">s²</div><div><h3 class="h6 mb-1">Varianza</h3><small class="text-muted">Promedio de las desviaciones al cuadrado.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">s</div><div><h3 class="h6 mb-1">Desviación estándar</h3><small class="text-muted">Qué tan dispersos están los datos respecto a la media.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">r</div><div><h3 class="h6 mb-1">Coeficiente de Pearson</h3><small class="text-muted">Entre dos variables cuantitativas, con su diagrama de dispersión; interpretar dirección y fuerza.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-pie-chart"></i></div><div><h3 class="h6 mb-1">Gráficas (mínimo 2)</h3><small class="text-muted">Tipos distintos y adecuados a la variable, con título, ejes y fuente. El diagrama de dispersión cuenta como una.</small></div></div></div></div>
-                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-chat-square-text"></i></div><div><h3 class="h6 mb-1">Interpretación</h3><small class="text-muted">Un párrafo por cada medida y gráfica.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-globe2"></i></div><div><h3 class="h6 mb-1">Población</h3><small class="text-muted">Conjunto completo de unidades de interés, delimitado en lugar, tiempo y características; su tamaño N.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-person"></i></div><div><h3 class="h6 mb-1">Unidad de análisis</h3><small class="text-muted">Elemento que se observa o encuesta: una persona, un grupo, una vivienda, etc.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-card-list"></i></div><div><h3 class="h6 mb-1">Marco muestral</h3><small class="text-muted">Lista o mapa de donde se seleccionan las unidades (por ejemplo, la lista de asistencia). Señalar si cubre a toda la población.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-diagram-3"></i></div><div><h3 class="h6 mb-1">Técnica de muestreo</h3><small class="text-muted">Probabilístico (aleatorio simple, sistemático, estratificado, por conglomerados) o no probabilístico (conveniencia, cuotas, bola de nieve), con su justificación.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">n</div><div><h3 class="h6 mb-1">Tamaño de la muestra</h3><small class="text-muted">Con el cálculo de n (fórmulas sugeridas) o la justificación del tamaño elegido.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-shuffle"></i></div><div><h3 class="h6 mb-1">Procedimiento de selección</h3><small class="text-muted">Paso a paso y reproducible: cómo se numeró el marco, cómo se obtuvieron los números aleatorios o el intervalo k.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-table"></i></div><div><h3 class="h6 mb-1">Muestra vs. población</h3><small class="text-muted">Tabla que compare la composición de la muestra con la de la población (por grupo, sexo, grado, etc.).</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-exclamation-diamond"></i></div><div><h3 class="h6 mb-1">Sesgos y error de muestreo</h3><small class="text-muted">Sesgo de selección y de no respuesta; diferencia entre lo observado en la muestra y lo que se espera de la población.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-chat-square-text"></i></div><div><h3 class="h6 mb-1">Interpretación</h3><small class="text-muted">Un párrafo por cada decisión y cada tabla: qué significa y por qué conviene.</small></div></div></div></div>
               </div>
 
               <div class="card shadow bloque p-4 mb-4">
                 <h2 class="seccion"><i class="bi bi-calculator"></i>Fórmulas sugeridas</h2>
-                <div class="alert alert-info shadow-sm py-2 small mb-3"><i class="bi bi-info-circle me-1"></i>Sugerencia para el cálculo. Pueden verificar sus resultados con Excel (PROMEDIO, MEDIANA, MODA, VAR.S, DESVEST.M, COEF.DE.CORREL) o GeoGebra.</div>
+                <div class="alert alert-info shadow-sm py-2 small mb-3"><i class="bi bi-info-circle me-1"></i>Sugerencias para el diseño. z es el valor del nivel de confianza (95 % → z = 1.96), e el error máximo permitido, p la proporción esperada (si no la conocen, p = 0.5) y q = 1 − p. Pueden verificar con Excel (ALEATORIO.ENTRE, ALEATORIO) o con GeoGebra/CODAP.</div>
                 <div class="row g-3">
-                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Media</small>
-                    <math display="block"><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>x</mi><mi>i</mi></msub></mrow><mi>n</mi></mfrac></math>
-                    <small class="text-muted">x̄ = (suma de los datos) / n</small></div></div>
-                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Varianza (muestral)</small>
-                    <math display="block"><msup><mi>s</mi><mn>2</mn></msup><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></mfrac></math>
-                    <small class="text-muted">s² = Σ(xᵢ − x̄)² / (n − 1)</small></div></div>
-                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Desviación estándar</small>
-                    <math display="block"><mi>s</mi><mo>=</mo><msqrt><msup><mi>s</mi><mn>2</mn></msup></msqrt></math>
-                    <small class="text-muted">s = √s²</small></div></div>
-                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Coeficiente de correlación de Pearson</small>
-                    <math display="block"><mi>r</mi><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>y</mi><mo>¯</mo></mover><mo>)</mo></mrow><msqrt><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>·</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>y</mi><mo>¯</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math>
-                    <small class="text-muted">r = Σ(xᵢ − x̄)(yᵢ − ȳ) / √( Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)² ); toma valores entre −1 y 1</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Tamaño de muestra (población grande)</small>
+                    <math display="block"><msub><mi>n</mi><mn>0</mn></msub><mo>=</mo><mfrac><mrow><msup><mi>z</mi><mn>2</mn></msup><mo>⋅</mo><mi>p</mi><mo>⋅</mo><mi>q</mi></mrow><msup><mi>e</mi><mn>2</mn></msup></mfrac></math>
+                    <small class="text-muted">n₀ = z² · p · q / e²</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Corrección por población finita</small>
+                    <math display="block"><mi>n</mi><mo>=</mo><mfrac><msub><mi>n</mi><mn>0</mn></msub><mrow><mn>1</mn><mo>+</mo><mfrac><mrow><msub><mi>n</mi><mn>0</mn></msub><mo>−</mo><mn>1</mn></mrow><mi>N</mi></mfrac></mrow></mfrac></math>
+                    <small class="text-muted">n = n₀ / (1 + (n₀ − 1) / N), con N = tamaño de la población</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Muestreo sistemático: intervalo de selección</small>
+                    <math display="block"><mi>k</mi><mo>=</mo><mfrac><mi>N</mi><mi>n</mi></mfrac></math>
+                    <small class="text-muted">k = N / n. Se elige un arranque al azar entre 1 y k y luego cada k-ésima unidad del marco.</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Muestreo estratificado: afijación proporcional</small>
+                    <math display="block"><msub><mi>n</mi><mi>h</mi></msub><mo>=</mo><mi>n</mi><mo>⋅</mo><mfrac><msub><mi>N</mi><mi>h</mi></msub><mi>N</mi></mfrac></math>
+                    <small class="text-muted">nₕ = n · Nₕ / N: cada estrato aporta a la muestra en proporción a su tamaño en la población</small></div></div>
                 </div>
               </div>
 
               <div class="card shadow bloque p-4">
                 <h2 class="seccion"><i class="bi bi-plus-circle"></i>Complementarios <span class="badge bg-secondary-subtle text-secondary-emphasis fw-normal fs-6">hasta +10 puntos</span></h2>
                 <div class="row g-3">
-                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Coeficiente de variación</strong><small class="text-muted">Comparar la dispersión entre dos grupos.</small></div></div>
-                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Cuartiles y diagrama de caja</strong><small class="text-muted">Comparar una variable entre grupos.</small></div></div>
-                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Recta de mínimos cuadrados</strong><small class="text-muted">Interpretar pendiente y hacer una predicción.</small></div></div>
-                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Tabla de contingencia y probabilidad</strong><small class="text-muted">Probabilidad condicional e independencia con sus datos.</small></div></div>
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Comparar dos técnicas</strong><small class="text-muted">Seleccionar muestras de la misma población con dos técnicas y comparar qué tan bien la representa cada una.</small></div></div>
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Margen de error</strong><small class="text-muted">Calcular el error máximo e que realmente alcanzó su tamaño de muestra.</small></div></div>
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Simulación de muestras</strong><small class="text-muted">Con Excel, GeoGebra o CODAP, extraer varias muestras y observar cómo varía el resultado de una a otra.</small></div></div>
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Muestreo por conglomerados</strong><small class="text-muted">Diseñar la selección por grupos completos y explicar cuándo conviene más que el aleatorio simple.</small></div></div>
                 </div>
                 <p class="small text-muted mt-3 mb-0">Pueden usar Excel, GeoGebra, CODAP u otro software; incluyan capturas en el Apéndice D.</p>
               </div>
@@ -281,20 +287,19 @@
             <div class="tab-pane fade" id="e1-rub">
               <div class="card shadow bloque p-4">
                 <h2 class="seccion"><i class="bi bi-clipboard-check"></i>Rúbrica del informe (100 puntos)</h2>
-                <div class="alert alert-warning shadow-sm py-2"><i class="bi bi-exclamation-triangle me-1"></i>Sin URL del formulario o sin evidencias de recolección, el trabajo no se califica hasta que se entreguen.</div>
+                <div class="alert alert-warning shadow-sm py-2"><i class="bi bi-exclamation-triangle me-1"></i>Sin URL del formulario o sin evidencias de la selección de la muestra, el trabajo no se califica hasta que se entreguen.</div>
                 <div class="table-responsive rounded-3 shadow">
                   <table class="table table-bordered table-hover table-sm align-middle">
                     <thead><tr><th>Criterio</th><th>Pts</th><th>Completo</th><th>Parcial</th><th>Insuficiente</th></tr></thead>
                     <tbody>
                       <tr><td>Portada, índice y datos obligatorios</td><td>5</td><td>Todos los datos e índice con páginas (5)</td><td>Falta un dato (3)</td><td>Faltan varios (0–1)</td></tr>
-                      <tr><td>Planteamiento y preguntas</td><td>10</td><td>3+ preguntas claras con conjeturas (10)</td><td>Vagas o sin conjeturas (5)</td><td>Sin preguntas que se respondan con datos (0–2)</td></tr>
-                      <tr><td>Metodología y formulario</td><td>10</td><td>Población, muestra, variables, URL funcional, 50+ respuestas (10)</td><td>Falta un elemento (5)</td><td>Sin URL ni evidencias (0)</td></tr>
-                      <tr><td>Tabla de frecuencias</td><td>10</td><td>Correcta e interpretada (10)</td><td>Correcta sin interpretar (5)</td><td>Con errores (0–2)</td></tr>
-                      <tr><td>Media, mediana y moda</td><td>15</td><td>Correctas e interpretadas en contexto (15)</td><td>Correctas sin interpretar (8)</td><td>Incompletas o erróneas (0–3)</td></tr>
-                      <tr><td>Varianza y desviación estándar</td><td>15</td><td>Correctas e interpretadas en contexto (15)</td><td>Correctas sin interpretar (8)</td><td>Incompletas o erróneas (0–3)</td></tr>
-                      <tr><td>Gráficas (mínimo 2)</td><td>10</td><td>2+ tipos adecuados, rotuladas e interpretadas (10)</td><td>Solo una o mal rotuladas (5)</td><td>Inadecuadas o ausentes (0–2)</td></tr>
-                      <tr><td>Coeficiente de Pearson</td><td>10</td><td>Con diagrama de dispersión, dirección y fuerza interpretadas (10)</td><td>Calculado sin interpretar (5)</td><td>Ausente o erróneo (0–2)</td></tr>
-                      <tr><td>Conclusiones</td><td>5</td><td>Responde cada pregunta y señala sesgos (5)</td><td>Resume sin responder (3)</td><td>Genéricas (0–1)</td></tr>
+                      <tr><td>Planteamiento: pregunta, objetivo y población de interés</td><td>10</td><td>Pregunta y objetivo claros, población delimitada (10)</td><td>Vagos o población poco delimitada (5)</td><td>Sin pregunta ni población (0–2)</td></tr>
+                      <tr><td>Población, unidad de análisis y marco muestral</td><td>15</td><td>Los tres definidos y se señala si el marco cubre a la población (15)</td><td>Falta uno o no se analiza la cobertura (8)</td><td>Confunde población con muestra (0–3)</td></tr>
+                      <tr><td>Técnica de muestreo y justificación</td><td>15</td><td>Técnica adecuada, explicada y justificada (15)</td><td>Técnica correcta sin justificar (8)</td><td>No se identifica la técnica (0–3)</td></tr>
+                      <tr><td>Tamaño de la muestra</td><td>15</td><td>Cálculo o justificación correcta con datos de la población (15)</td><td>Tamaño sin cálculo ni justificación (8)</td><td>Cálculo erróneo o ausente (0–3)</td></tr>
+                      <tr><td>Procedimiento de selección y evidencias</td><td>15</td><td>Paso a paso reproducible, URL funcional, 50+ unidades y evidencias (15)</td><td>Falta un elemento (8)</td><td>Sin URL ni evidencias (0)</td></tr>
+                      <tr><td>Muestra vs. población, sesgos y limitaciones</td><td>10</td><td>Tabla comparativa y análisis de sesgos y error (10)</td><td>Menciona sesgos sin analizarlos (5)</td><td>No analiza la representatividad (0–2)</td></tr>
+                      <tr><td>Conclusiones</td><td>5</td><td>Evalúa la técnica y propone mejoras (5)</td><td>Resume sin evaluar (3)</td><td>Genéricas (0–1)</td></tr>
                       <tr><td>Referencias y apéndices</td><td>10</td><td>APA 7, 3+ fuentes, apéndices A–D (10)</td><td>Formato irregular o falta un apéndice (5)</td><td>Sin referencias (0)</td></tr>
                     </tbody>
                   </table>
@@ -668,7 +673,6 @@ function abrir(id){
 }
 
 document.querySelectorAll("[data-open]").forEach(c => c.addEventListener("click", () => abrir(c.dataset.open)));
-document.getElementById("btnInicio").addEventListener("click", irInicio);
 document.querySelectorAll("[data-volver]").forEach(b => b.addEventListener("click", irInicio));
 
 document.getElementById("formLogin").addEventListener("submit", e => {
@@ -691,10 +695,6 @@ document.getElementById("verPass").addEventListener("click", function(){
   this.innerHTML = ver ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
 });
 
-document.getElementById("btnBloquear").addEventListener("click", () => {
-  desbloqueado.eyp1 = desbloqueado.eyp2 = false;
-  guardar(); actualizarCandados(); irInicio();
-});
 
 /* ==========================================================
    DEFINICIONES (popovers de Estadística II)
