@@ -309,7 +309,7 @@ const BANK = {
   prec: {
     A: [
       { q: '¿Quién escribió en 1843 las notas con el que se considera el primer algoritmo pensado para una máquina (la Máquina Analítica de Babbage)?', ok: 'Ada Lovelace', bad: ['Jean Jennings Bartik', 'Kathleen Booth', 'Arturo Rosenblueth'] },
-      { q: '¿Quién fundó la cibernética y acuñó el término en su libro <i>Cybernetics</i> (1948)?', ok: 'Norbert Wiener', bad: ['Alan Turing', 'Claude Shannon', 'Arturo Rosenblueth'] },
+      { q: 'Norbert Wiener es recordado principalmente por haber…', ok: 'fundado la cibernética, el estudio del control y la comunicación en animales y máquinas', bad: ['construido la computadora ENIAC', 'creado el primer lenguaje ensamblador', 'descifrado la máquina Enigma'] },
       { q: '¿Qué científico mexicano fue coautor del artículo «Behavior, Purpose and Teleology» (1943) y primer director del Cinvestav?', ok: 'Arturo Rosenblueth', bad: ['Norbert Wiener', 'Alan Turing', 'Claude Shannon'] },
       { q: 'La «máquina de Turing» (1936) introdujo la idea de…', ok: 'la computadora universal', bad: ['la teoría de la información', 'el primer lenguaje ensamblador', 'la programación de la ENIAC'] },
       { q: 'El artículo «A Mathematical Theory of Communication» (1948) dio origen a…', ok: 'la teoría de la información (Claude Shannon)', bad: ['la máquina de Turing (Alan Turing)', 'la cibernética (Norbert Wiener)', 'el lenguaje Ada (Ada Lovelace)'] },
@@ -320,7 +320,7 @@ const BANK = {
       { q: '¿Cuál es el periodo de vida de Ada Lovelace?', ok: '1815 – 1852', bad: ['1894 – 1964', '1912 – 1954', '1922 – 2022'] },
       { q: '¿Qué máquina logró descifrar Alan Turing en Bletchley Park durante la Segunda Guerra Mundial?', ok: 'La máquina Enigma', bad: ['La ENIAC', 'La Máquina Analítica', 'La computadora ARC'] },
       { q: 'La tesis de Claude Shannon de 1937 unió…', ok: 'los circuitos eléctricos con el álgebra de Boole', bad: ['la fisiología con la cibernética', 'el ensamblador con la ENIAC', 'la Máquina Analítica con los números de Bernoulli'] },
-      { q: '¿Cuál es el libro de Norbert Wiener (1948) que dio nombre a la cibernética?', ok: 'Cybernetics', bad: ['Mente y cerebro', 'Programming for an Automatic Digital Calculator', 'A Rubric on Rubik Cubics'] },
+      { q: 'El libro <i>Cybernetics</i> (1948) de Norbert Wiener lleva el subtítulo «control y comunicación en…»', ok: 'el animal y la máquina', bad: ['la computadora y el programa', 'el circuito y la batería', 'el número y la ecuación'] },
       { q: 'En 1979 se nombró «Ada» a un lenguaje de programación en honor a…', ok: 'Ada Lovelace', bad: ['Kathleen Booth', 'Jean Jennings Bartik', 'Alan Turing'] },
       { q: 'El «juego de la imitación» (1950) planteado por Alan Turing es…', ok: 'una prueba para decidir si una máquina puede comportarse como un ser humano', bad: ['un método para descifrar la máquina Enigma', 'un lenguaje ensamblador para el ARC', 'una forma de medir la información en bits'] },
       { q: 'Kathleen Booth, además del ensamblador, diseñó las computadoras…', ok: 'ARC, SEC y APE(X)C', bad: ['ENIAC, BINAC y UNIVAC', 'ACE, Colossus y Enigma', 'Cybernetics, Teseo y Dartmouth'] }
@@ -403,6 +403,7 @@ function buildP1(tipo, seed) {
    ========================================================================== */
 const SECS2 = [
   { id: 'gat', t: 'Compuertas lógicas', d: 'Elige la respuesta correcta.', ic: 'bi-toggles', c: '#7c3aed' },
+  { id: 'log', t: 'Lógica con enunciados', d: 'Lee cada situación. Usa 1 = verdadero (sí) y 0 = falso (no). En las tablas de verdad escribe solo 0 y 1, sin espacios.', ic: 'bi-chat-left-text-fill', c: '#0ea5e9' },
   { id: 'dia', t: 'Diagramas de circuitos lógicos', d: 'Observa cada diagrama. En las preguntas abiertas escribe solo la respuesta, sin espacios.', ic: 'bi-diagram-3-fill', c: '#0891b2' },
   { id: 'tv',  t: 'Tablas de verdad', d: 'Las respuestas abiertas llevan solo 0 y 1 (o un número), sin espacios.', ic: 'bi-table', c: '#d97706' },
   { id: 'kar', t: 'Mapas de Karnaugh y mintérminos (m)', d: 'En los mapas, las columnas y filas siguen el código Gray (00, 01, 11, 10).', ic: 'bi-grid-3x3-gap-fill', c: '#16a34a' },
@@ -411,20 +412,18 @@ const SECS2 = [
 const BANK2 = {
   gat: {
     A: [
-      { q: '¿Qué compuerta produce salida 1 únicamente cuando <b>todas</b> sus entradas valen 1?', ok: 'AND', bad: ['OR', 'XOR', 'NOR'] },
-      { q: 'La compuerta NOT también se conoce como…', ok: 'inversor (invierte el valor de la entrada)', bad: ['sumador', 'comparador', 'amplificador'] },
+      { q: '¿Qué compuerta produce salida 1 únicamente cuando <b>todas</b> sus entradas valen 1?', ok: 'AND', bad: ['OR', 'NOT', 'Ninguna: su salida siempre vale 0'] },
       { q: 'La salida de una compuerta OR vale 0 solamente cuando…', ok: 'todas sus entradas valen 0', bad: ['alguna entrada vale 1', 'todas sus entradas valen 1', 'sus entradas son distintas'] },
-      { q: 'Una compuerta NAND equivale a…', ok: 'una AND seguida de una NOT', bad: ['una OR seguida de una NOT', 'dos NOT en serie', 'una XOR seguida de una NOT'] },
-      { q: '¿Qué símbolo algebraico representa la operación AND?', ok: 'Un punto o producto (A·B)', bad: ['Un signo más (A+B)', 'Una barra superior (Ā)', 'Un círculo con cruz (A⊕B)'] },
-      { q: '¿Cuáles compuertas se llaman «universales» porque con cualquiera de ellas se puede construir cualquier circuito lógico?', ok: 'NAND y NOR', bad: ['AND y OR', 'XOR y XNOR', 'NOT y AND'] }
+      { q: 'La compuerta NOT también se conoce como…', ok: 'inversor (invierte el valor de la entrada)', bad: ['sumador', 'comparador', 'amplificador'] },
+      { q: '¿Qué símbolo algebraico representa la operación AND?', ok: 'Un punto o producto (A·B)', bad: ['Un signo más (A+B)', 'Una barra superior (Ā)', 'Un signo igual (A=B)'] },
+      { q: 'Las entradas de una compuerta AND son A = 1 y B = 0. ¿Cuánto vale su salida?', ok: '0', bad: ['1', '2', 'No se puede saber'] }
     ],
     B: [
-      { q: '¿Qué compuerta produce salida 1 cuando <b>al menos una</b> de sus entradas vale 1?', ok: 'OR', bad: ['AND', 'NAND', 'XNOR'] },
-      { q: 'La salida de una compuerta AND vale 0 cuando…', ok: 'al menos una entrada vale 0', bad: ['todas las entradas valen 1', 'sus dos entradas son distintas', 'nunca vale 0'] },
-      { q: 'Una compuerta XOR de dos entradas entrega 1 cuando…', ok: 'sus entradas son diferentes', bad: ['sus entradas son iguales', 'ambas valen 1', 'ambas valen 0'] },
-      { q: 'Una compuerta NOR equivale a…', ok: 'una OR seguida de una NOT', bad: ['una AND seguida de una NOT', 'una XOR seguida de una NOT', 'dos OR en serie'] },
+      { q: '¿Qué compuerta produce salida 1 cuando <b>al menos una</b> de sus entradas vale 1?', ok: 'OR', bad: ['AND', 'NOT', 'Ninguna: su salida siempre vale 1'] },
+      { q: 'La salida de una compuerta AND vale 0 cuando…', ok: 'al menos una entrada vale 0', bad: ['todas las entradas valen 1', 'solo la primera entrada vale 1', 'nunca vale 0'] },
       { q: '¿Qué significa la barra sobre una variable (Ā)?', ok: 'Negación: invierte su valor', bad: ['Que se suma con otra variable', 'Que se multiplica por 2', 'Que vale siempre 1'] },
-      { q: 'Una compuerta XNOR de dos entradas entrega 1 cuando…', ok: 'sus entradas son iguales', bad: ['sus entradas son diferentes', 'solo la primera entrada vale 1', 'solo la segunda entrada vale 1'] }
+      { q: 'A una compuerta NOT le llega un 0. ¿Qué valor entrega a la salida?', ok: '1', bad: ['0', '2', 'Ninguno'] },
+      { q: '¿Cuántas entradas tiene una compuerta NOT?', ok: 'Una', bad: ['Dos', 'Tres', 'Ninguna'] }
     ]
   },
   tv: {
@@ -448,7 +447,7 @@ const GT = {
   and: { n: 'AND', f: (a, b) => a & b }, or: { n: 'OR', f: (a, b) => a | b }, nand: { n: 'NAND', f: (a, b) => 1 - (a & b) },
   nor: { n: 'NOR', f: (a, b) => 1 - (a | b) }, xor: { n: 'XOR', f: (a, b) => a ^ b }, xnor: { n: 'XNOR', f: (a, b) => 1 - (a ^ b) }, not: { n: 'NOT' }
 };
-const GKEYS = ['and', 'or', 'nand', 'nor', 'xor', 'xnor'];
+const GKEYS = ['and', 'or'];
 const Lf = v => ({ v }), Gt = (g, ...c) => ({ g, c });
 const ev = (t, vals) => t.v !== undefined ? vals[t.v] : (t.g === 'not' ? 1 - ev(t.c[0], vals) : GT[t.g].f(ev(t.c[0], vals), ev(t.c[1], vals)));
 const ov = s => `<span class="ov">${s}</span>`;
@@ -513,16 +512,22 @@ function randCircuit(rnd, nv) {
   const g = () => pick(GKEYS, rnd);
   const A = Lf('A'), B = Lf('B'), C = Lf('C'), D = Lf('D');
   if (nv === 2) return pick([() => Gt(g(), A, B), () => Gt(g(), Gt('not', A), B), () => Gt(g(), A, Gt('not', B))], rnd)();
-  if (nv === 3) return pick([() => Gt(g(), Gt(g(), A, B), C), () => Gt(g(), A, Gt(g(), B, C)), () => Gt(g(), Gt(g(), A, B), Gt('not', C))], rnd)();
+  const g1 = g(), g2 = g1 === 'and' ? 'or' : 'and';      // en 3 variables se mezclan AND y OR para que el circuito tenga sentido
+  if (nv === 3) return pick([() => Gt(g1, Gt(g2, A, B), C), () => Gt(g1, A, Gt(g2, B, C)), () => Gt(g1, Gt(g2, A, B), Gt('not', C))], rnd)();
   return Gt(g(), Gt(g(), A, B), Gt(g(), C, D));
 }
 function circuitExprOptions(tree, rnd) {
   const vars = varsOf(tree), base = ttOf(tree, vars), seen = new Set([exprOf(tree)]), tts = new Set([base]), out = [];
-  const gl = []; (function f(n, p) { if (n.v === undefined) { if (n.g !== 'not') gl.push(n); n.c.forEach(f); } })(tree);
-  for (let tries = 0; tries < 200 && out.length < 3; tries++) {
-    const t2 = clone(tree), gs = []; (function f(n) { if (n.v === undefined) { if (n.g !== 'not') gs.push(n); n.c.forEach(f); } })(t2);
-    const n = pick(gs, rnd); n.g = pick(GKEYS.filter(k => k !== n.g), rnd);
-    if (rnd() < .3 && gs.length > 1) { const m = pick(gs, rnd); m.g = pick(GKEYS.filter(k => k !== m.g), rnd); }
+  const mut = t => {                      // cambia una compuerta AND↔OR o agrega/quita una negación en una entrada
+    const ent = []; (function f(n, p, i) { ent.push({ n, p, i }); if (n.v === undefined) n.c.forEach((k, j) => f(k, n, j)); })(t, null, 0);
+    if (rnd() < .5) { const gs = ent.filter(e => e.n.v === undefined && e.n.g !== 'not'); const e = pick(gs, rnd); e.n.g = e.n.g === 'and' ? 'or' : 'and'; }
+    else {
+      const cand = ent.filter(e => e.p && ((e.n.v !== undefined && e.p.g !== 'not') || (e.n.g === 'not'))); const e = pick(cand, rnd);
+      if (e.n.g === 'not') e.p.c[e.i] = e.n.c[0]; else e.p.c[e.i] = Gt('not', e.n);
+    }
+  };
+  for (let tries = 0; tries < 400 && out.length < 3; tries++) {
+    const t2 = clone(tree); mut(t2); if (rnd() < .3) mut(t2);
     const s = exprOf(t2), tt = ttOf(t2, vars);
     if (seen.has(s) || tts.has(tt)) continue; seen.add(s); tts.add(tt); out.push(s);
   }
@@ -592,6 +597,7 @@ function kmapQuestion(rnd, n, mode) {
   }
   throw new Error('kmap');
 }
+const truthNot = () => `<div class="km-wrap"><table class="km tv"><tr><th>A</th><th>F</th></tr><tr><td>0</td><td class="one"><b>1</b></td></tr><tr><td>1</td><td class="one"><b>0</b></td></tr></table></div>`;
 const truthMini = g => `<div class="km-wrap"><table class="km tv"><tr><th>A</th><th>B</th><th>F</th></tr>${[[0, 0], [0, 1], [1, 0], [1, 1]].map(([a, b]) => `<tr><td>${a}</td><td>${b}</td><td class="one"><b>${GT[g].f(a, b)}</b></td></tr>`).join('')}</table></div>`;
 
 /* ==========================================================================
@@ -665,7 +671,7 @@ const PRED = {
   sumouno: { t: 'a lo sumo una entrada vale 1', f: (x, y, z) => x + y + z <= 1 },
   xyz:     { t: 'X vale 1 y, además, al menos una de las entradas Y o Z vale 1', f: (x, y, z) => x === 1 && (y === 1 || z === 1) }
 };
-const PRED_POOL = { A: ['uno', 'dos', 'par', 'xyz'], B: ['mayoria', 'impar', 'iguales', 'sumouno'] };
+const PRED_POOL = { A: ['mayoria', 'xyz', 'sumouno'], B: ['mayoria', 'xyz', 'sumouno'] };
 const SCEN = ['un sistema de alarma con tres sensores X, Y y Z', 'una máquina con tres interruptores de seguridad X, Y y Z', 'un circuito de votación de tres jueces X, Y y Z'];
 
 function randSet(rnd, kmin, kmax, avoid) {
@@ -691,27 +697,73 @@ function mutatePats(pats, rnd, seenCols, tries = 300) {
 
 /* Equivalencias comprobadas: la opción correcta se valida contra la tabla de verdad al construir el examen */
 const EQV = {
-  A: { pats: patsOf([1, 2, 4, 7]), ok: ['X⊕Y⊕Z', (x, y, z) => x ^ y ^ z], bad: [['X·Y·Z', (x, y, z) => x & y & z], ['X + Y + Z', (x, y, z) => x | y | z], ['(X⊕Y)·Z', (x, y, z) => (x ^ y) & z]], what: 'la <b>suma S</b> de un sumador completo de 1 bit (X y Y son los bits y Z es el acarreo de entrada)' },
-  B: { pats: patsOf([3, 5, 6, 7]), ok: ['X·Y + X·Z + Y·Z', (x, y, z) => (x & y) | (x & z) | (y & z)], bad: [['X + Y + Z', (x, y, z) => x | y | z], ['X·Y·Z', (x, y, z) => x & y & z], ['X⊕Y⊕Z', (x, y, z) => x ^ y ^ z]], what: 'el <b>acarreo de salida</b> de un sumador completo de 1 bit (X y Y son los bits y Z es el acarreo de entrada)' }
+  A: { pats: patsOf([3, 5, 6, 7]), ok: ['X·Y + X·Z + Y·Z', (x, y, z) => (x & y) | (x & z) | (y & z)], bad: [['X + Y + Z', (x, y, z) => x | y | z], ['X·Y·Z', (x, y, z) => x & y & z], ['X·Y + Z', (x, y, z) => (x & y) | z]], what: 'el <b>acarreo de salida</b> de un sumador completo de 1 bit (X y Y son los bits y Z es el acarreo de entrada)' },
+  B: { pats: patsOf([1, 3, 5, 7]), ok: ['Z', (x, y, z) => z], bad: [['X·Z', (x, y, z) => x & z], ['Y + Z', (x, y, z) => y | z], ['X + Y', (x, y, z) => x | y]], what: 'la salida F de un circuito con tres entradas X, Y y Z' }
+};
+
+/* ----- Lógica con enunciados (proposiciones p y q) ----- */
+const SCN = [
+  { p: 'está nublado', np: 'no está nublado', q: 'llueve', nq: 'no llueve' },
+  { p: 'el interruptor está cerrado', np: 'el interruptor está abierto', q: 'el foco enciende', nq: 'el foco no enciende' },
+  { p: 'estudias para el examen', np: 'no estudias para el examen', q: 'aprobas', nq: 'no apruebas' },
+  { p: 'el semáforo está en rojo', np: 'el semáforo no está en rojo', q: 'los autos se detienen', nq: 'los autos no se detienen' },
+  { p: 'hay corriente en el circuito', np: 'no hay corriente en el circuito', q: 'el motor gira', nq: 'el motor no gira' }
+];
+SCN[2].q = 'apruebas';
+const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+const STM = {
+  cond: { txt: s => `Si ${s.p}, entonces ${s.q}.`, f: (p, q) => (!p || q) ? 1 : 0, ex: 'p → q', bad: ['q → p', 'p · q', 'p + q'] },
+  and:  { txt: s => `${cap(s.p)} y ${s.q}.`, f: (p, q) => p & q, ex: 'p · q', bad: ['p + q', 'p → q', 'q → p'] },
+  or:   { txt: s => `${cap(s.p)} o ${s.q}.`, f: (p, q) => p | q, ex: 'p + q', bad: ['p · q', 'p → q', 'q → p'] },
+  pnq:  { txt: s => `${cap(s.p)} y ${s.nq}.`, f: (p, q) => p & (1 - q), ex: `p·${ov('q')}`, bad: [`${ov('p')}·q`, 'p · q', `${ov('p')} + q`] },
+  npq:  { txt: s => `${cap(s.np)} y ${s.q}.`, f: (p, q) => (1 - p) & q, ex: `${ov('p')}·q`, bad: [`p·${ov('q')}`, 'p · q', `p + ${ov('q')}`] }
+};
+const col4 = f => [[0, 0], [0, 1], [1, 0], [1, 1]].map(([p, q]) => f(p, q) ? '1' : '0').join('');
+const SCN3 = {
+  A: [
+    { t: 'El riego automático se enciende cuando <b>es de noche (X)</b> y <b>la tierra está seca (Y)</b>, o cuando <b>alguien lo activa manualmente (Z)</b>.', f: (x, y, z) => (x & y) | z },
+    { t: 'La puerta del laboratorio abre si <b>el alumno trae credencial (X)</b> y <b>el profesor está presente (Y)</b>, o si <b>hay una emergencia (Z)</b>.', f: (x, y, z) => (x & y) | z }
+  ],
+  B: [
+    { t: 'La alarma suena cuando <b>hay humo (X)</b> o <b>hay un intruso (Y)</b>, y además <b>el sistema no está en mantenimiento (Z)</b>.', f: (x, y, z) => (x | y) & (1 - z) },
+    { t: 'El motor arranca cuando <b>se pulsa el botón (X)</b> o <b>llega la señal remota (Y)</b>, siempre que <b>la protección no esté activada (Z)</b>.', f: (x, y, z) => (x | y) & (1 - z) }
+  ]
 };
 
 function buildP2(tipo, seed) {
   const rnd = mulberry32((seed ^ (tipo === 'A' ? 0x1B873593 : 0xCC9E2D51)) >>> 0), qs = [], used = new Set();
   const push = q => { qs.push(q); return q; };
-  /* I. Compuertas lógicas (6): 4 de concepto + 2 de símbolo */
-  const gp = { A: [[0, 'Recordar'], [2, 'Comprender'], [3, 'Comprender'], [5, 'Recordar']], B: [[0, 'Recordar'], [2, 'Comprender'], [3, 'Comprender'], [4, 'Recordar']] }[tipo];
+  /* I. Compuertas lógicas (5): 3 de concepto + 2 de símbolo (solo AND, OR y NOT) */
+  const gp = { A: [[0, 'Recordar'], [1, 'Comprender'], [4, 'Aplicar']], B: [[0, 'Recordar'], [2, 'Comprender'], [3, 'Aplicar']] }[tipo];
   shuffle(gp, rnd).forEach(([i, bl]) => { const b = BANK2.gat[tipo][i]; push(mcQ('gat', b.q, b.ok, b.bad, rnd, bl)); });
-  (tipo === 'A' ? ['and', 'nor'] : ['or', 'xnor']).forEach(g => {
-    const others = shuffle(GKEYS.filter(x => x !== g), rnd).slice(0, 3);
-    push(mcQ('gat', `¿Cómo se llama la siguiente compuerta lógica?<div class="my-2">${circuitSVG(Gt(g, Lf('A'), Lf('B')))}</div>`, GT[g].n, others.map(x => GT[x].n), rnd, 'Recordar'));
+  (tipo === 'A' ? ['and', 'not'] : ['or', 'not']).forEach(g => {
+    const tr = g === 'not' ? Gt('not', Lf('A')) : Gt(g, Lf('A'), Lf('B'));
+    push(mcQ('gat', `¿Cómo se llama la siguiente compuerta lógica?<div class="my-2">${circuitSVG(tr)}</div>`, GT[g].n, ['and', 'or', 'not'].filter(x => x !== g).map(x => GT[x].n), rnd, 'Recordar'));
   });
-  /* II. Diagramas (9) */
-  [3, 4].forEach(nv => { const t = randCircuit(rnd, nv), bad = circuitExprOptions(t, rnd); push(mcQ('dia', `¿Cuál es la expresión booleana de la salida F del siguiente circuito?<div class="my-2">${circuitSVG(t)}</div>`, exprOf(t), bad, rnd, 'Analizar')); });
+  /* II. Lógica con enunciados (6): se responde con tablas de verdad */
+  const sc = shuffle(SCN, rnd), mk = s => `Sea <b>p</b> = «${s.p}» y <b>q</b> = «${s.q}».`;
+  const stA = tipo === 'A' ? 'cond' : 'pnq', st3 = tipo === 'A' ? pick(['and', 'pnq'], rnd) : pick(['or', 'npq'], rnd);
+  { const s = sc[0], S0 = STM[stA];
+    push(mcQ('log', `Enunciado: «<i>${S0.txt(s)}</i>» ${mk(s)} ¿Qué expresión lógica lo representa? (El símbolo → se lee «entonces», · se lee «y», + se lee «o» y la barra indica «no».)`, S0.ex, S0.bad, rnd, 'Comprender')); }
+  { const s = sc[1];
+    push(openQ('log', `Se afirma: «<i>${STM.cond.txt(s)}</i>» ${mk(s)} Completa la tabla de verdad de la afirmación. Escribe su columna para (p q) = 00, 01, 10, 11, de arriba hacia abajo (1 = verdadero, 0 = falso).`, col4(STM.cond.f), bitsRule(4), 'exact', 'Aplicar')); }
+  { const s = sc[2], S3 = STM[st3];
+    push(openQ('log', `Se afirma: «<i>${S3.txt(s)}</i>» ${mk(s)} Completa su tabla de verdad. Escribe la columna de la afirmación para (p q) = 00, 01, 10, 11, de arriba hacia abajo.`, col4(S3.f), bitsRule(4), 'exact', 'Aplicar')); }
+  { const s = sc[3], ob = tipo === 'A';
+    const bad = ob ? [`${cap(s.p)} y ${s.q}.`, `${cap(s.np)} y ${s.q}.`, `${cap(s.np)} y ${s.nq}.`] : [`${cap(s.p)} y ${s.q}.`, `${cap(s.p)} y ${s.nq}.`, `${cap(s.np)} y ${s.q}.`];
+    const ok = ob ? `${cap(s.p)} y ${s.nq}.` : `${cap(s.np)} y ${s.nq}.`;
+    push(mcQ('log', `${ob ? 'Un maestro promete' : 'Se afirma'}: «<i>${ob ? STM.cond.txt(s) : STM.or.txt(s)}</i>» Analiza la tabla de verdad: ¿en cuál de estos casos la afirmación resulta <b>falsa</b>?`, ok, bad, rnd, 'Analizar')); }
+  { const sd = pick(SCN3[tipo], rnd), col = colOfFn(sd.f);
+    push(openQ('log', `${sd.t} Completa la tabla de verdad de la salida F (1 = se activa, 0 = no). Escribe la columna F para (X Y Z) = 000, 001, 010, 011, 100, 101, 110, 111, de arriba hacia abajo.`, col, bitsRule(8), 'exact', 'Aplicar')); }
+  { const s = sc[4], f = tipo === 'A' ? STM.cond : STM.or, pv = rnd() < .5 ? 1 : 0, qv = rnd() < .5 ? 1 : 0, t = f.f(pv, qv), c = rnd() < .5 ? 1 : 0, ok = `${t === c ? 'Acierta' : 'Se equivoca'}: la afirmación vale ${t}`;
+    const all = ['Acierta', 'Se equivoca'].flatMap(a => [0, 1].map(v => `${a}: la afirmación vale ${v}`));
+    push(mcQ('log', `Ana evalúa la afirmación «<i>${f.txt(s)}</i>» ${mk(s)} Cuando p = ${pv} y q = ${qv}, Ana dice que la afirmación vale <b>${c}</b>. ¿Qué opción juzga correctamente lo que dijo Ana?`, ok, all.filter(x => x !== ok), rnd, 'Evaluar')); }
+  /* III. Diagramas (8) */
+  [3, 3].forEach(nv => { const t = randCircuit(rnd, nv), bad = circuitExprOptions(t, rnd); push(mcQ('dia', `¿Cuál es la expresión booleana de la salida F del siguiente circuito?<div class="my-2">${circuitSVG(t)}</div>`, exprOf(t), bad, rnd, 'Analizar')); });
   { const t = randCircuit(rnd, 3), vars = varsOf(t), vals = {}; vars.forEach(v => vals[v] = rnd() < .5 ? 0 : 1);
     push(openQ('dia', `Con las entradas <b>${vname(vars, vals)}</b>, ¿cuánto vale la salida F del circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(ev(t, vals)), bitsRule(1), 'exact', 'Aplicar')); }
   { const t = randCircuit(rnd, 3), n = gcount(t), opts = shuffle([...new Set([n + 1, n - 1, n + 2, n + 3, n - 2].filter(x => x > 0))], rnd).slice(0, 3).map(String);
-    push(mcQ('dia', `¿Cuántas compuertas lógicas (de cualquier tipo) tiene en total este circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(n), opts, rnd, 'Comprender')); }
-  /* circuitos de suma de minitérminos (como el sumador) */
+    push(mcQ('dia', `¿Cuántas compuertas lógicas (AND, OR y NOT) tiene en total este circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(n), opts, rnd, 'Comprender')); }
   { const m = randSet(rnd, 3, 4, used), pats = patsOf(m), seen = new Set([colOfPats(pats)]), bad = mutatePats(pats, rnd, seen);
     if (bad.length < 3) throw new Error('mut');
     push(mcQ('dia', `Observa el circuito de la figura (entradas X, Y, Z). ¿Cuál es la expresión booleana de su salida F?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, sopHTMLx(pats), bad, rnd, 'Analizar')); }
@@ -721,40 +773,25 @@ function buildP2(tipo, seed) {
     push(openQ('dia', `En el circuito de la figura, cada triángulo con un círculo es un inversor (NOT). ¿Cuántos inversores se usan en total?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, String(nNots(pats)), numRule, 'num', 'Comprender')); }
   { const m = randSet(rnd, 3, 4, used), pats = patsOf(m), k = Math.floor(rnd() * pats.length);
     push(openQ('dia', `Cada compuerta AND de este circuito se activa con un solo mintérmino. ¿Qué número de mintérmino <b>m</b> activa la compuerta marcada con ★? (X es el bit más significativo.) Escribe solo el número.<div class="my-2">${sopSVG(pats, { star: k, labels: false })}</div>`, String(m[k]), numRule, 'num', 'Aplicar')); }
-  { const m = randSet(rnd, 3, 4, used), pats = patsOf(m); const b = Math.floor(rnd() * 8);
-    const col = colOfPats(pats), vals = [(b >> 2) & 1, (b >> 1) & 1, b & 1];
-    push(openQ('dia', `Con las entradas <b>X = ${vals[0]}, Y = ${vals[1]}, Z = ${vals[2]}</b>, ¿cuánto vale la salida F del circuito de la figura?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, col[b], bitsRule(1), 'exact', 'Aplicar')); }
-  /* III. Tablas de verdad (8) */
-  (tipo === 'A' ? ['nand', 'xor'] : ['and', 'nor']).forEach(g => { const others = shuffle(GKEYS.filter(x => x !== g), rnd).slice(0, 3); push(mcQ('tv', `¿Qué compuerta tiene esta tabla de verdad?${truthMini(g)}`, GT[g].n, others.map(x => GT[x].n), rnd, 'Comprender')); });
+  /* IV. Tablas de verdad (6) */
+  (tipo === 'A' ? ['and', 'not'] : ['or', 'and']).forEach(g => { push(mcQ('tv', `¿Qué compuerta tiene esta tabla de verdad?${g === 'not' ? truthNot() : truthMini(g)}`, GT[g].n, ['and', 'or', 'not'].filter(x => x !== g).map(x => GT[x].n), rnd, 'Comprender')); });
   BANK2.tv[tipo].forEach(b => push(mcQ('tv', b.q, b.ok, b.bad, rnd, 'Recordar')));
-  { const nv = tipo === 'A' ? 4 : 5; push(openQ('tv', `¿Cuántas filas (combinaciones de entrada) tiene la tabla de verdad de un circuito con <b>${nv} variables</b>?`, String(1 << nv), numRule, 'num', 'Aplicar')); }
-  const usedE = new Set();
-  for (let i = 0; i < 2; i++) { let t, s; do { t = randCircuit(rnd, 2); s = exprOf(t); } while (usedE.has(s)); usedE.add(s);
+  { const nv = tipo === 'A' ? 3 : 4; push(openQ('tv', `¿Cuántas filas (combinaciones de entrada) tiene la tabla de verdad de un circuito con <b>${nv} variables</b>?`, String(1 << nv), numRule, 'num', 'Aplicar')); }
+  { let t, s; do { t = randCircuit(rnd, 2); s = exprOf(t); } while (varsOf(t).length < 2);
     push(openQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>. Escribe la columna F de arriba hacia abajo para (A B) = 00, 01, 10, 11.`, ttOf(t, ['A', 'B']), bitsRule(4), 'exact', 'Aplicar')); }
-  { let t, s; do { t = randCircuit(rnd, 3); s = exprOf(t); } while (usedE.has(s) || varsOf(t).length < 3);
-    push(openQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>. Escribe la columna F de arriba hacia abajo para (A B C) = 000, 001, 010, 011, 100, 101, 110, 111.`, ttOf(t, ['A', 'B', 'C']), bitsRule(8), 'exact', 'Aplicar')); }
-  { const m = randSet(rnd, 3, 5, used), col = colOfPats(patsOf(m)), seen = new Set([m.join(',')]), bad = [];
+  { const m = randSet(rnd, 3, 4, used), col = colOfPats(patsOf(m)), seen = new Set([m.join(',')]), bad = [];
     for (let t = 0; t < 300 && bad.length < 3; t++) { const s = new Set(m), fl = 1 + (rnd() < .4 ? 1 : 0); for (let f = 0; f < fl; f++) { const x = Math.floor(rnd() * 8); s.has(x) ? s.delete(x) : s.add(x); } const a = [...s].sort((p, q) => p - q); if (a.length < 2 || seen.has(a.join(','))) continue; seen.add(a.join(',')); bad.push(sigmaTxt(a)); }
     push(mcQ('tv', `Observa la tabla de verdad de F(X, Y, Z). ¿Cuál es su forma canónica como suma de mintérminos?${ttTable(col)}`, sigmaTxt(m), bad, rnd, 'Aplicar')); }
-  /* IV. Karnaugh (7) */
+  /* V. Karnaugh (6, solo de 3 variables) */
   (tipo === 'A' ? [[0, 'Comprender'], [1, 'Recordar']] : [[0, 'Recordar'], [2, 'Comprender']]).forEach(([i, bl]) => { const b = BANK2.kar[tipo][i]; push(mcQ('kar', b.q, b.ok, b.bad, rnd, bl)); });
-  if (tipo === 'A') {
-    const a = Math.floor(rnd() * 8), bi = 1 + Math.floor(rnd() * 7);
+  { const a = Math.floor(rnd() * 8), bi = 1 + Math.floor(rnd() * 7);
     push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué número de mintérmino <b>m</b> corresponde a la combinación <b>A = ${(a >> 2) & 1}, B = ${(a >> 1) & 1}, C = ${a & 1}</b>? Escribe solo el número.`, String(a), numRule, 'num', 'Aplicar'));
-    push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué combinación ABC corresponde al mintérmino <b>m${bi}</b>? Escribe los 3 dígitos (0 y 1).`, bi.toString(2).padStart(3, '0'), bitsRule(3), 'exact', 'Aplicar'));
-  } else {
-    const a = Math.floor(rnd() * 16), bi = 1 + Math.floor(rnd() * 15);
-    push(openQ('kar', `En una función de 4 variables (A, B, C, D), ¿qué número de mintérmino <b>m</b> corresponde a la combinación <b>A = ${(a >> 3) & 1}, B = ${(a >> 2) & 1}, C = ${(a >> 1) & 1}, D = ${a & 1}</b>? Escribe solo el número.`, String(a), numRule, 'num', 'Aplicar'));
-    push(openQ('kar', `En una función de 4 variables (A, B, C, D), ¿qué combinación ABCD corresponde al mintérmino <b>m${bi}</b>? Escribe los 4 dígitos (0 y 1).`, bi.toString(2).padStart(4, '0'), bitsRule(4), 'exact', 'Aplicar'));
-  }
-  [3, 4].forEach(n => { const k = kmapQuestion(rnd, n, 'sop'); push(mcQ('kar', k.html, k.sop, k.bad, rnd, 'Analizar')); });
-  { const kb = kmapQuestion(rnd, 4, 'big'); push(openQ('kar', kb.html, kb.expect, numRule, 'num', 'Analizar')); }
-  /* V. Diseño y evaluación (5) */
-  const pool = shuffle(PRED_POOL[tipo], rnd), p1 = PRED[pool[0]], p2 = PRED[pool[1]];
+    push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué combinación ABC corresponde al mintérmino <b>m${bi}</b>? Escribe los 3 dígitos (0 y 1).`, bi.toString(2).padStart(3, '0'), bitsRule(3), 'exact', 'Aplicar')); }
+  { const k = kmapQuestion(rnd, 3, 'sop'); push(mcQ('kar', k.html, k.sop, k.bad, rnd, 'Analizar')); }
+  { const kb = kmapQuestion(rnd, 3, 'big'); push(openQ('kar', kb.html, kb.expect, numRule, 'num', 'Analizar')); }
+  /* VI. Diseño y evaluación (4) */
+  const pool = shuffle(PRED_POOL[tipo], rnd), p1 = PRED[pool[0]];
   push(openQ('dis', `Diseña la tabla de verdad para ${pick(SCEN, rnd)}. La salida F debe valer 1 cuando <b>${p1.t}</b>. Escribe la columna F para (X Y Z) = 000, 001, 010, 011, 100, 101, 110, 111, de arriba hacia abajo.`, colOfFn(p1.f), bitsRule(8), 'exact', 'Crear'));
-  { const m2 = minsOfCol(colOfFn(p2.f)), allP = Object.keys(PRED).filter(k => k !== pool[1]), seen = new Set([m2.join(',')]), bad = [];
-    shuffle(allP, rnd).forEach(k => { const mm = minsOfCol(colOfFn(PRED[k].f)), key = mm.join(','); if (bad.length < 3 && !seen.has(key)) { seen.add(key); bad.push(sigmaTxt(mm)); } });
-    push(mcQ('dis', `Se necesita un circuito cuya salida F valga 1 cuando <b>${p2.t}</b>. ¿Cuál es su función como suma de mintérminos (X es el bit más significativo)?`, sigmaTxt(m2), bad, rnd, 'Aplicar')); }
   { /* detectar el error en un diseño */
     const M = randSet(rnd, 3, 4, used), missing = rnd() < .5, outside = [...Array(8).keys()].filter(i => !M.includes(i));
     let circ, ok, cand;
@@ -1126,22 +1163,29 @@ document.addEventListener('click', async e => {
 });
 function adClaves() {
   const c = AD.cfg, card = p => `<div class="col-lg-6"><div class="nav-card h-100"><div class="d-flex align-items-center gap-2 mb-3"><span class="qnum" style="--c:${p === 1 ? '#7c3aed' : '#0891b2'}">${p}</span><h2 class="h5 fw-bold mb-0">${EXAMS[p].titulo}</h2><span class="badge ms-auto ${c['abierto' + p] === 'SI' ? 'text-bg-success' : 'text-bg-danger'}">${c['abierto' + p] === 'SI' ? 'Acceso abierto' : 'Acceso cerrado'}</span></div>
-    <label class="form-label small fw-bold">Contraseña actual</label><div class="input-group mb-3"><input type="password" class="form-control mono" id="cur-${p}" value="${esc(c['clave' + p])}" readonly><button class="btn btn-outline-secondary" data-eye="cur-${p}"><i class="bi bi-eye"></i></button></div>
-    <label class="form-label small fw-bold" for="new-${p}">Nueva contraseña</label><div class="input-group mb-2"><input type="text" class="form-control" id="new-${p}" placeholder="Mínimo 4 caracteres" autocomplete="off"><button class="btn btn-primary fw-bold" data-setclave="${p}"><i class="bi bi-save-fill me-1"></i>Guardar</button></div>
+    <label class="form-label small fw-bold" for="new-${p}">Contraseña de este parcial <span class="text-muted fw-normal">(escribe aquí la nueva y pulsa Guardar)</span></label>
+    <div class="input-group mb-2"><input type="text" class="form-control mono fw-bold" id="new-${p}" value="${esc(c['clave' + p])}" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" data-clave-input="${p}"><button class="btn btn-primary fw-bold" data-setclave="${p}" id="sv-${p}"><i class="bi bi-save-fill me-1"></i>Guardar</button></div>
+    <div class="small mb-2" id="st-${p}" aria-live="polite"></div>
     <div class="small text-muted mb-3">Cambió ${c['cambios' + p]} ${c['cambios' + p] === 1 ? 'vez' : 'veces'}. Quien use la anterior verá: «La contraseña ha cambiado. Solicita la nueva a tu profesor(a)».</div>
     <button class="btn btn-sm ${c['abierto' + p] === 'SI' ? 'btn-outline-danger' : 'btn-outline-success'} fw-bold rounded-pill" data-abierto="${p}|${c['abierto' + p] === 'SI' ? 'NO' : 'SI'}"><i class="bi ${c['abierto' + p] === 'SI' ? 'bi-lock-fill' : 'bi-unlock-fill'} me-1"></i>${c['abierto' + p] === 'SI' ? 'Cerrar acceso' : 'Abrir acceso'}</button></div></div>`;
   $('#ad-body').innerHTML = `<div class="alert alert-info shadow-sm small"><i class="bi bi-info-circle-fill me-1"></i>Cada contraseña abre un examen distinto. Se guardan en la hoja <b>Config</b> de tu hoja de cálculo. Al cambiarla, nadie puede entrar con la anterior; los alumnos que ya están contestando pueden terminar.</div><div class="row g-3">${card(1)}${card(2)}</div>`;
 }
 document.addEventListener('click', async e => {
   const eye = e.target.closest('[data-eye]'); if (eye) { const i = $('#' + eye.dataset.eye); i.type = i.type === 'password' ? 'text' : 'password'; }
-  const sc = e.target.closest('[data-setclave]'); if (sc) {
-    const p = +sc.dataset.setclave, v = $('#new-' + p).value.trim();
-    if (v.length < 4) { toast('La contraseña debe tener al menos 4 caracteres.', 'bi-exclamation-triangle-fill'); return; }
-    const r = await adApi('admin_setclave', { parcial: p, clave: v });
-    if (r.ok) { toast('Contraseña actualizada.', 'bi-check-circle-fill', 3000); loadAdmin(); } else showAlert('No se pudo cambiar', r.msg || 'Inténtalo otra vez.');
-  }
+  const sc = e.target.closest('[data-setclave]'); if (sc) saveClave(+sc.dataset.setclave);
   const ab = e.target.closest('[data-abierto]'); if (ab) { const [p, v] = ab.dataset.abierto.split('|'); const r = await adApi('admin_abierto', { parcial: +p, abierto: v }); if (r.ok) { toast(v === 'SI' ? 'Acceso abierto.' : 'Acceso cerrado.', 'bi-check-circle-fill'); loadAdmin(); } }
 });
+async function saveClave(p) {
+  const inp = $('#new-' + p), st = $('#st-' + p), btn = $('#sv-' + p), v = inp.value.trim();
+  const say = (ok, t) => { st.className = 'small mb-2 fw-bold ' + (ok ? 'text-success' : 'text-danger'); st.innerHTML = `<i class="bi ${ok ? 'bi-check-circle-fill' : 'bi-x-circle-fill'} me-1"></i>${t}`; };
+  if (v.length < 4) { say(false, 'La contraseña debe tener al menos 4 caracteres.'); return; }
+  if (v === (AD.cfg['clave' + p] || '')) { say(true, 'Esa ya es la contraseña actual; no hay cambios.'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…'; st.textContent = '';
+  const r = await adApi('admin_setclave', { parcial: p, clave: v });
+  if (r.ok) { toast('Contraseña actualizada.', 'bi-check-circle-fill', 3000); AD.cfg['clave' + p] = v; AD.cfg['cambios' + p] = (AD.cfg['cambios' + p] || 0) + 1; adClaves(); const s2 = $('#st-' + p); if (s2) { s2.className = 'small mb-2 fw-bold text-success'; s2.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Guardada en la hoja Config. La contraseña anterior ya no funciona.'; } }
+  else { btn.disabled = false; btn.innerHTML = '<i class="bi bi-save-fill me-1"></i>Guardar'; say(false, MSG[r.code] || r.msg || 'No se pudo guardar. Inténtalo otra vez.'); }
+}
+document.addEventListener('keydown', e => { const i = e.target.closest && e.target.closest('[data-clave-input]'); if (i && e.key === 'Enter') { e.preventDefault(); saveClave(+i.dataset.claveInput); } });
 function adPrev() {
   const secs = EXAMS[AD.pvP].secs, ex = buildExam(AD.pvP, AD.pvT, AD.pvSeed), { html } = questionsHTML(ex, secs, { p: 'pv', key: true });
   $('#ad-body').innerHTML = `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-2 align-items-center"><b class="me-2"><i class="bi bi-eye-fill me-1 text-primary"></i>Vista previa con respuestas</b>${[1, 2].map(p => `<button class="btn-chip ${AD.pvP === p ? 'on' : ''}" data-pvp="${p}">Parcial ${p}</button>`).join('')}${['A', 'B'].map(t => `<button class="btn-chip ${AD.pvT === t ? 'on' : ''}" style="--c:#0891b2" data-pvt="${t}">Tipo ${t}</button>`).join('')}<button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold ms-auto" data-pvnew><i class="bi bi-shuffle me-1"></i>Otra muestra al azar</button></div><div class="small text-muted mt-2">Así lo ve un alumno (${ex.length} preguntas); la respuesta correcta aparece marcada. No se guarda nada.</div></div><div style="max-width:860px;margin:auto">${html}</div>`;
