@@ -27,8 +27,9 @@
         { label: 'Circuitos eléctricos', href: 'circuitos.html', icon: 'bi-lightning-charge-fill' },
         { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' },
         { label: 'Conversiones numéricas', href: 'conversiones.html', icon: 'bi-123' },
-        { label: 'Operaciones básicas binarios', href: 'conversion_binarios.html', icon: 'bi-calculator-fill' },
-        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' } ] },
+        { label: 'Operaciones básicas binarios', href: 'operaciones_basicas_binarios.html', icon: 'bi-calculator-fill' },
+        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' },
+        { label: 'Exámen Cibernética', href: 'examenes_cibernetica.html', icon: 'bi-toggles' } ] },
       { id: 'estadistica', label: 'Estadística', icon: 'bi-bar-chart-line', color: 'c-est', items: [
         { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-bar-chart-line-fill' },
         { label: 'Medidas de Dispersión', href: 'medidas_dispersion.html', icon: 'bi-arrows-expand' },
