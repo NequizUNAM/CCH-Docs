@@ -46,6 +46,8 @@
     .sec-ico { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.5rem; background:var(--c,var(--vio)); flex-shrink:0; }
     .qcard { background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:1.1rem 1.2rem 1.2rem; margin-bottom:1rem; border:2px solid transparent; scroll-margin-top:88px; transition:border-color .25s, box-shadow .25s; position:relative; }
     .qcard.done { border-color:rgba(22,163,74,.35); } .qcard.flag { border-color:var(--warn); }
+    .bl { display:inline-block; font-size:.68rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase; padding:.12rem .55rem; border-radius:999px; margin-bottom:.35rem; color:#fff; background:#64748b; }
+    .bl-Recordar { background:#64748b; } .bl-Comprender { background:#0891b2; } .bl-Aplicar { background:#16a34a; } .bl-Analizar { background:#d97706; } .bl-Evaluar { background:#e11d48; } .bl-Crear { background:#7c3aed; }
     .qnum { width:38px; height:38px; border-radius:50%; background:var(--c,var(--vio)); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0; box-shadow:0 4px 10px rgba(0,0,0,.2); }
     .qtext { font-size:1.06rem; font-weight:600; color:#0f172a; margin:.2rem 0 .9rem; }
     .num { font-family:'Courier New',monospace; font-weight:800; background:#eef2ff; color:#3730a3; padding:.05rem .5rem; border-radius:8px; letter-spacing:.06em; word-break:break-all; }
@@ -267,8 +269,8 @@
    viven en tu hoja de Google (contraseñas de alumnos) y en el script de Apps Script (administrador).
    ========================================================================== */
 const CFG = {
-  ENDPOINT: '',                    // URL de tu Apps Script (termina en /exec)
-  DURACION_MIN: 90,                // duración del examen en minutos (cuenta regresiva)
+  ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
+  DURACION_MIN: 140,               // duración del examen en minutos (cuenta regresiva)
   TOTAL: 35
 };
 
@@ -297,8 +299,8 @@ const bitsRule = n => ({ re: /[^01]/g, ic: 'bi-1-circle-fill', im: 'numeric', up
 const numRule = { re: /[^0-9]/g, ic: 'bi-123', im: 'numeric', up: true, max: 3, txt: 'Responde <b>solo con un número</b> (sin espacios ni letras).', warn: 'Solo se permiten números.' };
 
 /* Constructores de preguntas */
-const mcQ = (sec, html, ok, bad, rnd) => { const opts = shuffle([ok, ...bad], rnd); return { sec, kind: 'mc', html, opts, correct: opts.indexOf(ok) }; };
-const openQ = (sec, html, expect, rule, cmp = 'norm') => ({ sec, kind: 'open', html, expect, rule, cmp });
+const mcQ = (sec, html, ok, bad, rnd, bl) => { const opts = shuffle([ok, ...bad], rnd); return { sec, kind: 'mc', html, opts, correct: opts.indexOf(ok), bl }; };
+const openQ = (sec, html, expect, rule, cmp = 'norm', bl) => ({ sec, kind: 'open', html, expect, rule, cmp, bl });
 
 /* ==========================================================================
    PARCIAL 1 · Precursores, circuitos básicos, conversiones y suma binaria
@@ -374,11 +376,16 @@ const SUMBITS = { A: [4, 5], B: [5, 6] };
 
 function buildP1(tipo, seed) {
   const rnd = mulberry32((seed ^ (tipo === 'A' ? 0x9E3779B1 : 0x85EBCA6B)) >>> 0), qs = [];
-  ['prec', 'cvr', 'cdca'].forEach(sec => shuffle(BANK[sec][tipo], rnd).forEach(b => qs.push(mcQ(sec, b.q, b.ok, b.bad, rnd))));
+  const bloom = (sec, q) => {                    // nivel de la taxonomía de Bloom (revisada) de cada pregunta de opción múltiple
+    if (sec === 'prec') return /¿Quién|¿Qué científico|periodo de vida|¿Qué máquina|¿Cuál es el libro|además del ensamblador|Jean Jennings|En 1979/.test(q) ? 'Recordar' : 'Comprender';
+    if (sec === 'cvr') return /unidad|Ley de Ohm/.test(q) ? 'Recordar' : /12 V/.test(q) ? 'Aplicar' : 'Comprender';
+    return /frecuencia/.test(q) ? 'Recordar' : /¿Cuál afirmación/.test(q) ? 'Analizar' : 'Comprender';
+  };
+  ['prec', 'cvr', 'cdca'].forEach(sec => shuffle(BANK[sec][tipo], rnd).forEach(b => qs.push(mcQ(sec, b.q, b.ok, b.bad, rnd, bloom(sec, b.q)))));
   const used = new Set(), [lo, hi] = RANGE[tipo];
   shuffle(PAIRS[tipo], rnd).forEach(([from, to]) => {
     let n; do { n = lo + Math.floor(rnd() * (hi - lo + 1)); } while (used.has(n)); used.add(n);
-    qs.push(openQ('conv', `Convierte el número <span class="num">${n.toString(from).toUpperCase()}<sub>${from}</sub></span> de <b>${NAMES[from]}</b> a <b>${NAMES[to]}</b>.`, n.toString(to).toUpperCase(), OPEN[to], 'norm'));
+    qs.push(openQ('conv', `Convierte el número <span class="num">${n.toString(from).toUpperCase()}<sub>${from}</sub></span> de <b>${NAMES[from]}</b> a <b>${NAMES[to]}</b>.`, n.toString(to).toUpperCase(), OPEN[to], 'norm', (from === 10 || to === 10) ? 'Aplicar' : 'Analizar'));
   });
   const [bl, bh] = SUMBITS[tipo], seen = new Set();
   for (let i = 0; i < 5; i++) {
@@ -386,7 +393,7 @@ function buildP1(tipo, seed) {
       const la = bl + Math.floor(rnd() * (bh - bl + 1)), lb = bl + Math.floor(rnd() * (bh - bl + 1));
       a = (1 << (la - 1)) + Math.floor(rnd() * (1 << (la - 1))); b = (1 << (lb - 1)) + Math.floor(rnd() * (1 << (lb - 1))); key = a + '+' + b;
     } while (seen.has(key)); seen.add(key);
-    qs.push(openQ('sum', `Suma en binario: <span class="num">${a.toString(2)}<sub>2</sub></span> + <span class="num">${b.toString(2)}<sub>2</sub></span> = ?`, (a + b).toString(2), OPEN[2], 'norm'));
+    qs.push(openQ('sum', `Suma en binario: <span class="num">${a.toString(2)}<sub>2</sub></span> + <span class="num">${b.toString(2)}<sub>2</sub></span> = ?`, (a + b).toString(2), OPEN[2], 'norm', 'Aplicar'));
   }
   return qs;
 }
@@ -398,7 +405,8 @@ const SECS2 = [
   { id: 'gat', t: 'Compuertas lógicas', d: 'Elige la respuesta correcta.', ic: 'bi-toggles', c: '#7c3aed' },
   { id: 'dia', t: 'Diagramas de circuitos lógicos', d: 'Observa cada diagrama. En las preguntas abiertas escribe solo la respuesta, sin espacios.', ic: 'bi-diagram-3-fill', c: '#0891b2' },
   { id: 'tv',  t: 'Tablas de verdad', d: 'Las respuestas abiertas llevan solo 0 y 1 (o un número), sin espacios.', ic: 'bi-table', c: '#d97706' },
-  { id: 'kar', t: 'Mapas de Karnaugh y mintérminos (m)', d: 'En los mapas, las columnas y filas siguen el código Gray (00, 01, 11, 10).', ic: 'bi-grid-3x3-gap-fill', c: '#16a34a' }
+  { id: 'kar', t: 'Mapas de Karnaugh y mintérminos (m)', d: 'En los mapas, las columnas y filas siguen el código Gray (00, 01, 11, 10).', ic: 'bi-grid-3x3-gap-fill', c: '#16a34a' },
+  { id: 'dis', t: 'Diseño y evaluación de circuitos', d: 'Problemas como el sumador: de una tabla de verdad o un enunciado al circuito de AND, OR y NOT (suma de minitérminos).', ic: 'bi-cpu-fill', c: '#e11d48' }
 ];
 const BANK2 = {
   gat: {
@@ -586,59 +594,189 @@ function kmapQuestion(rnd, n, mode) {
 }
 const truthMini = g => `<div class="km-wrap"><table class="km tv"><tr><th>A</th><th>B</th><th>F</th></tr>${[[0, 0], [0, 1], [1, 0], [1, 1]].map(([a, b]) => `<tr><td>${a}</td><td>${b}</td><td class="one"><b>${GT[g].f(a, b)}</b></td></tr>`).join('')}</table></div>`;
 
-function buildP2(tipo, seed) {
-  const rnd = mulberry32((seed ^ (tipo === 'A' ? 0x1B873593 : 0xCC9E2D51)) >>> 0), qs = [], G2 = ['nand', 'xor', 'nor', 'and'];
-  /* I. Compuertas lógicas: 6 de concepto + 2 de símbolo */
-  shuffle(BANK2.gat[tipo], rnd).forEach(b => qs.push(mcQ('gat', b.q, b.ok, b.bad, rnd)));
-  const symSet = tipo === 'A' ? ['and', 'nor'] : ['or', 'xnor'];
-  shuffle(symSet, rnd).forEach(g => {
-    const others = shuffle(['and', 'or', 'nand', 'nor', 'xor', 'xnor'].filter(x => x !== g), rnd).slice(0, 3);
-    qs.push(mcQ('gat', `¿Cómo se llama la siguiente compuerta lógica?<div class="my-2">${circuitSVG(Gt(g, Lf('A'), Lf('B')))}</div>`, GT[g].n, others.map(x => GT[x].n), rnd));
+/* ==========================================================================
+   PARCIAL 2 (parte 2) · Circuitos de suma de minitérminos (tipo sumador) y generador del examen
+   Niveles de la taxonomía de Bloom (revisada): Recordar · Comprender · Aplicar · Analizar · Evaluar · Crear
+   ========================================================================== */
+const XV = ['X', 'Y', 'Z'];
+const mPat = m => [4, 2, 1].map(b => (m & b) ? '1' : '0').join('');           // m5 -> '101'
+const patHas = (p, m) => { const b = mPat(m); return [...p].every((c, i) => c === '-' || c === b[i]); };
+const termHTML = p => [...p].map((c, i) => c === '-' ? null : (c === '1' ? XV[i] : ov(XV[i]))).filter(Boolean).join('·');
+const sopHTMLx = pats => pats.map(termHTML).join(' + ');
+const colOfPats = pats => [...Array(8).keys()].map(m => pats.some(p => patHas(p, m)) ? '1' : '0').join('');
+const minsOfCol = col => [...col].map((c, i) => c === '1' ? i : -1).filter(i => i >= 0);
+const colOfFn = f => [...Array(8).keys()].map(m => f((m >> 2) & 1, (m >> 1) & 1, m & 1) ? '1' : '0').join('');
+const sigmaTxt = mins => `Σm(${mins.join(', ')})`;
+const nLits = p => [...p].filter(c => c !== '-').length;
+const nNots = pats => pats.reduce((s, p) => s + [...p].filter(c => c === '0').length, 0);
+const gatesOf = pats => pats.filter(p => nLits(p) >= 2).length + (pats.length > 1 ? 1 : 0) + nNots(pats);
+const cmpLbl = n => `${n} ${n === 1 ? 'compuerta' : 'compuertas'}`;
+
+/* Dibujo de un circuito de dos niveles: inversores -> AND -> OR (como en los diagramas de sumadores) */
+function sopSVG(pats, o = {}) {
+  const n = pats.length, top = 50, rowH = 76, vx = [34, 64, 94], NX = 138, GX = 190, ORX = GX + 52 + 62;
+  const showLab = o.labels !== false;
+  let wires = '', dots = '', parts = '', labs = '';
+  const ink = '#1e293b', st = `fill="#fff" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"`;
+  const lastY = [0, 0, 0], ys = [];
+  const termSVG = p => [...p].map((c, i) => c === '-' ? null : (c === '1' ? `<tspan>${XV[i]}</tspan>` : `<tspan style="text-decoration:overline">${XV[i]}</tspan>`)).filter(Boolean).join('<tspan>·</tspan>');
+  pats.forEach((p, k) => {
+    const y0 = top + k * rowH, L = [...p].map((c, i) => ({ c, i })).filter(l => l.c !== '-');
+    const inY = L.length === 3 ? [y0 + 10, y0 + 26, y0 + 42] : [y0 + 16, y0 + 36];
+    L.forEach((l, j) => {
+      const y = inY[j], x0 = vx[l.i];
+      wires += `<path d="M${x0},${y} H${GX}" stroke="#334155" stroke-width="2" fill="none"/>`;
+      dots += `<circle cx="${x0}" cy="${y}" r="3.6" fill="#0f172a"/>`;
+      lastY[l.i] = Math.max(lastY[l.i], y);
+      if (l.c === '0') parts += `<path d="M${NX},${y - 6} L${NX + 15},${y} L${NX},${y + 6} Z" ${st}/><circle cx="${NX + 18.5}" cy="${y}" r="3.4" ${st}/>`;
+    });
+    parts += `<path transform="translate(${GX},${y0})" d="M0,0 H26 A26,26 0 0 1 26,52 H0 Z" ${st}/>`;
+    ys.push(y0 + 26);
+    if (o.star === k) {
+      labs += `<g><circle cx="${GX + 26}" cy="${y0 + 66}" r="10" fill="#f59e0b"/><text x="${GX + 26}" y="${y0 + 71}" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Segoe UI,Arial">★</text></g>`;
+    } else if (showLab) {
+      labs += `<g><rect x="${GX - 22}" y="${y0 + 55}" width="92" height="19" rx="5" fill="#fff" stroke="#94a3b8"/><text x="${GX + 24}" y="${y0 + 69}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f172a" font-family="Segoe UI,Arial">${termSVG(p)}</text></g>`;
+    }
   });
-  /* II. Diagramas: 3 expresión (MC) + 2 evaluación (abierta) + 2 conteo de compuertas (MC) */
-  for (let i = 0; i < 3; i++) {
-    const t = randCircuit(rnd, i === 2 ? 4 : 3), bad = circuitExprOptions(t, rnd);
-    qs.push(mcQ('dia', `¿Cuál es la expresión booleana de la salida F del siguiente circuito?<div class="my-2">${circuitSVG(t)}</div>`, exprOf(t), bad, rnd));
+  const H = top + n * rowH + 4;
+  [0, 1, 2].forEach(i => { if (lastY[i]) { wires += `<path d="M${vx[i]},34 V${lastY[i]}" stroke="#334155" stroke-width="2" fill="none"/>`; } labs += `<g><rect x="${vx[i] - 13}" y="6" width="26" height="24" rx="6" fill="#fff" stroke="${ink}" stroke-width="1.6"/><text x="${vx[i]}" y="23" text-anchor="middle" font-size="15" font-weight="800" fill="${ink}" font-family="Segoe UI,Arial">${XV[i]}</text></g>`; });
+  let W, outY;
+  if (n > 1) {
+    const yA = ys[0], yB = ys[n - 1], oh = Math.max(64, yB - yA + 44), oy = (yA + yB) / 2 - oh / 2;
+    outY = (yA + yB) / 2;
+    ys.forEach(y => { wires += `<path d="M${GX + 52},${y} H${ORX + 10}" stroke="#334155" stroke-width="2" fill="none"/>`; });
+    parts += `<path transform="translate(${ORX},${oy}) scale(1,${oh / 40})" vector-effect="non-scaling-stroke" d="M0,0 C22,0 42,8 54,20 C42,32 22,40 0,40 C10,28 10,12 0,0 Z" ${st}/>`;
+    wires += `<path d="M${ORX + 54},${outY} H${ORX + 92}" stroke="#334155" stroke-width="2" fill="none"/>`;
+    labs += `<text x="${ORX + 98}" y="${outY + 5}" font-size="16" font-weight="800" fill="#7c3aed" font-family="Segoe UI,Arial">${o.out || 'F'}</text>`;
+    W = ORX + 130;
+  } else { outY = ys[0]; W = GX + 130; }
+  return `<svg class="circ" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Circuito de suma de minitérminos con entradas X, Y y Z">${wires}${dots}${parts}${labs}</svg>`;
+}
+const ttTable = col => `<div class="km-wrap"><table class="km tv"><tr><th>X</th><th>Y</th><th>Z</th><th>F</th></tr>${[...Array(8).keys()].map(m => { const b = mPat(m); return `<tr><td>${b[0]}</td><td>${b[1]}</td><td>${b[2]}</td><td class="${col[m] === '1' ? 'one' : ''}"><b>${col[m]}</b></td></tr>`; }).join('')}</table></div>`;
+
+/* Enunciados de diseño (se calcula la columna a partir de la función, así la respuesta nunca se equivoca) */
+const PRED = {
+  mayoria: { t: 'al menos dos de las tres entradas valen 1', f: (x, y, z) => x + y + z >= 2 },
+  uno:     { t: 'exactamente una de las tres entradas vale 1', f: (x, y, z) => x + y + z === 1 },
+  dos:     { t: 'exactamente dos de las tres entradas valen 1', f: (x, y, z) => x + y + z === 2 },
+  par:     { t: 'una cantidad par de entradas valen 1 (cero también es par)', f: (x, y, z) => (x + y + z) % 2 === 0 },
+  impar:   { t: 'una cantidad impar de entradas valen 1', f: (x, y, z) => (x + y + z) % 2 === 1 },
+  iguales: { t: 'las tres entradas tienen el mismo valor', f: (x, y, z) => x === y && y === z },
+  sumouno: { t: 'a lo sumo una entrada vale 1', f: (x, y, z) => x + y + z <= 1 },
+  xyz:     { t: 'X vale 1 y, además, al menos una de las entradas Y o Z vale 1', f: (x, y, z) => x === 1 && (y === 1 || z === 1) }
+};
+const PRED_POOL = { A: ['uno', 'dos', 'par', 'xyz'], B: ['mayoria', 'impar', 'iguales', 'sumouno'] };
+const SCEN = ['un sistema de alarma con tres sensores X, Y y Z', 'una máquina con tres interruptores de seguridad X, Y y Z', 'un circuito de votación de tres jueces X, Y y Z'];
+
+function randSet(rnd, kmin, kmax, avoid) {
+  for (let t = 0; t < 200; t++) {
+    const k = kmin + Math.floor(rnd() * (kmax - kmin + 1)), s = shuffle([...Array(8).keys()], rnd).slice(0, k).sort((a, b) => a - b), key = s.join(',');
+    if (avoid && avoid.has(key)) continue; if (avoid) avoid.add(key); return s;
   }
-  for (let i = 0; i < 2; i++) {
-    const t = randCircuit(rnd, 3), vars = varsOf(t), vals = {}; vars.forEach(v => vals[v] = rnd() < .5 ? 0 : 1);
-    qs.push(openQ('dia', `Con las entradas <b>${vname(vars, vals)}</b>, ¿cuánto vale la salida F del circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(ev(t, vals)), bitsRule(1), 'exact'));
+  throw new Error('randSet');
+}
+const patsOf = mins => mins.map(mPat);
+
+/* Distractores: mutan la polaridad de un literal en un término */
+function mutatePats(pats, rnd, seenCols, tries = 300) {
+  const out = [];
+  for (let t = 0; t < tries && out.length < 3; t++) {
+    const q = pats.slice(), k = Math.floor(rnd() * q.length), i = Math.floor(rnd() * 3), c = q[k][i];
+    q[k] = q[k].slice(0, i) + (c === '1' ? '0' : '1') + q[k].slice(i + 1);
+    if (new Set(q).size !== q.length) continue;
+    const col = colOfPats(q), s = sopHTMLx(q); if (seenCols.has(col)) continue; seenCols.add(col); out.push(s);
   }
-  for (let i = 0; i < 2; i++) {
-    const t = randCircuit(rnd, i ? 4 : 3), n = gcount(t), opts = shuffle([...new Set([n + 1, n - 1, n + 2, n + 3, n - 2].filter(x => x > 0))], rnd).slice(0, 3).map(String);
-    qs.push(mcQ('dia', `¿Cuántas compuertas lógicas (de cualquier tipo) tiene en total este circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(n), opts, rnd));
-  }
-  /* III. Tablas de verdad: 2 MC de compuerta + 1 concepto + 1 filas + 3 columnas (2 var) + 2 columnas (3 var) + 1 conteo de unos */
-  const gsel = tipo === 'A' ? ['nand', 'xor'] : ['and', 'nor'];
-  gsel.forEach(g => { const others = shuffle(GKEYS.filter(x => x !== g), rnd).slice(0, 3); qs.push(mcQ('tv', `¿Qué compuerta tiene esta tabla de verdad?${truthMini(g)}`, GT[g].n, others.map(x => GT[x].n), rnd)); });
-  BANK2.tv[tipo].forEach(b => qs.push(mcQ('tv', b.q, b.ok, b.bad, rnd)));
-  const nv = tipo === 'A' ? 4 : 5;
-  qs.push(openQ('tv', `¿Cuántas filas (combinaciones de entrada) tiene la tabla de verdad de un circuito con <b>${nv} variables</b>?`, String(1 << nv), numRule, 'num'));
+  return out;
+}
+
+/* Equivalencias comprobadas: la opción correcta se valida contra la tabla de verdad al construir el examen */
+const EQV = {
+  A: { pats: patsOf([1, 2, 4, 7]), ok: ['X⊕Y⊕Z', (x, y, z) => x ^ y ^ z], bad: [['X·Y·Z', (x, y, z) => x & y & z], ['X + Y + Z', (x, y, z) => x | y | z], ['(X⊕Y)·Z', (x, y, z) => (x ^ y) & z]], what: 'la <b>suma S</b> de un sumador completo de 1 bit (X y Y son los bits y Z es el acarreo de entrada)' },
+  B: { pats: patsOf([3, 5, 6, 7]), ok: ['X·Y + X·Z + Y·Z', (x, y, z) => (x & y) | (x & z) | (y & z)], bad: [['X + Y + Z', (x, y, z) => x | y | z], ['X·Y·Z', (x, y, z) => x & y & z], ['X⊕Y⊕Z', (x, y, z) => x ^ y ^ z]], what: 'el <b>acarreo de salida</b> de un sumador completo de 1 bit (X y Y son los bits y Z es el acarreo de entrada)' }
+};
+
+function buildP2(tipo, seed) {
+  const rnd = mulberry32((seed ^ (tipo === 'A' ? 0x1B873593 : 0xCC9E2D51)) >>> 0), qs = [], used = new Set();
+  const push = q => { qs.push(q); return q; };
+  /* I. Compuertas lógicas (6): 4 de concepto + 2 de símbolo */
+  const gp = { A: [[0, 'Recordar'], [2, 'Comprender'], [3, 'Comprender'], [5, 'Recordar']], B: [[0, 'Recordar'], [2, 'Comprender'], [3, 'Comprender'], [4, 'Recordar']] }[tipo];
+  shuffle(gp, rnd).forEach(([i, bl]) => { const b = BANK2.gat[tipo][i]; push(mcQ('gat', b.q, b.ok, b.bad, rnd, bl)); });
+  (tipo === 'A' ? ['and', 'nor'] : ['or', 'xnor']).forEach(g => {
+    const others = shuffle(GKEYS.filter(x => x !== g), rnd).slice(0, 3);
+    push(mcQ('gat', `¿Cómo se llama la siguiente compuerta lógica?<div class="my-2">${circuitSVG(Gt(g, Lf('A'), Lf('B')))}</div>`, GT[g].n, others.map(x => GT[x].n), rnd, 'Recordar'));
+  });
+  /* II. Diagramas (9) */
+  [3, 4].forEach(nv => { const t = randCircuit(rnd, nv), bad = circuitExprOptions(t, rnd); push(mcQ('dia', `¿Cuál es la expresión booleana de la salida F del siguiente circuito?<div class="my-2">${circuitSVG(t)}</div>`, exprOf(t), bad, rnd, 'Analizar')); });
+  { const t = randCircuit(rnd, 3), vars = varsOf(t), vals = {}; vars.forEach(v => vals[v] = rnd() < .5 ? 0 : 1);
+    push(openQ('dia', `Con las entradas <b>${vname(vars, vals)}</b>, ¿cuánto vale la salida F del circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(ev(t, vals)), bitsRule(1), 'exact', 'Aplicar')); }
+  { const t = randCircuit(rnd, 3), n = gcount(t), opts = shuffle([...new Set([n + 1, n - 1, n + 2, n + 3, n - 2].filter(x => x > 0))], rnd).slice(0, 3).map(String);
+    push(mcQ('dia', `¿Cuántas compuertas lógicas (de cualquier tipo) tiene en total este circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(n), opts, rnd, 'Comprender')); }
+  /* circuitos de suma de minitérminos (como el sumador) */
+  { const m = randSet(rnd, 3, 4, used), pats = patsOf(m), seen = new Set([colOfPats(pats)]), bad = mutatePats(pats, rnd, seen);
+    if (bad.length < 3) throw new Error('mut');
+    push(mcQ('dia', `Observa el circuito de la figura (entradas X, Y, Z). ¿Cuál es la expresión booleana de su salida F?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, sopHTMLx(pats), bad, rnd, 'Analizar')); }
+  { const m = randSet(rnd, 3, 5, used), pats = patsOf(m);
+    push(openQ('dia', `Observa el circuito de la figura. Escribe la columna de la salida F para (X Y Z) = 000, 001, 010, 011, 100, 101, 110, 111, de arriba hacia abajo.<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, colOfPats(pats), bitsRule(8), 'exact', 'Analizar')); }
+  { const m = randSet(rnd, 3, 5, used), pats = patsOf(m);
+    push(openQ('dia', `En el circuito de la figura, cada triángulo con un círculo es un inversor (NOT). ¿Cuántos inversores se usan en total?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, String(nNots(pats)), numRule, 'num', 'Comprender')); }
+  { const m = randSet(rnd, 3, 4, used), pats = patsOf(m), k = Math.floor(rnd() * pats.length);
+    push(openQ('dia', `Cada compuerta AND de este circuito se activa con un solo mintérmino. ¿Qué número de mintérmino <b>m</b> activa la compuerta marcada con ★? (X es el bit más significativo.) Escribe solo el número.<div class="my-2">${sopSVG(pats, { star: k, labels: false })}</div>`, String(m[k]), numRule, 'num', 'Aplicar')); }
+  { const m = randSet(rnd, 3, 4, used), pats = patsOf(m); const b = Math.floor(rnd() * 8);
+    const col = colOfPats(pats), vals = [(b >> 2) & 1, (b >> 1) & 1, b & 1];
+    push(openQ('dia', `Con las entradas <b>X = ${vals[0]}, Y = ${vals[1]}, Z = ${vals[2]}</b>, ¿cuánto vale la salida F del circuito de la figura?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, col[b], bitsRule(1), 'exact', 'Aplicar')); }
+  /* III. Tablas de verdad (8) */
+  (tipo === 'A' ? ['nand', 'xor'] : ['and', 'nor']).forEach(g => { const others = shuffle(GKEYS.filter(x => x !== g), rnd).slice(0, 3); push(mcQ('tv', `¿Qué compuerta tiene esta tabla de verdad?${truthMini(g)}`, GT[g].n, others.map(x => GT[x].n), rnd, 'Comprender')); });
+  BANK2.tv[tipo].forEach(b => push(mcQ('tv', b.q, b.ok, b.bad, rnd, 'Recordar')));
+  { const nv = tipo === 'A' ? 4 : 5; push(openQ('tv', `¿Cuántas filas (combinaciones de entrada) tiene la tabla de verdad de un circuito con <b>${nv} variables</b>?`, String(1 << nv), numRule, 'num', 'Aplicar')); }
   const usedE = new Set();
-  for (let i = 0; i < 3; i++) {
-    let t, s; do { t = randCircuit(rnd, 2); s = exprOf(t); } while (usedE.has(s)); usedE.add(s);
-    qs.push(openQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>. Escribe la columna F de arriba hacia abajo para (A B) = 00, 01, 10, 11.`, ttOf(t, ['A', 'B']), bitsRule(4), 'exact'));
-  }
-  for (let i = 0; i < 2; i++) {
-    let t, s; do { t = randCircuit(rnd, 3); s = exprOf(t); } while (usedE.has(s) || varsOf(t).length < 3); usedE.add(s);
-    qs.push(openQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>. Escribe la columna F de arriba hacia abajo para (A B C) = 000, 001, 010, 011, 100, 101, 110, 111.`, ttOf(t, ['A', 'B', 'C']), bitsRule(8), 'exact'));
-  }
-  { let t, s, c; do { t = randCircuit(rnd, 3); s = exprOf(t); c = ttOf(t, ['A', 'B', 'C']); } while (usedE.has(s) || varsOf(t).length < 3 || /^0+$|^1+$/.test(c)); usedE.add(s);
-    qs.push(openQ('tv', `En la tabla de verdad de <b>F = ${s}</b> (3 variables, 8 filas), ¿cuántas filas tienen salida F = 1?`, String([...c].filter(x => x === '1').length), numRule, 'num')); }
-  /* IV. Karnaugh: 3 concepto + 2 notación m (abierta) + 3 simplificación (MC) + 1 conteo de 1s + 1 grupo mayor */
-  BANK2.kar[tipo].forEach(b => qs.push(mcQ('kar', b.q, b.ok, b.bad, rnd)));
+  for (let i = 0; i < 2; i++) { let t, s; do { t = randCircuit(rnd, 2); s = exprOf(t); } while (usedE.has(s)); usedE.add(s);
+    push(openQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>. Escribe la columna F de arriba hacia abajo para (A B) = 00, 01, 10, 11.`, ttOf(t, ['A', 'B']), bitsRule(4), 'exact', 'Aplicar')); }
+  { let t, s; do { t = randCircuit(rnd, 3); s = exprOf(t); } while (usedE.has(s) || varsOf(t).length < 3);
+    push(openQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>. Escribe la columna F de arriba hacia abajo para (A B C) = 000, 001, 010, 011, 100, 101, 110, 111.`, ttOf(t, ['A', 'B', 'C']), bitsRule(8), 'exact', 'Aplicar')); }
+  { const m = randSet(rnd, 3, 5, used), col = colOfPats(patsOf(m)), seen = new Set([m.join(',')]), bad = [];
+    for (let t = 0; t < 300 && bad.length < 3; t++) { const s = new Set(m), fl = 1 + (rnd() < .4 ? 1 : 0); for (let f = 0; f < fl; f++) { const x = Math.floor(rnd() * 8); s.has(x) ? s.delete(x) : s.add(x); } const a = [...s].sort((p, q) => p - q); if (a.length < 2 || seen.has(a.join(','))) continue; seen.add(a.join(',')); bad.push(sigmaTxt(a)); }
+    push(mcQ('tv', `Observa la tabla de verdad de F(X, Y, Z). ¿Cuál es su forma canónica como suma de mintérminos?${ttTable(col)}`, sigmaTxt(m), bad, rnd, 'Aplicar')); }
+  /* IV. Karnaugh (7) */
+  (tipo === 'A' ? [[0, 'Comprender'], [1, 'Recordar']] : [[0, 'Recordar'], [2, 'Comprender']]).forEach(([i, bl]) => { const b = BANK2.kar[tipo][i]; push(mcQ('kar', b.q, b.ok, b.bad, rnd, bl)); });
   if (tipo === 'A') {
     const a = Math.floor(rnd() * 8), bi = 1 + Math.floor(rnd() * 7);
-    qs.push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué número de mintérmino <b>m</b> corresponde a la combinación <b>A = ${(a >> 2) & 1}, B = ${(a >> 1) & 1}, C = ${a & 1}</b>? Escribe solo el número.`, String(a), numRule, 'num'));
-    qs.push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué combinación ABC corresponde al mintérmino <b>m${bi}</b>? Escribe los 3 dígitos (0 y 1).`, bi.toString(2).padStart(3, '0'), bitsRule(3), 'exact'));
+    push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué número de mintérmino <b>m</b> corresponde a la combinación <b>A = ${(a >> 2) & 1}, B = ${(a >> 1) & 1}, C = ${a & 1}</b>? Escribe solo el número.`, String(a), numRule, 'num', 'Aplicar'));
+    push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué combinación ABC corresponde al mintérmino <b>m${bi}</b>? Escribe los 3 dígitos (0 y 1).`, bi.toString(2).padStart(3, '0'), bitsRule(3), 'exact', 'Aplicar'));
   } else {
     const a = Math.floor(rnd() * 16), bi = 1 + Math.floor(rnd() * 15);
-    qs.push(openQ('kar', `En una función de 4 variables (A, B, C, D), ¿qué número de mintérmino <b>m</b> corresponde a la combinación <b>A = ${(a >> 3) & 1}, B = ${(a >> 2) & 1}, C = ${(a >> 1) & 1}, D = ${a & 1}</b>? Escribe solo el número.`, String(a), numRule, 'num'));
-    qs.push(openQ('kar', `En una función de 4 variables (A, B, C, D), ¿qué combinación ABCD corresponde al mintérmino <b>m${bi}</b>? Escribe los 4 dígitos (0 y 1).`, bi.toString(2).padStart(4, '0'), bitsRule(4), 'exact'));
+    push(openQ('kar', `En una función de 4 variables (A, B, C, D), ¿qué número de mintérmino <b>m</b> corresponde a la combinación <b>A = ${(a >> 3) & 1}, B = ${(a >> 2) & 1}, C = ${(a >> 1) & 1}, D = ${a & 1}</b>? Escribe solo el número.`, String(a), numRule, 'num', 'Aplicar'));
+    push(openQ('kar', `En una función de 4 variables (A, B, C, D), ¿qué combinación ABCD corresponde al mintérmino <b>m${bi}</b>? Escribe los 4 dígitos (0 y 1).`, bi.toString(2).padStart(4, '0'), bitsRule(4), 'exact', 'Aplicar'));
   }
-  [3, 3, 4].forEach((n, i) => { const k = kmapQuestion(rnd, n, 'sop'); qs.push(mcQ('kar', k.html, k.sop, k.bad, rnd)); });
-  const kc = kmapQuestion(rnd, 3, 'count'); qs.push(openQ('kar', kc.html, kc.expect, numRule, 'num'));
-  const kb = kmapQuestion(rnd, 4, 'big'); qs.push(openQ('kar', kb.html, kb.expect, numRule, 'num'));
+  [3, 4].forEach(n => { const k = kmapQuestion(rnd, n, 'sop'); push(mcQ('kar', k.html, k.sop, k.bad, rnd, 'Analizar')); });
+  { const kb = kmapQuestion(rnd, 4, 'big'); push(openQ('kar', kb.html, kb.expect, numRule, 'num', 'Analizar')); }
+  /* V. Diseño y evaluación (5) */
+  const pool = shuffle(PRED_POOL[tipo], rnd), p1 = PRED[pool[0]], p2 = PRED[pool[1]];
+  push(openQ('dis', `Diseña la tabla de verdad para ${pick(SCEN, rnd)}. La salida F debe valer 1 cuando <b>${p1.t}</b>. Escribe la columna F para (X Y Z) = 000, 001, 010, 011, 100, 101, 110, 111, de arriba hacia abajo.`, colOfFn(p1.f), bitsRule(8), 'exact', 'Crear'));
+  { const m2 = minsOfCol(colOfFn(p2.f)), allP = Object.keys(PRED).filter(k => k !== pool[1]), seen = new Set([m2.join(',')]), bad = [];
+    shuffle(allP, rnd).forEach(k => { const mm = minsOfCol(colOfFn(PRED[k].f)), key = mm.join(','); if (bad.length < 3 && !seen.has(key)) { seen.add(key); bad.push(sigmaTxt(mm)); } });
+    push(mcQ('dis', `Se necesita un circuito cuya salida F valga 1 cuando <b>${p2.t}</b>. ¿Cuál es su función como suma de mintérminos (X es el bit más significativo)?`, sigmaTxt(m2), bad, rnd, 'Aplicar')); }
+  { /* detectar el error en un diseño */
+    const M = randSet(rnd, 3, 4, used), missing = rnd() < .5, outside = [...Array(8).keys()].filter(i => !M.includes(i));
+    let circ, ok, cand;
+    if (missing) { const k = pick(M, rnd); circ = M.filter(i => i !== k); ok = `Agregar la compuerta de m${k}`; cand = [...circ.map(i => `Quitar la compuerta de m${i}`), ...outside.map(i => `Agregar la compuerta de m${i}`), `Quitar la compuerta de m${k}`]; }
+    else { const j = pick(outside, rnd); circ = M.concat(j).sort((a, b) => a - b); ok = `Quitar la compuerta de m${j}`; cand = [...M.map(i => `Quitar la compuerta de m${i}`), ...outside.filter(i => i !== j).map(i => `Agregar la compuerta de m${i}`), ...M.map(i => `Agregar la compuerta de m${i}`)]; }
+    const cd = shuffle([...new Set(cand)].filter(x => x !== ok), rnd), bad = [];
+    for (const c of cd) { if (bad.length === 3) break; if (/Quitar/.test(c) && /Quitar/.test(ok) && bad.filter(b => /Quitar/.test(b)).length >= 2) continue; bad.push(c); }
+    push(mcQ('dis', `La especificación pide <b>F = ${sigmaTxt(M)}</b>, pero el circuito dibujado no la cumple. ¿Qué corrección hay que hacer?<div class="my-2">${sopSVG(patsOf(circ))}</div>`, ok, bad, rnd, 'Evaluar')); }
+  { /* canónico vs simplificado */
+    let done = false;
+    for (let t = 0; t < 500 && !done; t++) {
+      const m = randSet(rnd, 4, 6, null), r = minimize(m, 3), cov = r.cover;
+      if (cov.length < 2 || cov.some(p => nLits(p) < 2)) continue;
+      const canon = patsOf(m), sav = gatesOf(canon) - gatesOf(cov);
+      if (sav < 1 || cov.length > 3 || colOfPats(cov) !== colOfPats(canon)) continue;
+      push(openQ('dis', `Los dos circuitos implementan la misma función F(X, Y, Z) = ${sigmaTxt(m)}. El primero usa la forma canónica y el segundo la forma simplificada.<div class="my-2">${sopSVG(canon)}</div><div class="my-2">${sopSVG(cov)}</div>Cuenta todas las compuertas AND, OR y NOT (cada triángulo con círculo es una NOT). ¿Cuántas compuertas <b>menos</b> usa el circuito simplificado?`, String(sav), numRule, 'num', 'Evaluar')); done = true;
+    }
+    if (!done) throw new Error('canon');
+  }
+  { const e = EQV[tipo], bad = e.bad.map(b => b[0]);
+    const f = e.ok[1], col = colOfFn(f); if (col !== colOfPats(e.pats)) throw new Error('eqv ok'); e.bad.forEach(b => { if (colOfFn(b[1]) === col) throw new Error('eqv bad'); });
+    push(mcQ('dis', `El circuito de la figura es ${e.what}, dibujado en su forma canónica. ¿Qué expresión equivale a esa función, ya simplificada?<div class="my-2">${sopSVG(e.pats)}</div>`, e.ok[0], bad, rnd, 'Evaluar')); }
   return qs;
 }
 
@@ -674,8 +812,11 @@ const MSG = {
   cerrado: 'El examen está cerrado por ahora. Consulta a tu profesor(a).',
   red: 'No hay conexión con el servidor. Revisa tu internet e inténtalo otra vez.',
   config: 'El examen aún no está conectado a la hoja de Google (falta configurar el ENDPOINT).',
-  auth: 'Tu sesión de administrador expiró. Vuelve a entrar.'
+  auth: 'Tu sesión de administrador expiró. Vuelve a entrar.',
+  enCurso: 'Ya hay un examen en curso con ese número de cuenta. Para continuarlo escribe tu nombre completo exactamente como lo registraste al inicio.',
+  sesion: 'Este examen se continuó en otro dispositivo, por eso esta sesión se cerró.'
 };
+const DEV = (() => { let d = LS.get('eq_dev'); if (!d) { d = [...randBytes()].map(x => x.toString(36)).join(''); LS.set('eq_dev', d); } return d; })();   // identifica este equipo para el límite de intentos
 
 /* ===== Estado local ===== */
 const KEY = 'eq_cib1_state_v2';
@@ -700,7 +841,7 @@ const QKEY = 'eq_cib1_pending';
 function queueResult(r) { let q = []; try { q = JSON.parse(LS.get(QKEY) || '[]'); } catch (e) { } if (!q.some(x => x.cuenta === r.cuenta && x.parcial === r.parcial)) q.push(r); LS.set(QKEY, JSON.stringify(q)); }
 async function flushQueue() {
   let q = []; try { q = JSON.parse(LS.get(QKEY) || '[]'); } catch (e) { } if (!q.length || !CFG.ENDPOINT) return;
-  const keep = []; for (const r of q) { const x = await api('submit', r); if (!x.ok && x.code !== 'duplicado') keep.push(r); }
+  const keep = []; for (const r of q) { const x = await api('submit', r); if (!x.ok && x.code !== 'duplicado' && x.code !== 'sesion') keep.push(r); }
   LS.set(QKEY, JSON.stringify(keep));
 }
 
@@ -712,13 +853,22 @@ $('#form-clave').addEventListener('submit', async e => {
   const btn = $('#btn-entrar'), err = $('#clave-err'), clave = $('#clave').value.trim();
   if (!clave) return;
   btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verificando…'; err.hidden = true;
-  const r = await api('login', { clave });
+  const r = await api('login', { clave, dev: DEV });
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Entrar';
+  if (r.code === 'bloqueado') { lockLogin(r.espera || 300); return; }
   if (r.ok && r.role === 'admin') { ADMIN = r.token; SS.set('eq_sess', JSON.stringify({ role: 'admin', token: r.token })); openAdmin(); return; }
   if (r.ok && r.role === 'alumno') { SS.set('eq_sess', JSON.stringify({ role: 'alumno', parcial: r.parcial })); afterLogin(r.parcial, true); return; }
-  err.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i>${MSG[r.code] || r.msg || 'No se pudo entrar.'}`; err.hidden = false;
+  err.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i>${MSG[r.code] || r.msg || 'No se pudo entrar.'}${r.code === 'incorrecta' && r.restan !== undefined ? ` <b>Te ${r.restan === 1 ? 'queda 1 intento' : 'quedan ' + r.restan + ' intentos'}.</b>` : ''}`; err.hidden = false;
   const c = $('#clave-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); $('#clave').select();
 });
+let lockT = null;
+function lockLogin(sec) {                         // bloqueo por demasiados intentos: cuenta regresiva en pantalla
+  const btn = $('#btn-entrar'), err = $('#clave-err'), end = Date.now() + sec * 1000; clearInterval(lockT);
+  const paint = () => { const left = Math.max(0, Math.ceil((end - Date.now()) / 1000)); if (!left) { clearInterval(lockT); btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Entrar'; err.hidden = true; return; }
+    btn.disabled = true; btn.innerHTML = `<i class="bi bi-hourglass-split me-1"></i>Espera ${Math.floor(left / 60)}:${pad2(left % 60)}`;
+    err.innerHTML = `<i class="bi bi-shield-lock-fill me-1"></i>Demasiados intentos con contraseña incorrecta. Podrás intentar de nuevo en <b>${Math.floor(left / 60)}:${pad2(left % 60)}</b>.`; err.hidden = false; };
+  paint(); lockT = setInterval(paint, 500);
+}
 function afterLogin(parcial, fresh) {
   if (S && S.fin) {
     if (fresh) { if (!S.sent && S.status !== 'dup' && S.result) queueResult(S.result); clearState(); flushQueue(); }   // alumno nuevo en este equipo: se limpia el intento anterior
@@ -732,7 +882,7 @@ function afterLogin(parcial, fresh) {
   openDatos(parcial);
 }
 $('#rs-continuar').onclick = () => startExam(true);
-$('#rs-otro').onclick = () => { if (confirm('Se abandonará el intento anterior de este equipo. ¿Continuar?')) { clearState(); const s = JSON.parse(SS.get('eq_sess') || '{}'); openDatos(s.parcial || 1); } };
+$('#rs-otro').onclick = () => { if (confirm('Dejarás de ver el intento anterior en este equipo (el avance sigue guardado en la hoja y se puede continuar con su número de cuenta y nombre). ¿Continuar?')) { clearState(); const s = JSON.parse(SS.get('eq_sess') || '{}'); openDatos(s.parcial || 1); } };
 
 /* ===== 2. Datos ===== */
 let PARCIAL = 1;
@@ -752,14 +902,21 @@ $('#form-datos').addEventListener('submit', async e => {
   if (!$('#d-ok').checked) { err.textContent = 'Marca la casilla para confirmar que leíste las reglas.'; err.hidden = false; return; }
   const btn = $('#btn-comenzar'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando…';
   const r = $('#d-ok') && randBytes(), tipo = (r[1] & 1) ? 'B' : 'A', seed = r[0] >>> 0, inicio = new Date().toISOString();
-  const res = await api('start', { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, inicio });
+  const res = await api('start', { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, inicio, dev: DEV });
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-circle-fill me-1"></i>Comenzar examen';
   if (!res.ok) {
     if (res.code === 'duplicado') showAlert('Examen ya respondido', `El examen del <b>${EXAMS[PARCIAL].titulo}</b> ya fue respondido anteriormente con el número de cuenta <b>${esc(cuenta)}</b>. No es posible presentarlo de nuevo.<br><small class="text-muted">Si crees que es un error, habla con tu profesor(a).</small>`);
+    else if (res.code === 'enCurso') showAlert('Examen en curso', `Ya existe un examen <b>en curso</b> con el número de cuenta <b>${esc(cuenta)}</b>.<br>Si eres tú, escribe tu <b>nombre completo exactamente como lo registraste</b> al iniciar y podrás continuar donde ibas.`, 'bi-person-lock', '#d97706');
+    else if (res.code === 'cerrado') showAlert('Examen cerrado', MSG.cerrado, 'bi-lock-fill', '#d97706');
     else showAlert('No se pudo iniciar', MSG[res.code] || res.msg || 'Inténtalo otra vez.', 'bi-wifi-off', '#d97706');
     return;
   }
-  S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.now(), inicioISO: inicio, answers: {}, flags: {}, salidas: 0, fin: false, sent: false, result: null };
+  if (res.resumed) {          // el servidor ya tenía este examen en curso: se continúa con el mismo tipo, reloj y respuestas
+    const pr = res.progreso || {};
+    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: pr.a || {}, flags: pr.f || {}, salidas: res.salidas || 0, fin: false, sent: false, result: null, sid: res.sid };
+    save(); startExam(true); return;
+  }
+  S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.now(), inicioISO: inicio, answers: {}, flags: {}, salidas: 0, fin: false, sent: false, result: null, sid: res.sid };
   save(); startExam(false);
 });
 
@@ -769,7 +926,7 @@ function questionsHTML(exam, secs, opt = {}) {
   exam.forEach(q => {
     const sec = secs.find(s => s.id === q.sec);
     if (q.sec !== last) { last = q.sec; html += `<div class="sec-head" style="--c:${sec.c}"><div class="sec-ico"><i class="bi ${sec.ic}"></i></div><div><h2 class="h5 fw-bold mb-0">${sec.t}</h2><div class="small text-muted">${sec.d}</div></div></div>`; }
-    html += `<div class="qcard" id="${p}-${q.id}" style="--c:${sec.c}"><div class="d-flex align-items-start gap-2"><span class="qnum">${q.id}</span><div class="flex-grow-1"><div class="qtext">${q.html}</div>`;
+    html += `<div class="qcard" id="${p}-${q.id}" style="--c:${sec.c}"><div class="d-flex align-items-start gap-2"><span class="qnum">${q.id}</span><div class="flex-grow-1">${q.bl ? `<span class="bl bl-${q.bl}" title="Nivel de la taxonomía de Bloom">${q.bl}</span>` : ''}<div class="qtext">${q.html}</div>`;
     if (q.kind === 'mc') {
       html += q.opts.map((o, i) => `<label class="opt ${key && i === q.correct ? 'key' : ''}"><input type="radio" name="${p}${q.id}" value="${i}" ${key ? 'disabled' : `data-q="${q.id}"`}><span class="mark">${'ABCD'[i]}</span><span>${o}</span>${key && i === q.correct ? '<i class="bi bi-check-circle-fill ms-auto text-success"></i>' : ''}</label>`).join('');
     } else if (key) {
@@ -794,6 +951,23 @@ function startExam(resume) {
   refreshMarks(); updateProgress(); show('examen'); examActive = true;
   clearInterval(timerId); tick(); timerId = setInterval(tick, 500);
   if (resume) toast('Examen reanudado: tu reloj siguió corriendo.', 'bi-arrow-repeat', 3200);
+  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); syncId = setInterval(() => syncProgress(false), 45000); if (resume) syncProgress(true);
+}
+/* Avance guardado en la hoja (ligado al número de cuenta): permite continuar aunque cierren o cambien de equipo */
+let syncId = null, lastSig = '', syncBusy = false;
+async function syncProgress(force) {
+  if (!S || S.fin || !CFG.ENDPOINT || syncBusy) return;
+  const prog = JSON.stringify({ a: S.answers, f: S.flags }), sig = prog + '|' + S.salidas;
+  if (!force && sig === lastSig) return;
+  syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, progreso: prog, salidas: S.salidas }); syncBusy = false;
+  if (r.ok) { lastSig = sig; return; }
+  if (r.code === 'sesion' || r.code === 'duplicado') kickOut(r.code);
+}
+function kickOut(code) {                          // otra sesión tomó este examen (o ya se entregó): esta pantalla se cierra
+  if (!S || S.fin) return; examActive = false; clearInterval(timerId); clearInterval(syncId);
+  clearState(); SS.del('eq_sess');
+  showAlert(code === 'sesion' ? 'Sesión cerrada' : 'Examen ya entregado', code === 'sesion' ? 'Este examen se <b>continuó en otro dispositivo</b> con tu número de cuenta, así que esta pantalla ya no puede enviar respuestas.' : 'Este examen ya fue entregado con ese número de cuenta.', 'bi-shield-lock-fill', '#d97706');
+  $('#alertModal').addEventListener('hidden.bs.modal', () => location.reload(), { once: true });
 }
 const isAns = q => { const v = S.answers[q.id]; return v !== undefined && v !== '' && v !== null; };
 function refreshMarks() {
@@ -854,8 +1028,8 @@ function grade() {
 function finish(motivo) {
   if (!S || S.fin) return;
   const g = grade(), fin = Math.min(Date.now(), S.start + CFG.DURACION_MIN * 60000), usado = fin - S.start;
-  S.fin = true; examActive = false; clearInterval(timerId);
-  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: CFG.TOTAL, calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed };
+  S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId);
+  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: CFG.TOTAL, calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
   S.status = 'pend'; save(); renderFin(); show('fin'); sendResult(S);
 }
 
@@ -887,6 +1061,7 @@ async function sendResult(st) {
   const r = await api('submit', st.result);
   if (r.ok) { st.sent = true; st.status = 'ok'; }
   else if (r.code === 'duplicado') { st.status = 'dup'; if (st === S) { showAlert('Examen ya respondido', 'Este examen <b>ya fue respondido anteriormente</b> con ese número de cuenta, por eso <b>no se guardó</b> este intento.'); } }
+  else if (r.code === 'sesion') { st.status = 'dup'; if (st === S) showAlert('Sesión cerrada', 'Este examen se continuó en otro dispositivo con tu número de cuenta, por eso este envío no se guardó.'); }
   else st.status = 'err';
   if (st === S) { save(); renderFin(); }
 }
@@ -990,7 +1165,7 @@ document.addEventListener('keyup', e => { if (lockUI() && e.key === 'PrintScreen
 window.addEventListener('beforeprint', () => { document.body.style.display = 'none'; }); window.addEventListener('afterprint', () => { document.body.style.display = ''; });
 
 /* ===== Registro de salidas de la pestaña ===== */
-function leave() { if (!examActive || away) return; away = true; S.salidas++; save(); }
+function leave() { if (!examActive || away) return; away = true; S.salidas++; save(); syncProgress(false); }
 function back() { if (!away) return; away = false; if (examActive) toast(`Saliste de la ventana del examen (${S.salidas} ${S.salidas === 1 ? 'vez' : 'veces'}). Queda registrado.`, 'bi-eye-fill', 4000); }
 document.addEventListener('visibilitychange', () => document.hidden ? leave() : back());
 window.addEventListener('blur', leave); window.addEventListener('focus', back);
