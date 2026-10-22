@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proyectos finales EyP</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  :root{
+    --azul:#1d2a5c; --azul-2:#2f4391; --oro:#c9a227; --fondo:#eef1f7;
+  }
+  body{ background:var(--fondo); }
+  /* Header compartido de Aula Digital */
+  .app-navbar{ background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); z-index:1050; }
+  .app-navbar .dropdown-menu{ border:0; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); padding:.5rem; }
+  .app-navbar .dropdown-item{ border-radius:8px; padding:.5rem .8rem; }
+  .app-navbar .dropdown-item:hover{ background:#e7efff; }
+  .app-navbar .dropdown-item.active{ background:#0d6efd; }
+  .app-navbar .nav-link.active-group{ color:#fff; border-bottom:2px solid #0d6efd; }
+  /* Barra superior de la página (subheader) */
+  .topbar{ background:linear-gradient(90deg,var(--azul),var(--azul-2)); color:#fff; box-shadow:0 2px 10px rgba(0,0,0,.2); position:relative; z-index:1000; }
+  .topbar small{ color:#cfd6ee; }
+  /* Conceptos con definición (popover) */
+  b.def{ color:var(--azul); border-bottom:2px dotted var(--oro); cursor:help; outline:none; }
+  b.def:hover, b.def:focus{ background:rgba(201,162,39,.15); border-radius:.2rem; }
+  .conceptos{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.5rem; }
+  .conceptos b.def{ background:#f4f6fb; border:1px solid #dfe3ef; border-bottom:2px dotted var(--oro);
+                     border-radius:2rem; padding:.15rem .7rem; font-size:.9rem; box-shadow:0 1px 2px rgba(0,0,0,.05); }
+  .conceptos b.def:hover, .conceptos b.def:focus{ background:#fff7dd; }
+  .popover{ --bs-popover-max-width:320px; --bs-popover-header-bg:var(--azul); --bs-popover-header-color:#fff;
+            box-shadow:0 .75rem 1.5rem rgba(29,42,92,.2); border:0; }
+  /* Tarjetas */
+  .card{ border:0; border-radius:1rem; }
+  .card.shadow{ border:1px solid rgba(29,42,92,.08); transition:box-shadow .2s, transform .2s; }
+  .card.shadow:hover{ box-shadow:0 1rem 2.5rem rgba(29,42,92,.18)!important; }
+  .card.bloque{ border-left:5px solid var(--azul)!important; }
+  .formula-card{ background:#fbfcfe; border-left:4px solid var(--oro)!important; }
+  .formula-card math{ font-size:1.25rem; margin:.6rem 0; overflow-x:auto; overflow-y:hidden; }
+  .card-hover{ transition:transform .2s, box-shadow .2s; cursor:pointer; }
+  .card-hover:hover{ transform:translateY(-4px); box-shadow:0 1rem 2rem rgba(29,42,92,.18)!important; }
+  .hero{ background:linear-gradient(135deg,var(--azul),var(--azul-2)); color:#fff; border-radius:1rem; }
+  .hero .badge{ background:rgba(255,255,255,.15); font-weight:500; }
+  .icono-circulo{ width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+                  background:rgba(201,162,39,.15); color:var(--oro); font-size:1.4rem; flex-shrink:0; }
+  .req-card{ border-top:4px solid var(--oro)!important; height:100%; }
+  .req-card.opc{ border-top-color:#9aa5c4!important; }
+  .req-card > strong{ display:block; color:var(--azul); margin-bottom:.15rem; }
+  h2.seccion{ color:var(--azul); font-size:1.3rem; display:flex; align-items:center; gap:.5rem; }
+  h2.seccion i{ color:var(--oro); }
+  .list-group-numbered>.list-group-item::before{ color:var(--azul); font-weight:700; }
+  .table thead th{ background:var(--azul); color:#fff; vertical-align:middle; }
+  .table{ margin-bottom:0; }
+  .tabs-sticky{ position:sticky; top:56px; z-index:1020; background:var(--fondo); padding:.5rem 0; }
+  .nav-pills .nav-link{ color:var(--azul); background:#fff; margin:.15rem; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .nav-pills .nav-link.active{ background:var(--azul); color:#fff; }
+  .formula{ font-family:"Cambria Math","Times New Roman",serif; font-size:1.15rem; background:#f8f9fb;
+            border-left:4px solid var(--oro); border-radius:.5rem; padding:.7rem 1rem; overflow-x:auto; }
+  .frac{ display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .15rem; }
+  .frac>span:first-child{ border-bottom:1px solid #000; padding:0 .2rem; }
+  .sqrt{ border-top:1px solid #000; padding:0 .15rem; }
+  .blank{ display:inline-block; min-width:3rem; border-bottom:1px solid currentColor; opacity:.7; }
+  .escala{ font-size:.9rem; }
+  .escala span{ display:inline-block; background:#eef1f7; border-radius:2rem; padding:.15rem .6rem; margin:.15rem; }
+  .shake{ animation:shake .35s; }
+  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  #btnArriba{ position:fixed; right:1rem; bottom:1rem; display:none; z-index:1040; }
+  @media print{
+    .topbar,#app-header,.no-print,.tabs-sticky,#btnArriba,.popover{ display:none!important; }
+    b.def{ border-bottom:0; }
+    .tab-pane{ display:block!important; opacity:1!important; margin-bottom:1rem; }
+    body{ background:#fff; } .card{ box-shadow:none!important; border:1px solid #ddd; }
+    .hero{ color:#000; background:none; border:1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header compartido (marca, menús y bloqueo) -->
+<div id="app-header"></div>
+
+<header class="topbar px-3 px-md-4 py-2 d-flex align-items-center" style="height:68px">
+  <div class="me-auto">
+    <div class="fw-bold">Proyectos finales · Estadística y Probabilidad</div>
+    <small class="d-none d-sm-inline">UNAM · Escuela Nacional Colegio de Ciencias y Humanidades</small>
+  </div>
+  <button class="btn btn-sm btn-light shadow-sm me-2" id="btnInicio" title="Inicio"><i class="bi bi-house"></i><span class="d-none d-sm-inline ms-1">Inicio</span></button>
+  <button class="btn btn-sm btn-outline-light" id="btnBloquear" title="Bloquear todo"><i class="bi bi-lock"></i><span class="d-none d-sm-inline ms-1">Bloquear</span></button>
+</header>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- ================= CONTENIDO ================= -->
+    <main class="col-12 p-3 p-md-4">
+      <div class="mx-auto" style="max-width:1050px">
+
+        <!-- ---------- INICIO ---------- -->
+        <section id="vista-inicio">
+          <div class="hero p-4 p-md-5 shadow mb-4">
+            <h1 class="h2 fw-bold mb-2">Proyecto final de Estadística y Probabilidad</h1>
+            <p class="mb-3 opacity-75">Elige tu asignatura. Cada sección pide la contraseña que te dio tu profesor(a).</p>
+            <span class="badge rounded-pill me-1 mb-1"><i class="bi bi-file-earmark-pdf me-1"></i>Entrega en PDF</span>
+            <span class="badge rounded-pill me-1 mb-1"><i class="bi bi-ui-checks me-1"></i>Formulario en línea con URL</span>
+            <span class="badge rounded-pill mb-1"><i class="bi bi-easel me-1"></i>Exposición (EyP II)</span>
+          </div>
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="card shadow card-hover h-100 p-4" data-open="eyp1">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="icono-circulo"><i class="bi bi-bar-chart-line"></i></div>
+                  <div class="flex-grow-1"><small class="text-muted">5.º semestre</small><h2 class="h5 mb-0">Estadística y Probabilidad I</h2></div>
+                  <span class="badge rounded-pill text-bg-light border fs-6"><i class="bi bi-lock-fill" data-lock="eyp1"></i></span>
+                </div>
+                <p class="text-muted mb-3">Investigación con tema libre: medidas de tendencia central y dispersión, coeficiente de Pearson y gráficas.</p>
+                <span class="mt-auto text-primary fw-semibold">Entrar <i class="bi bi-arrow-right"></i></span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card shadow card-hover h-100 p-4" data-open="eyp2">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="icono-circulo"><i class="bi bi-graph-up-arrow"></i></div>
+                  <div class="flex-grow-1"><small class="text-muted">6.º semestre</small><h2 class="h5 mb-0">Estadística y Probabilidad II</h2></div>
+                  <span class="badge rounded-pill text-bg-light border fs-6"><i class="bi bi-lock-fill" data-lock="eyp2"></i></span>
+                </div>
+                <p class="text-muted mb-3">Encuesta de 13 a 18 preguntas a 100 compañeros, contraste de hipótesis y exposición ante el grupo.</p>
+                <span class="mt-auto text-primary fw-semibold">Entrar <i class="bi bi-arrow-right"></i></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---------- CONTRASEÑA ---------- -->
+        <section id="vista-login" class="d-none">
+          <div class="card shadow-lg p-4 p-md-5 mx-auto mt-md-5" style="max-width:440px">
+            <div class="text-center mb-4">
+              <div class="icono-circulo mx-auto mb-3" style="width:64px;height:64px;font-size:1.8rem"><i class="bi bi-shield-lock"></i></div>
+              <h2 class="h5 mb-1" id="loginTitulo">Acceso</h2>
+              <small class="text-muted">Escribe la contraseña de tu asignatura</small>
+            </div>
+            <form id="formLogin" autocomplete="off">
+              <div class="input-group input-group-lg has-validation">
+                <span class="input-group-text"><i class="bi bi-key"></i></span>
+                <input type="password" class="form-control" id="pass" placeholder="Contraseña" required>
+                <button class="btn btn-outline-secondary" type="button" id="verPass" aria-label="Mostrar contraseña"><i class="bi bi-eye"></i></button>
+                <div class="invalid-feedback">Contraseña incorrecta. Inténtalo de nuevo.</div>
+              </div>
+              <button class="btn btn-lg w-100 mt-3 text-white shadow-sm" style="background:var(--azul)">Entrar</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             ESTADÍSTICA Y PROBABILIDAD I
+             ================================================================ -->
+        <section id="vista-eyp1" class="d-none">
+          <div class="hero p-4 shadow mb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+              <small class="opacity-75">Proyecto final</small>
+              <h1 class="h3 fw-bold mb-2">Estadística y Probabilidad I</h1>
+              <span class="badge rounded-pill me-1"><i class="bi bi-people me-1"></i>Equipos de <span class="blank"></span></span>
+              <span class="badge rounded-pill me-1"><i class="bi bi-calendar-event me-1"></i>Entrega: <span class="blank"></span></span>
+              <span class="badge rounded-pill"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</span>
+            </div>
+            <div class="d-flex gap-2 no-print">
+              <button class="btn btn-outline-light" data-volver><i class="bi bi-arrow-left me-1"></i>Volver</button>
+              <button class="btn btn-light shadow-sm" onclick="window.print()"><i class="bi bi-printer me-1"></i>Imprimir / PDF</button>
+            </div>
+          </div>
+
+          <div class="tabs-sticky">
+            <ul class="nav nav-pills flex-nowrap overflow-auto" role="tablist">
+              <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#e1-lin" type="button"><i class="bi bi-journal-text me-1"></i>Lineamientos</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e1-est" type="button"><i class="bi bi-calculator me-1"></i>Elementos estadísticos</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e1-rub" type="button"><i class="bi bi-clipboard-check me-1"></i>Rúbrica</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e1-for" type="button"><i class="bi bi-file-earmark-pdf me-1"></i>Formato</button></li>
+            </ul>
+          </div>
+
+          <div class="tab-content mt-2">
+            <!-- Lineamientos -->
+            <div class="tab-pane fade show active" id="e1-lin">
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-lightbulb"></i>¿En qué consiste?</h2>
+                <p class="mb-0">Realizarán una investigación estadística sobre un tema de su elección, con datos propios recolectados por ustedes, y la entregarán como informe en PDF. El trabajo recorre los cuatro pasos de una investigación estadística: formular preguntas, recolectar datos, analizarlos e interpretar resultados.</p>
+              </div>
+
+              <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                  <div class="card shadow bloque p-4 h-100">
+                    <h2 class="seccion"><i class="bi bi-person-vcard"></i>Datos obligatorios de la portada</h2>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item px-0">UNAM · CCH · Plantel <span class="blank"></span></li>
+                      <li class="list-group-item px-0">Asignatura: Estadística y Probabilidad I</li>
+                      <li class="list-group-item px-0">Título de la investigación</li>
+                      <li class="list-group-item px-0">Nombre completo de cada integrante (apellido paterno primero, orden alfabético)</li>
+                      <li class="list-group-item px-0">Grupo y nombre del profesor(a)</li>
+                      <li class="list-group-item px-0">Ciclo escolar y fecha de entrega</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="card shadow bloque p-4 h-100">
+                    <h2 class="seccion"><i class="bi bi-ui-checks"></i>Recolección de datos</h2>
+                    <div class="alert alert-warning shadow-sm py-2 mb-3"><i class="bi bi-exclamation-triangle me-1"></i>Obligatorio: formulario en línea con <strong>URL</strong> que abra sin pedir permiso.</div>
+                    <ul class="mb-0">
+                      <li>Google Forms, Microsoft Forms u otro. La URL va en la Metodología y en el Apéndice.</li>
+                      <li>Si usaron otro medio (medición, experimento, base oficial como INEGI), anexen <strong>evidencias</strong>: fotos, hojas de registro, capturas o liga.</li>
+                      <li>10 a 15 preguntas, con al menos <strong>2 cualitativas</strong> y <strong>3 cuantitativas</strong>; dos de las cuantitativas deben poder relacionarse (para Pearson).</li>
+                      <li>Mínimo <strong>50 respuestas</strong>; anexen la base de datos.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card shadow bloque p-4">
+                <h2 class="seccion"><i class="bi bi-list-ol"></i>Estructura del informe</h2>
+                <ol class="list-group list-group-numbered list-group-flush">
+                  <li class="list-group-item">Portada</li>
+                  <li class="list-group-item">Índice</li>
+                  <li class="list-group-item">Introducción: tema y por qué les interesa</li>
+                  <li class="list-group-item">Planteamiento del problema: al menos 3 preguntas que se respondan con datos y sus conjeturas iniciales</li>
+                  <li class="list-group-item">Metodología: población, muestra, tamaño, fechas, URL del formulario y tabla de variables con su tipo</li>
+                  <li class="list-group-item">Análisis estadístico (ver pestaña <em>Elementos estadísticos</em>)</li>
+                  <li class="list-group-item">Conclusiones: respuesta a cada pregunta, contraste con las conjeturas y si los resultados pueden extenderse a todo el plantel (sesgos y limitaciones)</li>
+                  <li class="list-group-item">Referencias en APA 7, mínimo 3 fuentes confiables</li>
+                  <li class="list-group-item">Apéndices: A) cuestionario y URL, B) base de datos, C) evidencias, D) capturas del software</li>
+                </ol>
+              </div>
+            </div>
+
+            <!-- Elementos estadísticos -->
+            <div class="tab-pane fade" id="e1-est">
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-check2-square"></i>Elementos obligatorios</h2>
+                <p class="mb-0 text-muted">Cada medida o gráfica debe ir acompañada de una interpretación escrita en sus palabras, en el contexto de su tema. Un cálculo sin interpretación no cuenta.</p>
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-table"></i></div><div><h3 class="h6 mb-1">Tabla de frecuencias</h3><small class="text-muted">Absoluta, relativa y acumulada de al menos una variable.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">x̄</div><div><h3 class="h6 mb-1">Media</h3><small class="text-muted">Promedio de una variable cuantitativa.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-distribute-vertical"></i></div><div><h3 class="h6 mb-1">Mediana</h3><small class="text-muted">Valor central de los datos ordenados.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-trophy"></i></div><div><h3 class="h6 mb-1">Moda</h3><small class="text-muted">Valor o categoría más frecuente.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">s²</div><div><h3 class="h6 mb-1">Varianza</h3><small class="text-muted">Promedio de las desviaciones al cuadrado.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">s</div><div><h3 class="h6 mb-1">Desviación estándar</h3><small class="text-muted">Qué tan dispersos están los datos respecto a la media.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo">r</div><div><h3 class="h6 mb-1">Coeficiente de Pearson</h3><small class="text-muted">Entre dos variables cuantitativas, con su diagrama de dispersión; interpretar dirección y fuerza.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-pie-chart"></i></div><div><h3 class="h6 mb-1">Gráficas (mínimo 2)</h3><small class="text-muted">Tipos distintos y adecuados a la variable, con título, ejes y fuente. El diagrama de dispersión cuenta como una.</small></div></div></div></div>
+                <div class="col-sm-6 col-lg-4"><div class="card shadow req-card p-3"><div class="d-flex gap-3"><div class="icono-circulo"><i class="bi bi-chat-square-text"></i></div><div><h3 class="h6 mb-1">Interpretación</h3><small class="text-muted">Un párrafo por cada medida y gráfica.</small></div></div></div></div>
+              </div>
+
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-calculator"></i>Fórmulas sugeridas</h2>
+                <div class="alert alert-info shadow-sm py-2 small mb-3"><i class="bi bi-info-circle me-1"></i>Sugerencia para el cálculo. Pueden verificar sus resultados con Excel (PROMEDIO, MEDIANA, MODA, VAR.S, DESVEST.M, COEF.DE.CORREL) o GeoGebra.</div>
+                <div class="row g-3">
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Media</small>
+                    <math display="block"><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>x</mi><mi>i</mi></msub></mrow><mi>n</mi></mfrac></math>
+                    <small class="text-muted">x̄ = (suma de los datos) / n</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Varianza (muestral)</small>
+                    <math display="block"><msup><mi>s</mi><mn>2</mn></msup><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></mfrac></math>
+                    <small class="text-muted">s² = Σ(xᵢ − x̄)² / (n − 1)</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Desviación estándar</small>
+                    <math display="block"><mi>s</mi><mo>=</mo><msqrt><msup><mi>s</mi><mn>2</mn></msup></msqrt></math>
+                    <small class="text-muted">s = √s²</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Coeficiente de correlación de Pearson</small>
+                    <math display="block"><mi>r</mi><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>)</mo><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>y</mi><mo>¯</mo></mover><mo>)</mo></mrow><msqrt><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>·</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><mi>y</mi><mo>¯</mo></mover><mo>)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></math>
+                    <small class="text-muted">r = Σ(xᵢ − x̄)(yᵢ − ȳ) / √( Σ(xᵢ − x̄)² · Σ(yᵢ − ȳ)² ); toma valores entre −1 y 1</small></div></div>
+                </div>
+              </div>
+
+              <div class="card shadow bloque p-4">
+                <h2 class="seccion"><i class="bi bi-plus-circle"></i>Complementarios <span class="badge bg-secondary-subtle text-secondary-emphasis fw-normal fs-6">hasta +10 puntos</span></h2>
+                <div class="row g-3">
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Coeficiente de variación</strong><small class="text-muted">Comparar la dispersión entre dos grupos.</small></div></div>
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Cuartiles y diagrama de caja</strong><small class="text-muted">Comparar una variable entre grupos.</small></div></div>
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Recta de mínimos cuadrados</strong><small class="text-muted">Interpretar pendiente y hacer una predicción.</small></div></div>
+                  <div class="col-md-6"><div class="card req-card opc shadow p-3"><strong>Tabla de contingencia y probabilidad</strong><small class="text-muted">Probabilidad condicional e independencia con sus datos.</small></div></div>
+                </div>
+                <p class="small text-muted mt-3 mb-0">Pueden usar Excel, GeoGebra, CODAP u otro software; incluyan capturas en el Apéndice D.</p>
+              </div>
+            </div>
+
+            <!-- Rúbrica EyP I -->
+            <div class="tab-pane fade" id="e1-rub">
+              <div class="card shadow bloque p-4">
+                <h2 class="seccion"><i class="bi bi-clipboard-check"></i>Rúbrica del informe (100 puntos)</h2>
+                <div class="alert alert-warning shadow-sm py-2"><i class="bi bi-exclamation-triangle me-1"></i>Sin URL del formulario o sin evidencias de recolección, el trabajo no se califica hasta que se entreguen.</div>
+                <div class="table-responsive rounded-3 shadow">
+                  <table class="table table-bordered table-hover table-sm align-middle">
+                    <thead><tr><th>Criterio</th><th>Pts</th><th>Completo</th><th>Parcial</th><th>Insuficiente</th></tr></thead>
+                    <tbody>
+                      <tr><td>Portada, índice y datos obligatorios</td><td>5</td><td>Todos los datos e índice con páginas (5)</td><td>Falta un dato (3)</td><td>Faltan varios (0–1)</td></tr>
+                      <tr><td>Planteamiento y preguntas</td><td>10</td><td>3+ preguntas claras con conjeturas (10)</td><td>Vagas o sin conjeturas (5)</td><td>Sin preguntas que se respondan con datos (0–2)</td></tr>
+                      <tr><td>Metodología y formulario</td><td>10</td><td>Población, muestra, variables, URL funcional, 50+ respuestas (10)</td><td>Falta un elemento (5)</td><td>Sin URL ni evidencias (0)</td></tr>
+                      <tr><td>Tabla de frecuencias</td><td>10</td><td>Correcta e interpretada (10)</td><td>Correcta sin interpretar (5)</td><td>Con errores (0–2)</td></tr>
+                      <tr><td>Media, mediana y moda</td><td>15</td><td>Correctas e interpretadas en contexto (15)</td><td>Correctas sin interpretar (8)</td><td>Incompletas o erróneas (0–3)</td></tr>
+                      <tr><td>Varianza y desviación estándar</td><td>15</td><td>Correctas e interpretadas en contexto (15)</td><td>Correctas sin interpretar (8)</td><td>Incompletas o erróneas (0–3)</td></tr>
+                      <tr><td>Gráficas (mínimo 2)</td><td>10</td><td>2+ tipos adecuados, rotuladas e interpretadas (10)</td><td>Solo una o mal rotuladas (5)</td><td>Inadecuadas o ausentes (0–2)</td></tr>
+                      <tr><td>Coeficiente de Pearson</td><td>10</td><td>Con diagrama de dispersión, dirección y fuerza interpretadas (10)</td><td>Calculado sin interpretar (5)</td><td>Ausente o erróneo (0–2)</td></tr>
+                      <tr><td>Conclusiones</td><td>5</td><td>Responde cada pregunta y señala sesgos (5)</td><td>Resume sin responder (3)</td><td>Genéricas (0–1)</td></tr>
+                      <tr><td>Referencias y apéndices</td><td>10</td><td>APA 7, 3+ fuentes, apéndices A–D (10)</td><td>Formato irregular o falta un apéndice (5)</td><td>Sin referencias (0)</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="small text-muted mt-2 mb-0">Elementos complementarios: hasta +10 puntos (máximo 100 en total).</p>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="e1-for"><div class="card shadow bloque p-4" data-formato="EyP1"></div></div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             ESTADÍSTICA Y PROBABILIDAD II
+             ================================================================ -->
+        <section id="vista-eyp2" class="d-none">
+          <div class="hero p-4 shadow mb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+              <small class="opacity-75">Proyecto final</small>
+              <h1 class="h3 fw-bold mb-2">Estadística y Probabilidad II</h1>
+              <span class="badge rounded-pill me-1"><i class="bi bi-people me-1"></i>Equipos de <span class="blank"></span></span>
+              <span class="badge rounded-pill me-1"><i class="bi bi-calendar-event me-1"></i>Entrega: <span class="blank"></span></span>
+              <span class="badge rounded-pill me-1"><i class="bi bi-easel me-1"></i>Exposición: <span class="blank"></span></span>
+              <span class="badge rounded-pill"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</span>
+            </div>
+            <div class="d-flex gap-2 no-print">
+              <button class="btn btn-outline-light" data-volver><i class="bi bi-arrow-left me-1"></i>Volver</button>
+              <button class="btn btn-light shadow-sm" onclick="window.print()"><i class="bi bi-printer me-1"></i>Imprimir / PDF</button>
+            </div>
+          </div>
+
+          <div class="tabs-sticky">
+            <ul class="nav nav-pills flex-nowrap overflow-auto" role="tablist">
+              <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#e2-enc" type="button"><i class="bi bi-ui-checks me-1"></i>Encuesta</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e2-a" type="button"><i class="bi bi-1-circle me-1"></i>Caso A</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e2-b" type="button"><i class="bi bi-2-circle me-1"></i>Caso B</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e2-form" type="button"><i class="bi bi-award me-1"></i>Formalidad</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e2-rub" type="button"><i class="bi bi-clipboard-check me-1"></i>Rúbricas</button></li>
+              <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#e2-for" type="button"><i class="bi bi-file-earmark-pdf me-1"></i>Formato</button></li>
+            </ul>
+          </div>
+
+          <div class="tab-content mt-2">
+            <!-- Encuesta (lineamientos del PDF) -->
+            <div class="tab-pane fade show active" id="e2-enc">
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-lightbulb"></i>¿En qué consiste?</h2>
+                <p class="mb-0">Elaborarán una encuesta sobre el tema de su agrado, la aplicarán a sus compañeros, analizarán los resultados en porcentajes y contrastarán una hipótesis. El informe se entrega en PDF y se presenta ante el grupo. Hay dos versiones: el profesor(a) indicará si trabajan el <strong>Caso A</strong> o el <strong>Caso B</strong>.</p>
+              </div>
+
+              <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3"><div class="card shadow text-center p-3 h-100"><div class="display-6 fw-bold" style="color:var(--azul)">13–18</div><small class="text-muted">preguntas</small></div></div>
+                <div class="col-6 col-lg-3"><div class="card shadow text-center p-3 h-100"><div class="display-6 fw-bold" style="color:var(--azul)">≤ 3</div><small class="text-muted">preguntas Sí / No</small></div></div>
+                <div class="col-6 col-lg-3"><div class="card shadow text-center p-3 h-100"><div class="display-6 fw-bold" style="color:var(--azul)">100</div><small class="text-muted">encuestados (depurados)</small></div></div>
+                <div class="col-6 col-lg-3"><div class="card shadow text-center p-3 h-100"><div class="display-6 fw-bold" style="color:var(--azul)">≥ 2</div><small class="text-muted">gráficas</small></div></div>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-lg-7">
+                  <div class="card shadow bloque p-4 h-100">
+                    <h2 class="seccion"><i class="bi bi-list-check"></i>Opciones de respuesta sugeridas</h2>
+                    <p class="small text-muted">Cada pregunta de opción múltiple debe usar una escala de cinco opciones, por ejemplo:</p>
+                    <div class="escala mb-2"><span>Muy poco</span><span>Poco</span><span>Regular</span><span>Mucho</span><span>Demasiado</span></div>
+                    <div class="escala mb-2"><span>Nunca</span><span>Casi nunca</span><span>Algunas veces</span><span>Casi siempre</span><span>Siempre</span></div>
+                    <div class="escala mb-2"><span>Lo desconozco</span><span>Lo conozco muy poco</span><span>He oído el tema</span><span>Lo conozco</span><span>Lo conozco bien</span></div>
+                    <div class="escala mb-2"><span>No me agrada</span><span>Me agrada poco</span><span>Es de mi agrado</span><span>Me gusta</span><span>Me gusta mucho</span></div>
+                    <div class="escala"><span>No lo he oído</span><span>Lo he oído poco</span><span>Lo conozco</span><span>Lo conozco bien</span><span>Lo conozco muy bien</span></div>
+                  </div>
+                </div>
+                <div class="col-lg-5">
+                  <div class="card shadow bloque p-4 h-100">
+                    <h2 class="seccion"><i class="bi bi-rulers"></i>Reglas</h2>
+                    <ul class="mb-0">
+                      <li>Respuestas <strong>Sí / No</strong>: máximo 3. Si se excede, baja la calificación, por considerarse falta de profundidad.</li>
+                      <li>Mínimo 13 y máximo 18 preguntas.</li>
+                      <li>Aplicar a <strong>100 compañeros</strong>; conviene aplicar a más y depurar a 100.</li>
+                      <li>Si se desea conocer la opinión por género: <strong>50 mujeres y 50 hombres</strong>.</li>
+                      <li>Con muestra de 50, el porcentaje es (número de hombres o mujeres ÷ 50) × 100.</li>
+                      <li>Incluir al menos una pregunta con respuesta <strong>numérica</strong> (horas, pesos, edad) para calcular la media.</li>
+                      <li>Formulario en línea con <strong>URL</strong> en el informe.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card shadow bloque p-4 mt-4">
+                <h2 class="seccion"><i class="bi bi-pie-chart"></i>Análisis estadístico de los resultados</h2>
+                <p>Se debe verter una <strong>opinión de cada una de las respuestas</strong>, con el total de los resultados expresado en <strong>porcentajes</strong>. Además, en ambos casos:</p>
+                <div class="row g-3">
+                  <div class="col-md-4"><div class="card req-card shadow p-3"><strong>Tabla de porcentajes</strong><small class="text-muted">Una por pregunta, con su opinión.</small></div></div>
+                  <div class="col-md-4"><div class="card req-card shadow p-3"><strong>Mínimo 2 gráficas</strong><small class="text-muted">De tipos distintos, con título, fuente e interpretación.</small></div></div>
+                  <div class="col-md-4"><div class="card req-card shadow p-3"><strong>Medidas</strong><small class="text-muted">Media, mediana, moda, varianza y desviación estándar de la pregunta numérica.</small></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Caso A -->
+            <div class="tab-pane fade" id="e2-a">
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-1-circle"></i>Caso A · Índice obligatorio</h2>
+                <p class="text-muted">Versión base. Se respeta el siguiente orden de apartados:</p>
+                <p class="small text-muted mb-2"><i class="bi bi-hand-index me-1"></i>Pasa el cursor o toca las palabras subrayadas para ver su definición.</p>
+                <ol class="list-group list-group-numbered list-group-flush">
+                  <li class="list-group-item"><b class="def" data-def="portada">Portada</b> <small class="text-muted">(datos en la pestaña <em>Formalidad</em>)</small></li>
+                  <li class="list-group-item"><b class="def" data-def="indice">Índice paginado</b></li>
+                  <li class="list-group-item"><b class="def" data-def="introduccion">Introducción</b></li>
+                  <li class="list-group-item"><b class="def" data-def="planteamiento">Planteamiento del problema</b></li>
+                  <li class="list-group-item"><b class="def" data-def="objetivo">Objetivo</b></li>
+                  <li class="list-group-item"><b class="def" data-def="justificacion">Justificación</b></li>
+                  <li class="list-group-item"><b class="def" data-def="hipotesis">Planteamiento de la hipótesis</b>
+                    <div class="conceptos"><b class="def" data-def="proporcion">Proporción</b><b class="def" data-def="h0">H₀</b><b class="def" data-def="h1">H₁</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="marco">Marco teórico</b></li>
+                  <li class="list-group-item"><b class="def" data-def="metodologia">Metodología</b>
+                    <div class="conceptos"><b class="def" data-def="poblacion">Población</b><b class="def" data-def="muestra">Muestra</b><b class="def" data-def="seleccion">Procedimiento de selección</b><b class="def" data-def="depuracion">Depuración</b><b class="def" data-def="url">URL</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="analisis">Análisis estadístico de los resultados</b>
+                    <div class="conceptos"><b class="def" data-def="porcentajes">Porcentajes</b><b class="def" data-def="opinion">Opinión por pregunta</b><b class="def" data-def="graficas">Mínimo 2 gráficas</b><b class="def" data-def="media">Media</b><b class="def" data-def="mediana">Mediana</b><b class="def" data-def="moda">Moda</b><b class="def" data-def="varianza">Varianza</b><b class="def" data-def="desv">Desviación estándar</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="contraste">Contrastar la hipótesis</b>
+                    <div class="conceptos"><b class="def" data-def="alfa">α = 0.05</b><b class="def" data-def="estadprueba">Estadístico de prueba</b><b class="def" data-def="decision">Decisión</b><b class="def" data-def="ic">Intervalo de confianza 95 % (proporción)</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="cuestionario">Una copia del cuestionario</b></li>
+                  <li class="list-group-item"><b class="def" data-def="conclusiones">Conclusiones</b></li>
+                  <li class="list-group-item"><b class="def" data-def="bibliografia">Bibliografía</b> <small class="text-muted">(APA 7, mínimo 3)</small></li>
+                </ol>
+              </div>
+              <div class="card shadow bloque p-4">
+                <h2 class="seccion"><i class="bi bi-signpost-split"></i>Ejemplo de hipótesis</h2>
+                <p class="mb-2">«Más de la mitad del alumnado usa redes sociales más de 3 horas al día.»</p>
+                <p class="mb-0 text-muted">En notación: H₀: p ≤ 0.5 y H₁: p &gt; 0.5. Al final se decide si se rechaza o no H₀; no se «prueba» que la hipótesis sea verdadera.</p>
+              </div>
+            </div>
+
+            <!-- Caso B -->
+            <div class="tab-pane fade" id="e2-b">
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-2-circle"></i>Caso B · Índice obligatorio</h2>
+                <p class="text-muted">Versión ampliada. Mantiene el orden del Caso A y agrega los apartados marcados <span class="badge text-bg-warning">+</span>.</p>
+                <p class="small text-muted mb-2"><i class="bi bi-hand-index me-1"></i>Pasa el cursor o toca las palabras subrayadas para ver su definición.</p>
+                <ol class="list-group list-group-numbered list-group-flush">
+                  <li class="list-group-item"><b class="def" data-def="portada">Portada</b> y <b class="def" data-def="firmas">hoja de integrantes con firma</b></li>
+                  <li class="list-group-item"><b class="def" data-def="indice">Índice paginado</b>, <b class="def" data-def="indicefig">índice de tablas y de figuras</b> <span class="badge text-bg-warning">+</span></li>
+                  <li class="list-group-item"><b class="def" data-def="resumen">Resumen</b> <small class="text-muted">(máx. 150 palabras)</small> <span class="badge text-bg-warning">+</span></li>
+                  <li class="list-group-item"><b class="def" data-def="introduccion">Introducción</b></li>
+                  <li class="list-group-item"><b class="def" data-def="planteamiento">Planteamiento del problema</b>
+                    <div class="conceptos"><b class="def" data-def="pregunta">Pregunta de investigación</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="objetivo">Objetivo</b>
+                    <div class="conceptos"><b class="def" data-def="objgeneral">General</b><b class="def" data-def="objespecificos">Específicos</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="justificacion">Justificación</b></li>
+                  <li class="list-group-item"><b class="def" data-def="hipotesis">Planteamiento de la hipótesis</b>
+                    <div class="conceptos"><b class="def" data-def="proporcion">Proporción</b><b class="def" data-def="media">Media</b><b class="def" data-def="lenguaje">Lenguaje común</b><b class="def" data-def="h0">H₀</b><b class="def" data-def="h1">H₁</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="marco">Marco teórico</b>
+                    <div class="conceptos"><b class="def" data-def="marcotema">Sobre el tema</b><b class="def" data-def="va">Variable aleatoria</b><b class="def" data-def="binomial">Distribución binomial</b><b class="def" data-def="normal">Distribución normal</b><b class="def" data-def="tlc">Teorema del Límite Central</b><b class="def" data-def="dmuestral">Distribución muestral</b><b class="def" data-def="ic">Intervalo de confianza</b><b class="def" data-def="contraste">Contraste de hipótesis</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="metodologia">Metodología</b>
+                    <div class="conceptos"><b class="def" data-def="poblacion">Población</b><b class="def" data-def="muestra">Muestra</b><b class="def" data-def="seleccion">Procedimiento de selección</b><b class="def" data-def="fechas">Fechas</b><b class="def" data-def="depuracion">Depuración</b><b class="def" data-def="tablavars">Tabla de variables</b><b class="def" data-def="url">URL</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="analisis">Análisis estadístico de los resultados</b>
+                    <div class="conceptos"><b class="def" data-def="porcentajes">Porcentajes</b><b class="def" data-def="opinion">Opinión por pregunta</b><b class="def" data-def="genero">Comparación por género (50/50)</b><b class="def" data-def="graficas">Mínimo 2 gráficas</b><b class="def" data-def="media">Media</b><b class="def" data-def="mediana">Mediana</b><b class="def" data-def="moda">Moda</b><b class="def" data-def="varianza">Varianza</b><b class="def" data-def="desv">Desviación estándar</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="modelo">Modelo de probabilidad</b> <span class="badge text-bg-warning">+</span>
+                    <div class="conceptos"><b class="def" data-def="exito">Éxito / fracaso</b><b class="def" data-def="condbin">Condiciones binomiales</b><b class="def" data-def="esperanza">E(X) = np</b><b class="def" data-def="sigma">σ</b><b class="def" data-def="condnormal">np ≥ 10 y n(1 − p) ≥ 10</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="estimacion">Estimación</b> <span class="badge text-bg-warning">+</span>
+                    <div class="conceptos"><b class="def" data-def="ic">Intervalo de confianza</b><b class="def" data-def="nc95">Nivel de confianza 95 %</b><b class="def" data-def="icprop">Para la proporción</b><b class="def" data-def="icmedia">Para la media</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="contraste">Contrastar la hipótesis</b>
+                    <div class="conceptos"><b class="def" data-def="h0">H₀</b><b class="def" data-def="h1">H₁</b><b class="def" data-def="alfa">α = 0.05</b><b class="def" data-def="estadprueba">Estadístico de prueba</b><b class="def" data-def="vcritico">Valor crítico</b><b class="def" data-def="valorp">Valor p</b><b class="def" data-def="decision">Decisión</b><b class="def" data-def="interpretacion">Interpretación</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="cuestionario">Una copia del cuestionario</b> y <b class="def" data-def="url">URL</b></li>
+                  <li class="list-group-item"><b class="def" data-def="conclusiones">Conclusiones</b>
+                    <div class="conceptos"><b class="def" data-def="limitaciones">Limitaciones</b><b class="def" data-def="sesgo">Sesgos</b></div></li>
+                  <li class="list-group-item"><b class="def" data-def="bibliografia">Bibliografía</b> <small class="text-muted">(APA 7, mínimo 5; 2 académicas o institucionales)</small></li>
+                  <li class="list-group-item"><b class="def" data-def="apendices">Apéndices</b> <span class="badge text-bg-warning">+</span></li>
+                </ol>
+              </div>
+
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-calculator"></i>Fórmulas sugeridas</h2>
+                <div class="alert alert-info shadow-sm py-2 small mb-3"><i class="bi bi-info-circle me-1"></i>Sugerencia para el cálculo. Con n = 100 y σ desconocida se usa s. Con 95 % de confianza, z<sub>α/2</sub> = 1.96; en una prueba de una cola con α = 0.05, el valor crítico es 1.645 (dos colas: 1.96).</div>
+                <div class="row g-3">
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Intervalo para la proporción</small>
+                    <math display="block"><mover accent="true"><mi>p</mi><mo>^</mo></mover><mo>±</mo><msub><mi>z</mi><mrow><mi>α</mi><mo>/</mo><mn>2</mn></mrow></msub><msqrt><mfrac><mrow><mover accent="true"><mi>p</mi><mo>^</mo></mover><mo>(</mo><mn>1</mn><mo>−</mo><mover accent="true"><mi>p</mi><mo>^</mo></mover><mo>)</mo></mrow><mi>n</mi></mfrac></msqrt></math>
+                    <small class="text-muted">p̂ ± z<sub>α/2</sub> · √( p̂(1 − p̂) / n )</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Intervalo para la media</small>
+                    <math display="block"><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>±</mo><msub><mi>z</mi><mrow><mi>α</mi><mo>/</mo><mn>2</mn></mrow></msub><mfrac><mi>s</mi><msqrt><mi>n</mi></msqrt></mfrac></math>
+                    <small class="text-muted">x̄ ± z<sub>α/2</sub> · s / √n</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Estadístico de prueba para la proporción</small>
+                    <math display="block"><mi>Z</mi><mo>=</mo><mfrac><mrow><mover accent="true"><mi>p</mi><mo>^</mo></mover><mo>−</mo><msub><mi>p</mi><mn>0</mn></msub></mrow><msqrt><mfrac><mrow><msub><mi>p</mi><mn>0</mn></msub><mo>(</mo><mn>1</mn><mo>−</mo><msub><mi>p</mi><mn>0</mn></msub><mo>)</mo></mrow><mi>n</mi></mfrac></msqrt></mfrac></math>
+                    <small class="text-muted">Z = (p̂ − p₀) / √( p₀(1 − p₀) / n )</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Estadístico de prueba para la media</small>
+                    <math display="block"><mi>Z</mi><mo>=</mo><mfrac><mrow><mover accent="true"><mi>x</mi><mo>¯</mo></mover><mo>−</mo><msub><mi>μ</mi><mn>0</mn></msub></mrow><mrow><mi>s</mi><mo>/</mo><msqrt><mi>n</mi></msqrt></mrow></mfrac></math>
+                    <small class="text-muted">Z = (x̄ − μ₀) / (s / √n)</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Esperanza de la binomial</small>
+                    <math display="block"><mi>E</mi><mo>(</mo><mi>X</mi><mo>)</mo><mo>=</mo><mi>n</mi><mi>p</mi></math>
+                    <small class="text-muted">Número esperado de éxitos en n ensayos</small></div></div>
+                  <div class="col-md-6"><div class="card formula-card shadow h-100 p-3"><small class="fw-semibold text-uppercase" style="color:var(--azul)">Desviación estándar de la binomial</small>
+                    <math display="block"><mi>σ</mi><mo>=</mo><msqrt><mi>n</mi><mi>p</mi><mo>(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo>)</mo></msqrt></math>
+                    <small class="text-muted">σ = √( np(1 − p) )</small></div></div>
+                </div>
+              </div>
+
+              <div class="card shadow bloque p-4 border-start border-danger border-4">
+                <h2 class="seccion"><i class="bi bi-x-octagon"></i>Errores de interpretación que restan puntos</h2>
+                <ul class="mb-0">
+                  <li>Decir que «hay 95 % de probabilidad de que el parámetro esté en <em>este</em> intervalo». Lo correcto: el 95 % de los intervalos construidos así contienen al parámetro.</li>
+                  <li>Decir que se «probó» o «demostró» la hipótesis. Lo correcto: se rechaza o no se rechaza H₀.</li>
+                  <li>Confundir α con la probabilidad de que H₀ sea cierta.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Formalidad -->
+            <div class="tab-pane fade" id="e2-form">
+              <div class="row g-4">
+                <div class="col-lg-6">
+                  <div class="card shadow bloque p-4 h-100">
+                    <h2 class="seccion"><i class="bi bi-person-vcard"></i>Datos obligatorios de la portada</h2>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item px-0">Escudos de la UNAM y del CCH</li>
+                      <li class="list-group-item px-0">Universidad Nacional Autónoma de México · Escuela Nacional Colegio de Ciencias y Humanidades · Plantel <span class="blank"></span></li>
+                      <li class="list-group-item px-0">Asignatura: Estadística y Probabilidad II · Grupo <span class="blank"></span></li>
+                      <li class="list-group-item px-0">Título de la investigación</li>
+                      <li class="list-group-item px-0">Integrantes: nombre completo (apellidos primero) y número de cuenta</li>
+                      <li class="list-group-item px-0">Profesor(a)</li>
+                      <li class="list-group-item px-0">Ciclo escolar, lugar y fecha de entrega</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="card shadow bloque p-4 h-100">
+                    <h2 class="seccion"><i class="bi bi-award"></i>Formalidad del documento</h2>
+                    <ul class="mb-0">
+                      <li>Redacción impersonal o en tercera persona («se aplicó», «se observa»).</li>
+                      <li>Texto justificado, sin faltas de ortografía.</li>
+                      <li>Tablas y figuras numeradas, con título arriba y fuente abajo.</li>
+                      <li>Citas en el texto en APA 7 que coincidan con la bibliografía.</li>
+                      <li>Cada apartado inicia en página nueva.</li>
+                      <li>Encuesta anónima, con una línea de consentimiento al inicio del formulario.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="card shadow bloque p-4">
+                    <h2 class="seccion"><i class="bi bi-easel"></i>Exposición ante el grupo</h2>
+                    <p class="mb-0">Duración de <span class="blank"></span> minutos por equipo, con diapositivas (portada con los mismos datos del informe). Presentan el problema, la hipótesis, las gráficas principales y la decisión del contraste. Participan todos los integrantes. Se califica la <strong>formalidad</strong> (presentación del equipo y vestimenta), la <strong>expresión verbal</strong> y la <strong>calidad y creatividad</strong> de las diapositivas y de la presentación ante el grupo (ver pestaña <em>Rúbricas</em>).</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rúbricas EyP II -->
+            <div class="tab-pane fade" id="e2-rub">
+              <div class="row g-3 mb-4">
+                <div class="col-6"><div class="card shadow text-center p-3"><div class="display-6 fw-bold" style="color:var(--azul)">70 %</div><small class="text-muted">Informe escrito</small></div></div>
+                <div class="col-6"><div class="card shadow text-center p-3"><div class="display-6 fw-bold" style="color:var(--oro)">30 %</div><small class="text-muted">Exposición</small></div></div>
+              </div>
+
+              <div class="card shadow bloque p-4 mb-4">
+                <h2 class="seccion"><i class="bi bi-file-text"></i>Informe escrito (100 puntos)</h2>
+                <p class="small text-muted">En el Caso A, los puntos de «Modelo de probabilidad» pasan a «Análisis estadístico» y el intervalo es solo para la proporción.</p>
+                <div class="table-responsive rounded-3 shadow">
+                  <table class="table table-bordered table-hover table-sm align-middle">
+                    <thead><tr><th>Criterio</th><th>Pts</th><th>Qué se revisa</th></tr></thead>
+                    <tbody>
+                      <tr><td>Portada e índice</td><td>5</td><td>Todos los datos obligatorios, índice paginado</td></tr>
+                      <tr><td>Introducción, planteamiento, objetivo y justificación</td><td>10</td><td>Problema claro que se responde con datos; objetivo medible</td></tr>
+                      <tr><td>Planteamiento de la hipótesis</td><td>10</td><td>Redactada en lenguaje común y como H₀ / H₁ correctas</td></tr>
+                      <tr><td>Marco teórico</td><td>10</td><td>Sustento del tema y de los conceptos estadísticos, con citas</td></tr>
+                      <tr><td>Metodología y cuestionario</td><td>10</td><td>URL, 13–18 preguntas, escalas de 5 opciones, máximo 3 Sí/No, 100 encuestados, depuración descrita</td></tr>
+                      <tr><td>Análisis estadístico de los resultados</td><td>15</td><td>Porcentajes y opinión por pregunta, mínimo 2 gráficas, medidas correctas, comparación por género bien calculada</td></tr>
+                      <tr><td>Modelo de probabilidad</td><td>5</td><td>Condiciones binomiales, np y σ, condición para la normal</td></tr>
+                      <tr><td>Intervalos de confianza</td><td>5</td><td>Cálculo e interpretación correctos</td></tr>
+                      <tr><td>Contrastar la hipótesis</td><td>15</td><td>Estadístico, región de rechazo o valor p, decisión e interpretación en contexto</td></tr>
+                      <tr><td>Conclusiones</td><td>5</td><td>Responden al problema; reconocen limitaciones</td></tr>
+                      <tr><td>Copia del cuestionario y bibliografía</td><td>5</td><td>Cuestionario anexo; APA 7 con el mínimo de fuentes</td></tr>
+                      <tr><td>Formalidad del documento</td><td>5</td><td>Redacción, ortografía, numeración de tablas y figuras, formato</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card shadow bloque p-4">
+                <h2 class="seccion"><i class="bi bi-easel"></i>Exposición ante el grupo (100 puntos)</h2>
+                <div class="row g-3 mb-3">
+                  <div class="col-6 col-lg-3"><div class="card shadow text-center p-2"><div class="h4 fw-bold mb-0" style="color:var(--azul)">25</div><small class="text-muted">Formalidad</small></div></div>
+                  <div class="col-6 col-lg-3"><div class="card shadow text-center p-2"><div class="h4 fw-bold mb-0" style="color:var(--azul)">30</div><small class="text-muted">Expresión verbal</small></div></div>
+                  <div class="col-6 col-lg-3"><div class="card shadow text-center p-2"><div class="h4 fw-bold mb-0" style="color:var(--oro)">30</div><small class="text-muted">Diapositivas: calidad y creatividad</small></div></div>
+                  <div class="col-6 col-lg-3"><div class="card shadow text-center p-2"><div class="h4 fw-bold mb-0" style="color:var(--azul)">15</div><small class="text-muted">Dominio y organización</small></div></div>
+                </div>
+                <p class="small text-muted">Cada criterio indica en la etiqueta los puntos de cada nivel. Calificación = suma de puntos ÷ 10.</p>
+                <div class="table-responsive rounded-3 shadow">
+                  <table class="table table-bordered table-hover table-sm align-middle">
+                    <thead><tr><th>Bloque</th><th>Criterio</th><th>Pts</th><th>Excelente</th><th>Bueno</th><th>Suficiente</th><th>Insuficiente</th></tr></thead>
+                    <tbody>
+                      <tr><td rowspan="3" class="fw-bold table-light">Formalidad<br><small class="fw-normal">25 pts</small></td><td>Vestimenta</td><td class="text-center fw-bold">10</td><td>Todo el equipo con vestimenta formal y coordinada <span class="badge text-bg-success">10</span></td><td>La mayoría con vestimenta formal <span class="badge text-bg-primary">8</span></td><td>Vestimenta casual pero arreglada <span class="badge text-bg-warning">5</span></td><td>Vestimenta inapropiada para exponer <span class="badge text-bg-danger">2</span></td></tr>
+                      <tr><td>Presentación del equipo y actitud</td><td class="text-center fw-bold">10</td><td>Se presentan con nombre y rol; postura correcta y respeto al grupo <span class="badge text-bg-success">10</span></td><td>Se presentan; detalles menores de postura <span class="badge text-bg-primary">8</span></td><td>Presentación incompleta o actitud poco seria <span class="badge text-bg-warning">5</span></td><td>No se presentan o falta de respeto <span class="badge text-bg-danger">2</span></td></tr>
+                      <tr><td>Registro del lenguaje</td><td class="text-center fw-bold">5</td><td>Formal, sin muletillas ni groserías <span class="badge text-bg-success">5</span></td><td>Muletillas ocasionales <span class="badge text-bg-primary">4</span></td><td>Coloquial con frecuencia <span class="badge text-bg-warning">3</span></td><td>Inapropiado <span class="badge text-bg-danger">1</span></td></tr>
+                      <tr><td rowspan="3" class="fw-bold table-light">Expresión verbal<br><small class="fw-normal">30 pts</small></td><td>Claridad y volumen</td><td class="text-center fw-bold">10</td><td>Se escucha y entiende en todo el salón <span class="badge text-bg-success">10</span></td><td>Se entiende casi siempre <span class="badge text-bg-primary">8</span></td><td>Por momentos no se escucha <span class="badge text-bg-warning">5</span></td><td>No se escucha o no se entiende <span class="badge text-bg-danger">2</span></td></tr>
+                      <tr><td>Fluidez y contacto con el público</td><td class="text-center fw-bold">10</td><td>Explica con sus palabras, sin leer, mirando al grupo <span class="badge text-bg-success">10</span></td><td>Consulta notas ocasionalmente <span class="badge text-bg-primary">8</span></td><td>Lee buena parte de las diapositivas <span class="badge text-bg-warning">5</span></td><td>Lee todo el tiempo, de espaldas al grupo <span class="badge text-bg-danger">2</span></td></tr>
+                      <tr><td>Lenguaje estadístico</td><td class="text-center fw-bold">10</td><td>Usa los términos con precisión (muestra, H₀, intervalo, nivel de confianza) <span class="badge text-bg-success">10</span></td><td>Imprecisiones menores <span class="badge text-bg-primary">8</span></td><td>Confunde varios términos <span class="badge text-bg-warning">5</span></td><td>No usa vocabulario estadístico <span class="badge text-bg-danger">2</span></td></tr>
+                      <tr><td rowspan="2" class="fw-bold table-light">Diapositivas y presentación<br><small class="fw-normal">30 pts</small></td><td>Calidad</td><td class="text-center fw-bold">15</td><td>Portada con datos, texto legible, gráficas claras, sin faltas, fuentes citadas <span class="badge text-bg-success">15</span></td><td>Falla un elemento <span class="badge text-bg-primary">12</span></td><td>Fallan dos o tres elementos <span class="badge text-bg-warning">8</span></td><td>Sin apoyo visual o ilegible <span class="badge text-bg-danger">3</span></td></tr>
+                      <tr><td>Creatividad</td><td class="text-center fw-bold">15</td><td>Diseño original y coherente; recursos que captan la atención (infografía, material físico, dinámica con el grupo) <span class="badge text-bg-success">15</span></td><td>Diseño cuidado con algún recurso adicional <span class="badge text-bg-primary">12</span></td><td>Plantilla básica sin recursos adicionales <span class="badge text-bg-warning">8</span></td><td>Solo texto copiado del informe <span class="badge text-bg-danger">3</span></td></tr>
+                      <tr><td rowspan="2" class="fw-bold table-light">Dominio y organización<br><small class="fw-normal">15 pts</small></td><td>Tiempo y participación</td><td class="text-center fw-bold">5</td><td>Respeta el tiempo; todos participan por igual <span class="badge text-bg-success">5</span></td><td>Desfase menor a 2 min <span class="badge text-bg-primary">4</span></td><td>Desfase mayor o participación desigual <span class="badge text-bg-warning">3</span></td><td>Sin estructura; habla una sola persona <span class="badge text-bg-danger">1</span></td></tr>
+                      <tr><td>Respuesta a preguntas</td><td class="text-center fw-bold">10</td><td>Responde con argumentos y datos <span class="badge text-bg-success">10</span></td><td>Responde con alguna duda <span class="badge text-bg-primary">8</span></td><td>Responde parcialmente <span class="badge text-bg-warning">5</span></td><td>No puede responder <span class="badge text-bg-danger">2</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="e2-for"><div class="card shadow bloque p-4" data-formato="EyP2"></div></div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<button id="btnArriba" class="btn rounded-circle shadow text-white no-print" style="background:var(--azul);width:48px;height:48px" aria-label="Subir"><i class="bi bi-arrow-up"></i></button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="auth-config.js"></script>
+<script src="aula-header.js"></script>
+<script>
+/* ==========================================================
+   CONTRASEÑAS (en código duro, solo control básico de acceso).
+   Cámbialas aquí:
+   ========================================================== */
+const CLAVES = { eyp1: "estadistica3071", eyp2: "estadistica5344" };
+
+const TITULOS = { eyp1: "Estadística y Probabilidad I", eyp2: "Estadística y Probabilidad II" };
+const desbloqueado = { eyp1: false, eyp2: false };
+let pendiente = null;
+
+try { Object.assign(desbloqueado, JSON.parse(sessionStorage.getItem("eyp_acceso") || "{}")); } catch (e) {}
+function guardar(){ try { sessionStorage.setItem("eyp_acceso", JSON.stringify(desbloqueado)); } catch (e) {} }
+
+/* Formato de entrega (se reutiliza en ambas asignaturas) */
+function formatoHTML(sigla){
+  const dos = sigla === "EyP2";
+  return `
+    <h2 class="seccion"><i class="bi bi-file-earmark-pdf"></i>Formato de entrega</h2>
+    <div class="row g-3">
+      <div class="col-md-6"><div class="card req-card shadow p-3"><strong>Archivo</strong>
+        <small class="text-muted">Un solo PDF${dos ? "; las diapositivas en un segundo PDF" : ""}.</small></div></div>
+      <div class="col-md-6"><div class="card req-card shadow p-3"><strong>Tipografía</strong>
+        <small class="text-muted">Arial o Calibri 12, interlineado 1.5, márgenes de 2.5 cm, páginas numeradas.</small></div></div>
+      <div class="col-md-6"><div class="card req-card shadow p-3"><strong>Tablas y gráficas</strong>
+        <small class="text-muted">Numeradas, con título y fuente («Elaboración propia con datos de la encuesta»).</small></div></div>
+      <div class="col-md-6"><div class="card req-card shadow p-3"><strong>Ligas activas</strong>
+        <small class="text-muted">El profesor(a) debe poder abrir el formulario y la base de datos desde el PDF.</small></div></div>
+      <div class="col-12"><div class="card req-card shadow p-3"><strong>Nombre del archivo</strong>
+        <small class="text-muted"><code>Grupo_ApellidoIntegrante1_${sigla}_TrabajoFinal.pdf</code>${dos ? " y <code>Grupo_ApellidoIntegrante1_EyP2_Exposicion.pdf</code>" : ""}</small></div></div>
+    </div>`;
+}
+document.querySelectorAll("[data-formato]").forEach(el => el.innerHTML = formatoHTML(el.dataset.formato));
+
+/* Navegación */
+const vistas = ["inicio", "login", "eyp1", "eyp2"];
+function mostrar(v){
+  vistas.forEach(n => document.getElementById("vista-" + n).classList.toggle("d-none", n !== v));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function actualizarCandados(){
+  document.querySelectorAll("[data-lock]").forEach(i => {
+    i.className = desbloqueado[i.dataset.lock] ? "bi bi-unlock-fill" : "bi bi-lock-fill";
+  });
+}
+function irInicio(){ ocultarPopovers(); mostrar("inicio"); }
+function abrir(id){
+  if (desbloqueado[id]) { mostrar(id); return; }
+  pendiente = id;
+  document.getElementById("loginTitulo").textContent = TITULOS[id];
+  const input = document.getElementById("pass");
+  input.value = ""; input.classList.remove("is-invalid");
+  mostrar("login");
+  setTimeout(() => input.focus(), 150);
+}
+
+document.querySelectorAll("[data-open]").forEach(c => c.addEventListener("click", () => abrir(c.dataset.open)));
+document.getElementById("btnInicio").addEventListener("click", irInicio);
+document.querySelectorAll("[data-volver]").forEach(b => b.addEventListener("click", irInicio));
+
+document.getElementById("formLogin").addEventListener("submit", e => {
+  e.preventDefault();
+  const input = document.getElementById("pass");
+  if (input.value.trim() === CLAVES[pendiente]) {
+    desbloqueado[pendiente] = true; guardar(); actualizarCandados(); mostrar(pendiente);
+  } else {
+    input.classList.add("is-invalid");
+    const card = input.closest(".card");
+    card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+    input.select();
+  }
+});
+
+document.getElementById("verPass").addEventListener("click", function(){
+  const input = document.getElementById("pass");
+  const ver = input.type === "password";
+  input.type = ver ? "text" : "password";
+  this.innerHTML = ver ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+});
+
+document.getElementById("btnBloquear").addEventListener("click", () => {
+  desbloqueado.eyp1 = desbloqueado.eyp2 = false;
+  guardar(); actualizarCandados(); irInicio();
+});
+
+/* ==========================================================
+   DEFINICIONES (popovers de Estadística II)
+   ========================================================== */
+const DEFS = {
+  portada:       ["Portada", "Primera página con los datos de identificación del trabajo: institución, asignatura, título, integrantes, grupo, profesor(a) y fecha."],
+  firmas:        ["Hoja de integrantes", "Lista de integrantes con nombre, número de cuenta y firma; con ella cada uno declara haber participado en el trabajo."],
+  indice:        ["Índice", "Lista de los apartados del informe con el número de página donde inicia cada uno."],
+  indicefig:     ["Índice de tablas y figuras", "Lista numerada de todas las tablas y gráficas con su título y página."],
+  resumen:       ["Resumen", "Síntesis de máximo 150 palabras: problema, cómo se obtuvieron los datos, resultado principal y conclusión."],
+  introduccion:  ["Introducción", "Presenta el tema, su contexto y cómo está organizado el informe."],
+  planteamiento: ["Planteamiento del problema", "Describe la situación que se quiere conocer y por qué se necesitan datos para responderla."],
+  pregunta:      ["Pregunta de investigación", "Pregunta concreta que el estudio responderá con los datos de la encuesta."],
+  objetivo:      ["Objetivo", "Lo que se pretende lograr con la investigación. Se redacta con un verbo en infinitivo: conocer, estimar, comparar."],
+  objgeneral:    ["Objetivo general", "El propósito principal de toda la investigación, en una sola oración."],
+  objespecificos:["Objetivos específicos", "Pasos medibles que, en conjunto, permiten cumplir el objetivo general."],
+  justificacion: ["Justificación", "Explica por qué es importante investigar el tema, para qué sirve y a quién beneficia."],
+  hipotesis:     ["Hipótesis", "Afirmación sobre el valor de un parámetro de la población que se pone a prueba con los datos de una muestra."],
+  lenguaje:      ["Lenguaje común", "La hipótesis escrita como oración comprensible para cualquier persona, antes de pasarla a notación estadística."],
+  proporcion:    ["Proporción", "Fracción de la población que tiene cierta característica (p). En la muestra se calcula p̂ = casos favorables ÷ n."],
+  media:         ["Media", "Promedio de los datos: suma de los valores entre el número de datos. En la población es μ; en la muestra, x̄."],
+  h0:            ["Hipótesis nula (H₀)", "Afirma que el parámetro tiene el valor supuesto (p₀ o μ₀) y que cualquier diferencia observada se debe al azar."],
+  h1:            ["Hipótesis alternativa (H₁)", "Lo que se acepta si los datos llevan a rechazar H₀. Usa ≠, < o >."],
+  marco:         ["Marco teórico", "Fundamento del trabajo: información de fuentes confiables sobre el tema y sobre los conceptos estadísticos que se usarán, con citas."],
+  marcotema:     ["Marco teórico del tema", "Qué se sabe del tema investigado según fuentes confiables (artículos, encuestas oficiales, libros)."],
+  va:            ["Variable aleatoria", "Asigna un número a cada resultado de un experimento aleatorio; por ejemplo, cuántos encuestados responden «Mucho»."],
+  binomial:      ["Distribución binomial", "Modelo del número de éxitos en n ensayos independientes, cada uno con la misma probabilidad de éxito p."],
+  normal:        ["Distribución normal", "Distribución continua en forma de campana, simétrica respecto a su media μ, con dispersión σ."],
+  tlc:           ["Teorema del Límite Central", "Al aumentar n, la media muestral se distribuye aproximadamente normal, con media μ y desviación σ/√n, sin importar la forma de la población."],
+  dmuestral:     ["Distribución muestral", "Distribución de probabilidad de un estadístico (como x̄ o p̂) considerando todas las muestras posibles del mismo tamaño."],
+  ic:            ["Intervalo de confianza", "Rango de valores, calculado con la muestra, que estima el valor del parámetro con un nivel de confianza dado."],
+  contraste:     ["Contraste de hipótesis", "Procedimiento para decidir, con los datos de una sola muestra, si se rechaza o no H₀."],
+  metodologia:   ["Metodología", "Describe cómo se obtuvieron y procesaron los datos, para que otra persona pudiera repetir el estudio."],
+  poblacion:     ["Población", "Conjunto completo sobre el que se quiere concluir; por ejemplo, todo el alumnado del plantel."],
+  muestra:       ["Muestra", "Parte de la población de la que sí se obtienen datos; aquí, los 100 encuestados."],
+  seleccion:     ["Procedimiento de selección", "Cómo se eligió a los encuestados (al azar, por grupos, en pasillos). Determina los posibles sesgos."],
+  fechas:        ["Fechas", "Periodo en que se aplicó la encuesta; los resultados pueden cambiar con el tiempo."],
+  depuracion:    ["Depuración", "Eliminar respuestas incompletas, duplicadas o incoherentes hasta quedar con 100 válidas. Se informa cuántas se descartaron y por qué."],
+  tablavars:     ["Tabla de variables", "Lista de cada pregunta como variable, con su tipo (cualitativa nominal u ordinal; cuantitativa discreta o continua) y sus valores posibles."],
+  url:           ["URL", "Liga del formulario en línea. Debe abrir sin pedir permiso."],
+  analisis:      ["Análisis estadístico de los resultados", "Organización, cálculo e interpretación de los datos de la encuesta."],
+  porcentajes:   ["Porcentajes", "(Frecuencia de cada opción ÷ total) × 100. Con 100 encuestados, frecuencia y porcentaje coinciden."],
+  opinion:       ["Opinión por pregunta", "Interpretación escrita de lo que muestran los porcentajes de cada pregunta, en el contexto del tema."],
+  genero:        ["Comparación por género", "Porcentajes por separado para 50 mujeres y 50 hombres: (respuestas ÷ 50) × 100, y comparación entre ambos."],
+  graficas:      ["Gráficas", "Representación visual de los datos (barras, circular, histograma…). Cada una con título, ejes, fuente e interpretación."],
+  mediana:       ["Mediana", "Valor central de los datos ordenados: deja 50 % de los datos por debajo y 50 % por arriba."],
+  moda:          ["Moda", "Valor o categoría que más se repite."],
+  varianza:      ["Varianza", "Promedio de los cuadrados de las distancias de cada dato a la media (s²). Mide la dispersión."],
+  desv:          ["Desviación estándar", "Raíz cuadrada de la varianza (s). Distancia típica de los datos a la media, en las mismas unidades."],
+  modelo:        ["Modelo de probabilidad", "Distribución de probabilidad que describe el comportamiento de una variable aleatoria."],
+  exito:         ["Éxito / fracaso", "Agrupar las respuestas en dos: éxito (por ejemplo, «Mucho» o «Demasiado») y fracaso (el resto)."],
+  condbin:       ["Condiciones binomiales", "Número fijo de ensayos n, dos resultados posibles, probabilidad de éxito p constante e independencia entre ensayos."],
+  esperanza:     ["Esperanza E(X) = np", "Número de éxitos que se espera en promedio en n ensayos con probabilidad de éxito p."],
+  sigma:         ["Desviación estándar binomial", "σ = √(np(1 − p)). Variación típica del número de éxitos alrededor de np."],
+  condnormal:    ["Condición para la normal", "Si np ≥ 10 y n(1 − p) ≥ 10, la binomial y la proporción muestral pueden aproximarse con la distribución normal."],
+  estimacion:    ["Estimación", "Usar un estadístico de la muestra (x̄ o p̂) para aproximar el valor desconocido de un parámetro, puntualmente o por intervalo."],
+  nc95:          ["Nivel de confianza del 95 %", "Si se repitiera el muestreo muchas veces, el 95 % de los intervalos así construidos contendría al parámetro."],
+  icprop:        ["Intervalo para la proporción", "p̂ ± 1.96·√(p̂(1 − p̂)/n), con 95 % de confianza."],
+  icmedia:       ["Intervalo para la media", "x̄ ± 1.96·s/√n, con 95 % de confianza."],
+  alfa:          ["Nivel de significancia (α)", "Probabilidad máxima que se acepta de rechazar H₀ cuando en realidad es cierta (error tipo I). Aquí α = 0.05."],
+  estadprueba:   ["Estadístico de prueba", "Valor Z calculado con la muestra; indica cuántos errores estándar se aleja el estimador del valor que supone H₀."],
+  vcritico:      ["Valor crítico", "Límite de la región de rechazo. Con α = 0.05: 1.645 (una cola) o 1.96 (dos colas)."],
+  valorp:        ["Valor p", "Probabilidad de obtener un resultado tan extremo como el observado si H₀ fuera cierta. Si valor p ≤ α, se rechaza H₀."],
+  decision:      ["Decisión", "Rechazar o no rechazar H₀. Nunca se «prueba» que una hipótesis sea verdadera."],
+  interpretacion:["Interpretación", "Explicar la decisión en el contexto del problema, con lenguaje común."],
+  cuestionario:  ["Copia del cuestionario", "Todas las preguntas y opciones de respuesta tal como se aplicaron."],
+  conclusiones:  ["Conclusiones", "Respuesta al problema y al objetivo con base en los resultados obtenidos."],
+  limitaciones:  ["Limitaciones", "Factores que impiden generalizar los resultados: muestra no aleatoria, tamaño, periodo de aplicación."],
+  sesgo:         ["Sesgo", "Error sistemático que hace que la muestra no represente a la población; por ejemplo, encuestar solo a amigos."],
+  bibliografia:  ["Bibliografía", "Fuentes consultadas, en formato APA 7, que coinciden con las citas del texto."],
+  apendices:     ["Apéndices", "Material de apoyo al final: base de datos, capturas del software y cálculos."]
+};
+
+let popovers = [];
+function ocultarPopovers(){ popovers.forEach(p => p.hide()); }
+document.querySelectorAll("b.def").forEach(el => {
+  const d = DEFS[el.dataset.def];
+  if (!d) return;
+  el.setAttribute("tabindex", "0");
+  el.setAttribute("role", "button");
+  popovers.push(new bootstrap.Popover(el, {
+    title: d[0], content: d[1], trigger: "hover focus", placement: "top", container: "body"
+  }));
+});
+/* Al cambiar de pestaña, cerrar popovers abiertos */
+document.querySelectorAll('[data-bs-toggle="pill"]').forEach(t => t.addEventListener("show.bs.tab", ocultarPopovers));
+
+/* Botón para subir */
+const arriba = document.getElementById("btnArriba");
+window.addEventListener("scroll", () => { arriba.style.display = window.scrollY > 400 ? "block" : "none"; });
+arriba.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+actualizarCandados();
+</script>
+</body>
+</html>
