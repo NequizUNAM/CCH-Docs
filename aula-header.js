@@ -27,7 +27,7 @@
         { label: 'Circuitos eléctricos', href: 'circuitos.html', icon: 'bi-lightning-charge-fill' },
         { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' },
         { label: 'Conversiones numéricas', href: 'conversiones.html', icon: 'bi-123' },
-        { label: 'Operaciones básicas binarios', href: 'operaciones_basicas_binarios.html', icon: 'bi-calculator-fill' },
+        { label: 'Operaciones básicas binarios', href: 'conversion_binarios.html', icon: 'bi-calculator-fill' },
         { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' } ] },
       { id: 'estadistica', label: 'Estadística', icon: 'bi-bar-chart-line', color: 'c-est', items: [
         { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-bar-chart-line-fill' },
@@ -38,7 +38,8 @@
         { label: 'Probabilidad', href: 'probabilidad.html', icon: 'bi-dice-5-fill' },
         { label: 'Función de distribución de probabilidad', href: 'funcion_distribucion_probabilidad.html', icon: 'bi-bar-chart-line-fill' },
         { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' },
-        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' } ] }
+        { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' },
+        { label: 'Proyectos finales EyP', href: 'proyectos_finales_eyp.html', icon: 'bi-journal-check' } ] }
     ]
   };
   const store = {
