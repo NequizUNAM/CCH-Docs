@@ -15,12 +15,14 @@
   const MENU = {
     brand: { label: 'Aula Digital', icon: 'bi-mortarboard-fill', href: 'index.html' },
     groups: [
+      { id: 'computo', label: 'Taller de Cómputo', icon: 'bi-pc-display', color: 'c-com', items: [
+        { label: 'Taller de Cómputo', href: 'taller_computo.html', icon: 'bi-laptop' } ] },
       { id: 'matematicas', label: 'Matemáticas', icon: 'bi-calculator', color: 'c-mat', items: [
         { label: 'Los Números', href: 'los_numeros.html', icon: 'bi-hash' },
         { label: 'Fracciones', href: 'fracciones.html', icon: 'bi-pie-chart-fill' },
         { label: 'Variación directamente proporcional', href: 'variacion_proporcional.html', icon: 'bi-graph-up-arrow' },
         { label: 'Exponentes y Radicales', href: 'exponentes_radicales.html', icon: 'bi-superscript' },
-        { label: 'Ángulos', href: 'angulos.html', icon: 'bi-compass' },
+        { label: 'Ángulos', href: 'angulos.html', icon: 'bi-rulers' },
         { label: 'Teorema de Pitágoras', href: 'pitagoras.html', icon: 'bi-triangle-half' } ] },
       { id: 'cibernetica', label: 'Cibernética', icon: 'bi-cpu', color: 'c-cib', items: [
         { label: 'Precursores', href: 'precursores.html', icon: 'bi-clock-history' },
@@ -28,10 +30,10 @@
         { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' },
         { label: 'Conversiones numéricas', href: 'conversiones.html', icon: 'bi-123' },
         { label: 'Operaciones básicas binarios', href: 'operaciones_basicas_binarios.html', icon: 'bi-calculator-fill' },
-        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-toggles' },
-        { label: 'Exámen Cibernética', href: 'examenes_cibernetica.html', icon: 'bi-toggles' } ] },
+        { label: 'Compuertas lógicas', href: 'compuertas_logicas.html', icon: 'bi-diagram-3-fill' },
+        { label: 'Exámen Cibernética', href: 'examenes_cibernetica.html', icon: 'bi-file-earmark-check-fill' } ] },
       { id: 'estadistica', label: 'Estadística', icon: 'bi-bar-chart-line', color: 'c-est', items: [
-        { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-bar-chart-line-fill' },
+        { label: 'Distribución Muestral', href: 'distribucion_muestral.html', icon: 'bi-people-fill' },
         { label: 'Medidas de Dispersión', href: 'medidas_dispersion.html', icon: 'bi-arrows-expand' },
         { label: 'Amplitudes', href: 'amplitudes.html', icon: 'bi-distribute-horizontal' },
         { label: 'Cuartiles y Percentiles', href: 'cuartiles_percentiles.html', icon: 'bi-percent' },
@@ -40,8 +42,7 @@
         { label: 'Función de distribución de probabilidad', href: 'funcion_distribucion_probabilidad.html', icon: 'bi-bar-chart-line-fill' },
         { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' },
         { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' },
-        { label: 'Proyectos finales EyP', href: 'proyectos_finales_eyp.html', icon: 'bi-journal-check' },
-        { label: 'Exámen Estadistica', href: 'examenes_estadistica.html', icon: 'bi-journal-check' } ] }
+        { label: 'Proyectos finales EyP', href: 'proyectos_finales_eyp.html', icon: 'bi-journal-check' } ] }
     ]
   };
   const store = {
