@@ -162,19 +162,36 @@
     .rl-chk div { padding:.25rem .6rem; border-radius:10px; margin:.2rem 0; background:#fff; border:1px solid #e2e8f0; font-size:.92rem; }
     @media (max-width:576px) { .bgrid { font-size:1rem; border-spacing:2px; } .bgrid td { width:1.55rem; min-width:1.55rem; height:1.9rem; } .lesson-head { padding:1rem; } .hero-bits { font-size:1.6rem; } }
 
+    .vt-card { height:auto; } .vt-wrap { overflow-x:auto; padding:.2rem 0; }
+    table.vt { border-collapse:separate; border-spacing:3px 2px; margin:0 auto; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .vt td { min-width:2.3rem; height:2.4rem; text-align:center; font-size:1.5rem; font-weight:700; border-radius:8px; padding:0; color:#1e293b; }
+    .vt td.lab { min-width:0; font-size:.74rem; font-weight:700; text-align:right; color:#64748b; font-family:system-ui,sans-serif; padding-right:.4rem; white-space:nowrap; height:auto; }
+    .vt td.sg { min-width:1.6rem; font-size:1.6rem; font-weight:800; color:var(--c); }
+    .vt td.hl { background:#fff4e0; } .vt td.cur { outline:2px dashed var(--c); color:var(--c); }
+    .vt tr.ln td.dg { border-top:3px solid #1e293b; border-radius:0 0 8px 8px; }
+    .vt td.cy { font-size:1rem; height:1.5rem; font-weight:800; } .vt td.cy.on { color:var(--cc); } .vt td.cy.off { color:#cbd5e1; font-weight:600; }
+    .vt td.res.ok { color:#2f9e44; } .vt td.res.pend { color:#cbd5e1; } .vt td.new { animation:vtpop .35s ease-out; }
+    .vt td.pp0 { color:#94a3b8; } .vt td.sh { color:#e8590c; } .vt td.pp1 { color:#1864ab; } .vt td.qd { color:#d6336c; } .vt td.qd.q0 { color:#cbd5e1; }
+    .vt td.dvd { border-top:3px solid #1e293b; border-radius:0 0 8px 8px; } .vt td.dvd.first { border-left:3px solid #1e293b; } .vt td.lab.dv { font-size:1.3rem; font-weight:800; font-family:inherit; }
+    .vt tr.sb td.dg.has { border-bottom:3px solid #1e293b; border-radius:0; color:#e03131; } .vt tr.pend2 td.dg { background:#fff4e0; } .vt tr.rm td.dg { color:#2f9e44; }
+    .vbit { all:unset; box-sizing:border-box; cursor:pointer; display:block; width:100%; line-height:2.4rem; border-radius:8px; } .vbit:hover { background:#dbeafe; } .vbit:focus-visible { outline:2px solid #1864ab; }
+    .vt-info { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:.5rem .8rem; font-size:.92rem; } .vt-q { margin-top:.6rem; padding:.6rem .8rem; border:2px dashed var(--c); border-radius:12px; background:#fffdf5; }
+    .vp { min-width:2.6rem; border:2px solid var(--c); color:var(--c); background:#fff; } .vp.sel { background:var(--c); color:#fff; }
+    @keyframes vtpop { from { transform:scale(.4); opacity:0; } to { transform:none; opacity:1; } }
+    @media (max-width:576px) { .vt td { min-width:1.7rem; font-size:1.2rem; height:2rem; } .vbit { line-height:2rem; } }
   </style>
 </head>
 <body>
   <div id="app-header"></div>
   <nav class="sec-nav" id="sec-nav">
-    <a href="#s1">1. Teorema</a><a href="#s2">2. Conversor</a><a href="#sr">3. Reglas</a><a href="#s3">4. Suma</a><a href="#s4">5. Resta</a><a href="#s5">6. Multiplicación</a><a href="#s6">7. División</a><a href="#s7">8. Más temas</a><a href="#s8">9. Ejercicios</a><a href="#" data-manual="teorema"><i class="bi bi-journal-text me-1"></i>Manual</a>
+    <a href="#s1">1. Teorema</a><a href="#sr">2. Reglas</a><a href="#s3">3. Suma</a><a href="#s4">4. Resta</a><a href="#s5">5. Multiplicación</a><a href="#s6">6. División</a><a href="#s7">7. Más temas</a><a href="#s8">8. Ejercicios</a><a href="#" data-manual="teorema"><i class="bi bi-journal-text me-1"></i>Manual</a>
   </nav>
   <main>
     <header class="hero-header text-center mb-4">
       <div class="hero-bits" id="hero-bits" aria-hidden="true"></div>
       <div class="container">
         <h1 class="display-5 fw-bold"><i class="bi bi-123 text-info me-2"></i>Operaciones básicas binarios</h1>
-        <p class="lead mb-1">Teorema fundamental de la numeración • conversiones • <b>reglas de las operaciones</b> • suma • resta • multiplicación • división</p>
+        <p class="lead mb-1">Teorema fundamental de la numeración • <b>reglas de las operaciones</b> • suma • resta • multiplicación • división</p>
         <p class="mb-3 text-light opacity-75">Cada operación se resuelve paso a paso, con tus propios números, y al final practicas con ejercicios que se comprueban solos</p>
         <a class="btn btn-info text-white rounded-pill fw-bold me-1" href="#sr"><i class="bi bi-ui-checks-grid me-1"></i>Reglas de las operaciones</a><button class="btn btn-warning rounded-pill fw-bold" data-manual="teorema"><i class="bi bi-journal-text me-1"></i>Abrir el Manual</button>
       </div>
@@ -201,20 +218,9 @@
           <div class="row g-3" id="th-notes"></div>
         </div></div></section>
 
-      <!-- 2. CONVERSOR -->
-      <section class="lesson mb-5" id="s2"><div class="card lesson-card">
-        <div class="lesson-head h-3"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Conversor paso a paso</h2><small>El teorema aplicado: divisiones sucesivas, suma de pesos y agrupación de bits</small></div>
-          <button class="btn btn-sm btn-light rounded-pill" id="cv-man" data-manual="d2b"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
-        <div class="card-body">
-          <div class="d-flex flex-wrap gap-2 mb-3" id="cv-modes"></div>
-          <div class="row g-2 align-items-end mb-3"><div class="col-sm-6 col-lg-4"><label class="inlab mb-1" for="cv-in" id="cv-lab">Número</label><input id="cv-in" class="binput" autocomplete="off" spellcheck="false"><div class="errmsg" id="cv-err"></div></div>
-            <div class="col-auto pb-3" id="cv-sub"></div><div class="col-auto pb-3"><button class="btn btn-outline-dark rounded-pill btn-sm fw-bold" id="cv-rand"><i class="bi bi-shuffle me-1"></i>Aleatorio</button></div></div>
-          <div class="stepper" id="sp-cv"><div class="stp-top"><div class="stp-ctl"></div><div class="stp-dots"></div></div><div class="row g-3"><div class="col-lg-7"><div class="panel stp-viz"></div></div><div class="col-lg-5"><div class="stp-title"></div><div class="stp-note"></div><div class="calc-screen stp-screen"></div></div></div></div>
-        </div></div></section>
-
-      <!-- 3. REGLAS DE LAS OPERACIONES -->
+      <!-- 2. REGLAS DE LAS OPERACIONES -->
       <section class="lesson mb-5" id="sr"><div class="card lesson-card">
-        <div class="lesson-head" style="background:linear-gradient(135deg,#0c8599,#1864ab)"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Reglas de las operaciones básicas</h2><small>Las tablas de cada operación, un probador de bits, atajos, propiedades y un verificador</small></div>
+        <div class="lesson-head" style="background:linear-gradient(135deg,#0c8599,#1864ab)"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Reglas de las operaciones básicas</h2><small>Cada operación en vertical (y paso a paso), sus tablas de una columna, atajos, propiedades y un verificador</small></div>
           <button class="btn btn-sm btn-light rounded-pill" data-manual="reglas"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
         <div class="card-body">
           <div class="tip-box s-amp small mb-3"><i class="bi bi-lightbulb-fill text-warning me-1"></i><strong>Antes de operar números largos, domina la operación de una sola columna.</strong> Toda suma, resta, multiplicación o división binaria se reduce a repetir estas reglas bit por bit. Toca los bits del probador y mira cómo cambia la regla que se usa; después compruébalo con tus propios números.</div>
@@ -224,7 +230,7 @@
 
       <!-- 4. SUMA -->
       <section class="lesson mb-5" id="s3"><div class="card lesson-card">
-        <div class="lesson-head h-2"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Suma binaria</h2><small>Columna por columna, con acarreo: 1 + 1 = 10<sub>2</sub></small></div>
+        <div class="lesson-head h-2"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Suma binaria</h2><small>Columna por columna, con acarreo: 1 + 1 = 10<sub>2</sub></small></div>
           <button class="btn btn-sm btn-light rounded-pill" data-manual="suma"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
         <div class="card-body">
           <div class="row g-2 align-items-end mb-3"><div class="col-6 col-lg-3"><label class="inlab mb-1" for="ad-a">Sumando A (binario)</label><input id="ad-a" class="binput" autocomplete="off" spellcheck="false"></div>
@@ -236,7 +242,7 @@
 
       <!-- 4. RESTA -->
       <section class="lesson mb-5" id="s4"><div class="card lesson-card">
-        <div class="lesson-head h-4"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Resta binaria</h2><small>Con préstamo o con complemento a 2 (como lo hacen las computadoras)</small></div>
+        <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Resta binaria</h2><small>Con préstamo o con complemento a 2 (como lo hacen las computadoras)</small></div>
           <button class="btn btn-sm btn-light rounded-pill" id="sb-man" data-manual="resta"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
         <div class="card-body">
           <div class="d-flex flex-wrap gap-2 mb-3" id="sb-modes"></div>
@@ -249,7 +255,7 @@
 
       <!-- 5. MULTIPLICACIÓN -->
       <section class="lesson mb-5" id="s5"><div class="card lesson-card">
-        <div class="lesson-head h-5"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Multiplicación binaria</h2><small>Desplazar y sumar: cada bit 1 del multiplicador copia al multiplicando</small></div>
+        <div class="lesson-head h-5"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Multiplicación binaria</h2><small>Desplazar y sumar: cada bit 1 del multiplicador copia al multiplicando</small></div>
           <button class="btn btn-sm btn-light rounded-pill" data-manual="mult"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
         <div class="card-body">
           <div class="row g-2 align-items-end mb-3"><div class="col-6 col-lg-3"><label class="inlab mb-1" for="ml-a">Multiplicando A</label><input id="ml-a" class="binput" autocomplete="off" spellcheck="false"></div>
@@ -261,7 +267,7 @@
 
       <!-- 6. DIVISIÓN -->
       <section class="lesson mb-5" id="s6"><div class="card lesson-card">
-        <div class="lesson-head h-6"><div class="num">7</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">División binaria</h2><small>Algoritmo de la división: D = d · q + r con 0 ≤ r &lt; d</small></div>
+        <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">División binaria</h2><small>Algoritmo de la división: D = d · q + r con 0 ≤ r &lt; d</small></div>
           <button class="btn btn-sm btn-light rounded-pill" data-manual="div"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
         <div class="card-body">
           <div class="row g-2 align-items-end mb-3"><div class="col-6 col-lg-3"><label class="inlab mb-1" for="dv-a">Dividendo D (binario)</label><input id="dv-a" class="binput" autocomplete="off" spellcheck="false"></div>
@@ -274,7 +280,7 @@
 
       <!-- 7. MÁS TEMAS -->
       <section class="lesson mb-5" id="s7"><div class="card lesson-card">
-        <div class="lesson-head h-7"><div class="num">8</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Más temas que completan el tema</h2><small>Números con signo, desbordamiento, fracciones binarias y tablas de apoyo</small></div>
+        <div class="lesson-head h-7"><div class="num">7</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Más temas que completan el tema</h2><small>Números con signo, desbordamiento, fracciones binarias y tablas de apoyo</small></div>
           <button class="btn btn-sm btn-light rounded-pill" data-manual="signo"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
         <div class="card-body">
           <ul class="nav nav-pills mb-3 flex-wrap gap-1" id="ex-tabs"></ul><div id="ex-body"></div>
@@ -282,7 +288,7 @@
 
       <!-- 8. EJERCICIOS -->
       <section class="lesson mb-5" id="s8"><div class="card lesson-card">
-        <div class="lesson-head h-8"><div class="num">9</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ejercicios</h2><small>Escribe tu respuesta, compruébala y, si quieres, mira el resultado con su procedimiento</small></div>
+        <div class="lesson-head h-8"><div class="num">8</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ejercicios</h2><small>Escribe tu respuesta, compruébala y, si quieres, mira el resultado con su procedimiento</small></div>
           <button class="btn btn-sm btn-light rounded-pill" data-manual="formulario"><i class="bi bi-journal-text me-1"></i>Manual</button></div>
         <div class="card-body">
           <div class="d-flex flex-wrap align-items-center gap-2 mb-3"><span class="score" id="ex-score"></span>
@@ -459,10 +465,7 @@
       $('#th-notes').innerHTML = N.map(([c, ic, t, p], i) => `<div class="col-md-6 col-lg-4"><div class="note" style="--c:${c};animation-delay:${i * 70}ms"><h6><i class="bi ${ic}"></i>${t}</h6><p>${p}</p></div></div>`).join('');
     }
 
-    /* ================= 2. CONVERSOR ================= */
-    const CV = { mode: 'd2b', sb: 16, v: { d2b: '181', b2d: '10110101', b2x8: '110101101', b2x16: '10110101', x2b8: '265', x2b16: 'B5' } };
-    const CVM = [['d2b', 'Decimal → Binario', 'bi-arrow-right-circle-fill', '#6f42c1'], ['b2d', 'Binario → Decimal', 'bi-arrow-left-circle-fill', '#0d6efd'], ['b2x', 'Binario → Octal / Hex', 'bi-collection-fill', '#fd7e14'], ['x2b', 'Octal / Hex → Binario', 'bi-collection', '#198754']];
-    const cvKey = () => CV.mode + (CV.mode === 'b2x' || CV.mode === 'x2b' ? CV.sb : '');
+    /* ================= Pasos de conversión (se usan en los ejercicios) ================= */
     function ladder(rows, upto, fin) {
       let h = `<table class="ladder"><tr><th>Dividendo</th><th></th><th>Cociente</th><th>Resto</th></tr>`;
       for (let k = 0; k <= upto; k++) { const r = rows[k]; h += `<tr class="${k === upto && !fin ? 'cur' : ''}"><td>${r.a}</td><td>÷ 2 =</td><td class="q">${r.q}</td><td class="rm"><b>${r.r}</b></td></tr>`; }
@@ -514,27 +517,6 @@
       st.push({ title: 'Unir los grupos', viz: vz(digs.length - 1, -1), note: '<div class="small">Se pegan los grupos y se eliminan los ceros que sobran a la izquierda.</div>', calc: T`${bx(s.toUpperCase(), base)} = ${K('#7dd3fc', res)}_{2}`, col: COL.res });
       return st;
     }
-    function renderConvInputs() {
-      $('#cv-modes').innerHTML = CVM.map(([k, n, ic, c]) => `<button class="btn-chip ${CV.mode === k ? 'on' : ''}" style="--c:${c}" data-cvm="${k}"><i class="bi ${ic} me-1"></i>${n}</button>`).join('');
-      const m = CV.mode, lab = { d2b: 'Decimal (0 – 65535)', b2d: 'Binario (hasta 16 bits)', b2x: 'Binario (hasta 16 bits)', x2b: CV.sb === 16 ? 'Hexadecimal (0–9, A–F)' : 'Octal (0–7)' }[m];
-      $('#cv-lab').textContent = lab;
-      $('#cv-sub').innerHTML = (m === 'b2x' || m === 'x2b') ? `<div class="inlab mb-1">Base</div><div class="btn-group btn-group-sm">${[8, 16].map(b => `<button class="btn btn-outline-dark fw-bold ${CV.sb === b ? 'active' : ''}" data-cvb="${b}">${b === 8 ? 'Octal (8)' : 'Hexadecimal (16)'}</button>`).join('')}</div>` : '';
-      $('#sp-cv').dataset.base = CV.sb; const inp = $('#cv-in'); if (document.activeElement !== inp) inp.value = CV.v[cvKey()];
-      $('#cv-man').dataset.manual = { d2b: 'd2b', b2d: 'b2d', b2x: 'agrup', x2b: 'agrup' }[m];
-    }
-    function renderConv(keep) {
-      renderConvInputs(); const v = CV.v[cvKey()].trim(), m = CV.mode, err = $('#cv-err'), inp = $('#cv-in'); let ok = false, steps = [];
-      if (m === 'd2b') ok = /^\d{1,5}$/.test(v) && +v <= 65535; else if (m === 'b2d' || m === 'b2x') ok = /^[01]{1,16}$/.test(v); else ok = (CV.sb === 16 ? /^[0-9a-fA-F]{1,4}$/ : /^[0-7]{1,5}$/).test(v);
-      inp.classList.toggle('bad', !ok && v !== '');
-      err.textContent = ok || v === '' ? '' : { d2b: 'Escribe un entero entre 0 y 65535.', b2d: 'Solo 0 y 1, máximo 16 bits.', b2x: 'Solo 0 y 1, máximo 16 bits.', x2b: CV.sb === 16 ? 'Usa 0–9 y A–F (máx. 4 dígitos).' : 'Usa 0–7 (máx. 5 dígitos).' }[m];
-      if (ok) steps = m === 'd2b' ? stepsD2B(+v) : m === 'b2d' ? stepsB2D(v) : m === 'b2x' ? stepsB2X(v, CV.sb) : stepsX2B(v, CV.sb);
-      spSet('sp-cv', steps, keep);
-    }
-    on('[data-cvm]', 'click', (e, t) => { CV.mode = t.dataset.cvm; renderConv(); });
-    on('[data-cvb]', 'click', (e, t) => { CV.sb = +t.dataset.cvb; renderConv(); });
-    document.addEventListener('input', e => { if (e.target.id === 'cv-in') { CV.v[cvKey()] = e.target.value.replace(/\s/g, ''); renderConv(false); } });
-    $('#cv-rand').onclick = () => { const m = CV.mode; CV.v[cvKey()] = m === 'd2b' ? String(rnd(20, 999)) : m === 'b2d' || m === 'b2x' ? rndBin(rnd(5, 10)) : (CV.sb === 16 ? rnd(16, 4095).toString(16).toUpperCase() : rnd(8, 511).toString(8)); renderConv(); };
-
     /* ================= Operaciones: suma, resta, multiplicación, división ================= */
     const lsb = (s, L) => padL(s, L).split('').reverse().map(Number);
     function addBits(a, b, c0 = 0) { const n = a.length, bits = [], cin = [], cout = []; let c = c0; for (let i = 0; i < n; i++) { cin[i] = c; const s = a[i] + b[i] + c; bits[i] = s % 2; c = s >> 1; cout[i] = c; } return { bits, cin, cout, carry: c }; }
@@ -894,6 +876,7 @@
           <div class="col-lg-7"><div class="rl-card" style="--c:#2f9e44"><h6><i class="bi bi-patch-check-fill me-1"></i>Resultado y comprobaciones</h6>${out}</div></div></div>
           ${rlRule('Cómo comprobar cualquier operación', '#495057', ['<b>Operación inversa</b>: (A + B) − B = A · (A − B) + B = A · (A × B) ÷ B = A · d·q + r = D.', '<b>Pasa a decimal</b>: convierte A, B y el resultado con el teorema y compara.', '<b>Paridad</b>: el último bit de la suma es el XOR; el del producto, el AND.', '<b>Longitud</b>: el resultado no puede tener más bits que los máximos permitidos.', '<b>Residuo</b>: en la división, siempre menor que el divisor.'])}`;
       }
+      if (VT[t]) h = vtPanel(t) + '<div class="mt-3"></div>' + h;
       const keep = document.activeElement && document.activeElement.id, pos = keep && document.activeElement.selectionStart; $('#rl-body').innerHTML = h;
       if (keep && $('#' + keep)) { const el = $('#' + keep); el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) { } }
     }
@@ -903,7 +886,106 @@
     on('[data-rld]', 'click', (e, t) => { const k = t.dataset.rld, dv = +t.dataset.dv; if (k === 'd') { RL.d = Math.max(1, Math.min(7, RL.d + dv)); RL.R = Math.min(RL.R, RL.d - 1); } else RL.R = Math.max(0, Math.min(RL.d - 1, RL.R + dv)); renderRules(); });
     on('[data-rlk]', 'click', (e, t) => { RL.vk = Math.max(0, Math.min(6, RL.vk + +t.dataset.rlk)); renderRules(); });
     on('[data-rlop]', 'click', (e, t) => { RL.vop = t.dataset.rlop; renderRules(); });
-    document.addEventListener('input', e => { const id = e.target.id; if (id === 'rl-vA') RL.vA = e.target.value.replace(/\s/g, ''); else if (id === 'rl-vB') RL.vB = e.target.value.replace(/\s/g, ''); else if (id === 'rl-mine') RL.mine = e.target.value.replace(/\s/g, ''); else return; renderRules(); });
+    document.addEventListener('input', e => { const id = e.target.id; if (id === 'rl-vA') RL.vA = e.target.value.replace(/\s/g, ''); else if (id === 'rl-vB') RL.vB = e.target.value.replace(/\s/g, ''); else if (id === 'rl-mine') RL.mine = e.target.value.replace(/\s/g, ''); else if (id === 'vt-a' || id === 'vt-b') { const S = VS[RL.tab]; VT[RL.tab][id === 'vt-a' ? 'a' : 'b'] = e.target.value.replace(/\s/g, ''); S.i = 0; S.msg = ''; S.w = S.c = null; } else return; renderRules(); });
+
+    /* ===== Operaciones en vertical (interactivas) ===== */
+    const VT = { add: { a: '1', b: '1' }, sub: { a: '1101', b: '101' }, mul: { a: '101', b: '11' }, div: { a: '1101', b: '11' } };
+    const VS = { add: { i: 0, prac: 0, ok: 0, no: 0, msg: '', w: null, c: null }, sub: { i: 0, prac: 0, ok: 0, no: 0, msg: '', w: null, c: null }, mul: { i: 0, prac: 0, ok: 0, no: 0, msg: '', w: null, c: null }, div: { i: 0, prac: 0, ok: 0, no: 0, msg: '', w: null, c: null } };
+    const VLIM = { add: [8, 8], sub: [8, 8], mul: [6, 5], div: [10, 5] };
+    const VC = { add: '#d97706', sub: '#7048e8', mul: '#2f9e44', div: '#d6336c' };
+    const VSYM = { add: '+', sub: '−', mul: '×', div: '÷' };
+    const VPRE = { add: [['1', '1'], ['11', '1'], ['1111', '1'], ['1011', '110']], sub: [['10', '1'], ['1101', '101'], ['1000', '1'], ['101', '1101']], mul: [['11', '11'], ['101', '11'], ['1101', '101']], div: [['1010', '10'], ['1101', '11'], ['10110', '101']] };
+    const vtOk = k => okN(VT[k].a, VLIM[k][0]) && okN(VT[k].b, VLIM[k][1]) && (k !== 'div' || D2(VT[k].b) > 0);
+    function vtModel(k) {
+      const { a, b } = VT[k];
+      if (k === 'add') { const L = Math.max(a.length, b.length), A = lsb(a, L), Bv = lsb(b, L); let c = 0; const st = []; for (let i = 0; i < L; i++) { const r = fullAdd(A[i], Bv[i], c); st.push({ a: A[i], b: Bv[i], cin: c, s: r.s, bit: r.bit, co: r.co }); c = r.co; } if (c) st.push({ a: 0, b: 0, cin: c, s: c, bit: c, co: 0 }); return { st, N: st.length, res: st.map(x => x.bit).reverse().join('') }; }
+      if (k === 'sub') { const neg = D2(a) < D2(b), X = neg ? b : a, Y = neg ? a : b, L = Math.max(X.length, Y.length), A = lsb(X, L), Bv = lsb(Y, L); let p = 0; const st = []; for (let i = 0; i < L; i++) { const r = fullSub(A[i], Bv[i], p); st.push({ a: A[i], b: Bv[i], cin: p, raw: r.raw, bit: r.bit, co: r.bo }); p = r.bo; } return { st, N: L, neg, X, Y, res: st.map(x => x.bit).reverse().join('') }; }
+      if (k === 'mul') { const Bv = lsb(b, b.length), rows = Bv.map((bj, j) => ({ j, bj, str: (bj ? a : '0'.repeat(a.length)) + '0'.repeat(j) })); return { st: rows, N: rows.length + 1, W: a.length + b.length, res: B2(D2(a) * D2(b)) }; }
+      const d = D2(b); let R = 0; const st = []; a.split('').forEach((ch, k2) => { const cur = R * 2 + +ch, q = cur >= d ? 1 : 0, nr = cur - q * d; st.push({ k: k2, bit: +ch, cur, q, nr }); R = nr; });
+      return { st, N: st.length, d, quo: st.map(x => x.q).join(''), rem: R };
+    }
+    const vtTD = (t, cls = '', extra = '') => `<td class="${cls}" ${extra}>${t}</td>`;
+    function vtGrid(k, m, i) {
+      const C = VC[k], T0 = VT[k]; let rows = '';
+      const hlOn = k !== 'mul', dig = (s, N, topKey, fn) => { let h = ''; for (let x = 0; x < N; x++) { const p = N - 1 - x, off = N - s.length, ch = x >= off ? s[x - off] : ''; h += ch === '' ? vtTD('', 'dg' + (hlOn && p === i ? ' hl' : '')) : vtTD(topKey ? `<button class="vbit" data-vtb="${topKey}" data-ix="${x - off}" aria-label="cambiar bit">${ch}</button>` : ch, 'dg' + (hlOn && p === i ? ' hl' : '') + (fn ? ' ' + fn(p) : '')); } return h; };
+      if (k === 'add' || k === 'sub') {
+        const N = m.N, lbC = k === 'add' ? 'llevo' : 'debo', cc = k === 'add' ? COL.carry : COL.borrow;
+        let cy = ''; for (let x = 0; x < N; x++) { const p = N - 1 - x, s = p >= 1 && i > p - 1 ? m.st[p - 1] : null; cy += vtTD(s ? s.co : '', 'cy' + (p === i ? ' hl' : '') + (s && s.co ? ' on' : ' off') + (s && p === i ? ' new' : ''), `style="--cc:${cc}"`); }
+        const topS = k === 'sub' ? m.X : T0.a, botS = k === 'sub' ? m.Y : T0.b, topK = k === 'sub' ? (m.neg ? 'b' : 'a') : 'a', botK = k === 'sub' ? (m.neg ? 'a' : 'b') : 'b';
+        let rs = ''; for (let x = 0; x < N; x++) { const p = N - 1 - x, done = p < i; rs += vtTD(done ? m.st[p].bit : (p === i ? '?' : '·'), 'dg res' + (done ? ' ok' : ' pend') + (p === i ? ' hl cur' : '') + (done && p === i - 1 ? ' new' : '')); }
+        rows = `<tr class="rc"><td class="lab">${lbC}</td><td class="sg"></td>${cy}</tr><tr><td class="lab">A</td><td class="sg"></td>${dig(topS, N, topK)}</tr><tr><td class="lab">B</td><td class="sg" style="--c:${C}">${VSYM[k]}</td>${dig(botS, N, botK)}</tr><tr class="ln"><td class="lab">resultado</td><td class="sg" style="--c:${C}">${k === 'sub' && m.neg && i >= N ? '−' : '='}</td>${rs}</tr>`;
+      } else if (k === 'mul') {
+        const W = m.W, mm = m.st.length; let body = `<tr><td class="lab">A</td><td class="sg"></td>${dig(T0.a, W, 'a')}</tr><tr><td class="lab">B</td><td class="sg" style="--c:${C}">×</td>${dig(T0.b, W, 'b')}</tr>`;
+        m.st.forEach(r => { if (r.j >= i) return; const w = r.str.length, off = W - w; let c = ''; for (let x = 0; x < W; x++) { const ch = x >= off ? r.str[x - off] : '', sh = x >= W - r.j; c += vtTD(ch, 'dg' + (r.bj ? ' pp1' : ' pp0') + (sh ? ' sh' : '') + (r.j === i - 1 ? ' new' : '')); } body += `<tr class="${r.j === 0 ? 'ln' : ''}"><td class="lab">${r.bj ? 'fila ' + (r.j + 1) : 'fila ' + (r.j + 1)}</td><td class="sg" style="--c:${C}">${r.j ? '+' : ''}</td>${c}</tr>`; });
+        if (i > mm) { const ps = m.res, off = W - ps.length; let c = ''; for (let x = 0; x < W; x++) c += vtTD(x >= off ? ps[x - off] : '', 'dg res ok new'); body += `<tr class="ln"><td class="lab">producto</td><td class="sg" style="--c:${C}">=</td>${c}</tr>`; }
+        rows = body;
+      } else {
+        const a = T0.a, n = a.length; let body = '', qd = ''; for (let x = 0; x < n; x++) qd += vtTD(x < i ? m.st[x].q : '', 'dg qd' + (x < i && !m.st[x].q ? ' q0' : '') + (x === i - 1 ? ' new' : ''));
+        body += `<tr><td class="lab">cociente</td>${qd}</tr>`;
+        let dr = ''; for (let x = 0; x < n; x++) dr += vtTD(`<button class="vbit" data-vtb="a" data-ix="${x}" aria-label="cambiar bit">${a[x]}</button>`, 'dg dvd' + (x === 0 ? ' first' : '') + (x === i ? ' hl' : '')); body += `<tr><td class="lab dv"><span style="color:${COL.w}">${T0.b}</span> )</td>${dr}</tr>`;
+        const place = (str, col, cls, lab) => { let c = ''; for (let x = 0; x < n; x++) { const off = col - str.length + 1; c += vtTD(x >= off && x <= col ? str[x - off] : '', 'dg' + (cls ? ' ' + cls : '') + (x >= off && x <= col ? ' has' : '')); } return `<tr class="${cls || ''}"><td class="lab">${lab}</td>${c}</tr>`; };
+        m.st.forEach(s => { if (s.k > i) return; const pend = s.k === i; body += place(B2(s.cur), s.k, 'pt' + (pend ? ' pend2' : ''), pend ? 'parcial' : ''); if (s.k < i && s.q) body += place(T0.b, s.k, 'sb', '−'); });
+        if (i >= n) body += place(B2(m.rem), n - 1, 'rm', 'residuo');
+        rows = body;
+      }
+      return `<div class="vt-wrap"><table class="vt" style="--c:${C}">${rows}</table></div>`;
+    }
+    function vtInfo(k, m, i) {
+      const S = VS[k], C = VC[k], N = m.N, tot = k === 'mul' ? m.st.length + 1 : N;
+      const rule = { add: 'Suma: acarreo + A + B. Si da 0 o 1 se escribe y no se lleva; si da 2 (10₂) escribo 0 y llevo 1; si da 3 (11₂) escribo 1 y llevo 1.', sub: 'Resta: A − B − préstamo. Si es negativo, le sumo 2, escribo ese bit y debo 1 a la columna de la izquierda.', mul: 'Cada bit de B genera una fila: si el bit es 1 copio A, si es 0 pongo ceros; cada fila se corre un lugar más a la izquierda.', div: 'Bajo un bit: parcial = 2·residuo + bit. Si el parcial ≥ divisor, q = 1 y resto; si no, q = 0.' }[k];
+      if (i >= tot) {
+        if (k === 'add') return `<b class="ok-t">✔ Listo:</b> ${VT.add.a} + ${VT.add.b} = <b class="mono">${m.res}<sub>2</sub></b> &nbsp;(en decimal: ${D2(VT.add.a)} + ${D2(VT.add.b)} = ${D2(VT.add.a) + D2(VT.add.b)} = ${D2(m.res)} ✔)`;
+        if (k === 'sub') return `<b class="ok-t">✔ Listo:</b> ${VT.sub.a} − ${VT.sub.b} = <b class="mono">${m.neg ? '−' : ''}${trimZ(m.res)}<sub>2</sub></b> &nbsp;(decimal: ${D2(VT.sub.a)} − ${D2(VT.sub.b)} = ${D2(VT.sub.a) - D2(VT.sub.b)} ✔)${m.neg ? '<div class="small text-muted">Como A &lt; B se restó B − A y se puso el signo −.</div>' : ''}`;
+        if (k === 'mul') return `<b class="ok-t">✔ Listo:</b> ${VT.mul.a} × ${VT.mul.b} = <b class="mono">${m.res}<sub>2</sub></b> &nbsp;(decimal: ${D2(VT.mul.a)} × ${D2(VT.mul.b)} = ${D2(VT.mul.a) * D2(VT.mul.b)} ✔)`;
+        return `<b class="ok-t">✔ Listo:</b> ${VT.div.a} ÷ ${VT.div.b} → cociente <b class="mono">${trimZ(m.quo)}<sub>2</sub></b>, residuo <b class="mono">${B2(m.rem)}<sub>2</sub></b> &nbsp;(decimal: ${D2(VT.div.a)} = ${m.d}·${D2(m.quo)} + ${m.rem} ✔)`;
+      }
+      if (S.prac) return S.msg || '<span class="text-muted">Elige tu respuesta para la columna marcada.</span>';
+      if (i === 0) return `<span class="text-muted">Pulsa <b>Siguiente</b> para resolver paso a paso. ${rule}</span>`;
+      const s = m.st[i - 1];
+      if (k === 'add') return `<b>Columna ${i}</b> (de derecha a izquierda): llevo <b style="color:${COL.carry}">${s.cin}</b> + <b>${s.a}</b> + <b>${s.b}</b> = ${s.s} = <b class="mono">${B2(s.s)}<sub>2</sub></b> → escribo <b style="color:${COL.res}">${s.bit}</b> y llevo <b style="color:${COL.carry}">${s.co}</b>.`;
+      if (k === 'sub') return `<b>Columna ${i}</b>: <b>${s.a}</b> − <b>${s.b}</b> − <b style="color:${COL.borrow}">${s.cin}</b> = ${s.raw}${s.raw < 0 ? ` → como es negativo, +2 = ${s.bit}` : ''} → escribo <b style="color:${COL.res}">${s.bit}</b> y debo <b style="color:${COL.borrow}">${s.co}</b>.`;
+      if (k === 'mul') { if (i > m.st.length) return `<b>Suma de las filas</b> con las reglas de la suma (con acarreos): el producto es <b class="mono">${m.res}<sub>2</sub></b>.`; const r = m.st[i - 1]; return `<b>Fila ${r.j + 1}</b>: el bit ${r.j} de B vale <b>${r.bj}</b> → ${r.bj ? `copio A (${VT.mul.a})` : 'pongo una fila de ceros'}${r.j ? ` y la corro ${r.j} ${r.j === 1 ? 'lugar' : 'lugares'} (agrego ${r.j} ${r.j === 1 ? 'cero' : 'ceros'} a la derecha)` : ''}.`; }
+      return `<b>Bajo el bit ${s.bit}</b>: parcial = ${B2(s.cur)}<sub>2</sub> (${s.cur}). ${s.cur} ${s.q ? '≥' : '&lt;'} ${m.d} → ${s.q ? `el divisor cabe: <b style="color:${COL.dec}">q = 1</b> y resto ${s.cur} − ${m.d} = ${s.nr}.` : `el divisor no cabe: <b style="color:${COL.dec}">q = 0</b>, el residuo es ${s.nr}.`}`;
+    }
+    function vtPrompt(k, m, i) {
+      const S = VS[k], btn = (key, v, c) => `<button class="btn btn-sm fw-bold vp ${S[key] === v ? 'sel' : ''}" style="--c:${c}" data-vtp="${key}${v}">${v}</button>`;
+      if (k === 'add' || k === 'sub') { const s = m.st[i]; return `<div class="vt-q"><div class="small fw-bold mb-1">Columna ${i + 1}: ${k === 'add' ? `<span style="color:${COL.carry}">${s.cin}</span> + ${s.a} + ${s.b}` : `${s.a} − ${s.b} − <span style="color:${COL.borrow}">${s.cin}</span>`}</div><div class="d-flex gap-3 flex-wrap align-items-center"><span class="small fw-bold">Escribo:</span>${btn('w', 0, COL.res)}${btn('w', 1, COL.res)}<span class="small fw-bold ms-2">${k === 'add' ? 'Llevo' : 'Debo'}:</span>${btn('c', 0, k === 'add' ? COL.carry : COL.borrow)}${btn('c', 1, k === 'add' ? COL.carry : COL.borrow)}</div></div>`; }
+      if (k === 'mul') { if (i >= m.st.length) return ''; const r = m.st[i]; return `<div class="vt-q"><div class="small fw-bold mb-1">Fila ${r.j + 1}: el bit ${r.j} de B vale <b>${r.bj}</b>. ¿Qué escribo?</div><div class="d-flex gap-2 flex-wrap"><button class="btn btn-sm btn-outline-dark fw-bold" data-vtp="m1">Copio A</button><button class="btn btn-sm btn-outline-dark fw-bold" data-vtp="m0">Fila de ceros</button></div></div>`; }
+      const s = m.st[i]; return `<div class="vt-q"><div class="small fw-bold mb-1">Parcial ${B2(s.cur)}<sub>2</sub> (${s.cur}) y divisor ${VT.div.b}<sub>2</sub> (${m.d}): ¿el divisor cabe?</div><div class="d-flex gap-2 flex-wrap"><button class="btn btn-sm btn-outline-dark fw-bold" data-vtp="q1">Sí, q = 1</button><button class="btn btn-sm btn-outline-dark fw-bold" data-vtp="q0">No, q = 0</button></div></div>`;
+    }
+    function vtPanel(k) {
+      const S = VS[k], T0 = VT[k], C = VC[k], valid = vtOk(k), lim = VLIM[k], lab = { add: ['Sumando A', 'Sumando B'], sub: ['Minuendo A', 'Sustraendo B'], mul: ['Multiplicando A', 'Multiplicador B'], div: ['Dividendo D', 'Divisor d'] }[k];
+      let body = '';
+      if (!valid) body = `<div class="no-t small">Escribe números binarios válidos (A hasta ${lim[0]} bits, B hasta ${lim[1]} bits${k === 'div' ? ', y el divisor no puede ser 0' : ''}).</div>`;
+      else {
+        const m = vtModel(k), tot = k === 'mul' ? m.st.length + 1 : m.N; S.i = Math.max(0, Math.min(S.i, tot));
+        body = `${vtGrid(k, m, S.i)}<div class="vt-info mt-2" aria-live="polite">${vtInfo(k, m, S.i)}</div>${S.prac && S.i < tot ? vtPrompt(k, m, S.i) : ''}
+          <div class="d-flex flex-wrap gap-2 mt-3 align-items-center"><button class="btn btn-sm btn-outline-dark" data-vta="reset" ${S.i === 0 ? 'disabled' : ''}><i class="bi bi-skip-start-fill"></i></button><button class="btn btn-sm btn-outline-dark" data-vta="prev" ${S.i === 0 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i> Atrás</button>${S.prac ? '' : `<button class="btn btn-sm fw-bold text-white" style="background:${C}" data-vta="next" ${S.i >= tot ? 'disabled' : ''}>Siguiente <i class="bi bi-chevron-right"></i></button><button class="btn btn-sm btn-outline-dark" data-vta="all" ${S.i >= tot ? 'disabled' : ''}>Resolver todo</button>`}<span class="small text-muted ms-auto">Paso ${S.i} de ${tot}</span></div>`;
+      }
+      return `<div class="rl-card vt-card" style="--c:${C}"><h6><i class="bi bi-list-nested me-1"></i>La operación en vertical: ${k === 'add' ? 'suma' : k === 'sub' ? 'resta' : k === 'mul' ? 'multiplicación' : 'división'}</h6>
+        <div class="row g-3"><div class="col-lg-5"><div class="row g-2"><div class="col-6"><label class="inlab" for="vt-a">${lab[0]}</label><input id="vt-a" class="binput ${okN(T0.a, lim[0]) || T0.a === '' ? '' : 'bad'}" value="${T0.a}" autocomplete="off" inputmode="numeric"></div><div class="col-6"><label class="inlab" for="vt-b">${lab[1]}</label><input id="vt-b" class="binput ${okN(T0.b, lim[1]) || T0.b === '' ? '' : 'bad'}" value="${T0.b}" autocomplete="off" inputmode="numeric"></div></div>
+          <div class="small text-muted mt-2 mb-1">Ejemplos:</div><div class="d-flex flex-wrap gap-1">${VPRE[k].map(([a, b]) => `<button class="btn-chip" style="--c:${C}" data-vta="pre" data-va="${a}" data-vb="${b}">${a} ${VSYM[k]} ${b}</button>`).join('')}<button class="btn-chip" style="--c:${C}" data-vta="rand"><i class="bi bi-shuffle me-1"></i>Aleatorio</button></div>
+          <div class="form-check form-switch mt-3"><input class="form-check-input" type="checkbox" id="vt-prac" ${S.prac ? 'checked' : ''}><label class="form-check-label fw-bold small" for="vt-prac">Modo práctica: yo decido cada paso</label></div>
+          ${S.prac ? `<div class="small mt-1"><span class="ok-t">Aciertos ${S.ok}</span> · <span class="no-t">Errores ${S.no}</span></div>` : '<div class="small text-muted mt-2"><i class="bi bi-hand-index-thumb-fill text-warning me-1"></i>Toca cualquier bit de la operación para cambiarlo.</div>'}</div>
+          <div class="col-lg-7">${body}</div></div></div>`;
+    }
+    function vtAct(k, act, e) {
+      const S = VS[k];
+      if (act === 'next') S.i++; else if (act === 'prev') { S.i = Math.max(0, S.i - 1); S.msg = ''; S.w = S.c = null; } else if (act === 'reset') { S.i = 0; S.msg = ''; S.w = S.c = null; } else if (act === 'all') S.i = 99;
+      else if (act === 'pre') { VT[k].a = e.dataset.va; VT[k].b = e.dataset.vb; S.i = 0; S.msg = ''; S.w = S.c = null; }
+      else if (act === 'rand') { const [la, lb] = { add: [rnd(3, 6), rnd(3, 6)], sub: [rnd(4, 6), rnd(3, 5)], mul: [rnd(3, 5), rnd(2, 4)], div: [rnd(6, 9), rnd(2, 3)] }[k]; VT[k].a = rndBin(la); VT[k].b = rndBin(lb); S.i = 0; S.msg = ''; S.w = S.c = null; }
+      renderRules();
+    }
+    function vtPick(k, code) {
+      const S = VS[k]; if (!vtOk(k)) return; const m = vtModel(k), i = S.i, key = code[0], v = +code[1];
+      if (k === 'add' || k === 'sub') { S[key] = v; if (S.w === null || S.c === null) { renderRules(); return; } const s = m.st[i], okk = S.w === s.bit && S.c === s.co; if (okk) { S.ok++; S.i++; S.msg = `<b class="ok-t">✔ Correcto:</b> ` + (k === 'add' ? `${s.cin} + ${s.a} + ${s.b} = ${B2(s.s)}₂ → escribo ${s.bit}, llevo ${s.co}.` : `${s.a} − ${s.b} − ${s.cin} = ${s.raw}${s.raw < 0 ? ' → +2 = ' + s.bit : ''} → escribo ${s.bit}, debo ${s.co}.`); } else { S.no++; S.msg = `<b class="no-t">✘ Todavía no.</b> ` + (k === 'add' ? `Pista: ${s.cin} + ${s.a} + ${s.b} = ${s.s}. Si es 0 o 1 se escribe tal cual; si es 2 escribo 0 y llevo 1; si es 3 escribo 1 y llevo 1.` : `Pista: ${s.a} − ${s.b} − ${s.cin} = ${s.raw}. Si es negativo, le sumo 2 y debo 1 a la siguiente columna.`); } S.w = S.c = null; renderRules(); return; }
+      if (k === 'mul') { const r = m.st[i]; if (!r) return; if (v === r.bj) { S.ok++; S.i++; S.msg = `<b class="ok-t">✔ Correcto:</b> el bit ${r.j} de B es ${r.bj}, ${r.bj ? 'se copia A' : 'la fila es de ceros'}.`; } else { S.no++; S.msg = `<b class="no-t">✘ Todavía no.</b> Mira el bit ${r.j} de B (de derecha a izquierda, empezando en 0): si es 1 se copia A; si es 0, ceros.`; } renderRules(); return; }
+      const s = m.st[i]; if (!s) return; if (v === s.q) { S.ok++; S.i++; S.msg = `<b class="ok-t">✔ Correcto:</b> ${s.cur} ${s.q ? '≥' : '<'} ${m.d} → q = ${s.q}${s.q ? `, residuo ${s.cur} − ${m.d} = ${s.nr}` : `, residuo ${s.nr}`}.`; } else { S.no++; S.msg = `<b class="no-t">✘ Todavía no.</b> Compara el parcial ${s.cur} con el divisor ${m.d}: si el parcial es mayor o igual, el divisor cabe (q = 1).`; } renderRules();
+    }
+    on('[data-vta]', 'click', (e, t) => vtAct(RL.tab, t.dataset.vta, t));
+    on('[data-vtp]', 'click', (e, t) => vtPick(RL.tab, t.dataset.vtp));
+    on('[data-vtb]', 'click', (e, t) => { const k = RL.tab, key = t.dataset.vtb, ix = +t.dataset.ix, s = VT[k][key]; if (!s || ix < 0) return; VT[k][key] = s.slice(0, ix) + (s[ix] === '1' ? '0' : '1') + s.slice(ix + 1); VS[k].i = 0; VS[k].msg = ''; VS[k].w = VS[k].c = null; renderRules(); });
+    document.addEventListener('change', e => { if (e.target.id === 'vt-prac') { const S = VS[RL.tab]; S.prac = e.target.checked ? 1 : 0; S.i = 0; S.msg = ''; S.w = S.c = null; renderRules(); } });
 
     /* ================= MANUAL ================= */
     const legRows = arr => arr.map(([s, t, c]) => `<div class="legend-row"><span class="vchip" style="--c:${c}">${fi(s)}</span><span>${t}</span></div>`).join('');
@@ -927,25 +1009,7 @@
         thmT: 'Unicidad del cociente y el residuo', thm: 'El residuo siempre es menor que el divisor. Al dividir entre b, el residuo es el último dígito (a₀) de N en base b; repitiendo con el cociente se obtienen a₁, a₂, …',
         f: () => [T`N = d \cdot q + r \qquad 0 \le r < d`, T`N = b \cdot q_0 + a_0 \;,\; q_0 = b \cdot q_1 + a_1 \;,\; \cdots`], leg: () => [['N', 'Dividendo', COL.dec], ['d', 'Divisor', COL.w], ['q', 'Cociente', COL.res], ['r', 'Residuo', COL.bit]],
         how: ['Divide N entre d y anota cociente y residuo.', 'Verifica que 0 ≤ r &lt; d.', 'Comprueba: d·q + r debe dar N.'],
-        ex: () => { const n = /^\d{1,5}$/.test(CV.v.d2b) ? +CV.v.d2b : 181; return fd(T`${n} = 2 \cdot ${Math.floor(n / 2)} + ${K(COL.bit, n % 2)}`); } },
-      d2b: { t: 'Decimal → binario', ic: 'bi-arrow-right-circle-fill', col: '#6f42c1',
-        def: 'Convertir un decimal a binario es hallar los bits a<sub>i</sub> tales que N = Σ a<sub>i</sub>·2<sup>i</sup>.',
-        thmT: 'Divisiones sucesivas entre 2', thm: 'Si N = 2·q₀ + r₀ entonces r₀ es el bit de peso 2⁰. Repitiendo con q₀, q₁, … se obtienen los demás bits. Se detiene cuando el cociente es 0 y los restos se leen <strong>de abajo hacia arriba</strong>.',
-        f: () => [T`N = 2 \cdot q_0 + ${K(COL.bit, 'r_0')} \;,\; q_0 = 2 \cdot q_1 + ${K(COL.bit, 'r_1')} \;,\; \cdots \;,\; q_{n-1} = 2 \cdot 0 + ${K(COL.bit, 'r_{n-1}')}`, T`${bx('r_{n-1} \\cdots r_1 r_0')} = N_{10}`], leg: () => [['q_i', 'Cociente de la división número i', COL.res], ['r_i', 'Resto = bit de peso 2^i', COL.bit]],
-        how: ['Divide N entre 2: anota cociente y resto.', 'Divide el cociente entre 2 y repite hasta que el cociente sea 0.', 'Lee los restos del último al primero.', 'Comprueba sumando los pesos.'],
-        ex: () => { const v = CV.v.d2b; return /^\d{1,5}$/.test(v) && +v <= 65535 ? lastOf(stepsD2B(+v)) : '<span class="text-muted">Escribe un decimal válido en el conversor.</span>'; } },
-      b2d: { t: 'Binario → decimal', ic: 'bi-arrow-left-circle-fill', col: '#0d6efd',
-        def: 'Se obtiene aplicando directamente el teorema: se suman los pesos 2<sup>i</sup> de los bits que valen 1.',
-        thmT: 'Suma de pesos', thm: 'Los bits en 0 no aportan; los bits en 1 aportan su peso. Por eso un binario es una suma de potencias de 2 distintas.',
-        f: () => [T`N = \sum_{i=0}^{n-1} ${K(COL.bit, 'a_i')} \cdot ${K(COL.w, '2^{i}')}`], leg: () => [['a_i', 'Bit (0 o 1) en la posición i', COL.bit], ['2^i', 'Peso de la posición i', COL.w], ['n', 'Cantidad de bits', '#495057']],
-        how: ['Numera los bits de derecha a izquierda desde 0.', 'Escribe el peso 2<sup>i</sup> de cada bit.', 'Suma los pesos de los bits que valen 1.'],
-        ex: () => { const v = CV.v.b2d; return okBin(v, 16) ? lastOf(stepsB2D(v)) : '<span class="text-muted">Escribe un binario válido en el conversor.</span>'; } },
-      agrup: { t: 'Binario ↔ octal / hex', ic: 'bi-collection-fill', col: '#fd7e14',
-        def: 'Como 8 = 2³ y 16 = 2⁴, cada dígito octal equivale a <strong>3 bits</strong> y cada dígito hexadecimal a <strong>4 bits</strong>. La conversión es una agrupación, sin cálculos largos.',
-        thmT: 'Agrupación de bits', thm: 'Si b′ = b<sup>k</sup>, entonces cada grupo de k dígitos en base b es un dígito en base b′. Se agrupa <strong>desde la derecha</strong> y se rellena con ceros a la izquierda.',
-        f: () => [T`8 = 2^{3} \qquad 16 = 2^{4}`, T`\text{dígito hex} = 8 a_3 + 4 a_2 + 2 a_1 + a_0 \qquad \text{dígito oct} = 4 a_2 + 2 a_1 + a_0`], leg: () => [['a_j', 'Bits del grupo', COL.bit], ['8,4,2,1', 'Pesos dentro de cada grupo', COL.w]],
-        how: ['Agrupa los bits de 4 en 4 (hex) o de 3 en 3 (octal) desde la derecha.', 'Rellena con ceros a la izquierda el último grupo.', 'Convierte cada grupo con los pesos 8-4-2-1.', 'Para volver: cada dígito se escribe con 4 (o 3) bits.'],
-        ex: () => { const v = CV.v.b2x16; return okBin(v, 16) ? lastOf(stepsB2X(v, 16)) : ''; } },
+        ex: () => { const n = 181; return fd(T`${n} = 2 \cdot ${Math.floor(n / 2)} + ${K(COL.bit, n % 2)}`); } },
       suma: { t: 'Suma binaria', ic: 'bi-plus-circle-fill', col: '#d97706',
         def: 'La <strong>suma binaria</strong> se hace columna por columna, de derecha a izquierda, sumando los dos bits y el acarreo que llega de la columna anterior.',
         thmT: 'Tabla de la suma y acarreo', thm: '0+0=0 · 0+1=1 · 1+0=1 · 1+1=10 (escribo 0, llevo 1) · 1+1+1=11 (escribo 1, llevo 1). El acarreo sale de dividir la suma entre 2 (algoritmo de la división con b = 2): <strong>bit = s mod 2</strong>, <strong>acarreo = ⌊s/2⌋</strong>.',
@@ -1003,7 +1067,7 @@
         thmT: 'Reglas por columna', thm: '<b>Suma</b>: 0+0=0 · 0+1=1 · 1+0=1 · 1+1=10 (escribe 0, lleva 1) · 1+1+1=11 (escribe 1, lleva 1).<br><b>Resta</b>: 0−0=0 · 1−0=1 · 1−1=0 · 0−1=1 (pide préstamo).<br><b>Producto</b>: 0·0=0 · 0·1=0 · 1·0=0 · 1·1=1.<br><b>División</b>: el divisor cabe (1) o no cabe (0) en el residuo parcial.',
         f: () => [T`s_i = a_i + b_i + c_i \;;\; r_i = s_i \bmod 2 \;;\; c_{i+1} = \lfloor s_i/2 \rfloor`, T`d_i = a_i - b_i - p_i \;;\; d_i<0 \Rightarrow d_i+2,\; p_{i+1}=1`, T`A\cdot B = \sum_j b_j\,(A\cdot 2^{j})`, T`\text{parcial} = 2r + \text{bit} \;;\; q = [\text{parcial} \ge d]`],
         leg: () => [['c_i', 'Acarreo que entra a la columna i', COL.carry], ['p_i', 'Préstamo pendiente', COL.borrow], ['r_i', 'Bit que se escribe', COL.res], ['q', 'Bit del cociente (1 si el divisor cabe)', COL.dec]],
-        how: ['Alinea los números a la derecha.', 'Trabaja de derecha a izquierda, columna por columna.', 'Aplica la regla de la operación y arrastra el acarreo o el préstamo.', 'Comprueba con la operación inversa o pasando a decimal.'],
+        how: ['Escribe la operación en vertical: A arriba, B debajo con el signo, una raya y el resultado abajo.', 'Alinea los números a la derecha.', 'Trabaja de derecha a izquierda, columna por columna.', 'Aplica la regla de la operación y arrastra el acarreo o el préstamo.', 'Comprueba con la operación inversa o pasando a decimal.'],
         ex: () => okBin(OP.add.a, 12) && okBin(OP.add.b, 12) ? lastOf(stepsAdd(OP.add.a, OP.add.b)) : '' },
       props: { t: 'Atajos y propiedades', ic: 'bi-lightning-charge-fill', col: '#0c8599',
         def: 'Las <strong>propiedades</strong> de las operaciones permiten resolver o comprobar sin hacer todo el procedimiento largo. Lo más útil en binario es que multiplicar o dividir entre una potencia de 2 es un <strong>desplazamiento de bits</strong>.',
@@ -1047,7 +1111,7 @@
 
     /* ================= Arranque ================= */
     $('#hero-bits').innerHTML = Array.from({ length: 140 }, (_, i) => `<span style="--d:${(i % 17) * .17}s">${Math.random() < .5 ? 0 : 1}</span>`).join('');
-    renderTheorem(); renderNotes(); renderConv(); ['add', 'sub', 'mul', 'div'].forEach(k => renderOp(k)); renderExtras(); renderRules(); exNew();
+    renderTheorem(); renderNotes(); ['add', 'sub', 'mul', 'div'].forEach(k => renderOp(k)); renderExtras(); renderRules(); exNew();
     const navLinks = $$('#sec-nav a[href^="#s"]');
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
     $$('section.lesson').forEach(s => io.observe(s));
