@@ -105,6 +105,31 @@
     .solution-box table { font-size:.82rem; }
     .progress { height:14px; border-radius:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,.15); }
 
+    /* ===== Actividades ===== */
+    .act-toggle { display:flex; align-items:center; gap:.75rem; text-align:left; background:#fff; border:2px solid #dee2e6; border-radius:16px; padding:1rem 1.25rem; box-shadow:var(--shadow-sm); font-weight:700; font-size:1.25rem; color:#212529; transition:box-shadow .2s, border-color .2s; }
+    .act-toggle:hover { box-shadow:var(--shadow-md); border-color:#adb5bd; }
+    .act-toggle small { font-weight:400; font-size:.85rem; color:#6c757d; display:block; }
+    .act-toggle .chev, .act-card-toggle .chev { transition:transform .25s; margin-left:auto; }
+    .act-toggle[aria-expanded="true"] .chev, .act-card-toggle[aria-expanded="true"] .chev { transform:rotate(180deg); }
+    .act-card { border-radius:16px; overflow:hidden; border:1px solid #e9ecef!important; }
+    .act-card-toggle { display:flex; align-items:center; gap:.6rem; width:100%; text-align:left; background:#f8f9fa; border:0; padding:.9rem 1.1rem; font-weight:700; color:#212529; }
+    .act-card-toggle:hover { background:#f1f3f5; }
+    .act-h { font-weight:800; color:#343a40; border-bottom:2px solid #e9ecef; padding-bottom:.35rem; margin:1rem 0 .7rem; }
+    .act-series { display:flex; flex-wrap:wrap; gap:.5rem; margin:.5rem 0 1rem; }
+    .act-series span { background:#fff4e6; border:2px solid #ffd8a8; color:#c25e00; border-radius:10px; padding:.25rem .7rem; font-size:1.05rem; box-shadow:var(--shadow-sm); }
+    .act-steps li { margin-bottom:.45rem; }
+    .act-fill { width:100%; border-collapse:collapse; margin:.5rem 0; }
+    .act-fill th, .act-fill td { border:1.5px solid #343a40; padding:.45rem .6rem; font-size:.9rem; }
+    .act-fill th { background:#f1f3f5; text-align:left; white-space:nowrap; width:1%; }
+    .act-fill td { height:2.4rem; min-width:3.5rem; }
+    .act-lock { background:#f8f9fa; border:2px dashed #ced4da; border-radius:14px; padding:1rem 1.2rem; display:flex; align-items:center; gap:.9rem; flex-wrap:wrap; }
+    .act-lock i.big { font-size:1.8rem; color:#868e96; }
+    .act-pick { display:flex; flex-wrap:wrap; gap:.35rem; margin:.4rem 0 .8rem; }
+    .act-pick .btn { font-family:'Courier New',monospace; font-weight:800; }
+    .bits { font-family:'Courier New',monospace; font-weight:800; white-space:pre; }
+    .bits-box { background:#fff; border:1px solid #dee2e6; border-radius:10px; padding:.55rem .8rem; overflow-x:auto; line-height:1.55; }
+    .bits-box .neg { color:#e03131; } .bits-box .ok { color:#2f9e44; }
+
     /* ===== Método de la escalera (divisiones sucesivas) ===== */
     .stair-box { background:#fff; border:2px solid #dbe4ff; border-radius:14px; padding:.7rem .8rem .8rem; margin-top:.5rem; }
     .stair-ctl { display:flex; flex-wrap:wrap; gap:.4rem; align-items:center; margin-bottom:.5rem; }
@@ -136,7 +161,7 @@
       <div class="container">
         <h1 class="display-5 fw-bold"><i class="bi bi-cpu me-2"></i>Conversiones Numéricas</h1>
         <p class="lead mb-1">Binario • Octal • Decimal • Hexadecimal</p>
-        <p class="mb-0 text-light">Teoría paso a paso, ejemplos en ventanas, conversor en vivo y 80 ejercicios</p>
+        <p class="mb-0 text-light">Teoría paso a paso, ejemplos en ventanas, conversor en vivo, ejercicios aleatorios y actividades</p>
       </div>
     </header>
 
@@ -217,8 +242,6 @@
               <h5 class="fw-bold mb-0 text-white">Panel de 8 Bits (1 Byte)</h5>
             </div>
             <div class="d-flex flex-wrap gap-2">
-              <button class="btn btn-sm btn-outline-warning" id="sw-all-on"><i class="bi bi-check-all me-1"></i>Todos ON (255)</button>
-              <button class="btn btn-sm btn-outline-light" id="sw-all-off"><i class="bi bi-x-circle me-1"></i>Todos OFF (0)</button>
               <button class="btn btn-sm btn-outline-info" id="sw-alternate"><i class="bi bi-arrow-repeat me-1"></i>Alternar (10101010)</button>
               <button class="btn btn-sm btn-outline-success" id="sw-random"><i class="bi bi-shuffle me-1"></i>Aleatorio</button>
               <button class="btn btn-sm btn-primary" id="sw-animate"><i class="bi bi-play-fill me-1"></i><span>Contador +1</span></button>
@@ -282,11 +305,11 @@
 
       <!-- 5. Ejercicios -->
       <section>
-        <h2 class="section-title"><i class="bi bi-pencil-square text-success me-2"></i>5. Ejercicios prácticos (80)</h2>
+        <h2 class="section-title"><i class="bi bi-pencil-square text-success me-2"></i>5. Ejercicios prácticos</h2>
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <strong><i class="bi bi-trophy-fill text-warning me-1"></i>Progreso total: <span id="score-total">0</span>/80</strong>
+              <strong><i class="bi bi-trophy-fill text-warning me-1"></i>Progreso total: <span id="score-total">0</span>/<span id="score-max">16</span></strong>
               <button class="btn btn-sm btn-outline-secondary" id="reset-all"><i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar</button>
             </div>
             <div class="progress"><div id="score-bar" class="progress-bar bg-success progress-bar-striped" style="width:0%"></div></div>
@@ -294,16 +317,33 @@
         </div>
 
         <ul class="nav nav-pills nav-justified mb-4 gap-2" id="exerciseTabs" role="tablist">
-          <li class="nav-item"><button class="nav-link t2 active" data-bs-toggle="pill" data-bs-target="#pane-2" type="button"><i class="bi bi-toggles me-1"></i>Desde Binario <span class="badge bg-light text-dark" id="badge-2">0/20</span></button></li>
-          <li class="nav-item"><button class="nav-link t8" data-bs-toggle="pill" data-bs-target="#pane-8" type="button"><i class="bi bi-hash me-1"></i>Desde Octal <span class="badge bg-light text-dark" id="badge-8">0/20</span></button></li>
-          <li class="nav-item"><button class="nav-link t16" data-bs-toggle="pill" data-bs-target="#pane-16" type="button"><i class="bi bi-type me-1"></i>Desde Hexadecimal <span class="badge bg-light text-dark" id="badge-16">0/20</span></button></li>
-          <li class="nav-item"><button class="nav-link t10" data-bs-toggle="pill" data-bs-target="#pane-10" type="button"><i class="bi bi-123 me-1"></i>Desde Decimal <span class="badge bg-light text-dark" id="badge-10">0/20</span></button></li>
+          <li class="nav-item"><button class="nav-link t2 active" data-bs-toggle="pill" data-bs-target="#pane-2" type="button"><i class="bi bi-toggles me-1"></i>Desde Binario <span class="badge bg-light text-dark" id="badge-2">0/4</span></button></li>
+          <li class="nav-item"><button class="nav-link t8" data-bs-toggle="pill" data-bs-target="#pane-8" type="button"><i class="bi bi-hash me-1"></i>Desde Octal <span class="badge bg-light text-dark" id="badge-8">0/4</span></button></li>
+          <li class="nav-item"><button class="nav-link t16" data-bs-toggle="pill" data-bs-target="#pane-16" type="button"><i class="bi bi-type me-1"></i>Desde Hexadecimal <span class="badge bg-light text-dark" id="badge-16">0/4</span></button></li>
+          <li class="nav-item"><button class="nav-link t10" data-bs-toggle="pill" data-bs-target="#pane-10" type="button"><i class="bi bi-123 me-1"></i>Desde Decimal <span class="badge bg-light text-dark" id="badge-10">0/4</span></button></li>
         </ul>
         <div class="tab-content">
-          <div class="tab-pane fade show active" id="pane-2"><div class="row g-3" id="ex-2"></div></div>
-          <div class="tab-pane fade" id="pane-8"><div class="row g-3" id="ex-8"></div></div>
-          <div class="tab-pane fade" id="pane-16"><div class="row g-3" id="ex-16"></div></div>
-          <div class="tab-pane fade" id="pane-10"><div class="row g-3" id="ex-10"></div></div>
+          <div class="tab-pane fade show active" id="pane-2"><div class="row g-3" id="ex-2"></div>
+            <div class="text-center mt-3"><button class="btn btn-outline-success fw-bold" data-gen="2"><i class="bi bi-shuffle me-1"></i>Generar otro ejercicio aleatorio</button></div></div>
+          <div class="tab-pane fade" id="pane-8"><div class="row g-3" id="ex-8"></div>
+            <div class="text-center mt-3"><button class="btn btn-outline-success fw-bold" data-gen="8"><i class="bi bi-shuffle me-1"></i>Generar otro ejercicio aleatorio</button></div></div>
+          <div class="tab-pane fade" id="pane-16"><div class="row g-3" id="ex-16"></div>
+            <div class="text-center mt-3"><button class="btn btn-outline-success fw-bold" data-gen="16"><i class="bi bi-shuffle me-1"></i>Generar otro ejercicio aleatorio</button></div></div>
+          <div class="tab-pane fade" id="pane-10"><div class="row g-3" id="ex-10"></div>
+            <div class="text-center mt-3"><button class="btn btn-outline-success fw-bold" data-gen="10"><i class="bi bi-shuffle me-1"></i>Generar otro ejercicio aleatorio</button></div></div>
+        </div>
+      </section>
+
+      <!-- 6. Actividades (sección colapsada) -->
+      <section class="mt-5" id="actividades">
+        <button class="act-toggle w-100" type="button" data-bs-toggle="collapse" data-bs-target="#act-body" aria-expanded="false" aria-controls="act-body">
+          <i class="bi bi-clipboard2-check-fill text-primary fs-3"></i>
+          <span>6. Actividades<small>Planteamientos de problemas con ejercicios similares. La solución paso a paso aparece con la página desbloqueada.</small></span>
+          <i class="bi bi-chevron-down chev fs-5"></i>
+        </button>
+        <div class="collapse" id="act-body">
+          <div class="pt-3" id="act-list"></div>
+          <div class="text-center mb-2"><button class="btn btn-primary fw-bold rounded-pill px-4" id="act-random" type="button"><i class="bi bi-shuffle me-1"></i>Generar actividad aleatoria</button></div>
         </div>
       </section>
     </div>
@@ -729,7 +769,7 @@
     }
 
     /* ===================== 5. EJERCICIOS ===================== */
-    const SETS = {
+    const SETS_BANK = {
       2:  [['1010',10],['1101',8],['1111',16],['100001',10],['101110',8],['1101011',16],['11100',10],['100101',8],['10101010',16],['11111111',10],
            ['1011',10],['111000',8],['11001100',16],['10001',10],['110111',8],['1010011',16],['1100011',10],['10101',8],['11110000',16],['10000000',10]],
       8:  [['17',2],['25',10],['74',16],['52',2],['100',10],['175',16],['43',2],['66',10],['234',16],['77',2],
@@ -739,14 +779,27 @@
       10: [['25',2],['42',8],['60',16],['100',2],['75',8],['128',16],['15',2],['99',8],['255',16],['50',2],
            ['150',8],['200',16],['85',2],['64',8],['171',16],['31',2],['210',8],['300',16],['127',2],['512',8]]
     };
+    /* Solo se muestran 4 por pestaña; con «Generar otro ejercicio aleatorio» se crean todos los que quieras. */
+    const SHOWN = 4;
+    const SETS = { 2: [], 8: [], 10: [], 16: [] };
     const solved = new Set();
+    const resetSets = () => ORDER.forEach(b => { SETS[b] = SETS_BANK[b].slice(0, SHOWN); });
+    function randomExercise(from) {
+      const max = from === 10 ? 511 : 255;
+      for (let t = 0; t < 200; t++) {
+        const n = 6 + Math.floor(Math.random() * (max - 5));
+        const val = toBase(n, from), to = pickOther(from);
+        if (!SETS[from].some(([v, tt]) => v === val && tt === to)) return [val, to];
+      }
+      return [toBase(37, from), pickOther(from)];
+    }
+    const pickOther = from => { const o = ORDER.filter(b => b !== from); return o[Math.floor(Math.random() * o.length)]; };
 
-    function renderExercises() {
-      ORDER.forEach(from => {
-        const html = SETS[from].map(([val, to], idx) => {
-          const id = `${from}-${idx}`;
-          const ex = explain(from, to, val);
-          return `
+    function exerciseCardHTML(from, idx) {
+      const [val, to] = SETS[from][idx];
+      const id = `${from}-${idx}`;
+      const ex = explain(from, to, val);
+      return `
             <div class="col-lg-6">
               <div class="card exercise-card h-100" id="card-${id}">
                 <div class="card-body">
@@ -770,9 +823,18 @@
                 </div>
               </div>
             </div>`;
-        }).join('');
-        document.getElementById(`ex-${from}`).innerHTML = html;
+    }
+    function renderExercises() {
+      ORDER.forEach(from => {
+        document.getElementById(`ex-${from}`).innerHTML = SETS[from].map((_, idx) => exerciseCardHTML(from, idx)).join('');
       });
+    }
+    function addExercise(from) {
+      SETS[from].push(randomExercise(from));
+      const idx = SETS[from].length - 1;
+      document.getElementById(`ex-${from}`).insertAdjacentHTML('beforeend', exerciseCardHTML(from, idx));
+      updateScore();
+      document.getElementById(`card-${from}-${idx}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function checkAnswer(id) {
@@ -792,20 +854,213 @@
     }
 
     function updateScore() {
+      let total = 0;
       ORDER.forEach(b => {
         const c = [...solved].filter(k => k.startsWith(b + '-')).length;
-        document.getElementById(`badge-${b}`).textContent = `${c}/20`;
+        document.getElementById(`badge-${b}`).textContent = `${c}/${SETS[b].length}`;
+        total += SETS[b].length;
       });
       document.getElementById('score-total').textContent = solved.size;
-      document.getElementById('score-bar').style.width = (solved.size / 80 * 100) + '%';
+      document.getElementById('score-max').textContent = total;
+      document.getElementById('score-bar').style.width = (total ? solved.size / total * 100 : 0) + '%';
     }
 
     function resetAll() {
-      solved.clear();
-      document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('solved'));
-      document.querySelectorAll('[id^="fb-"]').forEach(f => f.innerHTML = '');
-      document.querySelectorAll('[id^="in-"]').forEach(i => i.value = '');
-      updateScore();
+      solved.clear(); resetSets(); renderExercises(); updateScore();
+    }
+
+    /* ===================== 6. ACTIVIDADES ===================== */
+    const ASCII_WORDS = ['Memoria', 'Teclado', 'Registro', 'Variable', 'Procesador', 'Algoritmo', 'Compuerta', 'Transistor', 'Binario', 'Microchip', 'Interruptor', 'Hexadecimal', 'Programa', 'Sistema', 'Circuito', 'Pantalla', 'Servidor', 'Software', 'Hardware', 'Octal'];
+    const ACT_FIXED = [
+      { title: 'Actividad 2 · Descubre la palabra secreta', badge: 'Planteamiento original', word: 'CyBernetiCs', s: 10, d: 6 },
+      { title: 'Ejercicio similar 1', badge: 'Similar', word: 'CompUertas', s: 9, d: 5 },
+      { title: 'Ejercicio similar 2', badge: 'Similar', word: 'AlgoRitmo', s: 12, d: 4 },
+      { title: 'Ejercicio similar 3', badge: 'Similar', word: 'TranSistor', s: 11, d: 7 },
+      { title: 'Ejercicio similar 4', badge: 'Similar', word: 'MemoRia', s: 7, d: 5 }
+    ];
+    const ACTS = [];
+    let actRandomCount = 0;
+    const bin = n => n.toString(2);
+    const g4 = str => str.replace(/(.{4})(?=.)/g, '$1 ');
+    const isUnlockedPage = () => { try { return !!(window.AulaHeader && window.AulaHeader.isUnlocked()); } catch (e) { return false; } };
+
+    function makeAct(base) {
+      const id = 'act' + ACTS.length;
+      const nums = [...base.word].map(ch => { const code = ch.charCodeAt(0), val = code * base.d + base.s; return { ch, code, val, hex: val.toString(16).toUpperCase() }; });
+      const a = { ...base, id, nums, sel: 0, W: Math.max(...nums.map(n => n.hex.length)) * 4 };
+      ACTS.push(a); return a;
+    }
+
+    /* ----- Planteamiento (siempre visible) ----- */
+    function actProblem(a) {
+      const sB = bin(a.s), dB = bin(a.d), cols = '<td></td>'.repeat(4);
+      return `
+        <p class="mb-2">Descubrir la palabra secreta de la siguiente serie de números en sistema <strong>hexadecimal</strong> realizando las siguientes actividades:</p>
+        <div class="act-series mono">${a.nums.map(n => `<span>${n.hex}</span>`).join('')}</div>
+        <ol class="act-steps">
+          <li>Convierte cada número hexadecimal a <strong>binario</strong> utilizando la tabla.</li>
+          <li>Al número binario que obtuviste réstale el número binario <b class="mono">${sB}</b> mostrando el procedimiento con el algoritmo de <strong>complemento a dos</strong>.</li>
+          <li>Al resultado de la resta, divídelo entre el número binario <b class="mono">${dB}</b> mostrando el procedimiento de la división.</li>
+          <li>El resultado de la división conviértelo a número <strong>decimal</strong> explicando cómo se realiza.</li>
+          <li>Busca el valor decimal en la tabla de código <strong>ASCII</strong> y, encontrando cada letra en orden, descubre la palabra secreta.</li>
+          <li>De las <strong>primeras cuatro letras</strong>, convierte el valor decimal a <strong>hexadecimal</strong> explicando el procedimiento.</li>
+          <li>Convierte el anterior valor hexadecimal a <strong>binario</strong> empleando la tabla.</li>
+          <li>Convierte el valor decimal a <strong>octal</strong> explicando el procedimiento.</li>
+          <li>Convierte el anterior valor octal a <strong>binario</strong> empleando la tabla.</li>
+          <li>Llena la tabla con los resultados de los pasos 4, 5, 6, 7 y 8:</li>
+        </ol>
+        <div class="table-responsive"><table class="act-fill">
+          <tr><th>LETRA</th>${cols}</tr><tr><th>DECIMAL</th>${cols}</tr><tr><th>HEXADECIMAL</th>${cols}</tr><tr><th>BINARIO</th>${cols}</tr><tr><th>OCTAL</th>${cols}</tr>
+        </table></div>`;
+    }
+
+    /* ----- Cálculo de un número (pasos 1 a 5) ----- */
+    function actCalc(a, n) {
+      const W = a.W, mask = (1 << W) - 1, A = n.val, B = a.s;
+      const notB = (~B) & mask, c2 = (notB + 1) & mask, sum = A + c2, R = sum & mask, carry = sum >> W;
+      const Rb = bin(R);
+      let rem = 0, qb = '', rows = '';
+      [...Rb].forEach(bit => {
+        const cur = rem * 2 + (+bit), ge = cur >= a.d, nrem = ge ? cur - a.d : cur;
+        qb += ge ? '1' : '0';
+        rows += `<tr><td class="mono">${bit}</td><td class="mono">${bin(cur)} <small class="text-muted">(${cur})</small></td><td>${cur} ${ge ? '≥' : '<'} ${a.d}</td><td class="mono fw-bold">${ge ? 1 : 0}</td><td class="mono">${bin(nrem)} <small class="text-muted">(${nrem})</small></td></tr>`;
+        rem = nrem;
+      });
+      const q = qb.replace(/^0+(?=.)/, ''), qn = parseInt(q, 2);
+      return { W, A, B, notB, c2, R, Rb, carry, q, qn, rem, rows, ok: R === A - B && qn * a.d + rem === R && qn === n.code && rem === 0 };
+    }
+
+    function asciiHint(code) {
+      if (code >= 65 && code <= 90) return `${code} está entre 65 (A) y 90 (Z): es una <strong>mayúscula</strong>. ${code} − 64 = ${code - 64}, la letra número ${code - 64} del abecedario.`;
+      if (code >= 97 && code <= 122) return `${code} está entre 97 (a) y 122 (z): es una <strong>minúscula</strong>. ${code} − 96 = ${code - 96}, la letra número ${code - 96} del abecedario.`;
+      return '';
+    }
+
+    function actDetailHTML(a, i) {
+      const n = a.nums[i], c = actCalc(a, n), W = c.W;
+      const hexChips = n.hex.split('').map(h => `<span class="chip">${h}<small>${dv(h).toString(2).padStart(4, '0')}</small></span>`).join('');
+      const w = 11, L = (label, bits, extra = '') => `${label.padEnd(w)} ${g4(bits.toString(2).padStart(W, '0'))}${extra}`;
+      const terms = c.q.split('').map((b, k) => b === '1' ? 2 ** (c.q.length - 1 - k) : null).filter(x => x !== null);
+      return `
+        <div class="step-box"><span class="step-num">1</span><strong>Hexadecimal → binario:</strong> cada dígito hexadecimal se cambia por sus 4 bits.
+          <div class="mt-2">${hexChips}</div>
+          <div class="result-line mt-2">${n.hex}<sub>16</sub> = ${g4(c.A.toString(2).padStart(W, '0'))}<sub>2</sub> <small>(= ${c.A} en decimal)</small></div></div>
+
+        <div class="step-box"><span class="step-num">2</span><strong>Resta con complemento a dos</strong> (${W} bits): restar ${bin(a.s)}<sub>2</sub> (${a.s}) es sumar su complemento a dos.
+          <div class="bits-box bits mt-2">${L('A', c.A, `   ← el número del paso 1 (${c.A})`)}
+${L('B', c.B, `   ← lo que se resta (${c.B})`)}
+${L('Invertir B', c.notB, '   ← cambia 0↔1 (complemento a uno)')}
+${L('+ 1', c.c2, `   ← complemento a dos de B (= −${c.B})`)}
+${'A + (−B)'.padEnd(w)} ${c.carry ? '<span class="neg">1</span> ' : ''}${g4(c.R.toString(2).padStart(W, '0'))}${c.carry ? '   ← el 1 de más es el acarreo: <span class="neg">se descarta</span>' : ''}</div>
+          <div class="result-line mt-2">${g4(c.R.toString(2).padStart(W, '0'))}<sub>2</sub> = ${c.R} <small>(comprobación: ${c.A} − ${c.B} = ${c.A - c.B})</small></div></div>
+
+        <div class="step-box"><span class="step-num">3</span><strong>División binaria</strong> ${c.Rb}<sub>2</sub> ÷ ${bin(a.d)}<sub>2</sub> (${c.R} ÷ ${a.d}): se baja un bit a la vez; si el residuo parcial es mayor o igual al divisor, el bit del cociente es 1 y se resta el divisor; si no, es 0.
+          <div class="table-responsive mt-2"><table class="table table-sm table-bordered bg-white mb-0 text-center">
+            <thead class="table-light"><tr><th>Bit que bajo</th><th>Residuo parcial</th><th>¿≥ divisor?</th><th>Bit del cociente</th><th>Nuevo residuo</th></tr></thead><tbody>${c.rows}</tbody></table></div>
+          <div class="result-line mt-2">Cociente = ${c.q}<sub>2</sub> · Residuo = ${c.rem}</div></div>
+
+        <div class="step-box"><span class="step-num">4</span><strong>Cociente binario → decimal:</strong> suma los pesos 2ⁿ donde hay un 1.
+          <div class="result-line mt-2">${c.q}<sub>2</sub> = ${terms.join(' + ')} = ${c.qn}</div></div>
+
+        <div class="step-box"><span class="step-num">5</span><strong>Tabla ASCII:</strong> ${asciiHint(c.qn)}
+          <div class="result-line mt-2">${c.qn} → <span style="color:#ffd43b;font-size:1.3em">${n.ch}</span></div></div>`;
+    }
+
+    function divCompact(n, b) {
+      let q = n, rows = '', rems = [];
+      while (q > 0) { const r = q % b, nq = Math.floor(q / b); rows += `<tr><td>${q} ÷ ${b}</td><td>${nq}</td><td><strong>${r}</strong>${r > 9 ? ` (${DIGITS[r]})` : ''}</td></tr>`; rems.push(DIGITS[r]); q = nq; }
+      return { rows, out: rems.reverse().join('') };
+    }
+    const chipsOf = (str, size) => str.split('').map(ch => `<span class="chip">${ch}<small>${dv(ch).toString(2).padStart(size, '0')}</small></span>`).join('');
+
+    function actLettersHTML(a) {
+      const first = a.nums.slice(0, 4);
+      const blocks = first.map(n => {
+        const h = divCompact(n.code, 16), o = divCompact(n.code, 8);
+        return `<div class="col-md-6"><div class="border rounded-3 p-2 h-100 bg-white">
+          <div class="fw-bold mb-1"><span class="badge bg-dark fs-6">${n.ch}</span> decimal <span class="mono">${n.code}</span></div>
+          <div class="small fw-bold">Paso 6 · decimal → hexadecimal (÷ 16)</div>
+          <table class="table table-sm table-bordered mb-1 text-center"><thead class="table-light"><tr><th>División</th><th>Cociente</th><th>Residuo</th></tr></thead><tbody>${h.rows}</tbody></table>
+          <div class="small mb-2">Residuos de abajo hacia arriba: <strong class="mono">${h.out}</strong><sub>16</sub></div>
+          <div class="small fw-bold">Paso 7 · hexadecimal → binario (4 bits por dígito)</div>
+          <div class="mb-2">${chipsOf(h.out, 4)} <span class="mono ms-1">= ${g4(h.out.split('').map(ch => dv(ch).toString(2).padStart(4, '0')).join(''))}</span></div>
+          <div class="small fw-bold">Paso 8 · decimal → octal (÷ 8)</div>
+          <table class="table table-sm table-bordered mb-1 text-center"><thead class="table-light"><tr><th>División</th><th>Cociente</th><th>Residuo</th></tr></thead><tbody>${o.rows}</tbody></table>
+          <div class="small mb-2">Residuos de abajo hacia arriba: <strong class="mono">${o.out}</strong><sub>8</sub></div>
+          <div class="small fw-bold">Paso 9 · octal → binario (3 bits por dígito)</div>
+          <div>${chipsOf(o.out, 3)} <span class="mono ms-1">= ${o.out.split('').map(ch => dv(ch).toString(2).padStart(3, '0')).join(' ')}</span></div>
+        </div></div>`;
+      }).join('');
+      const cell = f => first.map(n => `<td class="mono text-center">${f(n)}</td>`).join('');
+      const table = `<div class="table-responsive"><table class="act-fill">
+        <tr><th>LETRA</th>${cell(n => `<b>${n.ch}</b>`)}</tr>
+        <tr><th>DECIMAL</th>${cell(n => n.code)}</tr>
+        <tr><th>HEXADECIMAL</th>${cell(n => n.code.toString(16).toUpperCase())}</tr>
+        <tr><th>BINARIO</th>${cell(n => g4(n.code.toString(16).toUpperCase().split('').map(ch => dv(ch).toString(2).padStart(4, '0')).join('')))}</tr>
+        <tr><th>OCTAL</th>${cell(n => n.code.toString(8))}</tr></table></div>`;
+      return { blocks, table };
+    }
+
+    function actSolutionHTML(a) {
+      const W = a.W;
+      const summary = a.nums.map((n, i) => { const c = actCalc(a, n); return `<tr><td>${i + 1}</td><td class="mono">${n.hex}</td><td class="mono">${g4(c.A.toString(2).padStart(W, '0'))}</td><td class="mono">${g4(c.R.toString(2).padStart(W, '0'))}</td><td class="mono">${c.q}</td><td class="mono">${c.qn}</td><td><b>${n.ch}</b></td></tr>`; }).join('');
+      const L = actLettersHTML(a);
+      return `
+        <div class="alert alert-success py-2 mb-3"><i class="bi bi-unlock-fill me-1"></i><strong>Palabra secreta:</strong> <span class="mono fs-5">${a.word}</span> <small class="text-muted">(las mayúsculas y minúsculas se distinguen por su código ASCII)</small></div>
+        <div class="small fw-bold mb-1">Resumen de los pasos 1 a 5 para toda la serie (a − ${bin(a.s)}<sub>2</sub> y luego ÷ ${bin(a.d)}<sub>2</sub>):</div>
+        <div class="table-responsive mb-3"><table class="table table-sm table-bordered bg-white text-center mb-0">
+          <thead class="table-light"><tr><th>#</th><th>Hex</th><th>Binario (paso 1)</th><th>Tras la resta (paso 2)</th><th>Cociente (paso 3)</th><th>Decimal (paso 4)</th><th>Letra (paso 5)</th></tr></thead><tbody>${summary}</tbody></table></div>
+        <div class="fw-bold mb-1"><i class="bi bi-search me-1"></i>Procedimiento detallado: elige el número</div>
+        <div class="act-pick" id="${a.id}-pick">${a.nums.map((n, i) => `<button type="button" class="btn btn-sm ${i === a.sel ? 'btn-dark' : 'btn-outline-secondary'}" data-act-pick="${a.id}|${i}">${n.hex}</button>`).join('')}</div>
+        <div id="${a.id}-detail">${actDetailHTML(a, a.sel)}</div>
+        <div class="fw-bold mt-3 mb-2"><i class="bi bi-4-square me-1"></i>Pasos 6 a 9 con las primeras cuatro letras</div>
+        <div class="row g-2 mb-3">${L.blocks}</div>
+        <div class="fw-bold mb-1"><i class="bi bi-table me-1"></i>Paso 10 · tabla llena</div>${L.table}`;
+    }
+    const lockedHTML = `<div class="act-lock"><i class="bi bi-lock-fill big"></i><div class="flex-grow-1"><strong>Solución bloqueada.</strong><div class="small text-muted">El paso a paso se muestra cuando la página está desbloqueada.</div></div><button class="btn btn-outline-dark btn-sm rounded-pill fw-bold" type="button" data-unlock><i class="bi bi-unlock-fill me-1"></i>Desbloquear</button></div>`;
+
+    function renderActSolution(a) {
+      const box = document.querySelector(`[data-act="${a.id}"]`); if (!box) return;
+      box.innerHTML = isUnlockedPage() ? actSolutionHTML(a) : lockedHTML;
+    }
+    function renderAllActSolutions() { ACTS.forEach(renderActSolution); }
+    function actPick(id, i) {
+      const a = ACTS.find(x => x.id === id); if (!a || !isUnlockedPage()) return;
+      a.sel = i; renderActSolution(a);
+    }
+
+    function actCardHTML(a, open) {
+      return `
+        <div class="card act-card shadow-sm mb-3" id="card-${a.id}">
+          <button class="act-card-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#${a.id}-body" aria-expanded="${open}" aria-controls="${a.id}-body">
+            <i class="bi bi-puzzle-fill text-primary fs-5"></i><span>${a.title}</span><span class="badge text-bg-secondary ms-2">${a.badge}</span><i class="bi bi-chevron-down chev"></i>
+          </button>
+          <div class="collapse ${open ? 'show' : ''}" id="${a.id}-body"><div class="card-body">
+            <h6 class="act-h"><i class="bi bi-flag-fill me-1 text-danger"></i>Planteamiento del problema</h6>
+            ${actProblem(a)}
+            <h6 class="act-h"><i class="bi bi-list-check me-1 text-success"></i>Solución paso a paso</h6>
+            <div data-act="${a.id}"></div>
+          </div></div>
+        </div>`;
+    }
+    function renderActivities() {
+      ACTS.length = 0; ACT_FIXED.forEach(makeAct);
+      document.getElementById('act-list').innerHTML = ACTS.map((a, i) => actCardHTML(a, i === 0)).join('');
+      renderAllActSolutions();
+    }
+    function randomWord() {
+      const w = ASCII_WORDS[Math.floor(Math.random() * ASCII_WORDS.length)].toLowerCase();
+      if (Math.random() < .4) return w.charAt(0).toUpperCase() + w.slice(1);
+      const up = new Set([0]); while (up.size < 3) up.add(Math.floor(Math.random() * w.length));
+      return [...w].map((ch, i) => up.has(i) ? ch.toUpperCase() : ch).join('');
+    }
+    function addRandomActivity() {
+      let word, last = ACTS[ACTS.length - 1];
+      do { word = randomWord(); } while (last && word === last.word);
+      const a = makeAct({ title: `Actividad aleatoria #${++actRandomCount}`, badge: 'Aleatoria', word, s: 5 + Math.floor(Math.random() * 9), d: 4 + Math.floor(Math.random() * 4) });
+      document.getElementById('act-list').insertAdjacentHTML('beforeend', actCardHTML(a, true));
+      renderActSolution(a);
+      document.getElementById(`card-${a.id}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     /* ===================== INICIO ===================== */
@@ -813,7 +1068,7 @@
       renderBaseCards();
       renderEqTable(15);
       renderRoutes();
-      renderExercises();
+      resetSets(); renderExercises(); renderActivities();
       renderLive();
       renderSwitchPanel();
       updateScore();
@@ -827,6 +1082,12 @@
         
         const chk = e.target.closest('[data-check]');
         if (chk) checkAnswer(chk.dataset.check);
+
+        const gen = e.target.closest('[data-gen]');
+        if (gen) addExercise(+gen.dataset.gen);
+
+        const pk = e.target.closest('[data-act-pick]');
+        if (pk) { const [aid, i] = pk.dataset.actPick.split('|'); actPick(aid, +i); }
         
         const st = e.target.closest('[data-st]');
         if (st) stairGo(st.closest('.stair-box'), st.dataset.st);
@@ -866,8 +1127,6 @@
       });
 
       // Controles del Panel de Interruptores y Focos
-      document.getElementById('sw-all-on').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(255); });
-      document.getElementById('sw-all-off').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(0); });
       document.getElementById('sw-alternate').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(170); }); // 10101010 = 170
       document.getElementById('sw-random').addEventListener('click', () => { clearInterval(animTimer); setSwitchValue(Math.floor(Math.random() * 256)); });
 
@@ -891,6 +1150,8 @@
       });
 
       document.getElementById('reset-all').addEventListener('click', resetAll);
+      document.getElementById('act-random').addEventListener('click', addRandomActivity);
+      document.addEventListener('aula-auth', renderAllActSolutions);
     });
   </script>
 </body>
