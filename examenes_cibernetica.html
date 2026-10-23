@@ -92,6 +92,14 @@
     .btn-chip { border:2px solid var(--c,#4338ca); color:var(--c,#4338ca); background:#fff; font-weight:800; font-size:.86rem; padding:.28rem .9rem; border-radius:999px; transition:all .2s; } .btn-chip.on { background:var(--c,#4338ca); color:#fff; box-shadow:0 4px 12px rgba(0,0,0,.2); }
     .ad-tbl th { white-space:nowrap; font-size:.8rem; color:#475569; } .ad-tbl td { font-size:.88rem; }
     @media print { body { display:none !important; } }
+    .fin-banner { display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center; }
+    .fin-banner > div { flex:1 1 220px; background:linear-gradient(135deg,var(--navy2),var(--navy)); color:#fff; border-radius:20px; padding:1.1rem 1rem; text-align:center; box-shadow:0 10px 26px rgba(15,23,42,.25); }
+    .fin-banner small { display:block; text-transform:uppercase; letter-spacing:.08em; font-weight:700; opacity:.75; font-size:.8rem; }
+    .fin-banner b { display:block; font-family:'Courier New',monospace; font-size:2.6rem; line-height:1.15; letter-spacing:.08em; }
+    .mal-item { display:flex; gap:.7rem; align-items:flex-start; background:#fff; border:1px solid #e2e8f0; border-left:6px solid var(--c); border-radius:12px; padding:.55rem .8rem; margin-bottom:.45rem; font-size:.92rem; }
+    .mal-n { width:30px; height:30px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+    @media (max-width:575.98px) { .fin-banner b { font-size:2rem; } }
+
   </style>
 </head>
 <body>
@@ -148,7 +156,7 @@
       <hr class="my-4">
       <h2 class="h6 fw-bold mb-2"><i class="bi bi-list-check me-1 text-primary"></i>Reglas del examen</h2>
       <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b>35 preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
-      <div class="rule"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b>. El reloj arranca al pulsar «Comenzar» y el examen se entrega solo cuando llega a cero.</div></div>
+      <div class="rule"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b>. El reloj arranca al pulsar «Comenzar» y el examen se entregará en automático al llegar el reloj a 0.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo la respuesta, sin espacios</b>, con los símbolos que indique cada pregunta (solo 0 y 1, solo números, o números y letras A–F).</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
       <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen y tu reloj continúan. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
@@ -216,14 +224,14 @@
     </div>
     <div class="gate-body text-center">
       <div id="fin-score"></div>
-      <div class="row g-2 text-start my-3" id="fin-datos"></div>
+      <div class="my-3" id="fin-datos"></div>
+      <div class="text-start my-3" id="fin-malas"></div>
       <div id="fin-status" class="mb-3"></div>
       <div class="d-flex flex-wrap gap-2 justify-content-center">
-        <button class="btn btn-outline-primary fw-bold rounded-pill" id="btn-comprobante"><i class="bi bi-download me-1"></i>Descargar comprobante</button>
         <button class="btn btn-outline-secondary fw-bold rounded-pill d-none" id="btn-reenviar"><i class="bi bi-arrow-repeat me-1"></i>Reintentar envío</button>
         <button class="btn btn-primary fw-bold rounded-pill d-none" id="btn-terminar"><i class="bi bi-box-arrow-right me-1"></i>Terminar y salir</button>
       </div>
-      <p class="small text-muted mt-3 mb-0">Guarda tu comprobante por si tu profesor(a) lo pide. Pulsa «Terminar y salir» para dejar el equipo listo para otra persona.</p>
+      <p class="small text-muted mt-3 mb-0">Cuando termines de revisar, pulsa «Terminar y salir» para dejar el equipo listo para otra persona.</p>
     </div>
   </div>
 </div>
@@ -270,7 +278,7 @@
    ========================================================================== */
 const CFG = {
   ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
-  DURACION_MIN: 140,               // duración del examen en minutos (cuenta regresiva)
+  DURACION_MIN: 120,               // duración del examen en minutos (cuenta regresiva)
   TOTAL: 35
 };
 
@@ -1073,13 +1081,26 @@ function finish(motivo) {
 /* ===== 4. Pantalla final: calificación y envío ===== */
 function renderFin() {
   const r = S.result, pct = r.aciertos / r.total * 100, col = pct >= 60 ? '#16a34a' : '#dc2626';
-  $('#fin-sub').textContent = `${r.nombre} · ${EXAMS[r.parcial].titulo} · Tipo ${r.tipo}`;
+  $('#fin-sub').textContent = `${EXAMS[r.parcial].titulo}`;
   $('#fin-score').innerHTML = S.status === 'dup'
     ? `<div class="alert alert-danger d-inline-block"><i class="bi bi-x-octagon-fill me-1"></i>Este examen ya había sido respondido: no se guardó tu resultado.</div>`
     : `<div class="grade-ring" style="--p:${pct};--gc:${col}"><b style="color:${col}">${r.calificacion.toFixed(1)}</b><small class="text-muted fw-bold">de 10</small></div><div class="mt-2 fw-bold">${r.aciertos} aciertos de ${r.total}</div><div class="small text-muted">${pct >= 60 ? '¡Aprobado!' : 'Sigue practicando, ¡tú puedes!'}</div>`;
-  const row = (ic, k, v) => `<div class="col-sm-6"><div class="rule mb-0"><i class="bi ${ic}"></i><div><div class="small text-muted">${k}</div><b>${esc(v)}</b></div></div></div>`;
-  $('#fin-datos').innerHTML = row('bi-person-fill', 'Alumno', r.nombre) + row('bi-hash', 'Número de cuenta', r.cuenta) + row('bi-people-fill', 'Grupo', r.grupo) + row('bi-file-earmark-text-fill', 'Examen', `${EXAMS[r.parcial].titulo} · Tipo ${r.tipo}`) + row('bi-calendar-check-fill', 'Fecha y hora de entrega', fmtDT(r.fecha)) + row('bi-stopwatch-fill', 'Tiempo que tardaste', r.tiempo);
+  $('#fin-datos').innerHTML = `<div class="fin-banner"><div><small>Número de cuenta</small><b>${esc(r.cuenta)}</b></div><div><small>Grupo</small><b>${esc(r.grupo)}</b></div></div>`;
+  renderMalas(r);
   setStatus();
+}
+/* Preguntas que estuvieron mal (sin mostrar la respuesta correcta) */
+function renderMalas(r) {
+  const box = $('#fin-malas'); if (!box) return;
+  let ex = []; try { ex = buildExam(r.parcial, r.tipo, r.seed); } catch (e) { }
+  const secs = EXAMS[r.parcial].secs, det = String(r.detalle || ''), ans = (S && S.answers) || {};
+  const plain = h => String(h).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<div class="datos">[\s\S]*?<\/div>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const bad = ex.filter((q, i) => det[i] === '0');
+  if (!ex.length) { box.innerHTML = ''; return; }
+  if (!bad.length) { box.innerHTML = '<div class="alert alert-success fw-bold text-center mb-0"><i class="bi bi-stars me-1"></i>¡Todas tus respuestas fueron correctas!</div>'; return; }
+  const mine = q => { const v = ans[q.id]; if (v === undefined || v === '' || v === null) return '<span class="text-muted">Sin responder</span>'; return q.kind === 'mc' ? `Elegiste la opción <b>${'ABCD'[+v]}</b>` : `Escribiste <b class="mono">${esc(v)}</b>`; };
+  box.innerHTML = `<h2 class="h6 fw-bold mb-2"><i class="bi bi-x-circle-fill text-danger me-1"></i>Preguntas que estuvieron mal (${bad.length} de ${ex.length})</h2><div class="small text-muted mb-2">Aquí no se muestra la respuesta correcta; repasa estos temas con tu profesor(a).</div>` +
+    bad.map(q => { const sec = secs.find(x => x.id === q.sec), t = plain(q.html); return `<div class="mal-item" style="--c:${sec.c}"><span class="mal-n">${q.id}</span><div><div class="small fw-bold" style="color:${sec.c}">${esc(sec.t)}</div><div>${esc(t.length > 130 ? t.slice(0, 127) + '…' : t)}</div><div class="small mt-1">${mine(q)}</div></div></div>`; }).join('');
 }
 function setStatus() {
   const st = S.status || (S.sent ? 'ok' : 'pend');
@@ -1104,10 +1125,6 @@ async function sendResult(st) {
 }
 $('#btn-reenviar').onclick = () => sendResult(S);
 $('#btn-terminar').onclick = () => { clearState(); SS.del('eq_sess'); location.reload(); };
-$('#btn-comprobante').onclick = () => {
-  const r = S.result, txt = `COMPROBANTE · Examen Cibernética 1 · ${EXAMS[r.parcial].titulo}\n\nAlumno: ${r.nombre}\nCuenta: ${r.cuenta}\nGrupo: ${r.grupo}\nTipo de examen: ${r.tipo}\nCalificación: ${r.calificacion.toFixed(1)} / 10 (${r.aciertos} de ${r.total})\nTiempo usado: ${r.tiempo}\nEntrega: ${fmtDT(r.fecha)}\n`;
-  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' })); a.download = `comprobante_${r.cuenta}_P${r.parcial}${r.tipo}.txt`; document.body.appendChild(a); a.click(); a.remove();
-};
 
 /* ==========================================================================
    PANEL DEL ADMINISTRADOR
