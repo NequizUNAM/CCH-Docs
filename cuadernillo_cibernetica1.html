@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="es" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuadernillo de Cibernética I</title>
+<meta name="description" content="Cuadernillo interactivo de repaso de Cibernética y Computación I (CCH-UNAM, programa 2024): sistemas, binario, álgebra de Boole, circuitos, algoritmos y Java, con simuladores y ejercicios aleatorios.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --ink:#1d2433; --muted:#5b6475; --paper:#fbfaf6; --card:#ffffff; --line:#e6e2d6; --grid:rgba(30,60,120,.055);
+  --u1:#0f766e; --u2:#b45309; --u3:#7c3aed; --acc:var(--u1); --ok:#15803d; --bad:#b91c1c;
+  --shade:rgba(15,118,110,.22); --shade2:rgba(180,83,9,.25);
+  --font-head:'Fraunces',Georgia,serif; --font-body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+[data-bs-theme=dark]{
+  --ink:#e8e6df; --muted:#a3a9b6; --paper:#14171d; --card:#1c2029; --line:#2d3340; --grid:rgba(160,190,255,.05);
+  --u1:#2dd4bf; --u2:#fbbf24; --u3:#a78bfa; --shade:rgba(45,212,191,.25); --shade2:rgba(251,191,36,.25);
+}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1.04rem;line-height:1.62;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+h1,h2,h3,h4,.font-head{font-family:var(--font-head);letter-spacing:-.01em}
+a{color:var(--acc)}
+.navbar{background:color-mix(in srgb,var(--card) 88%,transparent)!important;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.navbar .nav-link{color:var(--muted);font-weight:600;font-size:.95rem}
+.navbar .nav-link.active,.navbar .nav-link:hover{color:var(--acc)}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--u1),var(--u2),var(--u3));z-index:2000;width:0;transition:width .1s}
+.hero{padding:7rem 0 3rem;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.1}
+.hero .lead{color:var(--muted);max-width:44rem}
+.hero-svg{width:100%;max-width:520px;height:auto}
+.hero-svg .draw{stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.4s ease forwards .3s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero-svg .bar{transform-origin:bottom;transform-box:fill-box;animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chip{display:inline-block;padding:.12rem .6rem;border-radius:99px;font-size:.78rem;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+.unit-tag{display:inline-block;font-weight:800;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);border:2px solid var(--uc);border-radius:6px;padding:.05rem .45rem}
+.u1{--uc:var(--u1)} .u2{--uc:var(--u2)} .u3{--uc:var(--u3)}
+section.unit{padding:3.5rem 0 1rem}
+.unit-head{border-left:6px solid var(--uc);padding-left:1rem;margin-bottom:1.5rem}
+.unit-head h2{font-weight:700;margin:.3rem 0}
+.topic{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.5rem;margin-bottom:1.75rem;box-shadow:0 1px 0 rgba(0,0,0,.02),0 8px 24px -16px rgba(0,0,0,.25)}
+.topic>h3{font-size:1.45rem;font-weight:650;display:flex;gap:.6rem;align-items:baseline}
+.topic>h3 .num{color:var(--uc);font-size:1rem;font-family:var(--font-body);font-weight:800}
+.topic h4{font-size:1.1rem;font-weight:650;margin-top:1.2rem;color:var(--uc)}
+.def{border-left:4px solid var(--uc);background:color-mix(in srgb,var(--uc) 7%,transparent);padding:.7rem 1rem;border-radius:0 10px 10px 0;margin:.8rem 0}
+.note{border:1px dashed var(--line);border-radius:10px;padding:.6rem .9rem;color:var(--muted);font-size:.95rem;margin:.8rem 0}
+.formula{background:color-mix(in srgb,var(--uc) 5%,var(--card));border:1px solid var(--line);border-radius:12px;padding:.6rem 1rem;margin:.8rem 0;overflow-x:auto}
+.lab{border:1px solid var(--line);border-radius:14px;padding:1rem;margin:1rem 0;background:color-mix(in srgb,var(--card) 92%,var(--uc) 8%)}
+.lab-title{font-weight:800;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.lab svg{width:100%;height:auto;display:block;user-select:none}
+.lab .form-range{accent-color:var(--uc)}
+.stat{display:inline-flex;flex-direction:column;padding:.35rem .7rem;border-radius:10px;background:var(--card);border:1px solid var(--line);min-width:5.5rem;margin:.2rem}
+.stat b{font-size:1.08rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.btn-acc{background:var(--uc,var(--acc));color:#fff;border:none;font-weight:700}
+.btn-acc:hover{filter:brightness(1.1);color:#fff}
+[data-bs-theme=dark] .btn-acc{color:#111}
+.btn-ghost{border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.btn-ghost:hover{border-color:var(--uc);color:var(--uc)}
+/* problems */
+.problem{border:2px solid var(--uc);border-radius:16px;padding:1.1rem 1.2rem;margin:1.2rem 0;background:var(--card);position:relative}
+.problem .ptag{position:absolute;top:-.8rem;left:1rem;background:var(--uc);color:#fff;font-weight:800;font-size:.75rem;letter-spacing:.06em;padding:.1rem .6rem;border-radius:6px;text-transform:uppercase}
+[data-bs-theme=dark] .problem .ptag{color:#111}
+.problem .enun{margin-top:.4rem}
+.problem .steps{list-style:none;padding:0;margin:.8rem 0 0;counter-reset:st}
+.problem .steps>li{counter-increment:st;position:relative;padding:.6rem .8rem .6rem 3rem;border-radius:10px;margin-bottom:.5rem;background:color-mix(in srgb,var(--uc) 6%,transparent);animation:stepIn .45s ease both}
+.problem .steps>li::before{content:counter(st);position:absolute;left:.7rem;top:.6rem;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--uc);color:#fff;font-weight:800;display:grid;place-items:center;font-size:.85rem}
+[data-bs-theme=dark] .problem .steps>li::before{color:#111}
+.problem .steps>li h6{font-weight:800;margin:0 0 .2rem;font-size:.95rem}
+@keyframes stepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.problem .check-ok{color:var(--ok);font-weight:700}
+.problem .check-bad{color:var(--bad);font-weight:700}
+.problem table,.topic table.tbl{font-variant-numeric:tabular-nums}
+.tbl{width:auto;border-collapse:collapse;margin:.5rem 0;font-size:.92rem}
+.tbl th,.tbl td{border:1px solid var(--line);padding:.25rem .55rem;text-align:center}
+.tbl th{background:color-mix(in srgb,var(--uc) 14%,var(--card))}
+.tbl td.hl{background:color-mix(in srgb,var(--uc) 22%,transparent);font-weight:700}
+.scroll-x{overflow-x:auto}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+/* learnings table */
+.learn{list-style:none;padding:0;margin:0}
+.learn li{display:grid;grid-template-columns:2.2rem 1fr;gap:.5rem;padding:.5rem 0;border-bottom:1px dashed var(--line)}
+.learn li .n{font-weight:800;color:var(--uc);text-align:right}
+.learn li .tm{display:block;margin-top:.15rem}
+.accordion-button:not(.collapsed){background:color-mix(in srgb,var(--uc) 10%,var(--card));color:var(--ink)}
+.accordion-item{background:var(--card);border-color:var(--line)}
+.accordion-button{background:var(--card);color:var(--ink)}
+.modal-content{background:var(--card);color:var(--ink)}
+.fgroup h5{font-family:var(--font-head);margin-top:1rem;color:var(--uc)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.6rem}
+.fcard{border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;background:color-mix(in srgb,var(--uc) 4%,var(--card));overflow-x:auto}
+.fcard small{display:block;color:var(--muted);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.fab{position:fixed;right:1.1rem;bottom:1.1rem;z-index:1040;border-radius:99px;padding:.7rem 1.1rem;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+#toTop{position:fixed;left:1.1rem;bottom:1.1rem;z-index:1040;opacity:0;pointer-events:none;transition:opacity .3s}
+#toTop.show{opacity:1;pointer-events:auto}
+svg text{font-family:var(--font-body);fill:var(--ink)}
+svg .axis{stroke:var(--muted);stroke-width:1}
+svg .gridl{stroke:var(--line);stroke-width:1}
+svg .tick{font-size:11px;fill:var(--muted)}
+svg .barr{transition:height .5s ease,y .5s ease,fill .3s}
+svg .pt{transition:cx .4s,cy .4s}
+.quiz-opt.correct{background:var(--ok)!important;color:#fff!important;border-color:var(--ok)!important}
+.quiz-opt.wrong{background:var(--bad)!important;color:#fff!important;border-color:var(--bad)!important}
+footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-size:.92rem}
+.katex-display{margin:.4em 0}
+@media (max-width:576px){.topic{padding:1rem}.problem{padding:1rem .8rem}.problem .steps>li{padding-left:2.6rem}}
+@media print{.navbar,.fab,#toTop,.lab,.problem .btns{display:none!important}.reveal{opacity:1;transform:none}}
+.btn-acc:focus,.btn-acc:active,.btn-acc:focus-visible,.btn-acc.active{background:var(--uc,var(--acc))!important;color:#fff!important;border:none}
+[data-bs-theme=dark] .btn-acc:focus,[data-bs-theme=dark] .btn-acc:active{color:#111!important}
+.btn-ghost.active,.btn-ghost:active,.btn-ghost:focus-visible{background:color-mix(in srgb,var(--uc,var(--acc)) 16%,var(--card))!important;border-color:var(--uc,var(--acc))!important;color:var(--ink)!important}
+h1,h2,h3,h4,h5,h6{color:var(--ink)}
+.navbar-brand{color:var(--ink)!important}
+.navbar-toggler{border-color:var(--line)}
+[data-bs-theme=dark] .navbar-toggler-icon{filter:invert(1)}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:.15em 0;max-width:100%}
+.problem .steps>li,.def,.note,.topic{min-width:0;overflow-wrap:anywhere}
+.lab .stat b{overflow-wrap:anywhere}
+
+pre.code{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:.8rem 1rem;font-size:.86rem;line-height:1.5;overflow-x:auto;margin:.6rem 0;tab-size:4}
+pre.code .tk-k{color:#c792ea;font-weight:600} pre.code .tk-s{color:#c3e88d} pre.code .tk-c{color:#7f8ea3;font-style:italic} pre.code .tk-n{color:#f78c6c} pre.code .tk-t{color:#82aaff} pre.code .tk-a{color:#ffcb6b}
+.out-console{background:#0b0f14;color:#a7f3d0;font-family:ui-monospace,Consolas,monospace;border-radius:10px;padding:.6rem .9rem;white-space:pre-wrap;font-size:.88rem;min-height:2.4rem}
+code{color:var(--uc,var(--acc));background:color-mix(in srgb,var(--uc,var(--acc)) 10%,transparent);padding:.05rem .3rem;border-radius:4px}
+pre code{background:none;padding:0;color:inherit}
+.bit{width:2.6rem;height:2.6rem;border-radius:10px;border:2px solid var(--line);background:var(--card);font-weight:800;font-size:1.2rem;font-family:ui-monospace,monospace;transition:all .25s;color:var(--ink)}
+.bit.on{background:var(--uc);border-color:var(--uc);color:#fff;transform:translateY(-3px);box-shadow:0 6px 14px -6px var(--uc)}
+.bitw{font-size:.7rem;color:var(--muted);text-align:center}
+.flip{perspective:900px;cursor:pointer;min-height:220px}
+.flip .inner{position:relative;width:100%;height:100%;min-height:220px;transition:transform .7s;transform-style:preserve-3d}
+.flip.on .inner{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:14px;padding:1rem;background:var(--card);overflow:auto}
+.flip .back{transform:rotateY(180deg);background:color-mix(in srgb,var(--uc) 8%,var(--card))}
+.flip .yr{font-family:var(--font-head);font-size:2rem;color:var(--uc);font-weight:700}
+.mock{border:1px solid #9aa4b2;border-radius:8px;overflow:hidden;background:#eef1f5;color:#111;max-width:520px;font-family:system-ui,sans-serif;font-size:.9rem;box-shadow:0 12px 30px -16px rgba(0,0,0,.5)}
+.mock .tb{background:linear-gradient(#e4e8ee,#cfd6df);padding:.3rem .6rem;font-weight:600;display:flex;justify-content:space-between}
+.mock .mb{background:#f7f8fa;border-bottom:1px solid #c5ccd6;padding:.2rem .4rem;display:flex;gap:.8rem;position:relative}
+.mock .mb span{cursor:pointer;padding:0 .3rem} .mock .mb span:hover{background:#dbe4f0}
+.mock .menu{position:absolute;top:100%;left:.4rem;background:#fff;border:1px solid #b9c2cf;box-shadow:0 6px 16px -6px rgba(0,0,0,.4);z-index:5;min-width:9rem;display:none}
+.mock .menu div{padding:.25rem .7rem;cursor:pointer} .mock .menu div:hover{background:#2f6fd6;color:#fff}
+.mock input[type=text],.mock textarea{border:1px solid #9aa4b2;background:#fff;color:#111;border-radius:2px;padding:.15rem .3rem;width:100%}
+.mock button{border:1px solid #8b95a3;background:linear-gradient(#fdfdfd,#dfe4ea);border-radius:4px;padding:.15rem .8rem;color:#111}
+.evlog{font-family:ui-monospace,monospace;font-size:.8rem;max-height:9rem;overflow:auto}
+.evlog div{animation:stepIn .35s ease both}
+.cell{display:inline-flex;flex-direction:column;align-items:center;margin:2px}
+.cell b{width:3rem;height:3rem;display:grid;place-items:center;border:2px solid var(--uc);border-radius:8px;font-family:ui-monospace,monospace;background:var(--card);transition:all .3s}
+.cell b.hot{background:var(--uc);color:#fff;transform:translateY(-4px)}
+.cell b.new{animation:pop .45s ease} .cell small{color:var(--muted);font-size:.7rem}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.kmap td{width:3rem;height:3rem;cursor:pointer;font-family:ui-monospace,monospace;font-weight:800;font-size:1.05rem;position:relative}
+.kmap td.one{background:color-mix(in srgb,var(--uc) 22%,transparent)}
+.stage{transition:all .35s;padding:.4rem .7rem;font-size:.85rem}
+.stage.on{background:var(--uc,var(--acc));color:#fff;border-color:var(--uc,var(--acc));transform:translateY(-3px)}
+
+:root{--acc:var(--u1)}
+</style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#mainnav" data-bs-offset="90">
+<div id="progress"></div>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainnav">
+ <div class="container">
+  <a class="navbar-brand font-head fw-bold" href="#inicio">Cuadernillo · Cibernética I</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nv" aria-label="Menú"><span class="navbar-toggler-icon"></span></button>
+  <div class="collapse navbar-collapse" id="nv">
+   <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+    <li class="nav-item"><a class="nav-link" href="#aprendizajes">Aprendizajes</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad1">Unidad 1</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad2">Unidad 2</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad3">Unidad 3</a></li>
+    <li class="nav-item"><a class="nav-link" href="#fuentes">Fuentes</a></li>
+    <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-ghost" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">◐</button></li>
+   </ul>
+  </div>
+ </div>
+</nav>
+<header class="hero" id="inicio">
+ <div class="container">
+  <div class="row align-items-center g-4">
+   <div class="col-lg-7">
+    <span class="chip mb-3">CCH · UNAM · Programa de Estudios 2024 · Quinto semestre</span>
+    <h1>Cibernética y Computación I<br><span style="color:var(--u1)">Cuadernillo interactivo de repaso</span></h1>
+    <p class="lead mt-3">Sistemas y retroalimentación, sistema binario, álgebra de Boole, circuitos lógicos, algoritmos y primeros programas en Java. Usa los simuladores y resuelve ejercicios que cambian cada vez que presionas <b>«Nuevo ejercicio»</b>.</p>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+     <a class="btn btn-acc u1" href="#aprendizajes">Ver aprendizajes</a>
+     <button class="btn btn-ghost" data-bs-toggle="modal" data-bs-target="#formulario">📘 Guía rápida</button>
+    </div>
+    <div class="mt-4 d-flex flex-wrap gap-2">
+     <a href="#unidad1" class="unit-tag u1 text-decoration-none">U1 · La cibernética · 14 h</a>
+     <a href="#unidad2" class="unit-tag u2 text-decoration-none">U2 · Binario y Boole · 18 h</a>
+     <a href="#unidad3" class="unit-tag u3 text-decoration-none">U3 · Algoritmos y Java · 32 h</a>
+    </div>
+   </div>
+   <div class="col-lg-5 text-center"><svg id="hero-svg" class="hero-svg" role="img" aria-label="Sistema con entrada, proceso, salida y retroalimentación"></svg></div>
+  </div>
+ </div>
+</header>
+
+<section id="aprendizajes" class="py-4">
+ <div class="container">
+  <h2 class="font-head mb-1">Aprendizajes y temática</h2>
+  <p class="text-body-secondary">Los aprendizajes aparecen en el orden del programa (numerados aquí para ubicarlos). Haz clic en la temática para ir a su sección.</p>
+  <div class="accordion" id="learn-acc"></div>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 1 ============================ -->
+<section class="unit u1" id="unidad1">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 1</span><h2>La cibernética</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 7</p></div>
+
+  <article class="topic reveal" id="t11">
+   <h3><span class="num">1.1</span> ¿Qué es la cibernética?</h3>
+   <div class="def">La <b>cibernética</b> es un campo <b>transdisciplinario</b> que estudia los procesos de <b>control y comunicación</b> en los seres vivos, las máquinas y las organizaciones, en particular los procesos circulares de <b>retroalimentación</b>: el resultado de una acción regresa como información para ajustar las acciones siguientes.</div>
+   <ul>
+    <li><b>Origen del nombre:</b> del griego <i>kybernḗtēs</i>, «timonel». El timonel corrige continuamente el rumbo según lo que observa: un ejemplo clásico de retroalimentación. André-Marie Ampère usó en 1834 la palabra francesa <i>cybernétique</i> para referirse al arte de gobernar.</li>
+    <li><b>Antecedentes:</b> Norbert Wiener y Arturo Rosenblueth acuñaron el término moderno en 1947. En 1948 Wiener publicó <i>Cybernetics: Or Control and Communication in the Animal and the Machine</i>. Las <b>Conferencias Macy</b> (1946–1953) reunieron a matemáticos, fisiólogos, ingenieros, psicólogos y antropólogos para estudiar los mecanismos de retroalimentación en sistemas biológicos y sociales.</li>
+    <li><b>Transdisciplina:</b> sus ideas atraviesan muchas disciplinas: ingeniería de control, biología (homeostasis), medicina, computación, robótica, economía, ecología, educación y ciencias sociales.</li>
+    <li><b>Aplicaciones actuales:</b> robots y vehículos autónomos, pilotos automáticos, termostatos inteligentes, control de procesos industriales, prótesis que responden a señales del cuerpo y sistemas de recomendación que se ajustan con lo que hace el usuario.</li>
+   </ul>
+  </article>
+
+  <article class="topic reveal" id="t12">
+   <h3><span class="num">1.2</span> Autoras y autores de la cibernética y la computación</h3>
+   <p class="small text-body-secondary">Haz clic en cada tarjeta para voltearla.</p>
+   <div class="row g-3">
+    <div class="col-md-6 col-lg-4"><div class="flip"><div class="inner"><div class="face"><div class="yr">1843</div><h5>Ada Lovelace</h5><p class="small mb-0">Matemática británica (1815–1852).</p></div><div class="face back small">Tradujo un artículo de Luigi Menabrea sobre la <b>máquina analítica</b> de Charles Babbage y le añadió siete notas (A–G). La <b>Nota G</b> describe paso a paso el cálculo de los números de Bernoulli; se considera uno de los primeros programas de computadora. Intuyó que una máquina podía manipular símbolos, no solo números.</div></div></div></div>
+    <div class="col-md-6 col-lg-4"><div class="flip"><div class="inner"><div class="face"><div class="yr">1937 · 1948</div><h5>Claude Shannon</h5><p class="small mb-0">Matemático e ingeniero estadounidense (1916–2001).</p></div><div class="face back small">En su tesis de maestría del MIT, <i>A Symbolic Analysis of Relay and Switching Circuits</i> (1937), mostró que el <b>álgebra de Boole</b> sirve para analizar y diseñar circuitos de interruptores: la base del diseño digital. En 1948 publicó <i>A Mathematical Theory of Communication</i>, que fundó la <b>teoría de la información</b> y usó la palabra <b>bit</b>.</div></div></div></div>
+    <div class="col-md-6 col-lg-4"><div class="flip"><div class="inner"><div class="face"><div class="yr">1943</div><h5>Arturo Rosenblueth</h5><p class="small mb-0">Fisiólogo mexicano (1900–1970), nacido en Chihuahua.</p></div><div class="face back small">Primer autor, con Wiener y Julian Bigelow, de «Behavior, Purpose and Teleology» (1943), que relaciona la conducta con propósito con la <b>retroalimentación</b>; Wiener lo consideró uno de los fundamentos de la cibernética. Fue profesor de fisiología en la UNAM (1944), trabajó en el Instituto Nacional de Cardiología y dirigió el <b>Cinvestav</b> del IPN desde 1961. Wiener le dedicó <i>Cybernetics</i>.</div></div></div></div>
+    <div class="col-md-6 col-lg-4"><div class="flip"><div class="inner"><div class="face"><div class="yr">1948</div><h5>Norbert Wiener</h5><p class="small mb-0">Matemático estadounidense (1894–1964), profesor del MIT.</p></div><div class="face back small">Publicó <i>Cybernetics: Or Control and Communication in the Animal and the Machine</i> (1948), que dio nombre y difusión al campo. Su idea central: animales y máquinas regulan su comportamiento comparando lo que hacen con lo que deberían hacer (<b>retroalimentación negativa</b>).</div></div></div></div>
+    <div class="col-md-6 col-lg-4"><div class="flip"><div class="inner"><div class="face"><div class="yr">1945–1948</div><h5>Jean Jennings Bartik</h5><p class="small mb-0">Programadora estadounidense (1924–2011).</p></div><div class="face back small">Una de las seis programadoras originales de la <b>ENIAC</b> (con Betty Holberton, Kathleen Antonelli, Marlyn Meltzer, Ruth Teitelbaum y Frances Spence). Ayudó a convertir la ENIAC en computadora de programa almacenado (1948) y después trabajó en la BINAC y la UNIVAC I. Es <i>Fellow</i> del Computer History Museum (2008).</div></div></div></div>
+   </div>
+   <div class="problem" data-gen="autores"></div>
+  </article>
+
+  <article class="topic reveal" id="t13">
+   <h3><span class="num">1.3</span> Sistemas</h3>
+   <div class="def">Un <b>sistema</b> es un conjunto de elementos que interactúan entre sí de forma organizada para cumplir un objetivo. Todo lo que está fuera del sistema y lo afecta, o es afectado por él, es su <b>ambiente</b> (entorno); la <b>frontera</b> separa al sistema de su ambiente.</div>
+   <div class="row g-3">
+    <div class="col-md-6"><h4>Elementos</h4><ul><li><b>Entradas:</b> lo que el sistema recibe (materia, energía o información).</li><li><b>Proceso:</b> la transformación de las entradas.</li><li><b>Salidas:</b> lo que el sistema produce.</li><li><b>Retroalimentación:</b> información de la salida que regresa para regular el sistema.</li></ul></div>
+    <div class="col-md-6"><h4>Clasificación</h4><ul><li><b>Naturales:</b> existen sin intervención humana (un ecosistema, el cuerpo humano).</li><li><b>Artificiales:</b> creados por el ser humano (una computadora, una escuela).</li><li><b>Abiertos:</b> intercambian materia, energía o información con su ambiente (una planta, una empresa).</li><li><b>Cerrados:</b> prácticamente no intercambian con su ambiente; en la realidad son casi siempre idealizaciones (un termo bien sellado se aproxima).</li></ul></div>
+   </div>
+   <div class="problem" data-gen="eps"></div>
+  </article>
+
+  <article class="topic reveal" id="t14">
+   <h3><span class="num">1.4</span> Control de un sistema: lazo abierto, lazo cerrado y retroalimentación</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def h-100"><b>Lazo abierto:</b> la acción de control no depende de la salida. El sistema no mide el resultado, así que no corrige si algo cambia. Ejemplo: una tostadora con temporizador.</div></div>
+    <div class="col-md-6"><div class="def h-100"><b>Lazo cerrado:</b> un sensor mide la salida, la compara con el valor deseado y el controlador corrige la diferencia (error). Ejemplo: un aire acondicionado con termostato.</div></div>
+   </div>
+   <p class="mt-2"><b>Retroalimentación negativa:</b> reduce la diferencia entre el estado actual y el deseado; estabiliza (termostato, homeostasis). <b>Retroalimentación positiva:</b> amplifica la diferencia (el chillido de un micrófono cerca de su bocina).</p>
+   <div class="lab" id="lab-termo">
+    <div class="lab-title">🌡️ Simulador: calefactor en lazo abierto vs. lazo cerrado</div>
+    <div class="row g-2 align-items-center">
+     <div class="col-md-3"><select class="form-select form-select-sm mode"><option value="cerrado">Lazo cerrado (termostato)</option><option value="abierto">Lazo abierto (temporizador)</option></select></div>
+     <div class="col-md-3"><label class="small">Temperatura deseada: <b class="sp-v"></b> °C</label><input type="range" class="form-range sp" min="16" max="28" value="22"></div>
+     <div class="col-md-3 duty-w"><label class="small">Encendido: <b class="duty-v"></b> % del tiempo</label><input type="range" class="form-range duty" min="0" max="100" value="50"></div>
+     <div class="col-md-3 d-flex flex-wrap gap-2"><button class="btn btn-sm btn-acc bplay">▶ Iniciar</button><button class="btn btn-sm btn-ghost bwin">Abrir ventana</button><button class="btn btn-sm btn-ghost breset">Reiniciar</button></div>
+    </div>
+    <svg role="img" aria-label="Temperatura en el tiempo"></svg>
+    <div class="st"></div>
+    <p class="small text-body-secondary mb-0">Inicia la simulación y presiona «Abrir ventana» (una perturbación). En lazo cerrado el termostato detecta el descenso y enciende el calefactor; en lazo abierto el calefactor sigue su horario y la temperatura no se corrige. La franja roja indica cuándo está encendido.</p>
+   </div>
+   <div class="problem" data-gen="lazo"></div>
+  </article>
+
+  <article class="topic reveal" id="t15">
+   <h3><span class="num">1.5</span> Sustentabilidad</h3>
+   <div class="def">El informe <i>Nuestro futuro común</i> (Comisión Brundtland, ONU, 1987) definió el <b>desarrollo sostenible</b> como el que satisface las necesidades del presente sin comprometer la capacidad de las generaciones futuras para satisfacer las suyas.</div>
+   <ul>
+    <li>Integra tres dimensiones: <b>ambiental</b> (cuidado del medio ambiente), <b>social</b> (bienestar social) y <b>económica</b> (sistemas de producción).</li>
+    <li>Un <b>sistema socioambiental</b> relaciona a una sociedad con su entorno natural: una cuenca y las comunidades que usan su agua, una ciudad y su aire.</li>
+    <li><b>Consumo responsable:</b> reducir, reutilizar y reciclar; elegir productos con menor impacto. Es el Objetivo de Desarrollo Sostenible 12 de la Agenda 2030 de la ONU («producción y consumo responsables»).</li>
+    <li>Visto como sistema, el planeta funciona con retroalimentaciones: la crisis socioambiental (contaminación, pérdida de biodiversidad, cambio climático) muestra lo que pasa cuando las salidas de nuestros sistemas de producción alteran el ambiente del que dependen.</li>
+   </ul>
+  </article>
+
+  <article class="topic reveal" id="t16">
+   <h3><span class="num">1.6</span> Modelos</h3>
+   <div class="def">Un <b>modelo</b> es una representación simplificada de un sistema que conserva sus características esenciales para estudiarlo, explicarlo o predecir su comportamiento.</div>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Tipo</th><th>Descripción</th><th>Ejemplo</th></tr></thead><tbody>
+    <tr><td>Natural / artificial</td><td>Según lo que representa: un sistema natural o uno creado por el ser humano</td><td>Modelo del sistema solar / maqueta de un puente</td></tr>
+    <tr><td>Analógico</td><td>Representa con magnitudes continuas o con una analogía física</td><td>Mapa en relieve, termómetro de mercurio</td></tr>
+    <tr><td>Digital</td><td>Representa con valores discretos (números, bits)</td><td>Simulación por computadora</td></tr>
+    <tr><td>Matemático</td><td>Usa ecuaciones y relaciones numéricas</td><td>\(d = v\,t\)</td></tr>
+    <tr><td>Conceptual</td><td>Usa diagramas, mapas o esquemas de ideas</td><td>Diagrama de caja negra, mapa conceptual</td></tr>
+   </tbody></table></div>
+   <p class="mt-2"><b>Para modelar un sistema</b> se identifican sus <b>entradas</b>, el <b>proceso</b> que las transforma y sus <b>salidas</b> (modelo de <b>caja negra</b>), y si existe retroalimentación. El modelo se valida comparando su comportamiento con el del sistema real.</p>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 2 ============================ -->
+<section class="unit u2" id="unidad2">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 2</span><h2>Representación de información en sistema binario y álgebra de Boole</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 5</p></div>
+
+  <article class="topic reveal" id="t21">
+   <h3><span class="num">2.1</span> Sistemas de numeración posicionales</h3>
+   <p>En un sistema posicional de base \(b\), cada dígito vale según su posición: \(N = d_{n}b^{n}+\dots+d_1b^1+d_0b^0\).</p>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Sistema</th><th>Base</th><th>Dígitos</th><th>Uso</th></tr></thead><tbody>
+    <tr><td>Decimal</td><td>10</td><td>0–9</td><td>Uso cotidiano</td></tr><tr><td>Binario</td><td>2</td><td>0, 1</td><td>Circuitos digitales: apagado/encendido</td></tr>
+    <tr><td>Octal</td><td>8</td><td>0–7</td><td>Abreviar grupos de 3 bits</td></tr><tr><td>Hexadecimal</td><td>16</td><td>0–9, A–F</td><td>Abreviar grupos de 4 bits (colores, direcciones de memoria)</td></tr>
+   </tbody></table></div>
+   <ul><li><b>Decimal → base b:</b> divisiones sucesivas entre \(b\); los residuos leídos de abajo hacia arriba.</li><li><b>Base b → decimal:</b> suma de cada dígito por su peso \(b^{k}\).</li><li><b>Binario ↔ octal/hexadecimal:</b> agrupar bits de 3 en 3 o de 4 en 4 desde la derecha.</li></ul>
+   <div class="lab" id="lab-bits">
+    <div class="lab-title">💡 Un byte: haz clic en cada bit</div>
+    <div class="bits d-flex flex-wrap gap-2 justify-content-center mb-2"></div>
+    <div class="d-flex flex-wrap gap-2 justify-content-center mb-2"><button class="btn btn-sm btn-ghost b0">Todo en 0</button><button class="btn btn-sm btn-ghost brand">Aleatorio</button><button class="btn btn-sm btn-ghost bshl">Desplazar ← (×2)</button><button class="btn btn-sm btn-ghost bnot">Invertir bits</button></div>
+    <div class="out text-center"></div>
+    <p class="small text-body-secondary mb-0 mt-1">*En un <code>byte</code> con signo (complemento a 2) el bit de la izquierda pesa −128. Prueba 01000001: es 65, la letra 'A' en ASCII/Unicode.</p>
+   </div>
+   <div class="problem" data-gen="dec2bin"></div>
+   <div class="problem" data-gen="bin2dec"></div>
+   <div class="problem" data-gen="bin2oh"></div>
+   <div class="problem" data-gen="hex2bin"></div>
+  </article>
+
+  <article class="topic reveal" id="t22">
+   <h3><span class="num">2.2</span> Tipos de datos primitivos: memoria, rango y precisión</h3>
+   <p>La computadora guarda todo en bits. El <b>tipo de dato</b> indica cuántos bits se usan y cómo se interpretan. Los 8 tipos primitivos de Java:</p>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Tipo</th><th>Bits</th><th>Representa</th><th>Rango</th></tr></thead><tbody>
+    <tr><td><code>byte</code></td><td>8</td><td>Entero con signo</td><td>−128 a 127</td></tr>
+    <tr><td><code>short</code></td><td>16</td><td>Entero con signo</td><td>−32 768 a 32 767</td></tr>
+    <tr><td><code>int</code></td><td>32</td><td>Entero con signo</td><td>\(-2^{31}\) a \(2^{31}-1\) (−2 147 483 648 a 2 147 483 647)</td></tr>
+    <tr><td><code>long</code></td><td>64</td><td>Entero con signo</td><td>\(-2^{63}\) a \(2^{63}-1\)</td></tr>
+    <tr><td><code>float</code></td><td>32</td><td>Punto flotante IEEE 754 (precisión simple)</td><td>≈ 7 dígitos significativos</td></tr>
+    <tr><td><code>double</code></td><td>64</td><td>Punto flotante IEEE 754 (precisión doble)</td><td>≈ 15–16 dígitos significativos</td></tr>
+    <tr><td><code>char</code></td><td>16</td><td>Carácter Unicode</td><td>'\u0000' (0) a '￿' (65 535)</td></tr>
+    <tr><td><code>boolean</code></td><td>—</td><td>Valor lógico</td><td><code>true</code> o <code>false</code></td></tr>
+   </tbody></table></div>
+   <ul>
+    <li><b>Enteros sin signo:</b> con \(n\) bits van de \(0\) a \(2^n-1\). <b>Con signo</b> (complemento a 2): de \(-2^{n-1}\) a \(2^{n-1}-1\). Para obtener \(-x\): se invierten los bits de \(x\) y se suma 1.</li>
+    <li><b>Punto flotante:</b> se guardan signo, exponente y mantisa (como la notación científica en base 2). Muchos decimales no tienen representación exacta: en Java <code>0.1 + 0.2</code> da <code>0.30000000000000004</code>. Por eso no se usan para dinero.</li>
+    <li><b>Desbordamiento:</b> si un resultado no cabe en el rango, «da la vuelta»: en Java <code>(byte)(127 + 1)</code> vale −128.</li>
+   </ul>
+   <div class="problem" data-gen="compl2"></div>
+   <div class="problem" data-gen="rango"></div>
+  </article>
+
+  <article class="topic reveal" id="t23">
+   <h3><span class="num">2.3</span> Aritmética binaria, octal y hexadecimal</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="formula h-100"><b>Suma:</b> \(0+0=0,\ 0+1=1,\ 1+1=10\) (0 y se lleva 1), \(1+1+1=11\).<br><b>Resta:</b> \(0-0=0,\ 1-0=1,\ 1-1=0,\ 10-1=1\) (se pide prestado), o bien sumando el <b>complemento a 2</b>.</div></div>
+    <div class="col-md-6"><div class="formula h-100"><b>Multiplicación:</b> \(0\times0=0,\ 0\times1=0,\ 1\times1=1\); se suman productos parciales desplazados.<br><b>División:</b> como la división larga; en cada paso el divisor cabe 1 o 0 veces.</div></div>
+   </div>
+   <p class="mt-2">En octal y hexadecimal se suma igual que en decimal, pero se «lleva 1» al llegar a 8 o a 16.</p>
+   <div class="problem" data-gen="sumaBin"></div>
+   <div class="problem" data-gen="restaBin"></div>
+   <div class="problem" data-gen="multBin"></div>
+   <div class="problem" data-gen="divBin"></div>
+   <div class="problem" data-gen="sumaHex"></div>
+  </article>
+
+  <article class="topic reveal" id="t24">
+   <h3><span class="num">2.4</span> Álgebra de Boole y compuertas lógicas</h3>
+   <p>George Boole publicó en 1854 <i>An Investigation of the Laws of Thought</i>, donde trató la lógica con símbolos algebraicos. Una <b>variable booleana</b> solo toma dos valores: 0 (falso, apagado) o 1 (verdadero, encendido). Sus operaciones básicas:</p>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Operación</th><th>Notación</th><th>Es 1 cuando…</th><th>Java</th></tr></thead><tbody>
+    <tr><td>AND (producto)</td><td>\(A\cdot B\)</td><td>ambas son 1</td><td><code>a &amp;&amp; b</code></td></tr>
+    <tr><td>OR (suma)</td><td>\(A+B\)</td><td>al menos una es 1</td><td><code>a || b</code></td></tr>
+    <tr><td>NOT (negación)</td><td>\(\overline{A}\) o \(A'\)</td><td>A es 0</td><td><code>!a</code></td></tr>
+    <tr><td>XOR</td><td>\(A\oplus B\)</td><td>son distintas</td><td><code>a ^ b</code></td></tr>
+   </tbody></table></div>
+   <div class="lab" id="lab-puertas">
+    <div class="lab-title">🔌 Compuertas lógicas: haz clic en las entradas</div>
+    <div class="btn-group btn-group-sm flex-wrap mb-2"><button class="btn btn-ghost active" data-g="AND">AND</button><button class="btn btn-ghost" data-g="OR">OR</button><button class="btn btn-ghost" data-g="NOT">NOT</button><button class="btn btn-ghost" data-g="NAND">NAND</button><button class="btn btn-ghost" data-g="NOR">NOR</button><button class="btn btn-ghost" data-g="XOR">XOR</button></div>
+    <div class="row g-2 align-items-center"><div class="col-md-8"><svg role="img" aria-label="Compuerta lógica"></svg></div><div class="col-md-4 tt"></div></div>
+   </div>
+   <h4>Postulados y teoremas básicos</h4>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Ley</th><th>Forma OR</th><th>Forma AND</th></tr></thead><tbody>
+    <tr><td>Identidad</td><td>\(A+0=A\)</td><td>\(A\cdot1=A\)</td></tr><tr><td>Elemento nulo</td><td>\(A+1=1\)</td><td>\(A\cdot0=0\)</td></tr>
+    <tr><td>Idempotencia</td><td>\(A+A=A\)</td><td>\(A\cdot A=A\)</td></tr><tr><td>Complemento</td><td>\(A+\overline{A}=1\)</td><td>\(A\cdot\overline{A}=0\)</td></tr>
+    <tr><td>Involución</td><td colspan="2">\(\overline{\overline{A}}=A\)</td></tr>
+    <tr><td>Conmutativa</td><td>\(A+B=B+A\)</td><td>\(AB=BA\)</td></tr><tr><td>Asociativa</td><td>\((A+B)+C=A+(B+C)\)</td><td>\((AB)C=A(BC)\)</td></tr>
+    <tr><td>Distributiva</td><td>\(A(B+C)=AB+AC\)</td><td>\(A+BC=(A+B)(A+C)\)</td></tr>
+    <tr><td>Absorción</td><td>\(A+AB=A\)</td><td>\(A(A+B)=A\)</td></tr>
+    <tr><td>De Morgan</td><td>\(\overline{A+B}=\overline{A}\,\overline{B}\)</td><td>\(\overline{AB}=\overline{A}+\overline{B}\)</td></tr>
+   </tbody></table></div>
+   <div class="problem" data-gen="tablaVerdad"></div>
+  </article>
+
+  <article class="topic reveal" id="t25">
+   <h3><span class="num">2.5</span> Funciones booleanas: caja negra, mintérminos y mapas de Karnaugh</h3>
+   <p><b>Metodología de caja negra:</b> (1) plantear el problema e identificar entradas y salidas; (2) construir la tabla de verdad; (3) obtener la función; (4) simplificarla; (5) dibujar el circuito; (6) probar y corregir.</p>
+   <p>Una <b>función booleana</b> asigna una salida 0 o 1 a cada combinación de entradas. Con \(n\) variables la tabla tiene \(2^n\) filas. La <b>suma de productos (mintérminos)</b> toma las filas donde la salida es 1: en cada una, la variable con valor 1 se escribe directa y la de valor 0 negada; luego se suman (OR) esos productos.</p>
+   <p>El <b>mapa de Karnaugh</b> (Maurice Karnaugh, 1953) ordena la tabla con <b>código Gray</b> (00, 01, 11, 10) para que las celdas vecinas difieran en una sola variable. Se agrupan los unos en rectángulos de 1, 2, 4, 8… celdas, lo más grandes posible; cada grupo elimina las variables que cambian dentro de él. Los bordes opuestos son vecinos.</p>
+   <div class="lab" id="lab-kmap">
+    <div class="lab-title">🗺️ Mapa de Karnaugh de 4 variables: haz clic en las celdas</div>
+    <div class="row g-3 align-items-center"><div class="col-md-7 map"></div><div class="col-md-5"><div class="res"></div><div class="d-flex gap-2 mt-2"><button class="btn btn-sm btn-ghost bclr">Limpiar</button><button class="btn btn-sm btn-acc brand">Aleatorio</button></div></div></div>
+    <p class="small text-body-secondary mb-0 mt-2">El número pequeño de cada celda es el mintérmino. Los colores marcan los grupos de la expresión mínima (calculada con el método de Quine–McCluskey).</p>
+   </div>
+   <div class="problem" data-gen="minterminos"></div>
+   <div class="problem" data-gen="kmap4"></div>
+  </article>
+
+  <article class="topic reveal" id="t26">
+   <h3><span class="num">2.6</span> Implementación de circuitos lógicos</h3>
+   <p><b>Elementos:</b> fuente de poder (pilas o eliminador de 5 V), interruptores (entradas), compuertas lógicas en circuitos integrados, cables, resistencias (limitan la corriente) y LEDs (muestran la salida), montados en una <b>protoboard</b> o en un simulador (Tinkercad, iCircuit).</p>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="formula h-100"><b>Semisumador</b> (suma 2 bits):\[S = A\oplus B,\qquad C = A\cdot B\]</div></div>
+    <div class="col-md-6"><div class="formula h-100"><b>Sumador completo</b> (suma 2 bits y el acarreo de entrada):\[S = A\oplus B\oplus C_{in},\qquad C_{out}=AB + C_{in}(A\oplus B)\]</div></div>
+   </div>
+   <p class="mt-2">Conectando sumadores completos en cascada (el \(C_{out}\) de uno al \(C_{in}\) del siguiente) se obtiene un sumador de \(n\) bits. Un <b>restador</b> se obtiene sumando el complemento a 2 del sustraendo.</p>
+   <div class="lab" id="lab-sum">
+    <div class="lab-title">➕ Sumador completo: haz clic en los interruptores A, B y Cin</div>
+    <svg role="img" aria-label="Circuito sumador completo"></svg>
+    <p class="res small mb-0"></p>
+   </div>
+   <div class="problem" data-gen="sumador"></div>
+  </article>
+
+  <article class="topic reveal" id="t27">
+   <h3><span class="num">2.7</span> Proposiciones lógicas y decisiones en programación</h3>
+   <p>Una <b>proposición</b> es un enunciado que puede ser verdadero o falso. Los conectivos se traducen a operaciones booleanas: «y» → AND, «o» → OR, «no» → NOT. Así se escriben las condiciones de un programa: <code>if (llueve &amp;&amp; !tengoParaguas) { ... }</code>.</p>
+   <div class="problem" data-gen="proposicion"></div>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 3 ============================ -->
+<section class="unit u3" id="unidad3">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 3</span><h2>Metodología de solución de problemas e introducción a la programación en Java</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 17</p></div>
+
+  <article class="topic reveal" id="t31">
+   <h3><span class="num">3.1</span> El problema: elementos y tipos</h3>
+   <div class="def">Un <b>problema</b> es una situación en la que se quiere llegar de un estado inicial a uno deseado y no se conoce de inmediato el camino. En computación se describe con sus <b>entradas</b> (datos), el <b>proceso</b> (lo que hay que hacer con ellos) y las <b>salidas</b> (resultados esperados).</div>
+   <div class="row g-3">
+    <div class="col-md-6"><h4>Por su certeza</h4><ul><li><b>Determinísticos:</b> con los mismos datos siempre dan el mismo resultado.</li><li><b>Probabilísticos:</b> interviene el azar; solo se puede hablar de probabilidades.</li></ul></div>
+    <div class="col-md-6"><h4>Por su estructura</h4><ul><li><b>Secuenciales:</b> pasos uno tras otro.</li><li><b>Condicionales:</b> hay que tomar decisiones.</li><li><b>Cíclicos:</b> hay pasos que se repiten.</li></ul></div>
+   </div>
+   <div class="problem" data-gen="tipoProblema"></div>
+  </article>
+
+  <article class="topic reveal" id="t32">
+   <h3><span class="num">3.2</span> Metodología de solución de problemas</h3>
+   <ol>
+    <li><b>Planteamiento:</b> entender qué se pide.</li>
+    <li><b>Análisis:</b> identificar entradas, proceso, salidas y restricciones.</li>
+    <li><b>Diseño de la solución:</b> elaborar el <b>algoritmo</b> y representarlo con <b>pseudocódigo</b> y <b>diagrama de flujo</b>.</li>
+    <li><b>Prueba de escritorio:</b> seguir el algoritmo a mano con datos de prueba, anotando cómo cambian las variables.</li>
+    <li>Después: codificación en un lenguaje, compilación, ejecución y pruebas.</li>
+   </ol>
+   <div class="def">Un <b>algoritmo</b> es una secuencia <b>finita</b>, <b>ordenada</b> y <b>precisa</b> de pasos que resuelve un problema. El <b>pseudocódigo</b> lo describe con palabras estructuradas (Inicio, Leer, Si…entonces, Mientras…); el <b>diagrama de flujo</b> lo representa con símbolos gráficos.</div>
+   <div class="row g-2 text-center small my-2">
+    <div class="col-4 col-md-2"><svg viewBox="0 0 120 50"><rect x="5" y="8" width="110" height="34" rx="17" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Inicio / Fin</div>
+    <div class="col-4 col-md-2"><svg viewBox="0 0 120 50"><rect x="5" y="8" width="110" height="34" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Proceso</div>
+    <div class="col-4 col-md-2"><svg viewBox="0 0 120 50"><path d="M20 8H115L100 42H5Z" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Entrada / Salida</div>
+    <div class="col-4 col-md-2"><svg viewBox="0 0 120 50"><path d="M60 3L115 25L60 47L5 25Z" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Decisión</div>
+    <div class="col-4 col-md-2"><svg viewBox="0 0 120 50"><circle cx="60" cy="25" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>Conector</div>
+    <div class="col-4 col-md-2"><svg viewBox="0 0 120 50"><path d="M10 25H105" stroke="currentColor" stroke-width="2.5"/><path d="M100 18L112 25L100 32Z" fill="currentColor"/></svg>Flujo</div>
+   </div>
+   <div class="lab" id="lab-flujo">
+    <div class="lab-title">▶️ Animador de diagramas de flujo con prueba de escritorio</div>
+    <div class="d-flex flex-wrap gap-2 mb-2"><select class="form-select form-select-sm alg" style="max-width:300px"><option value="sec">Área de un triángulo (secuencial)</option><option value="cond">Aprobado o reprobado (condicional)</option><option value="cic">Suma de 1 a n (cíclico)</option></select><button class="btn btn-sm btn-acc bplay">▶ Reproducir</button><button class="btn btn-sm btn-ghost bnext">Paso ▸</button><button class="btn btn-sm btn-ghost bnew">Otros datos</button></div>
+    <div class="row g-3"><div class="col-md-7"><svg role="img" aria-label="Diagrama de flujo"></svg></div><div class="col-md-5"><div class="small fw-bold">Pseudocódigo</div><pre class="out-console pseudo" style="color:inherit;background:var(--card);border:1px solid var(--line)"></pre><div class="small fw-bold">Prueba de escritorio</div><div class="desk"></div></div></div>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t33">
+   <h3><span class="num">3.3</span> Problemas secuenciales y condicionales</h3>
+   <div class="row g-3">
+    <div class="col-md-4"><div class="def h-100"><b>Condicional simple</b>: si se cumple la condición se ejecuta un bloque; si no, no se hace nada.<pre class="code">if (cal >= 6) {
+    System.out.println("Aprobado");
+}</pre></div></div>
+    <div class="col-md-4"><div class="def h-100"><b>Doble y anidada</b>: un bloque para verdadero y otro para falso; dentro puede haber otra condición.<pre class="code">if (n > 0) {
+    System.out.println("positivo");
+} else if (n < 0) {
+    System.out.println("negativo");
+} else {
+    System.out.println("cero");
+}</pre></div></div>
+    <div class="col-md-4"><div class="def h-100"><b>Múltiple</b>: elige entre varios casos según el valor de una variable.<pre class="code">switch (opcion) {
+    case 1: System.out.println("Alta"); break;
+    case 2: System.out.println("Baja"); break;
+    default: System.out.println("Inválida");
+}</pre></div></div>
+   </div>
+   <div class="problem" data-gen="condicional"></div>
+  </article>
+
+  <article class="topic reveal" id="t34">
+   <h3><span class="num">3.4</span> Expresiones: operadores aritméticos, relacionales y lógicos</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><h4>Jerarquía en Java (de mayor a menor)</h4><ol class="small"><li>Posfijos <code>x++ x--</code></li><li>Unarios <code>++x --x +x -x !</code></li><li>Multiplicativos <code>* / %</code></li><li>Aditivos <code>+ -</code></li><li>Relacionales <code>&lt; &gt; &lt;= &gt;=</code></li><li>Igualdad <code>== !=</code></li><li>Y lógico <code>&amp;&amp;</code></li><li>O lógico <code>||</code></li><li>Ternario <code>? :</code></li><li>Asignación <code>= += -= *= /= %=</code></li></ol><p class="small">Los operadores del mismo nivel se evalúan de izquierda a derecha (la asignación, de derecha a izquierda). Los paréntesis cambian el orden.</p></div>
+    <div class="col-md-6"><h4>Detalles importantes</h4><ul class="small"><li>Entre enteros, <code>/</code> descarta la parte decimal: <code>7 / 2</code> vale <code>3</code>; <code>7.0 / 2</code> vale <code>3.5</code>.</li><li><code>%</code> da el residuo: <code>17 % 5</code> vale <code>2</code>. Sirve para saber si un número es par: <code>n % 2 == 0</code>.</li><li><code>=</code> asigna; <code>==</code> compara.</li><li><code>&amp;&amp;</code> y <code>||</code> son de «corto circuito»: si el lado izquierdo ya decide el resultado, el derecho no se evalúa.</li><li>Clase <code>Math</code>: <code>Math.pow(a, b)</code>, <code>Math.sqrt(x)</code>, <code>Math.abs(x)</code>, <code>Math.max(a, b)</code>, <code>Math.min(a, b)</code>, <code>Math.round(x)</code>, <code>Math.random()</code>, <code>Math.PI</code>.</li></ul></div>
+   </div>
+   <div class="problem" data-gen="exprArit"></div>
+   <div class="problem" data-gen="exprLog"></div>
+   <div class="problem" data-gen="math"></div>
+  </article>
+
+  <article class="topic reveal" id="t35">
+   <h3><span class="num">3.5</span> Problemas cíclicos: contador, acumulador y bandera</h3>
+   <p>Toda estructura repetitiva tiene: un <b>valor o condición inicial</b>, la <b>evaluación de una expresión booleana</b>, las <b>sentencias que se repiten</b> y una <b>sentencia que modifica el estado</b> para que en algún momento la condición sea falsa (si no, el ciclo es infinito).</p>
+   <div class="row g-3">
+    <div class="col-md-4"><div class="def h-100"><b>Contador:</b> variable que aumenta en una cantidad fija: <code>c = c + 1</code> o <code>c++</code>.</div></div>
+    <div class="col-md-4"><div class="def h-100"><b>Acumulador:</b> variable que va sumando valores variables: <code>suma = suma + x</code>.</div></div>
+    <div class="col-md-4"><div class="def h-100"><b>Bandera:</b> variable (normalmente <code>boolean</code>) que indica si ocurrió algo: <code>encontrado = true</code>.</div></div>
+   </div>
+   <pre class="code">for (int i = 1; i <= 10; i++) { ... }      // se sabe cuántas veces se repite
+while (condicion) { ... }                   // se revisa ANTES de cada vuelta (puede no ejecutarse)
+do { ... } while (condicion);               // se revisa DESPUÉS: se ejecuta al menos una vez</pre>
+   <div class="problem" data-gen="ciclo"></div>
+  </article>
+
+  <article class="topic reveal" id="t36">
+   <h3><span class="num">3.6</span> Lenguajes de programación y el lenguaje Java</h3>
+   <ul>
+    <li><b>Paradigmas:</b> imperativo/estructurado (C), orientado a objetos (Java, C#), funcional (Haskell), lógico (Prolog); muchos lenguajes actuales son multiparadigma (Python, JavaScript).</li>
+    <li><b>Requerimientos funcionales</b> (qué debe hacer el programa) y <b>no funcionales</b> (cómo: rapidez, seguridad, facilidad de uso).</li>
+    <li>Cada lenguaje tiene reglas <b>léxicas</b> (qué palabras y símbolos son válidos) y de <b>sintaxis</b> (cómo se combinan).</li>
+    <li><b>Código fuente</b> (lo que escribe la persona) → <b>código objeto</b> (traducido, aún no ejecutable por sí solo) → <b>código máquina</b> (instrucciones binarias del procesador).</li>
+    <li>Un <b>compilador</b> traduce todo el programa antes de ejecutarlo; un <b>intérprete</b> lo traduce y ejecuta instrucción por instrucción. Java combina ambos: compila a <b>bytecode</b> y la JVM lo ejecuta.</li>
+   </ul>
+   <h4>Historia de Java</h4>
+   <p>En junio de 1991 James Gosling, Mike Sheridan y Patrick Naughton iniciaron en <b>Sun Microsystems</b> el proyecto del que surgió Java, pensado al principio para televisión interactiva. Se llamó primero <b>Oak</b> (por un roble junto a la oficina de Gosling), luego <i>Green</i>, y finalmente <b>Java</b> (por el café de la isla de Java). Se presentó en mayo de 1995 y la primera versión pública, Java 1.0, salió en 1996. Oracle adquirió Sun en enero de 2010.</p>
+   <h4>Características</h4>
+   <p>Fue diseñado para ser simple y orientado a objetos; robusto y seguro; de <b>arquitectura neutral</b> y portable («escríbelo una vez, ejecútalo en cualquier lugar»); de alto rendimiento; e interpretado, multihilo y dinámico. Es <b>distribuido</b> (pensado para redes) y tiene un amplio conjunto de <b>bibliotecas</b>. Se usa en aplicaciones de escritorio, web, servidores y Android.</p>
+  </article>
+
+  <article class="topic reveal" id="t37">
+   <h3><span class="num">3.7</span> Entorno de desarrollo, primer programa y entrada con Scanner</h3>
+   <div class="row g-3">
+    <div class="col-md-4"><div class="def h-100"><b>JDK</b> (Java Development Kit): herramientas para desarrollar, como el compilador <code>javac</code>.</div></div>
+    <div class="col-md-4"><div class="def h-100"><b>JVM</b> (Java Virtual Machine): ejecuta el bytecode en cada sistema operativo.</div></div>
+    <div class="col-md-4"><div class="def h-100"><b>IDE</b>: editor con herramientas integradas (NetBeans, Eclipse, BlueJ, Replit).</div></div>
+   </div>
+   <div class="lab" id="lab-comp">
+    <div class="lab-title">⚙️ Del código fuente a la ejecución</div>
+    <div class="d-flex flex-wrap gap-2 align-items-center mb-2"><button class="btn btn-sm btn-acc brun">▶ Compilar y ejecutar</button><label class="small"><input type="checkbox" class="err"> Introducir un error de sintaxis (falta <code>;</code>)</label></div>
+    <div class="d-flex flex-wrap gap-2 justify-content-between text-center small mb-2">
+     <div class="stage chip">📝 Hola.java</div><div class="stage chip">⚙️ javac</div><div class="stage chip">📦 Hola.class (bytecode)</div><div class="stage chip">☕ JVM</div><div class="stage chip">🖥️ Salida</div>
+    </div>
+    <div class="evlog log"></div>
+   </div>
+   <div class="row g-3">
+    <div class="col-lg-6"><pre class="code">public class Hola {                       // declaración de la clase
+    public static void main(String[] args) { // método principal
+        System.out.print("Hola, ");          // no salta de línea
+        System.out.println("mundo");         // sí salta de línea
+    }
+}</pre></div>
+    <div class="col-lg-6"><pre class="code">import java.util.Scanner;
+
+public class Promedio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in); // instancia de Scanner
+        System.out.print("Calificación 1: ");
+        double c1 = sc.nextDouble();
+        System.out.print("Calificación 2: ");
+        double c2 = sc.nextDouble();
+        System.out.println("Promedio: " + (c1 + c2) / 2);
+    }
+}</pre></div>
+   </div>
+   <p class="small">Métodos de <code>Scanner</code>: <code>nextInt()</code>, <code>nextDouble()</code>, <code>nextBoolean()</code>, <code>next()</code> (una palabra), <code>nextLine()</code> (toda la línea). <b>Error sintáctico:</b> viola las reglas del lenguaje y el compilador lo detecta (falta <code>;</code>). <b>Error lógico:</b> el programa compila y se ejecuta pero da un resultado incorrecto (por ejemplo, <code>c1 + c2 / 2</code> sin paréntesis).</p>
+  </article>
+
+  <article class="topic reveal" id="t38">
+   <h3><span class="num">3.8</span> Condicionales y ciclos en Java: ¿qué imprime?</h3>
+   <p>Practica leyendo código como lo haría la computadora: sigue el valor de cada variable línea por línea.</p>
+   <div class="problem" data-gen="condicional"></div>
+   <div class="problem" data-gen="ciclo"></div>
+  </article>
+ </div>
+</section>
+
+<section id="fuentes" class="py-5">
+ <div class="container">
+  <h2 class="font-head">Fuentes consultadas</h2>
+  <ul>
+   <li>Colegio de Ciencias y Humanidades, UNAM (2024). <i>Programas de Estudio de Cibernética y Computación I y II</i>.</li>
+   <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Cybernetics" target="_blank" rel="noopener">Cybernetics</a>, <a href="https://en.wikipedia.org/wiki/Arturo_Rosenblueth" target="_blank" rel="noopener">Arturo Rosenblueth</a>, <a href="https://en.wikipedia.org/wiki/Jean_Bartik" target="_blank" rel="noopener">Jean Bartik</a>, <a href="https://en.wikipedia.org/wiki/Note_G" target="_blank" rel="noopener">Note G</a>, <a href="https://en.wikipedia.org/wiki/Karnaugh_map" target="_blank" rel="noopener">Karnaugh map</a>, <a href="https://en.wikipedia.org/wiki/Java_(programming_language)" target="_blank" rel="noopener">Java (programming language)</a>.</li>
+   <li>MacTutor History of Mathematics, Universidad de St Andrews: <a href="https://mathshistory.st-andrews.ac.uk/SH/shannon_sh.pdf" target="_blank" rel="noopener">Claude Shannon</a>.</li>
+   <li>Oracle. <i>The Java Tutorials</i>: <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html" target="_blank" rel="noopener">Primitive Data Types</a> y <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/operators.html" target="_blank" rel="noopener">Operators</a>.</li>
+  </ul>
+  <p class="small text-body-secondary">Las respuestas de los ejercicios de código se verificaron compilando y ejecutando los programas con Java 21.</p>
+ </div>
+</section>
+<footer><div class="container d-flex flex-wrap justify-content-between gap-2"><span>Cuadernillo interactivo · Cibernética y Computación I · CCH-UNAM</span><span>Material de repaso con fines educativos.</span></div></footer>
+
+<button class="btn btn-acc fab" data-bs-toggle="modal" data-bs-target="#formulario" style="--uc:var(--acc)">📘 Guía rápida</button>
+<button class="btn btn-ghost btn-sm" id="toTop" aria-label="Volver arriba">▲</button>
+<div class="modal fade" id="formulario" tabindex="-1" aria-labelledby="formTitle" aria-hidden="true">
+ <div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal-content">
+   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="formTitle">Guía rápida de consulta</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
+ <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#f1" type="button">Numeración</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f2" type="button">Álgebra de Boole</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f3" type="button">Java básico</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f4" type="button">Sistemas</button></li>
+</ul>
+<div class="tab-content">
+ <div class="tab-pane fade show active u2 fgroup" id="f1">
+  <div class="row g-3"><div class="col-md-5"><h5>Equivalencias 0–15</h5><table class="tbl"><thead><tr><th>Dec</th><th>Bin</th><th>Oct</th><th>Hex</th></tr></thead><tbody><tr><td>0</td><td class='font-monospace'>0000</td><td>0</td><td>0</td></tr><tr><td>1</td><td class='font-monospace'>0001</td><td>1</td><td>1</td></tr><tr><td>2</td><td class='font-monospace'>0010</td><td>2</td><td>2</td></tr><tr><td>3</td><td class='font-monospace'>0011</td><td>3</td><td>3</td></tr><tr><td>4</td><td class='font-monospace'>0100</td><td>4</td><td>4</td></tr><tr><td>5</td><td class='font-monospace'>0101</td><td>5</td><td>5</td></tr><tr><td>6</td><td class='font-monospace'>0110</td><td>6</td><td>6</td></tr><tr><td>7</td><td class='font-monospace'>0111</td><td>7</td><td>7</td></tr><tr><td>8</td><td class='font-monospace'>1000</td><td>10</td><td>8</td></tr><tr><td>9</td><td class='font-monospace'>1001</td><td>11</td><td>9</td></tr><tr><td>10</td><td class='font-monospace'>1010</td><td>12</td><td>A</td></tr><tr><td>11</td><td class='font-monospace'>1011</td><td>13</td><td>B</td></tr><tr><td>12</td><td class='font-monospace'>1100</td><td>14</td><td>C</td></tr><tr><td>13</td><td class='font-monospace'>1101</td><td>15</td><td>D</td></tr><tr><td>14</td><td class='font-monospace'>1110</td><td>16</td><td>E</td></tr><tr><td>15</td><td class='font-monospace'>1111</td><td>17</td><td>F</td></tr></tbody></table></div>
+  <div class="col-md-7"><h5>Potencias de 2</h5><div class="scroll-x"><table class="tbl"><thead><tr><th>2<sup>0</sup></th><th>2<sup>1</sup></th><th>2<sup>2</sup></th><th>2<sup>3</sup></th><th>2<sup>4</sup></th><th>2<sup>5</sup></th><th>2<sup>6</sup></th><th>2<sup>7</sup></th><th>2<sup>8</sup></th><th>2<sup>9</sup></th><th>2<sup>10</sup></th></tr></thead><tbody><tr><td>1</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td><td>64</td><td>128</td><td>256</td><td>512</td><td>1024</td></tr></tbody></table></div>
+  <div class="fgrid mt-2">
+   <div class="fcard"><small>Valor posicional</small>\[N=\sum d_k\,b^k\]</div>
+   <div class="fcard"><small>Decimal → base b</small>Divisiones sucesivas entre b; residuos de abajo hacia arriba.</div>
+   <div class="fcard"><small>Binario ↔ octal / hexadecimal</small>Grupos de 3 / 4 bits desde la derecha.</div>
+   <div class="fcard"><small>Rango con n bits</small>\[\text{sin signo: } 0 \text{ a } 2^n-1\]\[\text{con signo: } -2^{n-1} \text{ a } 2^{n-1}-1\]</div>
+   <div class="fcard"><small>Complemento a 2 de x</small>Invertir todos los bits y sumar 1.</div>
+   <div class="fcard"><small>Suma binaria</small>\[1+1=10,\qquad 1+1+1=11\]</div>
+  </div></div></div>
+ </div>
+ <div class="tab-pane fade u2 fgroup" id="f2">
+  <div class="fgrid">
+   <div class="fcard"><small>AND</small>\[A\cdot B\]Es 1 solo si ambas son 1.</div>
+   <div class="fcard"><small>OR</small>\[A+B\]Es 1 si al menos una es 1.</div>
+   <div class="fcard"><small>NOT</small>\[\overline{A}=A'\]</div>
+   <div class="fcard"><small>XOR</small>\[A\oplus B=\overline{A}B+A\overline{B}\]</div>
+   <div class="fcard"><small>NAND / NOR</small>\[\overline{AB},\qquad \overline{A+B}\]</div>
+   <div class="fcard"><small>Identidad y nulo</small>\[A+0=A,\ A\cdot1=A,\ A+1=1,\ A\cdot0=0\]</div>
+   <div class="fcard"><small>Idempotencia y complemento</small>\[A+A=A,\ AA=A,\ A+\overline{A}=1,\ A\overline{A}=0\]</div>
+   <div class="fcard"><small>Distributiva</small>\[A(B+C)=AB+AC,\quad A+BC=(A+B)(A+C)\]</div>
+   <div class="fcard"><small>Absorción</small>\[A+AB=A,\qquad A(A+B)=A\]</div>
+   <div class="fcard"><small>De Morgan</small>\[\overline{A+B}=\overline{A}\,\overline{B},\qquad \overline{AB}=\overline{A}+\overline{B}\]</div>
+   <div class="fcard"><small>Semisumador</small>\[S=A\oplus B,\quad C=AB\]</div>
+   <div class="fcard"><small>Sumador completo</small>\[S=A\oplus B\oplus C_{in}\]\[C_{out}=AB+C_{in}(A\oplus B)\]</div>
+   <div class="fcard"><small>Mapa de Karnaugh</small>Orden Gray 00, 01, 11, 10; grupos de 1, 2, 4, 8; los bordes opuestos son vecinos.</div>
+  </div>
+ </div>
+ <div class="tab-pane fade u3 fgroup" id="f3">
+  <div class="row g-3"><div class="col-md-6"><h5>Estructura y entrada/salida</h5><pre class="code">import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        double x = sc.nextDouble();
+        String s = sc.nextLine();
+        System.out.println("n = " + n);
+    }
+}</pre><h5>Tipos primitivos (bits)</h5><p class="small"><code>byte</code> 8 · <code>short</code> 16 · <code>int</code> 32 · <code>long</code> 64 · <code>float</code> 32 · <code>double</code> 64 · <code>char</code> 16 · <code>boolean</code></p></div>
+  <div class="col-md-6"><h5>Estructuras de control</h5><pre class="code">if (c) { ... } else if (d) { ... } else { ... }
+switch (x) { case 1: ...; break; default: ... }
+for (int i = 0; i < n; i++) { ... }
+while (c) { ... }
+do { ... } while (c);</pre><h5>Jerarquía de operadores</h5><p class="small"><code>()</code> → <code>! ++ --</code> → <code>* / %</code> → <code>+ -</code> → <code>&lt; &gt; &lt;= &gt;=</code> → <code>== !=</code> → <code>&amp;&amp;</code> → <code>||</code> → <code>?:</code> → <code>=</code></p>
+  <h5>Clase Math</h5><p class="small"><code>Math.pow(a,b)</code> · <code>Math.sqrt(x)</code> · <code>Math.abs(x)</code> · <code>Math.max(a,b)</code> · <code>Math.min(a,b)</code> · <code>Math.round(x)</code> · <code>Math.random()</code> · <code>Math.PI</code></p></div></div>
+ </div>
+ <div class="tab-pane fade u1 fgroup" id="f4">
+  <div class="fgrid">
+   <div class="fcard"><small>Sistema</small>Conjunto de elementos que interactúan para un objetivo: entradas, proceso, salidas, ambiente y frontera.</div>
+   <div class="fcard"><small>Lazo abierto</small>La acción no depende de la salida (sin retroalimentación).</div>
+   <div class="fcard"><small>Lazo cerrado</small>Sensor → comparación con el valor deseado → corrección del error.</div>
+   <div class="fcard"><small>Retroalimentación</small>Negativa: estabiliza. Positiva: amplifica.</div>
+   <div class="fcard"><small>Desarrollo sostenible (Brundtland, 1987)</small>Satisfacer las necesidades del presente sin comprometer las de las generaciones futuras.</div>
+   <div class="fcard"><small>Diagrama de flujo</small>Óvalo: inicio/fin · Rectángulo: proceso · Paralelogramo: E/S · Rombo: decisión.</div>
+  </div>
+ </div>
+</div>
+</div>
+   <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  </div>
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+'use strict';
+/* ====================== utilidades ====================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const R = {
+  int: (a, b) => a + Math.floor(Math.random() * (b - a + 1)),
+  pick: arr => arr[Math.floor(Math.random() * arr.length)],
+  float: (a, b, d = 1) => +(a + Math.random() * (b - a)).toFixed(d),
+  shuffle: arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
+  normal: () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+};
+const S = {
+  sum: a => a.reduce((s, x) => s + x, 0),
+  mean: a => S.sum(a) / a.length,
+  sorted: a => a.slice().sort((x, y) => x - y),
+  median: a => { const s = S.sorted(a), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; },
+  modes: a => { const c = new Map(); a.forEach(x => c.set(x, (c.get(x) || 0) + 1)); const m = Math.max(...c.values()); if (m === 1) return []; return [...c.entries()].filter(e => e[1] === m).map(e => e[0]).sort((x, y) => x - y); },
+  ss: a => { const m = S.mean(a); return S.sum(a.map(x => (x - m) ** 2)); },
+  varS: a => S.ss(a) / (a.length - 1), varP: a => S.ss(a) / a.length,
+  sdS: a => Math.sqrt(S.varS(a)), sdP: a => Math.sqrt(S.varP(a)),
+  /* percentil por el método p(n+1) con interpolación lineal (NIST/SEMATECH, Hyndman-Fan R6) */
+  quantile: (a, p) => { const s = S.sorted(a), n = s.length, pos = p * (n + 1); const k = Math.floor(pos), d = pos - k; if (k < 1) return s[0]; if (k >= n) return s[n - 1]; return s[k - 1] + d * (s[k] - s[k - 1]); },
+  pearson: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; } return sxy / Math.sqrt(sxx * syy); },
+  linreg: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; } const b = sxy / sxx; return { b, a: my - b * mx }; }
+};
+/* Función de distribución normal estándar Φ(x) (algoritmo de Hart, precisión doble; West 2005) */
+function Phi(x) {
+  const z = Math.abs(x); let c = 0;
+  if (z <= 37) {
+    const e = Math.exp(-z * z / 2);
+    if (z < 7.07106781186547) {
+      let n = 3.52624965998911e-02 * z + 0.700383064443688; n = n * z + 6.37396220353165; n = n * z + 33.912866078383; n = n * z + 112.079291497871; n = n * z + 221.213596169931; n = n * z + 220.206867912376;
+      let d = 8.83883476483184e-02 * z + 1.75566716318264; d = d * z + 16.064177579207; d = d * z + 86.7807322029461; d = d * z + 296.564248779674; d = d * z + 637.333633378831; d = d * z + 793.826512519948; d = d * z + 440.413735824752;
+      c = e * n / d;
+    } else { let b = z + 0.65; b = z + 4 / b; b = z + 3 / b; b = z + 2 / b; b = z + 1 / b; c = e / b / 2.506628274631; }
+  }
+  return x > 0 ? 1 - c : c;
+}
+/* Inversa de Φ (Acklam) con un paso de refinamiento de Newton */
+function invPhi(p) {
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  const pl = 0.02425; let q, r, x;
+  if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  else if (p <= 1 - pl) { q = p - 0.5; r = q * q; x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); }
+  else { q = Math.sqrt(-2 * Math.log(1 - p)); x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  const e = Phi(x) - p, u = e * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2); return x - u / (1 + x * u / 2);
+}
+const normPdf = (x, m = 0, s = 1) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+function comb(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return Math.round(r); }
+const binomPmf = (n, p, k) => comb(n, k) * p ** k * (1 - p) ** (n - k);
+/* formato */
+const r2 = (x, d = 2) => { const f = 10 ** d; return Math.round((x + Number.EPSILON * Math.sign(x)) * f) / f; };
+const fx = (x, d = 2) => { const v = r2(x, d); return (Object.is(v, -0) ? 0 : v).toFixed(d); };
+const fn = (x, d = 4) => { const v = r2(x, d); return String(Object.is(v, -0) ? 0 : v); }; /* sin ceros de relleno */
+const pct = (x, d = 2) => fx(100 * x, d) + '\\%';
+const esc = s => String(s).replace(/</g, '\\lt ').replace(/>/g, '\\gt ');
+const M = s => `\\(${esc(s)}\\)`;          /* matemáticas en línea */
+const MD = s => `\\[${esc(s)}\\]`;         /* matemáticas en bloque */
+
+/* ====================== SVG ====================== */
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) { if (k === 'text') e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); } if (parent) parent.appendChild(e); return e; }
+function clear(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+function niceTicks(min, max, count = 6) {
+  const span = max - min || 1, step0 = span / count, mag = 10 ** Math.floor(Math.log10(step0)), err = step0 / mag;
+  const step = (err >= 7.5 ? 10 : err >= 3.5 ? 5 : err >= 1.5 ? 2 : 1) * mag; const t = [];
+  for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) t.push(+v.toFixed(10)); return t;
+}
+/* Plano con escalas; devuelve {sx, sy, g} */
+function plane(svg, o) {
+  const W = o.W || 640, H = o.H || 300, p = Object.assign({ l: 48, r: 16, t: 14, b: 34 }, o.pad || {});
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); if (!o.keep) clear(svg);
+  const sx = v => p.l + (v - o.x0) / (o.x1 - o.x0) * (W - p.l - p.r);
+  const sy = v => H - p.b - (v - o.y0) / (o.y1 - o.y0) * (H - p.t - p.b);
+  const g = el('g', {}, svg);
+  if (o.grid !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('line', { x1: p.l, x2: W - p.r, y1: sy(t), y2: sy(t), class: 'gridl' }, g));
+  el('line', { x1: p.l, x2: W - p.r, y1: H - p.b, y2: H - p.b, class: 'axis' }, g);
+  if (o.yaxis !== false) el('line', { x1: p.l, x2: p.l, y1: p.t, y2: H - p.b, class: 'axis' }, g);
+  (o.xt || niceTicks(o.x0, o.x1, 8)).forEach(t => el('text', { x: sx(t), y: H - p.b + 16, 'text-anchor': 'middle', class: 'tick', text: o.xf ? o.xf(t) : fn(t, 3) }, g));
+  if (o.yaxis !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('text', { x: p.l - 6, y: sy(t) + 4, 'text-anchor': 'end', class: 'tick', text: o.yf ? o.yf(t) : fn(t, 3) }, g));
+  if (o.xl) el('text', { x: (W + p.l - p.r) / 2, y: H - 2, 'text-anchor': 'middle', class: 'tick', text: o.xl }, g);
+  if (o.yl) el('text', { x: 12, y: (H - p.b + p.t) / 2, 'text-anchor': 'middle', class: 'tick', transform: `rotate(-90 12 ${(H - p.b + p.t) / 2})`, text: o.yl }, g);
+  return { sx, sy, g, W, H, p };
+}
+function pathFn(f, a, b, sx, sy, n = 200) { let d = ''; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += (i ? 'L' : 'M') + sx(x).toFixed(2) + ',' + sy(f(x)).toFixed(2); } return d; }
+function areaFn(f, a, b, sx, sy, n = 160) { let d = `M${sx(a)},${sy(0)}`; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += `L${sx(x).toFixed(2)},${sy(f(x)).toFixed(2)}`; } return d + `L${sx(b)},${sy(0)}Z`; }
+function animatePath(p, ms = 900) { try { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p.getBoundingClientRect(); p.style.transition = `stroke-dashoffset ${ms}ms ease`; p.style.strokeDashoffset = 0; } catch (e) { } }
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ====================== KaTeX ====================== */
+function tex(node) {
+  if (window.renderMathInElement) renderMathInElement(node || document.body, { delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }], throwOnError: false });
+}
+
+/* ====================== problemas aleatorios paso a paso ====================== */
+/* gen() devuelve {enun, steps:[{h, b}], ans:{label, value, tol}, fig?(node)} */
+const PROBLEMS = {};
+function mountProblem(node) {
+  const gen = PROBLEMS[node.dataset.gen]; if (!gen) return;
+  node.innerHTML = `<span class="ptag">${node.dataset.tag || 'Ejercicio aleatorio'}</span>
+   <div class="enun"></div><div class="fig"></div>
+   <div class="ansbox mt-2"></div>
+   <div class="btns d-flex flex-wrap gap-2 mt-3">
+     <button class="btn btn-sm btn-acc b-new">↻ Nuevo ejercicio</button>
+     <button class="btn btn-sm btn-ghost b-step">Siguiente paso ▸</button>
+     <button class="btn btn-sm btn-ghost b-all">Ver solución completa</button>
+   </div><ol class="steps"></ol>`;
+  let cur = null, shown = 0;
+  const enun = $('.enun', node), steps = $('.steps', node), ansbox = $('.ansbox', node), fig = $('.fig', node);
+  const showStep = () => { if (!cur || shown >= cur.steps.length) return; const s = cur.steps[shown++]; const li = document.createElement('li'); li.innerHTML = (s.h ? `<h6>${s.h}</h6>` : '') + s.b; steps.appendChild(li); tex(li); if (s.fig) s.fig(li); $('.b-step', node).disabled = shown >= cur.steps.length; };
+  const norm = v => String(v).trim().toLowerCase().replace(/\s+/g, '').replace(/^0+(?=[0-9a-f])/i, '');
+  const fresh = () => {
+    cur = gen(); shown = 0; steps.innerHTML = ''; enun.innerHTML = cur.enun; fig.innerHTML = '';
+    if (cur.fig) cur.fig(fig);
+    const a = cur.ans; ansbox.innerHTML = '';
+    if (a && a.choices) {
+      ansbox.innerHTML = `<div class="d-flex flex-wrap gap-2">${a.choices.map(c => `<button class="btn btn-sm btn-ghost quiz-opt">${c}</button>`).join('')}</div><div class="small mt-1 fb"></div>`;
+      $$('.quiz-opt', ansbox).forEach(b => b.onclick = () => { if ($('.quiz-opt.correct', ansbox)) return; const ok = b.textContent === String(a.value); b.classList.add(ok ? 'correct' : 'wrong'); $$('.quiz-opt', ansbox).forEach(x => { if (x.textContent === String(a.value)) x.classList.add('correct'); });
+        const fb = $('.fb', ansbox); fb.className = 'small mt-1 fb ' + (ok ? 'check-ok' : 'check-bad'); fb.innerHTML = ok ? '✔ ¡Correcto!' : '✘ No es correcto. Revisa la solución paso a paso.'; });
+    } else if (a) {
+      ansbox.innerHTML = `<div class="input-group input-group-sm" style="max-width:460px"><span class="input-group-text">${a.label}</span><input type="text" class="form-control font-monospace" placeholder="tu respuesta" autocomplete="off" spellcheck="false"><button class="btn btn-ghost b-chk">Comprobar</button></div><div class="small mt-1 fb"></div>`;
+      const inp = $('input', ansbox), fb = $('.fb', ansbox);
+      const chk = () => { let ok;
+        if (a.text) { const accept = [].concat(a.value, a.alt || []).map(x => (a.norm || norm)(x)); ok = accept.includes((a.norm || norm)(inp.value)); }
+        else { const v = parseFloat(String(inp.value).replace(',', '.')); if (isNaN(v)) { fb.className = 'small mt-1 fb'; fb.innerHTML = 'Escribe un número.'; return; } ok = Math.abs(v - a.value) <= (a.tol ?? 1e-9); }
+        fb.className = 'small mt-1 fb ' + (ok ? 'check-ok' : 'check-bad');
+        fb.innerHTML = ok ? '✔ ¡Correcto! Revisa el procedimiento para confirmar tu razonamiento.' : '✘ Aún no. Usa «Siguiente paso» para guiarte.'; };
+      $('.b-chk', ansbox).onclick = chk; inp.onkeydown = e => { if (e.key === 'Enter') chk(); };
+    }
+    $('.b-step', node).disabled = false; tex(enun); tex(ansbox); hlAll(node);
+  };
+  $('.b-new', node).onclick = fresh; $('.b-step', node).onclick = () => { showStep(); hlAll(node); };
+  $('.b-all', node).onclick = () => { while (cur && shown < cur.steps.length) showStep(); hlAll(node); };
+  fresh();
+}
+/* ====================== resaltado de código Java ====================== */
+const JKW = new Set('abstract boolean break byte case catch char class continue default do double else extends final finally float for if implements import instanceof int interface long new package private protected public return short static super switch this throw throws try void while var true false null'.split(' '));
+function hlJava(src) {
+  const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(@\w+)|(\b\d+(?:\.\d+)?[fFdDlL]?\b)|(\b[A-Za-z_]\w*\b)/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))) { out += esc(src.slice(last, m.index)); const t = esc(m[0]);
+    if (m[1]) out += `<span class="tk-c">${t}</span>`; else if (m[2]) out += `<span class="tk-s">${t}</span>`; else if (m[3]) out += `<span class="tk-a">${t}</span>`; else if (m[4]) out += `<span class="tk-n">${t}</span>`;
+    else if (JKW.has(m[5])) out += `<span class="tk-k">${t}</span>`; else if (/^[A-Z]/.test(m[5])) out += `<span class="tk-t">${t}</span>`; else out += t; last = re.lastIndex; }
+  return out + esc(src.slice(last));
+}
+function hlAll(root = document) { $$('pre.code:not(.hl)', root).forEach(p => { p.innerHTML = hlJava(p.textContent); p.classList.add('hl'); }); }
+const codeBlock = src => `<pre class="code">${src.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+/* tabla html rápida */
+function htable(head, rows, cls = 'tbl') { return `<div class="scroll-x"><table class="${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => typeof c === 'object' && c !== null ? `<td class="${c.c || ''}">${c.v}</td>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+
+/* ====================== interfaz general ====================== */
+function initUI() {
+  /* tema */
+  const root = document.documentElement; let saved = null; try { saved = localStorage.getItem('cuad-theme'); } catch (e) { }
+  if (saved) root.setAttribute('data-bs-theme', saved);
+  const tbtn = $('#themeBtn'); if (tbtn) tbtn.onclick = () => { const t = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark'; root.setAttribute('data-bs-theme', t); try { localStorage.setItem('cuad-theme', t); } catch (e) { } document.dispatchEvent(new Event('themechange')); };
+  /* progreso y volver arriba */
+  const prog = $('#progress'), top = $('#toTop');
+  const onScroll = () => { const h = document.documentElement; const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight); if (prog) prog.style.width = (p * 100) + '%'; if (top) top.classList.toggle('show', h.scrollTop > 600); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  if (top) top.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+  /* apariciones */
+  if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .08 }); $$('.reveal').forEach(n => io.observe(n)); }
+  else $$('.reveal').forEach(n => n.classList.add('in'));
+  /* problemas */
+  hlAll(document); $$('.problem[data-gen]').forEach(mountProblem);
+  tex(document.body);
+}
+
+/* ====================== utilidades booleanas (compartidas) ====================== */
+const VARS4 = ['A', 'B', 'C', 'D'];
+/* Analizador de expresiones: acepta A B C D, ' (negación posfija), !, ~, ¬, +, |, ·, *, &, yuxtaposición y paréntesis, 0, 1 */
+function parseBool(str, vars) {
+  const s = String(str).replace(/\s+/g, '').replace(/[·*&∧]/g, '.').replace(/[|∨]/g, '+').replace(/[!~¬]/g, '!').replace(/’|`|´/g, "'").toUpperCase();
+  let i = 0;
+  const peek = () => s[i];
+  function expr() { let t = term(); while (peek() === '+') { i++; const r = term(); const l = t; t = env => l(env) | r(env); } return t; }
+  function term() { let f = factor(); while (i < s.length && (peek() === '.' || /[A-Z01(!]/.test(peek()))) { if (peek() === '.') i++; const r = factor(); const l = f; f = env => l(env) & r(env); } return f; }
+  function factor() {
+    let f;
+    if (peek() === '!') { i++; const g = factor(); f = env => 1 - g(env); }
+    else if (peek() === '(') { i++; f = expr(); if (peek() !== ')') throw new Error('Falta )'); i++; }
+    else if (peek() === '0' || peek() === '1') { const v = +s[i++]; f = () => v; }
+    else if (/[A-Z]/.test(peek() || '')) { const v = s[i++]; if (!vars.includes(v)) throw new Error('Variable ' + v + ' no válida'); f = env => env[v]; }
+    else throw new Error('Expresión incompleta');
+    while (peek() === "'") { i++; const g = f; f = env => 1 - g(env); }
+    return f;
+  }
+  if (!s.length) throw new Error('vacía');
+  const f = expr(); if (i < s.length) throw new Error('Símbolo inesperado: ' + s[i]); return f;
+}
+function truthVector(f, vars) { const n = vars.length, out = []; for (let m = 0; m < 2 ** n; m++) { const env = {}; vars.forEach((v, k) => env[v] = (m >> (n - 1 - k)) & 1); out.push(f(env)); } return out; }
+/* Quine-McCluskey con cobertura mínima exhaustiva */
+function qm(ones, n, dc = []) {
+  if (!ones.length) return [];
+  const all = [...new Set([...ones, ...dc])];
+  let groups = all.map(m => ({ v: m, mask: 0, cov: [m] })); const primes = [];
+  while (groups.length) {
+    const used = new Set(), next = [], seen = new Set();
+    for (let a = 0; a < groups.length; a++) for (let b = a + 1; b < groups.length; b++) {
+      const x = groups[a], y = groups[b]; if (x.mask !== y.mask) continue; const d = x.v ^ y.v;
+      if (d && !(d & (d - 1))) { used.add(a); used.add(b); const v = x.v & ~d, mask = x.mask | d, key = v + ':' + mask; if (!seen.has(key)) { seen.add(key); next.push({ v, mask, cov: [...new Set([...x.cov, ...y.cov])].sort((p, q) => p - q) }); } }
+    }
+    groups.forEach((g, k) => { if (!used.has(k) && !primes.some(p => p.v === g.v && p.mask === g.mask)) primes.push(g); });
+    groups = next;
+  }
+  const P = primes.filter(p => p.cov.some(m => ones.includes(m)));
+  let best = null;
+  const lits = p => n - popcount(p.mask);
+  for (let sz = 1; sz <= P.length && !best; sz++) {
+    const pick = []; const rec = (start) => {
+      if (pick.length === sz) { const cov = new Set(pick.flatMap(k => P[k].cov)); if (ones.every(m => cov.has(m))) { const L = pick.reduce((s, k) => s + lits(P[k]), 0); if (!best || L < best.L) best = { L, terms: pick.map(k => P[k]) }; } return; }
+      for (let k = start; k < P.length; k++) { pick.push(k); rec(k + 1); pick.pop(); } };
+    rec(0);
+  }
+  return best.terms;
+}
+function popcount(x) { let c = 0; while (x) { c += x & 1; x >>= 1; } return c; }
+/* término -> texto y TeX */
+function termLits(t, vars) { const n = vars.length, L = []; vars.forEach((v, k) => { const bit = 1 << (n - 1 - k); if (t.mask & bit) return; L.push([v, (t.v & bit) ? 1 : 0]); }); return L; }
+function sopText(terms, vars) { if (!terms.length) return '0'; if (terms.length === 1 && termLits(terms[0], vars).length === 0) return '1'; return terms.map(t => termLits(t, vars).map(([v, b]) => b ? v : v + "'").join('')).join(' + '); }
+function sopTex(terms, vars) { if (!terms.length) return '0'; if (terms.length === 1 && termLits(terms[0], vars).length === 0) return '1'; return terms.map(t => termLits(t, vars).map(([v, b]) => b ? v : `\\overline{${v}}`).join('')).join(' + '); }
+function mintermTex(m, vars) { const n = vars.length; return vars.map((v, k) => ((m >> (n - 1 - k)) & 1) ? v : `\\overline{${v}}`).join(''); }
+function mintermText(m, vars) { const n = vars.length; return vars.map((v, k) => ((m >> (n - 1 - k)) & 1) ? v : v + "'").join(''); }
+const GRAY2 = [0, 1, 3, 2];
+
+/* ======================= Cibernética y Computación I ======================= */
+const LEARN = [
+ { u: 1, nombre: 'La cibernética', h: 14,
+   prop: 'Modelará un sistema relacionado con un tema de alguna disciplina de su interés, analizando el concepto de cibernética para interrelacionarlo con otras ciencias y los elementos que conforman un sistema, aplicando los principios de sustentabilidad.',
+   L: [
+    ['Identifica a la cibernética como una ciencia transdisciplinaria.', 'Definición, antecedentes y aplicaciones actuales de la cibernética; transdisciplina', '#t11'],
+    ['Describe el trabajo científico sobre la cibernética desde distintos autores y autoras.', 'Norbert Wiener, Arturo Rosenblueth, Claude Shannon, Ada Lovelace y Jean Jennings Bartik', '#t12'],
+    ['Describe los componentes de un sistema.', 'Sistemas: concepto, elementos, ambiente y clasificación (naturales, artificiales, abiertos y cerrados)', '#t13'],
+    ['Explica el funcionamiento de los sistemas y el control de estos.', 'Control de un sistema: lazo abierto, lazo cerrado y retroalimentación', '#t14'],
+    ['Asocia el concepto de sustentabilidad dentro de los sistemas.', 'Sustentabilidad: concepto, sistemas socioambientales, consumo responsable', '#t15'],
+    ['Identifica el concepto y la importancia del modelo.', 'Modelos: concepto y tipos; elementos para modelar un sistema (entrada, proceso y salida)', '#t16'],
+    ['Explica las características de un modelo del sistema, las partes que lo conforman y su funcionamiento.', 'Desarrollo de un modelo de un sistema', '#t16'] ] },
+ { u: 2, nombre: 'Representación de información en sistema binario y álgebra de Boole', h: 18,
+   prop: 'Realizará operaciones aritméticas básicas y conversiones de base entre los sistemas de numeración: binario, octal y hexadecimal para comprender la representación de la información en la memoria de una computadora y en conjunto con el álgebra de Boole para entender la lógica combinacional y diseñar circuitos lógicos.',
+   L: [
+    ['Comprende las características de los sistemas de numeración decimal y binario, así como sus equivalencias en octal y hexadecimal, para poder representar información en la computadora como tipos de datos primitivos en un lenguaje de programación.', 'Sistemas de numeración y conversiones; tipos de datos primitivos, rango y precisión', '#t21'],
+    ['Realiza operaciones aritméticas con el sistema de numeración binario.', 'Adición, sustracción, multiplicación y división en binario; operaciones en octal y hexadecimal', '#t23'],
+    ['Obtiene funciones booleanas a partir de sistemas digitales y los reducirá a una expresión equivalente.', 'Álgebra de Boole, tablas de verdad, caja negra, mintérminos, teoremas y mapas de Karnaugh', '#t24'],
+    ['Aplica una metodología para la implementación de circuitos lógicos.', 'Elementos de un circuito digital; semisumador, sumador completo y restador', '#t26'],
+    ['Relaciona expresiones booleanas con proposiciones lógicas.', 'Proposiciones lógicas para la toma de decisiones mediante variables booleanas', '#t27'] ] },
+ { u: 3, nombre: 'Metodología de solución de problemas e introducción a la programación en Java', h: 32,
+   prop: 'Aplicará la metodología de solución de problemas mediante la construcción de algoritmos y la codificación en el lenguaje de programación Java para tener una visión integral del proceso de solución de un problema utilizando la computadora.',
+   L: [
+    ['Define el concepto de problema.', 'Definiciones y conceptos generales de un problema', '#t31'],
+    ['Identifica los elementos de un problema.', 'Entrada, proceso y salida', '#t31'],
+    ['Identifica los diferentes tipos de problemas: determinísticos, probabilísticos, secuenciales, condicionales y cíclicos.', 'Tipos de problema', '#t31'],
+    ['Conoce las etapas de la metodología de solución de problemas.', 'Planteamiento, análisis, diseño (algoritmo, pseudocódigo, diagrama de flujo) y prueba de escritorio', '#t32'],
+    ['Conoce el concepto de algoritmo, diagrama de flujo y pseudocódigo.', 'Elementos de un algoritmo, de un diagrama de flujo y de un pseudocódigo', '#t32'],
+    ['Elabora el algoritmo, diagrama de flujo y pseudocódigo para problemas secuenciales.', 'Transformación de algoritmo a diagrama de flujo y a pseudocódigo', '#t33'],
+    ['Elabora algoritmo, diagrama de flujo y pseudocódigo para problemas condicionales.', 'Condicionales simples, anidadas y múltiples', '#t33'],
+    ['Construye expresiones lógicas utilizando operadores relacionales y lógicos.', 'Operadores relacionales y lógicos; jerarquía y evaluación', '#t34'],
+    ['Construye expresiones aritméticas utilizando la jerarquía de las operaciones y los operadores apropiados en el lenguaje de programación Java.', 'Asignación, operadores aritméticos, jerarquía y funciones de la clase Math', '#t34'],
+    ['Elabora el algoritmo, diagrama de flujo y pseudocódigo para resolver problemas cíclicos.', 'Estructuras repetitivas; bandera, contador y acumulador', '#t35'],
+    ['Conoce las generalidades de los lenguajes de programación más utilizados.', 'Paradigmas, requerimientos, léxico y sintaxis, código fuente, objeto y máquina, compiladores e intérpretes', '#t36'],
+    ['Conoce la historia del lenguaje de programación Java.', 'Historia del lenguaje Java', '#t36'],
+    ['Conoce las características básicas del lenguaje de programación Java.', 'Características de Java', '#t36'],
+    ['Conoce el entorno de desarrollo para el lenguaje de programación Java.', 'JDK, JVM, IDE; clase, método main, print/println; errores sintácticos y lógicos', '#t37'],
+    ['Realiza programas empleando la clase Scanner para la entrada de datos.', 'Clase Scanner y tipos de datos primitivos', '#t37'],
+    ['Codifica algoritmos condicionales en el lenguaje de programación Java.', 'if, if-else, if-else-if y switch', '#t38'],
+    ['Codifica algoritmos cíclicos en el lenguaje de programación Java.', 'for, while y do-while', '#t38'] ] }
+];
+
+/* ---------------------------------------------------------------- Unidad 1 */
+const AUTORES = ['Norbert Wiener', 'Arturo Rosenblueth', 'Claude Shannon', 'Ada Lovelace', 'Jean Jennings Bartik'];
+const HECHOS = [
+  ['Publicó en 1948 el libro <i>Cybernetics: Or Control and Communication in the Animal and the Machine</i>, que popularizó la cibernética.', 'Norbert Wiener'],
+  ['Matemático del MIT que, junto con Rosenblueth, acuñó en 1947 el término moderno «cibernética».', 'Norbert Wiener'],
+  ['Fisiólogo mexicano (nacido en Chihuahua en 1900), primer autor del artículo «Behavior, Purpose and Teleology» (1943).', 'Arturo Rosenblueth'],
+  ['Profesor de fisiología en la UNAM desde 1944 y director del Cinvestav del IPN a partir de 1961.', 'Arturo Rosenblueth'],
+  ['Wiener le dedicó su libro <i>Cybernetics</i> llamándolo «mi compañero en la ciencia».', 'Arturo Rosenblueth'],
+  ['En su tesis de maestría del MIT (1937) mostró que el álgebra de Boole sirve para analizar y diseñar circuitos de relevadores e interruptores.', 'Claude Shannon'],
+  ['Publicó en 1948 «A Mathematical Theory of Communication», trabajo que fundó la teoría de la información y usó la palabra <i>bit</i>.', 'Claude Shannon'],
+  ['En 1843 tradujo un artículo de Menabrea sobre la máquina analítica de Charles Babbage y le añadió siete notas (A–G).', 'Ada Lovelace'],
+  ['Su «Nota G» describe paso a paso cómo calcular números de Bernoulli con la máquina analítica; se considera uno de los primeros programas.', 'Ada Lovelace'],
+  ['Fue una de las seis programadoras originales de la ENIAC, junto con Betty Holberton, Kathleen Antonelli, Marlyn Meltzer, Ruth Teitelbaum y Frances Spence.', 'Jean Jennings Bartik'],
+  ['Ayudó a convertir la ENIAC en una computadora de programa almacenado (1948) y después trabajó en la BINAC y la UNIVAC I.', 'Jean Jennings Bartik']];
+PROBLEMS.autores = () => {
+  const [h, a] = R.pick(HECHOS);
+  return { enun: `<b>¿Quién?</b> ${h}`, ans: { choices: R.shuffle(AUTORES), value: a }, chk: { a },
+    steps: [{ h: 'Respuesta', b: `<b>${a}</b>.` }, { h: 'Para recordar', b: ({ 'Norbert Wiener': 'Wiener (1894–1964) definió la cibernética como el estudio del control y la comunicación en el animal y la máquina; su idea central es la retroalimentación.', 'Arturo Rosenblueth': 'Rosenblueth (1900–1970) aportó la visión de la fisiología: los seres vivos regulan su conducta con retroalimentación, igual que algunas máquinas.', 'Claude Shannon': 'Shannon (1916–2001) unió la lógica de Boole con los circuitos eléctricos y creó la teoría de la información: la base de la computación digital.', 'Ada Lovelace': 'Ada Lovelace (1815–1852) vio que una máquina podía manipular símbolos siguiendo instrucciones, no solo hacer cuentas.', 'Jean Jennings Bartik': 'Jean Jennings Bartik (1924–2011) programó la ENIAC configurando cables e interruptores; el trabajo de estas programadoras fue reconocido décadas después.' })[a] }] };
+};
+const LAZOS = [
+  ['Un foco que se enciende y apaga con un interruptor', 'Lazo abierto', 'La acción (encender) no depende de medir la luz producida: no hay retroalimentación.'],
+  ['Una tostadora que funciona por un tiempo fijo con un temporizador', 'Lazo abierto', 'El tiempo está fijado de antemano; no mide qué tan tostado está el pan.'],
+  ['Una lavadora automática que sigue un programa de tiempos', 'Lazo abierto', 'Ejecuta los ciclos por tiempo sin medir si la ropa ya quedó limpia.'],
+  ['Un semáforo con tiempos fijos', 'Lazo abierto', 'Cambia de luz según un horario, sin medir el tránsito.'],
+  ['Un horno de microondas programado por minutos', 'Lazo abierto', 'Calienta el tiempo indicado sin medir la temperatura del alimento.'],
+  ['Un sistema de riego que se activa a las 6:00 h todos los días', 'Lazo abierto', 'Riega aunque el suelo ya esté húmedo: no mide la salida.'],
+  ['Un aire acondicionado con termostato', 'Lazo cerrado', 'El termostato mide la temperatura (salida) y la compara con la deseada para encender o apagar el equipo.'],
+  ['Un refrigerador con termostato', 'Lazo cerrado', 'Mide la temperatura interior y activa el compresor solo cuando hace falta.'],
+  ['El flotador que cierra la válvula de llenado de un tinaco', 'Lazo cerrado', 'El nivel del agua (salida) mueve el flotador que regula la entrada de agua.'],
+  ['Una plancha con termostato', 'Lazo cerrado', 'El termostato corta la corriente cuando la plancha alcanza la temperatura elegida.'],
+  ['El control de velocidad crucero de un automóvil', 'Lazo cerrado', 'Mide la velocidad real y ajusta el acelerador para mantener la velocidad deseada.'],
+  ['La regulación de la temperatura del cuerpo humano', 'Lazo cerrado', 'El cuerpo detecta la temperatura y responde (sudor, escalofríos) para mantenerla cerca de 37 °C: es homeostasis.']];
+PROBLEMS.lazo = () => { const [s, a, e] = R.pick(LAZOS); return { enun: `¿Qué tipo de control tiene este sistema? <b>${s}</b>.`, ans: { choices: ['Lazo abierto', 'Lazo cerrado'], value: a }, chk: { a },
+  steps: [{ h: 'Pregunta clave', b: '¿El sistema <b>mide su salida</b> y usa esa información para corregir su acción? Si sí, hay retroalimentación (lazo cerrado); si no, es lazo abierto.' }, { h: 'Respuesta: ' + a, b: e }] }; };
+const SISTEMAS = [
+  { s: 'Una licuadora', e: 'Frutas, leche y energía eléctrica', p: 'Las aspas giran y trituran los ingredientes', o: 'Licuado', t: 'Artificial' },
+  { s: 'La fotosíntesis en una planta', e: 'Luz solar, agua y dióxido de carbono', p: 'Transformación química en los cloroplastos', o: 'Glucosa y oxígeno', t: 'Natural' },
+  { s: 'Un cajero automático', e: 'Tarjeta, NIP y cantidad solicitada', p: 'Validación de la cuenta y conteo de billetes', o: 'Dinero y comprobante', t: 'Artificial' },
+  { s: 'El sistema digestivo', e: 'Alimentos y agua', p: 'Digestión y absorción de nutrientes', o: 'Nutrientes al cuerpo y desechos', t: 'Natural' },
+  { s: 'Una impresora', e: 'Archivo digital, papel y tinta', p: 'Colocación de la tinta sobre el papel', o: 'Documento impreso', t: 'Artificial' },
+  { s: 'Una calculadora', e: 'Números y operación tecleados', p: 'El circuito realiza el cálculo', o: 'Resultado en la pantalla', t: 'Artificial' },
+  { s: 'Un panel solar', e: 'Radiación solar', p: 'Efecto fotovoltaico en las celdas', o: 'Energía eléctrica', t: 'Artificial' }];
+PROBLEMS.eps = () => { const S0 = R.pick(SISTEMAS), q = R.pick([['entrada', 'e'], ['proceso', 'p'], ['salida', 'o']]);
+  const others = R.shuffle(SISTEMAS.filter(x => x !== S0)).slice(0, 1)[0];
+  const choices = R.shuffle([S0.e, S0.p, S0.o, others[q[1]]]);
+  return { enun: `Sistema: <b>${S0.s}</b> (sistema ${S0.t.toLowerCase()}). ¿Cuál es su <b>${q[0]}</b>?`, ans: { choices, value: S0[q[1]] }, chk: {},
+    steps: [{ h: 'Modelo de caja negra', b: htable(['Entrada', 'Proceso', 'Salida'], [[S0.e, S0.p, S0.o]]) }, { h: 'Respuesta', b: `La ${q[0]} es: <b>${S0[q[1]]}</b>. Es un sistema <b>${S0.t.toLowerCase()}</b> porque ${S0.t === 'Natural' ? 'existe en la naturaleza sin intervención humana' : 'fue diseñado y construido por el ser humano'}.` }] }; };
+
+/* ---------------------------------------------------------------- Unidad 2: numeración */
+const toB = (n, b) => n.toString(b).toUpperCase();
+const grp = (s, k) => { const pad = (k - s.length % k) % k; const t = '0'.repeat(pad) + s; const out = []; for (let i = 0; i < t.length; i += k) out.push(t.slice(i, i + k)); return out; };
+const HEXD = '0123456789ABCDEF';
+PROBLEMS.dec2bin = () => {
+  const n = R.int(37, 500), rows = []; let q = n; while (q > 0) { rows.push([q, Math.floor(q / 2), q % 2]); q = Math.floor(q / 2); }
+  const b = toB(n, 2);
+  return { enun: `Convierte el número decimal <b>${n}</b> a binario.`, ans: { label: 'binario:', value: b, text: true }, chk: { n, b },
+    steps: [{ h: 'Divisiones sucesivas entre 2', b: 'Se divide entre 2 y se anota el residuo, hasta que el cociente sea 0:' + htable(['Dividendo', 'Cociente', 'Residuo'], rows.map(r => [r[0], r[1], { v: r[2], c: 'hl' }])) },
+      { h: 'Lee los residuos de abajo hacia arriba', b: MD(`${n}_{10} = ${b}_{2}`) },
+      { h: 'Comprueba con la notación posicional', b: MD(b.split('').map((d, i) => `${d}\\cdot 2^{${b.length - 1 - i}}`).join('+') + ` = ${n}`) }] };
+};
+PROBLEMS.bin2dec = () => {
+  const n = R.int(20, 1023), b = toB(n, 2); const terms = b.split('').map((d, i) => [d, b.length - 1 - i]).filter(t => t[0] === '1');
+  return { enun: `Convierte el número binario <b class="font-monospace">${b}<sub>2</sub></b> a decimal.`, ans: { label: 'decimal:', value: n }, chk: { n, b },
+    steps: [{ h: 'Escribe el peso de cada posición', b: htable(['Posición', ...b.split('').map((_, i) => b.length - 1 - i)], [['Peso 2ⁿ', ...b.split('').map((_, i) => 2 ** (b.length - 1 - i))], ['Bit', ...b.split('').map(d => d === '1' ? { v: 1, c: 'hl' } : 0)]]) },
+      { h: 'Suma los pesos donde hay 1', b: MD(terms.map(t => `2^{${t[1]}}`).join('+') + ' = ' + terms.map(t => 2 ** t[1]).join('+') + ` = ${n}`) }] };
+};
+PROBLEMS.bin2oh = () => {
+  const n = R.int(64, 4095), b = toB(n, 2), g3 = grp(b, 3), g4 = grp(b, 4), o = toB(n, 8), h = toB(n, 16); const which = R.pick(['octal', 'hexadecimal']);
+  return { enun: `Convierte <b class="font-monospace">${b}<sub>2</sub></b> a <b>${which}</b> agrupando bits.`, ans: { label: which + ':', value: which === 'octal' ? o : h, text: true }, chk: { n, o, h },
+    steps: [{ h: 'Por qué funciona', b: `${M('8 = 2^3')} y ${M('16 = 2^4')}: cada dígito octal equivale a 3 bits y cada dígito hexadecimal a 4 bits. Se agrupa <b>de derecha a izquierda</b> y se completan ceros a la izquierda.` },
+      which === 'octal' ? { h: 'Grupos de 3 bits', b: htable(g3, [g3.map(x => parseInt(x, 2))]) + MD(`${b}_2 = ${o}_8`) } : { h: 'Grupos de 4 bits', b: htable(g4, [g4.map(x => HEXD[parseInt(x, 2)])]) + MD(`${b}_2 = ${h}_{16}`) },
+      { h: 'Comprobación en decimal', b: `${M(b + '_2 = ' + n + '_{10}')}, y también ${M((which === 'octal' ? o : h) + '_{' + (which === 'octal' ? 8 : 16) + '} = ' + (which === 'octal' ? o : h).split('').map((d, i, a) => `${parseInt(d, 16)}\\cdot ${which === 'octal' ? 8 : 16}^{${a.length - 1 - i}}`).join('+') + ' = ' + n)}.` }] };
+};
+PROBLEMS.hex2bin = () => {
+  const n = R.int(256, 65535), h = toB(n, 16), b = toB(n, 2);
+  return { enun: `Convierte <b class="font-monospace">${h}<sub>16</sub></b> a binario y a decimal. <b>Escribe el binario.</b>`, ans: { label: 'binario:', value: b, text: true }, chk: { n, h, b },
+    steps: [{ h: 'Cada dígito hexadecimal → 4 bits', b: htable(h.split(''), [h.split('').map(d => parseInt(d, 16).toString(2).padStart(4, '0'))]) + `Recuerda: A=10, B=11, C=12, D=13, E=14, F=15.` },
+      { h: 'Une los grupos', b: MD(`${h}_{16} = ${b}_2`) + '(los ceros a la izquierda no cambian el valor).' },
+      { h: 'A decimal', b: MD(h.split('').map((d, i) => `${parseInt(d, 16)}\\cdot 16^{${h.length - 1 - i}}`).join('+') + ` = ${n}`) }] };
+};
+PROBLEMS.compl2 = () => {
+  const n = R.int(1, 127), pos = n.toString(2).padStart(8, '0'), inv = pos.split('').map(c => c === '1' ? '0' : '1').join(''), res = ((256 - n) & 255).toString(2).padStart(8, '0');
+  return { enun: `Representa <b>−${n}</b> como entero con signo de <b>8 bits</b> (como un <code>byte</code> de Java) usando complemento a 2.`, ans: { label: '8 bits:', value: res, text: true, norm: v => String(v).replace(/\s+/g, '') }, chk: { n, res },
+    steps: [{ h: 'Escribe +' + n + ' en 8 bits', b: `<span class="font-monospace fs-5">${pos}</span>` },
+      { h: 'Invierte todos los bits (complemento a 1)', b: `<span class="font-monospace fs-5">${inv}</span>` },
+      { h: 'Suma 1', b: `<span class="font-monospace fs-5">${inv} + 1 = ${res}</span>` },
+      { h: 'Comprueba', b: `El bit de la izquierda vale ${M('-2^7 = -128')}: ${MD(`-128 + ${parseInt(res.slice(1), 2)} = -${n}`)} En 8 bits con signo el rango es de −128 a 127.` }] };
+};
+PROBLEMS.rango = () => {
+  const k = R.pick([4, 6, 8, 10, 12, 16]), signed = Math.random() < .5;
+  const lo = signed ? -(2 ** (k - 1)) : 0, hi = signed ? 2 ** (k - 1) - 1 : 2 ** k - 1;
+  return { enun: `¿Cuál es el valor <b>máximo</b> que se puede representar con <b>${k} bits ${signed ? 'con signo (complemento a 2)' : 'sin signo'}</b>?`, ans: { label: 'máximo:', value: hi }, chk: { k, signed, hi },
+    steps: [{ h: 'Cantidad de combinaciones', b: `Con ${k} bits hay ${M(`2^{${k}} = ${2 ** k}`)} combinaciones distintas.` },
+      { h: signed ? 'Con signo' : 'Sin signo', b: signed ? `La mitad de las combinaciones son negativas: el rango es ${MD(`-2^{${k - 1}} \\ \\text{a}\\ 2^{${k - 1}}-1 \\;\\Rightarrow\\; ${lo}\\ \\text{a}\\ ${hi}`)}` : `Se usan de 0 a ${M(`2^{${k}}-1`)}: ${MD(`0\\ \\text{a}\\ ${hi}`)}` },
+      { h: 'Relación con Java', b: 'Los tipos enteros de Java son con signo: <code>byte</code> (8 bits) va de −128 a 127, <code>short</code> (16 bits) de −32 768 a 32 767.' }] };
+};
+function bitRow(s, cls = '') { return `<span class="font-monospace ${cls}" style="letter-spacing:.35em">${s}</span>`; }
+PROBLEMS.sumaBin = () => {
+  const a = R.int(20, 200), b = R.int(20, 200), s = a + b, w = s.toString(2).length;
+  const A = a.toString(2).padStart(w, '0'), B = b.toString(2).padStart(w, '0'), Sb = s.toString(2); let c = 0; const carry = Array(w).fill(' ');
+  for (let i = w - 1; i >= 0; i--) { const t = +A[i] + +B[i] + c; c = t >> 1; if (i > 0) carry[i - 1] = c ? '1' : ' '; }
+  return { enun: `Suma en binario: <b class="font-monospace">${a.toString(2)}<sub>2</sub> + ${b.toString(2)}<sub>2</sub></b>`, ans: { label: 'resultado:', value: Sb, text: true }, chk: { a, b, Sb },
+    steps: [{ h: 'Reglas', b: htable(['0+0', '0+1', '1+0', '1+1', '1+1+1'], [['0', '1', '1', '0, lleva 1', '1, lleva 1']]) },
+      { h: 'Suma columna por columna (de derecha a izquierda)', b: `<pre class="out-console" style="color:inherit;background:var(--card);border:1px solid var(--line)">acarreo  ${carry.join('')}\n         ${A}\n       + ${B}\n         ${'-'.repeat(w)}\n         ${Sb}</pre>` },
+      { h: 'Comprueba en decimal', b: M(`${a} + ${b} = ${s}`) + ` y ${M(Sb + '_2 = ' + s)} ✓` }] };
+};
+PROBLEMS.restaBin = () => {
+  let a = R.int(60, 255), b = R.int(10, 120); if (b >= a) [a, b] = [b + 1, a];
+  const w = 8, A = a.toString(2).padStart(w, '0'), B = b.toString(2).padStart(w, '0'), Bc = ((256 - b) & 255).toString(2).padStart(w, '0'), tot = a + ((256 - b) & 255), r = a - b, R8 = (tot & 255).toString(2).padStart(w, '0');
+  return { enun: `Resta en binario usando complemento a 2 (8 bits): <b class="font-monospace">${A} − ${B}</b>`, ans: { label: 'resultado (8 bits):', value: R8, text: true, norm: v => String(v).replace(/\s+/g, '').replace(/^0+(?=.)/, '') }, chk: { a, b, R8 },
+    steps: [{ h: 'Complemento a 2 del sustraendo', b: `Invertir ${bitRow(B)} → ${bitRow(B.split('').map(c => c === '1' ? 0 : 1).join(''))}, y sumar 1 → ${bitRow(Bc)}` },
+      { h: 'Suma el minuendo con el complemento', b: bitRow(`${A} + ${Bc} = ${tot.toString(2)}`) },
+      { h: 'Descarta el acarreo final', b: `Como trabajamos con 8 bits, el 1 de la posición 9 se descarta: <b>${bitRow(R8)}</b>` },
+      { h: 'Comprueba', b: M(`${a} - ${b} = ${r}`) + ` y ${M(R8 + '_2 = ' + r)} ✓` }] };
+};
+PROBLEMS.multBin = () => {
+  const a = R.int(5, 31), b = R.int(3, 15), A = a.toString(2), B = b.toString(2), p = a * b;
+  const parts = B.split('').reverse().map((d, i) => d === '1' ? (a << i).toString(2) : null).filter(Boolean);
+  return { enun: `Multiplica en binario: <b class="font-monospace">${A}<sub>2</sub> × ${B}<sub>2</sub></b>`, ans: { label: 'producto:', value: p.toString(2), text: true }, chk: { a, b },
+    steps: [{ h: 'Productos parciales', b: `Como en decimal: por cada bit 1 del multiplicador se copia el multiplicando desplazado; por cada 0 se escribe 0.<pre class="out-console" style="color:inherit;background:var(--card);border:1px solid var(--line)">${B.split('').reverse().map((d, i) => (d === '1' ? A : '0'.repeat(A.length)) + ' '.repeat(i).replace(/ /g, '·') + `   (bit ${i} = ${d})`).join('\n')}</pre>` },
+      { h: 'Suma los parciales', b: MD(parts.join(' + ') + ` = ${p.toString(2)}`) },
+      { h: 'Comprueba', b: M(`${a}\\times ${b} = ${p}`) + ' ✓' }] };
+};
+PROBLEMS.divBin = () => {
+  const b = R.int(2, 7), q = R.int(3, 20), r = R.int(0, b - 1), a = b * q + r;
+  return { enun: `Divide en binario: <b class="font-monospace">${a.toString(2)}<sub>2</sub> ÷ ${b.toString(2)}<sub>2</sub></b>. <b>Escribe el cociente.</b>`, ans: { label: 'cociente:', value: q.toString(2), text: true }, chk: { a, b },
+    steps: [{ h: 'División larga', b: 'Se procede como en decimal, pero en cada paso el divisor «cabe» 1 vez o 0 veces; si cabe se resta.' },
+      { h: 'Resultado', b: MD(`${a.toString(2)}_2 \\div ${b.toString(2)}_2 = ${q.toString(2)}_2 \\ \\text{residuo}\\ ${r.toString(2)}_2`) },
+      { h: 'Comprueba en decimal', b: M(`${a} = ${b}\\times ${q} + ${r}`) + ' ✓' }] };
+};
+PROBLEMS.sumaHex = () => {
+  const a = R.int(300, 40000), b = R.int(300, 25000), s = a + b, A = toB(a, 16), B = toB(b, 16), S = toB(s, 16);
+  const w = S.length, Ap = A.padStart(w, '0'), Bp = B.padStart(w, '0'); let c = 0; const cols = [];
+  for (let i = w - 1; i >= 0; i--) { const t = parseInt(Ap[i], 16) + parseInt(Bp[i], 16) + c; cols.unshift(`${HEXD[parseInt(Ap[i], 16)]}+${HEXD[parseInt(Bp[i], 16)]}${c ? '+1' : ''} = ${t} → escribe ${HEXD[t % 16]}${t >= 16 ? ', lleva 1' : ''}`); c = t >= 16 ? 1 : 0; }
+  return { enun: `Suma en hexadecimal: <b class="font-monospace">${A}<sub>16</sub> + ${B}<sub>16</sub></b>`, ans: { label: 'resultado:', value: S, text: true }, chk: { a, b, S },
+    steps: [{ h: 'Regla', b: 'Se suma en decimal cada columna; si el resultado es 16 o más, se escribe (resultado − 16) y se lleva 1.' }, { h: 'Columna por columna (derecha a izquierda)', b: '<ol class="small mb-0">' + cols.reverse().map(t => `<li>${t}</li>`).join('') + '</ol>' }, { h: 'Resultado', b: MD(`${A}_{16} + ${B}_{16} = ${S}_{16}\\quad(${a}+${b}=${s})`) }] };
+};
+
+/* ---------------------------------------------------------------- Unidad 2: Boole */
+const EXPRS3 = ["AB + C'", "A(B + C)", "A'B + AC", "(A + B)C'", "AB' + BC", "A + B'C", "(A + B')(B + C)", "A'C' + AB", "(AB)' + C", "A ⊕ B"];
+function texExpr(s) { return s.replace(/\(([^()]*)\)'/g, '\\overline{($1)}').replace(/([A-D])'/g, '\\overline{$1}').replace(/⊕/g, '\\oplus '); }
+PROBLEMS.tablaVerdad = () => {
+  const ex = R.pick(EXPRS3.filter(e => !e.includes('⊕'))), f = parseBool(ex, ['A', 'B', 'C']), tv = truthVector(f, ['A', 'B', 'C']);
+  const m = R.int(0, 7), bits = [m >> 2 & 1, m >> 1 & 1, m & 1];
+  return { enun: `Construye la tabla de verdad de ${M('F = ' + texExpr(ex))}. <b>¿Cuánto vale F cuando A = ${bits[0]}, B = ${bits[1]}, C = ${bits[2]}?</b>`, ans: { choices: ['0', '1'], value: String(tv[m]) }, chk: { ex, tv },
+    steps: [{ h: 'Orden de evaluación', b: 'Primero la negación (\'), luego el producto lógico (AND, ·) y al final la suma lógica (OR, +). Los paréntesis se resuelven primero.' },
+      { h: 'Tabla de verdad (2³ = 8 filas)', b: htable(['A', 'B', 'C', 'F'], tv.map((v, k) => [k >> 2 & 1, k >> 1 & 1, k & 1, k === m ? { v, c: 'hl' } : v])) },
+      { h: 'Respuesta', b: `Para A=${bits[0]}, B=${bits[1]}, C=${bits[2]}: ${M('F = ' + tv[m])}.` }] };
+};
+PROBLEMS.minterminos = () => {
+  let tv; do { tv = Array.from({ length: 8 }, () => +(Math.random() < .45)); } while (S.sum(tv) < 2 || S.sum(tv) > 6);
+  const ones = tv.map((v, k) => v ? k : -1).filter(k => k >= 0), V = ['A', 'B', 'C'], min = qm(ones, 3);
+  return { enun: 'Una caja negra con entradas A, B, C produce la salida F de la tabla. Obtén la función como <b>suma de productos (mintérminos)</b> y simplifícala. <b>Escribe la expresión simplificada</b> (usa \' para negar, por ejemplo <code>A\'B + C</code>).' + htable(['A', 'B', 'C', 'F'], tv.map((v, k) => [k >> 2 & 1, k >> 1 & 1, k & 1, v])),
+    ans: { label: 'F =', value: sopText(min, V), text: true, norm: v => { try { return truthVector(parseBool(v, V), V).join(''); } catch (e) { return 'x' + v; } } }, chk: { ones, min: sopText(min, V) },
+    steps: [{ h: 'Toma las filas donde F = 1', b: `Mintérminos: ${M('F = \\sum m(' + ones.join(',') + ')')}. En cada fila, la variable que vale 1 se escribe tal cual y la que vale 0 se escribe negada.` },
+      { h: 'Suma de productos canónica', b: MD('F = ' + ones.map(m => mintermTex(m, V)).join(' + ')) },
+      { h: 'Simplifica (mapa de Karnaugh o teoremas)', b: kmapHtml(tv, 3, min) + `Se agrupan unos adyacentes en bloques de 1, 2, 4… (potencias de 2). Cada grupo elimina las variables que cambian dentro de él.` },
+      { h: 'Expresión mínima', b: MD('F = ' + sopTex(min, V)) + '<div class="small text-body-secondary">El campo de respuesta acepta cualquier expresión <i>equivalente</i>.</div>' }] };
+};
+function kmapHtml(tv, n, terms) {
+  const V = n === 3 ? ['A', 'B', 'C'] : VARS4, colors = ['#0f766e', '#b45309', '#7c3aed', '#be123c', '#0369a1', '#4d7c0f'];
+  const rowsG = n === 3 ? [0, 1] : GRAY2, colsG = GRAY2;
+  const idx = (r, c) => n === 3 ? (r << 2) | c : (r << 2) | c;
+  const covers = (t, m) => (m & ~t.mask) === (t.v & ~t.mask);
+  const head = n === 3 ? ['A \\ BC', ...colsG.map(c => c.toString(2).padStart(2, '0'))] : ['AB \\ CD', ...colsG.map(c => c.toString(2).padStart(2, '0'))];
+  let h = `<div class="scroll-x"><table class="tbl kmap"><thead><tr>${head.map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody>`;
+  rowsG.forEach(r => { h += `<tr><th>${n === 3 ? r : r.toString(2).padStart(2, '0')}</th>`; colsG.forEach(c => { const m = idx(r, c); const ts = terms.map((t, k) => covers(t, m) ? k : -1).filter(k => k >= 0);
+    const sh = ts.map((k, j) => `inset 0 0 0 ${3 + 3 * j}px ${colors[k % colors.length]}`).join(','); h += `<td class="${tv[m] ? 'one' : ''}" style="box-shadow:${sh || 'none'}">${tv[m]}<div style="position:absolute;right:3px;bottom:1px;font-size:.6rem;color:var(--muted)">${m}</div></td>`; }); h += '</tr>'; });
+  h += '</tbody></table></div>';
+  if (terms.length) h += '<div class="small">' + terms.map((t, k) => `<span style="color:${colors[k % colors.length]};font-weight:800">■</span> ${M(sopTex([t], V))}`).join(' &nbsp; ') + '</div>';
+  return h;
+}
+PROBLEMS.kmap4 = () => {
+  let tv; do { tv = Array.from({ length: 16 }, () => +(Math.random() < .42)); } while (S.sum(tv) < 4 || S.sum(tv) > 11);
+  const ones = tv.map((v, k) => v ? k : -1).filter(k => k >= 0), min = qm(ones, 4);
+  return { enun: `Simplifica con un mapa de Karnaugh de 4 variables: ${M('F(A,B,C,D) = \\sum m(' + ones.join(',') + ')')}. <b>Escribe la expresión mínima.</b>`,
+    ans: { label: 'F =', value: sopText(min, VARS4), text: true, norm: v => { try { return truthVector(parseBool(v, VARS4), VARS4).join(''); } catch (e) { return 'x' + v; } } }, chk: { ones, min: sopText(min, VARS4) },
+    steps: [{ h: 'Coloca los unos en el mapa', b: 'Las filas (AB) y columnas (CD) siguen el código Gray 00, 01, 11, 10: celdas vecinas difieren en una sola variable. Los bordes opuestos también son vecinos.' + kmapHtml(tv, 4, []) },
+      { h: 'Forma los grupos más grandes posibles', b: kmapHtml(tv, 4, min) + 'Grupos rectangulares de 1, 2, 4 u 8 celdas; pueden traslaparse y «dar la vuelta» por los bordes.' },
+      { h: 'Expresión mínima', b: MD('F = ' + sopTex(min, VARS4)) + `Tiene ${min.length} término(s). El campo de respuesta acepta cualquier expresión equivalente.` }] };
+};
+PROBLEMS.sumador = () => {
+  const n = 4, a = R.int(1, 15), b = R.int(1, 15), s = a + b, A = a.toString(2).padStart(4, '0'), B = b.toString(2).padStart(4, '0'); let c = 0; const rows = [];
+  for (let i = 3; i >= 0; i--) { const x = +A[i], y = +B[i], S1 = x ^ y ^ c, co = (x & y) | (c & (x ^ y)); rows.unshift([`bit ${3 - i}`, x, y, c, { v: S1, c: 'hl' }, co]); c = co; }
+  const res = s.toString(2).padStart(5, '0');
+  return { enun: `Un sumador de 4 bits se forma conectando 4 sumadores completos en cascada. Calcula ${bitRow(A)} + ${bitRow(B)}. <b>Escribe el resultado de 5 bits (acarreo final + 4 bits de suma).</b>`, ans: { label: 'resultado:', value: res, text: true, norm: v => String(v).replace(/\s+/g, '').padStart(5, '0') }, chk: { a, b, res },
+    steps: [{ h: 'Ecuaciones del sumador completo', b: MD('S = A \\oplus B \\oplus C_{in} \\qquad C_{out} = AB + C_{in}(A\\oplus B)') },
+      { h: 'Bit a bit, del menos significativo al más significativo', b: htable(['', 'A', 'B', 'Cin', 'S', 'Cout'], rows.slice().reverse()) },
+      { h: 'Resultado', b: `Acarreo final ${c} y suma ${rows.map(r => r[4].v).join('')} → <b>${bitRow(res)}</b> = ${M(String(s))} (${a} + ${b}) ✓` }] };
+};
+const PROPS = [
+  { t: 'La alarma suena (F) si la puerta está abierta (A) <b>y</b> el sistema está activado (B).', e: 'AB', o: ["A + B", "A'B", "AB'"] },
+  { t: 'El ventilador se enciende (F) si hace calor (A) <b>o</b> el usuario presiona el botón (B).', e: 'A + B', o: ['AB', "A'B'", "A + B'"] },
+  { t: 'Se puede salir al recreo (F) si suena el timbre (A) y <b>no</b> hay examen (B).', e: "AB'", o: ["A'B", 'AB', "A + B'"] },
+  { t: 'Una lámpara se enciende (F) si es de noche (A) y hay movimiento (B), <b>o</b> si se presiona el interruptor manual (C).', e: 'AB + C', o: ['A(B + C)', 'ABC', "AB + C'"] },
+  { t: 'El auto arranca (F) si la llave está puesta (A) y el freno está pisado (B) y el cinturón <b>no</b> está desabrochado (C).', e: "ABC'", o: ['ABC', "A + B + C'", "AB + C'"] },
+  { t: 'Se presenta el examen extraordinario (F) si el alumno <b>no</b> aprobó (A) y está inscrito (B).', e: "A'B", o: ["AB'", "A' + B", 'AB'] }];
+PROBLEMS.proposicion = () => { const p = R.pick(PROPS), toJ = e => e.replace(/([A-C])'/g, '!$1').replace(/\s\+\s/g, ' || ').replace(/([A-C!)])(?=[A-C!(])/g, '$1 && ');
+  return { enun: `Traduce a expresión booleana: ${p.t}`, ans: { choices: R.shuffle([p.e, ...p.o]), value: p.e }, chk: {},
+    steps: [{ h: 'Identifica conectivos', b: '«y» → producto lógico (AND, ·); «o» → suma lógica (OR, +); «no» → negación (\').' }, { h: 'Expresión booleana', b: MD('F = ' + texExpr(p.e)) }, { h: 'En Java', b: codeBlock(`boolean f = ${toJ(p.e).replace(/A/g, 'a').replace(/B/g, 'b').replace(/C/g, 'c')};`) }] }; };
+
+/* ---------------------------------------------------------------- Unidad 3 */
+const TIPOS_P = [
+  ['Calcular el área de un rectángulo conociendo base y altura.', 'Secuencial', 'Las instrucciones se ejecutan una tras otra, sin decisiones ni repeticiones.'],
+  ['Convertir una temperatura de grados Celsius a Fahrenheit.', 'Secuencial', 'Se lee el dato, se aplica la fórmula y se muestra el resultado.'],
+  ['Decidir si un alumno aprobó o reprobó según su calificación.', 'Condicional', 'Depende de comparar la calificación con 6: hay una decisión.'],
+  ['Indicar si un número es par o impar.', 'Condicional', 'Se decide según el residuo de dividir entre 2.'],
+  ['Mostrar la tabla de multiplicar del 7.', 'Cíclico', 'La misma operación se repite 10 veces.'],
+  ['Calcular el promedio de las calificaciones de 40 alumnos.', 'Cíclico', 'Se repite la lectura y la suma para cada alumno.'],
+  ['Simular el lanzamiento de un dado.', 'Probabilístico', 'El resultado depende del azar: no se puede predecir con certeza.'],
+  ['Estimar cuántos días lloverá el próximo mes.', 'Probabilístico', 'Interviene la incertidumbre; solo se puede dar una probabilidad.'],
+  ['Calcular el interés de una inversión con una tasa fija conocida.', 'Determinístico', 'Con los mismos datos siempre se obtiene el mismo resultado.']];
+PROBLEMS.tipoProblema = () => { const [t, a, e] = R.pick(TIPOS_P); const ch = a === 'Probabilístico' || a === 'Determinístico' ? ['Determinístico', 'Probabilístico'] : ['Secuencial', 'Condicional', 'Cíclico'];
+  return { enun: `¿Qué tipo de problema es? <b>${t}</b>`, ans: { choices: ch, value: a }, chk: {}, steps: [{ h: 'Respuesta: ' + a, b: e }, { h: 'Recuerda', b: 'Por su certeza: <b>determinísticos</b> (resultado predecible) o <b>probabilísticos</b> (interviene el azar). Por su estructura: <b>secuenciales</b>, <b>condicionales</b> (decisiones) o <b>cíclicos</b> (repeticiones).' }] }; };
+
+/* --- evaluación de expresiones Java (enteros) --- */
+const jdiv = (a, b) => Math.trunc(a / b), jmod = (a, b) => a % b;
+PROBLEMS.exprArit = () => {
+  const a = R.int(2, 9), b = R.int(2, 9), c = R.int(2, 6), d = R.int(10, 30), e = R.int(2, 7);
+  const forms = [
+    { s: `a + b * c`, f: () => a + b * c, st: [`b * c = ${b} * ${c} = ${b * c}`, `a + ${b * c} = ${a + b * c}`] },
+    { s: `(a + b) * c`, f: () => (a + b) * c, st: [`(a + b) = ${a + b}`, `${a + b} * c = ${(a + b) * c}`] },
+    { s: `d / e + d % e`, f: () => jdiv(d, e) + jmod(d, e), st: [`d / e = ${d} / ${e} = ${jdiv(d, e)}  (división entera: se descarta la parte decimal)`, `d % e = ${d} % ${e} = ${jmod(d, e)}  (residuo)`, `${jdiv(d, e)} + ${jmod(d, e)} = ${jdiv(d, e) + jmod(d, e)}`] },
+    { s: `a * b - d / c`, f: () => a * b - jdiv(d, c), st: [`a * b = ${a * b}`, `d / c = ${d} / ${c} = ${jdiv(d, c)}  (entera)`, `${a * b} - ${jdiv(d, c)} = ${a * b - jdiv(d, c)}`] },
+    { s: `d - a * b % c`, f: () => d - jmod(a * b, c), st: [`a * b = ${a * b}  (* y % tienen igual jerarquía: se evalúan de izquierda a derecha)`, `${a * b} % c = ${jmod(a * b, c)}`, `d - ${jmod(a * b, c)} = ${d - jmod(a * b, c)}`] },
+    { s: `(d + a) / (b + 1) * c`, f: () => jdiv(d + a, b + 1) * c, st: [`(d + a) = ${d + a}`, `(b + 1) = ${b + 1}`, `${d + a} / ${b + 1} = ${jdiv(d + a, b + 1)}  (entera)`, `${jdiv(d + a, b + 1)} * c = ${jdiv(d + a, b + 1) * c}`] }];
+  const F = R.pick(forms), r = F.f();
+  const code = `public class Main {\n    public static void main(String[] args) {\n        int a = ${a}, b = ${b}, c = ${c}, d = ${d}, e = ${e};\n        int r = ${F.s};\n        System.out.println(r);\n    }\n}`;
+  return { enun: `¿Qué imprime el programa?` + codeBlock(code), ans: { label: 'salida:', value: r }, chk: { code, out: String(r) },
+    steps: [{ h: 'Jerarquía de operadores en Java', b: 'Paréntesis → <code>* / %</code> (izquierda a derecha) → <code>+ -</code> (izquierda a derecha). Entre enteros, <code>/</code> da el cociente entero y <code>%</code> el residuo.' },
+      ...F.st.map((t, k) => ({ h: 'Paso ' + (k + 1), b: `<code>${t}</code>` })), { h: 'Salida', b: `<div class="out-console">${r}</div>` }] };
+};
+PROBLEMS.exprLog = () => {
+  const x = R.int(1, 20), y = R.int(1, 20), z = R.int(1, 20);
+  const forms = [
+    [`x > y && y > z`, () => x > y && y > z, () => [`x > y → ${x} > ${y} → ${x > y}`, `y > z → ${y} > ${z} → ${y > z}`, `${x > y} && ${y > z} → ${x > y && y > z}`]],
+    [`x > y || z == 10`, () => x > y || z === 10, () => [`x > y → ${x > y}`, `z == 10 → ${z === 10}`, `${x > y} || ${z === 10} → ${x > y || z === 10}`]],
+    [`!(x <= y) && z % 2 == 0`, () => !(x <= y) && z % 2 === 0, () => [`x <= y → ${x <= y}`, `!(${x <= y}) → ${!(x <= y)}`, `z % 2 == 0 → ${z % 2} == 0 → ${z % 2 === 0}`, `${!(x <= y)} && ${z % 2 === 0} → ${!(x <= y) && z % 2 === 0}`]],
+    [`x + y > z * 2 || x == y`, () => x + y > z * 2 || x === y, () => [`x + y = ${x + y}; z * 2 = ${z * 2} (los aritméticos van antes que los relacionales)`, `${x + y} > ${z * 2} → ${x + y > z * 2}`, `x == y → ${x === y}`, `resultado → ${x + y > z * 2 || x === y}`]],
+    [`x != y && (y < z || z < x)`, () => x !== y && (y < z || z < x), () => [`x != y → ${x !== y}`, `(y < z || z < x) → (${y < z} || ${z < x}) → ${y < z || z < x}`, `resultado → ${x !== y && (y < z || z < x)}`]],
+    [`x >= 10 || y >= 10 && z >= 10`, () => x >= 10 || (y >= 10 && z >= 10), () => [`&& tiene mayor jerarquía que ||: se agrupa x >= 10 || (y >= 10 && z >= 10)`, `y >= 10 && z >= 10 → ${y >= 10} && ${z >= 10} → ${y >= 10 && z >= 10}`, `x >= 10 → ${x >= 10}`, `resultado → ${x >= 10 || (y >= 10 && z >= 10)}`]]];
+  const [s, f, st] = R.pick(forms), r = String(f());
+  const code = `public class Main {\n    public static void main(String[] args) {\n        int x = ${x}, y = ${y}, z = ${z};\n        boolean r = ${s};\n        System.out.println(r);\n    }\n}`;
+  return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { choices: ['true', 'false'], value: r }, chk: { code, out: r },
+    steps: [{ h: 'Jerarquía', b: 'Aritméticos → relacionales (<code>&lt; &gt; &lt;= &gt;=</code>) → igualdad (<code>== !=</code>) → <code>&amp;&amp;</code> → <code>||</code>. El <code>!</code> se aplica primero a lo que tiene a su derecha.' }, ...st().map((t, k) => ({ h: 'Paso ' + (k + 1), b: `<code>${t.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</code>` })), { h: 'Salida', b: `<div class="out-console">${r}</div>` }] };
+};
+PROBLEMS.condicional = () => {
+  const cal = R.int(0, 100) / 10, n = R.int(1, 7), dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+  if (Math.random() < .5) {
+    const out = cal >= 9 ? 'MB' : cal >= 8 ? 'B' : cal >= 6 ? 'S' : 'NA';
+    const code = `public class Main {\n    public static void main(String[] args) {\n        double cal = ${cal.toFixed(1)};\n        if (cal >= 9) {\n            System.out.println("MB");\n        } else if (cal >= 8) {\n            System.out.println("B");\n        } else if (cal >= 6) {\n            System.out.println("S");\n        } else {\n            System.out.println("NA");\n        }\n    }\n}`;
+    return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { choices: ['MB', 'B', 'S', 'NA'], value: out }, chk: { code, out },
+      steps: [{ h: 'if-else-if', b: 'Las condiciones se revisan <b>en orden</b>; se ejecuta solo el bloque de la primera condición verdadera.' }, ...[[9, 'MB'], [8, 'B'], [6, 'S']].map(([v]) => ({ h: `¿cal >= ${v}?`, b: `<code>${cal.toFixed(1)} >= ${v}</code> → <b>${cal >= v}</b>` })).slice(0, out === 'MB' ? 1 : out === 'B' ? 2 : 3), { h: 'Salida', b: `<div class="out-console">${out}</div>` }] };
+  }
+  const out = n >= 6 ? 'fin de semana' : dias[n - 1];
+  const code = `public class Main {\n    public static void main(String[] args) {\n        int dia = ${n};\n        switch (dia) {\n            case 1: System.out.println("lunes"); break;\n            case 2: System.out.println("martes"); break;\n            case 3: System.out.println("miércoles"); break;\n            case 4: System.out.println("jueves"); break;\n            case 5: System.out.println("viernes"); break;\n            default: System.out.println("fin de semana");\n        }\n    }\n}`;
+  return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { label: 'salida:', value: out, text: true, norm: v => String(v).trim().toLowerCase().replace(/\s+/g, ' ') }, chk: { code, out },
+    steps: [{ h: 'switch', b: `Se compara <code>dia = ${n}</code> con cada <code>case</code>. ${n <= 5 ? `Coincide con <code>case ${n}</code>` : 'Ningún case coincide, así que se ejecuta <code>default</code>'}; <code>break</code> evita que se ejecuten los casos siguientes.` }, { h: 'Salida', b: `<div class="out-console">${out}</div>` }] };
+};
+PROBLEMS.ciclo = () => {
+  const t = R.int(0, 2);
+  if (t === 0) { const n = R.int(4, 9), step = R.pick([1, 2]); let s = 0; const rows = []; for (let i = 1; i <= n; i += step) { s += i; rows.push([i, `${s - i} + ${i}`, s]); }
+    const code = `public class Main {\n    public static void main(String[] args) {\n        int suma = 0;\n        for (int i = 1; i <= ${n}; i += ${step}) {\n            suma = suma + i;   // acumulador\n        }\n        System.out.println(suma);\n    }\n}`;
+    return { enun: '¿Qué imprime el programa? Haz la prueba de escritorio.' + codeBlock(code), ans: { label: 'salida:', value: s }, chk: { code, out: String(s) },
+      steps: [{ h: 'Partes del ciclo for', b: `Inicio <code>i = 1</code>; condición <code>i &lt;= ${n}</code>; incremento <code>i += ${step}</code>. <code>suma</code> es un <b>acumulador</b>.` }, { h: 'Prueba de escritorio', b: htable(['i', 'suma + i', 'suma'], rows) + `Cuando <code>i = ${rows[rows.length - 1][0] + step}</code> la condición es falsa y el ciclo termina.` }, { h: 'Salida', b: `<div class="out-console">${s}</div>` }] }; }
+  if (t === 1) { let n = R.int(100, 9999); const n0 = n; let c = 0; const rows = []; while (n > 0) { rows.push([n, n % 10, Math.floor(n / 10), c + 1]); n = Math.floor(n / 10); c++; }
+    const code = `public class Main {\n    public static void main(String[] args) {\n        int n = ${n0};\n        int cifras = 0;   // contador\n        while (n > 0) {\n            n = n / 10;\n            cifras++;\n        }\n        System.out.println(cifras);\n    }\n}`;
+    return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { label: 'salida:', value: c }, chk: { code, out: String(c) },
+      steps: [{ h: 'while', b: 'Mientras <code>n &gt; 0</code>, se quita la última cifra con <code>n / 10</code> (división entera) y el <b>contador</b> aumenta en 1.' }, { h: 'Prueba de escritorio', b: htable(['n antes', 'n / 10', 'cifras'], rows.map(r => [r[0], r[2], r[3]])) }, { h: 'Salida', b: `<div class="out-console">${c}</div>` }] }; }
+  const x = R.int(1, 6), lim = R.int(20, 90); let v = x; const seq = []; do { seq.push(v); v = v * 2; } while (v < lim);
+  const code = `public class Main {\n    public static void main(String[] args) {\n        int v = ${x};\n        do {\n            System.out.print(v + " ");\n            v = v * 2;\n        } while (v < ${lim});\n    }\n}`;
+  const out = seq.join(' ') + ' ';
+  return { enun: '¿Qué imprime el programa? (escribe los números separados por espacios)' + codeBlock(code), ans: { label: 'salida:', value: seq.join(' '), text: true, norm: v => String(v).trim().replace(/\s+/g, ' ') }, chk: { code, out },
+    steps: [{ h: 'do-while', b: 'El cuerpo se ejecuta <b>al menos una vez</b>; la condición se revisa al final.' }, { h: 'Prueba de escritorio', b: htable(['v impreso', 'v * 2', `¿v < ${lim}?`], seq.map(s => [s, s * 2, String(s * 2 < lim)])) }, { h: 'Salida', b: `<div class="out-console">${out}</div>` }] };
+};
+PROBLEMS.math = () => {
+  const a = R.int(2, 6), b = R.int(2, 4), c = R.pick([16, 25, 36, 49, 64, 81, 100]), d = R.int(-30, -2), e = (R.int(10, 99) + .5) / 10;
+  const forms = [
+    [`Math.pow(${a}, ${b})`, (a ** b).toFixed(1), `Math.pow(a, b) calcula a elevado a la b y devuelve un double: ${a}^${b} = ${a ** b}.0`],
+    [`Math.sqrt(${c})`, Math.sqrt(c).toFixed(1), `Raíz cuadrada; devuelve double: √${c} = ${Math.sqrt(c)}.0`],
+    [`Math.abs(${d})`, String(-d), `Valor absoluto; con un int devuelve int: |${d}| = ${-d}`],
+    [`Math.max(${a}, ${b * 3})`, String(Math.max(a, b * 3)), `Devuelve el mayor de los dos: ${Math.max(a, b * 3)}`],
+    [`Math.round(${e.toFixed(2)})`, String(Math.round(e)), `Redondea al entero más cercano (los .5 hacia arriba) y devuelve long: ${Math.round(e)}`]];
+  const [ex, out, why] = R.pick(forms);
+  const code = `public class Main {\n    public static void main(String[] args) {\n        System.out.println(${ex});\n    }\n}`;
+  return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { label: 'salida:', value: out, text: true }, chk: { code, out },
+    steps: [{ h: 'Clase Math', b: why }, { h: 'Salida', b: `<div class="out-console">${out}</div>` + (out.endsWith('.0') ? '<div class="small">Java imprime los <code>double</code> con al menos un decimal.</div>' : '') }] };
+};
+
+/* ---------------------------------------------------------------- laboratorios */
+function labTermostato() {
+  const root = $('#lab-termo'); if (!root) return; const svg = $('svg', root); let T = 18, t = 0, data = [], on = false, timer = null, dist = 0;
+  const reset = () => { T = 18; t = 0; data = []; on = false; dist = 0; draw(); };
+  const step = () => { const sp = +$('.sp', root).value, mode = $('.mode', root).value, Tout = 12;
+    if (mode === 'cerrado') { if (T < sp - .5) on = true; else if (T > sp + .5) on = false; } else on = (t % 60) < +$('.duty', root).value * 0.6;
+    T += 0.06 * (Tout - T) + (on ? 1.15 : 0) + dist; dist *= 0.9; t++; data.push({ t, T, on }); if (data.length > 300) data.shift(); draw(); };
+  const draw = () => { const sp = +$('.sp', root).value; $('.sp-v', root).textContent = sp; $('.duty-v', root).textContent = $('.duty', root).value;
+    const t0 = data.length ? data[0].t : 0; const P = plane(svg, { W: 640, H: 260, x0: t0, x1: t0 + 300, y0: 5, y1: 35, xl: 'tiempo', yl: 'temperatura (°C)', xf: () => '' });
+    el('line', { x1: P.sx(t0), x2: P.sx(t0 + 300), y1: P.sy(sp), y2: P.sy(sp), stroke: css('--u2'), 'stroke-dasharray': '6 4', 'stroke-width': 2 }, P.g); el('text', { x: P.sx(t0 + 300) - 4, y: P.sy(sp) - 6, 'text-anchor': 'end', class: 'tick', text: 'temperatura deseada' }, P.g);
+    data.forEach(d => { if (d.on) el('rect', { x: P.sx(d.t), y: P.sy(35), width: P.sx(1) - P.sx(0) + .5, height: 6, fill: css('--bad'), opacity: .6 }, P.g); });
+    if (data.length > 1) el('path', { d: data.map((d, i) => (i ? 'L' : 'M') + P.sx(d.t).toFixed(1) + ',' + P.sy(Math.max(5, Math.min(35, d.T))).toFixed(1)).join(''), fill: 'none', stroke: css('--u1'), 'stroke-width': 2.5 }, P.g);
+    $('.st', root).innerHTML = `<div class="stat"><span>temperatura</span><b>${fx(T, 1)} °C</b></div><div class="stat"><span>calefactor</span><b style="color:${on ? 'var(--bad)' : 'var(--muted)'}">${on ? 'ENCENDIDO' : 'apagado'}</b></div>`;
+    $('.duty-w', root).style.display = $('.mode', root).value === 'abierto' ? '' : 'none'; };
+  $('.bplay', root).onclick = () => { if (timer) { clearInterval(timer); timer = null; $('.bplay', root).textContent = '▶ Iniciar'; } else { timer = setInterval(step, 50); $('.bplay', root).textContent = '⏸ Pausar'; } };
+  $('.bwin', root).onclick = () => { dist = -2.2; }; $('.breset', root).onclick = reset; $('.mode', root).onchange = reset; $$('input', root).forEach(i => i.oninput = draw); reset();
+  document.addEventListener('themechange', draw);
+}
+function labBits() {
+  const root = $('#lab-bits'); if (!root) return; const box = $('.bits', root); let v = 0b01000001;
+  const draw = () => { box.innerHTML = Array.from({ length: 8 }, (_, i) => { const k = 7 - i, on = (v >> k) & 1; return `<div class="text-center"><button class="bit ${on ? 'on' : ''}" data-k="${k}">${on}</button><div class="bitw">${k === 7 ? '2⁷ (−128*)' : '2' + '⁰¹²³⁴⁵⁶⁷'[k]}<br>${k === 7 ? 128 : 2 ** k}</div></div>`; }).join('');
+    $$('.bit', box).forEach(b => b.onclick = () => { v ^= 1 << +b.dataset.k; draw(); });
+    const signed = v >= 128 ? v - 256 : v, chr = v >= 32 && v < 127 ? `'${String.fromCharCode(v)}'` : '—';
+    $('.out', root).innerHTML = `<div class="stat"><span>binario</span><b class="font-monospace">${v.toString(2).padStart(8, '0')}</b></div><div class="stat"><span>decimal sin signo</span><b>${v}</b></div><div class="stat"><span>byte con signo (C2)</span><b>${signed}</b></div><div class="stat"><span>octal</span><b>${v.toString(8)}</b></div><div class="stat"><span>hexadecimal</span><b>${v.toString(16).toUpperCase().padStart(2, '0')}</b></div><div class="stat"><span>carácter ASCII</span><b>${chr}</b></div>`; };
+  $('.b0', root).onclick = () => { v = 0; draw(); }; $('.brand', root).onclick = () => { v = R.int(0, 255); draw(); }; $('.bshl', root).onclick = () => { v = (v << 1) & 255; draw(); }; $('.bnot', root).onclick = () => { v = ~v & 255; draw(); };
+  draw();
+}
+const GATES = { AND: (a, b) => a & b, OR: (a, b) => a | b, NOT: a => 1 - a, NAND: (a, b) => 1 - (a & b), NOR: (a, b) => 1 - (a | b), XOR: (a, b) => a ^ b };
+function gateShape(g, x, y, svg, col) {
+  const s = { stroke: css('--ink'), 'stroke-width': 2.5, fill: col };
+  if (g === 'AND' || g === 'NAND') el('path', Object.assign({ d: `M${x},${y - 40}H${x + 40}A40,40 0 0 1 ${x + 40},${y + 40}H${x}Z` }, s), svg);
+  else if (g === 'NOT') el('path', Object.assign({ d: `M${x},${y - 35}L${x + 70},${y}L${x},${y + 35}Z` }, s), svg);
+  else { if (g === 'XOR') el('path', { d: `M${x - 12},${y - 40}Q${x + 8},${y} ${x - 12},${y + 40}`, fill: 'none', stroke: css('--ink'), 'stroke-width': 2.5 }, svg);
+    el('path', Object.assign({ d: `M${x},${y - 40}Q${x + 55},${y - 40} ${x + 85},${y}Q${x + 55},${y + 40} ${x},${y + 40}Q${x + 20},${y} ${x},${y - 40}Z` }, s), svg); }
+  const bub = g === 'NAND' || g === 'NOR' || g === 'NOT'; if (bub) el('circle', { cx: x + (g === 'NOT' ? 77 : 87), cy: y, r: 7, fill: css('--card'), stroke: css('--ink'), 'stroke-width': 2.5 }, svg);
+  return x + (bub ? 94 : g === 'NOT' ? 70 : 85);
+}
+function labPuertas() {
+  const root = $('#lab-puertas'); if (!root) return; const svg = $('svg', root); let g = 'AND', a = 0, b = 1;
+  const draw = () => { svg.setAttribute('viewBox', '0 0 640 220'); clear(svg); const f = GATES[g], out = g === 'NOT' ? f(a) : f(a, b); const onC = css('--u2'), offC = css('--line');
+    const inp = (y, v, lab, key) => { el('line', { x1: 90, x2: 250, y1: y, y2: y, stroke: v ? onC : offC, 'stroke-width': 6, 'stroke-linecap': 'round' }, svg); const c = el('circle', { cx: 70, cy: y, r: 22, fill: v ? onC : css('--card'), stroke: css('--ink'), 'stroke-width': 2, style: 'cursor:pointer' }, svg); c.onclick = () => { if (key === 'a') a ^= 1; else b ^= 1; draw(); };
+      const t = el('text', { x: 70, y: y + 6, 'text-anchor': 'middle', style: 'font-size:18px;font-weight:800;cursor:pointer;pointer-events:none', text: v }, svg); el('text', { x: 30, y: y + 6, style: 'font-size:16px;font-weight:700', text: lab }, svg); };
+    if (g === 'NOT') inp(110, a, 'A', 'a'); else { inp(80, a, 'A', 'a'); inp(140, b, 'B', 'b'); }
+    const ox = gateShape(g, 250, 110, svg, css('--card')); el('text', { x: 290, y: 115, 'text-anchor': 'middle', style: 'font-size:13px;font-weight:800', text: g }, svg);
+    el('line', { x1: ox, x2: 520, y1: 110, y2: 110, stroke: out ? onC : offC, 'stroke-width': 6, 'stroke-linecap': 'round' }, svg);
+    el('circle', { cx: 550, cy: 110, r: 26, fill: out ? '#facc15' : css('--card'), stroke: css('--ink'), 'stroke-width': 2, style: out ? 'filter:drop-shadow(0 0 14px #facc15)' : '' }, svg); el('text', { x: 550, y: 116, 'text-anchor': 'middle', style: 'font-size:18px;font-weight:800;fill:#111', text: out }, svg);
+    el('text', { x: 550, y: 160, 'text-anchor': 'middle', class: 'tick', text: 'LED (salida)' }, svg);
+    const rows = g === 'NOT' ? [[0], [1]] : [[0, 0], [0, 1], [1, 0], [1, 1]];
+    const expr = { AND: 'A\\cdot B', OR: 'A+B', NOT: '\\overline{A}', NAND: '\\overline{A\\cdot B}', NOR: '\\overline{A+B}', XOR: 'A\\oplus B' }[g];
+    $('.tt', root).innerHTML = MD('F = ' + expr) + htable(g === 'NOT' ? ['A', 'F'] : ['A', 'B', 'F'], rows.map(r => { const o = g === 'NOT' ? f(r[0]) : f(r[0], r[1]); const cur = g === 'NOT' ? r[0] === a : r[0] === a && r[1] === b; return [...r, cur ? { v: o, c: 'hl' } : o]; })) + `<div class="small">Java: <code>${{ AND: 'a &amp;&amp; b', OR: 'a || b', NOT: '!a', NAND: '!(a &amp;&amp; b)', NOR: '!(a || b)', XOR: 'a ^ b' }[g]}</code></div>`; tex($('.tt', root)); };
+  $$('[data-g]', root).forEach(x => x.onclick = () => { $$('[data-g]', root).forEach(y => y.classList.remove('active')); x.classList.add('active'); g = x.dataset.g; draw(); });
+  draw(); document.addEventListener('themechange', draw);
+}
+function labKmap() {
+  const root = $('#lab-kmap'); if (!root) return; let tv = Array(16).fill(0); [0, 2, 5, 7, 8, 10, 13, 15].forEach(m => tv[m] = 1);
+  const draw = () => { const ones = tv.map((v, k) => v ? k : -1).filter(k => k >= 0), min = qm(ones, 4);
+    $('.map', root).innerHTML = kmapHtml(tv, 4, min); $('.res', root).innerHTML = MD('F = ' + sopTex(min, VARS4)) + `<div class="small">${M('\\sum m(' + (ones.join(',') || '\\,') + ')')} · ${min.length} término(s)</div>`; tex($('.res', root)); tex($('.map', root));
+    $$('.map td', root).forEach(td => td.onclick = () => { const m = +td.querySelector('div').textContent; tv[m] ^= 1; draw(); }); };
+  $('.bclr', root).onclick = () => { tv = Array(16).fill(0); draw(); }; $('.brand', root).onclick = () => { tv = tv.map(() => +(Math.random() < .45)); draw(); }; draw();
+}
+function labSumador() {
+  const root = $('#lab-sum'); if (!root) return; const svg = $('svg', root); let a = 1, b = 1, c = 0;
+  const draw = () => { svg.setAttribute('viewBox', '0 0 640 260'); clear(svg); const on = css('--u2'), off = css('--line'); const x1 = a ^ b, s = x1 ^ c, g1 = a & b, g2 = x1 & c, co = g1 | g2;
+    const wire = (pts, v) => el('path', { d: pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(''), fill: 'none', stroke: v ? on : off, 'stroke-width': 5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+    const sw = (y, v, lab, set) => { const g = el('g', { style: 'cursor:pointer' }, svg); el('rect', { x: 14, y: y - 18, width: 52, height: 36, rx: 18, fill: v ? on : css('--card'), stroke: css('--ink'), 'stroke-width': 2 }, g); el('circle', { cx: v ? 48 : 32, cy: y, r: 13, fill: '#fff', stroke: css('--ink') }, g); el('text', { x: 86, y: y - 22, style: 'font-size:14px;font-weight:800', text: `${lab} = ${v}` }, svg); g.onclick = set; };
+    wire([[66, 50], [170, 50]], a); wire([[120, 50], [120, 140], [170, 140]], a); wire([[66, 90], [160, 90], [160, 70], [170, 70]], b); wire([[140, 90], [140, 160], [170, 160]], b);
+    wire([[255, 60], [330, 60]], x1); wire([[300, 60], [300, 200], [330, 200]], x1); wire([[66, 230], [320, 230], [320, 220], [330, 220]], c); wire([[310, 230], [310, 80], [330, 80]], c);
+    wire([[415, 70], [600, 70]], s); wire([[415, 210], [450, 210], [450, 180], [460, 180]], g2); wire([[255, 150], [440, 150], [440, 160], [460, 160]], g1); wire([[545, 170], [600, 170]], co);
+    gateShape('XOR', 170, 60, svg, css('--card')); gateShape('XOR', 330, 70, svg, css('--card')); gateShape('AND', 170, 150, svg, css('--card')); gateShape('AND', 330, 210, svg, css('--card')); gateShape('OR', 460, 170, svg, css('--card'));
+    sw(50, a, 'A', () => { a ^= 1; draw(); }); sw(90, b, 'B', () => { b ^= 1; draw(); }); sw(230, c, 'Cin', () => { c ^= 1; draw(); });
+    [[600, 70, s, 'S'], [600, 170, co, 'Cout']].forEach(([x, y, v, l]) => { el('circle', { cx: x + 16, cy: y, r: 16, fill: v ? '#facc15' : css('--card'), stroke: css('--ink'), 'stroke-width': 2, style: v ? 'filter:drop-shadow(0 0 10px #facc15)' : '' }, svg); el('text', { x: x + 16, y: y + 34, 'text-anchor': 'middle', style: 'font-size:13px;font-weight:800', text: `${l}=${v}` }, svg); });
+    $('.res', root).innerHTML = `A + B + Cin = ${a} + ${b} + ${c} = ${a + b + c} = <b class="font-monospace">${co}${s}<sub>2</sub></b> (Cout = ${co}, S = ${s})`; };
+  draw(); document.addEventListener('themechange', draw);
+}
+/* animador de diagramas de flujo con prueba de escritorio */
+const ALGS = {
+  sec: { t: 'Área de un triángulo (secuencial)', nodes: [['ini', 'Inicio', 'term'], ['in', 'Leer base, altura', 'io'], ['p', 'area ← base * altura / 2', 'proc'], ['out', 'Escribir area', 'io'], ['fin', 'Fin', 'term']], edges: [[0, 1], [1, 2], [2, 3], [3, 4]],
+    run: () => { const b = R.int(2, 12), h = R.int(2, 10), area = b * h / 2; return [[0, {}], [1, { base: b, altura: h }], [2, { base: b, altura: h, area }], [3, { base: b, altura: h, area }, `area = ${area}`], [4, { base: b, altura: h, area }]]; },
+    pseudo: 'Inicio\n  Leer base, altura\n  area ← base * altura / 2\n  Escribir area\nFin' },
+  cond: { t: 'Aprobado o reprobado (condicional)', nodes: [['ini', 'Inicio', 'term'], ['in', 'Leer cal', 'io'], ['d', '¿cal >= 6?', 'dec'], ['si', 'Escribir "Aprobado"', 'io'], ['no', 'Escribir "Reprobado"', 'io'], ['fin', 'Fin', 'term']], edges: [[0, 1], [1, 2], [2, 3, 'Sí'], [2, 4, 'No'], [3, 5], [4, 5]],
+    run: () => { const c = R.int(30, 100) / 10; const ok = c >= 6; return [[0, {}], [1, { cal: c }], [2, { cal: c }, `${c} >= 6 → ${ok}`], [ok ? 3 : 4, { cal: c }, ok ? 'Aprobado' : 'Reprobado'], [5, { cal: c }]]; },
+    pseudo: 'Inicio\n  Leer cal\n  Si cal >= 6 entonces\n     Escribir "Aprobado"\n  Si no\n     Escribir "Reprobado"\n  FinSi\nFin' },
+  cic: { t: 'Suma de 1 a n (cíclico)', nodes: [['ini', 'Inicio', 'term'], ['in', 'Leer n', 'io'], ['p0', 'suma ← 0; i ← 1', 'proc'], ['d', '¿i <= n?', 'dec'], ['p1', 'suma ← suma + i; i ← i + 1', 'proc'], ['out', 'Escribir suma', 'io'], ['fin', 'Fin', 'term']], edges: [[0, 1], [1, 2], [2, 3], [3, 4, 'Sí'], [4, 3, ''], [3, 5, 'No'], [5, 6]],
+    run: () => { const n = R.int(3, 6); const st = [[0, {}], [1, { n }]]; let s = 0, i = 1; st.push([2, { n, suma: s, i }]); while (true) { st.push([3, { n, suma: s, i }, `${i} <= ${n} → ${i <= n}`]); if (i > n) break; s += i; i++; st.push([4, { n, suma: s, i }]); } st.push([5, { n, suma: s, i }, `suma = ${s}`]); st.push([6, { n, suma: s, i }]); return st; },
+    pseudo: 'Inicio\n  Leer n\n  suma ← 0\n  i ← 1\n  Mientras i <= n hacer\n     suma ← suma + i\n     i ← i + 1\n  FinMientras\n  Escribir suma\nFin' } };
+function drawFlow(svg, A, cur) {
+  const pos = A === ALGS.cond ? [[260, 30], [260, 95], [260, 170], [130, 250], [390, 250], [260, 330]] : A.nodes.map((_, i) => [260, 30 + i * (A === ALGS.cic ? 56 : 70)]);
+  if (A === ALGS.cic) { pos.splice(0, pos.length, [260, 30], [260, 90], [260, 150], [260, 225], [500, 225], [260, 310], [260, 370]); }
+  const H = Math.max(...pos.map(p => p[1])) + 40; svg.setAttribute('viewBox', `0 0 620 ${H}`); clear(svg);
+  const defs = el('defs', {}, svg); const mk = el('marker', { id: 'arr', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs); el('path', { d: 'M0,0L10,5L0,10z', fill: css('--muted') }, mk);
+  const line = (d, lab, lx, ly) => { el('path', { d, fill: 'none', stroke: css('--muted'), 'stroke-width': 2, 'marker-end': 'url(#arr)' }, svg); if (lab) el('text', { x: lx, y: ly, 'text-anchor': 'middle', class: 'tick', text: lab }, svg); };
+  if (A === ALGS.cic) {
+    line('M260,48L260,70'); line('M260,108L260,130'); line('M260,168L260,197');
+    line('M342,225L388,225', 'Sí', 362, 216); line('M500,207L500,180L262,180', '', 0, 0);
+    line('M260,251L260,290', 'No', 274, 274); line('M260,328L260,350');
+  } else A.edges.forEach(([a, b, lab]) => { const [x1, y1] = pos[a], [x2, y2] = pos[b]; let d;
+    if (A === ALGS.cond && (a === 3 || a === 4)) d = `M${x1},${y1 + 20}L${x1},${y2}L${x2 + (x1 < x2 ? -45 : 45)},${y2}`;
+    else if (x1 !== x2) d = `M${x1 + (x2 > x1 ? 70 : -70)},${y1}L${x2},${y1}L${x2},${y2 - 20}`; else d = `M${x1},${y1 + 20}L${x2},${y2 - 20}`;
+    line(d, lab, x1 + (x2 > x1 ? 85 : x2 < x1 ? -85 : 8), y1 - 6); });
+  A.nodes.forEach(([id, txt, kind], i) => { const [x, y] = pos[i], on = i === cur, fill = on ? css('--u3') : css('--card'), tc = on ? '#fff' : css('--ink'), w = Math.max(110, txt.length * 7.2 + 20), st = { fill, stroke: css('--u3'), 'stroke-width': 2.5 };
+    if (kind === 'term') el('rect', Object.assign({ x: x - w / 2, y: y - 18, width: w, height: 36, rx: 18 }, st), svg);
+    else if (kind === 'proc') el('rect', Object.assign({ x: x - w / 2, y: y - 18, width: w, height: 36 }, st), svg);
+    else if (kind === 'io') el('path', Object.assign({ d: `M${x - w / 2 + 12},${y - 18}H${x + w / 2 + 12}L${x + w / 2 - 12},${y + 18}H${x - w / 2 - 12}Z` }, st), svg);
+    else el('path', Object.assign({ d: `M${x},${y - 26}L${x + w / 2 + 10},${y}L${x},${y + 26}L${x - w / 2 - 10},${y}Z` }, st), svg);
+    el('text', { x, y: y + 5, 'text-anchor': 'middle', style: `font-size:13px;font-weight:700;fill:${tc}`, text: txt }, svg); });
+}
+function labFlujo() {
+  const root = $('#lab-flujo'); if (!root) return; const svg = $('svg', root); let A, trace = [], k = 0, timer = null;
+  const load = () => { A = ALGS[$('.alg', root).value]; trace = A.run(); k = 0; $('.pseudo', root).textContent = A.pseudo; show(); };
+  const show = () => { const [node, vars, out] = trace[k]; drawFlow(svg, A, node);
+    const keys = [...new Set(trace.flatMap(t => Object.keys(t[1])))];
+    $('.desk', root).innerHTML = htable(['paso', ...keys, 'salida / decisión'], trace.slice(0, k + 1).map((t, i) => [i + 1, ...keys.map(kk => t[1][kk] ?? ''), t[2] || ''].map((v, j) => i === k && j > 0 ? { v, c: 'hl' } : v)));
+    $('.bnext', root).disabled = k >= trace.length - 1; };
+  $('.alg', root).onchange = load; $('.bnew', root).onclick = load; $('.bnext', root).onclick = () => { if (k < trace.length - 1) { k++; show(); } };
+  $('.bplay', root).onclick = () => { if (timer) return; k = 0; show(); timer = setInterval(() => { if (k >= trace.length - 1) { clearInterval(timer); timer = null; return; } k++; show(); }, 800); };
+  load(); document.addEventListener('themechange', show);
+}
+function labCompila() {
+  const root = $('#lab-comp'); if (!root) return; const st = $$('.stage', root), log = $('.log', root);
+  const run = () => { const bad = $('.err', root).checked; st.forEach(s => s.classList.remove('on')); log.innerHTML = '';
+    const steps = [[0, 'Escribes el código fuente <code>Hola.java</code> en el IDE.'], [1, bad ? '<span class="check-bad">javac: Hola.java:3: error: \';\' expected</span> → <b>error sintáctico</b>: el compilador no genera el archivo .class.' : '<code>javac Hola.java</code> compila y genera <code>Hola.class</code> (bytecode).'], ...(bad ? [] : [[2, 'El bytecode es independiente del sistema operativo («escríbelo una vez, ejecútalo donde sea»).'], [3, '<code>java Hola</code>: la JVM interpreta/compila el bytecode para el procesador real.'], [4, 'Salida en consola: <code>Hola, mundo</code>']])];
+    steps.forEach(([i, msg], j) => setTimeout(() => { st[i].classList.add('on'); const d = document.createElement('div'); d.innerHTML = '▸ ' + msg; log.appendChild(d); }, 650 * j)); };
+  $('.brun', root).onclick = run; run();
+}
+function labAutores() { $$('.flip').forEach(f => f.onclick = () => f.classList.toggle('on')); }
+function renderLearn() {
+  const box = $('#learn-acc'); if (!box) return;
+  box.innerHTML = LEARN.map((U, k) => `<div class="accordion-item u${U.u}"><h2 class="accordion-header"><button class="accordion-button ${k ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#lu${U.u}"><span class="unit-tag me-2">Unidad ${U.u}</span><b>${U.nombre}</b><span class="chip ms-2">${U.h} h</span></button></h2>
+   <div id="lu${U.u}" class="accordion-collapse collapse ${k ? '' : 'show'}" data-bs-parent="#learn-acc"><div class="accordion-body"><p class="small"><b>Propósito:</b> ${U.prop}</p><ul class="learn">${U.L.map((l, i) => `<li><span class="n">${i + 1}.</span><span>${l[0]}<span class="tm"><a class="chip" href="${l[2]}">${l[1]}</a></span></span></li>`).join('')}</ul></div></div></div>`).join('');
+}
+function heroArt() {
+  const svg = $('#hero-svg'); if (!svg) return; svg.setAttribute('viewBox', '0 0 520 320');
+  const defs = el('defs', {}, svg); const mk = el('marker', { id: 'ha', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto' }, defs); el('path', { d: 'M0,0L10,5L0,10z', fill: 'var(--u2)' }, mk);
+  [['Entrada', 40], ['Proceso', 200], ['Salida', 360]].forEach(([t, x], i) => { el('rect', { x, y: 110, width: 120, height: 60, rx: 12, fill: 'var(--card)', stroke: `var(--u${i + 1})`, 'stroke-width': 3, class: 'bar', style: `animation-delay:${.15 * i}s` }, svg); el('text', { x: x + 60, y: 146, 'text-anchor': 'middle', style: 'font-weight:800;font-size:16px', text: t }, svg); });
+  el('path', { d: 'M160,140H196', stroke: 'var(--u2)', 'stroke-width': 4, 'marker-end': 'url(#ha)', class: 'draw' }, svg); el('path', { d: 'M320,140H356', stroke: 'var(--u2)', 'stroke-width': 4, 'marker-end': 'url(#ha)', class: 'draw' }, svg);
+  el('path', { d: 'M420,175V250H100V178', fill: 'none', stroke: 'var(--u3)', 'stroke-width': 4, 'stroke-dasharray': '10 7', 'marker-end': 'url(#ha)', class: 'draw' }, svg);
+  el('text', { x: 260, y: 278, 'text-anchor': 'middle', style: 'font-weight:700;font-size:14px;fill:var(--u3)', text: 'retroalimentación' }, svg);
+  '01001011'.split('').forEach((b, i) => el('text', { x: 120 + i * 36, y: 70, 'text-anchor': 'middle', style: `font-family:monospace;font-size:26px;font-weight:800;fill:var(--u${1 + i % 3});opacity:.75`, class: 'bar', text: b }, svg));
+}
+document.addEventListener('DOMContentLoaded', () => { renderLearn(); heroArt(); labAutores(); labTermostato(); labBits(); labPuertas(); labKmap(); labSumador(); labFlujo(); labCompila(); initUI(); });
+
+</script>
+</body>
+</html>
