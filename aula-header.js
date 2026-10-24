@@ -47,7 +47,8 @@
         { label: 'Función de distribución de probabilidad', href: 'funcion_distribucion_probabilidad.html', icon: 'bi-bar-chart-line-fill' },
         { label: 'Distribución Binomial', href: 'distribucion_binomial.html', icon: 'bi-bar-chart-steps' },
         { label: 'Distribución Normal', href: 'distribucion_normal.html', icon: 'bi-activity' },
-        { label: 'Proyectos finales EyP', href: 'proyectos_finales_eyp.html', icon: 'bi-journal-check' } ] }
+        { label: 'Proyectos finales EyP', href: 'proyectos_finales_eyp.html', icon: 'bi-journal-check' },
+        { label: 'Exámen Estadística', href: 'examenes_estadistica.html', icon: 'bi-file-earmark-check-fill' } ] }
     ]
   };
   const store = {
