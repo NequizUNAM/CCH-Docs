@@ -16,11 +16,11 @@
     brand: { label: 'Aula Digital', icon: 'bi-mortarboard-fill', href: 'index.html' },
     groups: [
       { id: 'programas', label: 'Programas de Estudio 2024', icon: 'bi-journal-bookmark-fill', color: 'c-com', items: [
-        { label: 'Programa Taller de Cómputo', href: 'programa_taller_computo.html', icon: 'bi-laptop' },
-        { label: 'Programa Cibernética 1', href: 'programa_cibernetica1.html', icon: 'bi-cpu' },
-        { label: 'Programa Cibernética 2', href: 'programa_cibernetica2.html', icon: 'bi-motherboard' },
-        { label: 'Programa Estadística 1', href: 'programa_estadistica1.html', icon: 'bi-bar-chart-line' },
-        { label: 'Programa Estadística 2', href: 'programa_estadistica2.html', icon: 'bi-graph-up' } ] },
+        { label: 'Programa Taller de Cómputo', href: 'Programas_2024/programa_taller_computo.html', icon: 'bi-laptop' },
+        { label: 'Programa Cibernética 1', href: 'Programas_2024/programa_cibernetica1.html', icon: 'bi-cpu' },
+        { label: 'Programa Cibernética 2', href: 'Programas_2024/programa_cibernetica2.html', icon: 'bi-motherboard' },
+        { label: 'Programa Estadística 1', href: 'Programas_2024/programa_estadistica1.html', icon: 'bi-bar-chart-line' },
+        { label: 'Programa Estadística 2', href: 'Programas_2024/programa_estadistica2.html', icon: 'bi-graph-up' } ] },
       { id: 'matematicas', label: 'Matemáticas', icon: 'bi-calculator', color: 'c-mat', items: [
         { label: 'Los Números', href: 'los_numeros.html', icon: 'bi-hash' },
         { label: 'Fracciones', href: 'fracciones.html', icon: 'bi-pie-chart-fill' },
