@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="es" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuadernillo de Estadística I</title>
+<meta name="description" content="Cuadernillo interactivo de repaso de Estadística y Probabilidad I (CCH-UNAM, programa 2024): aprendizajes, teoría, simuladores y problemas aleatorios resueltos paso a paso.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --ink:#1d2433; --muted:#5b6475; --paper:#fbfaf6; --card:#ffffff; --line:#e6e2d6; --grid:rgba(30,60,120,.055);
+  --u1:#0f766e; --u2:#b45309; --u3:#7c3aed; --acc:var(--u1); --ok:#15803d; --bad:#b91c1c;
+  --shade:rgba(15,118,110,.22); --shade2:rgba(180,83,9,.25);
+  --font-head:'Fraunces',Georgia,serif; --font-body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+[data-bs-theme=dark]{
+  --ink:#e8e6df; --muted:#a3a9b6; --paper:#14171d; --card:#1c2029; --line:#2d3340; --grid:rgba(160,190,255,.05);
+  --u1:#2dd4bf; --u2:#fbbf24; --u3:#a78bfa; --shade:rgba(45,212,191,.25); --shade2:rgba(251,191,36,.25);
+}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1.04rem;line-height:1.62;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+h1,h2,h3,h4,.font-head{font-family:var(--font-head);letter-spacing:-.01em}
+a{color:var(--acc)}
+.navbar{background:color-mix(in srgb,var(--card) 88%,transparent)!important;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.navbar .nav-link{color:var(--muted);font-weight:600;font-size:.95rem}
+.navbar .nav-link.active,.navbar .nav-link:hover{color:var(--acc)}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--u1),var(--u2),var(--u3));z-index:2000;width:0;transition:width .1s}
+.hero{padding:7rem 0 3rem;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.1}
+.hero .lead{color:var(--muted);max-width:44rem}
+.hero-svg{width:100%;max-width:520px;height:auto}
+.hero-svg .draw{stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.4s ease forwards .3s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero-svg .bar{transform-origin:bottom;transform-box:fill-box;animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chip{display:inline-block;padding:.12rem .6rem;border-radius:99px;font-size:.78rem;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+.unit-tag{display:inline-block;font-weight:800;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);border:2px solid var(--uc);border-radius:6px;padding:.05rem .45rem}
+.u1{--uc:var(--u1)} .u2{--uc:var(--u2)} .u3{--uc:var(--u3)}
+section.unit{padding:3.5rem 0 1rem}
+.unit-head{border-left:6px solid var(--uc);padding-left:1rem;margin-bottom:1.5rem}
+.unit-head h2{font-weight:700;margin:.3rem 0}
+.topic{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.5rem;margin-bottom:1.75rem;box-shadow:0 1px 0 rgba(0,0,0,.02),0 8px 24px -16px rgba(0,0,0,.25)}
+.topic>h3{font-size:1.45rem;font-weight:650;display:flex;gap:.6rem;align-items:baseline}
+.topic>h3 .num{color:var(--uc);font-size:1rem;font-family:var(--font-body);font-weight:800}
+.topic h4{font-size:1.1rem;font-weight:650;margin-top:1.2rem;color:var(--uc)}
+.def{border-left:4px solid var(--uc);background:color-mix(in srgb,var(--uc) 7%,transparent);padding:.7rem 1rem;border-radius:0 10px 10px 0;margin:.8rem 0}
+.note{border:1px dashed var(--line);border-radius:10px;padding:.6rem .9rem;color:var(--muted);font-size:.95rem;margin:.8rem 0}
+.formula{background:color-mix(in srgb,var(--uc) 5%,var(--card));border:1px solid var(--line);border-radius:12px;padding:.6rem 1rem;margin:.8rem 0;overflow-x:auto}
+.lab{border:1px solid var(--line);border-radius:14px;padding:1rem;margin:1rem 0;background:color-mix(in srgb,var(--card) 92%,var(--uc) 8%)}
+.lab-title{font-weight:800;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.lab svg{width:100%;height:auto;display:block;user-select:none}
+.lab .form-range{accent-color:var(--uc)}
+.stat{display:inline-flex;flex-direction:column;padding:.35rem .7rem;border-radius:10px;background:var(--card);border:1px solid var(--line);min-width:5.5rem;margin:.2rem}
+.stat b{font-size:1.08rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.btn-acc{background:var(--uc,var(--acc));color:#fff;border:none;font-weight:700}
+.btn-acc:hover{filter:brightness(1.1);color:#fff}
+[data-bs-theme=dark] .btn-acc{color:#111}
+.btn-ghost{border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.btn-ghost:hover{border-color:var(--uc);color:var(--uc)}
+/* problems */
+.problem{border:2px solid var(--uc);border-radius:16px;padding:1.1rem 1.2rem;margin:1.2rem 0;background:var(--card);position:relative}
+.problem .ptag{position:absolute;top:-.8rem;left:1rem;background:var(--uc);color:#fff;font-weight:800;font-size:.75rem;letter-spacing:.06em;padding:.1rem .6rem;border-radius:6px;text-transform:uppercase}
+[data-bs-theme=dark] .problem .ptag{color:#111}
+.problem .enun{margin-top:.4rem}
+.problem .steps{list-style:none;padding:0;margin:.8rem 0 0;counter-reset:st}
+.problem .steps>li{counter-increment:st;position:relative;padding:.6rem .8rem .6rem 3rem;border-radius:10px;margin-bottom:.5rem;background:color-mix(in srgb,var(--uc) 6%,transparent);animation:stepIn .45s ease both}
+.problem .steps>li::before{content:counter(st);position:absolute;left:.7rem;top:.6rem;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--uc);color:#fff;font-weight:800;display:grid;place-items:center;font-size:.85rem}
+[data-bs-theme=dark] .problem .steps>li::before{color:#111}
+.problem .steps>li h6{font-weight:800;margin:0 0 .2rem;font-size:.95rem}
+@keyframes stepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.problem .check-ok{color:var(--ok);font-weight:700}
+.problem .check-bad{color:var(--bad);font-weight:700}
+.problem table,.topic table.tbl{font-variant-numeric:tabular-nums}
+.tbl{width:auto;border-collapse:collapse;margin:.5rem 0;font-size:.92rem}
+.tbl th,.tbl td{border:1px solid var(--line);padding:.25rem .55rem;text-align:center}
+.tbl th{background:color-mix(in srgb,var(--uc) 14%,var(--card))}
+.tbl td.hl{background:color-mix(in srgb,var(--uc) 22%,transparent);font-weight:700}
+.scroll-x{overflow-x:auto}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+/* learnings table */
+.learn{list-style:none;padding:0;margin:0}
+.learn li{display:grid;grid-template-columns:2.2rem 1fr;gap:.5rem;padding:.5rem 0;border-bottom:1px dashed var(--line)}
+.learn li .n{font-weight:800;color:var(--uc);text-align:right}
+.learn li .tm{display:block;margin-top:.15rem}
+.accordion-button:not(.collapsed){background:color-mix(in srgb,var(--uc) 10%,var(--card));color:var(--ink)}
+.accordion-item{background:var(--card);border-color:var(--line)}
+.accordion-button{background:var(--card);color:var(--ink)}
+.modal-content{background:var(--card);color:var(--ink)}
+.fgroup h5{font-family:var(--font-head);margin-top:1rem;color:var(--uc)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.6rem}
+.fcard{border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;background:color-mix(in srgb,var(--uc) 4%,var(--card));overflow-x:auto}
+.fcard small{display:block;color:var(--muted);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.fab{position:fixed;right:1.1rem;bottom:1.1rem;z-index:1040;border-radius:99px;padding:.7rem 1.1rem;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+#toTop{position:fixed;left:1.1rem;bottom:1.1rem;z-index:1040;opacity:0;pointer-events:none;transition:opacity .3s}
+#toTop.show{opacity:1;pointer-events:auto}
+svg text{font-family:var(--font-body);fill:var(--ink)}
+svg .axis{stroke:var(--muted);stroke-width:1}
+svg .gridl{stroke:var(--line);stroke-width:1}
+svg .tick{font-size:11px;fill:var(--muted)}
+svg .barr{transition:height .5s ease,y .5s ease,fill .3s}
+svg .pt{transition:cx .4s,cy .4s}
+.quiz-opt.correct{background:var(--ok)!important;color:#fff!important;border-color:var(--ok)!important}
+.quiz-opt.wrong{background:var(--bad)!important;color:#fff!important;border-color:var(--bad)!important}
+footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-size:.92rem}
+.katex-display{margin:.4em 0}
+@media (max-width:576px){.topic{padding:1rem}.problem{padding:1rem .8rem}.problem .steps>li{padding-left:2.6rem}}
+@media print{.navbar,.fab,#toTop,.lab,.problem .btns{display:none!important}.reveal{opacity:1;transform:none}}
+.btn-acc:focus,.btn-acc:active,.btn-acc:focus-visible,.btn-acc.active{background:var(--uc,var(--acc))!important;color:#fff!important;border:none}
+[data-bs-theme=dark] .btn-acc:focus,[data-bs-theme=dark] .btn-acc:active{color:#111!important}
+.btn-ghost.active,.btn-ghost:active,.btn-ghost:focus-visible{background:color-mix(in srgb,var(--uc,var(--acc)) 16%,var(--card))!important;border-color:var(--uc,var(--acc))!important;color:var(--ink)!important}
+h1,h2,h3,h4,h5,h6{color:var(--ink)}
+.navbar-brand{color:var(--ink)!important}
+.navbar-toggler{border-color:var(--line)}
+[data-bs-theme=dark] .navbar-toggler-icon{filter:invert(1)}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:.15em 0;max-width:100%}
+.problem .steps>li,.def,.note,.topic{min-width:0;overflow-wrap:anywhere}
+.lab .stat b{overflow-wrap:anywhere}
+
+:root{--acc:var(--u1)}
+</style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#mainnav" data-bs-offset="90">
+<div id="progress"></div>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainnav">
+ <div class="container">
+  <a class="navbar-brand font-head fw-bold" href="#inicio">Cuadernillo · Estadística I</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nv" aria-label="Menú"><span class="navbar-toggler-icon"></span></button>
+  <div class="collapse navbar-collapse" id="nv">
+   <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+    <li class="nav-item"><a class="nav-link" href="#aprendizajes">Aprendizajes</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad1">Unidad 1</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad2">Unidad 2</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad3">Unidad 3</a></li>
+    <li class="nav-item"><a class="nav-link" href="#fuentes">Fuentes</a></li>
+    <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-ghost" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">◐</button></li>
+   </ul>
+  </div>
+ </div>
+</nav>
+<header class="hero" id="inicio">
+ <div class="container">
+  <div class="row align-items-center g-4">
+   <div class="col-lg-7">
+    <span class="chip mb-3">CCH · UNAM · Programa de Estudios 2024 · Quinto semestre</span>
+    <h1>Estadística y Probabilidad I<br><span style="color:var(--u1)">Cuadernillo interactivo de repaso</span></h1>
+    <p class="lead mt-3">Repasa los aprendizajes del programa con explicaciones breves, simuladores que puedes manipular y problemas que cambian cada vez que presionas <b>«Nuevo problema»</b>, resueltos paso a paso.</p>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+     <a class="btn btn-acc u1" href="#aprendizajes">Ver aprendizajes</a>
+     <button class="btn btn-ghost" data-bs-toggle="modal" data-bs-target="#formulario">∑ Abrir formulario</button>
+    </div>
+    <div class="mt-4 d-flex flex-wrap gap-2">
+     <a href="#unidad1" class="unit-tag u1 text-decoration-none">U1 · Una variable · 28 h</a>
+     <a href="#unidad2" class="unit-tag u2 text-decoration-none">U2 · Datos bivariados · 10 h</a>
+     <a href="#unidad3" class="unit-tag u3 text-decoration-none">U3 · Azar y probabilidad · 26 h</a>
+    </div>
+   </div>
+   <div class="col-lg-5 text-center"><svg id="hero-svg" class="hero-svg" role="img" aria-label="Histograma con curva normal"></svg></div>
+  </div>
+ </div>
+</header>
+
+<section id="aprendizajes" class="py-4">
+ <div class="container">
+  <h2 class="font-head mb-1">Aprendizajes y temática</h2>
+  <p class="text-body-secondary">Los aprendizajes están numerados como en el programa. Cada uno indica su temática; haz clic en ella para ir a la sección correspondiente.</p>
+  <div class="accordion" id="learn-acc"></div>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 1 ============================ -->
+<section class="unit u1" id="unidad1">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 1</span><h2>Análisis de información estadística para una variable</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 18</p></div>
+
+  <article class="topic reveal" id="t11">
+   <h3><span class="num">1.1</span> Nociones básicas e investigación estadística</h3>
+   <p>La <b>estadística</b> es la disciplina que se ocupa de recolectar, organizar, resumir, analizar e interpretar datos para tomar decisiones en presencia de <b>variabilidad</b>. Si todos los individuos fueran iguales (población homogénea) no haría falta la estadística; precisamente porque los valores cambian de un individuo a otro (heterogeneidad) necesitamos describir esa variación.</p>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def"><b>Población:</b> conjunto completo de individuos u objetos que tienen la característica que se desea estudiar.</div></div>
+    <div class="col-md-6"><div class="def"><b>Muestra:</b> subconjunto de la población del que realmente se obtienen los datos. Debe ser representativo.</div></div>
+    <div class="col-md-6"><div class="def"><b>Variable estadística:</b> característica que se observa o mide en cada individuo (edad, carrera deseada, tiempo de traslado…).</div></div>
+    <div class="col-md-6"><div class="def"><b>Dato:</b> valor que toma la variable en un individuo. Un <b>parámetro</b> describe a la población; un <b>estadístico</b> se calcula con la muestra.</div></div>
+   </div>
+   <h4>¿Cómo se obtienen los datos?</h4>
+   <ul>
+    <li><b>Levantamiento (estudio observacional):</b> se observan o preguntan características sin intervenir; por ejemplo, una encuesta sobre hábitos de lectura o un censo.</li>
+    <li><b>Experimentación:</b> el investigador aplica un tratamiento y mide su efecto; por ejemplo, comparar el rendimiento de dos grupos que usan métodos de estudio distintos.</li>
+   </ul>
+   <h4>Ciclo de una investigación estadística</h4>
+   <div class="row g-2 text-center small">
+    <div class="col-6 col-md-3"><div class="formula h-100"><b>1. Pregunta</b><br>¿Qué queremos saber? ¿De qué población?</div></div>
+    <div class="col-6 col-md-3"><div class="formula h-100"><b>2. Recolección</b><br>Diseño del cuestionario o experimento y del muestreo.</div></div>
+    <div class="col-6 col-md-3"><div class="formula h-100"><b>3. Análisis</b><br>Tablas, gráficas y medidas.</div></div>
+    <div class="col-6 col-md-3"><div class="formula h-100"><b>4. Interpretación</b><br>Conclusiones en contexto, sesgos y limitaciones.</div></div>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t12">
+   <h3><span class="num">1.2</span> Muestreo, azar y probabilidad</h3>
+   <p>Estudiar a toda la población suele ser costoso o imposible, por eso se usan muestras. En un <b>muestreo aleatorio simple</b> cada individuo (y cada muestra del mismo tamaño) tiene la misma probabilidad de ser elegido; así se evitan sesgos de selección. Aun así, <b>dos muestras aleatorias distintas dan resultados distintos</b>: el azar es una de las causas de la variabilidad de los datos (variabilidad muestral). Con muestras más grandes, los resultados se concentran más alrededor del valor real de la población.</p>
+   <div class="lab" id="lab-muestreo">
+    <div class="lab-title">🧪 Simulador · Muestras de una población conocida</div>
+    <p class="small mb-2">Población de 200 estudiantes: <span style="color:var(--u2)">●</span> usa transporte público, <span style="color:var(--u1)">●</span> no lo usa. Proporción real <b class="p-real"></b>.</p>
+    <svg class="pop" role="img" aria-label="Población de 200 puntos"></svg>
+    <div class="row g-2 align-items-center mt-1">
+     <div class="col-md-5"><label class="form-label small mb-0">Tamaño de muestra n = <b class="n-v">20</b></label><input type="range" class="form-range n" min="5" max="100" value="20"></div>
+     <div class="col-md-7 d-flex flex-wrap gap-2"><button class="btn btn-sm btn-acc b1">Tomar 1 muestra</button><button class="btn btn-sm btn-ghost b20">Tomar 20 muestras</button><button class="btn btn-sm btn-ghost bnew">Otra población</button></div>
+    </div>
+    <div class="my-2"><div class="stat"><span>p̂ última</span><b class="p-hat">—</b></div><div class="stat"><span>muestras</span><b class="n-m">0</b></div><div class="stat"><span>promedio de p̂</span><b class="p-prom">—</b></div></div>
+    <svg class="hist" role="img" aria-label="Histograma de proporciones muestrales"></svg>
+    <p class="small text-body-secondary mb-0">Observa: cada muestra da un p̂ distinto (variabilidad por azar), pero los valores se agrupan alrededor de la proporción real. Aumenta n y verás que se concentran más.</p>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t13">
+   <h3><span class="num">1.3</span> Tipos de variables</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def"><b>Cualitativas (categóricas):</b> sus valores son cualidades o categorías.<br>• <b>Nominales:</b> sin orden (color favorito, red social).<br>• <b>Ordinales:</b> con orden natural (nivel de satisfacción, talla CH-M-G).</div></div>
+    <div class="col-md-6"><div class="def"><b>Cuantitativas (numéricas):</b> sus valores son números que resultan de contar o medir.<br>• <b>Discretas:</b> se cuentan; valores aislados (número de hermanos).<br>• <b>Continuas:</b> se miden; cualquier valor en un intervalo (estatura, tiempo).</div></div>
+   </div>
+   <div class="note">Cuidado: un número no siempre es una variable cuantitativa. El número de cuenta o el código postal son etiquetas (cualitativas): no tiene sentido promediarlos.</div>
+   <div class="lab" id="lab-tipos">
+    <div class="lab-title">🎯 Clasifica la variable <span class="chip ms-auto">aciertos <span class="score">0/0</span></span></div>
+    <p class="fs-5 fw-semibold q mb-2"></p><div class="opts d-flex flex-wrap gap-2"></div><p class="small mt-2 mb-0 fb"></p>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t14">
+   <h3><span class="num">1.4</span> Tablas de distribución de frecuencias</h3>
+   <p>Una tabla de frecuencias organiza los datos indicando cuántas veces aparece cada valor (o cada intervalo de valores).</p>
+   <div class="formula">\[ f_r=\frac{f}{n},\qquad F_i = f_1+f_2+\cdots+f_i,\qquad F_{r,i}=\frac{F_i}{n},\qquad \%=f_r\times 100 \]</div>
+   <p class="small">\(f\): frecuencia absoluta; \(f_r\): relativa; \(F\): absoluta acumulada; \(F_r\): relativa acumulada. Se cumple \(\sum f=n\) y \(\sum f_r = 1\).</p>
+   <h4>Datos agrupados en clases (variables continuas o con muchos valores)</h4>
+   <ol>
+    <li>Rango: \(R = x_{\max}-x_{\min}\).</li>
+    <li>Número de clases, por ejemplo con la regla de Sturges: \(k \approx 1+3.322\log_{10} n\).</li>
+    <li>Amplitud: \(A \approx R/k\), redondeada hacia arriba para cubrir todos los datos.</li>
+    <li>Límites de cada clase y <b>marca de clase</b> \(x_c=\frac{L_i+L_s}{2}\) (punto medio).</li>
+    <li>Contar frecuencias y calcular las relativas y acumuladas.</li>
+   </ol>
+   <div class="note">Ninguna tabla termina en sí misma: siempre hay que describir lo que muestran los datos (dónde se concentran, valores raros) y señalar posibles sesgos o limitaciones de la muestra.</div>
+   <div class="problem" data-gen="frecDisc"></div>
+   <div class="problem" data-gen="frecAgr"></div>
+  </article>
+
+  <article class="topic reveal" id="t15">
+   <h3><span class="num">1.5</span> Representación gráfica</h3>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Gráfica</th><th>Tipo de variable</th><th>¿Qué muestra?</th></tr></thead><tbody>
+    <tr><td>Barras</td><td>Cualitativa o discreta</td><td>Frecuencia de cada categoría (barras separadas)</td></tr>
+    <tr><td>Circular</td><td>Cualitativa</td><td>Parte del total que representa cada categoría</td></tr>
+    <tr><td>Puntos</td><td>Cuantitativa (pocos datos)</td><td>Cada dato; concentración, huecos y atípicos</td></tr>
+    <tr><td>Histograma</td><td>Cuantitativa agrupada</td><td>Forma de la distribución (barras juntas)</td></tr>
+    <tr><td>Polígono de frecuencias</td><td>Cuantitativa agrupada</td><td>Forma; permite comparar varias distribuciones</td></tr>
+    <tr><td>Ojiva</td><td>Cuantitativa agrupada</td><td>Frecuencias acumuladas: cuántos datos hay por debajo de un valor</td></tr>
+   </tbody></table></div>
+   <div class="lab" id="lab-graf">
+    <div class="lab-title">📊 Explorador de gráficas</div>
+    <div class="btn-group btn-group-sm flex-wrap mb-2" role="group">
+     <button class="btn btn-ghost active" data-g="barras">Barras</button><button class="btn btn-ghost" data-g="circular">Circular</button><button class="btn btn-ghost" data-g="puntos">Puntos</button><button class="btn btn-ghost" data-g="histograma">Histograma</button><button class="btn btn-ghost" data-g="poligono">Polígono</button><button class="btn btn-ghost" data-g="ojiva">Ojiva</button>
+    </div>
+    <button class="btn btn-sm btn-acc bnew ms-1 mb-2">Nuevos datos</button>
+    <svg role="img" aria-label="Gráfica"></svg>
+    <p class="small desc mb-0 mt-2"></p>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t16">
+   <h3><span class="num">1.6</span> Medidas de tendencia central, dispersión y posición</h3>
+   <h4>Tendencia central</h4>
+   <div class="formula">\[ \bar{x}=\frac{\sum x_i}{n}\ (\text{muestra}),\qquad \mu=\frac{\sum x_i}{N}\ (\text{población}),\qquad \bar{x}\approx\frac{\sum f\,x_c}{n}\ (\text{datos agrupados}) \]</div>
+   <ul>
+    <li><b>Media:</b> el «punto de equilibrio» de los datos; se ve afectada por valores extremos.</li>
+    <li><b>Mediana:</b> el valor central de los datos ordenados (posición \(\frac{n+1}{2}\)); con \(n\) par es el promedio de los dos centrales. Es resistente a valores atípicos, por eso se prefiere con datos sesgados (por ejemplo, ingresos).</li>
+    <li><b>Moda:</b> el valor más frecuente; es la única medida de tendencia central que se puede usar con variables nominales. Puede no existir o haber varias.</li>
+   </ul>
+   <h4>Dispersión</h4>
+   <div class="formula">\[ R=x_{\max}-x_{\min} \qquad s^2=\frac{\sum (x_i-\bar{x})^2}{n-1} \qquad s=\sqrt{s^2} \qquad \sigma=\sqrt{\frac{\sum (x_i-\mu)^2}{N}} \qquad CV=\frac{s}{\bar{x}}\times 100\% \]</div>
+   <p>La desviación estándar mide, aproximadamente, qué tan lejos están los datos de la media en promedio, en las mismas unidades que los datos. Con datos de una <b>muestra</b> se divide entre \(n-1\); con <b>toda la población</b> se divide entre \(N\).</p>
+   <h4>Posición</h4>
+   <p>Los <b>cuartiles</b> dividen los datos ordenados en cuatro partes con 25 % cada una (\(Q_1, Q_2=\) mediana, \(Q_3\)); los <b>deciles</b> en diez y los <b>percentiles</b> en cien. Aquí usamos la posición \(p(n+1)\): si no es entera, se interpola entre los dos datos vecinos. El <b>rango intercuartílico</b> \(RIC=Q_3-Q_1\) contiene el 50 % central. En el <b>diagrama de caja</b>, se consideran atípicos los datos menores que \(Q_1-1.5\,RIC\) o mayores que \(Q_3+1.5\,RIC\).</p>
+   <div class="note">Existen varios métodos para calcular cuartiles (Excel, calculadoras y libros pueden dar valores un poco distintos con pocos datos). Todos son válidos si se explica el método.</div>
+   <div class="lab" id="lab-medidas">
+    <div class="lab-title">🧮 Calculadora de medidas · escribe o cambia los datos</div>
+    <textarea class="form-control font-monospace mb-2" rows="2">7, 8, 6, 9, 10, 7, 8, 5, 8, 9, 6, 8, 7, 25</textarea>
+    <button class="btn btn-sm btn-ghost bnew mb-2">Datos aleatorios</button>
+    <div class="out"></div>
+    <svg class="dot" role="img" aria-label="Gráfica de puntos"></svg>
+    <svg class="box" role="img" aria-label="Diagrama de caja"></svg>
+    <p class="small text-body-secondary mb-0">Prueba: el dato 25 es atípico (círculo rojo). Bórralo y observa cuánto cambian la media y la desviación estándar, y qué poco cambia la mediana.</p>
+   </div>
+   <div class="problem" data-gen="medidas"></div>
+  </article>
+
+  <article class="topic reveal" id="t17">
+   <h3><span class="num">1.7</span> Comparar colecciones: coeficiente de variación</h3>
+   <p>Para comparar la variabilidad de colecciones con medias muy distintas (o en unidades diferentes) se usa el <b>coeficiente de variación</b> \(CV = \frac{s}{\bar{x}}\times 100\%\), que expresa la desviación estándar como porcentaje de la media. Mayor CV = mayor variabilidad relativa. Al comparar distribuciones conviene revisar juntos su forma, su centro (media o mediana) y su dispersión (s, RIC o CV) antes de tomar una decisión.</p>
+   <div class="problem" data-gen="cv"></div>
+  </article>
+
+  <article class="topic reveal" id="t18">
+   <h3><span class="num">1.8</span> Regla empírica</h3>
+   <p>Si la distribución de los datos es <b>unimodal y aproximadamente simétrica</b> (forma de campana), entonces aproximadamente:</p>
+   <div class="formula">\[ 68\%\ \text{en}\ \bar{x}\pm 1s,\qquad 95\%\ \text{en}\ \bar{x}\pm 2s,\qquad 99.7\%\ \text{en}\ \bar{x}\pm 3s \]</div>
+   <p>Relaciona la tendencia (media) con la dispersión (desviación estándar). No debe usarse con distribuciones sesgadas o con varias modas.</p>
+   <div class="lab" id="lab-empirica">
+    <div class="lab-title">🔔 Regla empírica interactiva</div>
+    <div class="row g-2">
+     <div class="col-md-4"><label class="small">Media = <b class="mu-v"></b></label><input type="range" class="form-range mu" min="20" max="100" value="60"></div>
+     <div class="col-md-4"><label class="small">Desv. estándar = <b class="sd-v"></b></label><input type="range" class="form-range sd" min="2" max="15" value="8"></div>
+     <div class="col-md-4 d-flex align-items-center gap-1 flex-wrap"><div class="btn-group btn-group-sm"><button class="btn btn-ghost active" data-k="1">±1s</button><button class="btn btn-ghost" data-k="2">±2s</button><button class="btn btn-ghost" data-k="3">±3s</button></div><button class="btn btn-sm btn-ghost bnew">Simular otra vez</button></div>
+    </div>
+    <svg role="img" aria-label="Curva normal con área sombreada"></svg>
+    <p class="small res mb-0"></p>
+   </div>
+   <div class="problem" data-gen="empirica"></div>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 2 ============================ -->
+<section class="unit u2" id="unidad2">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 2</span><h2>Datos bivariados</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 12</p></div>
+
+  <article class="topic reveal" id="t21">
+   <h3><span class="num">2.1</span> Datos bivariados y covariación</h3>
+   <p>Los <b>datos bivariados</b> se obtienen al observar <b>dos características en cada individuo</b>; cada observación es un par \((x, y)\). Interesa saber si las variables <b>covarían</b>, es decir, si los cambios en una se acompañan de cambios en la otra.</p>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Tipo de variables</th><th>Ejemplo</th><th>Herramienta</th></tr></thead><tbody>
+    <tr><td>Dos cualitativas</td><td>Género y hábito de fumar</td><td>Tabla de contingencia, barras múltiples o subdivididas</td></tr>
+    <tr><td>Dos cuantitativas</td><td>Horas de estudio y calificación</td><td>Diagrama de dispersión, coeficiente de correlación, recta de regresión</td></tr>
+   </tbody></table></div>
+  </article>
+
+  <article class="topic reveal" id="t22">
+   <h3><span class="num">2.2</span> Dos variables cualitativas: tablas de contingencia</h3>
+   <p>Una <b>tabla de contingencia</b> cruza las categorías de dos variables. Las sumas de filas y columnas son las <b>frecuencias marginales</b>. Para buscar relación se comparan <b>porcentajes condicionales</b> (por fila o por columna): si los porcentajes de una variable cambian mucho según la categoría de la otra, hay indicios de asociación.</p>
+   <div class="formula">\[ \%\ \text{por fila} = \frac{\text{frecuencia de la celda}}{\text{total de su fila}}\times 100 \]</div>
+   <div class="lab" id="lab-conting">
+    <div class="lab-title">📊 Tabaquismo en 300 estudiantes (ejemplo del programa)</div>
+    <div class="scroll-x"><table class="tbl"><thead><tr><th></th><th>Nunca ha fumado</th><th>Dejó de fumar</th><th>Fuma</th><th>Total</th></tr></thead><tbody><tr><th>Hombre</th><td>85</td><td>12</td><td>43</td><td>140</td></tr><tr><th>Mujer</th><td>103</td><td>17</td><td>40</td><td>160</td></tr><tr><th>Total</th><td>188</td><td>29</td><td>83</td><td>300</td></tr></tbody></table></div>
+    <button class="btn btn-sm btn-acc btog mb-2">Ver % por fila</button>
+    <svg role="img" aria-label="Barras subdivididas"></svg>
+    <p class="small mb-0">Con porcentajes por fila: fuma el \(43/140 = 30.7\%\) de los hombres y el \(40/160 = 25\%\) de las mujeres. La diferencia es moderada; las barras de 100 % hacen la comparación más justa porque los grupos tienen tamaños distintos.</p>
+   </div>
+   <div class="problem" data-gen="conting"></div>
+  </article>
+
+  <article class="topic reveal" id="t23">
+   <h3><span class="num">2.3</span> Dos variables cuantitativas: dispersión y correlación</h3>
+   <p>En el <b>diagrama de dispersión</b> cada individuo es un punto \((x,y)\). Se describe la <b>forma</b> (lineal o curva), la <b>dirección</b> (positiva o negativa) y la <b>intensidad</b> (qué tan cerca están los puntos de una recta).</p>
+   <p>El <b>coeficiente de correlación lineal de Pearson</b> mide la intensidad y dirección de la relación <i>lineal</i>:</p>
+   <div class="formula">\[ r=\frac{\sum (x-\bar{x})(y-\bar{y})}{\sqrt{\sum (x-\bar{x})^2\,\sum (y-\bar{y})^2}}=\frac{n\sum xy-\sum x\sum y}{\sqrt{\left[n\sum x^2-(\sum x)^2\right]\left[n\sum y^2-(\sum y)^2\right]}},\qquad -1\le r\le 1 \]</div>
+   <ul>
+    <li>\(r\) cerca de \(1\): relación lineal positiva fuerte; cerca de \(-1\): negativa fuerte; cerca de \(0\): no hay relación <i>lineal</i> (puede haber una relación curva).</li>
+    <li>\(r\) no tiene unidades y es sensible a valores atípicos.</li>
+    <li><b>Correlación no implica causalidad:</b> dos variables pueden estar relacionadas por una tercera variable.</li>
+   </ul>
+   <div class="lab" id="lab-disp">
+    <div class="lab-title">🖱️ Haz clic para agregar puntos · observa r y la recta de mejor ajuste</div>
+    <div class="row g-2 align-items-center mb-1">
+     <div class="col-md-5"><label class="small">Generar nube con r ≈ <b class="rt-v">0.8</b></label><input type="range" class="form-range rt" min="-1" max="1" step="0.05" value="0.8"></div>
+     <div class="col-md-7 d-flex flex-wrap gap-2"><button class="btn btn-sm btn-acc bgen">Generar</button><button class="btn btn-sm btn-ghost bres">Mostrar/ocultar cuadrados de los residuos</button><button class="btn btn-sm btn-ghost bclr">Limpiar</button></div>
+    </div>
+    <svg style="cursor:crosshair" role="img" aria-label="Diagrama de dispersión interactivo"></svg>
+    <div class="st mt-1"></div>
+    <p class="small text-body-secondary mb-0">La recta de mínimos cuadrados es la que hace <b>mínima la suma de los cuadrados</b> de los residuos (las áreas sombreadas). Agrega un punto muy alejado y observa cómo cambia r.</p>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t24">
+   <h3><span class="num">2.4</span> Regresión lineal: recta de mínimos cuadrados</h3>
+   <div class="formula">\[ \hat{y}=a+bx,\qquad b=\frac{n\sum xy-\sum x\sum y}{n\sum x^2-(\sum x)^2}=r\,\frac{s_y}{s_x},\qquad a=\bar{y}-b\,\bar{x} \]</div>
+   <ul>
+    <li><b>Pendiente \(b\):</b> cambio promedio estimado de \(y\) cuando \(x\) aumenta una unidad. Tiene el mismo signo que \(r\).</li>
+    <li><b>Ordenada al origen \(a\):</b> valor estimado de \(y\) cuando \(x=0\) (solo tiene sentido si \(x=0\) está dentro o cerca de los datos).</li>
+    <li><b>Predicción:</b> se sustituye \(x\) en la recta. Es confiable si \(|r|\) es alto y \(x\) está dentro del rango observado (<b>interpolación</b>); fuera del rango (<b>extrapolación</b>) puede ser muy engañosa.</li>
+    <li>El <b>residuo</b> de cada punto es \(e=y-\hat{y}\).</li>
+   </ul>
+   <div class="problem" data-gen="regresion"></div>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 3 ============================ -->
+<section class="unit u3" id="unidad3">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 3</span><h2>Azar y probabilidad</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 15</p></div>
+
+  <article class="topic reveal" id="t31">
+   <h3><span class="num">3.1</span> La probabilidad y su objeto de estudio</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def"><b>Experimento determinista:</b> en las mismas condiciones siempre produce el mismo resultado (por ejemplo, el tiempo de caída de un objeto desde cierta altura en el vacío).</div></div>
+    <div class="col-md-6"><div class="def"><b>Experimento aleatorio:</b> se conocen los resultados posibles, pero no se puede predecir cuál ocurrirá en una repetición (lanzar un dado).</div></div>
+    <div class="col-md-6"><div class="def"><b>Espacio muestral \(S\):</b> conjunto de todos los resultados posibles. Dos monedas: \(S=\{AA, AS, SA, SS\}\).</div></div>
+    <div class="col-md-6"><div class="def"><b>Evento:</b> subconjunto del espacio muestral. Es <b>simple</b> si tiene un solo resultado y <b>compuesto</b> si tiene varios.</div></div>
+   </div>
+   <p class="mt-2">La <b>probabilidad</b> mide qué tan posible es que ocurra un evento: \(0\le P(E)\le 1\), \(P(S)=1\) y \(P(\varnothing)=0\). Al repetir muchas veces un experimento aleatorio, la frecuencia relativa de un evento tiende a estabilizarse alrededor de su probabilidad (<b>ley de los grandes números</b>), aunque no de forma regular.</p>
+   <div class="lab" id="lab-lgn">
+    <div class="lab-title">🎲 Estabilización de la frecuencia relativa</div>
+    <div class="row g-2 mb-2">
+     <div class="col-md-4"><select class="form-select form-select-sm exp"><option value="moneda">Moneda: sale águila</option><option value="dado">Dado: sale 6</option><option value="dos">Dos dados: suma 7</option></select></div>
+     <div class="col-md-3"><select class="form-select form-select-sm nn"><option value="100">100 repeticiones</option><option value="1000" selected>1000 repeticiones</option><option value="5000">5000 repeticiones</option></select></div>
+     <div class="col-md-5 d-flex gap-2"><button class="btn btn-sm btn-acc brun">Simular</button><button class="btn btn-sm btn-ghost bclr">Limpiar</button></div>
+    </div>
+    <svg role="img" aria-label="Frecuencia relativa contra número de repeticiones"></svg>
+    <p class="small res mb-0"></p>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t32">
+   <h3><span class="num">3.2</span> Enfoques de la probabilidad</h3>
+   <div class="row g-3">
+    <div class="col-md-4"><div class="def h-100"><b>Clásico (Laplace)</b><br>Si los \(n\) resultados de \(S\) son igualmente probables:\[P(E)=\frac{\text{casos favorables}}{\text{casos posibles}}\]Ej.: \(P(\text{par en un dado})=\frac36=0.5\).</div></div>
+    <div class="col-md-4"><div class="def h-100"><b>Frecuencial (empírico)</b><br>Se repite el experimento muchas veces:\[P(E)\approx \frac{\text{veces que ocurrió }E}{\text{repeticiones}}\]Útil cuando los resultados no son equiprobables (una chinche que cae con la punta arriba).</div></div>
+    <div class="col-md-4"><div class="def h-100"><b>Subjetivo</b><br>Es el grado de creencia de una persona basado en su experiencia e información, cuando el experimento no se puede repetir ni los resultados son equiprobables (probabilidad de que un equipo gane la final).</div></div>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t33">
+   <h3><span class="num">3.3</span> Eventos simples y compuestos: reglas básicas</h3>
+   <div class="formula">\[ P(A^c)=1-P(A) \qquad P(A\cup B)=P(A)+P(B)-P(A\cap B) \]</div>
+   <ul>
+    <li><b>Unión \(A\cup B\):</b> ocurre A, o B, o ambos. <b>Intersección \(A\cap B\):</b> ocurren A y B a la vez. <b>Complemento \(A^c\):</b> no ocurre A.</li>
+    <li><b>Mutuamente excluyentes:</b> no pueden ocurrir juntos, \(A\cap B=\varnothing\); entonces \(P(A\cup B)=P(A)+P(B)\) (regla de la suma).</li>
+   </ul>
+   <div class="lab" id="lab-venn">
+    <div class="lab-title">⭕ Diagrama de Venn interactivo</div>
+    <div class="row g-2">
+     <div class="col-md-4"><label class="small">P(A) = <b class="pa-v"></b></label><input type="range" class="form-range pa" min="0" max="100" value="45"></div>
+     <div class="col-md-4"><label class="small">P(B) = <b class="pb-v"></b></label><input type="range" class="form-range pb" min="0" max="100" value="35"></div>
+     <div class="col-md-4"><label class="small">P(A∩B) = <b class="pi-v"></b></label><input type="range" class="form-range pi" min="0" max="100" value="15"></div>
+    </div>
+    <div class="btn-group btn-group-sm flex-wrap mb-2"><button class="btn btn-ghost active" data-op="union">A ∪ B</button><button class="btn btn-ghost" data-op="inter">A ∩ B</button><button class="btn btn-ghost" data-op="solaA">Solo A</button><button class="btn btn-ghost" data-op="compA">Aᶜ</button><button class="btn btn-ghost" data-op="ninguno">Ni A ni B</button></div>
+    <svg role="img" aria-label="Diagrama de Venn"></svg>
+    <div class="res"></div>
+   </div>
+   <div class="problem" data-gen="dados"></div>
+  </article>
+
+  <article class="topic reveal" id="t34">
+   <h3><span class="num">3.4</span> Probabilidad condicional e independencia</h3>
+   <p>Si sabemos que ocurrió B, el espacio muestral se <b>reduce</b> a B. La probabilidad de A dado B es:</p>
+   <div class="formula">\[ P(A\mid B)=\frac{P(A\cap B)}{P(B)},\quad P(B)\gt 0 \qquad\Longrightarrow\qquad P(A\cap B)=P(B)\,P(A\mid B)\ \ (\text{regla del producto}) \]</div>
+   <p>A y B son <b>independientes</b> si la ocurrencia de uno no cambia la probabilidad del otro: \(P(A\mid B)=P(A)\), lo que equivale a</p>
+   <div class="formula">\[ P(A\cap B)=P(A)\,P(B) \]</div>
+   <p><b>Ejemplo con la tabla de tabaquismo:</b> si se elige al azar un estudiante y es mujer (M), la probabilidad de que fume (F) es \(P(F\mid M)=\frac{40}{160}=0.25\), mientras que \(P(F)=\frac{83}{300}\approx 0.2767\). Como son distintas, F y M no son independientes (aunque la diferencia es pequeña). Además \(P(M\cap F)=\frac{40}{300}\approx 0.1333\).</p>
+   <div class="note">No confundas <b>independientes</b> con <b>mutuamente excluyentes</b>: si A y B son excluyentes y ambos tienen probabilidad positiva, saber que ocurrió uno hace imposible el otro, así que son <i>dependientes</i>.</div>
+   <div class="problem" data-gen="condicional"></div>
+   <div class="problem" data-gen="urna"></div>
+  </article>
+ </div>
+</section>
+
+<section id="fuentes" class="py-5">
+ <div class="container">
+  <h2 class="font-head">Fuentes consultadas</h2>
+  <p class="text-body-secondary">Las definiciones y fórmulas se verificaron con estas fuentes:</p>
+  <ul>
+   <li>Colegio de Ciencias y Humanidades, UNAM (2024). <i>Programas de Estudio de Estadística y Probabilidad I y II</i> (aprendizajes, temática y ejemplos como la tabla de tabaquismo).</li>
+   <li>OpenStax (2023). <i>Introducción a la estadística</i>. Capítulos 2, 3 y 12 (medidas de dispersión, regla empírica, reglas de probabilidad, regresión). <a href="https://openstax.org/books/introducci%C3%B3n-estad%C3%ADstica/pages/1-introduccion" target="_blank" rel="noopener">openstax.org</a> · <a href="https://openstax.org/books/introductory-statistics/pages/3-formula-review" target="_blank" rel="noopener">Repaso de fórmulas, cap. 3</a> · <a href="https://openstax.org/books/introductory-business-statistics-2e/pages/2-7-measures-of-the-spread-of-the-data" target="_blank" rel="noopener">Medidas de dispersión</a></li>
+   <li>NIST/SEMATECH. <i>e-Handbook of Statistical Methods</i>, sección 7.2.6.2 «Percentiles» (método \(p(n+1)\) con interpolación). <a href="https://itl.nist.gov/div898/handbook/prc/section2/prc262.htm" target="_blank" rel="noopener">itl.nist.gov</a></li>
+   <li>Lane, D. M. <i>HyperStat Online</i>: Regression line (relación \(b=r\,s_y/s_x\)). <a href="https://davidmlane.com/hyperstat/A118355.html" target="_blank" rel="noopener">davidmlane.com</a></li>
+   <li>PhET, Universidad de Colorado. <i>Regresión por mínimos cuadrados</i> (simulación sugerida en el programa). <a href="https://phet.colorado.edu/es/simulations/least-squares-regression" target="_blank" rel="noopener">phet.colorado.edu</a></li>
+  </ul>
+ </div>
+</section>
+<footer><div class="container d-flex flex-wrap justify-content-between gap-2"><span>Cuadernillo interactivo · Estadística y Probabilidad I · CCH-UNAM</span><span>Material de repaso con fines educativos.</span></div></footer>
+
+<button class="btn btn-acc fab" data-bs-toggle="modal" data-bs-target="#formulario" style="--uc:var(--acc)">∑ Formulario</button>
+<button class="btn btn-ghost btn-sm" id="toTop" aria-label="Volver arriba">▲</button>
+<div class="modal fade" id="formulario" tabindex="-1" aria-labelledby="formTitle" aria-hidden="true">
+ <div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal-content">
+   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="formTitle">Formulario completo</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
+ <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#f1" type="button">U1 · Una variable</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f2" type="button">U2 · Bivariados</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f3" type="button">U3 · Probabilidad</button></li>
+</ul>
+<div class="tab-content">
+ <div class="tab-pane fade show active u1 fgroup" id="f1">
+  <h5>Frecuencias</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Frecuencia relativa</small>\[f_r=\frac{f}{n},\quad \sum f_r=1\]</div>
+   <div class="fcard"><small>Frecuencia acumulada</small>\[F_i=\sum_{j\le i} f_j,\quad F_{r,i}=\frac{F_i}{n}\]</div>
+   <div class="fcard"><small>Porcentaje</small>\[\%=f_r\times 100\]</div>
+   <div class="fcard"><small>Regla de Sturges</small>\[k\approx 1+3.322\log_{10} n\]</div>
+   <div class="fcard"><small>Rango y amplitud</small>\[R=x_{\max}-x_{\min},\quad A\approx\frac{R}{k}\]</div>
+   <div class="fcard"><small>Marca de clase</small>\[x_c=\frac{L_i+L_s}{2}\]</div>
+   <div class="fcard"><small>Ángulo en gráfica circular</small>\[\theta=\frac{f}{n}\times 360^\circ\]</div>
+  </div>
+  <h5>Tendencia central</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Media muestral / poblacional</small>\[\bar{x}=\frac{\sum x}{n},\qquad \mu=\frac{\sum x}{N}\]</div>
+   <div class="fcard"><small>Media de datos agrupados</small>\[\bar{x}\approx\frac{\sum f\,x_c}{n}\]</div>
+   <div class="fcard"><small>Posición de la mediana</small>\[\frac{n+1}{2}\ \text{(datos ordenados)}\]</div>
+  </div>
+  <h5>Dispersión</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Varianza muestral</small>\[s^2=\frac{\sum (x-\bar{x})^2}{n-1}\]</div>
+   <div class="fcard"><small>Desviación estándar muestral</small>\[s=\sqrt{\frac{\sum (x-\bar{x})^2}{n-1}}\]</div>
+   <div class="fcard"><small>Varianza y desviación poblacional</small>\[\sigma^2=\frac{\sum (x-\mu)^2}{N},\quad \sigma=\sqrt{\sigma^2}\]</div>
+   <div class="fcard"><small>Forma de cálculo</small>\[s=\sqrt{\frac{\sum x^2-n\bar{x}^2}{n-1}}\]</div>
+   <div class="fcard"><small>Coeficiente de variación</small>\[CV=\frac{s}{\bar{x}}\times 100\%\]</div>
+  </div>
+  <h5>Posición</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Percentil p (posición)</small>\[\text{pos}=p(n+1);\ \ P=x_{(k)}+d\,(x_{(k+1)}-x_{(k)})\]</div>
+   <div class="fcard"><small>Cuartiles</small>\[Q_1=P_{25},\ Q_2=P_{50}=\tilde{x},\ Q_3=P_{75}\]</div>
+   <div class="fcard"><small>Rango intercuartílico y atípicos</small>\[RIC=Q_3-Q_1;\ \ x\lt Q_1-1.5RIC\ \text{o}\ x\gt Q_3+1.5RIC\]</div>
+  </div>
+  <h5>Regla empírica (distribución en campana)</h5>
+  <div class="fgrid"><div class="fcard"><small>Porcentajes aproximados</small>\[\bar{x}\pm s:68\%,\quad \bar{x}\pm 2s:95\%,\quad \bar{x}\pm 3s:99.7\%\]</div></div>
+ </div>
+ <div class="tab-pane fade u2 fgroup" id="f2">
+  <h5>Tablas de contingencia</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Porcentaje por fila</small>\[\frac{f_{ij}}{\text{total fila } i}\times 100\]</div>
+   <div class="fcard"><small>Porcentaje por columna</small>\[\frac{f_{ij}}{\text{total columna } j}\times 100\]</div>
+  </div>
+  <h5>Correlación y regresión</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Coeficiente de Pearson</small>\[r=\frac{n\sum xy-\sum x\sum y}{\sqrt{[n\sum x^2-(\sum x)^2][n\sum y^2-(\sum y)^2]}}\]</div>
+   <div class="fcard"><small>Forma con desviaciones</small>\[r=\frac{\sum (x-\bar{x})(y-\bar{y})}{\sqrt{\sum (x-\bar{x})^2\sum (y-\bar{y})^2}}\]</div>
+   <div class="fcard"><small>Recta de mínimos cuadrados</small>\[\hat{y}=a+bx\]</div>
+   <div class="fcard"><small>Pendiente</small>\[b=\frac{n\sum xy-\sum x\sum y}{n\sum x^2-(\sum x)^2}=r\frac{s_y}{s_x}\]</div>
+   <div class="fcard"><small>Ordenada al origen</small>\[a=\bar{y}-b\,\bar{x}\]</div>
+   <div class="fcard"><small>Residuo</small>\[e=y-\hat{y}\]</div>
+  </div>
+ </div>
+ <div class="tab-pane fade u3 fgroup" id="f3">
+  <h5>Enfoques</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Clásico</small>\[P(E)=\frac{\text{casos favorables}}{\text{casos posibles}}\]</div>
+   <div class="fcard"><small>Frecuencial</small>\[P(E)\approx\frac{\text{n.º de veces que ocurre }E}{\text{n.º de repeticiones}}\]</div>
+   <div class="fcard"><small>Axiomas</small>\[0\le P(E)\le 1,\quad P(S)=1,\quad P(\varnothing)=0\]</div>
+  </div>
+  <h5>Reglas</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Complemento</small>\[P(A^c)=1-P(A)\]</div>
+   <div class="fcard"><small>Suma (general)</small>\[P(A\cup B)=P(A)+P(B)-P(A\cap B)\]</div>
+   <div class="fcard"><small>Mutuamente excluyentes</small>\[P(A\cap B)=0,\quad P(A\cup B)=P(A)+P(B)\]</div>
+   <div class="fcard"><small>Probabilidad condicional</small>\[P(A\mid B)=\frac{P(A\cap B)}{P(B)}\]</div>
+   <div class="fcard"><small>Regla del producto</small>\[P(A\cap B)=P(B)\,P(A\mid B)=P(A)\,P(B\mid A)\]</div>
+   <div class="fcard"><small>Independencia</small>\[P(A\mid B)=P(A)\iff P(A\cap B)=P(A)P(B)\]</div>
+  </div>
+ </div>
+</div>
+</div>
+   <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  </div>
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+'use strict';
+/* ====================== utilidades ====================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const R = {
+  int: (a, b) => a + Math.floor(Math.random() * (b - a + 1)),
+  pick: arr => arr[Math.floor(Math.random() * arr.length)],
+  float: (a, b, d = 1) => +(a + Math.random() * (b - a)).toFixed(d),
+  shuffle: arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
+  normal: () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+};
+const S = {
+  sum: a => a.reduce((s, x) => s + x, 0),
+  mean: a => S.sum(a) / a.length,
+  sorted: a => a.slice().sort((x, y) => x - y),
+  median: a => { const s = S.sorted(a), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; },
+  modes: a => { const c = new Map(); a.forEach(x => c.set(x, (c.get(x) || 0) + 1)); const m = Math.max(...c.values()); if (m === 1) return []; return [...c.entries()].filter(e => e[1] === m).map(e => e[0]).sort((x, y) => x - y); },
+  ss: a => { const m = S.mean(a); return S.sum(a.map(x => (x - m) ** 2)); },
+  varS: a => S.ss(a) / (a.length - 1), varP: a => S.ss(a) / a.length,
+  sdS: a => Math.sqrt(S.varS(a)), sdP: a => Math.sqrt(S.varP(a)),
+  /* percentil por el método p(n+1) con interpolación lineal (NIST/SEMATECH, Hyndman-Fan R6) */
+  quantile: (a, p) => { const s = S.sorted(a), n = s.length, pos = p * (n + 1); const k = Math.floor(pos), d = pos - k; if (k < 1) return s[0]; if (k >= n) return s[n - 1]; return s[k - 1] + d * (s[k] - s[k - 1]); },
+  pearson: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; } return sxy / Math.sqrt(sxx * syy); },
+  linreg: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; } const b = sxy / sxx; return { b, a: my - b * mx }; }
+};
+/* Función de distribución normal estándar Φ(x) (algoritmo de Hart, precisión doble; West 2005) */
+function Phi(x) {
+  const z = Math.abs(x); let c = 0;
+  if (z <= 37) {
+    const e = Math.exp(-z * z / 2);
+    if (z < 7.07106781186547) {
+      let n = 3.52624965998911e-02 * z + 0.700383064443688; n = n * z + 6.37396220353165; n = n * z + 33.912866078383; n = n * z + 112.079291497871; n = n * z + 221.213596169931; n = n * z + 220.206867912376;
+      let d = 8.83883476483184e-02 * z + 1.75566716318264; d = d * z + 16.064177579207; d = d * z + 86.7807322029461; d = d * z + 296.564248779674; d = d * z + 637.333633378831; d = d * z + 793.826512519948; d = d * z + 440.413735824752;
+      c = e * n / d;
+    } else { let b = z + 0.65; b = z + 4 / b; b = z + 3 / b; b = z + 2 / b; b = z + 1 / b; c = e / b / 2.506628274631; }
+  }
+  return x > 0 ? 1 - c : c;
+}
+/* Inversa de Φ (Acklam) con un paso de refinamiento de Newton */
+function invPhi(p) {
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  const pl = 0.02425; let q, r, x;
+  if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  else if (p <= 1 - pl) { q = p - 0.5; r = q * q; x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); }
+  else { q = Math.sqrt(-2 * Math.log(1 - p)); x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  const e = Phi(x) - p, u = e * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2); return x - u / (1 + x * u / 2);
+}
+const normPdf = (x, m = 0, s = 1) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+function comb(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return Math.round(r); }
+const binomPmf = (n, p, k) => comb(n, k) * p ** k * (1 - p) ** (n - k);
+/* formato */
+const r2 = (x, d = 2) => { const f = 10 ** d; return Math.round((x + Number.EPSILON * Math.sign(x)) * f) / f; };
+const fx = (x, d = 2) => { const v = r2(x, d); return (Object.is(v, -0) ? 0 : v).toFixed(d); };
+const fn = (x, d = 4) => { const v = r2(x, d); return String(Object.is(v, -0) ? 0 : v); }; /* sin ceros de relleno */
+const pct = (x, d = 2) => fx(100 * x, d) + '\\%';
+const esc = s => String(s).replace(/</g, '\\lt ').replace(/>/g, '\\gt ');
+const M = s => `\\(${esc(s)}\\)`;          /* matemáticas en línea */
+const MD = s => `\\[${esc(s)}\\]`;         /* matemáticas en bloque */
+
+/* ====================== SVG ====================== */
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) { if (k === 'text') e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); } if (parent) parent.appendChild(e); return e; }
+function clear(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+function niceTicks(min, max, count = 6) {
+  const span = max - min || 1, step0 = span / count, mag = 10 ** Math.floor(Math.log10(step0)), err = step0 / mag;
+  const step = (err >= 7.5 ? 10 : err >= 3.5 ? 5 : err >= 1.5 ? 2 : 1) * mag; const t = [];
+  for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) t.push(+v.toFixed(10)); return t;
+}
+/* Plano con escalas; devuelve {sx, sy, g} */
+function plane(svg, o) {
+  const W = o.W || 640, H = o.H || 300, p = Object.assign({ l: 48, r: 16, t: 14, b: 34 }, o.pad || {});
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); if (!o.keep) clear(svg);
+  const sx = v => p.l + (v - o.x0) / (o.x1 - o.x0) * (W - p.l - p.r);
+  const sy = v => H - p.b - (v - o.y0) / (o.y1 - o.y0) * (H - p.t - p.b);
+  const g = el('g', {}, svg);
+  if (o.grid !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('line', { x1: p.l, x2: W - p.r, y1: sy(t), y2: sy(t), class: 'gridl' }, g));
+  el('line', { x1: p.l, x2: W - p.r, y1: H - p.b, y2: H - p.b, class: 'axis' }, g);
+  if (o.yaxis !== false) el('line', { x1: p.l, x2: p.l, y1: p.t, y2: H - p.b, class: 'axis' }, g);
+  (o.xt || niceTicks(o.x0, o.x1, 8)).forEach(t => el('text', { x: sx(t), y: H - p.b + 16, 'text-anchor': 'middle', class: 'tick', text: o.xf ? o.xf(t) : fn(t, 3) }, g));
+  if (o.yaxis !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('text', { x: p.l - 6, y: sy(t) + 4, 'text-anchor': 'end', class: 'tick', text: o.yf ? o.yf(t) : fn(t, 3) }, g));
+  if (o.xl) el('text', { x: (W + p.l - p.r) / 2, y: H - 2, 'text-anchor': 'middle', class: 'tick', text: o.xl }, g);
+  if (o.yl) el('text', { x: 12, y: (H - p.b + p.t) / 2, 'text-anchor': 'middle', class: 'tick', transform: `rotate(-90 12 ${(H - p.b + p.t) / 2})`, text: o.yl }, g);
+  return { sx, sy, g, W, H, p };
+}
+function pathFn(f, a, b, sx, sy, n = 200) { let d = ''; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += (i ? 'L' : 'M') + sx(x).toFixed(2) + ',' + sy(f(x)).toFixed(2); } return d; }
+function areaFn(f, a, b, sx, sy, n = 160) { let d = `M${sx(a)},${sy(0)}`; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += `L${sx(x).toFixed(2)},${sy(f(x)).toFixed(2)}`; } return d + `L${sx(b)},${sy(0)}Z`; }
+function animatePath(p, ms = 900) { try { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p.getBoundingClientRect(); p.style.transition = `stroke-dashoffset ${ms}ms ease`; p.style.strokeDashoffset = 0; } catch (e) { } }
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ====================== KaTeX ====================== */
+function tex(node) {
+  if (window.renderMathInElement) renderMathInElement(node || document.body, { delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }], throwOnError: false });
+}
+
+/* ====================== problemas aleatorios paso a paso ====================== */
+/* gen() devuelve {enun, steps:[{h, b}], ans:{label, value, tol}, fig?(node)} */
+const PROBLEMS = {};
+function mountProblem(node) {
+  const gen = PROBLEMS[node.dataset.gen]; if (!gen) return;
+  node.innerHTML = `<span class="ptag">Problema aleatorio</span>
+   <div class="enun"></div><div class="fig"></div>
+   <div class="ansbox mt-2"></div>
+   <div class="btns d-flex flex-wrap gap-2 mt-3">
+     <button class="btn btn-sm btn-acc b-new">↻ Nuevo problema</button>
+     <button class="btn btn-sm btn-ghost b-step">Siguiente paso ▸</button>
+     <button class="btn btn-sm btn-ghost b-all">Ver solución completa</button>
+   </div><ol class="steps"></ol>`;
+  let cur = null, shown = 0;
+  const enun = $('.enun', node), steps = $('.steps', node), ansbox = $('.ansbox', node), fig = $('.fig', node);
+  const showStep = () => { if (!cur || shown >= cur.steps.length) return; const s = cur.steps[shown++]; const li = document.createElement('li'); li.innerHTML = (s.h ? `<h6>${s.h}</h6>` : '') + s.b; steps.appendChild(li); tex(li); if (s.fig) s.fig(li); $('.b-step', node).disabled = shown >= cur.steps.length; };
+  const fresh = () => {
+    cur = gen(); shown = 0; steps.innerHTML = ''; enun.innerHTML = cur.enun; fig.innerHTML = '';
+    if (cur.fig) cur.fig(fig);
+    ansbox.innerHTML = cur.ans ? `<div class="input-group input-group-sm" style="max-width:420px"><span class="input-group-text">${cur.ans.label}</span><input type="text" inputmode="decimal" class="form-control" placeholder="tu respuesta"><button class="btn btn-ghost b-chk">Comprobar</button></div><div class="small mt-1 fb"></div>` : '';
+    if (cur.ans) {
+      const inp = $('input', ansbox), fb = $('.fb', ansbox);
+      const chk = () => { const v = parseFloat(String(inp.value).replace(',', '.').replace('%', '')); if (isNaN(v)) { fb.innerHTML = 'Escribe un número.'; fb.className = 'small mt-1 fb'; return; }
+        const ok = Math.abs(v - cur.ans.value) <= (cur.ans.tol ?? 0.01); fb.className = 'small mt-1 fb ' + (ok ? 'check-ok' : 'check-bad');
+        fb.innerHTML = ok ? '✔ ¡Correcto! Revisa el procedimiento para confirmar tu razonamiento.' : '✘ Aún no. Usa «Siguiente paso» para guiarte.'; };
+      $('.b-chk', ansbox).onclick = chk; inp.onkeydown = e => { if (e.key === 'Enter') chk(); };
+    }
+    $('.b-step', node).disabled = false; tex(enun); tex(ansbox);
+  };
+  $('.b-new', node).onclick = fresh; $('.b-step', node).onclick = showStep;
+  $('.b-all', node).onclick = () => { while (cur && shown < cur.steps.length) showStep(); };
+  fresh();
+}
+/* tabla html rápida */
+function htable(head, rows, cls = 'tbl') { return `<div class="scroll-x"><table class="${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => typeof c === 'object' && c !== null ? `<td class="${c.c || ''}">${c.v}</td>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+
+/* ====================== interfaz general ====================== */
+function initUI() {
+  /* tema */
+  const root = document.documentElement; let saved = null; try { saved = localStorage.getItem('cuad-theme'); } catch (e) { }
+  if (saved) root.setAttribute('data-bs-theme', saved);
+  const tbtn = $('#themeBtn'); if (tbtn) tbtn.onclick = () => { const t = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark'; root.setAttribute('data-bs-theme', t); try { localStorage.setItem('cuad-theme', t); } catch (e) { } document.dispatchEvent(new Event('themechange')); };
+  /* progreso y volver arriba */
+  const prog = $('#progress'), top = $('#toTop');
+  const onScroll = () => { const h = document.documentElement; const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight); if (prog) prog.style.width = (p * 100) + '%'; if (top) top.classList.toggle('show', h.scrollTop > 600); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  if (top) top.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+  /* apariciones */
+  if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .08 }); $$('.reveal').forEach(n => io.observe(n)); }
+  else $$('.reveal').forEach(n => n.classList.add('in'));
+  /* problemas */
+  $$('.problem[data-gen]').forEach(mountProblem);
+  tex(document.body);
+}
+
+/* ======================= Estadística y Probabilidad I ======================= */
+const LEARN = [
+ { u: 1, nombre: 'Análisis de información estadística para una variable', h: 28,
+   prop: 'Analizará la información que brinda una colección de datos acerca de una característica de interés, a partir de su distribución, tendencia y variabilidad, y usando diversas representaciones, en el contexto de una toma de decisión o la resolución de un problema, para desarrollar su cultura y razonamiento estadístico.',
+   L: [
+    ['Discute que la estadística estudia la variabilidad de las características de la población, considerando la homogeneidad y la heterogeneidad en los valores observados.', 'Nociones básicas: variabilidad', '#t11'],
+    ['Explica las nociones de variable estadística, población y muestra.', 'Nociones básicas: variable, población y muestra', '#t11'],
+    ['Reconoce que los datos se obtienen por levantamiento o por experimentación.', 'Investigación estadística', '#t11'],
+    ['Examina la importancia de la recopilación y representación de datos en la investigación estadística.', 'Recolección de datos', '#t11'],
+    ['Reconoce la importancia del muestreo.', 'Muestreo, azar y probabilidad', '#t12'],
+    ['Aplica algún procedimiento de selección aleatoria que le permita comparar una característica de una población conocida con la misma característica en muestras aleatorias.', 'Muestreo, azar y probabilidad', '#t12'],
+    ['Concluye que el azar es una de las causas de la variabilidad en los datos estadísticos.', 'Muestreo, azar y probabilidad', '#t12'],
+    ['Distingue los diferentes tipos de variables estadísticas.', 'Representación tabular: tipos de variables', '#t13'],
+    ['Construye tablas de distribución de frecuencias, incorporando el uso de la computadora, para describir el comportamiento de una variable.', 'Tablas de distribución de frecuencias', '#t14'],
+    ['Formula conclusiones e inferencias informales con base en datos reales o realistas organizados en tablas de frecuencias, argumentando su validez y señalando posibles sesgos o limitaciones.', 'Tablas de distribución de frecuencias', '#t14'],
+    ['Construye gráficas, incorporando el uso de herramientas tecnológicas, para interpretar la información que brindan los datos en el contexto de una investigación o problema.', 'Representación gráfica: barras, circular, puntos, histograma, polígono de frecuencias y ojivas', '#t15'],
+    ['Calcula medidas de tendencia central, de dispersión y de posición con apoyo de herramientas tecnológicas para describir el comportamiento de una variable.', 'Medidas estadísticas: tendencia central, dispersión y posición', '#t16'],
+    ['Interpreta los valores de las medidas de tendencia central y escoge la más adecuada para representar los datos en el contexto de una investigación o problema.', 'Tendencia central: media, mediana y moda', '#t16'],
+    ['Interpreta los valores del rango, la desviación estándar y los cuartiles en el contexto de una investigación o problema.', 'Dispersión y posición', '#t16'],
+    ['Compara la variabilidad entre colecciones de datos con medias muy distintas por medio de sus coeficientes de variación.', 'Coeficiente de variación', '#t17'],
+    ['Formula inferencias informales con base en medidas estadísticas de datos reales o realistas, argumentando su validez y señalando posibles sesgos o limitaciones.', 'Medidas estadísticas', '#t16'],
+    ['Discute la Regla empírica en distribuciones aproximadamente simétricas y unimodales en términos de relación entre tendencia y dispersión.', 'Regla empírica', '#t18'],
+    ['Analiza el comportamiento de diversas colecciones de datos a partir de su distribución, tendencia y dispersión para compararlas y tomar decisiones en el contexto de una investigación o problema.', 'Medidas estadísticas (integración)', '#t17'] ] },
+ { u: 2, nombre: 'Datos bivariados', h: 10,
+   prop: 'Analizará la relación entre dos variables estadísticas tanto cualitativas como cuantitativas y realizará predicciones válidas, a partir de la modelación de la tendencia de esa relación y midiendo su grado de intensidad, con la finalidad de interpretar y evaluar críticamente la información estadística en dos variables aparejadas.',
+   L: [
+    ['Reconoce que los datos bivariados se obtienen al observar dos características en cada elemento de la población.', 'Correlación entre dos variables: ejemplos de covariación', '#t21'],
+    ['Distingue que, entre dos variables estadísticas representadas en datos bivariados, puede existir alguna relación.', 'Ejemplos de covariación de variables de diversos tipos', '#t21'],
+    ['Construye tablas de contingencia, barras múltiples o barras con subdivisiones para presentar e interpretar la información correspondiente a dos variables estadísticas cualitativas aparejadas.', 'Tablas de contingencia; gráficos y su interpretación', '#t22'],
+    ['Examina la información vertida en una tabla de contingencia, en términos de la relación entre dos variables estadísticas cualitativas, dentro del contexto de una investigación o problema.', 'Tablas de contingencia y su interpretación', '#t22'],
+    ['Formula inferencias informales acerca del comportamiento de dos variables estadísticas cualitativas en el contexto de una investigación o problema.', 'Tablas de contingencia y su interpretación', '#t22'],
+    ['Construye diagramas de dispersión para describir el comportamiento de dos variables estadísticas cuantitativas aparejadas.', 'Diagrama de dispersión', '#t23'],
+    ['Examina la información vertida en un diagrama de dispersión en el contexto de una investigación o problema.', 'Diagrama de dispersión', '#t23'],
+    ['Formula inferencias informales acerca del comportamiento de dos variables estadísticas cuantitativas aparejadas en el contexto de una investigación o problema.', 'Diagrama de dispersión', '#t23'],
+    ['Interpreta el valor del coeficiente de correlación lineal al ajustar los puntos del diagrama de dispersión desde una relación aproximadamente lineal hasta datos no relacionados, utilizando una aplicación interactiva o software especializado.', 'Coeficiente de correlación (Pearson)', '#t23'],
+    ['Descubre que la recta de mínimos cuadrados es la que mejor modela la correlación entre dos variables estadísticas cuantitativas, cuando ésta se presenta de manera aproximadamente lineal.', 'Regresión lineal', '#t24'],
+    ['Analiza los parámetros de la recta de mejor ajuste interpretándolos dentro del contexto de una investigación o problema.', 'Regresión lineal', '#t24'],
+    ['Aproxima, considerando las limitaciones del dominio y el valor del coeficiente de correlación, el valor de una variable regresora de un valor de la variable de respuesta, por medio de la recta de mejor ajuste.', 'Regresión lineal', '#t24'] ] },
+ { u: 3, nombre: 'Azar y probabilidad', h: 26,
+   prop: 'Iniciará el estudio formal de la probabilidad mediante el tratamiento de experiencias aleatorias, aplicando los tres enfoques para la asignación de probabilidades a eventos y deduciendo las reglas básicas para el cálculo de probabilidades con la finalidad de desarrollar su razonamiento probabilístico.',
+   L: [
+    ['Reconoce la relación entre la probabilidad y la cantidad de ocurrencias de un resultado en un gran número de repeticiones.', 'La probabilidad y su objeto de estudio', '#t31'],
+    ['Comprende las características de experimentos aleatorios y experimentos deterministas.', 'Experimentos aleatorios y deterministas', '#t31'],
+    ['Identifica a la probabilidad como la medida de la posibilidad de ocurrencia de un resultado en un experimento aleatorio.', 'Probabilidad como medida de la ocurrencia', '#t31'],
+    ['Define los conceptos de espacio muestral y evento.', 'Espacio muestral y eventos', '#t31'],
+    ['Comprende el enfoque clásico para el cálculo de probabilidades cuando los resultados son igualmente probables y lo aplica en experimentos sencillos.', 'Enfoque clásico', '#t32'],
+    ['Observa la tendencia a estabilizarse de las frecuencias relativas de un evento al realizar un gran número de repeticiones mediante simulaciones físicas y por computadora.', 'Enfoque frecuencial', '#t32'],
+    ['Aproxima la probabilidad de ocurrencia de algún resultado de un experimento aleatorio a partir de observaciones experimentales o de simulaciones físicas y por computadora.', 'Enfoque frecuencial', '#t32'],
+    ['Identifica condiciones en las que puede ser necesario acudir a una aproximación subjetiva de la probabilidad.', 'Enfoque subjetivo', '#t32'],
+    ['Construye espacios muestrales, eventos simples, y eventos compuestos aplicando operaciones entre conjuntos: unión, intersección y complemento.', 'Cálculo de probabilidad de eventos simples y compuestos', '#t33'],
+    ['Calcula probabilidades de eventos simples y compuestos mediante conteo directo y construyendo tablas de contingencia para representar las relaciones entre dos eventos.', 'Conteo directo; reglas del complemento y de la unión', '#t33'],
+    ['Explica el concepto de mutua exclusividad entre eventos y aplica la regla de la suma.', 'Eventos mutuamente excluyentes y regla de la suma', '#t33'],
+    ['Construye la expresión para el cálculo de la probabilidad condicional entre dos eventos, a partir de una tabla de contingencia o usando diagramas de Venn.', 'Probabilidad condicional: reducción del espacio muestral', '#t34'],
+    ['Calcula probabilidades condicionales utilizando la expresión correspondiente.', 'Regla para probabilidades condicionales', '#t34'],
+    ['Calcula probabilidades conjuntas.', 'Regla para probabilidades conjuntas', '#t34'],
+    ['Reconoce el concepto de independencia y deduce la regla del producto.', 'Eventos independientes', '#t34'] ] }
+];
+
+/* ---------------------------------------------------------------- problemas: Unidad 1 */
+const ESCENARIOS_DISC = [
+  { v: 'número de hermanos', u: 'hermanos', min: 0, max: 5, w: [3, 6, 5, 3, 2, 1] },
+  { v: 'número de materias que adeudan', u: 'materias', min: 0, max: 4, w: [8, 5, 3, 2, 1] },
+  { v: 'número de veces por semana que hacen ejercicio', u: 'veces', min: 0, max: 5, w: [3, 3, 5, 4, 2, 1] }
+];
+function wpick(w) { const t = S.sum(w); let r = Math.random() * t; for (let i = 0; i < w.length; i++) { r -= w[i]; if (r < 0) return i; } return w.length - 1; }
+PROBLEMS.frecDisc = () => {
+  const E = R.pick(ESCENARIOS_DISC), n = R.int(20, 30);
+  const d = Array.from({ length: n }, () => E.min + wpick(E.w));
+  const vals = []; for (let v = E.min; v <= E.max; v++) vals.push(v);
+  let F = 0; const rows = vals.map(v => { const f = d.filter(x => x === v).length; F += f; return { v, f, fr: f / n, F, Fr: F / n }; });
+  const k = R.int(E.min + 1, E.max - 1), row = rows.find(r => r.v === k);
+  return {
+    enun: `Se preguntó a ${n} estudiantes su <b>${E.v}</b>. Los datos fueron:<div class="font-monospace my-2">${d.join(', ')}</div>Construye la tabla de distribución de frecuencias y responde: <b>¿qué porcentaje de estudiantes tiene ${k} ${E.u} o menos?</b>`,
+    ans: { label: '% con ≤ ' + k, value: r2(100 * row.Fr, 2), tol: 0.06 }, chk: { d, k },
+    steps: [
+      { h: 'Identifica la variable', b: `La variable es cuantitativa <b>discreta</b> (se cuenta). Sus valores van de ${E.min} a ${E.max}; hay ${M('n=' + n)} datos.` },
+      { h: 'Cuenta la frecuencia absoluta f', b: `Para cada valor contamos cuántas veces aparece. Comprobación: ${M('\\sum f = ' + rows.map(r => r.f).join('+') + '=' + n)}.` },
+      { h: 'Calcula frecuencia relativa y acumuladas', b: `${M('f_r = \\dfrac{f}{n}')}, ${M('F')} = suma de las frecuencias hasta ese valor, ${M('F_r = \\dfrac{F}{n}')}.` +
+        htable(['x', 'f', 'f_r', 'F', 'F_r', '%'], rows.map(r => [r.v, r.f, fx(r.fr, 4), r.v === k ? { v: r.F, c: 'hl' } : r.F, r.v === k ? { v: fx(r.Fr, 4), c: 'hl' } : fx(r.Fr, 4), fx(100 * r.fr, 2)])) },
+      { h: 'Responde', b: `El porcentaje con ${k} o menos es la frecuencia relativa acumulada: ${M('F_r(' + k + ') = \\dfrac{' + row.F + '}{' + n + '} = ' + fx(row.Fr, 4))}, es decir <b>${fx(100 * row.Fr, 2)} %</b>.` },
+      { h: 'Interpreta', b: `El valor más frecuente (moda) es ${S.modes(d).join(' y ') || 'inexistente'}. Una tabla de frecuencias resume los datos, pero conviene preguntarse si la muestra representa a toda la población (posibles sesgos).` }
+    ]
+  };
+};
+PROBLEMS.frecAgr = () => {
+  const n = R.pick([30, 32, 35, 40]), mu = R.int(28, 40), sd = R.int(9, 14);
+  const d = Array.from({ length: n }, () => Math.max(3, Math.min(90, Math.round(mu + sd * R.normal()))));
+  const mn = Math.min(...d), mx = Math.max(...d), Rg = mx - mn;
+  const kS = 1 + 3.322 * Math.log10(n), k = Math.round(kS), A = Math.ceil((Rg + 1) / k);
+  const cls = []; let F = 0;
+  for (let i = 0; i < k; i++) { const li = mn + i * A, ls = li + A - 1; const f = d.filter(x => x >= li && x <= ls).length; F += f; cls.push({ li, ls, mc: (li + ls) / 2, f, fr: f / n, F, Fr: F / n }); }
+  while (F < n) { const li = cls[cls.length - 1].ls + 1, ls = li + A - 1; const f = d.filter(x => x >= li && x <= ls).length; F += f; cls.push({ li, ls, mc: (li + ls) / 2, f, fr: f / n, F, Fr: F / n }); }
+  const j = Math.min(2, cls.length - 2), c = cls[j];
+  return {
+    enun: `Se registró el tiempo (en minutos) que tardan ${n} estudiantes en llegar al plantel:<div class="font-monospace small my-2">${d.join(', ')}</div>Agrupa los datos en clases (regla de Sturges) y responde: <b>¿qué porcentaje tarda ${c.ls} minutos o menos?</b>`,
+    ans: { label: '% ≤ ' + c.ls + ' min', value: r2(100 * c.Fr, 2), tol: 0.06 }, chk: { d, ls: c.ls, k, A, mn, mx },
+    fig: node => { const svg = el('svg', {}); node.appendChild(svg); histo(svg, cls, 'minutos'); },
+    steps: [
+      { h: 'Rango', b: `Dato mínimo ${mn}, dato máximo ${mx}: ${M('R = ' + mx + ' - ' + mn + ' = ' + Rg)}.` },
+      { h: 'Número de clases (Sturges)', b: MD(`k = 1 + 3.322\\log_{10}(${n}) = ${fx(kS, 2)} \\approx ${k}`) },
+      { h: 'Amplitud', b: `Como los datos son enteros, usamos ${M('A = \\left\\lceil \\dfrac{R+1}{k} \\right\\rceil = \\left\\lceil \\dfrac{' + (Rg + 1) + '}{' + k + '} \\right\\rceil = ' + A)} para que las ${k} clases cubran del ${mn} al ${mx}.` },
+      { h: 'Tabla de frecuencias', b: `Cada clase incluye sus límites; la marca de clase es el punto medio ${M('x_c = \\dfrac{L_i + L_s}{2}')}.` +
+        htable(['Clase', 'x_c', 'f', 'f_r', 'F', 'F_r'], cls.map((r, i) => [`${r.li} – ${r.ls}`, fn(r.mc, 1), r.f, fx(r.fr, 4), i === j ? { v: r.F, c: 'hl' } : r.F, i === j ? { v: fx(r.Fr, 4), c: 'hl' } : fx(r.Fr, 4)])) },
+      { h: 'Responde', b: `Hasta la clase ${c.li} – ${c.ls} se acumulan ${c.F} estudiantes: ${M('F_r = \\dfrac{' + c.F + '}{' + n + '} = ' + fx(c.Fr, 4))} → <b>${fx(100 * c.Fr, 2)} %</b> tarda ${c.ls} minutos o menos.` },
+      { h: 'Observa la forma', b: 'El histograma de la figura muestra dónde se concentran los datos y si la distribución es simétrica o tiene sesgo.' }
+    ]
+  };
+};
+function histo(svg, cls, xl) {
+  const ymax = Math.max(...cls.map(c => c.f)) + 1, x0 = cls[0].li - 0.5, x1 = cls[cls.length - 1].ls + 0.5;
+  const P = plane(svg, { W: 640, H: 240, x0, x1, y0: 0, y1: ymax, xt: cls.map(c => c.li - 0.5).concat([x1]), xf: t => fn(t, 1), yl: 'f', xl });
+  cls.forEach((c, i) => { const r = el('rect', { x: P.sx(c.li - 0.5) + 1, width: P.sx(c.ls + 0.5) - P.sx(c.li - 0.5) - 2, y: P.sy(0), height: 0, fill: css('--u1'), opacity: .75, class: 'barr' }, P.g); setTimeout(() => { r.setAttribute('y', P.sy(c.f)); r.setAttribute('height', P.sy(0) - P.sy(c.f)); }, 60 + i * 80); });
+}
+PROBLEMS.medidas = () => {
+  const ctx = R.pick([{ t: 'calificaciones (0 a 10) de un examen', a: 4, b: 10 }, { t: 'edades de los asistentes a un taller', a: 15, b: 22 }, { t: 'horas de sueño en una noche', a: 4, b: 10 }]);
+  const n = R.int(8, 12); const d = Array.from({ length: n }, () => R.int(ctx.a, ctx.b));
+  const s = S.sorted(d), mean = S.mean(d), med = S.median(d), modes = S.modes(d), ss = S.ss(d), vs = ss / (n - 1), sd = Math.sqrt(vs), vp = ss / n;
+  const q1 = S.quantile(d, .25), q3 = S.quantile(d, .75);
+  const posQ = p => p * (n + 1);
+  return {
+    enun: `Las ${ctx.t} de una muestra de ${n} personas son:<div class="font-monospace my-2">${d.join(', ')}</div>Calcula las medidas de tendencia central, de dispersión y de posición. <b>¿Cuál es la desviación estándar muestral \\(s\\)?</b> (2 decimales)`,
+    ans: { label: 's =', value: r2(sd, 2), tol: 0.011 }, chk: { d, q1, q3, med },
+    steps: [
+      { h: 'Ordena los datos', b: `<span class="font-monospace">${s.join(', ')}</span>` },
+      { h: 'Media', b: MD(`\\bar{x} = \\frac{\\sum x}{n} = \\frac{${S.sum(d)}}{${n}} = ${fx(mean, 2)}`) },
+      { h: 'Mediana y moda', b: `Con ${M('n=' + n)} datos, la mediana ocupa la posición ${M('\\frac{n+1}{2} = ' + fn((n + 1) / 2, 1))}: ${M('\\tilde{x} = ' + fn(med, 2))}. Moda: ${modes.length ? modes.join(', ') : 'no hay (ningún valor se repite más que otro)'}${modes.length > 1 ? ' (multimodal)' : ''}.` },
+      { h: 'Rango', b: M(`R = x_{\\max} - x_{\\min} = ${s[n - 1]} - ${s[0]} = ${s[n - 1] - s[0]}`) },
+      { h: 'Varianza y desviación estándar', b: htable(['x', 'x − x̄', '(x − x̄)²'], d.map(x => [x, fx(x - mean, 2), fx((x - mean) ** 2, 2)])) +
+        MD(`s^2 = \\frac{\\sum (x-\\bar{x})^2}{n-1} = \\frac{${fx(ss, 2)}}{${n - 1}} = ${fx(vs, 2)} \\qquad s = \\sqrt{${fx(vs, 4)}} = ${fx(sd, 2)}`) +
+        `<div class="note">Si los datos fueran toda la población, se divide entre ${M('N')}: ${M('\\sigma^2 = ' + fx(vp, 2) + ',\\; \\sigma = ' + fx(Math.sqrt(vp), 2))}.</div>` },
+      { h: 'Coeficiente de variación', b: MD(`CV = \\frac{s}{\\bar{x}}\\times 100 = \\frac{${fx(sd, 2)}}{${fx(mean, 2)}}\\times 100 = ${fx(sd / mean * 100, 2)}\\%`) },
+      { h: 'Cuartiles (posición p(n+1))', b: `${M('Q_1')}: posición ${M('0.25(' + (n + 1) + ') = ' + fn(posQ(.25), 2))} → ${M('Q_1 = ' + fn(q1, 2))}; ${M('Q_3')}: posición ${M('0.75(' + (n + 1) + ') = ' + fn(posQ(.75), 2))} → ${M('Q_3 = ' + fn(q3, 2))}. Si la posición tiene decimales se interpola entre los dos datos vecinos. Rango intercuartílico: ${M('RIC = Q_3 - Q_1 = ' + fn(q3 - q1, 2))}.`,
+        fig: li => { const svg = el('svg', {}); li.appendChild(svg); boxplot(svg, d); } },
+      { h: 'Interpreta', b: `En promedio los datos están a unas ${fx(sd, 2)} unidades de la media (${fx(mean, 2)}). El 50 % central de los datos está entre ${fn(q1, 2)} y ${fn(q3, 2)}.` }
+    ]
+  };
+};
+PROBLEMS.cv = () => {
+  const A = { n: 'peso de recién nacidos (kg)', m: R.float(3.0, 3.5, 2), s: R.float(0.35, 0.55, 2) };
+  const B = { n: 'peso de estudiantes de bachillerato (kg)', m: R.float(55, 68, 1), s: R.float(7, 12, 1) };
+  const cvA = A.s / A.m * 100, cvB = B.s / B.m * 100, mayor = cvA > cvB ? 'recién nacidos' : 'estudiantes';
+  return {
+    enun: `Se tienen dos colecciones de datos:<ul><li><b>A:</b> ${A.n}: ${M('\\bar{x}=' + A.m)}, ${M('s=' + A.s)}</li><li><b>B:</b> ${B.n}: ${M('\\bar{x}=' + B.m)}, ${M('s=' + B.s)}</li></ul>¿Cuál colección es relativamente más variable? <b>Calcula el CV de A</b> (en %, 2 decimales).`,
+    ans: { label: 'CV de A (%)', value: r2(cvA, 2), tol: 0.02 }, chk: { A, B },
+    steps: [
+      { h: '¿Por qué no comparar s directamente?', b: `Las medias son muy distintas (${A.m} vs ${B.m}); una ${M('s')} grande en datos con media grande puede representar poca variación relativa. El coeficiente de variación no tiene unidades.` },
+      { h: 'CV de A', b: MD(`CV_A = \\frac{${A.s}}{${A.m}}\\times 100 = ${fx(cvA, 2)}\\%`) },
+      { h: 'CV de B', b: MD(`CV_B = \\frac{${B.s}}{${B.m}}\\times 100 = ${fx(cvB, 2)}\\%`) },
+      { h: 'Conclusión', b: `El grupo de <b>${mayor}</b> tiene mayor variabilidad relativa (mayor CV), aunque su desviación estándar en kg sea ${mayor === 'recién nacidos' ? 'menor' : 'mayor'}.` }
+    ]
+  };
+};
+PROBLEMS.empirica = () => {
+  const c = R.pick([{ t: 'la estatura de mujeres adultas (cm)', m: 158, s: 6 }, { t: 'el tiempo de traslado al plantel (min)', m: 45, s: 10 }, { t: 'las calificaciones de un examen de admisión (puntos)', m: 72, s: 8 }, { t: 'el peso de piezas de pan (g)', m: 60, s: 4 }]);
+  const tipo = R.int(0, 3); let q, val, steps;
+  if (tipo === 0) { const k = R.int(1, 3); const p = [68, 95, 99.7][k - 1]; q = `entre ${c.m - k * c.s} y ${c.m + k * c.s}`; val = p; steps = [{ h: 'Expresa los límites en desviaciones estándar', b: M(`${c.m - k * c.s} = ${c.m} - ${k}(${c.s}),\\quad ${c.m + k * c.s} = ${c.m} + ${k}(${c.s})`) + ` → es el intervalo ${M('\\bar{x}\\pm ' + k + 's')}.` }, { h: 'Aplica la regla', b: `Aproximadamente <b>${p} %</b> de los datos.` }]; }
+  else if (tipo === 1) { q = `mayor que ${c.m + c.s}`; val = 16; steps = [{ h: 'Ubica el valor', b: `${c.m + c.s} = ${M('\\bar{x}+1s')}. Entre ${M('\\bar{x}\\pm 1s')} está ≈68 %, fuera queda ≈32 %.` }, { h: 'Usa la simetría', b: `Ese 32 % se reparte por igual en las dos colas: ${M('32\\%/2 = 16\\%')}.` }]; }
+  else if (tipo === 2) { q = `entre ${c.m} y ${c.m + 2 * c.s}`; val = 47.5; steps = [{ h: 'Ubica los valores', b: `${c.m} es la media y ${c.m + 2 * c.s} = ${M('\\bar{x}+2s')}.` }, { h: 'Usa la simetría', b: `Entre ${M('\\bar{x}\\pm 2s')} hay ≈95 %; la mitad derecha es ${M('95\\%/2 = 47.5\\%')}.` }]; }
+  else { q = `menor que ${c.m - 2 * c.s}`; val = 2.5; steps = [{ h: 'Ubica el valor', b: `${c.m - 2 * c.s} = ${M('\\bar{x}-2s')}.` }, { h: 'Usa la simetría', b: `Fuera de ${M('\\bar{x}\\pm 2s')} queda ≈5 %; en la cola izquierda ${M('5\\%/2 = 2.5\\%')}.` }]; }
+  return {
+    enun: `La distribución de ${c.t} es aproximadamente simétrica y unimodal (forma de campana), con media ${c.m} y desviación estándar ${c.s}. Según la regla empírica, <b>¿qué porcentaje aproximado de los datos es ${q}?</b>`,
+    ans: { label: '%', value: val, tol: 0.05 }, chk: { q, val, m: c.m, s: c.s },
+    steps: [{ h: 'Verifica la condición', b: 'La regla empírica solo aplica a distribuciones unimodales y aproximadamente simétricas (en forma de campana).' }, ...steps,
+      { h: 'Respuesta', b: `≈ <b>${val} %</b> de los datos es ${q}.` }],
+    fig: node => { const svg = el('svg', {}); node.appendChild(svg); bell(svg, c.m, c.s); }
+  };
+};
+function bell(svg, m, s, a, b) {
+  const P = plane(svg, { W: 640, H: 200, x0: m - 3.6 * s, x1: m + 3.6 * s, y0: 0, y1: normPdf(m, m, s) * 1.12, xt: [-3, -2, -1, 0, 1, 2, 3].map(k => m + k * s), yaxis: false, grid: false, pad: { l: 16, r: 16 } });
+  if (a !== undefined) el('path', { d: areaFn(x => normPdf(x, m, s), a, b, P.sx, P.sy), fill: css('--shade') }, P.g);
+  const p = el('path', { d: pathFn(x => normPdf(x, m, s), m - 3.6 * s, m + 3.6 * s, P.sx, P.sy), fill: 'none', stroke: css('--u1'), 'stroke-width': 2.5 }, P.g); animatePath(p);
+  return P;
+}
+function boxplot(svg, d) {
+  const s = S.sorted(d), q1 = S.quantile(d, .25), q2 = S.median(d), q3 = S.quantile(d, .75), ric = q3 - q1;
+  const lo = q1 - 1.5 * ric, hi = q3 + 1.5 * ric; const inl = s.filter(x => x >= lo && x <= hi), out = s.filter(x => x < lo || x > hi);
+  const pad = (s[s.length - 1] - s[0]) * 0.08 || 1;
+  const P = plane(svg, { W: 640, H: 120, x0: s[0] - pad, x1: s[s.length - 1] + pad, y0: 0, y1: 1, yaxis: false, grid: false, pad: { l: 16, r: 16, t: 8, b: 26 } });
+  const y = P.sy(0.55), h = 34, col = css('--u1');
+  el('line', { x1: P.sx(inl[0]), x2: P.sx(q1), y1: y, y2: y, stroke: col, 'stroke-width': 2 }, P.g);
+  el('line', { x1: P.sx(q3), x2: P.sx(inl[inl.length - 1]), y1: y, y2: y, stroke: col, 'stroke-width': 2 }, P.g);
+  [inl[0], inl[inl.length - 1]].forEach(v => el('line', { x1: P.sx(v), x2: P.sx(v), y1: y - 10, y2: y + 10, stroke: col, 'stroke-width': 2 }, P.g));
+  el('rect', { x: P.sx(q1), y: y - h / 2, width: Math.max(1, P.sx(q3) - P.sx(q1)), height: h, fill: css('--shade'), stroke: col, 'stroke-width': 2, rx: 4 }, P.g);
+  el('line', { x1: P.sx(q2), x2: P.sx(q2), y1: y - h / 2, y2: y + h / 2, stroke: css('--u2'), 'stroke-width': 3 }, P.g);
+  out.forEach(v => el('circle', { cx: P.sx(v), cy: y, r: 5, fill: 'none', stroke: css('--bad'), 'stroke-width': 2 }, P.g));
+  [['Q₁', q1], ['Me', q2], ['Q₃', q3]].forEach(([t, v]) => el('text', { x: P.sx(v), y: y - h / 2 - 6, 'text-anchor': 'middle', class: 'tick', text: t }, P.g));
+  return { q1, q2, q3, ric, out };
+}
+
+/* ---------------------------------------------------------------- problemas: Unidad 2 */
+PROBLEMS.conting = () => {
+  const c = R.pick([
+    { r: ['Mujer', 'Hombre'], c: ['Ciencias', 'Sociales', 'Artes'], t: 'el área de la carrera que desean estudiar' },
+    { r: ['Turno matutino', 'Turno vespertino'], c: ['Camión', 'Metro', 'A pie'], t: 'el medio de transporte que usan para llegar al plantel' },
+    { r: ['Hace ejercicio', 'No hace ejercicio'], c: ['Duerme < 6 h', '6 a 8 h', '> 8 h'], t: 'las horas que duermen' }]);
+  const T = c.r.map(() => c.c.map(() => R.int(8, 45)));
+  const rt = T.map(r => S.sum(r)), ct = c.c.map((_, j) => S.sum(T.map(r => r[j]))), N = S.sum(rt);
+  const i = R.int(0, 1), j = R.int(0, 2), cond = T[i][j] / rt[i], cond2 = T[1 - i][j] / rt[1 - i], marg = ct[j] / N;
+  const tab = htable(['', ...c.c, 'Total'], [...c.r.map((rn, a) => [`<b>${rn}</b>`, ...T[a].map((v, b) => a === i && b === j ? { v, c: 'hl' } : v), rt[a]]), ['<b>Total</b>', ...ct, N]]);
+  return {
+    enun: `Se encuestó a ${N} estudiantes sobre ${c.t}:` + tab + `<b>¿Qué porcentaje de «${c.r[i]}» eligió «${c.c[j]}»?</b> ¿Parece haber relación entre las variables?`,
+    ans: { label: '%', value: r2(100 * cond, 2), tol: 0.06 }, chk: { T, i, j },
+    fig: node => { const svg = el('svg', {}); node.appendChild(svg); stacked(svg, c.r, c.c, T, true); },
+    steps: [
+      { h: 'Identifica las variables', b: `Dos variables <b>cualitativas</b> observadas en cada estudiante: fila (${c.r.join(' / ')}) y columna (${c.c.join(' / ')}).` },
+      { h: 'Frecuencia condicional (por fila)', b: `Se divide entre el total de la fila «${c.r[i]}»: ${MD('\\frac{' + T[i][j] + '}{' + rt[i] + '} = ' + fx(cond, 4) + ' \\;\\Rightarrow\\; ' + pct(cond))}` },
+      { h: 'Compara con el otro grupo', b: `En «${c.r[1 - i]}»: ${M('\\frac{' + T[1 - i][j] + '}{' + rt[1 - i] + '} = ' + pct(cond2))}. En el total: ${M('\\frac{' + ct[j] + '}{' + N + '} = ' + pct(marg))}.` },
+      { h: 'Inferencia informal', b: Math.abs(cond - cond2) > 0.1 ? `Los porcentajes difieren en ${fx(100 * Math.abs(cond - cond2), 1)} puntos: hay indicios de <b>asociación</b> entre las variables (en estos datos).` : `Los porcentajes son parecidos (diferencia de ${fx(100 * Math.abs(cond - cond2), 1)} puntos): no se aprecia una asociación fuerte.` + ' Es una conclusión informal: otra muestra podría dar resultados distintos.' }
+    ]
+  };
+};
+function stacked(svg, rows, cols, T, percent) {
+  const colors = [css('--u1'), css('--u2'), css('--u3'), '#64748b'];
+  const P = plane(svg, { W: 640, H: 60 + 46 * rows.length, x0: 0, x1: percent ? 100 : Math.max(...T.map(r => S.sum(r))), y0: 0, y1: rows.length, yaxis: false, grid: false, pad: { l: 130, r: 16, t: 34, b: 26 }, xf: t => percent ? t + '%' : fn(t) });
+  T.forEach((r, a) => {
+    const tot = S.sum(r); let acc = 0; const y = P.sy(rows.length - a) + 6, h = P.sy(0) - P.sy(1) - 12;
+    el('text', { x: P.p.l - 8, y: y + h / 2 + 4, 'text-anchor': 'end', text: rows[a], style: 'font-size:13px;font-weight:600' }, P.g);
+    r.forEach((v, b) => { const w = percent ? 100 * v / tot : v; const x = P.sx(acc); const rect = el('rect', { x, y, height: h, width: 0, fill: colors[b], opacity: .85, class: 'barr' }, P.g); const W = P.sx(acc + w) - x; setTimeout(() => rect.setAttribute('width', W), 50 + 90 * b); rect.style.transition = 'width .6s ease';
+      if (W > 34) el('text', { x: x + W / 2, y: y + h / 2 + 4, 'text-anchor': 'middle', style: 'font-size:11px;font-weight:700;fill:#fff', text: percent ? fx(w, 0) + '%' : v }, P.g); acc += w; });
+  });
+  cols.forEach((c, b) => { el('rect', { x: P.p.l + b * 150, y: 8, width: 12, height: 12, fill: colors[b] }, P.g); el('text', { x: P.p.l + b * 150 + 16, y: 18, class: 'tick', text: c }, P.g); });
+}
+PROBLEMS.regresion = () => {
+  const ctx = R.pick([{ x: 'horas de estudio', y: 'calificación', a: 5, b: 0.45, sx: [1, 10], noise: 0.5, d: 1 }, { x: 'estatura (cm)', y: 'longitud del pie (cm)', a: -2, b: 0.16, sx: [150, 185], noise: 0.6, d: 1 }, { x: 'temperatura (°C)', y: 'vasos de agua vendidos', a: -20, b: 4, sx: [18, 34], noise: 6, d: 0 }]);
+  const n = 6; let xs;
+  do { xs = R.shuffle(Array.from({ length: ctx.sx[1] - ctx.sx[0] + 1 }, (_, i) => ctx.sx[0] + i)).slice(0, n).sort((a, b) => a - b); } while (new Set(xs).size < n);
+  const ys = xs.map(x => +(ctx.a + ctx.b * x + ctx.noise * R.normal()).toFixed(ctx.d));
+  const sx = S.sum(xs), sy = S.sum(ys), sxx = S.sum(xs.map(x => x * x)), syy = S.sum(ys.map(y => y * y)), sxy = S.sum(xs.map((x, i) => x * ys[i]));
+  const num = n * sxy - sx * sy, den = Math.sqrt((n * sxx - sx * sx) * (n * syy - sy * sy)), r = num / den;
+  const b = num / (n * sxx - sx * sx), a = sy / n - b * sx / n;
+  const x0 = Math.round((xs[1] + xs[4]) / 2) + (xs.includes(Math.round((xs[1] + xs[4]) / 2)) ? 0 : 0);
+  const yhat = a + b * x0;
+  const fmt = v => fn(v, 4);
+  return {
+    enun: `Se midieron ${ctx.x} (\\(x\\)) y ${ctx.y} (\\(y\\)) en ${n} casos:` + htable(['x', ...xs], [['y', ...ys]]) + `Calcula el coeficiente de correlación de Pearson, la recta de mínimos cuadrados y estima \\(y\\) cuando \\(x = ${x0}\\). <b>¿Cuánto vale r?</b> (3 decimales)`,
+    ans: { label: 'r =', value: r2(r, 3), tol: 0.006 }, chk: { xs, ys, b, a, x0, yhat },
+    fig: node => { const svg = el('svg', {}); node.appendChild(svg); scatterPlot(svg, xs, ys, null); },
+    steps: [
+      { h: 'Tabla de sumas', b: htable(['x', 'y', 'x²', 'y²', 'xy'], [...xs.map((x, i) => [x, ys[i], fmt(x * x), fmt(ys[i] ** 2), fmt(x * ys[i])]), [{ v: '∑ ' + fmt(sx), c: 'hl' }, { v: fmt(sy), c: 'hl' }, { v: fmt(sxx), c: 'hl' }, { v: fmt(syy), c: 'hl' }, { v: fmt(sxy), c: 'hl' }]]) },
+      { h: 'Coeficiente de correlación de Pearson', b: MD(`r = \\frac{n\\sum xy - \\sum x\\sum y}{\\sqrt{\\left[n\\sum x^2 - (\\sum x)^2\\right]\\left[n\\sum y^2 - (\\sum y)^2\\right]}} = \\frac{${fmt(num)}}{\\sqrt{(${fmt(n * sxx - sx * sx)})(${fmt(n * syy - sy * sy)})}} = ${fx(r, 3)}`) },
+      { h: 'Interpreta r', b: `${M('r = ' + fx(r, 3))}: correlación lineal ${Math.abs(r) >= 0.8 ? 'fuerte' : Math.abs(r) >= 0.5 ? 'moderada' : 'débil'} y ${r > 0 ? 'positiva (cuando x aumenta, y tiende a aumentar)' : 'negativa (cuando x aumenta, y tiende a disminuir)'}. Correlación no implica causalidad.` },
+      { h: 'Pendiente', b: MD(`b = \\frac{n\\sum xy - \\sum x\\sum y}{n\\sum x^2 - (\\sum x)^2} = \\frac{${fmt(num)}}{${fmt(n * sxx - sx * sx)}} = ${fx(b, 4)}`) + `Por cada unidad que aumenta ${M('x')}, ${M('y')} cambia en promedio ${fx(b, 4)} unidades.` },
+      { h: 'Ordenada al origen', b: MD(`a = \\bar{y} - b\\bar{x} = ${fx(sy / n, 4)} - (${fx(b, 4)})(${fx(sx / n, 4)}) = ${fx(a, 4)}`) + MD(`\\hat{y} = ${fx(a, 4)} ${b >= 0 ? '+' : '-'} ${fx(Math.abs(b), 4)}\\,x`) },
+      { h: 'Predicción', b: MD(`\\hat{y}(${x0}) = ${fx(a, 4)} ${b >= 0 ? '+' : '-'} ${fx(Math.abs(b), 4)}(${x0}) = ${fx(yhat, 2)}`) + `Como ${x0} está dentro del rango observado (${xs[0]} a ${xs[n - 1]}), es una <b>interpolación</b>; extrapolar lejos de ese rango no es confiable.`,
+        fig: li => { const svg = el('svg', {}); li.appendChild(svg); scatterPlot(svg, xs, ys, { a, b }); } }
+    ]
+  };
+};
+function scatterPlot(svg, xs, ys, line, opts = {}) {
+  const pxx = (Math.max(...xs) - Math.min(...xs)) * 0.1 || 1, pyy = (Math.max(...ys) - Math.min(...ys)) * 0.15 || 1;
+  const o = { W: 640, H: 280, x0: opts.x0 ?? Math.min(...xs) - pxx, x1: opts.x1 ?? Math.max(...xs) + pxx, y0: opts.y0 ?? Math.min(...ys) - pyy, y1: opts.y1 ?? Math.max(...ys) + pyy };
+  const P = plane(svg, o);
+  if (line) { const l = el('path', { d: `M${P.sx(o.x0)},${P.sy(line.a + line.b * o.x0)}L${P.sx(o.x1)},${P.sy(line.a + line.b * o.x1)}`, stroke: css('--u2'), 'stroke-width': 2.5 }, P.g); animatePath(l); }
+  xs.forEach((x, i) => { const c = el('circle', { cx: P.sx(x), cy: P.sy(ys[i]), r: 0, fill: css('--u1'), opacity: .85 }, P.g); c.style.transition = 'r .4s'; setTimeout(() => c.setAttribute('r', 6), 40 * i); });
+  return P;
+}
+
+/* ---------------------------------------------------------------- problemas: Unidad 3 */
+const DICE_EV = [
+  { t: 'la suma es 7', f: (a, b) => a + b === 7 }, { t: 'la suma es 8', f: (a, b) => a + b === 8 }, { t: 'la suma es mayor que 9', f: (a, b) => a + b > 9 },
+  { t: 'la suma es par', f: (a, b) => (a + b) % 2 === 0 }, { t: 'sale al menos un 6', f: (a, b) => a === 6 || b === 6 }, { t: 'los dos dados muestran el mismo número', f: (a, b) => a === b },
+  { t: 'el primer dado es par', f: (a) => a % 2 === 0 }, { t: 'la suma es menor que 5', f: (a, b) => a + b < 5 }, { t: 'el segundo dado es mayor que 4', f: (a, b) => b > 4 }];
+function gcd(a, b) { return b ? gcd(b, a % b) : Math.abs(a); }
+const frac = (a, b) => { const g = gcd(a, b) || 1; return b / g === 1 ? `${a / g}` : `\\tfrac{${a / g}}{${b / g}}`; };
+PROBLEMS.dados = () => {
+  let A, B; do { [A, B] = R.shuffle(DICE_EV).slice(0, 2); } while (!A || !B);
+  let nA = 0, nB = 0, nAB = 0; const cells = [];
+  for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) { const ia = A.f(a, b), ib = B.f(a, b); nA += ia; nB += ib; nAB += ia && ib; cells.push({ a, b, ia, ib }); }
+  const nU = nA + nB - nAB;
+  const grid = node => { const svg = el('svg', { viewBox: '0 0 300 300', style: 'max-width:320px' }); node.appendChild(svg); const s = 40, o = 40;
+    for (let i = 1; i <= 6; i++) { el('text', { x: o + (i - .5) * s, y: 26, 'text-anchor': 'middle', class: 'tick', text: i }, svg); el('text', { x: 22, y: o + (i - .5) * s + 4, 'text-anchor': 'middle', class: 'tick', text: i }, svg); }
+    el('text', { x: 170, y: 10, 'text-anchor': 'middle', class: 'tick', text: 'dado 2 →' }, svg);
+    cells.forEach((c, k) => { const fill = c.ia && c.ib ? css('--u3') : c.ia ? css('--u1') : c.ib ? css('--u2') : 'transparent';
+      const r = el('rect', { x: o + (c.b - 1) * s + 2, y: o + (c.a - 1) * s + 2, width: s - 4, height: s - 4, rx: 6, fill, opacity: 0, stroke: css('--line') }, svg); r.style.transition = 'opacity .4s'; setTimeout(() => r.setAttribute('opacity', c.ia || c.ib ? .8 : 1), 15 * k);
+      el('text', { x: o + (c.b - .5) * s, y: o + (c.a - .5) * s + 4, 'text-anchor': 'middle', style: 'font-size:10px', text: `${c.a},${c.b}` }, svg); }); };
+  return {
+    enun: `Se lanzan dos dados equilibrados. Sean los eventos <b>A:</b> «${A.t}» y <b>B:</b> «${B.t}». Calcula ${M('P(A)')}, ${M('P(B)')}, ${M('P(A\\cap B)')} y <b>${M('P(A\\cup B)')}</b> (en decimal, 4 cifras).`,
+    ans: { label: 'P(A∪B) =', value: r2(nU / 36, 4), tol: 0.0006 }, chk: { A: A.t, B: B.t, nA, nB, nAB },
+    steps: [
+      { h: 'Espacio muestral', b: `Cada resultado es un par (dado 1, dado 2): ${M('6\\times 6 = 36')} resultados igualmente probables. Usamos el enfoque clásico ${M('P(E)=\\dfrac{\\text{casos favorables}}{\\text{casos posibles}}')}.`, fig: grid },
+      { h: 'Cuenta A y B', b: `En la cuadrícula: <span style="color:var(--u1)">■</span> solo A, <span style="color:var(--u2)">■</span> solo B, <span style="color:var(--u3)">■</span> A y B. ${MD(`P(A) = \\frac{${nA}}{36} = ${frac(nA, 36)},\\qquad P(B) = \\frac{${nB}}{36} = ${frac(nB, 36)}`)}` },
+      { h: 'Intersección', b: MD(`P(A\\cap B) = \\frac{${nAB}}{36}${nAB ? ' = ' + frac(nAB, 36) : ' = 0'}`) + (nAB === 0 ? 'A y B son <b>mutuamente excluyentes</b> (no pueden ocurrir a la vez).' : '') },
+      { h: 'Regla de la suma (unión)', b: MD(`P(A\\cup B) = P(A) + P(B) - P(A\\cap B) = \\frac{${nA} + ${nB} - ${nAB}}{36} = \\frac{${nU}}{36} = ${fx(nU / 36, 4)}`) },
+      { h: 'Complemento', b: MD(`P\\big((A\\cup B)^c\\big) = 1 - ${fx(nU / 36, 4)} = ${fx(1 - nU / 36, 4)}`) + 'Es la probabilidad de que no ocurra ni A ni B.' }
+    ]
+  };
+};
+PROBLEMS.condicional = () => {
+  const c = R.pick([{ A: 'aprobó el examen', B: 'asistió a asesorías' }, { A: 'usa lentes', B: 'pasa más de 5 h diarias frente a pantallas' }, { A: 'desayunó', B: 'es del turno matutino' }]);
+  const ab = R.int(20, 60), anb = R.int(15, 60), nab = R.int(8, 40), nanb = R.int(10, 50), N = ab + anb + nab + nanb;
+  const pB = (ab + nab) / N, pA = (ab + anb) / N, pAB = ab / N, pAgB = ab / (ab + nab);
+  const tab = htable(['', 'B: ' + c.B, 'Bᶜ', 'Total'], [['<b>A: ' + c.A + '</b>', { v: ab, c: 'hl' }, anb, ab + anb], ['<b>Aᶜ</b>', nab, nanb, nab + nanb], ['<b>Total</b>', ab + nab, anb + nanb, N]]);
+  const indep = Math.abs(pAgB - pA) < 0.02;
+  return {
+    enun: `En un grupo de ${N} estudiantes se registró si <b>${c.A}</b> (A) y si <b>${c.B}</b> (B):` + tab + `Se elige un estudiante al azar. <b>Calcula ${M('P(A\\mid B)')}</b> (4 decimales) y decide si A y B son independientes.`,
+    ans: { label: 'P(A|B) =', value: r2(pAgB, 4), tol: 0.0006 }, chk: { ab, anb, nab, nanb },
+    steps: [
+      { h: 'Reduce el espacio muestral', b: `Si sabemos que ocurrió B, solo consideramos la columna B: ${ab + nab} estudiantes; de ellos ${ab} también cumplen A. ${MD(`P(A\\mid B) = \\frac{${ab}}{${ab + nab}} = ${fx(pAgB, 4)}`)}` },
+      { h: 'Con la fórmula', b: MD(`P(A\\mid B) = \\frac{P(A\\cap B)}{P(B)} = \\frac{${ab}/${N}}{${ab + nab}/${N}} = \\frac{${fx(pAB, 4)}}{${fx(pB, 4)}} = ${fx(pAgB, 4)}`) },
+      { h: 'Probabilidad conjunta (regla del producto)', b: MD(`P(A\\cap B) = P(B)\\,P(A\\mid B) = (${fx(pB, 4)})(${fx(pAgB, 4)}) = ${fx(pAB, 4)}`) },
+      { h: '¿Independientes?', b: `Compara ${M('P(A\\mid B) = ' + fx(pAgB, 4))} con ${M('P(A) = \\frac{' + (ab + anb) + '}{' + N + '} = ' + fx(pA, 4))}. ` + (indep ? 'Son prácticamente iguales: saber B casi no cambia la probabilidad de A → A y B son (aproximadamente) <b>independientes</b>.' : `Son distintas: saber que ocurrió B ${pAgB > pA ? 'aumenta' : 'disminuye'} la probabilidad de A → A y B <b>no son independientes</b> (son dependientes). También se puede verificar con ${M('P(A\\cap B) \\ne P(A)P(B) = ' + fx(pA * pB, 4))}.`) }
+    ]
+  };
+};
+PROBLEMS.urna = () => {
+  const r = R.int(3, 8), b = R.int(3, 8), n = r + b; const col = R.pick(['rojas', 'azules']); const k = col === 'rojas' ? r : b; const sg = col === 'rojas' ? 'roja' : 'azul';
+  const sin = k / n * (k - 1) / (n - 1), con = (k / n) ** 2;
+  return {
+    enun: `Una urna tiene ${r} canicas rojas y ${b} azules. Se extraen dos canicas al azar <b>sin reemplazo</b>. <b>¿Cuál es la probabilidad de que ambas sean ${col}?</b> (4 decimales) Compara con el caso <i>con</i> reemplazo.`,
+    ans: { label: 'P =', value: r2(sin, 4), tol: 0.0006 }, chk: { r, b, col },
+    steps: [
+      { h: 'Define los eventos', b: `${M('E_1')}: la 1.ª es ${sg}; ${M('E_2')}: la 2.ª es ${sg}. Buscamos ${M('P(E_1\\cap E_2)')}.` },
+      { h: 'Primera extracción', b: M(`P(E_1) = \\frac{${k}}{${n}}`) },
+      { h: 'Segunda extracción (condicional)', b: `Sin reemplazo queda una canica ${sg} menos y una canica menos en total: ${M(`P(E_2\\mid E_1) = \\frac{${k - 1}}{${n - 1}}`)}` },
+      { h: 'Regla del producto', b: MD(`P(E_1\\cap E_2) = \\frac{${k}}{${n}}\\cdot\\frac{${k - 1}}{${n - 1}} = \\frac{${k * (k - 1)}}{${n * (n - 1)}} = ${fx(sin, 4)}`) },
+      { h: 'Con reemplazo', b: `La urna vuelve a su estado inicial; los eventos son <b>independientes</b>: ${M(`\\left(\\frac{${k}}{${n}}\\right)^2 = ${fx(con, 4)}`)}. Sin reemplazo los eventos son dependientes y la probabilidad es menor.` }
+    ]
+  };
+};
+
+/* ---------------------------------------------------------------- laboratorios */
+function labMuestreo() {
+  const root = $('#lab-muestreo'); if (!root) return;
+  const svg = $('svg.pop', root), svg2 = $('svg.hist', root), N = 200, cols = 20; let p = 0.35; let pop = [], hist = [];
+  const build = () => { const K = Math.round(p * N); pop = R.shuffle(Array.from({ length: N }, (_, i) => i < K)); hist = []; draw([]); drawHist(); $('.p-real', root).textContent = fx(p, 2); };
+  const draw = (sel) => { svg.setAttribute('viewBox', '0 0 640 330'); clear(svg); const s = new Set(sel);
+    pop.forEach((v, i) => { const x = 22 + (i % cols) * 31, y = 20 + Math.floor(i / cols) * 31; el('circle', { cx: x, cy: y, r: s.has(i) ? 11 : 9, fill: v ? css('--u2') : css('--u1'), opacity: s.size && !s.has(i) ? .18 : .9, stroke: s.has(i) ? css('--ink') : 'none', 'stroke-width': 2 }, svg); }); };
+  const drawHist = () => { const P = plane(svg2, { W: 640, H: 170, x0: 0, x1: 1, y0: 0, y1: Math.max(4, ...countBins()) + 1, xt: [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1], xl: 'proporción muestral p̂', yl: 'muestras' });
+    const b = countBins(); b.forEach((c, k) => { if (c) el('rect', { x: P.sx(k * .05) + 1, y: P.sy(c), width: P.sx(.05) - P.sx(0) - 2, height: P.sy(0) - P.sy(c), fill: css('--u2'), opacity: .75 }, P.g); });
+    el('line', { x1: P.sx(p), x2: P.sx(p), y1: P.sy(0), y2: 10, stroke: css('--u1'), 'stroke-width': 3, 'stroke-dasharray': '6 4' }, P.g);
+    el('text', { x: P.sx(p) + 6, y: 20, class: 'tick', text: 'p real' }, P.g); };
+  const countBins = () => { const b = Array(20).fill(0); hist.forEach(v => b[Math.min(19, Math.floor(v / .05))]++); return b; };
+  const sample = () => { const n = +$('.n', root).value; const sel = R.shuffle([...Array(N).keys()]).slice(0, n); const ph = sel.filter(i => pop[i]).length / n; hist.push(ph); draw(sel); drawHist();
+    $('.p-hat', root).textContent = fx(ph, 3); $('.n-m', root).textContent = hist.length; $('.p-prom', root).textContent = fx(S.mean(hist), 3); };
+  $('.n', root).oninput = e => { $('.n-v', root).textContent = e.target.value; hist = []; drawHist(); };
+  $('.b1', root).onclick = sample; $('.b20', root).onclick = () => { let i = 0; const t = setInterval(() => { sample(); if (++i >= 20) clearInterval(t); }, 90); };
+  $('.bnew', root).onclick = () => { p = R.pick([.2, .25, .3, .35, .4, .45, .55, .6]); build(); };
+  build(); document.addEventListener('themechange', () => { draw([]); drawHist(); });
+}
+const VARS_QUIZ = [
+  ['Color de ojos', 'Cualitativa nominal'], ['Nivel socioeconómico (bajo, medio, alto)', 'Cualitativa ordinal'], ['Número de hermanos', 'Cuantitativa discreta'], ['Estatura en cm', 'Cuantitativa continua'],
+  ['Red social favorita', 'Cualitativa nominal'], ['Tiempo de traslado a la escuela', 'Cuantitativa continua'], ['Número de materias adeudadas', 'Cuantitativa discreta'], ['Grado de satisfacción (nada, poco, mucho)', 'Cualitativa ordinal'],
+  ['Peso de una mochila', 'Cuantitativa continua'], ['Carrera que desea estudiar', 'Cualitativa nominal'], ['Lugar obtenido en una carrera (1.º, 2.º, 3.º)', 'Cualitativa ordinal'], ['Número de mensajes enviados en un día', 'Cuantitativa discreta'],
+  ['Temperatura del salón', 'Cuantitativa continua'], ['Alcaldía donde vive', 'Cualitativa nominal'], ['Talla de playera (CH, M, G)', 'Cualitativa ordinal'], ['Número de goles en un partido', 'Cuantitativa discreta']];
+function labTipos() {
+  const root = $('#lab-tipos'); if (!root) return; const opts = ['Cualitativa nominal', 'Cualitativa ordinal', 'Cuantitativa discreta', 'Cuantitativa continua']; let ok = 0, tot = 0, cur;
+  const next = () => { cur = R.pick(VARS_QUIZ); $('.q', root).textContent = cur[0]; $('.fb', root).textContent = ''; $('.opts', root).innerHTML = opts.map(o => `<button class="btn btn-ghost btn-sm quiz-opt">${o}</button>`).join(''); $$('.quiz-opt', root).forEach(b => b.onclick = () => answer(b)); };
+  const answer = b => { if ($('.quiz-opt.correct', root)) return; tot++; const right = b.textContent === cur[1]; if (right) ok++; b.classList.add(right ? 'correct' : 'wrong'); $$('.quiz-opt', root).forEach(x => { if (x.textContent === cur[1]) x.classList.add('correct'); });
+    $('.fb', root).innerHTML = (right ? '✔ Correcto. ' : '✘ Es <b>' + cur[1] + '</b>. ') + ({ 'Cualitativa nominal': 'Categorías sin orden.', 'Cualitativa ordinal': 'Categorías con un orden natural.', 'Cuantitativa discreta': 'Se cuenta: valores aislados (enteros).', 'Cuantitativa continua': 'Se mide: puede tomar cualquier valor en un intervalo.' })[cur[1]]; $('.score', root).textContent = `${ok}/${tot}`; setTimeout(next, 1800); };
+  next();
+}
+const DEPORTES = ['Fútbol', 'Básquetbol', 'Voleibol', 'Natación', 'Atletismo'];
+function labGraficas() {
+  const root = $('#lab-graf'); if (!root) return; const svg = $('svg', root); let cat, num, tipo = 'barras';
+  const gen = () => { cat = DEPORTES.map(() => R.int(3, 18)); num = Array.from({ length: 40 }, () => Math.max(5, Math.round(35 + 12 * R.normal()))); draw(); };
+  const colors = () => [css('--u1'), css('--u2'), css('--u3'), '#0ea5e9', '#e11d48'];
+  const draw = () => { clear(svg); const C = colors(); const desc = $('.desc', root);
+    if (tipo === 'barras') { const P = plane(svg, { W: 640, H: 280, x0: 0, x1: 5, y0: 0, y1: Math.max(...cat) + 2, xt: [], yl: 'frecuencia' });
+      cat.forEach((v, i) => { const r = el('rect', { x: P.sx(i + .15), width: P.sx(.7) - P.sx(0), y: P.sy(0), height: 0, fill: C[i], class: 'barr', rx: 4 }, P.g); setTimeout(() => { r.setAttribute('y', P.sy(v)); r.setAttribute('height', P.sy(0) - P.sy(v)); }, 40 + 70 * i); el('text', { x: P.sx(i + .5), y: P.H - 14, 'text-anchor': 'middle', class: 'tick', text: DEPORTES[i] }, P.g); });
+      desc.innerHTML = '<b>Gráfica de barras:</b> variables cualitativas (o discretas con pocos valores). Las barras están separadas; su altura es la frecuencia.'; }
+    else if (tipo === 'circular') { svg.setAttribute('viewBox', '0 0 640 280'); const T = S.sum(cat); let a0 = -Math.PI / 2; const cx = 200, cy = 140, r = 115;
+      cat.forEach((v, i) => { const a1 = a0 + 2 * Math.PI * v / T; const large = a1 - a0 > Math.PI ? 1 : 0; const p = el('path', { d: `M${cx},${cy}L${cx + r * Math.cos(a0)},${cy + r * Math.sin(a0)}A${r},${r} 0 ${large} 1 ${cx + r * Math.cos(a1)},${cy + r * Math.sin(a1)}Z`, fill: C[i], stroke: css('--card'), 'stroke-width': 2, opacity: 0 }, svg); p.style.transition = 'opacity .5s'; setTimeout(() => p.setAttribute('opacity', .9), 80 * i);
+        el('rect', { x: 380, y: 50 + 34 * i, width: 16, height: 16, fill: C[i] }, svg); el('text', { x: 404, y: 63 + 34 * i, text: `${DEPORTES[i]}: ${v} (${fx(100 * v / T, 1)} %, ${fx(360 * v / T, 1)}°)`, style: 'font-size:13px' }, svg); a0 = a1; });
+      desc.innerHTML = '<b>Gráfica circular:</b> muestra la proporción de cada categoría respecto al total. Ángulo del sector = ' + M('\\dfrac{f}{n}\\times 360^\\circ') + '.'; tex(desc); }
+    else if (tipo === 'puntos') { const cnt = {}; const P = plane(svg, { W: 640, H: 280, x0: Math.min(...num) - 2, x1: Math.max(...num) + 2, y0: 0, y1: 1, yaxis: false, grid: false, xl: 'minutos de traslado' });
+      S.sorted(num).forEach((v, i) => { cnt[v] = (cnt[v] || 0) + 1; const c = el('circle', { cx: P.sx(v), cy: P.sy(0) - 9 - 15 * (cnt[v] - 1), r: 0, fill: C[0] }, P.g); c.style.transition = 'r .3s'; setTimeout(() => c.setAttribute('r', 6), 20 * i); });
+      desc.innerHTML = '<b>Gráfica de puntos:</b> cada dato es un punto sobre la recta numérica; útil con pocos datos cuantitativos para ver concentración, huecos y valores atípicos.'; }
+    else { const mn = Math.min(...num), A = 10, li0 = Math.floor(mn / A) * A; const cls = []; let F = 0; for (let li = li0; li <= Math.max(...num); li += A) { const f = num.filter(x => x >= li && x < li + A).length; F += f; cls.push({ li, ls: li + A, f, F }); }
+      const yM = tipo === 'ojiva' ? num.length : Math.max(...cls.map(c => c.f)) + 2;
+      const P = plane(svg, { W: 640, H: 280, x0: li0 - A, x1: cls[cls.length - 1].ls + A, y0: 0, y1: yM, xt: [li0 - A, ...cls.map(c => c.li), cls[cls.length - 1].ls, cls[cls.length - 1].ls + A], xl: 'minutos de traslado', yl: tipo === 'ojiva' ? 'F (acumulada)' : 'f' });
+      if (tipo === 'histograma' || tipo === 'poligono') cls.forEach((c, i) => { const r = el('rect', { x: P.sx(c.li), width: P.sx(c.ls) - P.sx(c.li), y: P.sy(0), height: 0, fill: C[0], opacity: tipo === 'poligono' ? .25 : .8, stroke: css('--card'), class: 'barr' }, P.g); setTimeout(() => { r.setAttribute('y', P.sy(c.f)); r.setAttribute('height', P.sy(0) - P.sy(c.f)); }, 50 + 60 * i); });
+      if (tipo === 'poligono') { const pts = [[li0 - A / 2, 0], ...cls.map(c => [(c.li + c.ls) / 2, c.f]), [cls[cls.length - 1].ls + A / 2, 0]]; const p = el('path', { d: pts.map((q, i) => (i ? 'L' : 'M') + P.sx(q[0]) + ',' + P.sy(q[1])).join(''), fill: 'none', stroke: C[1], 'stroke-width': 3 }, P.g); animatePath(p, 1200); pts.forEach(q => el('circle', { cx: P.sx(q[0]), cy: P.sy(q[1]), r: 4, fill: C[1] }, P.g)); }
+      if (tipo === 'ojiva') { const pts = [[li0, 0], ...cls.map(c => [c.ls, c.F])]; const p = el('path', { d: pts.map((q, i) => (i ? 'L' : 'M') + P.sx(q[0]) + ',' + P.sy(q[1])).join(''), fill: 'none', stroke: C[2], 'stroke-width': 3 }, P.g); animatePath(p, 1200); pts.forEach(q => el('circle', { cx: P.sx(q[0]), cy: P.sy(q[1]), r: 4, fill: C[2] }, P.g)); }
+      desc.innerHTML = { histograma: '<b>Histograma:</b> datos cuantitativos agrupados en clases; las barras van juntas porque los intervalos son contiguos.', poligono: '<b>Polígono de frecuencias:</b> une las marcas de clase a la altura de su frecuencia; se cierra en el eje con una clase vacía en cada extremo.', ojiva: '<b>Ojiva:</b> une los límites superiores de cada clase a la altura de su frecuencia acumulada; permite leer cuántos datos están por debajo de un valor.' }[tipo]; } };
+  $$('[data-g]', root).forEach(b => b.onclick = () => { $$('[data-g]', root).forEach(x => x.classList.remove('active')); b.classList.add('active'); tipo = b.dataset.g; draw(); });
+  $('.bnew', root).onclick = gen; gen(); document.addEventListener('themechange', draw);
+}
+function labMedidas() {
+  const root = $('#lab-medidas'); if (!root) return; const ta = $('textarea', root), out = $('.out', root), svg = $('svg.box', root), svg2 = $('svg.dot', root);
+  const upd = () => { const d = ta.value.split(/[\s,;]+/).filter(t => t.trim() !== '').map(Number).filter(x => !isNaN(x)); if (d.length < 2) { out.innerHTML = '<span class="text-danger">Escribe al menos 2 números.</span>'; return; }
+    const m = S.mean(d), md = S.median(d), mo = S.modes(d), s = S.sdS(d), q1 = S.quantile(d, .25), q3 = S.quantile(d, .75);
+    const st = (k, v) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`;
+    out.innerHTML = st('n', d.length) + st('media', fx(m, 2)) + st('mediana', fn(md, 2)) + st('moda', mo.length ? mo.join(', ') : '—') + st('rango', fn(Math.max(...d) - Math.min(...d), 2)) + st('varianza s²', fx(S.varS(d), 2)) + st('desv. est. s', fx(s, 2)) + st('CV', m ? fx(100 * s / m, 1) + ' %' : '—') + st('Q₁', fn(q1, 2)) + st('Q₃', fn(q3, 2)) + st('RIC', fn(q3 - q1, 2));
+    const b = boxplot(svg, d); const s2 = S.sorted(d), pad = (s2[s2.length - 1] - s2[0]) * .08 || 1, cnt = {};
+    const P = plane(svg2, { W: 640, H: 150, x0: s2[0] - pad, x1: s2[s2.length - 1] + pad, y0: 0, y1: 1, yaxis: false, grid: false, pad: { l: 16, r: 16, t: 8, b: 26 } });
+    s2.forEach(v => { cnt[v] = (cnt[v] || 0) + 1; el('circle', { cx: P.sx(v), cy: P.sy(0) - 8 - 13 * (cnt[v] - 1), r: 5.5, fill: b.out.includes(v) ? css('--bad') : css('--u1'), opacity: .85 }, P.g); });
+    el('line', { x1: P.sx(m), x2: P.sx(m), y1: P.sy(0), y2: 10, stroke: css('--u2'), 'stroke-width': 2.5, 'stroke-dasharray': '5 4' }, P.g); el('text', { x: P.sx(m) + 5, y: 18, class: 'tick', text: 'media' }, P.g); };
+  ta.oninput = upd; $('.bnew', root).onclick = () => { const n = R.int(12, 20); const d = Array.from({ length: n }, () => R.int(5, 10)); if (Math.random() < .5) d.push(R.int(20, 30)); ta.value = d.join(', '); upd(); };
+  upd(); document.addEventListener('themechange', upd);
+}
+function labEmpirica() {
+  const root = $('#lab-empirica'); if (!root) return; const svg = $('svg', root); let k = 1, data = [];
+  const resample = () => { data = Array.from({ length: 1000 }, R.normal); draw(); };
+  const draw = () => { const m = +$('.mu', root).value, s = +$('.sd', root).value; $('.mu-v', root).textContent = m; $('.sd-v', root).textContent = s;
+    const P = plane(svg, { W: 640, H: 260, x0: m - 4 * s, x1: m + 4 * s, y0: 0, y1: normPdf(m, m, s) * 1.15, xt: [-3, -2, -1, 0, 1, 2, 3].map(j => m + j * s), yaxis: false, grid: false, pad: { l: 16, r: 16 } });
+    const bw = s / 2.5; const bins = {}; data.forEach(z => { const x = m + s * z; const b = Math.floor((x - (m - 4 * s)) / bw); bins[b] = (bins[b] || 0) + 1; });
+    Object.entries(bins).forEach(([b, c]) => { const x = m - 4 * s + b * bw, h = c / (data.length * bw); if (x >= m - 4 * s && x + bw <= m + 4 * s) el('rect', { x: P.sx(x), width: P.sx(x + bw) - P.sx(x) - 1, y: P.sy(h), height: P.sy(0) - P.sy(h), fill: css('--muted'), opacity: .18 }, P.g); });
+    el('path', { d: areaFn(x => normPdf(x, m, s), m - k * s, m + k * s, P.sx, P.sy), fill: css('--shade') }, P.g);
+    el('path', { d: pathFn(x => normPdf(x, m, s), m - 4 * s, m + 4 * s, P.sx, P.sy), fill: 'none', stroke: css('--u1'), 'stroke-width': 2.5 }, P.g);
+    [m - k * s, m + k * s].forEach(v => el('line', { x1: P.sx(v), x2: P.sx(v), y1: P.sy(0), y2: P.sy(normPdf(v, m, s)), stroke: css('--u1'), 'stroke-dasharray': '4 3' }, P.g));
+    const real = data.filter(z => Math.abs(z) <= k).length / data.length;
+    el('text', { x: P.sx(m), y: P.sy(normPdf(m, m, s) * .45), 'text-anchor': 'middle', style: 'font-size:20px;font-weight:800', text: ['≈68 %', '≈95 %', '≈99.7 %'][k - 1] }, P.g);
+    $('.res', root).innerHTML = `Intervalo ${M('\\bar{x}\\pm' + k + 's')} = [${fn(m - k * s, 2)}, ${fn(m + k * s, 2)}]. En los 1000 datos simulados (fondo gris) cae el <b>${fx(100 * real, 1)} %</b>; la regla empírica predice ≈${['68', '95', '99.7'][k - 1]} %.`; tex($('.res', root)); };
+  $$('[data-k]', root).forEach(b => b.onclick = () => { $$('[data-k]', root).forEach(x => x.classList.remove('active')); b.classList.add('active'); k = +b.dataset.k; draw(); });
+  $('.mu', root).oninput = draw; $('.sd', root).oninput = draw; $('.bnew', root).onclick = resample; resample(); document.addEventListener('themechange', draw);
+}
+function labConting() {
+  const root = $('#lab-conting'); if (!root) return; let pc = false; const svg = $('svg', root);
+  const T = [[85, 12, 43], [103, 17, 40]];
+  const draw = () => stacked(svg, ['Hombre', 'Mujer'], ['Nunca ha fumado', 'Dejó de fumar', 'Fuma'], T, pc);
+  $('.btog', root).onclick = () => { pc = !pc; $('.btog', root).textContent = pc ? 'Ver frecuencias' : 'Ver % por fila'; draw(); }; draw(); document.addEventListener('themechange', draw);
+}
+function labDispersion() {
+  const root = $('#lab-disp'); if (!root) return; const svg = $('svg', root); let xs = [], ys = [], showRes = false;
+  const draw = () => { const P = plane(svg, { W: 640, H: 340, x0: 0, x1: 10, y0: 0, y1: 10 });
+    svg._P = P; const st = $('.st', root);
+    if (xs.length >= 2 && new Set(xs).size > 1) { const { a, b } = S.linreg(xs, ys); const r = S.pearson(xs, ys);
+      if (showRes) xs.forEach((x, i) => { const yh = a + b * x, d = P.sy(yh) - P.sy(ys[i]); el('rect', { x: P.sx(x), y: Math.min(P.sy(ys[i]), P.sy(yh)), width: Math.abs(d), height: Math.abs(d), fill: css('--shade2'), stroke: css('--u2') }, P.g); });
+      el('line', { x1: P.sx(0), y1: P.sy(a), x2: P.sx(10), y2: P.sy(a + 10 * b), stroke: css('--u2'), 'stroke-width': 2.5 }, P.g);
+      const sse = S.sum(xs.map((x, i) => (ys[i] - a - b * x) ** 2));
+      st.innerHTML = `<div class="stat"><span>n</span><b>${xs.length}</b></div><div class="stat"><span>r</span><b>${isNaN(r) ? '—' : fx(r, 3)}</b></div><div class="stat"><span>recta</span><b>ŷ = ${fx(a, 2)} ${b >= 0 ? '+' : '−'} ${fx(Math.abs(b), 2)}x</b></div><div class="stat"><span>suma de cuadrados</span><b>${fx(sse, 2)}</b></div>`; }
+    else st.innerHTML = '<span class="text-muted">Haz clic en la gráfica para agregar al menos 2 puntos.</span>';
+    xs.forEach((x, i) => el('circle', { cx: P.sx(x), cy: P.sy(ys[i]), r: 6, fill: css('--u1') }, P.g)); };
+  svg.addEventListener('click', e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const q = pt.matrixTransform(svg.getScreenCTM().inverse()); const P = svg._P;
+    const x = (q.x - P.p.l) / (P.W - P.p.l - P.p.r) * 10, y = (P.H - P.p.b - q.y) / (P.H - P.p.t - P.p.b) * 10; if (x < 0 || x > 10 || y < 0 || y > 10) return; xs.push(+x.toFixed(2)); ys.push(+y.toFixed(2)); draw(); });
+  $('.bclr', root).onclick = () => { xs = []; ys = []; draw(); };
+  $('.bres', root).onclick = () => { showRes = !showRes; draw(); };
+  const target = $('.rt', root); target.oninput = () => $('.rt-v', root).textContent = target.value;
+  $('.bgen', root).onclick = () => { const rho = +target.value, n = 25; xs = []; ys = []; for (let i = 0; i < n; i++) { const z1 = R.normal(), z2 = R.normal(); const zx = z1, zy = rho * z1 + Math.sqrt(1 - rho * rho) * z2; xs.push(+Math.min(9.8, Math.max(.2, 5 + 1.6 * zx)).toFixed(2)); ys.push(+Math.min(9.8, Math.max(.2, 5 + 1.6 * zy)).toFixed(2)); } draw(); };
+  $('.bgen', root).click(); document.addEventListener('themechange', draw);
+}
+function labLGN() {
+  const root = $('#lab-lgn'); if (!root) return; const svg = $('svg', root); let runs = [];
+  const EXP = { moneda: { p: .5, t: 'águila', f: () => Math.random() < .5 }, dado: { p: 1 / 6, t: 'sale 6', f: () => R.int(1, 6) === 6 }, dos: { p: 6 / 36, t: 'suma 7 con dos dados', f: () => R.int(1, 6) + R.int(1, 6) === 7 } };
+  const draw = () => { const e = EXP[$('.exp', root).value], N = +$('.nn', root).value;
+    const P = plane(svg, { W: 640, H: 300, x0: 0, x1: N, y0: 0, y1: 1, xl: 'número de repeticiones', yl: 'frecuencia relativa' });
+    el('line', { x1: P.sx(0), x2: P.sx(N), y1: P.sy(e.p), y2: P.sy(e.p), stroke: css('--u2'), 'stroke-width': 2, 'stroke-dasharray': '6 4' }, P.g);
+    el('text', { x: P.sx(N) - 4, y: P.sy(e.p) - 6, 'text-anchor': 'end', class: 'tick', text: 'probabilidad teórica = ' + fx(e.p, 4) }, P.g);
+    const C = [css('--u1'), css('--u3'), '#0ea5e9', '#e11d48', '#64748b'];
+    runs.forEach((run, j) => { let c = 0, d = ''; const step = Math.max(1, Math.floor(N / 400)); for (let i = 1; i <= N; i++) { c += run[i - 1]; if (i % step === 0 || i === N) d += (d ? 'L' : 'M') + P.sx(i).toFixed(1) + ',' + P.sy(c / i).toFixed(1); } const p = el('path', { d, fill: 'none', stroke: C[j % 5], 'stroke-width': 2 }, P.g); if (j === runs.length - 1) animatePath(p, 1500); });
+    if (runs.length) { const last = runs[runs.length - 1]; const fr = S.sum(last) / N; $('.res', root).innerHTML = `Última simulación: «${e.t}» ocurrió ${S.sum(last)} veces en ${N} repeticiones → ${M('f_r = ' + fx(fr, 4))} (teórica ${fx(e.p, 4)}).`; tex($('.res', root)); } };
+  const run = () => { const e = EXP[$('.exp', root).value], N = +$('.nn', root).value; runs.push(Array.from({ length: N }, () => e.f() ? 1 : 0)); if (runs.length > 5) runs.shift(); draw(); };
+  $('.brun', root).onclick = run; $('.bclr', root).onclick = () => { runs = []; draw(); $('.res', root).textContent = ''; };
+  $('.exp', root).onchange = () => { runs = []; run(); }; $('.nn', root).onchange = () => { runs = []; run(); }; run(); document.addEventListener('themechange', draw);
+}
+function labVenn() {
+  const root = $('#lab-venn'); if (!root) return; const svg = $('svg', root); let op = 'union';
+  const draw = () => { let pa = +$('.pa', root).value / 100, pb = +$('.pb', root).value / 100, pi = +$('.pi', root).value / 100;
+    const maxI = Math.min(pa, pb), minI = Math.max(0, pa + pb - 1); if (pi > maxI) pi = maxI; if (pi < minI) pi = minI; $('.pi', root).value = Math.round(pi * 100);
+    $('.pa-v', root).textContent = fx(pa, 2); $('.pb-v', root).textContent = fx(pb, 2); $('.pi-v', root).textContent = fx(pi, 2);
+    svg.setAttribute('viewBox', '0 0 640 300'); clear(svg);
+    const d = 120 - 110 * (pi / Math.max(.01, maxI)); const ca = { x: 320 - d / 2 - 60, y: 150 }, cb = { x: 320 + d / 2 + 60, y: 150 }, r = 105;
+    const defs = el('defs', {}, svg);
+    const mk = (id, inner) => { const m = el('mask', { id }, defs); inner(m); };
+    mk('mA', m => { el('rect', { x: 0, y: 0, width: 640, height: 300, fill: 'black' }, m); el('circle', { cx: ca.x, cy: ca.y, r, fill: 'white' }, m); });
+    mk('mB', m => { el('rect', { x: 0, y: 0, width: 640, height: 300, fill: 'black' }, m); el('circle', { cx: cb.x, cy: cb.y, r, fill: 'white' }, m); });
+    mk('mAnotB', m => { el('rect', { x: 0, y: 0, width: 640, height: 300, fill: 'black' }, m); el('circle', { cx: ca.x, cy: ca.y, r, fill: 'white' }, m); el('circle', { cx: cb.x, cy: cb.y, r, fill: 'black' }, m); });
+    mk('mUc', m => { el('rect', { x: 0, y: 0, width: 640, height: 300, fill: 'white' }, m); el('circle', { cx: ca.x, cy: ca.y, r, fill: 'black' }, m); el('circle', { cx: cb.x, cy: cb.y, r, fill: 'black' }, m); });
+    mk('mAc', m => { el('rect', { x: 0, y: 0, width: 640, height: 300, fill: 'white' }, m); el('circle', { cx: ca.x, cy: ca.y, r, fill: 'black' }, m); });
+    const sh = css('--shade2');
+    el('rect', { x: 6, y: 6, width: 628, height: 288, rx: 12, fill: 'none', stroke: css('--muted'), 'stroke-width': 1.5 }, svg);
+    if (op === 'union') { const g = el('g', { opacity: .4 }, svg); el('circle', { cx: ca.x, cy: ca.y, r, fill: css('--u2') }, g); el('circle', { cx: cb.x, cy: cb.y, r, fill: css('--u2') }, g); }
+    if (op === 'inter') el('circle', { cx: cb.x, cy: cb.y, r, fill: sh, mask: 'url(#mA)' }, svg);
+    if (op === 'solaA') el('rect', { x: 0, y: 0, width: 640, height: 300, fill: sh, mask: 'url(#mAnotB)' }, svg);
+    if (op === 'compA') el('rect', { x: 8, y: 8, width: 624, height: 284, rx: 10, fill: sh, mask: 'url(#mAc)' }, svg);
+    if (op === 'ninguno') el('rect', { x: 8, y: 8, width: 624, height: 284, rx: 10, fill: sh, mask: 'url(#mUc)' }, svg);
+    el('circle', { cx: ca.x, cy: ca.y, r, fill: 'none', stroke: css('--u1'), 'stroke-width': 3 }, svg); el('circle', { cx: cb.x, cy: cb.y, r, fill: 'none', stroke: css('--u3'), 'stroke-width': 3 }, svg);
+    el('text', { x: ca.x - r * .55, y: 60, style: 'font-size:22px;font-weight:800;fill:' + css('--u1'), text: 'A' }, svg); el('text', { x: cb.x + r * .45, y: 60, style: 'font-size:22px;font-weight:800;fill:' + css('--u3'), text: 'B' }, svg); el('text', { x: 24, y: 32, style: 'font-size:18px;font-weight:700', text: 'S' }, svg);
+    el('text', { x: ca.x - 40, y: 155, 'text-anchor': 'middle', style: 'font-size:14px;font-weight:700', text: fx(pa - pi, 2) }, svg); el('text', { x: cb.x + 40, y: 155, 'text-anchor': 'middle', style: 'font-size:14px;font-weight:700', text: fx(pb - pi, 2) }, svg);
+    if (pi > 0) el('text', { x: (ca.x + cb.x) / 2, y: 155, 'text-anchor': 'middle', style: 'font-size:14px;font-weight:700', text: fx(pi, 2) }, svg);
+    el('text', { x: 600, y: 280, 'text-anchor': 'end', style: 'font-size:14px;font-weight:700', text: fx(1 - pa - pb + pi, 2) }, svg);
+    const F = { union: `P(A\\cup B) = P(A)+P(B)-P(A\\cap B) = ${fx(pa, 2)}+${fx(pb, 2)}-${fx(pi, 2)} = ${fx(pa + pb - pi, 2)}`, inter: `P(A\\cap B) = ${fx(pi, 2)}` + (pi === 0 ? '\\quad\\text{(mutuamente excluyentes)}' : ''), solaA: `P(A\\cap B^c) = P(A)-P(A\\cap B) = ${fx(pa - pi, 2)}`, compA: `P(A^c) = 1-P(A) = ${fx(1 - pa, 2)}`, ninguno: `P\\big((A\\cup B)^c\\big) = 1-P(A\\cup B) = ${fx(1 - pa - pb + pi, 2)}` }[op];
+    const cond = pb > 0 ? `\\qquad P(A\\mid B) = \\frac{P(A\\cap B)}{P(B)} = ${fx(pi / pb, 3)}` : '';
+    $('.res', root).innerHTML = MD(F) + MD(`P(A)P(B) = ${fx(pa * pb, 4)}${cond}`) + (Math.abs(pa * pb - pi) < 0.005 ? '<div class="check-ok">P(A∩B) = P(A)·P(B): A y B son independientes.</div>' : '<div class="text-muted small">P(A∩B) ≠ P(A)·P(B): A y B no son independientes.</div>'); tex($('.res', root)); };
+  $$('[data-op]', root).forEach(b => b.onclick = () => { $$('[data-op]', root).forEach(x => x.classList.remove('active')); b.classList.add('active'); op = b.dataset.op; draw(); });
+  $$('input[type=range]', root).forEach(i => i.oninput = draw); draw(); document.addEventListener('themechange', draw);
+}
+function heroArt() {
+  const svg = $('#hero-svg'); if (!svg) return; svg.setAttribute('viewBox', '0 0 520 320');
+  const hs = [3, 7, 12, 18, 22, 18, 12, 7, 3]; hs.forEach((h, i) => el('rect', { x: 40 + i * 50, y: 280 - h * 10, width: 44, height: h * 10, rx: 4, fill: i % 2 ? 'var(--u1)' : 'var(--u2)', opacity: .55, class: 'bar', style: `animation-delay:${.08 * i}s` }, svg));
+  el('path', { d: pathFn(x => 230 * Math.exp(-((x - 4) ** 2) / (2 * 1.9 ** 2)), -0.3, 8.3, x => 40 + x * 54.5 + 22, y => 280 - y), fill: 'none', stroke: 'var(--u3)', 'stroke-width': 4, class: 'draw' }, svg);
+  el('line', { x1: 20, x2: 500, y1: 280, y2: 280, stroke: 'var(--muted)', 'stroke-width': 2 }, svg);
+  [[90, 60], [140, 95], [450, 70]].forEach(([x, y], i) => el('circle', { cx: x, cy: y, r: 7 + i * 2, fill: 'var(--u' + (i + 1) + ')', opacity: .6 }, svg));
+}
+function renderLearn() {
+  const box = $('#learn-acc'); if (!box) return;
+  box.innerHTML = LEARN.map((U, k) => `<div class="accordion-item u${U.u}"><h2 class="accordion-header"><button class="accordion-button ${k ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#lu${U.u}"><span class="unit-tag me-2">Unidad ${U.u}</span><b>${U.nombre}</b><span class="chip ms-2">${U.h} h</span></button></h2>
+   <div id="lu${U.u}" class="accordion-collapse collapse ${k ? '' : 'show'}" data-bs-parent="#learn-acc"><div class="accordion-body"><p class="small"><b>Propósito:</b> ${U.prop}</p><ul class="learn">${U.L.map((l, i) => `<li><span class="n">${i + 1}.</span><span>${l[0]}<span class="tm"><a class="chip" href="${l[2]}">${l[1]}</a></span></span></li>`).join('')}</ul></div></div></div>`).join('');
+}
+document.addEventListener('DOMContentLoaded', () => { renderLearn(); heroArt(); labMuestreo(); labTipos(); labGraficas(); labMedidas(); labEmpirica(); labConting(); labDispersion(); labLGN(); labVenn(); initUI(); });
+
+</script>
+</body>
+</html>
