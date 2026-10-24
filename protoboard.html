@@ -26,7 +26,7 @@
     main { flex:1; }
     section.lesson { scroll-margin-top:110px; }
 
-    /* Header (z-index mayor que la barra superior móvil para que el menú desplegable quede visible) */
+    /* Header */
     .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
     .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
     .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
@@ -262,6 +262,23 @@
               <div class="lesson-foot" data-lesson="6"></div>
             </div>
           </section>
+
+          <!-- ACCESO A LABORATORIO EXTERNO -->
+          <div class="card lesson-card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #fff4e0 0%, #ffffff 100%); border-left: 6px solid var(--volt) !important;">
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 text-center text-md-start">
+              <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-box-arrow-up-right t-volt me-2"></i>Laboratorio Práctico Adicional</h4>
+                <p class="text-secondary mb-0 small">Explora más simulaciones avanzadas y prácticas de hardware en nuestro entorno externo interactivo.</p>
+              </div>
+              <a href="https://esp-labs-web.vercel.app/?fbclid=Iwb21leAVJ5bhjbGNrBUnllWV4dG4DYWVtAjExAHBkb2YFc3J0YwZhcHBfaWQMMzUwNjg1NTMxNzI4AAEesLj6fLddIlufpQnb-rDyy23OCUvdjlw6X8q9eaztQKhTooYcMZybrYOcCwk_aem_FH_D1IWl1c6lCEVNLokmQQ#/?lang=es" 
+                 target="_blank" 
+                 rel="noopener noreferrer" 
+                 class="btn btn-warning fw-semibold px-4 py-2 shadow-sm text-dark flex-shrink-0">
+                <i class="bi bi-rocket-takeoff-fill me-1"></i> Abrir Laboratorio Externo
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -269,7 +286,7 @@
 
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Cibernética • Protoboard e Interconexiones</small></footer>
 
-  <!-- JS de Bootstrap: faltaba en la versión anterior y es lo que abre los menús desplegables -->
+  <!-- JS de Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- ===================== HEADER DINÁMICO ===================== -->
@@ -317,7 +334,7 @@
       return [Math.floor(s / 10), s % 10, m].map(i => BANDS[Math.min(9, i)]);
     }
 
-    /* ---------- Motor de la protoboard (compartido por las lecciones 1, 3, 4 y 5) ---------- */
+    /* ---------- Motor de la protoboard ---------- */
     const W = 640, H = 260, COLS = 26, X0 = 50, DX = 21;
     const HOLES = [], HM = {}, GR = {};
     const addHole = (id, x, y, group, label) => { const h = { id, x, y, group, label }; HOLES.push(h); HM[id] = h; };
@@ -359,7 +376,6 @@
       return HOLES.find(h => Math.hypot(h.x - mx, h.y - my) <= 4 + pad);
     };
 
-    /* Circuito: la batería y los componentes se dibujan sobre los orificios indicados */
     const BATP = { x: 20, y: 80 }, BATN = { x: 34, y: 80 };
     const P = k => typeof k === 'string' ? HM[k] : k;
     const FULL = [{ t: 'bat+', b: 'tp3' }, { t: 'bat-', b: 'tn3' }, { t: 'wire', a: 'tp8', b: 'A5' }, { t: 'res', a: 'B5', b: 'B15' }, { t: 'led', a: 'C15', b: 'tn17' }];
@@ -409,7 +425,6 @@
         }
         ctx.restore();
       });
-      // batería
       ctx.fillStyle = '#343a40'; ctx.fillRect(14, 80, 28, 56); ctx.fillStyle = '#f08c00'; ctx.fillRect(18, 80, 6, 6); ctx.fillStyle = '#adb5bd'; ctx.fillRect(31, 80, 6, 6);
       ctx.fillStyle = '#f08c00'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('BAT', 28, 106); ctx.fillText(o.V ? o.V + 'V' : '5V', 28, 120);
       const path = o.flow && flowPath(items);
@@ -419,13 +434,12 @@
       } else if (path) { ctx.fillStyle = '#ffd43b'; path.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, 6.283); ctx.fill(); }); }
     }
 
-    /* Bucle de animación: solo dibuja los lienzos visibles */
     const VIS = {}, DRAW = {};
     const io = new IntersectionObserver(es => es.forEach(e => VIS[e.target.id] = e.isIntersecting));
     function register(id, fn) { DRAW[id] = fn; io.observe(document.getElementById(id)); }
     (function loop(now) { for (const id in DRAW) if (VIS[id]) DRAW[id](now); requestAnimationFrame(loop); })(0);
 
-    /* ---------- LECCIÓN 1: Anatomía ---------- */
+    /* ---------- LECCIÓN 1 ---------- */
     const cv1 = $('#proto-canvas'), ctx1 = setupCanvas(cv1, W, H);
     const S1 = { mode: 'real', hover: null, sel: [], topic: 'intro' };
     const allCols = Array.from({ length: COLS }, (_, i) => ['ct' + (i + 1), 'cb' + (i + 1)]).flat();
@@ -469,7 +483,7 @@
     }
     $('#s1-modes').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (b) { SoundFX.click(); setMode(b.dataset.mode); } });
 
-    /* ---------- LECCIÓN 2: Calculadora ---------- */
+    /* ---------- LECCIÓN 2 ---------- */
     $('#c-led').innerHTML = LEDS.map((l, i) => `<option value="${i}">${l.n} (${l.vf} V)</option>`).join('');
     function calc() {
       const V = +$('#c-v').value, led = LEDS[+$('#c-led').value], I = +$('#c-i').value / 1000;
@@ -484,7 +498,7 @@
     }
     ['#c-v', '#c-led', '#c-i'].forEach(s => $(s).addEventListener('input', calc));
 
-    /* ---------- LECCIÓN 3: Simulador ---------- */
+    /* ---------- LECCIÓN 3 ---------- */
     $('#sim-led-col').innerHTML = LEDS.map((l, i) => `<option value="${i}">${l.n} (${l.vf} V)</option>`).join('');
     const cv3 = $('#sim-canvas'), ctx3 = setupCanvas(cv3, W, H), sim = { on: true, noR: false };
     function simData() {
@@ -516,7 +530,7 @@
       $('#sim-r').value = Math.max(10, Math.min(1000, Math.round(e12Up((d.V - d.led.vf) / .015) / 10) * 10)); SoundFX.ok();
     });
 
-    /* ---------- LECCIÓN 4: Laboratorio guiado ---------- */
+    /* ---------- LECCIÓN 4 ---------- */
     const cv4 = $('#lab-canvas'), ctx4 = setupCanvas(cv4, W, H);
     const LAB = [
       { t: 'Cable rojo: batería (+) → bus +', ok: [h => h.group === 'tp'], g: [['tp']], exp: ['un orificio del bus + (línea roja superior)'], build: c => ({ t: 'bat+', b: c[0].id }) },
@@ -563,7 +577,7 @@
     });
     labList(); labStart();
 
-    /* ---------- LECCIÓN 5: Tutorial animado ---------- */
+    /* ---------- LECCIÓN 5 ---------- */
     const cv5 = $('#tut-canvas'), ctx5 = setupCanvas(cv5, W, H);
     const STEPS = [
       { t: 'Antes de empezar', icon: 'bi-shield-check', upto: 0, hl: [], ring: [], d: 'Desconecta la batería y revisa tus piezas: cables, una resistencia de 220 Ω y un LED. Se arma <strong>con la energía apagada</strong>.', why: 'Montar con la fuente conectada puede causar cortos al rozar patas.', err: 'Dejar la batería conectada mientras mueves cables.' },
@@ -604,7 +618,7 @@
       s.ring.forEach(id => { const h = HM[id]; ctx5.strokeStyle = '#f08c00'; ctx5.lineWidth = 2.5; ctx5.beginPath(); ctx5.arc(h.x, h.y, 7 + 2 * Math.sin(now / 180), 0, 6.283); ctx5.stroke(); });
     });
 
-    /* ---------- LECCIÓN 6: Quiz ---------- */
+    /* ---------- LECCIÓN 6 ---------- */
     const QUIZ = [
       { q: '¿Cómo están conectadas internamente las 5 perforaciones de una columna (A-B-C-D-E)?', o: ['Comparten una pletina vertical', 'En línea horizontal por toda la placa', 'No tienen conexión', 'En diagonal'], a: 0, e: 'Cada columna de 5 orificios comparte una pletina metálica.' },
       { q: '¿Para qué sirven las líneas laterales marcadas con + y −?', o: ['Distribuir la alimentación a la placa', 'Solo para LEDs', 'Aislar componentes', 'Medir voltaje'], a: 0, e: 'Son los buses de alimentación, unidos horizontalmente.' },
@@ -650,12 +664,13 @@
         const n = +f.dataset.lesson, prev = sections[n - 2], next = sections[n];
         f.innerHTML = `<div class="form-check"><input class="form-check-input" type="checkbox" id="seen-${n}"><label class="form-check-label" for="seen-${n}">Ya lo entendí</label></div>
           <div class="d-flex gap-2">${prev ? `<a class="btn btn-sm btn-outline-dark" href="#${prev.id}"><i class="bi bi-arrow-up"></i> Paso ${prev.n}</a>` : ''}${next ? `<a class="btn btn-sm btn-dark" href="#${next.id}">Paso ${next.n}: ${next.title} <i class="bi bi-arrow-down"></i></a>` : ''}</div>`;
-        $('#seen-' + n).addEventListener('change', e => markDone(n, e.target.checked));
+        const chk = $('#seen-' + n);
+        if (chk) chk.addEventListener('change', e => markDone(n, e.target.checked));
       });
       const ob = new IntersectionObserver(es => es.forEach(en => {
         if (!en.isIntersecting) return; const n = sections.find(s => s.id === en.target.id).n;
-        $$('#side-nav .list-group-item').forEach(a => a.classList.remove('active')); $('#nav-' + n).classList.add('active');
-        $$('#top-nav a').forEach(a => a.classList.remove('active')); const t = $('#tnav-' + n); t.classList.add('active'); t.scrollIntoView({ block: 'nearest', inline: 'center' });
+        $$('#side-nav .list-group-item').forEach(a => a.classList.remove('active')); const navItem = $('#nav-' + n); if (navItem) navItem.classList.add('active');
+        $$('#top-nav a').forEach(a => a.classList.remove('active')); const t = $('#tnav-' + n); if (t) { t.classList.add('active'); t.scrollIntoView({ block: 'nearest', inline: 'center' }); }
       }), { rootMargin: '-35% 0px -55% 0px' });
       $$('section.lesson').forEach(s => ob.observe(s));
     }

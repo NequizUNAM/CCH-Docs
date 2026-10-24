@@ -29,6 +29,7 @@
         { label: 'Ángulos', href: 'angulos.html', icon: 'bi-rulers' },
         { label: 'Teorema de Pitágoras', href: 'pitagoras.html', icon: 'bi-triangle-half' } ] },
       { id: 'cibernetica', label: 'Cibernética', icon: 'bi-cpu', color: 'c-cib', items: [
+        { label: 'Guia Taller Cómputo', href: 'taller_computo.html', icon: 'bi-clock-history' },
         { label: 'Precursores', href: 'precursores.html', icon: 'bi-clock-history' },
         { label: 'Circuitos eléctricos', href: 'circuitos.html', icon: 'bi-lightning-charge-fill' },
         { label: 'Protoboard e Interconexiones', href: 'protoboard.html', icon: 'bi-grid-3x3-gap-fill' },
@@ -103,8 +104,17 @@
     });
   }
 
+  /* Si la página tiene barra de secciones pegajosa (.sec-nav, top:56px), el header también debe quedarse fijo;
+     si no, se va con el scroll y deja un hueco de 56px sobre la barra. */
+  function pinHeader() {
+    if (!document.querySelector('.sec-nav') || document.getElementById('aula-pin-style')) return;
+    const st = document.createElement('style'); st.id = 'aula-pin-style';
+    st.textContent = '#app-header{position:sticky;top:0;z-index:1040}';
+    document.head.appendChild(st);
+  }
+
   function init() {
-    ensureModal(); render();
+    pinHeader(); ensureModal(); render();
     document.addEventListener('click', e => {
       if (e.target.closest('[data-unlock]')) { if (window.bootstrap) bootstrap.Modal.getOrCreateInstance(document.getElementById('unlockModal')).show(); }
       if (e.target.closest('[data-lock]')) { store.set(false); render(); }
