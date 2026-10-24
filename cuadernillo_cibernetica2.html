@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="es" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuadernillo de Cibernética II</title>
+<meta name="description" content="Cuadernillo interactivo de repaso de Cibernética y Computación II (CCH-UNAM, programa 2024): programación orientada a objetos en Java, estructuras de control, arreglos, herencia, polimorfismo e interfaces gráficas, con ejercicios aleatorios.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --ink:#1d2433; --muted:#5b6475; --paper:#fbfaf6; --card:#ffffff; --line:#e6e2d6; --grid:rgba(30,60,120,.055);
+  --u1:#0f766e; --u2:#b45309; --u3:#7c3aed; --acc:var(--u1); --ok:#15803d; --bad:#b91c1c;
+  --shade:rgba(15,118,110,.22); --shade2:rgba(180,83,9,.25);
+  --font-head:'Fraunces',Georgia,serif; --font-body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+[data-bs-theme=dark]{
+  --ink:#e8e6df; --muted:#a3a9b6; --paper:#14171d; --card:#1c2029; --line:#2d3340; --grid:rgba(160,190,255,.05);
+  --u1:#2dd4bf; --u2:#fbbf24; --u3:#a78bfa; --shade:rgba(45,212,191,.25); --shade2:rgba(251,191,36,.25);
+}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1.04rem;line-height:1.62;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+h1,h2,h3,h4,.font-head{font-family:var(--font-head);letter-spacing:-.01em}
+a{color:var(--acc)}
+.navbar{background:color-mix(in srgb,var(--card) 88%,transparent)!important;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.navbar .nav-link{color:var(--muted);font-weight:600;font-size:.95rem}
+.navbar .nav-link.active,.navbar .nav-link:hover{color:var(--acc)}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--u1),var(--u2),var(--u3));z-index:2000;width:0;transition:width .1s}
+.hero{padding:7rem 0 3rem;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.1}
+.hero .lead{color:var(--muted);max-width:44rem}
+.hero-svg{width:100%;max-width:520px;height:auto}
+.hero-svg .draw{stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.4s ease forwards .3s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero-svg .bar{transform-origin:bottom;transform-box:fill-box;animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chip{display:inline-block;padding:.12rem .6rem;border-radius:99px;font-size:.78rem;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+.unit-tag{display:inline-block;font-weight:800;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);border:2px solid var(--uc);border-radius:6px;padding:.05rem .45rem}
+.u1{--uc:var(--u1)} .u2{--uc:var(--u2)} .u3{--uc:var(--u3)}
+section.unit{padding:3.5rem 0 1rem}
+.unit-head{border-left:6px solid var(--uc);padding-left:1rem;margin-bottom:1.5rem}
+.unit-head h2{font-weight:700;margin:.3rem 0}
+.topic{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.5rem;margin-bottom:1.75rem;box-shadow:0 1px 0 rgba(0,0,0,.02),0 8px 24px -16px rgba(0,0,0,.25)}
+.topic>h3{font-size:1.45rem;font-weight:650;display:flex;gap:.6rem;align-items:baseline}
+.topic>h3 .num{color:var(--uc);font-size:1rem;font-family:var(--font-body);font-weight:800}
+.topic h4{font-size:1.1rem;font-weight:650;margin-top:1.2rem;color:var(--uc)}
+.def{border-left:4px solid var(--uc);background:color-mix(in srgb,var(--uc) 7%,transparent);padding:.7rem 1rem;border-radius:0 10px 10px 0;margin:.8rem 0}
+.note{border:1px dashed var(--line);border-radius:10px;padding:.6rem .9rem;color:var(--muted);font-size:.95rem;margin:.8rem 0}
+.formula{background:color-mix(in srgb,var(--uc) 5%,var(--card));border:1px solid var(--line);border-radius:12px;padding:.6rem 1rem;margin:.8rem 0;overflow-x:auto}
+.lab{border:1px solid var(--line);border-radius:14px;padding:1rem;margin:1rem 0;background:color-mix(in srgb,var(--card) 92%,var(--uc) 8%)}
+.lab-title{font-weight:800;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.lab svg{width:100%;height:auto;display:block;user-select:none}
+.lab .form-range{accent-color:var(--uc)}
+.stat{display:inline-flex;flex-direction:column;padding:.35rem .7rem;border-radius:10px;background:var(--card);border:1px solid var(--line);min-width:5.5rem;margin:.2rem}
+.stat b{font-size:1.08rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.btn-acc{background:var(--uc,var(--acc));color:#fff;border:none;font-weight:700}
+.btn-acc:hover{filter:brightness(1.1);color:#fff}
+[data-bs-theme=dark] .btn-acc{color:#111}
+.btn-ghost{border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.btn-ghost:hover{border-color:var(--uc);color:var(--uc)}
+/* problems */
+.problem{border:2px solid var(--uc);border-radius:16px;padding:1.1rem 1.2rem;margin:1.2rem 0;background:var(--card);position:relative}
+.problem .ptag{position:absolute;top:-.8rem;left:1rem;background:var(--uc);color:#fff;font-weight:800;font-size:.75rem;letter-spacing:.06em;padding:.1rem .6rem;border-radius:6px;text-transform:uppercase}
+[data-bs-theme=dark] .problem .ptag{color:#111}
+.problem .enun{margin-top:.4rem}
+.problem .steps{list-style:none;padding:0;margin:.8rem 0 0;counter-reset:st}
+.problem .steps>li{counter-increment:st;position:relative;padding:.6rem .8rem .6rem 3rem;border-radius:10px;margin-bottom:.5rem;background:color-mix(in srgb,var(--uc) 6%,transparent);animation:stepIn .45s ease both}
+.problem .steps>li::before{content:counter(st);position:absolute;left:.7rem;top:.6rem;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--uc);color:#fff;font-weight:800;display:grid;place-items:center;font-size:.85rem}
+[data-bs-theme=dark] .problem .steps>li::before{color:#111}
+.problem .steps>li h6{font-weight:800;margin:0 0 .2rem;font-size:.95rem}
+@keyframes stepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.problem .check-ok{color:var(--ok);font-weight:700}
+.problem .check-bad{color:var(--bad);font-weight:700}
+.problem table,.topic table.tbl{font-variant-numeric:tabular-nums}
+.tbl{width:auto;border-collapse:collapse;margin:.5rem 0;font-size:.92rem}
+.tbl th,.tbl td{border:1px solid var(--line);padding:.25rem .55rem;text-align:center}
+.tbl th{background:color-mix(in srgb,var(--uc) 14%,var(--card))}
+.tbl td.hl{background:color-mix(in srgb,var(--uc) 22%,transparent);font-weight:700}
+.scroll-x{overflow-x:auto}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+/* learnings table */
+.learn{list-style:none;padding:0;margin:0}
+.learn li{display:grid;grid-template-columns:2.2rem 1fr;gap:.5rem;padding:.5rem 0;border-bottom:1px dashed var(--line)}
+.learn li .n{font-weight:800;color:var(--uc);text-align:right}
+.learn li .tm{display:block;margin-top:.15rem}
+.accordion-button:not(.collapsed){background:color-mix(in srgb,var(--uc) 10%,var(--card));color:var(--ink)}
+.accordion-item{background:var(--card);border-color:var(--line)}
+.accordion-button{background:var(--card);color:var(--ink)}
+.modal-content{background:var(--card);color:var(--ink)}
+.fgroup h5{font-family:var(--font-head);margin-top:1rem;color:var(--uc)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.6rem}
+.fcard{border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;background:color-mix(in srgb,var(--uc) 4%,var(--card));overflow-x:auto}
+.fcard small{display:block;color:var(--muted);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.fab{position:fixed;right:1.1rem;bottom:1.1rem;z-index:1040;border-radius:99px;padding:.7rem 1.1rem;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+#toTop{position:fixed;left:1.1rem;bottom:1.1rem;z-index:1040;opacity:0;pointer-events:none;transition:opacity .3s}
+#toTop.show{opacity:1;pointer-events:auto}
+svg text{font-family:var(--font-body);fill:var(--ink)}
+svg .axis{stroke:var(--muted);stroke-width:1}
+svg .gridl{stroke:var(--line);stroke-width:1}
+svg .tick{font-size:11px;fill:var(--muted)}
+svg .barr{transition:height .5s ease,y .5s ease,fill .3s}
+svg .pt{transition:cx .4s,cy .4s}
+.quiz-opt.correct{background:var(--ok)!important;color:#fff!important;border-color:var(--ok)!important}
+.quiz-opt.wrong{background:var(--bad)!important;color:#fff!important;border-color:var(--bad)!important}
+footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-size:.92rem}
+.katex-display{margin:.4em 0}
+@media (max-width:576px){.topic{padding:1rem}.problem{padding:1rem .8rem}.problem .steps>li{padding-left:2.6rem}}
+@media print{.navbar,.fab,#toTop,.lab,.problem .btns{display:none!important}.reveal{opacity:1;transform:none}}
+.btn-acc:focus,.btn-acc:active,.btn-acc:focus-visible,.btn-acc.active{background:var(--uc,var(--acc))!important;color:#fff!important;border:none}
+[data-bs-theme=dark] .btn-acc:focus,[data-bs-theme=dark] .btn-acc:active{color:#111!important}
+.btn-ghost.active,.btn-ghost:active,.btn-ghost:focus-visible{background:color-mix(in srgb,var(--uc,var(--acc)) 16%,var(--card))!important;border-color:var(--uc,var(--acc))!important;color:var(--ink)!important}
+h1,h2,h3,h4,h5,h6{color:var(--ink)}
+.navbar-brand{color:var(--ink)!important}
+.navbar-toggler{border-color:var(--line)}
+[data-bs-theme=dark] .navbar-toggler-icon{filter:invert(1)}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:.15em 0;max-width:100%}
+.problem .steps>li,.def,.note,.topic{min-width:0;overflow-wrap:anywhere}
+.lab .stat b{overflow-wrap:anywhere}
+
+pre.code{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:.8rem 1rem;font-size:.86rem;line-height:1.5;overflow-x:auto;margin:.6rem 0;tab-size:4}
+pre.code .tk-k{color:#c792ea;font-weight:600} pre.code .tk-s{color:#c3e88d} pre.code .tk-c{color:#7f8ea3;font-style:italic} pre.code .tk-n{color:#f78c6c} pre.code .tk-t{color:#82aaff} pre.code .tk-a{color:#ffcb6b}
+.out-console{background:#0b0f14;color:#a7f3d0;font-family:ui-monospace,Consolas,monospace;border-radius:10px;padding:.6rem .9rem;white-space:pre-wrap;font-size:.88rem;min-height:2.4rem}
+code{color:var(--uc,var(--acc));background:color-mix(in srgb,var(--uc,var(--acc)) 10%,transparent);padding:.05rem .3rem;border-radius:4px}
+pre code{background:none;padding:0;color:inherit}
+.bit{width:2.6rem;height:2.6rem;border-radius:10px;border:2px solid var(--line);background:var(--card);font-weight:800;font-size:1.2rem;font-family:ui-monospace,monospace;transition:all .25s;color:var(--ink)}
+.bit.on{background:var(--uc);border-color:var(--uc);color:#fff;transform:translateY(-3px);box-shadow:0 6px 14px -6px var(--uc)}
+.bitw{font-size:.7rem;color:var(--muted);text-align:center}
+.flip{perspective:900px;cursor:pointer;min-height:220px}
+.flip .inner{position:relative;width:100%;height:100%;min-height:220px;transition:transform .7s;transform-style:preserve-3d}
+.flip.on .inner{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:14px;padding:1rem;background:var(--card);overflow:auto}
+.flip .back{transform:rotateY(180deg);background:color-mix(in srgb,var(--uc) 8%,var(--card))}
+.flip .yr{font-family:var(--font-head);font-size:2rem;color:var(--uc);font-weight:700}
+.mock{border:1px solid #9aa4b2;border-radius:8px;overflow:hidden;background:#eef1f5;color:#111;max-width:520px;font-family:system-ui,sans-serif;font-size:.9rem;box-shadow:0 12px 30px -16px rgba(0,0,0,.5)}
+.mock .tb{background:linear-gradient(#e4e8ee,#cfd6df);padding:.3rem .6rem;font-weight:600;display:flex;justify-content:space-between}
+.mock .mb{background:#f7f8fa;border-bottom:1px solid #c5ccd6;padding:.2rem .4rem;display:flex;gap:.8rem;position:relative}
+.mock .mb span{cursor:pointer;padding:0 .3rem} .mock .mb span:hover{background:#dbe4f0}
+.mock .menu{position:absolute;top:100%;left:.4rem;background:#fff;border:1px solid #b9c2cf;box-shadow:0 6px 16px -6px rgba(0,0,0,.4);z-index:5;min-width:9rem;display:none}
+.mock .menu div{padding:.25rem .7rem;cursor:pointer} .mock .menu div:hover{background:#2f6fd6;color:#fff}
+.mock input[type=text],.mock textarea{border:1px solid #9aa4b2;background:#fff;color:#111;border-radius:2px;padding:.15rem .3rem;width:100%}
+.mock button{border:1px solid #8b95a3;background:linear-gradient(#fdfdfd,#dfe4ea);border-radius:4px;padding:.15rem .8rem;color:#111}
+.evlog{font-family:ui-monospace,monospace;font-size:.8rem;max-height:9rem;overflow:auto}
+.evlog div{animation:stepIn .35s ease both}
+.cell{display:inline-flex;flex-direction:column;align-items:center;margin:2px}
+.cell b{width:3rem;height:3rem;display:grid;place-items:center;border:2px solid var(--uc);border-radius:8px;font-family:ui-monospace,monospace;background:var(--card);transition:all .3s}
+.cell b.hot{background:var(--uc);color:#fff;transform:translateY(-4px)}
+.cell b.new{animation:pop .45s ease} .cell small{color:var(--muted);font-size:.7rem}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.kmap td{width:3rem;height:3rem;cursor:pointer;font-family:ui-monospace,monospace;font-weight:800;font-size:1.05rem;position:relative}
+.kmap td.one{background:color-mix(in srgb,var(--uc) 22%,transparent)}
+.stage{transition:all .35s;padding:.4rem .7rem;font-size:.85rem}
+.stage.on{background:var(--uc,var(--acc));color:#fff;border-color:var(--uc,var(--acc));transform:translateY(-3px)}
+
+:root{--acc:var(--u3)}
+</style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#mainnav" data-bs-offset="90">
+<div id="progress"></div>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainnav">
+ <div class="container">
+  <a class="navbar-brand font-head fw-bold" href="#inicio">Cuadernillo · Cibernética II</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nv" aria-label="Menú"><span class="navbar-toggler-icon"></span></button>
+  <div class="collapse navbar-collapse" id="nv">
+   <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+    <li class="nav-item"><a class="nav-link" href="#aprendizajes">Aprendizajes</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad1">Unidad 1</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad2">Unidad 2</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad3">Unidad 3</a></li>
+    <li class="nav-item"><a class="nav-link" href="#fuentes">Fuentes</a></li>
+    <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-ghost" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">◐</button></li>
+   </ul>
+  </div>
+ </div>
+</nav>
+<header class="hero" id="inicio">
+ <div class="container">
+  <div class="row align-items-center g-4">
+   <div class="col-lg-7">
+    <span class="chip mb-3">CCH · UNAM · Programa de Estudios 2024 · Sexto semestre</span>
+    <h1>Cibernética y Computación II<br><span style="color:var(--u3)">Cuadernillo interactivo de repaso</span></h1>
+    <p class="lead mt-3">Programación orientada a objetos con Java: clases y objetos, UML, MVC, estructuras de control, excepciones, arreglos, ArrayList, herencia, polimorfismo e interfaces gráficas con Swing. Cada ejercicio cambia al presionar <b>«Nuevo ejercicio»</b>.</p>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+     <a class="btn btn-acc u3" href="#aprendizajes">Ver aprendizajes</a>
+     <button class="btn btn-ghost" data-bs-toggle="modal" data-bs-target="#formulario">📘 Guía rápida</button>
+    </div>
+    <div class="mt-4 d-flex flex-wrap gap-2">
+     <a href="#unidad1" class="unit-tag u1 text-decoration-none">U1 · POO · 10 h</a>
+     <a href="#unidad2" class="unit-tag u2 text-decoration-none">U2 · Control y arreglos · 24 h</a>
+     <a href="#unidad3" class="unit-tag u3 text-decoration-none">U3 · Herencia y polimorfismo · 14 h</a>
+     <a href="#unidad4" class="unit-tag u1 text-decoration-none">U4 · Interfaz gráfica · 16 h</a>
+    </div>
+   </div>
+   <div class="col-lg-5 text-center"><svg id="hero-svg" class="hero-svg" role="img" aria-label="Diagrama UML de herencia"></svg></div>
+  </div>
+ </div>
+</header>
+
+<section id="aprendizajes" class="py-4">
+ <div class="container">
+  <h2 class="font-head mb-1">Aprendizajes y temática</h2>
+  <p class="text-body-secondary">Los aprendizajes aparecen en el orden del programa (numerados aquí para ubicarlos). Haz clic en la temática para ir a su sección.</p>
+  <div class="accordion" id="learn-acc"></div>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 1 ============================ -->
+<section class="unit u1" id="unidad1">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 1</span><h2>Fundamentos de programación orientada a objetos con Java</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 8</p></div>
+
+  <article class="topic reveal" id="t11">
+   <h3><span class="num">1.1</span> Conceptos básicos de la POO</h3>
+   <p>La <b>programación orientada a objetos</b> organiza un programa en <b>objetos</b> que tienen datos (atributos) y comportamiento (métodos), en lugar de solo una secuencia de instrucciones.</p>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def h-100"><b>Clase:</b> plantilla que define atributos y métodos. <b>Objeto:</b> instancia concreta de una clase; tiene <b>identidad</b> (es distinto de otros objetos aunque tenga los mismos valores), <b>atributos</b> (estado) y <b>métodos</b> (comportamiento). <b>Paquete:</b> agrupa clases relacionadas (<code>java.util</code>, <code>javax.swing</code>).</div></div>
+    <div class="col-md-6"><div class="def h-100"><b>Pilares:</b><br>• <b>Abstracción:</b> modelar solo lo esencial.<br>• <b>Encapsulamiento:</b> ocultar los datos (<code>private</code>) y exponer métodos.<br>• <b>Herencia:</b> crear clases a partir de otras.<br>• <b>Polimorfismo:</b> un mismo mensaje, distintos comportamientos.</div></div>
+   </div>
+   <p class="mt-2"><b>Organización de un programa en Java:</b> el código se escribe en clases (una clase pública por archivo <code>.java</code>, con el mismo nombre), dentro de paquetes; la ejecución inicia en el método <code>public static void main(String[] args)</code>.</p>
+   <div class="problem" data-gen="pooDef"></div>
+  </article>
+
+  <article class="topic reveal" id="t12">
+   <h3><span class="num">1.2</span> UML: diagramas de clase y de objetos</h3>
+   <p>El <b>Lenguaje Unificado de Modelado (UML)</b> es un estándar gráfico para diseñar software. El <b>diagrama de clase</b> tiene tres compartimentos: <b>nombre</b>, <b>atributos</b> (<code>visibilidad nombre : tipo</code>) y <b>métodos</b> (<code>visibilidad nombre(parámetros) : tipoRetorno</code>). El <b>diagrama de objetos</b> muestra instancias: <u>nombreObjeto : Clase</u> (subrayado) y los valores de sus atributos.</p>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>UML</th><th>Java</th><th>Acceso</th></tr></thead><tbody>
+    <tr><td><code>+</code></td><td><code>public</code></td><td>Desde cualquier clase</td></tr><tr><td><code>-</code></td><td><code>private</code></td><td>Solo dentro de la clase</td></tr>
+    <tr><td><code>#</code></td><td><code>protected</code></td><td>Clase, subclases y mismo paquete</td></tr><tr><td><code>~</code></td><td>(sin modificador)</td><td>Mismo paquete</td></tr>
+    <tr><td><u>subrayado</u></td><td><code>static</code></td><td>Pertenece a la clase, no a cada objeto</td></tr><tr><td><i>cursiva</i></td><td><code>abstract</code></td><td>Sin implementación; la definen las subclases</td></tr>
+   </tbody></table></div>
+   <div class="lab" id="lab-fab">
+    <div class="lab-title">🏭 Fábrica de objetos: de la clase a las instancias</div>
+    <div class="row g-2 align-items-end mb-2">
+     <div class="col-6 col-md-3"><label class="small">nombre</label><input class="form-control form-control-sm nom" value="Ana"></div>
+     <div class="col-3 col-md-2"><label class="small">edad</label><input class="form-control form-control-sm edad" type="number" value="17"></div>
+     <div class="col-3 col-md-2"><label class="small">promedio</label><input class="form-control form-control-sm prom" type="number" step="0.1" value="8.5"></div>
+     <div class="col-md-5 d-flex flex-wrap gap-2"><button class="btn btn-sm btn-acc bnew">new Alumno(...)</button><select class="form-select form-select-sm objsel" style="max-width:6rem"></select><button class="btn btn-sm btn-ghost bset">setPromedio()</button><button class="btn btn-sm btn-ghost bget">getNombre()</button><button class="btn btn-sm btn-ghost bapr">aprobado()</button></div>
+    </div>
+    <svg role="img" aria-label="Diagramas de clase y de objetos"></svg>
+    <div class="out-console evlog log" style="max-height:8rem"></div>
+   </div>
+   <div class="problem" data-gen="uml"></div>
+  </article>
+
+  <article class="topic reveal" id="t13">
+   <h3><span class="num">1.3</span> Del diagrama de clase al código: constructor, getters y setters</h3>
+   <div class="row g-3">
+    <div class="col-lg-6"><pre class="code">public class Rectangulo {
+    private double base;      // atributos privados
+    private double altura;
+
+    public Rectangulo(double base, double altura) { // constructor
+        this.base = base;
+        this.altura = altura;
+    }
+    public double getBase() {          // getter: consulta
+        return base;
+    }
+    public void setBase(double base) { // setter: modifica
+        this.base = base;
+    }
+    public double area() {             // comportamiento
+        return base * altura;
+    }
+}</pre></div>
+    <div class="col-lg-6"><ul class="small">
+     <li><b>Constructor:</b> método especial con el mismo nombre de la clase y sin tipo de retorno; se ejecuta con <code>new</code> e inicializa los atributos.</li>
+     <li><b>Getter</b> (<code>getX()</code>): devuelve el valor de un atributo privado.</li>
+     <li><b>Setter</b> (<code>setX(valor)</code>): cambia el valor; puede validar antes de asignar.</li>
+     <li><b>this</b>: el objeto actual; <code>this.base = base</code> asigna el parámetro al atributo con el mismo nombre.</li>
+     <li>Los atributos son <code>private</code> y los métodos <code>public</code>: así se aplica el <b>encapsulamiento</b>.</li>
+    </ul></div>
+   </div>
+   <div class="problem" data-gen="getter"></div>
+   <div class="problem" data-gen="objetos"></div>
+  </article>
+
+  <article class="topic reveal" id="t14">
+   <h3><span class="num">1.4</span> Arquitectura modelo-vista-controlador (MVC)</h3>
+   <p>Separa el programa en tres responsabilidades: el <b>modelo</b> (clases con los datos y la lógica), la <b>vista</b> (lo que ve y usa el usuario: consola o formulario) y el <b>controlador</b> (recibe las acciones de la vista, crea los objetos del modelo y les envía mensajes). En el controlador se <b>instancia</b> la clase con <code>new</code> y se llaman sus métodos con <b>notación punto</b>: <code>objeto.metodo()</code>.</p>
+   <div class="lab" id="lab-mvc">
+    <div class="lab-title">🔁 Flujo de mensajes en MVC</div>
+    <button class="btn btn-sm btn-acc brun mb-2">▶ Ejecutar</button>
+    <svg role="img" aria-label="Modelo, vista y controlador"></svg>
+    <div class="out-console evlog log"></div>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t15">
+   <h3><span class="num">1.5</span> Métodos de clase y de instancia</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def h-100"><b>Método de instancia:</b> trabaja con los atributos de un objeto; se llama sobre el objeto: <code>r.area()</code>.</div></div>
+    <div class="col-md-6"><div class="def h-100"><b>Método de clase</b> (<code>static</code>): pertenece a la clase y no necesita un objeto: <code>Math.sqrt(16)</code>, <code>Integer.parseInt("12")</code>.</div></div>
+   </div>
+   <p class="mt-2"><b>Componentes de un método:</b> <code><span>public</span> double calcularIva(double precio) { return precio * 0.16; }</code> → modificador de acceso (<code>public</code>), tipo de retorno (<code>double</code>, o <code>void</code> si no devuelve nada), identificador (<code>calcularIva</code>), parámetros (<code>double precio</code>) y bloque de sentencias entre llaves.</p>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 2 ============================ -->
+<section class="unit u2" id="unidad2">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 2</span><h2>Estructuras de control de secuencia en Java</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 16</p></div>
+
+  <article class="topic reveal" id="t21">
+   <h3><span class="num">2.1</span> Estructuras condicionales</h3>
+   <div class="row g-3">
+    <div class="col-lg-6"><pre class="code">// simple
+if (edad >= 18) { System.out.println("mayor de edad"); }
+// compuesta
+if (n % 2 == 0) { ... } else { ... }
+// anidada
+if (cal >= 6) {
+    if (cal >= 9) { ... } else { ... }
+} else { ... }
+// operador ternario
+String r = (cal >= 6) ? "aprobado" : "reprobado";</pre></div>
+    <div class="col-lg-6"><pre class="code">// múltiple
+switch (opcion) {
+    case 1:
+        System.out.println("Sumar");
+        break;      // sin break, continúa al siguiente case
+    case 2:
+        System.out.println("Restar");
+        break;
+    default:
+        System.out.println("Opción no válida");
+}</pre></div>
+   </div>
+   <div class="problem" data-gen="ternario"></div>
+  </article>
+
+  <article class="topic reveal" id="t22">
+   <h3><span class="num">2.2</span> Excepciones: try y catch</h3>
+   <p>Una <b>excepción</b> es un evento que ocurre durante la ejecución e interrumpe el flujo normal del programa (dividir entre cero, acceder a un índice que no existe, convertir un texto inválido). Con <code>try</code>/<code>catch</code> se atrapa y se maneja, en lugar de que el programa termine con error.</p>
+   <pre class="code">try {
+    int n = Integer.parseInt(texto);   // código que puede fallar
+} catch (NumberFormatException e) {     // tipo de excepción que se maneja
+    System.out.println("Escribe un número entero");
+}</pre>
+   <p class="small">Excepciones comunes: <code>ArithmeticException</code> (división entera entre 0), <code>ArrayIndexOutOfBoundsException</code>, <code>NumberFormatException</code>, <code>InputMismatchException</code> (Scanner recibe un dato del tipo incorrecto), <code>NullPointerException</code>.</p>
+   <div class="problem" data-gen="excepcion"></div>
+  </article>
+
+  <article class="topic reveal" id="t23">
+   <h3><span class="num">2.3</span> Estructuras repetitivas: for, while y do-while</h3>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Estructura</th><th>¿Cuándo se revisa la condición?</th><th>Uso típico</th></tr></thead><tbody>
+    <tr><td><code>for</code></td><td>Antes de cada vuelta</td><td>Se conoce el número de repeticiones</td></tr>
+    <tr><td><code>while</code></td><td>Antes de cada vuelta (puede no ejecutarse)</td><td>Repetir mientras se cumpla algo</td></tr>
+    <tr><td><code>do-while</code></td><td>Después de cada vuelta (al menos una vez)</td><td>Menús y validación de datos</td></tr>
+   </tbody></table></div>
+   <pre class="code">int opcion;
+do {
+    System.out.println("1) Calcular  2) Salir");
+    opcion = sc.nextInt();
+} while (opcion != 2);   // repite el menú hasta elegir Salir</pre>
+  </article>
+
+  <article class="topic reveal" id="t24">
+   <h3><span class="num">2.4</span> Estructuras de datos y arreglos unidimensionales</h3>
+   <p>Una <b>estructura de datos</b> organiza varios datos para usarlos de forma eficiente. Es <b>estática</b> si su tamaño se fija al crearla (arreglos) y <b>dinámica</b> si puede crecer o disminuir durante la ejecución (ArrayList).</p>
+   <div class="def">Un <b>arreglo</b> guarda un número fijo de elementos <b>del mismo tipo</b>, accesibles por un <b>índice</b> que va de 0 a <code>length - 1</code>.<br><code>int[] v = new int[5];</code> (todos en 0) · <code>double[] notas = {8.5, 9, 7};</code> · <code>String[] nombres = new String[30];</code></div>
+   <div class="lab" id="lab-arr">
+    <div class="lab-title">📦 Recorridos de un arreglo</div>
+    <div class="d-flex flex-wrap gap-2 mb-2"><button class="btn btn-sm btn-acc" data-op="suma">Sumar</button><button class="btn btn-sm btn-ghost" data-op="max">Máximo</button><button class="btn btn-sm btn-ghost" data-op="buscar">Buscar</button><button class="btn btn-sm btn-ghost" data-op="foreach">for-each</button><button class="btn btn-sm btn-ghost" data-op="invertir">Invertir</button><button class="btn btn-sm btn-ghost bnew">Nuevos datos</button></div>
+    <div class="cells d-flex flex-wrap justify-content-center"></div>
+    <p class="st text-center my-2"></p>
+    <pre class="code"></pre>
+   </div>
+   <p class="small"><b>for-each</b> recorre todos los elementos sin usar índices: <code>for (int x : v) { ... }</code>. Es cómodo para leer, pero no sirve para modificar posiciones del arreglo ni para saber el índice.</p>
+   <div class="problem" data-gen="arreglo"></div>
+  </article>
+
+  <article class="topic reveal" id="t25">
+   <h3><span class="num">2.5</span> Arreglos bidimensionales</h3>
+   <p>Una <b>matriz</b> es un arreglo de arreglos: <code>int[][] m = new int[3][4];</code> (3 filas, 4 columnas). Se accede con <code>m[fila][columna]</code>; <code>m.length</code> es el número de filas y <code>m[i].length</code> el de columnas de la fila <code>i</code>. Se recorre con dos ciclos anidados.</p>
+   <div class="lab" id="lab-mat">
+    <div class="lab-title">🔢 Recorrido de una matriz 3 × 4</div>
+    <div class="d-flex flex-wrap gap-2 mb-2"><button class="btn btn-sm btn-acc brow">Por filas</button><button class="btn btn-sm btn-ghost bcol">Por columnas</button><button class="btn btn-sm btn-ghost bnew">Nuevos datos</button></div>
+    <div class="row g-3"><div class="col-md-5"><div class="mat"></div><p class="st small"></p></div><div class="col-md-7"><pre class="code"></pre></div></div>
+   </div>
+   <div class="problem" data-gen="matriz"></div>
+  </article>
+
+  <article class="topic reveal" id="t26">
+   <h3><span class="num">2.6</span> Estructuras dinámicas: ArrayList</h3>
+   <p><code>ArrayList</code> (paquete <code>java.util</code>) es una lista que cambia de tamaño. Solo guarda objetos, así que para números se usan las clases envolventes: <code>ArrayList&lt;Integer&gt;</code>, <code>ArrayList&lt;Double&gt;</code>.</p>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Método</th><th>Qué hace</th></tr></thead><tbody>
+    <tr><td><code>add(x)</code></td><td>Agrega al final</td></tr><tr><td><code>add(i, x)</code></td><td>Inserta en la posición i (recorre los demás a la derecha)</td></tr>
+    <tr><td><code>get(i)</code></td><td>Devuelve el elemento i</td></tr><tr><td><code>set(i, x)</code></td><td>Reemplaza el elemento i</td></tr>
+    <tr><td><code>remove(i)</code></td><td>Elimina el elemento i (recorre los demás a la izquierda)</td></tr><tr><td><code>size()</code></td><td>Número de elementos</td></tr>
+    <tr><td><code>contains(x)</code>, <code>indexOf(x)</code></td><td>Busca un elemento</td></tr><tr><td><code>clear()</code>, <code>isEmpty()</code></td><td>Vacía / pregunta si está vacía</td></tr>
+   </tbody></table></div>
+   <div class="lab" id="lab-al">
+    <div class="lab-title">📋 ArrayList&lt;String&gt; en acción · tamaño: <span class="sz"></span></div>
+    <div class="row g-2 align-items-end mb-2">
+     <div class="col-6 col-md-3"><label class="small">valor</label><input class="form-control form-control-sm val" placeholder="(aleatorio)"></div>
+     <div class="col-6 col-md-2"><label class="small">índice</label><input class="form-control form-control-sm idx" type="number" value="1"></div>
+     <div class="col-md-7 d-flex flex-wrap gap-2"><button class="btn btn-sm btn-acc badd">add(v)</button><button class="btn btn-sm btn-ghost bins">add(i, v)</button><button class="btn btn-sm btn-ghost bget">get(i)</button><button class="btn btn-sm btn-ghost bset">set(i, v)</button><button class="btn btn-sm btn-ghost brem">remove(i)</button><button class="btn btn-sm btn-ghost bclr">clear()</button></div>
+    </div>
+    <div class="cells d-flex flex-wrap justify-content-center my-2"></div>
+    <div class="out-console evlog log"></div>
+   </div>
+   <div class="problem" data-gen="arraylist"></div>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 3 ============================ -->
+<section class="unit u3" id="unidad3">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 3</span><h2>Herencia y polimorfismo</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 3</p></div>
+
+  <article class="topic reveal" id="t31">
+   <h3><span class="num">3.1</span> Herencia: superclase y subclase</h3>
+   <p>La <b>herencia</b> permite crear una clase (<b>subclase</b> o clase hija) a partir de otra (<b>superclase</b> o clase padre) con <code>extends</code>. La subclase recibe los atributos y métodos no privados de la superclase y puede <b>agregar</b> nuevos o <b>especializar</b> los existentes: así se reutiliza código. En Java una clase solo puede extender a una clase, y todas heredan, directa o indirectamente, de <code>Object</code>.</p>
+   <div class="row g-3">
+    <div class="col-lg-6"><pre class="code">class Persona {
+    protected String nombre;
+    public Persona(String nombre) {
+        this.nombre = nombre;          // this: el objeto actual
+    }
+    public String saludar() {
+        return "Hola, soy " + nombre;
+    }
+}</pre></div>
+    <div class="col-lg-6"><pre class="code">class Estudiante extends Persona {
+    private String cuenta;             // atributo agregado
+    public Estudiante(String nombre, String cuenta) {
+        super(nombre);                 // constructor de Persona
+        this.cuenta = cuenta;
+    }
+    @Override
+    public String saludar() {          // especialización
+        return super.saludar() + ", mi cuenta es " + cuenta;
+    }
+}</pre></div>
+   </div>
+   <p class="small"><b>super</b> se refiere a la superclase (su constructor o sus métodos); <b>this</b>, al objeto actual. Una relación de herencia se lee «<i>es un</i>»: un Estudiante <i>es una</i> Persona.</p>
+  </article>
+
+  <article class="topic reveal" id="t32">
+   <h3><span class="num">3.2</span> Colaboración de clases</h3>
+   <p>Las clases <b>colaboran</b> cuando un objeto usa a otro para cumplir su tarea: tiene un atributo de otra clase o le envía mensajes. Se lee «<i>tiene un</i>»: un <code>Grupo</code> tiene una lista de <code>Estudiante</code>; un <code>Controlador</code> crea y usa un objeto del <code>Modelo</code>; una <code>Ventana</code> tiene botones y campos de texto.</p>
+   <pre class="code">class Grupo {
+    private ArrayList&lt;Estudiante&gt; alumnos = new ArrayList&lt;&gt;();
+    public void inscribir(Estudiante e) { alumnos.add(e); }   // colaboración
+    public int total() { return alumnos.size(); }
+}</pre>
+  </article>
+
+  <article class="topic reveal" id="t33">
+   <h3><span class="num">3.3</span> Polimorfismo, clases abstractas e interfaces</h3>
+   <p>El <b>polimorfismo</b> permite tratar objetos de distintas subclases como si fueran de la superclase; al llamar un método, Java ejecuta la versión de la clase <b>real</b> del objeto (enlace dinámico). Así un ciclo puede procesar figuras, animales o empleados de distintos tipos con el mismo código: es un mecanismo de <b>especialización</b> y <b>automatización</b>.</p>
+   <ul>
+    <li><b>Sobreescritura</b> (<i>override</i>): la subclase redefine un método con la <b>misma firma</b> (nombre y parámetros) que el de la superclase; se marca con <code>@Override</code>.</li>
+    <li><b>Sobrecarga</b> (<i>overload</i>): varios métodos con el mismo nombre y <b>distintos parámetros</b>, en la misma clase.</li>
+    <li><b>Clase abstracta</b> (<code>abstract class</code>): no se puede instanciar; puede tener métodos abstractos (sin cuerpo) que las subclases deben implementar.</li>
+    <li><b>Interfaz</b> (<code>interface</code>): declara métodos que una clase se compromete a implementar con <code>implements</code>; una clase puede implementar varias interfaces.</li>
+   </ul>
+   <div class="lab" id="lab-poli">
+    <div class="lab-title">🔷 Polimorfismo en un arreglo <code>Figura[]</code></div>
+    <div class="d-flex gap-2 mb-2"><button class="btn btn-sm btn-acc brun">▶ for (Figura f : figs) f.area()</button><button class="btn btn-sm btn-ghost bnew">Otras figuras</button></div>
+    <svg role="img" aria-label="Jerarquía de figuras"></svg>
+    <div class="arr d-flex flex-wrap justify-content-center my-2"></div>
+    <div class="out-console out"></div>
+   </div>
+   <pre class="code">abstract class Figura {
+    public abstract double area();          // sin cuerpo
+}
+class Circulo extends Figura {
+    private double r;
+    public Circulo(double r) { this.r = r; }
+    @Override
+    public double area() { return Math.PI * r * r; }
+}</pre>
+   <div class="problem" data-gen="polimorfismo"></div>
+   <div class="problem" data-gen="poliQ"></div>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 4 ============================ -->
+<section class="unit u1" id="unidad4">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 4</span><h2>Interfaz gráfica de usuario</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 6</p></div>
+
+  <article class="topic reveal" id="t41">
+   <h3><span class="num">4.1</span> Interfaz de consola vs. interfaz gráfica</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def h-100"><b>Consola:</b> el programa controla el orden; pregunta y espera (<code>Scanner</code>). La interacción es secuencial.</div></div>
+    <div class="col-md-6"><div class="def h-100"><b>Formulario (GUI):</b> el usuario decide qué hacer y cuándo; el programa <b>responde a eventos</b> (clics, teclas) mediante <i>listeners</i>. La interacción es dirigida por eventos.</div></div>
+   </div>
+   <p class="mt-2">En ambos casos conviene separar la <b>presentación</b> (vista) de la <b>lógica</b> (modelo): la misma clase <code>Rectangulo</code> puede usarse desde la consola o desde un formulario. Un <b>diagrama de secuencia</b> muestra, en el tiempo, los mensajes entre el usuario, el programa principal y las clases de lógica.</p>
+   <p><b>Sistema de coordenadas:</b> el origen (0, 0) está en la esquina superior izquierda; <b>x</b> crece a la derecha y <b>y</b> crece hacia abajo, en píxeles. Con <code>setLayout(null)</code> se coloca cada componente con <code>setBounds(x, y, ancho, alto)</code>.</p>
+   <div class="problem" data-gen="coords"></div>
+  </article>
+
+  <article class="topic reveal" id="t42">
+   <h3><span class="num">4.2</span> Jerarquía de clases de AWT/Swing</h3>
+   <p>Swing (paquete <code>javax.swing</code>) se construye sobre AWT (<code>java.awt</code>) usando herencia. Por eso todos los componentes comparten métodos como <code>setBounds</code>, <code>setVisible</code> o <code>setEnabled</code>, heredados de <code>Component</code>, y los contenedores pueden agregar componentes con <code>add</code>, heredado de <code>Container</code>.</p>
+   <div class="lab"><div class="lab-title">🌳 Árbol de herencia (verificado con la documentación de Java)</div><svg id="swing-tree" role="img" aria-label="Jerarquía de clases de Swing"></svg><p class="small mb-0" id="swing-chain"></p></div>
+   <div class="problem" data-gen="jerarquia"></div>
+  </article>
+
+  <article class="topic reveal" id="t43">
+   <h3><span class="num">4.3</span> Componentes y eventos</h3>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Clase</th><th>Para qué sirve</th><th>Métodos frecuentes</th></tr></thead><tbody>
+    <tr><td><code>JFrame</code></td><td>Ventana principal</td><td><code>setTitle, setSize, setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE), setVisible(true)</code></td></tr>
+    <tr><td><code>JPanel</code></td><td>Contenedor para agrupar componentes</td><td><code>add, setLayout</code></td></tr>
+    <tr><td><code>JLabel</code></td><td>Texto o imagen fijos</td><td><code>setText, getText</code></td></tr>
+    <tr><td><code>JTextField</code></td><td>Captura de una línea de texto</td><td><code>getText, setText</code></td></tr>
+    <tr><td><code>JTextArea</code></td><td>Varias líneas de texto</td><td><code>setText, append</code></td></tr>
+    <tr><td><code>JButton</code></td><td>Ejecutar una acción</td><td><code>addActionListener</code></td></tr>
+    <tr><td><code>JCheckBox</code></td><td>Opciones independientes (varias)</td><td><code>isSelected</code></td></tr>
+    <tr><td><code>JRadioButton</code></td><td>Una opción de un grupo (con <code>ButtonGroup</code>)</td><td><code>isSelected</code></td></tr>
+    <tr><td><code>JMenuBar</code>, <code>JMenu</code>, <code>JMenuItem</code></td><td>Barra de menús, menú y opción</td><td><code>setJMenuBar, add, addActionListener</code></td></tr>
+   </tbody></table></div>
+   <p class="small mt-2">Por defecto, al cerrar un <code>JFrame</code> la ventana solo se oculta (<code>HIDE_ON_CLOSE</code>); para terminar el programa se usa <code>setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)</code>. Las acciones se programan con <b>ActionListener</b> (<code>actionPerformed(ActionEvent e)</code>) y las teclas con <b>KeyListener</b> (<code>keyPressed</code>, <code>keyReleased</code>, <code>keyTyped</code>).</p>
+   <div class="lab" id="lab-gui">
+    <div class="lab-title">🖥️ Simulación de un formulario Swing: interactúa y observa los eventos</div>
+    <div class="row g-3">
+     <div class="col-lg-6">
+      <div class="mock">
+       <div class="tb"><span>Registro — JFrame</span><span>— ▢ ✕</span></div>
+       <div class="mb" data-b="0, 0, 420, 22" data-n="barra"><span>Archivo</span><div class="menu"><div data-a="limpiar">Limpiar</div><div>Salir</div></div><span>Ayuda</span><div class="menu"><div data-a="acerca">Acerca de</div></div></div>
+       <div class="p-3 d-grid gap-2">
+        <label data-b="20, 30, 80, 25" data-n="etiqueta">Nombre: (JLabel)</label>
+        <input type="text" class="nombre" placeholder="JTextField" data-b="110, 30, 200, 25" data-n="campo">
+        <div data-b="20, 70, 300, 25" data-n="checks">Intereses: <label><input type="checkbox" class="chk" value="deporte"> deporte</label> <label><input type="checkbox" class="chk" value="música"> música</label> <label><input type="checkbox" class="chk" value="lectura"> lectura</label> <small>(JCheckBox)</small></div>
+        <div data-b="20, 100, 300, 25" data-n="radios">Turno: <label><input type="radio" name="turno" class="rad" value="matutino"> matutino</label> <label><input type="radio" name="turno" class="rad" value="vespertino"> vespertino</label> <small>(JRadioButton)</small></div>
+        <div><button class="btn-saludar" data-b="20, 135, 120, 30" data-n="boton">Registrar</button> <span class="lbl small"></span></div>
+        <textarea class="area" rows="3" placeholder="JTextArea" data-b="20, 175, 380, 70" data-n="area"></textarea>
+       </div>
+      </div>
+      <label class="small mt-2 d-block"><input type="checkbox" class="coords"> Mostrar <code>setBounds</code> de cada componente</label>
+      <div class="small bounds"></div>
+     </div>
+     <div class="col-lg-6"><div class="small fw-bold">Eventos generados</div><div class="out-console evlog" style="max-height:14rem"></div>
+      <pre class="code">boton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String n = campo.getText();
+        area.setText("Hola, " + n);
+    }
+});</pre></div>
+    </div>
+   </div>
+   <div class="problem" data-gen="componente"></div>
+  </article>
+ </div>
+</section>
+
+<section id="fuentes" class="py-5">
+ <div class="container">
+  <h2 class="font-head">Fuentes consultadas</h2>
+  <ul>
+   <li>Colegio de Ciencias y Humanidades, UNAM (2024). <i>Programas de Estudio de Cibernética y Computación I y II</i>.</li>
+   <li>Oracle. <i>The Java Tutorials</i>: <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/operators.html" target="_blank" rel="noopener">Operators</a> y <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html" target="_blank" rel="noopener">Primitive Data Types</a>.</li>
+   <li>Oracle. Documentación de la API de Java SE: <a href="https://docs.oracle.com/javase/8/docs/api/javax/swing/JFrame.html" target="_blank" rel="noopener">JFrame</a>, <a href="https://docs.oracle.com/javase/8/docs/api/javax/swing/package-tree.html" target="_blank" rel="noopener">jerarquía del paquete javax.swing</a> y <a href="https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html" target="_blank" rel="noopener">ArrayList</a>.</li>
+  </ul>
+  <p class="small text-body-secondary">La jerarquía de Swing se comprobó con <code>javap</code> del JDK 21, y las respuestas de los ejercicios de código se verificaron compilando y ejecutando los programas.</p>
+ </div>
+</section>
+<footer><div class="container d-flex flex-wrap justify-content-between gap-2"><span>Cuadernillo interactivo · Cibernética y Computación II · CCH-UNAM</span><span>Material de repaso con fines educativos.</span></div></footer>
+
+<button class="btn btn-acc fab" data-bs-toggle="modal" data-bs-target="#formulario" style="--uc:var(--acc)">📘 Guía rápida</button>
+<button class="btn btn-ghost btn-sm" id="toTop" aria-label="Volver arriba">▲</button>
+<div class="modal fade" id="formulario" tabindex="-1" aria-labelledby="formTitle" aria-hidden="true">
+ <div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal-content">
+   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="formTitle">Guía rápida de consulta</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
+ <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#f1" type="button">Clases y objetos</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f2" type="button">Control y arreglos</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f3" type="button">Herencia</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f4" type="button">Swing</button></li>
+</ul>
+<div class="tab-content">
+ <div class="tab-pane fade show active u1 fgroup" id="f1"><div class="row g-3">
+  <div class="col-md-6"><h5>Plantilla de clase</h5><pre class="code">public class Nombre {
+    private tipo atributo;
+    public Nombre(tipo atributo) {
+        this.atributo = atributo;
+    }
+    public tipo getAtributo() { return atributo; }
+    public void setAtributo(tipo a) { this.atributo = a; }
+}</pre></div>
+  <div class="col-md-6"><h5>Uso (controlador)</h5><pre class="code">Nombre obj = new Nombre(valor);   // instanciar
+obj.setAtributo(otro);            // notación punto
+tipo x = obj.getAtributo();</pre><h5>UML</h5><p class="small"><code>+</code> public · <code>-</code> private · <code>#</code> protected · <code>~</code> paquete · <u>subrayado</u> static · <i>cursiva</i> abstract</p><h5>MVC</h5><p class="small">Modelo (datos y lógica) · Vista (interacción) · Controlador (crea objetos y coordina).</p></div>
+ </div></div>
+ <div class="tab-pane fade u2 fgroup" id="f2"><div class="row g-3">
+  <div class="col-md-6"><pre class="code">variable = (cond) ? valorV : valorF;
+try { ... } catch (TipoException e) { ... }
+for (int i = 0; i < n; i++) { ... }
+while (cond) { ... }
+do { ... } while (cond);
+for (int x : arreglo) { ... }</pre></div>
+  <div class="col-md-6"><pre class="code">int[] v = new int[5];        // v.length == 5
+int[] w = {3, 1, 4};
+int[][] m = new int[3][4];   // m.length == 3, m[0].length == 4
+m[1][2] = 7;
+ArrayList&lt;String&gt; l = new ArrayList&lt;&gt;();
+l.add("a"); l.add(0, "b"); l.get(0);
+l.set(0, "c"); l.remove(0); l.size();</pre></div>
+ </div></div>
+ <div class="tab-pane fade u3 fgroup" id="f3"><div class="row g-3">
+  <div class="col-md-6"><pre class="code">class Hija extends Padre {
+    public Hija(...) { super(...); }
+    @Override
+    public tipo metodo() { ... }
+}
+abstract class Figura {
+    public abstract double area();
+}
+interface Dibujable { void dibujar(); }
+class Circulo extends Figura implements Dibujable { ... }</pre></div>
+  <div class="col-md-6"><div class="fgrid"><div class="fcard"><small>Sobreescritura</small>Misma firma en la subclase (<code>@Override</code>).</div><div class="fcard"><small>Sobrecarga</small>Mismo nombre, distintos parámetros.</div><div class="fcard"><small>super / this</small>Superclase / objeto actual.</div><div class="fcard"><small>Polimorfismo</small>Se ejecuta el método de la clase real del objeto.</div></div></div>
+ </div></div>
+ <div class="tab-pane fade u1 fgroup" id="f4"><div class="row g-3">
+  <div class="col-md-7"><pre class="code">import javax.swing.*;
+import java.awt.event.*;
+public class Ventana extends JFrame implements ActionListener {
+    private JTextField campo = new JTextField();
+    private JButton boton = new JButton("Aceptar");
+    private JLabel salida = new JLabel();
+    public Ventana() {
+        setTitle("Ejemplo");
+        setSize(400, 200);
+        setLayout(null);
+        campo.setBounds(20, 20, 200, 25);
+        boton.setBounds(230, 20, 100, 25);
+        salida.setBounds(20, 60, 300, 25);
+        add(campo); add(boton); add(salida);
+        boton.addActionListener(this);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        salida.setText("Hola, " + campo.getText());
+    }
+    public static void main(String[] args) { new Ventana(); }
+}</pre></div>
+  <div class="col-md-5"><h5>Jerarquía</h5><p class="small"><code>Object → Component → Container → Window → Frame → JFrame</code><br><code>Container → JComponent → JPanel, JLabel, JMenuBar</code><br><code>JComponent → AbstractButton → JButton, JMenuItem → JMenu</code><br><code>AbstractButton → JToggleButton → JCheckBox, JRadioButton</code><br><code>JComponent → JTextComponent → JTextField, JTextArea</code></p><h5>Menús</h5><pre class="code">JMenuBar barra = new JMenuBar();
+JMenu menu = new JMenu("Archivo");
+JMenuItem salir = new JMenuItem("Salir");
+menu.add(salir); barra.add(menu);
+setJMenuBar(barra);</pre></div>
+ </div></div>
+</div>
+</div>
+   <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  </div>
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+'use strict';
+/* ====================== utilidades ====================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const R = {
+  int: (a, b) => a + Math.floor(Math.random() * (b - a + 1)),
+  pick: arr => arr[Math.floor(Math.random() * arr.length)],
+  float: (a, b, d = 1) => +(a + Math.random() * (b - a)).toFixed(d),
+  shuffle: arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
+  normal: () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+};
+const S = {
+  sum: a => a.reduce((s, x) => s + x, 0),
+  mean: a => S.sum(a) / a.length,
+  sorted: a => a.slice().sort((x, y) => x - y),
+  median: a => { const s = S.sorted(a), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; },
+  modes: a => { const c = new Map(); a.forEach(x => c.set(x, (c.get(x) || 0) + 1)); const m = Math.max(...c.values()); if (m === 1) return []; return [...c.entries()].filter(e => e[1] === m).map(e => e[0]).sort((x, y) => x - y); },
+  ss: a => { const m = S.mean(a); return S.sum(a.map(x => (x - m) ** 2)); },
+  varS: a => S.ss(a) / (a.length - 1), varP: a => S.ss(a) / a.length,
+  sdS: a => Math.sqrt(S.varS(a)), sdP: a => Math.sqrt(S.varP(a)),
+  /* percentil por el método p(n+1) con interpolación lineal (NIST/SEMATECH, Hyndman-Fan R6) */
+  quantile: (a, p) => { const s = S.sorted(a), n = s.length, pos = p * (n + 1); const k = Math.floor(pos), d = pos - k; if (k < 1) return s[0]; if (k >= n) return s[n - 1]; return s[k - 1] + d * (s[k] - s[k - 1]); },
+  pearson: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; } return sxy / Math.sqrt(sxx * syy); },
+  linreg: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; } const b = sxy / sxx; return { b, a: my - b * mx }; }
+};
+/* Función de distribución normal estándar Φ(x) (algoritmo de Hart, precisión doble; West 2005) */
+function Phi(x) {
+  const z = Math.abs(x); let c = 0;
+  if (z <= 37) {
+    const e = Math.exp(-z * z / 2);
+    if (z < 7.07106781186547) {
+      let n = 3.52624965998911e-02 * z + 0.700383064443688; n = n * z + 6.37396220353165; n = n * z + 33.912866078383; n = n * z + 112.079291497871; n = n * z + 221.213596169931; n = n * z + 220.206867912376;
+      let d = 8.83883476483184e-02 * z + 1.75566716318264; d = d * z + 16.064177579207; d = d * z + 86.7807322029461; d = d * z + 296.564248779674; d = d * z + 637.333633378831; d = d * z + 793.826512519948; d = d * z + 440.413735824752;
+      c = e * n / d;
+    } else { let b = z + 0.65; b = z + 4 / b; b = z + 3 / b; b = z + 2 / b; b = z + 1 / b; c = e / b / 2.506628274631; }
+  }
+  return x > 0 ? 1 - c : c;
+}
+/* Inversa de Φ (Acklam) con un paso de refinamiento de Newton */
+function invPhi(p) {
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  const pl = 0.02425; let q, r, x;
+  if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  else if (p <= 1 - pl) { q = p - 0.5; r = q * q; x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); }
+  else { q = Math.sqrt(-2 * Math.log(1 - p)); x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  const e = Phi(x) - p, u = e * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2); return x - u / (1 + x * u / 2);
+}
+const normPdf = (x, m = 0, s = 1) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+function comb(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return Math.round(r); }
+const binomPmf = (n, p, k) => comb(n, k) * p ** k * (1 - p) ** (n - k);
+/* formato */
+const r2 = (x, d = 2) => { const f = 10 ** d; return Math.round((x + Number.EPSILON * Math.sign(x)) * f) / f; };
+const fx = (x, d = 2) => { const v = r2(x, d); return (Object.is(v, -0) ? 0 : v).toFixed(d); };
+const fn = (x, d = 4) => { const v = r2(x, d); return String(Object.is(v, -0) ? 0 : v); }; /* sin ceros de relleno */
+const pct = (x, d = 2) => fx(100 * x, d) + '\\%';
+const esc = s => String(s).replace(/</g, '\\lt ').replace(/>/g, '\\gt ');
+const M = s => `\\(${esc(s)}\\)`;          /* matemáticas en línea */
+const MD = s => `\\[${esc(s)}\\]`;         /* matemáticas en bloque */
+
+/* ====================== SVG ====================== */
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) { if (k === 'text') e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); } if (parent) parent.appendChild(e); return e; }
+function clear(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+function niceTicks(min, max, count = 6) {
+  const span = max - min || 1, step0 = span / count, mag = 10 ** Math.floor(Math.log10(step0)), err = step0 / mag;
+  const step = (err >= 7.5 ? 10 : err >= 3.5 ? 5 : err >= 1.5 ? 2 : 1) * mag; const t = [];
+  for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) t.push(+v.toFixed(10)); return t;
+}
+/* Plano con escalas; devuelve {sx, sy, g} */
+function plane(svg, o) {
+  const W = o.W || 640, H = o.H || 300, p = Object.assign({ l: 48, r: 16, t: 14, b: 34 }, o.pad || {});
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); if (!o.keep) clear(svg);
+  const sx = v => p.l + (v - o.x0) / (o.x1 - o.x0) * (W - p.l - p.r);
+  const sy = v => H - p.b - (v - o.y0) / (o.y1 - o.y0) * (H - p.t - p.b);
+  const g = el('g', {}, svg);
+  if (o.grid !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('line', { x1: p.l, x2: W - p.r, y1: sy(t), y2: sy(t), class: 'gridl' }, g));
+  el('line', { x1: p.l, x2: W - p.r, y1: H - p.b, y2: H - p.b, class: 'axis' }, g);
+  if (o.yaxis !== false) el('line', { x1: p.l, x2: p.l, y1: p.t, y2: H - p.b, class: 'axis' }, g);
+  (o.xt || niceTicks(o.x0, o.x1, 8)).forEach(t => el('text', { x: sx(t), y: H - p.b + 16, 'text-anchor': 'middle', class: 'tick', text: o.xf ? o.xf(t) : fn(t, 3) }, g));
+  if (o.yaxis !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('text', { x: p.l - 6, y: sy(t) + 4, 'text-anchor': 'end', class: 'tick', text: o.yf ? o.yf(t) : fn(t, 3) }, g));
+  if (o.xl) el('text', { x: (W + p.l - p.r) / 2, y: H - 2, 'text-anchor': 'middle', class: 'tick', text: o.xl }, g);
+  if (o.yl) el('text', { x: 12, y: (H - p.b + p.t) / 2, 'text-anchor': 'middle', class: 'tick', transform: `rotate(-90 12 ${(H - p.b + p.t) / 2})`, text: o.yl }, g);
+  return { sx, sy, g, W, H, p };
+}
+function pathFn(f, a, b, sx, sy, n = 200) { let d = ''; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += (i ? 'L' : 'M') + sx(x).toFixed(2) + ',' + sy(f(x)).toFixed(2); } return d; }
+function areaFn(f, a, b, sx, sy, n = 160) { let d = `M${sx(a)},${sy(0)}`; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += `L${sx(x).toFixed(2)},${sy(f(x)).toFixed(2)}`; } return d + `L${sx(b)},${sy(0)}Z`; }
+function animatePath(p, ms = 900) { try { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p.getBoundingClientRect(); p.style.transition = `stroke-dashoffset ${ms}ms ease`; p.style.strokeDashoffset = 0; } catch (e) { } }
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ====================== KaTeX ====================== */
+function tex(node) {
+  if (window.renderMathInElement) renderMathInElement(node || document.body, { delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }], throwOnError: false });
+}
+
+/* ====================== problemas aleatorios paso a paso ====================== */
+/* gen() devuelve {enun, steps:[{h, b}], ans:{label, value, tol}, fig?(node)} */
+const PROBLEMS = {};
+function mountProblem(node) {
+  const gen = PROBLEMS[node.dataset.gen]; if (!gen) return;
+  node.innerHTML = `<span class="ptag">${node.dataset.tag || 'Ejercicio aleatorio'}</span>
+   <div class="enun"></div><div class="fig"></div>
+   <div class="ansbox mt-2"></div>
+   <div class="btns d-flex flex-wrap gap-2 mt-3">
+     <button class="btn btn-sm btn-acc b-new">↻ Nuevo ejercicio</button>
+     <button class="btn btn-sm btn-ghost b-step">Siguiente paso ▸</button>
+     <button class="btn btn-sm btn-ghost b-all">Ver solución completa</button>
+   </div><ol class="steps"></ol>`;
+  let cur = null, shown = 0;
+  const enun = $('.enun', node), steps = $('.steps', node), ansbox = $('.ansbox', node), fig = $('.fig', node);
+  const showStep = () => { if (!cur || shown >= cur.steps.length) return; const s = cur.steps[shown++]; const li = document.createElement('li'); li.innerHTML = (s.h ? `<h6>${s.h}</h6>` : '') + s.b; steps.appendChild(li); tex(li); if (s.fig) s.fig(li); $('.b-step', node).disabled = shown >= cur.steps.length; };
+  const norm = v => String(v).trim().toLowerCase().replace(/\s+/g, '').replace(/^0+(?=[0-9a-f])/i, '');
+  const fresh = () => {
+    cur = gen(); shown = 0; steps.innerHTML = ''; enun.innerHTML = cur.enun; fig.innerHTML = '';
+    if (cur.fig) cur.fig(fig);
+    const a = cur.ans; ansbox.innerHTML = '';
+    if (a && a.choices) {
+      ansbox.innerHTML = `<div class="d-flex flex-wrap gap-2">${a.choices.map(c => `<button class="btn btn-sm btn-ghost quiz-opt">${c}</button>`).join('')}</div><div class="small mt-1 fb"></div>`;
+      $$('.quiz-opt', ansbox).forEach(b => b.onclick = () => { if ($('.quiz-opt.correct', ansbox)) return; const ok = b.textContent === String(a.value); b.classList.add(ok ? 'correct' : 'wrong'); $$('.quiz-opt', ansbox).forEach(x => { if (x.textContent === String(a.value)) x.classList.add('correct'); });
+        const fb = $('.fb', ansbox); fb.className = 'small mt-1 fb ' + (ok ? 'check-ok' : 'check-bad'); fb.innerHTML = ok ? '✔ ¡Correcto!' : '✘ No es correcto. Revisa la solución paso a paso.'; });
+    } else if (a) {
+      ansbox.innerHTML = `<div class="input-group input-group-sm" style="max-width:460px"><span class="input-group-text">${a.label}</span><input type="text" class="form-control font-monospace" placeholder="tu respuesta" autocomplete="off" spellcheck="false"><button class="btn btn-ghost b-chk">Comprobar</button></div><div class="small mt-1 fb"></div>`;
+      const inp = $('input', ansbox), fb = $('.fb', ansbox);
+      const chk = () => { let ok;
+        if (a.text) { const accept = [].concat(a.value, a.alt || []).map(x => (a.norm || norm)(x)); ok = accept.includes((a.norm || norm)(inp.value)); }
+        else { const v = parseFloat(String(inp.value).replace(',', '.')); if (isNaN(v)) { fb.className = 'small mt-1 fb'; fb.innerHTML = 'Escribe un número.'; return; } ok = Math.abs(v - a.value) <= (a.tol ?? 1e-9); }
+        fb.className = 'small mt-1 fb ' + (ok ? 'check-ok' : 'check-bad');
+        fb.innerHTML = ok ? '✔ ¡Correcto! Revisa el procedimiento para confirmar tu razonamiento.' : '✘ Aún no. Usa «Siguiente paso» para guiarte.'; };
+      $('.b-chk', ansbox).onclick = chk; inp.onkeydown = e => { if (e.key === 'Enter') chk(); };
+    }
+    $('.b-step', node).disabled = false; tex(enun); tex(ansbox); hlAll(node);
+  };
+  $('.b-new', node).onclick = fresh; $('.b-step', node).onclick = () => { showStep(); hlAll(node); };
+  $('.b-all', node).onclick = () => { while (cur && shown < cur.steps.length) showStep(); hlAll(node); };
+  fresh();
+}
+/* ====================== resaltado de código Java ====================== */
+const JKW = new Set('abstract boolean break byte case catch char class continue default do double else extends final finally float for if implements import instanceof int interface long new package private protected public return short static super switch this throw throws try void while var true false null'.split(' '));
+function hlJava(src) {
+  const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(@\w+)|(\b\d+(?:\.\d+)?[fFdDlL]?\b)|(\b[A-Za-z_]\w*\b)/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))) { out += esc(src.slice(last, m.index)); const t = esc(m[0]);
+    if (m[1]) out += `<span class="tk-c">${t}</span>`; else if (m[2]) out += `<span class="tk-s">${t}</span>`; else if (m[3]) out += `<span class="tk-a">${t}</span>`; else if (m[4]) out += `<span class="tk-n">${t}</span>`;
+    else if (JKW.has(m[5])) out += `<span class="tk-k">${t}</span>`; else if (/^[A-Z]/.test(m[5])) out += `<span class="tk-t">${t}</span>`; else out += t; last = re.lastIndex; }
+  return out + esc(src.slice(last));
+}
+function hlAll(root = document) { $$('pre.code:not(.hl)', root).forEach(p => { p.innerHTML = hlJava(p.textContent); p.classList.add('hl'); }); }
+const codeBlock = src => `<pre class="code">${src.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+/* tabla html rápida */
+function htable(head, rows, cls = 'tbl') { return `<div class="scroll-x"><table class="${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => typeof c === 'object' && c !== null ? `<td class="${c.c || ''}">${c.v}</td>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+
+/* ====================== interfaz general ====================== */
+function initUI() {
+  /* tema */
+  const root = document.documentElement; let saved = null; try { saved = localStorage.getItem('cuad-theme'); } catch (e) { }
+  if (saved) root.setAttribute('data-bs-theme', saved);
+  const tbtn = $('#themeBtn'); if (tbtn) tbtn.onclick = () => { const t = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark'; root.setAttribute('data-bs-theme', t); try { localStorage.setItem('cuad-theme', t); } catch (e) { } document.dispatchEvent(new Event('themechange')); };
+  /* progreso y volver arriba */
+  const prog = $('#progress'), top = $('#toTop');
+  const onScroll = () => { const h = document.documentElement; const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight); if (prog) prog.style.width = (p * 100) + '%'; if (top) top.classList.toggle('show', h.scrollTop > 600); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  if (top) top.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+  /* apariciones */
+  if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .08 }); $$('.reveal').forEach(n => io.observe(n)); }
+  else $$('.reveal').forEach(n => n.classList.add('in'));
+  /* problemas */
+  hlAll(document); $$('.problem[data-gen]').forEach(mountProblem);
+  tex(document.body);
+}
+
+/* ====================== utilidades booleanas (compartidas) ====================== */
+const VARS4 = ['A', 'B', 'C', 'D'];
+/* Analizador de expresiones: acepta A B C D, ' (negación posfija), !, ~, ¬, +, |, ·, *, &, yuxtaposición y paréntesis, 0, 1 */
+function parseBool(str, vars) {
+  const s = String(str).replace(/\s+/g, '').replace(/[·*&∧]/g, '.').replace(/[|∨]/g, '+').replace(/[!~¬]/g, '!').replace(/’|`|´/g, "'").toUpperCase();
+  let i = 0;
+  const peek = () => s[i];
+  function expr() { let t = term(); while (peek() === '+') { i++; const r = term(); const l = t; t = env => l(env) | r(env); } return t; }
+  function term() { let f = factor(); while (i < s.length && (peek() === '.' || /[A-Z01(!]/.test(peek()))) { if (peek() === '.') i++; const r = factor(); const l = f; f = env => l(env) & r(env); } return f; }
+  function factor() {
+    let f;
+    if (peek() === '!') { i++; const g = factor(); f = env => 1 - g(env); }
+    else if (peek() === '(') { i++; f = expr(); if (peek() !== ')') throw new Error('Falta )'); i++; }
+    else if (peek() === '0' || peek() === '1') { const v = +s[i++]; f = () => v; }
+    else if (/[A-Z]/.test(peek() || '')) { const v = s[i++]; if (!vars.includes(v)) throw new Error('Variable ' + v + ' no válida'); f = env => env[v]; }
+    else throw new Error('Expresión incompleta');
+    while (peek() === "'") { i++; const g = f; f = env => 1 - g(env); }
+    return f;
+  }
+  if (!s.length) throw new Error('vacía');
+  const f = expr(); if (i < s.length) throw new Error('Símbolo inesperado: ' + s[i]); return f;
+}
+function truthVector(f, vars) { const n = vars.length, out = []; for (let m = 0; m < 2 ** n; m++) { const env = {}; vars.forEach((v, k) => env[v] = (m >> (n - 1 - k)) & 1); out.push(f(env)); } return out; }
+/* Quine-McCluskey con cobertura mínima exhaustiva */
+function qm(ones, n, dc = []) {
+  if (!ones.length) return [];
+  const all = [...new Set([...ones, ...dc])];
+  let groups = all.map(m => ({ v: m, mask: 0, cov: [m] })); const primes = [];
+  while (groups.length) {
+    const used = new Set(), next = [], seen = new Set();
+    for (let a = 0; a < groups.length; a++) for (let b = a + 1; b < groups.length; b++) {
+      const x = groups[a], y = groups[b]; if (x.mask !== y.mask) continue; const d = x.v ^ y.v;
+      if (d && !(d & (d - 1))) { used.add(a); used.add(b); const v = x.v & ~d, mask = x.mask | d, key = v + ':' + mask; if (!seen.has(key)) { seen.add(key); next.push({ v, mask, cov: [...new Set([...x.cov, ...y.cov])].sort((p, q) => p - q) }); } }
+    }
+    groups.forEach((g, k) => { if (!used.has(k) && !primes.some(p => p.v === g.v && p.mask === g.mask)) primes.push(g); });
+    groups = next;
+  }
+  const P = primes.filter(p => p.cov.some(m => ones.includes(m)));
+  let best = null;
+  const lits = p => n - popcount(p.mask);
+  for (let sz = 1; sz <= P.length && !best; sz++) {
+    const pick = []; const rec = (start) => {
+      if (pick.length === sz) { const cov = new Set(pick.flatMap(k => P[k].cov)); if (ones.every(m => cov.has(m))) { const L = pick.reduce((s, k) => s + lits(P[k]), 0); if (!best || L < best.L) best = { L, terms: pick.map(k => P[k]) }; } return; }
+      for (let k = start; k < P.length; k++) { pick.push(k); rec(k + 1); pick.pop(); } };
+    rec(0);
+  }
+  return best.terms;
+}
+function popcount(x) { let c = 0; while (x) { c += x & 1; x >>= 1; } return c; }
+/* término -> texto y TeX */
+function termLits(t, vars) { const n = vars.length, L = []; vars.forEach((v, k) => { const bit = 1 << (n - 1 - k); if (t.mask & bit) return; L.push([v, (t.v & bit) ? 1 : 0]); }); return L; }
+function sopText(terms, vars) { if (!terms.length) return '0'; if (terms.length === 1 && termLits(terms[0], vars).length === 0) return '1'; return terms.map(t => termLits(t, vars).map(([v, b]) => b ? v : v + "'").join('')).join(' + '); }
+function sopTex(terms, vars) { if (!terms.length) return '0'; if (terms.length === 1 && termLits(terms[0], vars).length === 0) return '1'; return terms.map(t => termLits(t, vars).map(([v, b]) => b ? v : `\\overline{${v}}`).join('')).join(' + '); }
+function mintermTex(m, vars) { const n = vars.length; return vars.map((v, k) => ((m >> (n - 1 - k)) & 1) ? v : `\\overline{${v}}`).join(''); }
+function mintermText(m, vars) { const n = vars.length; return vars.map((v, k) => ((m >> (n - 1 - k)) & 1) ? v : v + "'").join(''); }
+const GRAY2 = [0, 1, 3, 2];
+
+/* ======================= Cibernética y Computación II ======================= */
+const LEARN = [
+ { u: 1, nombre: 'Fundamentos de programación orientada a objetos con Java', h: 10,
+   prop: 'Conocerá las características de la programación orientada a objetos en el lenguaje Java, para resolver problemas desde la definición de las clases hasta la instanciación de objetos.',
+   L: [
+    ['Conoce los conceptos básicos de la programación orientada a objetos.', 'Paquete, clase, atributos, métodos y objeto (identidad, atributos, métodos)', '#t11'],
+    ['Conoce la organización general de un programa en Java como lenguaje orientado a objetos.', 'Abstracción, encapsulamiento, herencia y polimorfismo', '#t11'],
+    ['Conoce los estándares del Lenguaje Unificado de Modelado (UML) para la elaboración de un diagrama de clase y de objeto.', 'Estructura de los diagramas de clase y de objetos', '#t12'],
+    ['Elabora los diagramas de clase y de objetos usando el Lenguaje Unificado de Modelado (UML).', 'Modificadores de acceso (niveles de visibilidad)', '#t12'],
+    ['Implementa la codificación en Java del modelo de clase, utilizando el diagrama de clase (atributos y los 3 métodos constructor, setter y getter).', 'Declaración de la clase, atributos, constructor, setters y getters', '#t13'],
+    ['Emplea la arquitectura modelo-vista-controlador para instanciar una clase.', 'Arquitectura modelo-vista-controlador', '#t14'],
+    ['Escribe el código del controlador para la instanciación de la clase.', 'Instanciación, creación de objetos y notación punto', '#t14'],
+    ['Elabora la solución a un problema definiendo la clase e instanciando el objeto.', 'Métodos de clase y de instancia; componentes de un método', '#t15'] ] },
+ { u: 2, nombre: 'Estructuras de control de secuencia en Java', h: 24,
+   prop: 'Utilizará las estructuras de control de secuencia para la resolución de problemas a través del lenguaje de programación orientado a objetos con Java.',
+   L: [
+    ['Desarrolla programas que involucren las estructuras condicionales simples, compuestas, anidadas y múltiples en los métodos de una clase.', 'if, if-else, anidadas, operador ternario y switch', '#t21'],
+    ['Identifica y codifica excepciones a través de las sentencias try y catch.', 'Concepto de excepción; try y catch', '#t22'],
+    ['Codifica programas para resolver problemas que involucren estructuras repetitivas for, while y do-while.', 'for, while y do-while', '#t23'],
+    ['Desarrolla programas que involucren la estructura repetitiva while en los métodos de una clase.', 'while: implementación', '#t23'],
+    ['Desarrolla programas que involucren la estructura repetitiva do–while en los métodos de una clase.', 'do-while: implementación', '#t23'],
+    ['Resuelve problemas que involucren el uso de los arreglos unidimensionales en los métodos de una clase.', 'Arreglos unidimensionales: concepto, declaración, tipos, uso y recorrido', '#t24'],
+    ['Conoce el concepto de estructuras de datos en Java.', 'Estructuras de datos', '#t24'],
+    ['Conoce el concepto de estructura de datos estática.', 'Estructuras de datos estáticas', '#t24'],
+    ['Describe el concepto de los arreglos unidimensionales en los métodos de una clase.', 'Arreglos unidimensionales', '#t24'],
+    ['Codifica programas que involucren el uso de los arreglos unidimensionales en los métodos de una clase que involucren la estructura repetitiva for-each.', 'for-each: implementación', '#t24'],
+    ['Describe los conceptos de los arreglos bidimensionales en los métodos de una clase.', 'Arreglos bidimensionales: concepto, declaración, uso, acceso y recorrido', '#t25'],
+    ['Codifica programas que involucren el uso de los arreglos bidimensionales en los métodos de una clase.', 'Arreglos bidimensionales: implementación', '#t25'],
+    ['Elabora un proyecto que utilice las sentencias vistas hasta el momento, incluyendo arreglos unidimensionales y/o bidimensionales.', 'Proyecto integrador', '#t25'],
+    ['Conoce el concepto de estructura de datos dinámica.', 'Estructuras de datos dinámicas', '#t26'],
+    ['Describe el concepto de ArrayList en los métodos de una clase.', 'ArrayList: concepto y declaración', '#t26'],
+    ['Codifica programas que involucren el uso de los ArrayList en los métodos de una clase.', 'ArrayList: añadir, eliminar, acceder, recorrer', '#t26'] ] },
+ { u: 3, nombre: 'Herencia y polimorfismo', h: 14,
+   prop: 'Implementará programas en Java utilizando herencia, polimorfismo, y colaboración de clases para aprovechar las bondades de la programación orientada a objetos como mecanismos de reutilización de código y especialización de clases.',
+   L: [
+    ['Conoce el concepto de herencia como mecanismo de especialización y reutilización de código.', 'Herencia y jerarquía: clase, superclase, subclase, super y this', '#t31'],
+    ['Comprende la colaboración de clases.', 'Colaboración de clases', '#t32'],
+    ['Comprende el concepto de polimorfismo como mecanismo de especialización y automatización.', 'Polimorfismo, sobreescritura, clases abstractas e interfaces', '#t33'] ] },
+ { u: 4, nombre: 'Interfaz gráfica de usuario', h: 16,
+   prop: 'Implementará programas con colaboración de clases en Java para aplicar sus conocimientos de programación orientada a objetos, utilizando interfaces gráficas de usuario con formularios y su comparación con las interfaces de consola.',
+   L: [
+    ['Aplicará los mecanismos de colaboración entre clases para implementar interfaces de usuario (presentación) con las clases de la lógica (modelado).', 'Consola vs. formularios; diagramas de secuencia; sistema de coordenadas', '#t41'],
+    ['Aplicará los conceptos de herencia para modelar e interpretar la jerarquía de clases de AWT/Swing para la construcción de interfaces gráficas de usuario (GUI).', 'Jerarquía de clases de Swing', '#t42'],
+    ['Elabora programas con interfaz gráfica que capture y presente texto con JLabel, JTextField y JTextArea.', 'JFrame, JPanel, JLabel, JTextField, JTextArea', '#t43'],
+    ['Elabora programas con interfaz gráfica que realice acciones a través de JButton.', 'JButton; ActionListener y KeyListener', '#t43'],
+    ['Elabora programas con interfaz gráfica aplicando las clases JCheckBox y JRadioButton.', 'JCheckBox y JRadioButton', '#t43'],
+    ['Elabora programas con interfaz gráfica aplicando las clases JMenuBar, JMenu y JMenuItem.', 'JMenuBar, JMenu y JMenuItem', '#t43'] ] }
+];
+const prog = (classes, body) => `${classes ? classes + '\n\n' : ''}public class Main {\n    public static void main(String[] args) {\n${body.split('\n').map(l => '        ' + l).join('\n')}\n    }\n}`;
+const outBox = o => `<div class="out-console">${String(o).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</div>`;
+const jstr = v => typeof v === 'number' && !Number.isInteger(v) ? String(v) : String(v);
+/* formato de double como Java (para valores sencillos: enteros → x.0) */
+const jd = v => Number.isInteger(v) ? v.toFixed(1) : String(v);
+
+/* ---------------------------------------------------------------- Unidad 1 */
+const POO_DEF = [
+  ['Plantilla o molde que define los atributos y métodos que tendrán sus objetos.', 'Clase'],
+  ['Instancia concreta de una clase, con identidad propia y valores en sus atributos.', 'Objeto'],
+  ['Característica o dato de un objeto (por ejemplo, nombre o edad).', 'Atributo'],
+  ['Comportamiento u operación que puede realizar un objeto.', 'Método'],
+  ['Agrupación de clases relacionadas en un mismo espacio de nombres (por ejemplo, java.util).', 'Paquete'],
+  ['Ocultar los atributos (private) y permitir el acceso solo mediante métodos (getters y setters).', 'Encapsulamiento'],
+  ['Tomar solo las características esenciales de un objeto real para modelarlo, ignorando detalles irrelevantes.', 'Abstracción'],
+  ['Mecanismo para crear una clase nueva a partir de otra, reutilizando sus atributos y métodos.', 'Herencia'],
+  ['Capacidad de que un mismo mensaje (método) produzca comportamientos distintos según la clase del objeto.', 'Polimorfismo']];
+PROBLEMS.pooDef = () => { const [d, a] = R.pick(POO_DEF); const opts = R.shuffle([a, ...R.shuffle(POO_DEF.map(x => x[1]).filter(x => x !== a)).slice(0, 3)]);
+  return { enun: `¿A qué concepto corresponde? <b>${d}</b>`, ans: { choices: opts, value: a }, chk: {}, steps: [{ h: 'Respuesta', b: `<b>${a}</b>.` }] }; };
+const VIS = [['+', 'public', 'Accesible desde cualquier clase.'], ['-', 'private', 'Solo accesible dentro de la propia clase.'], ['#', 'protected', 'Accesible en la clase, sus subclases y su paquete.'], ['~', 'de paquete (sin modificador)', 'Accesible solo desde clases del mismo paquete.']];
+PROBLEMS.uml = () => { const [sym, mod, ex] = R.pick(VIS); const attr = R.pick(['nombre : String', 'edad : int', 'saldo : double', 'activo : boolean', 'calcularArea() : double', 'getNombre() : String']);
+  return { enun: `En un diagrama de clase UML aparece: <code>${sym}${attr}</code>. ¿Qué modificador de acceso de Java le corresponde?`, ans: { choices: VIS.map(v => v[1]), value: mod }, chk: {},
+    steps: [{ h: 'Símbolos de visibilidad en UML', b: htable(['Símbolo', 'Java', 'Significado'], VIS.map(v => [v[0], v[1], v[2]])) + 'Además, un miembro <u>subrayado</u> es <code>static</code> y uno en <i>cursiva</i> es <code>abstract</code>.' }, { h: 'Respuesta', b: `<code>${sym}</code> → <b>${mod}</b>. ${ex}` }] }; };
+const CLASES = [
+  { n: 'Rectangulo', at: [['double', 'base'], ['double', 'altura']], m: 'area', mr: 'double', mb: 'return base * altura;', val: () => [R.int(2, 12), R.int(2, 9)], f: (v) => v[0] * v[1], mod: [1, 'altura'] },
+  { n: 'Cuenta', at: [['String', 'titular'], ['double', 'saldo']], m: 'depositar', mr: 'void', mb: null, val: () => [R.pick(['"Ana"', '"Luis"', '"Sofía"']), R.int(100, 900)], f: null },
+  { n: 'Producto', at: [['String', 'nombre'], ['int', 'cantidad'], ['double', 'precio']], m: 'total', mr: 'double', mb: 'return cantidad * precio;', val: () => [R.pick(['"Lápiz"', '"Cuaderno"', '"Goma"']), R.int(2, 9), R.int(3, 25)], f: v => v[1] * v[2], mod: [1, 'cantidad'] }];
+const cap = s => s[0].toUpperCase() + s.slice(1);
+function classCode(C) {
+  const at = C.at.map(([t, a]) => `    private ${t} ${a};`).join('\n');
+  const ctor = `    public ${C.n}(${C.at.map(([t, a]) => `${t} ${a}`).join(', ')}) {\n${C.at.map(([, a]) => `        this.${a} = ${a};`).join('\n')}\n    }`;
+  const gs = C.at.map(([t, a]) => `    public ${t} get${cap(a)}() {\n        return ${a};\n    }\n    public void set${cap(a)}(${t} ${a}) {\n        this.${a} = ${a};\n    }`).join('\n');
+  const extra = C.n === 'Cuenta' ? `    public void depositar(double monto) {\n        if (monto > 0) {\n            saldo = saldo + monto;\n        }\n    }` : `    public ${C.mr} ${C.m}() {\n        ${C.mb}\n    }`;
+  return `class ${C.n} {\n${at}\n\n${ctor}\n\n${gs}\n\n${extra}\n}`;
+}
+PROBLEMS.objetos = () => {
+  const C = R.pick(CLASES), v = C.val(); const obj = C.n[0].toLowerCase() + '1';
+  let body, out, steps;
+  if (C.n === 'Cuenta') { const d1 = R.int(50, 500), d2 = -R.int(10, 200), s = v[1] + d1; body = `${C.n} ${obj} = new ${C.n}(${v[0]}, ${v[1]});\n${obj}.depositar(${d1});\n${obj}.depositar(${d2});\nSystem.out.println(${obj}.getTitular() + ": " + ${obj}.getSaldo());`; out = `${v[0].replace(/"/g, '')}: ${jd(s)}`;
+    steps = [{ h: 'Instanciación', b: `<code>new ${C.n}(${v[0]}, ${v[1]})</code> llama al constructor: titular = ${v[0]}, saldo = ${v[1]}.0` }, { h: `depositar(${d1})`, b: `${d1} &gt; 0 → saldo = ${v[1]} + ${d1} = ${s}` }, { h: `depositar(${d2})`, b: `${d2} no es mayor que 0: el <code>if</code> no se cumple y el saldo no cambia (el método protege al atributo: encapsulamiento).` }, { h: 'Salida', b: outBox(out) + 'Un atributo <code>double</code> se imprime con decimal.' }]; }
+  else { const nv = R.int(2, 9); const v2 = v.slice(); const idx = C.at.findIndex(a => a[1] === C.mod[1]); v2[idx] = nv; const r1 = C.f(v), r2 = C.f(v2);
+    body = `${C.n} ${obj} = new ${C.n}(${v.join(', ')});\nSystem.out.println(${obj}.${C.m}());\n${obj}.set${cap(C.mod[1])}(${nv});\nSystem.out.println(${obj}.${C.m}());`; out = `${jd(r1)}\n${jd(r2)}`;
+    steps = [{ h: 'Constructor', b: `<code>new ${C.n}(${v.join(', ')})</code> asigna ${C.at.map(([, a], k) => `${a} = ${v[k]}`).join(', ')} usando <code>this.atributo = parámetro</code>.` }, { h: `Primera llamada a ${C.m}()`, b: `${C.mb.replace('return ', '').replace(';', '')} = ${jd(r1)}` }, { h: `set${cap(C.mod[1])}(${nv})`, b: `El setter cambia ${C.mod[1]} a ${nv}.` }, { h: `Segunda llamada a ${C.m}()`, b: `= ${jd(r2)}` }, { h: 'Salida', b: outBox(out) + `Como el resultado es <code>double</code>, Java lo imprime con punto decimal.` }]; }
+  const code = prog(classCode(C), body);
+  return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { label: 'salida:', value: out.replace(/\n/g, ' '), text: true, norm: x => String(x).trim().replace(/\s+/g, ' ').toLowerCase() }, chk: { code, out }, steps };
+};
+PROBLEMS.getter = () => { const [t, a] = R.pick([['String', 'nombre'], ['int', 'edad'], ['double', 'promedio'], ['boolean', 'inscrito'], ['char', 'grupo']]);
+  const ok = `public ${t} get${cap(a)}() { return ${a}; }`;
+  const wrong = [`public void get${cap(a)}() { return ${a}; }`, `public ${t} get${cap(a)}(${t} ${a}) { this.${a} = ${a}; }`, `private ${t} get${cap(a)}() { ${a}; }`];
+  return { enun: `La clase tiene el atributo <code>private ${t} ${a};</code>. ¿Cuál es el <b>getter</b> correcto?`, ans: { choices: R.shuffle([ok, ...wrong]), value: ok }, chk: {},
+    steps: [{ h: 'Getter', b: `Es público, devuelve el tipo del atributo, no recibe parámetros y regresa su valor: <code>${ok}</code>` }, { h: 'Setter correspondiente', b: `<code>public void set${cap(a)}(${t} ${a}) { this.${a} = ${a}; }</code> — no devuelve nada (<code>void</code>) y recibe el nuevo valor. <code>this</code> distingue el atributo del parámetro con el mismo nombre.` }] }; };
+
+/* ---------------------------------------------------------------- Unidad 2 */
+PROBLEMS.ternario = () => { const a = R.int(-20, 40), b = R.int(-20, 40);
+  const t = R.int(0, 2); let body, out, st;
+  if (t === 0) { body = `int a = ${a}, b = ${b};\nint mayor = (a > b) ? a : b;\nSystem.out.println(mayor);`; out = String(a > b ? a : b); st = `<code>(a > b)</code> → ${a} &gt; ${b} → ${a > b}; el operador ternario devuelve ${a > b ? 'a' : 'b'}.`; }
+  else if (t === 1) { body = `int n = ${a};\nString r = (n % 2 == 0) ? "par" : "impar";\nSystem.out.println(n + " es " + r);`; out = `${a} es ${a % 2 === 0 ? 'par' : 'impar'}`; st = `<code>${a} % 2</code> = ${a % 2} → ${a % 2 === 0 ? 'par' : 'impar'}. (En Java el residuo de un negativo es negativo o 0; la comparación con 0 sigue funcionando.)`; }
+  else { body = `int t = ${a};\nif (t < 0) {\n    System.out.println("congelado");\n} else if (t < 15) {\n    System.out.println("frío");\n} else if (t < 28) {\n    System.out.println("templado");\n} else {\n    System.out.println("caluroso");\n}`; out = a < 0 ? 'congelado' : a < 15 ? 'frío' : a < 28 ? 'templado' : 'caluroso'; st = `Con t = ${a} se revisan las condiciones en orden; la primera verdadera es la que se ejecuta.`; }
+  const code = prog('', body);
+  return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { label: 'salida:', value: out, text: true, norm: x => String(x).trim().replace(/\s+/g, ' ').toLowerCase() }, chk: { code, out },
+    steps: [{ h: 'Operador ternario', b: '<code>condición ? valorSiVerdadero : valorSiFalso</code> es una forma compacta de un if-else que <b>devuelve</b> un valor.' }, { h: 'Evaluación', b: st }, { h: 'Salida', b: outBox(out) }] }; };
+const EXC = [
+  { body: (n) => `int a = ${n}, b = 0;\ntry {\n    System.out.println(a / b);\n} catch (ArithmeticException e) {\n    System.out.println("Error: división entre cero");\n}`, out: 'Error: división entre cero', ex: 'ArithmeticException', why: 'La división entera entre 0 lanza <code>ArithmeticException</code>.' },
+  { body: (n) => `int[] datos = {4, 8, 15};\ntry {\n    System.out.println(datos[${n % 3 + 3}]);\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println("Índice fuera de rango");\n}`, out: 'Índice fuera de rango', ex: 'ArrayIndexOutOfBoundsException', why: 'El arreglo tiene 3 elementos (índices 0, 1 y 2); acceder a un índice mayor lanza <code>ArrayIndexOutOfBoundsException</code>.' },
+  { body: () => `String texto = "${R.pick(['doce', '12a', 'tres'])}";\ntry {\n    int x = Integer.parseInt(texto);\n    System.out.println(x * 2);\n} catch (NumberFormatException e) {\n    System.out.println("No es un número");\n}`, out: 'No es un número', ex: 'NumberFormatException', why: '<code>Integer.parseInt</code> no puede convertir un texto que no representa un entero y lanza <code>NumberFormatException</code>.' },
+  { body: (n) => `int a = ${n}, b = ${R.int(2, 5)};\ntry {\n    System.out.println(a / b);\n} catch (ArithmeticException e) {\n    System.out.println("Error");\n}`, out: null, ex: 'Ninguna', why: 'El divisor no es cero: no ocurre ninguna excepción y el bloque <code>catch</code> no se ejecuta.' }];
+PROBLEMS.excepcion = () => { const E = R.pick(EXC), n = R.int(5, 40); const body = E.body(n); let out = E.out;
+  if (out === null) { const m = body.match(/int a = (\d+), b = (\d+)/); out = String(Math.trunc(+m[1] / +m[2])); }
+  const code = prog('', body);
+  return { enun: '¿Qué imprime el programa? ¿Qué excepción se lanza?' + codeBlock(code), ans: { choices: ['ArithmeticException', 'ArrayIndexOutOfBoundsException', 'NumberFormatException', 'Ninguna'], value: E.ex }, chk: { code, out },
+    steps: [{ h: 'try / catch', b: 'Las instrucciones que pueden fallar van en <code>try</code>. Si ocurre una excepción del tipo indicado, el programa salta al bloque <code>catch</code> en lugar de terminar con error.' }, { h: 'Análisis', b: E.why }, { h: 'Salida', b: outBox(out) }] }; };
+function arrLit(a) { return '{' + a.join(', ') + '}'; }
+PROBLEMS.arreglo = () => { const a = Array.from({ length: R.int(5, 8) }, () => R.int(1, 30)); const t = R.int(0, 3); let body, out, st;
+  if (t === 0) { body = `int[] v = ${arrLit(a)};\nint suma = 0;\nfor (int i = 0; i < v.length; i++) {\n    suma += v[i];\n}\nSystem.out.println(suma);`; out = String(S.sum(a)); st = htable(['i', ...a.map((_, i) => i)], [['v[i]', ...a], ['suma', ...a.map((_, i) => S.sum(a.slice(0, i + 1)))]]); }
+  else if (t === 1) { body = `int[] v = ${arrLit(a)};\nint max = v[0];\nfor (int i = 1; i < v.length; i++) {\n    if (v[i] > max) {\n        max = v[i];\n    }\n}\nSystem.out.println(max);`; let m = a[0]; out = String(Math.max(...a)); st = htable(['i', ...a.map((_, i) => i)], [['v[i]', ...a], ['max', ...a.map((x, i) => (m = i ? Math.max(m, x) : x))]]); }
+  else if (t === 2) { const lim = R.int(8, 20); const c = a.filter(x => x > lim).length; body = `int[] v = ${arrLit(a)};\nint cuenta = 0;\nfor (int x : v) {\n    if (x > ${lim}) {\n        cuenta++;\n    }\n}\nSystem.out.println(cuenta);`; out = String(c); st = `El <b>for-each</b> toma cada elemento <code>x</code> del arreglo en orden: ${a.map(x => x > lim ? `<b>${x}</b>` : x).join(', ')}. Los que son mayores que ${lim} (en negritas) son ${c}.`; }
+  else { body = `int[] v = ${arrLit(a)};\nfor (int i = v.length - 1; i >= 0; i -= 2) {\n    System.out.print(v[i] + " ");\n}`; const r = []; for (let i = a.length - 1; i >= 0; i -= 2) r.push(a[i]); out = r.join(' ') + ' '; st = `Se recorre del índice ${a.length - 1} hacia atrás de 2 en 2: índices ${r.map((_, k) => a.length - 1 - 2 * k).join(', ')}.`; }
+  const code = prog('', body);
+  return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { label: 'salida:', value: out.trim(), text: true, norm: x => String(x).trim().replace(/\s+/g, ' ') }, chk: { code, out },
+    steps: [{ h: 'El arreglo', b: `<code>v.length</code> = ${a.length}; los índices van de 0 a ${a.length - 1}.` + `<div class="d-flex flex-wrap">${a.map((x, i) => `<span class="cell"><b>${x}</b><small>[${i}]</small></span>`).join('')}</div>` }, { h: 'Recorrido', b: st }, { h: 'Salida', b: outBox(out) }] }; };
+PROBLEMS.matriz = () => { const f = R.int(2, 4), c = R.int(3, 4), M0 = Array.from({ length: f }, () => Array.from({ length: c }, () => R.int(0, 9)));
+  const t = R.int(0, 2); let body, out, st; const lit = '{' + M0.map(r => arrLit(r)).join(', ') + '}';
+  if (t === 0) { const k = R.int(0, f - 1); body = `int[][] m = ${lit};\nint suma = 0;\nfor (int j = 0; j < m[${k}].length; j++) {\n    suma += m[${k}][j];\n}\nSystem.out.println(suma);`; out = String(S.sum(M0[k])); st = `Se suma la fila ${k}: ${M0[k].join(' + ')} = ${out}.`; }
+  else if (t === 1) { const k = R.int(0, c - 1); body = `int[][] m = ${lit};\nint suma = 0;\nfor (int i = 0; i < m.length; i++) {\n    suma += m[i][${k}];\n}\nSystem.out.println(suma);`; out = String(S.sum(M0.map(r => r[k]))); st = `<code>m.length</code> = ${f} (número de filas). Se suma la columna ${k}: ${M0.map(r => r[k]).join(' + ')} = ${out}.`; }
+  else { const i = R.int(0, f - 1), j = R.int(0, c - 1); body = `int[][] m = ${lit};\nSystem.out.println(m.length + " " + m[0].length + " " + m[${i}][${j}]);`; out = `${f} ${c} ${M0[i][j]}`; st = `<code>m.length</code> = filas = ${f}; <code>m[0].length</code> = columnas = ${c}; <code>m[${i}][${j}]</code> = fila ${i}, columna ${j} = ${M0[i][j]}.`; }
+  const code = prog('', body);
+  return { enun: '¿Qué imprime el programa?' + codeBlock(code), ans: { label: 'salida:', value: out, text: true, norm: x => String(x).trim().replace(/\s+/g, ' ') }, chk: { code, out },
+    steps: [{ h: 'La matriz', b: htable(['', ...M0[0].map((_, j) => 'col ' + j)], M0.map((r, i) => ['fila ' + i, ...r])) }, { h: 'Recorrido', b: st }, { h: 'Salida', b: outBox(out) }] }; };
+const FRUTAS = ['manzana', 'pera', 'uva', 'kiwi', 'mango', 'fresa', 'limón', 'piña'];
+PROBLEMS.arraylist = () => { const L = []; const lines = ['ArrayList<String> lista = new ArrayList<>();']; const trace = [];
+  const pool = R.shuffle(FRUTAS); let p = 0;
+  for (let k = 0; k < 3; k++) { const x = pool[p++]; L.push(x); lines.push(`lista.add("${x}");`); trace.push([`add("${x}")`, `[${L.join(', ')}]`]); }
+  const ops = R.shuffle(['ins', 'rem', 'set', 'add']).slice(0, 3);
+  ops.forEach(o => { if (o === 'add') { const x = pool[p++]; L.push(x); lines.push(`lista.add("${x}");`); trace.push([`add("${x}")`, `[${L.join(', ')}]`]); }
+    if (o === 'ins') { const x = pool[p++], i = R.int(0, L.length); L.splice(i, 0, x); lines.push(`lista.add(${i}, "${x}");`); trace.push([`add(${i}, "${x}")`, `[${L.join(', ')}] (se recorren a la derecha)`]); }
+    if (o === 'rem') { const i = R.int(0, L.length - 1); L.splice(i, 1); lines.push(`lista.remove(${i});`); trace.push([`remove(${i})`, `[${L.join(', ')}] (se recorren a la izquierda)`]); }
+    if (o === 'set') { const x = pool[p++], i = R.int(0, L.length - 1); L[i] = x; lines.push(`lista.set(${i}, "${x}");`); trace.push([`set(${i}, "${x}")`, `[${L.join(', ')}]`]); } });
+  const gi = R.int(0, L.length - 1); lines.push(`System.out.println(lista);`, `System.out.println(lista.size() + " " + lista.get(${gi}));`);
+  const out = `[${L.join(', ')}]\n${L.length} ${L[gi]}`; const code = prog('import java.util.ArrayList;', lines.join('\n'));
+  return { enun: '¿Qué imprime el programa? (escribe la segunda línea: tamaño y elemento)' + codeBlock(code), ans: { label: 'segunda línea:', value: `${L.length} ${L[gi]}`, text: true, norm: x => String(x).trim().replace(/\s+/g, ' ').toLowerCase() }, chk: { code, out },
+    steps: [{ h: 'ArrayList', b: 'Es una lista <b>dinámica</b>: su tamaño cambia al agregar o eliminar. Los índices empiezan en 0.' }, { h: 'Seguimiento', b: htable(['operación', 'lista'], trace) }, { h: 'Salida', b: outBox(out) + `<code>size()</code> = ${L.length}; <code>get(${gi})</code> = ${L[gi]}.` }] }; };
+
+/* ---------------------------------------------------------------- Unidad 3 */
+const ANIMALES = [['Perro', 'Guau'], ['Gato', 'Miau'], ['Vaca', 'Muu'], ['Pato', 'Cuac']];
+PROBLEMS.polimorfismo = () => { const subs = R.shuffle(ANIMALES).slice(0, 2); const noOverride = Math.random() < .4 ? subs[1][0] : null;
+  const arr = Array.from({ length: R.int(3, 4) }, () => R.pick([...subs.map(s => s[0]), 'Animal']));
+  const cls = `class Animal {\n    protected String nombre;\n    public Animal(String nombre) {\n        this.nombre = nombre;\n    }\n    public String sonido() {\n        return "...";\n    }\n    public String presentarse() {\n        return nombre + " dice " + sonido();\n    }\n}\n\n` + subs.map(([n, s]) => `class ${n} extends Animal {\n    public ${n}(String nombre) {\n        super(nombre);\n    }\n${n === noOverride ? '' : `    @Override\n    public String sonido() {\n        return "${s}";\n    }\n`}}`).join('\n\n');
+  const names = ['Fido', 'Luna', 'Toby', 'Nala', 'Rocky', 'Kira']; const objs = arr.map((c, i) => [c, names[i]]);
+  const body = `Animal[] zoo = {${objs.map(([c, n]) => `new ${c}("${n}")`).join(', ')}};\nfor (Animal a : zoo) {\n    System.out.println(a.presentarse());\n}`;
+  const snd = c => c === 'Animal' || c === noOverride ? '...' : ANIMALES.find(x => x[0] === c)[1];
+  const out = objs.map(([c, n]) => `${n} dice ${snd(c)}`).join('\n'); const code = prog(cls, body);
+  return { enun: '¿Qué imprime el programa? (escribe la línea del <b>último</b> elemento del arreglo)' + codeBlock(code), ans: { label: 'última línea:', value: out.split('\n').pop(), text: true, norm: x => String(x).trim().replace(/\s+/g, ' ').toLowerCase() }, chk: { code, out },
+    steps: [{ h: 'Herencia', b: `${subs.map(s => `<code>${s[0]}</code>`).join(' y ')} heredan de <code>Animal</code> (<code>extends</code>). Su constructor llama a <code>super(nombre)</code> para inicializar el atributo heredado.` },
+      { h: 'Sobreescritura', b: subs.map(([n]) => n === noOverride ? `<code>${n}</code> <b>no</b> sobreescribe <code>sonido()</code>, así que usa el de <code>Animal</code> ("...").` : `<code>${n}</code> sobreescribe <code>sonido()</code> con <code>@Override</code>.`).join('<br>') },
+      { h: 'Polimorfismo', b: 'El arreglo es de tipo <code>Animal</code>, pero en cada vuelta Java ejecuta el <code>sonido()</code> de la clase <b>real</b> del objeto (enlace dinámico).' + htable(['objeto', 'clase real', 'sonido()'], objs.map(([c, n]) => [n, c, snd(c)])) },
+      { h: 'Salida', b: outBox(out) }] }; };
+const POLI_Q = [
+  ['Dos métodos en la <b>misma clase</b> con el mismo nombre y <b>distintos parámetros</b>: <code>sumar(int a, int b)</code> y <code>sumar(double a, double b)</code>.', 'Sobrecarga', 'Sobrecarga (overloading): misma clase, mismo nombre, distinta lista de parámetros.'],
+  ['Una subclase define un método con la <b>misma firma</b> que uno de su superclase para cambiar su comportamiento.', 'Sobreescritura', 'Sobreescritura (overriding): misma firma en la subclase; se marca con @Override.'],
+  ['Una clase que no se puede instanciar y puede tener métodos sin cuerpo que las subclases deben implementar.', 'Clase abstracta', 'Se declara con abstract; sus métodos abstract no tienen cuerpo.'],
+  ['Un tipo que solo declara métodos que una clase se compromete a implementar con <code>implements</code>.', 'Interfaz', 'Una clase puede implementar varias interfaces, pero solo extender una clase.'],
+  ['Palabra que se usa en el constructor de una subclase para llamar al constructor de la superclase.', 'super', 'super(...) debe ser la primera instrucción del constructor.'],
+  ['Palabra que hace referencia al objeto actual, por ejemplo para distinguir un atributo de un parámetro con el mismo nombre.', 'this', 'this.nombre = nombre;']];
+PROBLEMS.poliQ = () => { const [q, a, e] = R.pick(POLI_Q); return { enun: q + ' ¿Cómo se llama?', ans: { choices: R.shuffle(POLI_Q.map(x => x[1])).slice(0, 0).concat(R.shuffle([a, ...R.shuffle(POLI_Q.map(x => x[1]).filter(x => x !== a)).slice(0, 3)])), value: a }, chk: {}, steps: [{ h: 'Respuesta: ' + a, b: e }] }; };
+
+/* ---------------------------------------------------------------- Unidad 4 */
+const GUI_Q = [
+  ['Mostrar un texto fijo, como «Nombre:», junto a un campo.', 'JLabel'], ['Que el usuario escriba su nombre en una sola línea.', 'JTextField'], ['Mostrar o capturar varias líneas de texto, como comentarios.', 'JTextArea'],
+  ['Ejecutar una acción cuando el usuario hace clic, como «Calcular».', 'JButton'], ['Elegir varias opciones independientes, como intereses: deporte, música, lectura.', 'JCheckBox'],
+  ['Elegir solo una opción de un grupo, como el turno: matutino o vespertino.', 'JRadioButton'], ['La barra superior que contiene los menús «Archivo» y «Ayuda».', 'JMenuBar'],
+  ['Una opción dentro de un menú, como «Guardar».', 'JMenuItem'], ['La ventana principal con barra de título y botones de cerrar.', 'JFrame'], ['Un contenedor para agrupar y organizar componentes dentro de la ventana.', 'JPanel']];
+PROBLEMS.componente = () => { const [q, a] = R.pick(GUI_Q); return { enun: `¿Qué componente de Swing usarías? <b>${q}</b>`, ans: { choices: R.shuffle([a, ...R.shuffle(GUI_Q.map(x => x[1]).filter(x => x !== a)).slice(0, 3)]), value: a }, chk: {},
+  steps: [{ h: 'Respuesta', b: `<code>${a}</code>.` }, { h: 'Recuerda', b: a === 'JRadioButton' ? 'Para que solo se pueda elegir uno, los JRadioButton se agregan a un <code>ButtonGroup</code>.' : a === 'JButton' || a === 'JMenuItem' ? 'Su acción se programa con un <code>ActionListener</code> y su método <code>actionPerformed(ActionEvent e)</code>.' : 'Todos los componentes de Swing (salvo JFrame) heredan de <code>JComponent</code>.' }] }; };
+const SUPER = { JFrame: 'Frame (java.awt)', JPanel: 'JComponent', JButton: 'AbstractButton', JLabel: 'JComponent', JTextField: 'JTextComponent', JTextArea: 'JTextComponent', JCheckBox: 'JToggleButton', JRadioButton: 'JToggleButton', JMenuBar: 'JComponent', JMenu: 'JMenuItem', JMenuItem: 'AbstractButton' };
+PROBLEMS.jerarquia = () => { const c = R.pick(Object.keys(SUPER)), a = SUPER[c]; const opts = R.shuffle([a, ...R.shuffle([...new Set(Object.values(SUPER))].filter(x => x !== a)).slice(0, 3)]);
+  return { enun: `¿Cuál es la superclase directa de <code>${c}</code>?`, ans: { choices: opts, value: a }, chk: {}, steps: [{ h: 'Respuesta', b: `<code>${c} extends ${a.split(' ')[0]}</code>.` }, { h: 'Cadena completa', b: `<code>${chainOf(c).join(' → ')}</code>` }] }; };
+function chainOf(c) { const P = { JFrame: 'Frame', Frame: 'Window', Window: 'Container', Container: 'Component', Component: 'Object', JComponent: 'Container', AbstractButton: 'JComponent', JToggleButton: 'AbstractButton', JTextComponent: 'JComponent' }; const ch = [c]; let k = c; while (true) { const s = SUPER[k] ? SUPER[k].split(' ')[0] : P[k]; if (!s) break; ch.push(s); k = s; } return ch.reverse(); }
+PROBLEMS.coords = () => { const x = R.int(1, 30) * 10, y = R.int(1, 25) * 10, w = R.int(6, 20) * 10, h = R.pick([25, 30, 40]); const q = R.pick(['derecho', 'inferior']);
+  return { enun: `Con <code>setLayout(null)</code>, un botón se coloca con <code>boton.setBounds(${x}, ${y}, ${w}, ${h});</code>. ¿En qué coordenada ${q === 'derecho' ? '<b>x</b> está su borde derecho' : '<b>y</b> está su borde inferior'}?`, ans: { label: q === 'derecho' ? 'x =' : 'y =', value: q === 'derecho' ? x + w : y + h }, chk: {},
+    fig: node => { const svg = el('svg', { viewBox: '0 0 420 300', style: 'max-width:420px' }); node.appendChild(svg); const s = .7; el('rect', { x: 10, y: 10, width: 400, height: 280, fill: 'none', stroke: css('--muted') }, svg); el('text', { x: 14, y: 26, class: 'tick', text: '(0, 0)' }, svg);
+      el('rect', { x: 10 + x * s, y: 10 + y * s, width: w * s, height: h * s, rx: 4, fill: css('--shade'), stroke: css('--u3'), 'stroke-width': 2 }, svg); el('text', { x: 10 + x * s + 4, y: 10 + y * s - 4, class: 'tick', text: `(${x}, ${y})` }, svg); el('text', { x: 400, y: 26, 'text-anchor': 'end', class: 'tick', text: 'x →' }, svg); el('text', { x: 14, y: 285, class: 'tick', text: 'y ↓' }, svg); },
+    steps: [{ h: 'Sistema de coordenadas en pantalla', b: 'El origen (0, 0) está en la esquina <b>superior izquierda</b> del contenedor; <b>x</b> crece hacia la derecha y <b>y</b> crece hacia <b>abajo</b>. Las unidades son píxeles.' }, { h: 'setBounds(x, y, ancho, alto)', b: `(x, y) = (${x}, ${y}) es la esquina superior izquierda del componente.` }, { h: 'Respuesta', b: q === 'derecho' ? M(`x + \\text{ancho} = ${x} + ${w} = ${x + w}`) : M(`y + \\text{alto} = ${y} + ${h} = ${y + h}`) }] }; };
+
+/* ---------------------------------------------------------------- laboratorios */
+function umlBox(svg, x, y, title, attrs, methods, opts = {}) {
+  const w = opts.w || 260, lh = 20, h1 = 30, h2 = attrs.length * lh + 10, h3 = methods.length * lh + 10, col = opts.col || css('--u1');
+  const g = el('g', { class: 'uml' }, svg);
+  el('rect', { x, y, width: w, height: h1 + h2 + h3, fill: css('--card'), stroke: col, 'stroke-width': 2, rx: 4 }, g); el('rect', { x, y, width: w, height: h1, fill: col, opacity: .18 }, g);
+  el('text', { x: x + w / 2, y: y + 20, 'text-anchor': 'middle', style: `font-weight:800;font-size:14px;${opts.italic ? 'font-style:italic' : ''}${opts.under ? ';text-decoration:underline' : ''}`, text: title }, g);
+  el('line', { x1: x, x2: x + w, y1: y + h1, y2: y + h1, stroke: col }, g); el('line', { x1: x, x2: x + w, y1: y + h1 + h2, y2: y + h1 + h2, stroke: col }, g);
+  attrs.forEach((a, i) => el('text', { x: x + 8, y: y + h1 + 18 + i * lh, style: 'font-family:ui-monospace,monospace;font-size:12px', text: a }, g));
+  methods.forEach((m, i) => el('text', { x: x + 8, y: y + h1 + h2 + 18 + i * lh, style: `font-family:ui-monospace,monospace;font-size:12px;${/abstract/.test(m) ? 'font-style:italic' : ''}`, text: m.replace(' abstract', '') }, g));
+  return { x, y, w, h: h1 + h2 + h3, g };
+}
+function labFabrica() {
+  const root = $('#lab-fab'); if (!root) return; const svg = $('svg', root); let objs = [], n = 0;
+  const draw = () => { const H = 300 + Math.ceil(objs.length / 3) * 120; svg.setAttribute('viewBox', `0 0 640 ${Math.max(300, H)}`); clear(svg);
+    umlBox(svg, 20, 20, 'Alumno', ['- nombre : String', '- edad : int', '- promedio : double'], ['+ Alumno(nombre, edad, promedio)', '+ getNombre() : String', '+ setPromedio(p : double) : void', '+ aprobado() : boolean'], { w: 270 });
+    el('text', { x: 310, y: 40, class: 'tick', text: 'Diagrama de clase (plantilla)' }, svg); el('text', { x: 310, y: 58, class: 'tick', text: 'Abajo: diagramas de objeto (instancias)' }, svg);
+    objs.forEach((o, i) => { const x = 20 + (i % 3) * 210, y = 260 + Math.floor(i / 3) * 120; const b = umlBox(svg, x, y, `${o.id} : Alumno`, [`nombre = "${o.nombre}"`, `edad = ${o.edad}`, `promedio = ${jd(o.prom)}`], [], { w: 195, col: css('--u3'), under: true }); b.g.style.animation = 'pop .45s ease'; if (o.flash) { b.g.querySelectorAll('rect')[0].setAttribute('stroke-width', 4); o.flash = false; } });
+    $('.objsel', root).innerHTML = objs.map(o => `<option>${o.id}</option>`).join(''); };
+  const log = s => { const d = document.createElement('div'); d.textContent = s; $('.log', root).prepend(d); };
+  $('.bnew', root).onclick = () => { const nombre = $('.nom', root).value.trim() || 'Ana', edad = parseInt($('.edad', root).value) || 17, prom = parseFloat($('.prom', root).value) || 8; if (objs.length >= 6) { log('// máximo 6 objetos en esta demostración'); return; } n++; const id = 'a' + n; objs.push({ id, nombre, edad, prom });
+    log(`Alumno ${id} = new Alumno("${nombre}", ${edad}, ${jd(prom)});`); draw(); };
+  $('.bset', root).onclick = () => { const o = objs.find(x => x.id === $('.objsel', root).value); if (!o) return; const p = Math.round(Math.random() * 100) / 10; o.prom = p; o.flash = true; log(`${o.id}.setPromedio(${jd(p)});`); draw(); };
+  $('.bapr', root).onclick = () => { const o = objs.find(x => x.id === $('.objsel', root).value); if (!o) return; log(`System.out.println(${o.id}.aprobado());   // → ${o.prom >= 6}`); };
+  $('.bget', root).onclick = () => { const o = objs.find(x => x.id === $('.objsel', root).value); if (!o) return; log(`System.out.println(${o.id}.getNombre());   // → ${o.nombre}`); };
+  draw(); document.addEventListener('themechange', draw);
+}
+function labMVC() {
+  const root = $('#lab-mvc'); if (!root) return; const svg = $('svg', root);
+  const pos = { V: [100, 110], C: [320, 110], M: [540, 110] };
+  const draw = (active, msg) => { svg.setAttribute('viewBox', '0 0 640 230'); clear(svg);
+    [['V', 'Vista', 'Interacción con el usuario'], ['C', 'Controlador', 'Crea objetos y coordina'], ['M', 'Modelo', 'Clase con datos y lógica']].forEach(([k, t, d]) => { const [x, y] = pos[k], on = active === k;
+      el('rect', { x: x - 85, y: y - 40, width: 170, height: 80, rx: 14, fill: on ? css('--u3') : css('--card'), stroke: css('--u3'), 'stroke-width': 2.5 }, svg); el('text', { x, y: y - 6, 'text-anchor': 'middle', style: `font-weight:800;font-size:16px;fill:${on ? '#fff' : css('--ink')}`, text: t }, svg); el('text', { x, y: y + 16, 'text-anchor': 'middle', style: `font-size:10px;fill:${on ? '#fff' : css('--muted')}`, text: d }, svg); });
+    el('path', { d: 'M185,100H235', stroke: css('--muted'), 'stroke-width': 2 }, svg); el('path', { d: 'M405,100H455', stroke: css('--muted'), 'stroke-width': 2 }, svg); el('path', { d: 'M455,120H405', stroke: css('--muted'), 'stroke-width': 2 }, svg); el('path', { d: 'M235,120H185', stroke: css('--muted'), 'stroke-width': 2 }, svg);
+    if (msg) el('text', { x: 320, y: 205, 'text-anchor': 'middle', style: 'font-size:13px;font-weight:700', text: msg }, svg); };
+  const seq = [['V', 'El usuario escribe base = 5, altura = 3 y presiona «Calcular»'], ['C', 'Rectangulo r = new Rectangulo(5, 3);   // instanciación'], ['M', 'r.area() calcula base * altura = 15.0'], ['C', 'double a = r.area();   // notación punto'], ['V', 'Se muestra: "Área = 15.0"']];
+  $('.brun', root).onclick = () => { seq.forEach(([k, m], i) => setTimeout(() => { draw(k, m); const d = document.createElement('div'); d.textContent = `${i + 1}. [${{ V: 'Vista', C: 'Controlador', M: 'Modelo' }[k]}] ${m}`; $('.log', root).appendChild(d); }, 1100 * i)); $('.log', root).innerHTML = ''; };
+  draw(null, 'Presiona «Ejecutar» para ver el flujo de mensajes'); document.addEventListener('themechange', () => draw(null, ''));
+}
+function labArreglo() {
+  const root = $('#lab-arr'); if (!root) return; let a = [], timer = null;
+  const CODE = { suma: 'int suma = 0;\nfor (int i = 0; i < v.length; i++) {\n    suma += v[i];\n}', max: 'int max = v[0];\nfor (int i = 1; i < v.length; i++) {\n    if (v[i] > max) max = v[i];\n}', buscar: 'int pos = -1;\nfor (int i = 0; i < v.length; i++) {\n    if (v[i] == buscado) { pos = i; break; }\n}', foreach: 'for (int x : v) {\n    System.out.print(x + " ");\n}', invertir: 'for (int i = 0; i < v.length / 2; i++) {\n    int tmp = v[i];\n    v[i] = v[v.length - 1 - i];\n    v[v.length - 1 - i] = tmp;\n}' };
+  const show = (hot = [], extra = '') => { $('.cells', root).innerHTML = a.map((x, i) => `<span class="cell"><b class="${hot.includes(i) ? 'hot' : ''}">${x}</b><small>[${i}]</small></span>`).join(''); $('.st', root).innerHTML = extra; };
+  const gen = () => { a = Array.from({ length: 8 }, () => R.int(1, 50)); show(); };
+  const run = op => { if (timer) clearInterval(timer); $('.code', root).innerHTML = hlJava(CODE[op]); let i = 0, acc = op === 'max' ? a[0] : 0; const target = a[R.int(0, a.length - 1)]; const out = [];
+    timer = setInterval(() => {
+      if (op === 'invertir') { const n = a.length; if (i >= Math.floor(n / 2)) { clearInterval(timer); show([], 'Arreglo invertido.'); return; } [a[i], a[n - 1 - i]] = [a[n - 1 - i], a[i]]; show([i, n - 1 - i], `intercambio v[${i}] ↔ v[${n - 1 - i}]`); i++; return; }
+      if (i >= a.length) { clearInterval(timer); show([], op === 'suma' ? `suma = <b>${acc}</b>` : op === 'max' ? `max = <b>${acc}</b>` : op === 'buscar' ? `${target} no encontrado` : `salida: <code>${out.join(' ')}</code>`); return; }
+      if (op === 'suma') { acc += a[i]; show([i], `i = ${i} → suma = ${acc}`); }
+      if (op === 'max') { if (a[i] > acc) acc = a[i]; show([i], `i = ${i} → max = ${acc}`); }
+      if (op === 'foreach') { out.push(a[i]); show([i], `x = ${a[i]} → salida: <code>${out.join(' ')}</code>`); }
+      if (op === 'buscar') { show([i], `¿v[${i}] == ${target}? ${a[i] === target}`); if (a[i] === target) { clearInterval(timer); setTimeout(() => show([i], `<b>${target}</b> encontrado en la posición ${i} (break)`), 500); } }
+      i++; }, 550); };
+  $$('[data-op]', root).forEach(b => b.onclick = () => run(b.dataset.op)); $('.bnew', root).onclick = gen; gen();
+}
+function labMatriz() {
+  const root = $('#lab-mat'); if (!root) return; let M0 = [], timer = null;
+  const show = (hi, hj, extra = '') => { $('.mat', root).innerHTML = `<table class="tbl"><thead><tr><th></th>${M0[0].map((_, j) => `<th>[${j}]</th>`).join('')}</tr></thead><tbody>${M0.map((r, i) => `<tr><th>[${i}]</th>${r.map((x, j) => `<td class="${i === hi && j === hj ? 'hl' : ''}" style="width:3rem;height:2.6rem;transition:all .3s">${x}</td>`).join('')}</tr>`).join('')}</tbody></table>`; $('.st', root).innerHTML = extra; };
+  const gen = () => { M0 = Array.from({ length: 3 }, () => Array.from({ length: 4 }, () => R.int(0, 9))); show(-1, -1); };
+  const run = byRow => { if (timer) clearInterval(timer); const order = []; if (byRow) M0.forEach((r, i) => r.forEach((_, j) => order.push([i, j]))); else M0[0].forEach((_, j) => M0.forEach((_, i) => order.push([i, j])));
+    $('.code', root).innerHTML = hlJava(byRow ? 'for (int i = 0; i < m.length; i++) {        // filas\n    for (int j = 0; j < m[i].length; j++) { // columnas\n        suma += m[i][j];\n    }\n}' : 'for (int j = 0; j < m[0].length; j++) {     // columnas\n    for (int i = 0; i < m.length; i++) {    // filas\n        suma += m[i][j];\n    }\n}');
+    let k = 0, s = 0; timer = setInterval(() => { if (k >= order.length) { clearInterval(timer); show(-1, -1, `suma total = <b>${s}</b>`); return; } const [i, j] = order[k++]; s += M0[i][j]; show(i, j, `m[${i}][${j}] = ${M0[i][j]} → suma = ${s}`); }, 420); };
+  $('.brow', root).onclick = () => run(true); $('.bcol', root).onclick = () => run(false); $('.bnew', root).onclick = gen; gen();
+}
+function labArrayList() {
+  const root = $('#lab-al'); if (!root) return; let L = ['uva', 'pera', 'kiwi'], fresh = -1, hot = -1;
+  const log = s => { const d = document.createElement('div'); d.innerHTML = s; $('.log', root).prepend(d); };
+  const show = () => { $('.cells', root).innerHTML = L.length ? L.map((x, i) => `<span class="cell"><b class="${i === fresh ? 'new' : ''} ${i === hot ? 'hot' : ''}" style="width:auto;min-width:3.4rem;padding:0 .4rem">${x}</b><small>[${i}]</small></span>`).join('') : '<span class="text-muted">[ ] lista vacía</span>'; $('.sz', root).textContent = L.length; fresh = -1; hot = -1; };
+  const val = () => $('.val', root).value.trim() || R.pick(FRUTAS), idx = () => parseInt($('.idx', root).value);
+  $('.badd', root).onclick = () => { const v = val(); L.push(v); fresh = L.length - 1; log(`lista.add("${v}");`); show(); };
+  $('.bins', root).onclick = () => { const v = val(), i = idx(); if (isNaN(i) || i < 0 || i > L.length) { log(`<span class="check-bad">lista.add(${$('.idx', root).value}, "${v}"); → IndexOutOfBoundsException</span>`); return; } L.splice(i, 0, v); fresh = i; log(`lista.add(${i}, "${v}");`); show(); };
+  $('.brem', root).onclick = () => { const i = idx(); if (isNaN(i) || i < 0 || i >= L.length) { log(`<span class="check-bad">lista.remove(${$('.idx', root).value}); → IndexOutOfBoundsException</span>`); return; } const r = L.splice(i, 1)[0]; log(`lista.remove(${i});   // elimina "${r}"`); show(); };
+  $('.bset', root).onclick = () => { const v = val(), i = idx(); if (isNaN(i) || i < 0 || i >= L.length) { log(`<span class="check-bad">lista.set(${$('.idx', root).value}, "${v}"); → IndexOutOfBoundsException</span>`); return; } L[i] = v; fresh = i; log(`lista.set(${i}, "${v}");`); show(); };
+  $('.bget', root).onclick = () => { const i = idx(); if (isNaN(i) || i < 0 || i >= L.length) { log(`<span class="check-bad">lista.get(${$('.idx', root).value}); → IndexOutOfBoundsException</span>`); return; } hot = i; log(`lista.get(${i})   // → "${L[i]}"`); show(); };
+  $('.bclr', root).onclick = () => { L = []; log('lista.clear();'); show(); };
+  show();
+}
+function labPoli() {
+  const root = $('#lab-poli'); if (!root) return; const svg = $('svg', root); let figs = [], timer = null;
+  const KIND = { Circulo: { a: f => Math.PI * f.r ** 2, d: f => `r = ${f.r}`, code: 'Math.PI * r * r' }, Rectangulo: { a: f => f.b * f.h, d: f => `b = ${f.b}, h = ${f.h}`, code: 'base * altura' }, Triangulo: { a: f => f.b * f.h / 2, d: f => `b = ${f.b}, h = ${f.h}`, code: 'base * altura / 2' } };
+  const draw = (cur = -1) => { svg.setAttribute('viewBox', '0 0 640 230'); clear(svg);
+    umlBox(svg, 245, 8, 'Figura', [], ['+ area() : double abstract'], { w: 150, col: css('--u3'), italic: true });
+    ['Circulo', 'Rectangulo', 'Triangulo'].forEach((k, i) => { const x = 30 + i * 210, on = cur >= 0 && figs[cur].k === k; el('line', { x1: x + 75, y1: 135, x2: 320, y2: 82, stroke: css('--muted'), 'stroke-width': 2 }, svg);
+      const b = umlBox(svg, x, 135, k, [], ['+ area() : double'], { w: 150, col: on ? css('--u2') : css('--u1') }); if (on) b.g.querySelector('rect').setAttribute('stroke-width', 5); });
+    el('path', { d: 'M312,90L320,76L328,90Z', fill: css('--card'), stroke: css('--muted'), 'stroke-width': 2 }, svg);
+    $('.arr', root).innerHTML = figs.map((f, i) => `<span class="cell"><b class="${i === cur ? 'hot' : ''}" style="width:auto;padding:0 .5rem;font-size:.75rem">${f.k}</b><small>figs[${i}]</small></span>`).join(''); };
+  const gen = () => { figs = Array.from({ length: 5 }, () => { const k = R.pick(Object.keys(KIND)); return { k, r: R.int(1, 5), b: R.int(2, 9), h: R.int(2, 8) }; }); $('.out', root).textContent = ''; draw(); };
+  $('.brun', root).onclick = () => { if (timer) clearInterval(timer); let i = 0; $('.out', root).textContent = ''; timer = setInterval(() => { if (i >= figs.length) { clearInterval(timer); draw(); return; } const f = figs[i]; draw(i); $('.out', root).textContent += `figs[${i}] es ${f.k} (${KIND[f.k].d(f)}) → area() = ${KIND[f.k].code} = ${fx(KIND[f.k].a(f), 2)}\n`; i++; }, 900); };
+  $('.bnew', root).onclick = gen; gen(); document.addEventListener('themechange', () => draw());
+}
+function labGUI() {
+  const root = $('#lab-gui'); if (!root) return; const log = (ev, code) => { const d = document.createElement('div'); d.innerHTML = `<b>${ev}</b> → <code>${code}</code>`; $('.evlog', root).prepend(d); };
+  const mb = $('.mb', root); $$('.mb > span', root).forEach(s => s.onclick = e => { const m = s.nextElementSibling; const open = m.style.display === 'block'; $$('.menu', root).forEach(x => x.style.display = 'none'); if (!open) { m.style.display = 'block'; m.style.left = s.offsetLeft + 'px'; } e.stopPropagation(); });
+  document.addEventListener('click', () => $$('.menu', root).forEach(x => x.style.display = 'none'));
+  $$('.menu div', root).forEach(it => it.onclick = () => { log('ActionEvent (JMenuItem «' + it.textContent + '»)', 'actionPerformed(e)'); if (it.dataset.a === 'limpiar') { $('.nombre', root).value = ''; $('.area', root).value = ''; } if (it.dataset.a === 'acerca') $('.area', root).value = 'Cuadernillo CCH · Swing'; });
+  $('.nombre', root).addEventListener('keyup', e => log(`KeyEvent («${e.key}»)`, 'keyReleased(e)'));
+  $$('.chk', root).forEach(c => c.onchange = () => log(`ActionEvent (JCheckBox «${c.value}» = ${c.checked})`, 'chk.isSelected() → ' + c.checked));
+  $$('.rad', root).forEach(r => r.onchange = () => log(`ActionEvent (JRadioButton «${r.value}»)`, 'ButtonGroup: solo uno seleccionado'));
+  $('.btn-saludar', root).onclick = () => { const n = $('.nombre', root).value.trim() || '(vacío)'; const ints = $$('.chk', root).filter(c => c.checked).map(c => c.value); const t = ($$('.rad', root).find(r => r.checked) || {}).value || 'sin turno';
+    $('.area', root).value = `Hola, ${n}\nTurno: ${t}\nIntereses: ${ints.join(', ') || 'ninguno'}`; $('.lbl', root).textContent = 'Datos registrados ✔'; log('ActionEvent (JButton «Registrar»)', 'actionPerformed(e) → area.setText(...)'); };
+  $('.coords', root).onchange = e => { $$('[data-b]', root).forEach(x => { x.style.outline = e.target.checked ? '2px dashed #7c3aed' : ''; x.title = e.target.checked ? 'setBounds(' + x.dataset.b + ')' : ''; }); $('.bounds', root).innerHTML = e.target.checked ? $$('[data-b]', root).map(x => `<code>${x.dataset.n}.setBounds(${x.dataset.b});</code>`).join('<br>') : ''; };
+}
+function labSwingTree() {
+  const svg = $('#swing-tree'); if (!svg) return; svg.setAttribute('viewBox', '0 0 760 480');
+  const N = { Object: [380, 25], Component: [380, 75], Container: [380, 125], Window: [110, 180], Frame: [110, 245], JFrame: [110, 320], JComponent: [500, 180], JPanel: [205, 245], JLabel: [290, 245], JMenuBar: [382, 245], JTextComponent: [610, 245], AbstractButton: [380, 320], JTextField: [565, 320], JTextArea: [690, 320], JButton: [250, 395], JToggleButton: [390, 395], JMenuItem: [540, 395], JCheckBox: [320, 455], JRadioButton: [460, 455], JMenu: [610, 455] };
+  const E = [['Component', 'Object'], ['Container', 'Component'], ['Window', 'Container'], ['Frame', 'Window'], ['JFrame', 'Frame'], ['JComponent', 'Container'], ['JPanel', 'JComponent'], ['JLabel', 'JComponent'], ['AbstractButton', 'JComponent'], ['JTextComponent', 'JComponent'], ['JMenuBar', 'JComponent'], ['JButton', 'AbstractButton'], ['JToggleButton', 'AbstractButton'], ['JMenuItem', 'AbstractButton'], ['JCheckBox', 'JToggleButton'], ['JRadioButton', 'JToggleButton'], ['JMenu', 'JMenuItem'], ['JTextField', 'JTextComponent'], ['JTextArea', 'JTextComponent']];
+  const draw = sel => { clear(svg); const chain = new Set(); if (sel) { let k = sel; chain.add(k); let p; while ((p = E.find(e => e[0] === k))) { chain.add(p[1]); k = p[1]; } }
+    E.forEach(([c, p]) => el('line', { x1: N[c][0], y1: N[c][1] - 10, x2: N[p][0], y2: N[p][1] + 10, stroke: chain.has(c) && chain.has(p) ? css('--u2') : css('--line'), 'stroke-width': chain.has(c) && chain.has(p) ? 3 : 1.5 }, svg));
+    Object.entries(N).forEach(([k, [x, y]]) => { const awt = ['Object', 'Component', 'Container', 'Window', 'Frame'].includes(k), on = chain.has(k), w = k.length * 7.4 + 16; const g = el('g', { style: 'cursor:pointer' }, svg);
+      el('rect', { x: x - w / 2, y: y - 12, width: w, height: 24, rx: 6, fill: on ? css('--u2') : css('--card'), stroke: awt ? css('--muted') : css('--u3'), 'stroke-width': 1.8, 'stroke-dasharray': awt ? '4 3' : '' }, g);
+      el('text', { x, y: y + 4, 'text-anchor': 'middle', style: `font-size:11.5px;font-weight:700;font-family:ui-monospace,monospace;fill:${on ? '#fff' : css('--ink')}`, text: k }, g); g.onclick = () => draw(k); });
+    $('#swing-chain').innerHTML = sel ? `<code>${[...chain].reverse().join(' → ')}</code>` : 'Haz clic en una clase para ver su cadena de herencia. Bordes punteados: clases de AWT (java.lang / java.awt).'; };
+  draw('JButton'); document.addEventListener('themechange', () => draw());
+}
+function renderLearn() {
+  const box = $('#learn-acc'); if (!box) return;
+  box.innerHTML = LEARN.map((U, k) => `<div class="accordion-item u${Math.min(U.u, 3)}"><h2 class="accordion-header"><button class="accordion-button ${k ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#lu${U.u}"><span class="unit-tag me-2">Unidad ${U.u}</span><b>${U.nombre}</b><span class="chip ms-2">${U.h} h</span></button></h2>
+   <div id="lu${U.u}" class="accordion-collapse collapse ${k ? '' : 'show'}" data-bs-parent="#learn-acc"><div class="accordion-body"><p class="small"><b>Propósito:</b> ${U.prop}</p><ul class="learn">${U.L.map((l, i) => `<li><span class="n">${i + 1}.</span><span>${l[0]}<span class="tm"><a class="chip" href="${l[2]}">${l[1]}</a></span></span></li>`).join('')}</ul></div></div></div>`).join('');
+}
+function heroArt() {
+  const svg = $('#hero-svg'); if (!svg) return; svg.setAttribute('viewBox', '0 0 520 320');
+  umlBox(svg, 170, 20, 'Figura', ['# nombre : String'], ['+ area() : double abstract'], { w: 180, col: 'var(--u3)', italic: true });
+  ['Circulo', 'Rectangulo'].forEach((k, i) => { const x = 40 + i * 270; el('line', { x1: x + 85, y1: 190, x2: 260, y2: 132, stroke: 'var(--muted)', 'stroke-width': 2, class: 'draw' }, svg); const b = umlBox(svg, x, 190, k, ['- ' + (i ? 'base, altura' : 'radio') + ' : double'], ['+ area() : double'], { w: 170, col: `var(--u${i + 1})` }); b.g.classList.add('bar'); b.g.style.animationDelay = (.2 + .2 * i) + 's'; });
+  el('path', { d: 'M252,140L260,126L268,140Z', fill: 'var(--card)', stroke: 'var(--muted)', 'stroke-width': 2 }, svg);
+}
+document.addEventListener('DOMContentLoaded', () => { renderLearn(); heroArt(); labFabrica(); labMVC(); labArreglo(); labMatriz(); labArrayList(); labPoli(); labGUI(); labSwingTree(); initUI(); });
+
+</script>
+</body>
+</html>
