@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="es" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuadernillo de Estadística II</title>
+<meta name="description" content="Cuadernillo interactivo de repaso de Estadística y Probabilidad II (CCH-UNAM, programa 2024): variables aleatorias, distribuciones muestrales e inferencia, con simuladores y problemas aleatorios paso a paso.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --ink:#1d2433; --muted:#5b6475; --paper:#fbfaf6; --card:#ffffff; --line:#e6e2d6; --grid:rgba(30,60,120,.055);
+  --u1:#0f766e; --u2:#b45309; --u3:#7c3aed; --acc:var(--u1); --ok:#15803d; --bad:#b91c1c;
+  --shade:rgba(15,118,110,.22); --shade2:rgba(180,83,9,.25);
+  --font-head:'Fraunces',Georgia,serif; --font-body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+[data-bs-theme=dark]{
+  --ink:#e8e6df; --muted:#a3a9b6; --paper:#14171d; --card:#1c2029; --line:#2d3340; --grid:rgba(160,190,255,.05);
+  --u1:#2dd4bf; --u2:#fbbf24; --u3:#a78bfa; --shade:rgba(45,212,191,.25); --shade2:rgba(251,191,36,.25);
+}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:1.04rem;line-height:1.62;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+h1,h2,h3,h4,.font-head{font-family:var(--font-head);letter-spacing:-.01em}
+a{color:var(--acc)}
+.navbar{background:color-mix(in srgb,var(--card) 88%,transparent)!important;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.navbar .nav-link{color:var(--muted);font-weight:600;font-size:.95rem}
+.navbar .nav-link.active,.navbar .nav-link:hover{color:var(--acc)}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--u1),var(--u2),var(--u3));z-index:2000;width:0;transition:width .1s}
+.hero{padding:7rem 0 3rem;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.1}
+.hero .lead{color:var(--muted);max-width:44rem}
+.hero-svg{width:100%;max-width:520px;height:auto}
+.hero-svg .draw{stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.4s ease forwards .3s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero-svg .bar{transform-origin:bottom;transform-box:fill-box;animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.chip{display:inline-block;padding:.12rem .6rem;border-radius:99px;font-size:.78rem;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+.unit-tag{display:inline-block;font-weight:800;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);border:2px solid var(--uc);border-radius:6px;padding:.05rem .45rem}
+.u1{--uc:var(--u1)} .u2{--uc:var(--u2)} .u3{--uc:var(--u3)}
+section.unit{padding:3.5rem 0 1rem}
+.unit-head{border-left:6px solid var(--uc);padding-left:1rem;margin-bottom:1.5rem}
+.unit-head h2{font-weight:700;margin:.3rem 0}
+.topic{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.5rem;margin-bottom:1.75rem;box-shadow:0 1px 0 rgba(0,0,0,.02),0 8px 24px -16px rgba(0,0,0,.25)}
+.topic>h3{font-size:1.45rem;font-weight:650;display:flex;gap:.6rem;align-items:baseline}
+.topic>h3 .num{color:var(--uc);font-size:1rem;font-family:var(--font-body);font-weight:800}
+.topic h4{font-size:1.1rem;font-weight:650;margin-top:1.2rem;color:var(--uc)}
+.def{border-left:4px solid var(--uc);background:color-mix(in srgb,var(--uc) 7%,transparent);padding:.7rem 1rem;border-radius:0 10px 10px 0;margin:.8rem 0}
+.note{border:1px dashed var(--line);border-radius:10px;padding:.6rem .9rem;color:var(--muted);font-size:.95rem;margin:.8rem 0}
+.formula{background:color-mix(in srgb,var(--uc) 5%,var(--card));border:1px solid var(--line);border-radius:12px;padding:.6rem 1rem;margin:.8rem 0;overflow-x:auto}
+.lab{border:1px solid var(--line);border-radius:14px;padding:1rem;margin:1rem 0;background:color-mix(in srgb,var(--card) 92%,var(--uc) 8%)}
+.lab-title{font-weight:800;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--uc);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.lab svg{width:100%;height:auto;display:block;user-select:none}
+.lab .form-range{accent-color:var(--uc)}
+.stat{display:inline-flex;flex-direction:column;padding:.35rem .7rem;border-radius:10px;background:var(--card);border:1px solid var(--line);min-width:5.5rem;margin:.2rem}
+.stat b{font-size:1.08rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.btn-acc{background:var(--uc,var(--acc));color:#fff;border:none;font-weight:700}
+.btn-acc:hover{filter:brightness(1.1);color:#fff}
+[data-bs-theme=dark] .btn-acc{color:#111}
+.btn-ghost{border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.btn-ghost:hover{border-color:var(--uc);color:var(--uc)}
+/* problems */
+.problem{border:2px solid var(--uc);border-radius:16px;padding:1.1rem 1.2rem;margin:1.2rem 0;background:var(--card);position:relative}
+.problem .ptag{position:absolute;top:-.8rem;left:1rem;background:var(--uc);color:#fff;font-weight:800;font-size:.75rem;letter-spacing:.06em;padding:.1rem .6rem;border-radius:6px;text-transform:uppercase}
+[data-bs-theme=dark] .problem .ptag{color:#111}
+.problem .enun{margin-top:.4rem}
+.problem .steps{list-style:none;padding:0;margin:.8rem 0 0;counter-reset:st}
+.problem .steps>li{counter-increment:st;position:relative;padding:.6rem .8rem .6rem 3rem;border-radius:10px;margin-bottom:.5rem;background:color-mix(in srgb,var(--uc) 6%,transparent);animation:stepIn .45s ease both}
+.problem .steps>li::before{content:counter(st);position:absolute;left:.7rem;top:.6rem;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--uc);color:#fff;font-weight:800;display:grid;place-items:center;font-size:.85rem}
+[data-bs-theme=dark] .problem .steps>li::before{color:#111}
+.problem .steps>li h6{font-weight:800;margin:0 0 .2rem;font-size:.95rem}
+@keyframes stepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.problem .check-ok{color:var(--ok);font-weight:700}
+.problem .check-bad{color:var(--bad);font-weight:700}
+.problem table,.topic table.tbl{font-variant-numeric:tabular-nums}
+.tbl{width:auto;border-collapse:collapse;margin:.5rem 0;font-size:.92rem}
+.tbl th,.tbl td{border:1px solid var(--line);padding:.25rem .55rem;text-align:center}
+.tbl th{background:color-mix(in srgb,var(--uc) 14%,var(--card))}
+.tbl td.hl{background:color-mix(in srgb,var(--uc) 22%,transparent);font-weight:700}
+.scroll-x{overflow-x:auto}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+/* learnings table */
+.learn{list-style:none;padding:0;margin:0}
+.learn li{display:grid;grid-template-columns:2.2rem 1fr;gap:.5rem;padding:.5rem 0;border-bottom:1px dashed var(--line)}
+.learn li .n{font-weight:800;color:var(--uc);text-align:right}
+.learn li .tm{display:block;margin-top:.15rem}
+.accordion-button:not(.collapsed){background:color-mix(in srgb,var(--uc) 10%,var(--card));color:var(--ink)}
+.accordion-item{background:var(--card);border-color:var(--line)}
+.accordion-button{background:var(--card);color:var(--ink)}
+.modal-content{background:var(--card);color:var(--ink)}
+.fgroup h5{font-family:var(--font-head);margin-top:1rem;color:var(--uc)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.6rem}
+.fcard{border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;background:color-mix(in srgb,var(--uc) 4%,var(--card));overflow-x:auto}
+.fcard small{display:block;color:var(--muted);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.fab{position:fixed;right:1.1rem;bottom:1.1rem;z-index:1040;border-radius:99px;padding:.7rem 1.1rem;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+#toTop{position:fixed;left:1.1rem;bottom:1.1rem;z-index:1040;opacity:0;pointer-events:none;transition:opacity .3s}
+#toTop.show{opacity:1;pointer-events:auto}
+svg text{font-family:var(--font-body);fill:var(--ink)}
+svg .axis{stroke:var(--muted);stroke-width:1}
+svg .gridl{stroke:var(--line);stroke-width:1}
+svg .tick{font-size:11px;fill:var(--muted)}
+svg .barr{transition:height .5s ease,y .5s ease,fill .3s}
+svg .pt{transition:cx .4s,cy .4s}
+.quiz-opt.correct{background:var(--ok)!important;color:#fff!important;border-color:var(--ok)!important}
+.quiz-opt.wrong{background:var(--bad)!important;color:#fff!important;border-color:var(--bad)!important}
+footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-size:.92rem}
+.katex-display{margin:.4em 0}
+@media (max-width:576px){.topic{padding:1rem}.problem{padding:1rem .8rem}.problem .steps>li{padding-left:2.6rem}}
+@media print{.navbar,.fab,#toTop,.lab,.problem .btns{display:none!important}.reveal{opacity:1;transform:none}}
+.btn-acc:focus,.btn-acc:active,.btn-acc:focus-visible,.btn-acc.active{background:var(--uc,var(--acc))!important;color:#fff!important;border:none}
+[data-bs-theme=dark] .btn-acc:focus,[data-bs-theme=dark] .btn-acc:active{color:#111!important}
+.btn-ghost.active,.btn-ghost:active,.btn-ghost:focus-visible{background:color-mix(in srgb,var(--uc,var(--acc)) 16%,var(--card))!important;border-color:var(--uc,var(--acc))!important;color:var(--ink)!important}
+h1,h2,h3,h4,h5,h6{color:var(--ink)}
+.navbar-brand{color:var(--ink)!important}
+.navbar-toggler{border-color:var(--line)}
+[data-bs-theme=dark] .navbar-toggler-icon{filter:invert(1)}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:.15em 0;max-width:100%}
+.problem .steps>li,.def,.note,.topic{min-width:0;overflow-wrap:anywhere}
+.lab .stat b{overflow-wrap:anywhere}
+
+:root{--acc:var(--u3)}
+</style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#mainnav" data-bs-offset="90">
+<div id="progress"></div>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainnav">
+ <div class="container">
+  <a class="navbar-brand font-head fw-bold" href="#inicio">Cuadernillo · Estadística II</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nv" aria-label="Menú"><span class="navbar-toggler-icon"></span></button>
+  <div class="collapse navbar-collapse" id="nv">
+   <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+    <li class="nav-item"><a class="nav-link" href="#aprendizajes">Aprendizajes</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad1">Unidad 1</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad2">Unidad 2</a></li>
+    <li class="nav-item"><a class="nav-link" href="#unidad3">Unidad 3</a></li>
+    <li class="nav-item"><a class="nav-link" href="#fuentes">Fuentes</a></li>
+    <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-ghost" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">◐</button></li>
+   </ul>
+  </div>
+ </div>
+</nav>
+<header class="hero" id="inicio">
+ <div class="container">
+  <div class="row align-items-center g-4">
+   <div class="col-lg-7">
+    <span class="chip mb-3">CCH · UNAM · Programa de Estudios 2024 · Sexto semestre</span>
+    <h1>Estadística y Probabilidad II<br><span style="color:var(--u3)">Cuadernillo interactivo de repaso</span></h1>
+    <p class="lead mt-3">Variables aleatorias, modelos binomial y normal, distribuciones muestrales e inferencia. Manipula los simuladores y resuelve problemas que cambian cada vez que presionas <b>«Nuevo problema»</b>, con la solución paso a paso.</p>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+     <a class="btn btn-acc u3" href="#aprendizajes">Ver aprendizajes</a>
+     <button class="btn btn-ghost" data-bs-toggle="modal" data-bs-target="#formulario">∑ Abrir formulario</button>
+    </div>
+    <div class="mt-4 d-flex flex-wrap gap-2">
+     <a href="#unidad1" class="unit-tag u1 text-decoration-none">U1 · Modelos de probabilidad · 24 h</a>
+     <a href="#unidad2" class="unit-tag u2 text-decoration-none">U2 · Distribuciones muestrales · 18 h</a>
+     <a href="#unidad3" class="unit-tag u3 text-decoration-none">U3 · Inferencia · 22 h</a>
+    </div>
+   </div>
+   <div class="col-lg-5 text-center"><svg id="hero-svg" class="hero-svg" role="img" aria-label="Distribución binomial aproximada por una normal"></svg></div>
+  </div>
+ </div>
+</header>
+
+<section id="aprendizajes" class="py-4">
+ <div class="container">
+  <h2 class="font-head mb-1">Aprendizajes y temática</h2>
+  <p class="text-body-secondary">Los aprendizajes están numerados como en el programa. Cada uno indica su temática; haz clic en ella para ir a la sección correspondiente.</p>
+  <div class="accordion" id="learn-acc"></div>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 1 ============================ -->
+<section class="unit u1" id="unidad1">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 1</span><h2>Modelos de probabilidad y sus aplicaciones</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 14</p></div>
+
+  <article class="topic reveal" id="t11">
+   <h3><span class="num">1.1</span> Variables aleatorias discretas y su distribución</h3>
+   <p>Una <b>variable aleatoria</b> \(X\) asigna un número real a cada resultado de un experimento aleatorio; así elegimos una sola característica numérica de los resultados. Es <b>discreta</b> si toma valores aislados (que se pueden contar) y <b>continua</b> si puede tomar cualquier valor en un intervalo.</p>
+   <div class="def">La <b>distribución de probabilidad</b> de una variable discreta es la lista (tabla, gráfica o fórmula) de sus valores \(x\) con sus probabilidades \(P(X=x)\), donde \(0\le P(X=x)\le 1\) y \(\sum P(X=x)=1\).</div>
+   <p>Una distribución también se puede <b>aproximar frecuencialmente</b>: se simula el experimento muchas veces y se calculan las frecuencias relativas de cada valor.</p>
+   <div class="lab" id="lab-juego">
+    <div class="lab-title">🪙 El juego de las 4 monedas (ejemplo del programa)</div>
+    <p class="small mb-1">Se pagan <b>$15</b> para lanzar monedas de $1, $5, $10 y $10, y se ganan las que caen en <b>sol</b> (coloreadas). Abajo de cada uno de los 16 resultados aparece la ganancia neta.</p>
+    <svg class="grid" role="img" aria-label="16 resultados posibles"></svg>
+    <div class="d-flex flex-wrap gap-2 my-2"><button class="btn btn-sm btn-acc b1">Jugar 1 vez</button><button class="btn btn-sm btn-ghost b100">Jugar 100</button><button class="btn btn-sm btn-ghost b1000">Jugar 1000</button><button class="btn btn-sm btn-ghost bclr">Reiniciar</button></div>
+    <svg class="dist" role="img" aria-label="Distribución teórica y frecuencial"></svg>
+    <svg class="run" role="img" aria-label="Ganancia promedio acumulada"></svg>
+    <p class="small res mb-0"></p>
+   </div>
+   <div class="problem" data-gen="juego"></div>
+  </article>
+
+  <article class="topic reveal" id="t12">
+   <h3><span class="num">1.2</span> Esperanza matemática y desviación estándar</h3>
+   <div class="formula">\[ \mu=E(X)=\sum x\,P(x)\qquad \sigma^2=\sum (x-\mu)^2P(x)=\sum x^2P(x)-\mu^2\qquad \sigma=\sqrt{\sigma^2} \]</div>
+   <ul>
+    <li>La <b>esperanza</b> es el valor promedio que se obtendría a la larga si el experimento se repitiera muchísimas veces. No tiene que ser uno de los valores posibles (por ejemplo, \(E(X)=-2\) en el juego).</li>
+    <li>Un juego es <b>justo</b> si la esperanza de la ganancia neta es 0.</li>
+    <li>La <b>desviación estándar</b> mide qué tanto se alejan típicamente los valores de \(X\) de su media: es una medida del riesgo o la variabilidad.</li>
+   </ul>
+   <div class="problem" data-gen="discreta"></div>
+  </article>
+
+  <article class="topic reveal" id="t13">
+   <h3><span class="num">1.3</span> Distribución binomial</h3>
+   <p>Un <b>experimento Bernoulli</b> tiene solo dos resultados: éxito (probabilidad \(p\)) o fracaso (probabilidad \(q=1-p\)). Un <b>proceso binomial</b> cumple:</p>
+   <ol><li>Se realizan \(n\) ensayos Bernoulli.</li><li>Los ensayos son independientes.</li><li>La probabilidad de éxito \(p\) es la misma en cada ensayo.</li><li>\(X\) cuenta el número de éxitos en los \(n\) ensayos.</li></ol>
+   <div class="formula">\[ X\sim B(n,p):\quad P(X=k)=\binom{n}{k}p^k q^{\,n-k},\ \ k=0,1,\dots,n \qquad \binom{n}{k}=\frac{n!}{k!(n-k)!} \qquad \mu=np,\quad \sigma=\sqrt{npq} \]</div>
+   <p><b>¿Por qué esa fórmula?</b> En 4 lanzamientos de una moneda, cada secuencia con exactamente 2 águilas (por ejemplo AASS) tiene probabilidad \(p^2q^2\), y hay \(\binom42=6\) secuencias así, entonces \(P(X=2)=6p^2q^2=6/16=0.375\).</p>
+   <div class="lab" id="lab-binom">
+    <div class="lab-title">📊 Explorador de la distribución binomial</div>
+    <div class="row g-2">
+     <div class="col-md-3"><label class="small">n = <b class="n-v"></b></label><input type="range" class="form-range n" min="1" max="100" value="12"></div>
+     <div class="col-md-3"><label class="small">p = <b class="p-v"></b></label><input type="range" class="form-range p" min="0.01" max="0.99" step="0.01" value="0.3"></div>
+     <div class="col-md-3"><label class="small">k = <b class="k-v"></b></label><input type="range" class="form-range k" min="0" max="12" value="4"></div>
+     <div class="col-md-3"><select class="form-select form-select-sm tipo"><option value="igual">P(X = k)</option><option value="menor">P(X ≤ k)</option><option value="mayor">P(X ≥ k)</option></select><div class="form-check form-switch small mt-1"><input class="form-check-input ov" type="checkbox" id="ovb"><label class="form-check-label" for="ovb">Superponer curva normal</label></div></div>
+    </div>
+    <svg role="img" aria-label="Distribución binomial"></svg>
+    <p class="res mb-1"></p>
+    <p class="small text-body-secondary mb-0">Prueba \(p=0.05\) con \(n=5\) (muy asimétrica) y luego aumenta \(n\) a 20, 50 y 100 con la curva normal activada: la forma se acerca a una campana con eje de simetría en \(np\).</p>
+   </div>
+   <div class="problem" data-gen="binomial"></div>
+  </article>
+
+  <article class="topic reveal" id="t14">
+   <h3><span class="num">1.4</span> Variables aleatorias continuas: la probabilidad como área</h3>
+   <p>Una variable continua (estatura, tiempo, peso) puede tomar infinitos valores, así que la probabilidad de un valor exacto es cero: \(P(X=a)=0\). Por eso <b>la probabilidad se calcula para intervalos</b>. Su comportamiento se describe con una <b>función de densidad</b> \(f(x)\ge 0\), con área total bajo la curva igual a 1, y:</p>
+   <div class="formula">\[ P(a\le X\le b)=\text{área bajo } f(x) \text{ entre } a \text{ y } b,\qquad P(a\le X\le b)=P(a\lt X\lt b) \]</div>
+   <p>Si en un histograma la altura de cada barra es \(\frac{f_r}{\text{ancho}}\) (densidad), el área de cada barra es su frecuencia relativa. Con muchos datos y clases cada vez más angostas, el polígono de frecuencias se <b>suaviza</b> y se acerca a la curva de densidad.</p>
+   <div class="lab" id="lab-dens">
+    <div class="lab-title">📈 Del histograma a la curva de densidad</div>
+    <div class="row g-2 align-items-center">
+     <div class="col-md-4"><label class="small">Número de clases: <b class="k-v"></b></label><input type="range" class="form-range k" min="4" max="60" value="8"></div>
+     <div class="col-md-3"><label class="small">Datos: <b class="N-v"></b></label><select class="form-select form-select-sm N"><option>200</option><option selected>2000</option><option>20000</option></select></div>
+     <div class="col-md-5 d-flex flex-wrap gap-3 small"><label><input type="checkbox" class="pol" checked> polígono</label><label><input type="checkbox" class="cur"> curva normal</label><button class="btn btn-sm btn-ghost bnew">Otros datos</button></div>
+    </div>
+    <svg role="img" aria-label="Histograma de densidad"></svg>
+    <p class="small res mb-0"></p>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t15">
+   <h3><span class="num">1.5</span> Distribución normal</h3>
+   <p>La distribución normal \(X\sim N(\mu,\sigma)\) tiene forma de campana y es el modelo continuo más usado: describe bien muchas mediciones (estaturas, errores de medición, puntajes) y aparece como límite de la binomial cuando \(n\) es grande.</p>
+   <div class="formula">\[ f(x)=\frac{1}{\sigma\sqrt{2\pi}}\,e^{-\frac12\left(\frac{x-\mu}{\sigma}\right)^2} \]</div>
+   <ul>
+    <li>Es <b>simétrica</b> respecto a la media: el eje de simetría se levanta en \(x=\mu\), donde también están la mediana y la moda.</li>
+    <li>Los valores cercanos a la media son los más probables: hay más área en el centro de la campana.</li>
+    <li>\(\sigma\) es la distancia de la media a los <b>puntos de inflexión</b> de la curva; un \(\sigma\) mayor da una campana más ancha y baja.</li>
+    <li><b>Regla empírica:</b> \(P(\mu-\sigma\lt X\lt \mu+\sigma)\approx 0.68\), \(P(\mu-2\sigma\lt X\lt \mu+2\sigma)\approx 0.95\), \(P(\mu-3\sigma\lt X\lt \mu+3\sigma)\approx 0.997\).</li>
+   </ul>
+  </article>
+
+  <article class="topic reveal" id="t16">
+   <h3><span class="num">1.6</span> Normal estándar y estandarización</h3>
+   <p>La <b>normal estándar</b> \(Z\sim N(0,1)\) tiene media 0 y desviación 1. Las tablas (y las aplicaciones) dan el área a la izquierda \(\Phi(z)=P(Z\lt z)\). Cualquier normal se transforma en la estándar con:</p>
+   <div class="formula">\[ Z=\frac{X-\mu}{\sigma}\qquad P(X\lt a)=\Phi\!\left(\tfrac{a-\mu}{\sigma}\right)\qquad P(X\gt a)=1-\Phi(z)\qquad P(a\lt X\lt b)=\Phi(z_b)-\Phi(z_a) \]</div>
+   <p>El valor \(z\) indica a cuántas desviaciones estándar está \(x\) de la media. El área bajo la curva de \(X\) entre \(a\) y \(b\) es <b>la misma</b> que el área bajo \(Z\) entre \(z_a\) y \(z_b\). También se usa al revés: para el percentil \(P\), \(x=\mu+z\sigma\).</p>
+   <div class="lab" id="lab-normal">
+    <div class="lab-title">🔔 Calculadora normal: área original vs. área estandarizada</div>
+    <div class="row g-2 align-items-end">
+     <div class="col-6 col-md-2"><label class="small">μ</label><input type="number" class="form-control form-control-sm m" value="165"></div>
+     <div class="col-6 col-md-2"><label class="small">σ</label><input type="number" class="form-control form-control-sm s" value="8" min="0.1" step="0.1"></div>
+     <div class="col-6 col-md-3"><label class="small">Probabilidad</label><select class="form-select form-select-sm tipo"><option value="menor">P(X &lt; a)</option><option value="mayor">P(X &gt; a)</option><option value="entre" selected>P(a &lt; X &lt; b)</option></select></div>
+     <div class="col-6 col-md-2"><label class="small">a</label><input type="number" class="form-control form-control-sm a" value="160"></div>
+     <div class="col-6 col-md-2 bwrap"><label class="small">b</label><input type="number" class="form-control form-control-sm b" value="175"></div>
+    </div>
+    <div class="figs mt-2"></div>
+    <div class="res"></div>
+   </div>
+   <div class="problem" data-gen="normal"></div>
+   <div class="problem" data-gen="normalInv"></div>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 2 ============================ -->
+<section class="unit u2" id="unidad2">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 2</span><h2>Distribuciones muestrales</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 8</p></div>
+
+  <article class="topic reveal" id="t21">
+   <h3><span class="num">2.1</span> Población, muestra, parámetros y estadísticos</h3>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th></th><th>Población (parámetro)</th><th>Muestra (estadístico / estimador)</th></tr></thead><tbody>
+    <tr><td>Media</td><td>\(\mu\)</td><td>\(\bar{x}\)</td></tr><tr><td>Desviación estándar</td><td>\(\sigma\)</td><td>\(s\)</td></tr><tr><td>Proporción</td><td>\(p\)</td><td>\(\hat{p}=\frac{x}{n}\)</td></tr><tr><td>Tamaño</td><td>\(N\)</td><td>\(n\)</td></tr>
+   </tbody></table></div>
+   <ul>
+    <li>Un <b>parámetro</b> es un número fijo (normalmente desconocido) que describe a la población; un <b>estadístico</b> se calcula con los datos de una muestra y sirve como <b>estimador</b> del valor del parámetro.</li>
+    <li>En un <b>muestreo aleatorio simple</b> todas las muestras de tamaño \(n\) tienen la misma probabilidad de ser elegidas; las observaciones son independientes e idénticamente distribuidas.</li>
+    <li><b>Variabilidad muestral:</b> cada muestra da un valor diferente de \(\bar{x}\) o de \(\hat{p}\). Antes de tomar la muestra no sabemos qué valor saldrá: <b>los estimadores son variables aleatorias</b> y por eso tienen distribución, esperanza y desviación estándar.</li>
+   </ul>
+  </article>
+
+  <article class="topic reveal" id="t22">
+   <h3><span class="num">2.2</span> Distribución muestral</h3>
+   <p>La <b>distribución muestral</b> de un estadístico es la distribución de probabilidad de sus valores en todas las muestras posibles de tamaño \(n\). A su desviación estándar se le llama <b>error estándar</b>. En un ejemplo pequeño se puede construir completa, listando todas las muestras.</p>
+   <div class="problem" data-gen="muestral"></div>
+  </article>
+
+  <article class="topic reveal" id="t23">
+   <h3><span class="num">2.3</span> Teorema del Límite Central (TLC)</h3>
+   <div class="def">Si se toman muestras aleatorias simples de tamaño \(n\) de <b>cualquier</b> población con media \(\mu\) y desviación estándar \(\sigma\) finitas, cuando \(n\) es suficientemente grande la distribución de la media muestral es aproximadamente normal:\[\bar{x}\ \sim\ N\!\left(\mu_{\bar{x}}=\mu,\ \ \sigma_{\bar{x}}=\frac{\sigma}{\sqrt{n}}\right)\]</div>
+   <p>No importa si la población es discreta o continua, simétrica o muy sesgada. Una regla práctica usual es \(n\ge 30\); si la población ya es normal, \(\bar{x}\) es normal para cualquier \(n\). Como \(\sigma/\sqrt{n}\) disminuye al crecer \(n\), es muy probable que la media muestral caiga cerca de la media poblacional cuando la muestra es grande.</p>
+   <div class="lab" id="lab-tlc">
+    <div class="lab-title">🧪 Simulador del Teorema del Límite Central</div>
+    <div class="row g-2 align-items-center">
+     <div class="col-md-4"><select class="form-select form-select-sm pob"><option value="sesgada">Población sesgada (exponencial)</option><option value="uniforme">Población uniforme</option><option value="bimodal">Población bimodal</option><option value="dado">Dado (discreta)</option></select></div>
+     <div class="col-md-3"><label class="small">Tamaño de muestra n = <b class="n-v"></b></label><input type="range" class="form-range n" min="1" max="60" value="2"></div>
+     <div class="col-md-5 d-flex flex-wrap gap-2"><button class="btn btn-sm btn-acc b1">1 muestra</button><button class="btn btn-sm btn-ghost b1000">1000 muestras</button><button class="btn btn-sm btn-ghost bclr">Limpiar</button><label class="small"><input type="checkbox" class="ov" checked> curva N(μ, σ/√n)</label></div>
+    </div>
+    <svg class="pop" role="img" aria-label="Distribución de la población"></svg>
+    <svg class="means" role="img" aria-label="Histograma de medias muestrales"></svg>
+    <div class="st"></div>
+    <p class="small text-body-secondary mb-0">Elige la población sesgada con \(n=2\) y presiona «1000 muestras» varias veces; luego sube \(n\) a 10, 30 y 60. El histograma de las medias se vuelve una campana cada vez más angosta, centrada en \(\mu\), y su desviación estándar se acerca a \(\sigma/\sqrt{n}\).</p>
+   </div>
+  </article>
+
+  <article class="topic reveal" id="t24">
+   <h3><span class="num">2.4</span> Distribuciones muestrales de la media y de la proporción</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="formula h-100"><b>Media muestral</b>\[\mu_{\bar{x}}=\mu,\qquad \sigma_{\bar{x}}=\frac{\sigma}{\sqrt{n}},\qquad z=\frac{\bar{x}-\mu}{\sigma/\sqrt{n}}\]</div></div>
+    <div class="col-md-6"><div class="formula h-100"><b>Proporción muestral</b>\[\mu_{\hat{p}}=p,\qquad \sigma_{\hat{p}}=\sqrt{\frac{p(1-p)}{n}},\qquad z=\frac{\hat{p}-p}{\sqrt{p(1-p)/n}}\]</div></div>
+   </div>
+   <p class="mt-2">Para la proporción, la aproximación normal es buena si \(np\ge 10\) y \(n(1-p)\ge 10\) (algunos textos usan 5). Con estas distribuciones se calculan probabilidades sobre \(\bar{x}\) o \(\hat{p}\) cuando se conocen los parámetros.</p>
+   <div class="problem" data-gen="probMedia"></div>
+   <div class="problem" data-gen="probProp"></div>
+  </article>
+ </div>
+</section>
+
+<!-- ============================ UNIDAD 3 ============================ -->
+<section class="unit u3" id="unidad3">
+ <div class="container">
+  <div class="unit-head"><span class="unit-tag">Unidad 3</span><h2>Inferencia estadística</h2><p class="text-body-secondary mb-0">Aprendizajes 1 a 7</p></div>
+
+  <article class="topic reveal" id="t31">
+   <h3><span class="num">3.1</span> ¿Estimar o contrastar?</h3>
+   <div class="row g-3">
+    <div class="col-md-6"><div class="def h-100"><b>Estimación</b><br>Cuando no sabemos el valor del parámetro y queremos aproximarlo. «¿Cuál es el tiempo promedio de estudio de los estudiantes del plantel?» → <i>intervalo de confianza</i>.</div></div>
+    <div class="col-md-6"><div class="def h-100"><b>Contraste de hipótesis</b><br>Cuando hay una afirmación sobre el parámetro y queremos ver si los datos la contradicen. «¿Es cierto que la edad promedio es de al menos 17 años?» → <i>prueba de hipótesis</i>.</div></div>
+   </div>
+   <p class="mt-2">En ambos casos usamos una sola muestra aleatoria y la distribución muestral del estimador (TLC). Las conclusiones siempre tienen incertidumbre: es poco probable, pero no imposible, obtener una muestra alejada del parámetro.</p>
+  </article>
+
+  <article class="topic reveal" id="t32">
+   <h3><span class="num">3.2</span> Intervalos de confianza</h3>
+   <p>Una <b>estimación puntual</b> da un solo número (\(\bar{x}\) o \(\hat{p}\)); una <b>estimación por intervalo</b> da un rango de valores plausibles: estimación puntual ± <b>margen de error</b>.</p>
+   <div class="formula">\[ \text{Media: } \bar{x}\pm z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \qquad\qquad \text{Proporción: } \hat{p}\pm z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}} \]</div>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Nivel de confianza</th><th>90 %</th><th>95 %</th><th>99 %</th></tr></thead><tbody><tr><td>\(z_{\alpha/2}\)</td><td>1.645</td><td>1.96</td><td>2.576</td></tr></tbody></table></div>
+   <ul>
+    <li><b>Nivel de confianza:</b> si repitiéramos el muestreo muchas veces, ese porcentaje de los intervalos construidos contendría al parámetro. Un intervalo ya calculado contiene al parámetro o no lo contiene.</li>
+    <li>Si \(\sigma\) es desconocida y \(n\ge 30\), se suele aproximar con \(s\).</li>
+    <li><b>Relaciones:</b> más confianza → intervalo más ancho; muestra más grande → intervalo más angosto (el margen se reduce a la mitad si \(n\) se multiplica por 4).</li>
+    <li><b>Tamaño de muestra:</b> \(n=\left(\frac{z\sigma}{E}\right)^2\) para la media y \(n=\frac{z^2\hat{p}(1-\hat{p})}{E^2}\) para la proporción (se redondea hacia arriba).</li>
+   </ul>
+   <div class="lab" id="lab-ic">
+    <div class="lab-title">🎯 ¿Qué significa «95 % de confianza»? · 50 muestras de N(100, 15)</div>
+    <div class="row g-2 align-items-center">
+     <div class="col-md-4"><label class="small">Nivel de confianza: <b class="cl-v"></b> %</label><input type="range" class="form-range cl" min="50" max="99" value="95"></div>
+     <div class="col-md-4"><label class="small">Tamaño de muestra n = <b class="n-v"></b></label><input type="range" class="form-range n" min="5" max="200" value="30"></div>
+     <div class="col-md-4"><button class="btn btn-sm btn-acc bgen">Tomar otras 50 muestras</button></div>
+    </div>
+    <svg role="img" aria-label="50 intervalos de confianza"></svg>
+    <p class="small res mb-0"></p>
+   </div>
+   <div class="problem" data-gen="icMedia"></div>
+   <div class="problem" data-gen="icProp"></div>
+   <div class="problem" data-gen="tamano"></div>
+  </article>
+
+  <article class="topic reveal" id="t33">
+   <h3><span class="num">3.3</span> Contraste de hipótesis</h3>
+   <p>Se analiza qué tan <b>inusual</b> sería el valor observado del estimador si la hipótesis nula fuera cierta. Pasos:</p>
+   <ol>
+    <li><b>Hipótesis:</b> la nula \(H_0\) (contiene la igualdad) y la alternativa \(H_1\). Parejas posibles: \(H_0:\mu=\mu_0\) vs \(H_1:\mu\ne\mu_0\) (bilateral); \(H_0:\mu\le\mu_0\) vs \(H_1:\mu\gt \mu_0\); \(H_0:\mu\ge\mu_0\) vs \(H_1:\mu\lt \mu_0\) (unilaterales). Igual para \(p\).</li>
+    <li><b>Nivel de significancia</b> \(\alpha\) (por ejemplo 0.05): probabilidad de cometer un error tipo I.</li>
+    <li><b>Estadístico de prueba:</b> \(z=\dfrac{\bar{x}-\mu_0}{\sigma/\sqrt{n}}\) o \(z=\dfrac{\hat{p}-p_0}{\sqrt{p_0(1-p_0)/n}}\).</li>
+    <li><b>Decisión:</b> rechazar \(H_0\) si \(z\) cae en la <b>región de rechazo</b>, o equivalentemente si el <b>valor p</b> \(\le\alpha\).</li>
+    <li><b>Conclusión</b> en el contexto del problema.</li>
+   </ol>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th></th><th>\(H_0\) verdadera</th><th>\(H_0\) falsa</th></tr></thead><tbody><tr><th>Rechazar \(H_0\)</th><td>Error tipo I (prob. \(\alpha\))</td><td>Decisión correcta</td></tr><tr><th>No rechazar \(H_0\)</th><td>Decisión correcta</td><td>Error tipo II (prob. \(\beta\))</td></tr></tbody></table></div>
+   <div class="scroll-x"><table class="tbl"><thead><tr><th>Valores críticos</th><th>Bilateral</th><th>Unilateral</th></tr></thead><tbody><tr><td>\(\alpha=0.05\)</td><td>\(\pm 1.96\)</td><td>\(1.645\)</td></tr><tr><td>\(\alpha=0.01\)</td><td>\(\pm 2.576\)</td><td>\(2.33\)</td></tr></tbody></table></div>
+   <div class="lab" id="lab-prueba">
+    <div class="lab-title">⚖️ Región de rechazo y valor p</div>
+    <div class="row g-2 align-items-center">
+     <div class="col-md-3"><select class="form-select form-select-sm alt"><option value="≠">H₁: ≠ (bilateral)</option><option value=">">H₁: &gt; (cola derecha)</option><option value="<">H₁: &lt; (cola izquierda)</option></select></div>
+     <div class="col-md-3"><select class="form-select form-select-sm alpha"><option value="0.05">α = 0.05</option><option value="0.01">α = 0.01</option><option value="0.10">α = 0.10</option></select></div>
+     <div class="col-md-6"><label class="small">z observado = <b class="z-v"></b></label><input type="range" class="form-range z" min="-3.5" max="3.5" step="0.01" value="1.8"></div>
+    </div>
+    <div class="fig"></div>
+    <p class="res mb-0"></p>
+   </div>
+   <div class="problem" data-gen="pruebaMedia"></div>
+   <div class="problem" data-gen="pruebaProp"></div>
+  </article>
+ </div>
+</section>
+
+<section id="fuentes" class="py-5">
+ <div class="container">
+  <h2 class="font-head">Fuentes consultadas</h2>
+  <p class="text-body-secondary">Las definiciones y fórmulas se verificaron con estas fuentes:</p>
+  <ul>
+   <li>Colegio de Ciencias y Humanidades, UNAM (2024). <i>Programas de Estudio de Estadística y Probabilidad I y II</i> (aprendizajes, temática, juego de las 4 monedas y estrategias sugeridas).</li>
+   <li>OpenStax (2023). <i>Introducción a la estadística</i>, cap. 4 «Repaso de fórmulas» (esperanza, desviación estándar, binomial). <a href="https://openstax.org/books/introducci%C3%B3n-estad%C3%ADstica/pages/4-repaso-de-formulas" target="_blank" rel="noopener">openstax.org</a></li>
+   <li>OpenStax. <i>Introductory Business Statistics 2e</i>, cap. 7 «Formula Review» (Teorema del Límite Central, error estándar). <a href="https://openstax.org/books/introductory-business-statistics-2e/pages/7-formula-review" target="_blank" rel="noopener">openstax.org</a></li>
+   <li>OpenStax. <i>Statistics</i>, cap. 8 «Formula Review» (intervalos de confianza y tamaño de muestra). <a href="https://openstax.org/books/statistics/pages/8-formula-review" target="_blank" rel="noopener">openstax.org</a></li>
+   <li>OpenStax. <i>Introductory Statistics</i>, cap. 9 «Formula Review» (hipótesis, errores tipo I y II, valor p). <a href="https://openstax.org/books/introductory-statistics/pages/9-formula-review" target="_blank" rel="noopener">openstax.org</a></li>
+   <li>Simuladores sugeridos en el programa: <a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">Seeing Theory (Brown University)</a> y <a href="https://www.rossmanchance.com/applets/" target="_blank" rel="noopener">Rossman/Chance applets</a>.</li>
+  </ul>
+  <p class="small text-body-secondary">Las probabilidades de la normal se calculan con un algoritmo de doble precisión (Hart, 1968). En los problemas, \(z\) se redondea a 2 decimales como en las tablas, por lo que los resultados pueden diferir en la cuarta cifra de los de una calculadora.</p>
+ </div>
+</section>
+<footer><div class="container d-flex flex-wrap justify-content-between gap-2"><span>Cuadernillo interactivo · Estadística y Probabilidad II · CCH-UNAM</span><span>Material de repaso con fines educativos.</span></div></footer>
+
+<button class="btn btn-acc fab" data-bs-toggle="modal" data-bs-target="#formulario" style="--uc:var(--acc)">∑ Formulario</button>
+<button class="btn btn-ghost btn-sm" id="toTop" aria-label="Volver arriba">▲</button>
+<div class="modal fade" id="formulario" tabindex="-1" aria-labelledby="formTitle" aria-hidden="true">
+ <div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal-content">
+   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="formTitle">Formulario completo</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
+ <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#f1" type="button">U1 · Modelos de probabilidad</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f2" type="button">U2 · Distribuciones muestrales</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f3" type="button">U3 · Inferencia</button></li>
+ <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#f4" type="button">Tabla Z</button></li>
+</ul>
+<div class="tab-content">
+ <div class="tab-pane fade show active u1 fgroup" id="f1">
+  <h5>Variable aleatoria discreta</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Condiciones</small>\[0\le P(x)\le 1,\qquad \sum P(x)=1\]</div>
+   <div class="fcard"><small>Esperanza</small>\[\mu=E(X)=\sum x\,P(x)\]</div>
+   <div class="fcard"><small>Varianza</small>\[\sigma^2=\sum (x-\mu)^2P(x)=\sum x^2P(x)-\mu^2\]</div>
+   <div class="fcard"><small>Desviación estándar</small>\[\sigma=\sqrt{\sigma^2}\]</div>
+  </div>
+  <h5>Binomial</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Función de probabilidad</small>\[P(X=k)=\binom{n}{k}p^k(1-p)^{n-k}\]</div>
+   <div class="fcard"><small>Combinaciones</small>\[\binom{n}{k}=\frac{n!}{k!\,(n-k)!}\]</div>
+   <div class="fcard"><small>Media y desviación</small>\[\mu=np,\qquad \sigma=\sqrt{np(1-p)}\]</div>
+   <div class="fcard"><small>Complemento</small>\[P(X\ge k)=1-P(X\le k-1)\]</div>
+  </div>
+  <h5>Normal</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Densidad</small>\[f(x)=\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac12\left(\frac{x-\mu}{\sigma}\right)^2}\]</div>
+   <div class="fcard"><small>Estandarización</small>\[z=\frac{x-\mu}{\sigma},\qquad x=\mu+z\sigma\]</div>
+   <div class="fcard"><small>Áreas</small>\[P(X\lt a)=\Phi(z_a),\ \ P(X\gt a)=1-\Phi(z_a)\]</div>
+   <div class="fcard"><small>Entre dos valores</small>\[P(a\lt X\lt b)=\Phi(z_b)-\Phi(z_a)\]</div>
+   <div class="fcard"><small>Regla empírica</small>\[\mu\pm\sigma:68\%,\ \ \mu\pm2\sigma:95\%,\ \ \mu\pm3\sigma:99.7\%\]</div>
+   <div class="fcard"><small>Continua</small>\[P(X=a)=0\]</div>
+  </div>
+ </div>
+ <div class="tab-pane fade u2 fgroup" id="f2">
+  <h5>Media muestral</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Esperanza</small>\[\mu_{\bar{x}}=\mu\]</div>
+   <div class="fcard"><small>Error estándar</small>\[\sigma_{\bar{x}}=\frac{\sigma}{\sqrt{n}}\]</div>
+   <div class="fcard"><small>Estandarización (TLC)</small>\[z=\frac{\bar{x}-\mu}{\sigma/\sqrt{n}}\]</div>
+  </div>
+  <h5>Proporción muestral</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Estimador</small>\[\hat{p}=\frac{x}{n}\]</div>
+   <div class="fcard"><small>Esperanza y error estándar</small>\[\mu_{\hat{p}}=p,\qquad \sigma_{\hat{p}}=\sqrt{\frac{p(1-p)}{n}}\]</div>
+   <div class="fcard"><small>Estandarización</small>\[z=\frac{\hat{p}-p}{\sqrt{p(1-p)/n}}\]</div>
+   <div class="fcard"><small>Condición de normalidad</small>\[np\ge 10,\quad n(1-p)\ge 10\]</div>
+  </div>
+ </div>
+ <div class="tab-pane fade u3 fgroup" id="f3">
+  <h5>Intervalos de confianza</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Media (σ conocida o n ≥ 30)</small>\[\bar{x}\pm z_{\alpha/2}\frac{\sigma}{\sqrt{n}}\]</div>
+   <div class="fcard"><small>Proporción</small>\[\hat{p}\pm z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}\]</div>
+   <div class="fcard"><small>Margen de error</small>\[E=z_{\alpha/2}\,\sigma_{\text{estimador}}\]</div>
+   <div class="fcard"><small>Valores críticos</small>\[90\%:1.645\quad 95\%:1.96\quad 99\%:2.576\]</div>
+   <div class="fcard"><small>Tamaño de muestra (media)</small>\[n=\left(\frac{z_{\alpha/2}\,\sigma}{E}\right)^2\]</div>
+   <div class="fcard"><small>Tamaño de muestra (proporción)</small>\[n=\frac{z_{\alpha/2}^2\,\hat{p}(1-\hat{p})}{E^2}\]</div>
+  </div>
+  <h5>Contraste de hipótesis</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Estadístico para la media</small>\[z=\frac{\bar{x}-\mu_0}{\sigma/\sqrt{n}}\]</div>
+   <div class="fcard"><small>Estadístico para la proporción</small>\[z=\frac{\hat{p}-p_0}{\sqrt{p_0(1-p_0)/n}}\]</div>
+   <div class="fcard"><small>Valor p</small>\[\begin{aligned}H_1:\gt &\ \ P(Z\gt z)\\ H_1:\lt &\ \ P(Z\lt z)\\ H_1:\ne&\ \ 2P(Z\gt |z|)\end{aligned}\]</div>
+   <div class="fcard"><small>Decisión</small>\[\text{valor } p\le\alpha\ \Rightarrow\ \text{rechazar } H_0\]</div>
+   <div class="fcard"><small>Errores</small>\[\alpha=P(\text{rechazar }H_0\mid H_0\text{ cierta}),\ \ \beta=P(\text{no rechazar }H_0\mid H_0\text{ falsa})\]</div>
+   <div class="fcard"><small>Valores críticos</small>\[\alpha=0.05:\ \pm1.96\ \text{o}\ 1.645;\quad \alpha=0.01:\ \pm2.576\ \text{o}\ 2.33\]</div>
+  </div>
+ </div>
+ <div class="tab-pane fade u3" id="f4">
+  <p class="small">Área a la izquierda \(\Phi(z)=P(Z\lt z)\) para \(z\ge 0\). Para \(z\lt 0\): \(\Phi(-z)=1-\Phi(z)\). Generada con el mismo algoritmo de la página.</p>
+  <div id="ztable" class="scroll-x"></div>
+ </div>
+</div>
+</div>
+   <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  </div>
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+'use strict';
+/* ====================== utilidades ====================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const R = {
+  int: (a, b) => a + Math.floor(Math.random() * (b - a + 1)),
+  pick: arr => arr[Math.floor(Math.random() * arr.length)],
+  float: (a, b, d = 1) => +(a + Math.random() * (b - a)).toFixed(d),
+  shuffle: arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
+  normal: () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+};
+const S = {
+  sum: a => a.reduce((s, x) => s + x, 0),
+  mean: a => S.sum(a) / a.length,
+  sorted: a => a.slice().sort((x, y) => x - y),
+  median: a => { const s = S.sorted(a), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; },
+  modes: a => { const c = new Map(); a.forEach(x => c.set(x, (c.get(x) || 0) + 1)); const m = Math.max(...c.values()); if (m === 1) return []; return [...c.entries()].filter(e => e[1] === m).map(e => e[0]).sort((x, y) => x - y); },
+  ss: a => { const m = S.mean(a); return S.sum(a.map(x => (x - m) ** 2)); },
+  varS: a => S.ss(a) / (a.length - 1), varP: a => S.ss(a) / a.length,
+  sdS: a => Math.sqrt(S.varS(a)), sdP: a => Math.sqrt(S.varP(a)),
+  /* percentil por el método p(n+1) con interpolación lineal (NIST/SEMATECH, Hyndman-Fan R6) */
+  quantile: (a, p) => { const s = S.sorted(a), n = s.length, pos = p * (n + 1); const k = Math.floor(pos), d = pos - k; if (k < 1) return s[0]; if (k >= n) return s[n - 1]; return s[k - 1] + d * (s[k] - s[k - 1]); },
+  pearson: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; } return sxy / Math.sqrt(sxx * syy); },
+  linreg: (x, y) => { const mx = S.mean(x), my = S.mean(y); let sxy = 0, sxx = 0; for (let i = 0; i < x.length; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; } const b = sxy / sxx; return { b, a: my - b * mx }; }
+};
+/* Función de distribución normal estándar Φ(x) (algoritmo de Hart, precisión doble; West 2005) */
+function Phi(x) {
+  const z = Math.abs(x); let c = 0;
+  if (z <= 37) {
+    const e = Math.exp(-z * z / 2);
+    if (z < 7.07106781186547) {
+      let n = 3.52624965998911e-02 * z + 0.700383064443688; n = n * z + 6.37396220353165; n = n * z + 33.912866078383; n = n * z + 112.079291497871; n = n * z + 221.213596169931; n = n * z + 220.206867912376;
+      let d = 8.83883476483184e-02 * z + 1.75566716318264; d = d * z + 16.064177579207; d = d * z + 86.7807322029461; d = d * z + 296.564248779674; d = d * z + 637.333633378831; d = d * z + 793.826512519948; d = d * z + 440.413735824752;
+      c = e * n / d;
+    } else { let b = z + 0.65; b = z + 4 / b; b = z + 3 / b; b = z + 2 / b; b = z + 1 / b; c = e / b / 2.506628274631; }
+  }
+  return x > 0 ? 1 - c : c;
+}
+/* Inversa de Φ (Acklam) con un paso de refinamiento de Newton */
+function invPhi(p) {
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  const pl = 0.02425; let q, r, x;
+  if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  else if (p <= 1 - pl) { q = p - 0.5; r = q * q; x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); }
+  else { q = Math.sqrt(-2 * Math.log(1 - p)); x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  const e = Phi(x) - p, u = e * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2); return x - u / (1 + x * u / 2);
+}
+const normPdf = (x, m = 0, s = 1) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+function comb(n, k) { if (k < 0 || k > n) return 0; k = Math.min(k, n - k); let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return Math.round(r); }
+const binomPmf = (n, p, k) => comb(n, k) * p ** k * (1 - p) ** (n - k);
+/* formato */
+const r2 = (x, d = 2) => { const f = 10 ** d; return Math.round((x + Number.EPSILON * Math.sign(x)) * f) / f; };
+const fx = (x, d = 2) => { const v = r2(x, d); return (Object.is(v, -0) ? 0 : v).toFixed(d); };
+const fn = (x, d = 4) => { const v = r2(x, d); return String(Object.is(v, -0) ? 0 : v); }; /* sin ceros de relleno */
+const pct = (x, d = 2) => fx(100 * x, d) + '\\%';
+const esc = s => String(s).replace(/</g, '\\lt ').replace(/>/g, '\\gt ');
+const M = s => `\\(${esc(s)}\\)`;          /* matemáticas en línea */
+const MD = s => `\\[${esc(s)}\\]`;         /* matemáticas en bloque */
+
+/* ====================== SVG ====================== */
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) { if (k === 'text') e.textContent = attrs[k]; else e.setAttribute(k, attrs[k]); } if (parent) parent.appendChild(e); return e; }
+function clear(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+function niceTicks(min, max, count = 6) {
+  const span = max - min || 1, step0 = span / count, mag = 10 ** Math.floor(Math.log10(step0)), err = step0 / mag;
+  const step = (err >= 7.5 ? 10 : err >= 3.5 ? 5 : err >= 1.5 ? 2 : 1) * mag; const t = [];
+  for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) t.push(+v.toFixed(10)); return t;
+}
+/* Plano con escalas; devuelve {sx, sy, g} */
+function plane(svg, o) {
+  const W = o.W || 640, H = o.H || 300, p = Object.assign({ l: 48, r: 16, t: 14, b: 34 }, o.pad || {});
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); if (!o.keep) clear(svg);
+  const sx = v => p.l + (v - o.x0) / (o.x1 - o.x0) * (W - p.l - p.r);
+  const sy = v => H - p.b - (v - o.y0) / (o.y1 - o.y0) * (H - p.t - p.b);
+  const g = el('g', {}, svg);
+  if (o.grid !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('line', { x1: p.l, x2: W - p.r, y1: sy(t), y2: sy(t), class: 'gridl' }, g));
+  el('line', { x1: p.l, x2: W - p.r, y1: H - p.b, y2: H - p.b, class: 'axis' }, g);
+  if (o.yaxis !== false) el('line', { x1: p.l, x2: p.l, y1: p.t, y2: H - p.b, class: 'axis' }, g);
+  (o.xt || niceTicks(o.x0, o.x1, 8)).forEach(t => el('text', { x: sx(t), y: H - p.b + 16, 'text-anchor': 'middle', class: 'tick', text: o.xf ? o.xf(t) : fn(t, 3) }, g));
+  if (o.yaxis !== false) (o.yt || niceTicks(o.y0, o.y1, 5)).forEach(t => el('text', { x: p.l - 6, y: sy(t) + 4, 'text-anchor': 'end', class: 'tick', text: o.yf ? o.yf(t) : fn(t, 3) }, g));
+  if (o.xl) el('text', { x: (W + p.l - p.r) / 2, y: H - 2, 'text-anchor': 'middle', class: 'tick', text: o.xl }, g);
+  if (o.yl) el('text', { x: 12, y: (H - p.b + p.t) / 2, 'text-anchor': 'middle', class: 'tick', transform: `rotate(-90 12 ${(H - p.b + p.t) / 2})`, text: o.yl }, g);
+  return { sx, sy, g, W, H, p };
+}
+function pathFn(f, a, b, sx, sy, n = 200) { let d = ''; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += (i ? 'L' : 'M') + sx(x).toFixed(2) + ',' + sy(f(x)).toFixed(2); } return d; }
+function areaFn(f, a, b, sx, sy, n = 160) { let d = `M${sx(a)},${sy(0)}`; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += `L${sx(x).toFixed(2)},${sy(f(x)).toFixed(2)}`; } return d + `L${sx(b)},${sy(0)}Z`; }
+function animatePath(p, ms = 900) { try { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p.getBoundingClientRect(); p.style.transition = `stroke-dashoffset ${ms}ms ease`; p.style.strokeDashoffset = 0; } catch (e) { } }
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ====================== KaTeX ====================== */
+function tex(node) {
+  if (window.renderMathInElement) renderMathInElement(node || document.body, { delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }], throwOnError: false });
+}
+
+/* ====================== problemas aleatorios paso a paso ====================== */
+/* gen() devuelve {enun, steps:[{h, b}], ans:{label, value, tol}, fig?(node)} */
+const PROBLEMS = {};
+function mountProblem(node) {
+  const gen = PROBLEMS[node.dataset.gen]; if (!gen) return;
+  node.innerHTML = `<span class="ptag">Problema aleatorio</span>
+   <div class="enun"></div><div class="fig"></div>
+   <div class="ansbox mt-2"></div>
+   <div class="btns d-flex flex-wrap gap-2 mt-3">
+     <button class="btn btn-sm btn-acc b-new">↻ Nuevo problema</button>
+     <button class="btn btn-sm btn-ghost b-step">Siguiente paso ▸</button>
+     <button class="btn btn-sm btn-ghost b-all">Ver solución completa</button>
+   </div><ol class="steps"></ol>`;
+  let cur = null, shown = 0;
+  const enun = $('.enun', node), steps = $('.steps', node), ansbox = $('.ansbox', node), fig = $('.fig', node);
+  const showStep = () => { if (!cur || shown >= cur.steps.length) return; const s = cur.steps[shown++]; const li = document.createElement('li'); li.innerHTML = (s.h ? `<h6>${s.h}</h6>` : '') + s.b; steps.appendChild(li); tex(li); if (s.fig) s.fig(li); $('.b-step', node).disabled = shown >= cur.steps.length; };
+  const fresh = () => {
+    cur = gen(); shown = 0; steps.innerHTML = ''; enun.innerHTML = cur.enun; fig.innerHTML = '';
+    if (cur.fig) cur.fig(fig);
+    ansbox.innerHTML = cur.ans ? `<div class="input-group input-group-sm" style="max-width:420px"><span class="input-group-text">${cur.ans.label}</span><input type="text" inputmode="decimal" class="form-control" placeholder="tu respuesta"><button class="btn btn-ghost b-chk">Comprobar</button></div><div class="small mt-1 fb"></div>` : '';
+    if (cur.ans) {
+      const inp = $('input', ansbox), fb = $('.fb', ansbox);
+      const chk = () => { const v = parseFloat(String(inp.value).replace(',', '.').replace('%', '')); if (isNaN(v)) { fb.innerHTML = 'Escribe un número.'; fb.className = 'small mt-1 fb'; return; }
+        const ok = Math.abs(v - cur.ans.value) <= (cur.ans.tol ?? 0.01); fb.className = 'small mt-1 fb ' + (ok ? 'check-ok' : 'check-bad');
+        fb.innerHTML = ok ? '✔ ¡Correcto! Revisa el procedimiento para confirmar tu razonamiento.' : '✘ Aún no. Usa «Siguiente paso» para guiarte.'; };
+      $('.b-chk', ansbox).onclick = chk; inp.onkeydown = e => { if (e.key === 'Enter') chk(); };
+    }
+    $('.b-step', node).disabled = false; tex(enun); tex(ansbox);
+  };
+  $('.b-new', node).onclick = fresh; $('.b-step', node).onclick = showStep;
+  $('.b-all', node).onclick = () => { while (cur && shown < cur.steps.length) showStep(); };
+  fresh();
+}
+/* tabla html rápida */
+function htable(head, rows, cls = 'tbl') { return `<div class="scroll-x"><table class="${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => typeof c === 'object' && c !== null ? `<td class="${c.c || ''}">${c.v}</td>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+
+/* ====================== interfaz general ====================== */
+function initUI() {
+  /* tema */
+  const root = document.documentElement; let saved = null; try { saved = localStorage.getItem('cuad-theme'); } catch (e) { }
+  if (saved) root.setAttribute('data-bs-theme', saved);
+  const tbtn = $('#themeBtn'); if (tbtn) tbtn.onclick = () => { const t = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark'; root.setAttribute('data-bs-theme', t); try { localStorage.setItem('cuad-theme', t); } catch (e) { } document.dispatchEvent(new Event('themechange')); };
+  /* progreso y volver arriba */
+  const prog = $('#progress'), top = $('#toTop');
+  const onScroll = () => { const h = document.documentElement; const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight); if (prog) prog.style.width = (p * 100) + '%'; if (top) top.classList.toggle('show', h.scrollTop > 600); };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  if (top) top.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+  /* apariciones */
+  if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .08 }); $$('.reveal').forEach(n => io.observe(n)); }
+  else $$('.reveal').forEach(n => n.classList.add('in'));
+  /* problemas */
+  $$('.problem[data-gen]').forEach(mountProblem);
+  tex(document.body);
+}
+
+/* ======================= Estadística y Probabilidad II ======================= */
+const LEARN = [
+ { u: 1, nombre: 'Modelos de probabilidad y sus aplicaciones', h: 24,
+   prop: 'Se apropiará del concepto de variable aleatoria y analizará las distribuciones de probabilidad con sus medidas de tendencia y variabilidad, abordando en particular los modelos Binomial y Normal para resolver problemas.',
+   L: [
+    ['Reconoce una variable aleatoria discreta y construye su distribución de probabilidad.', 'Variables aleatorias discretas y sus distribuciones de probabilidad', '#t11'],
+    ['Construye distribuciones aproximadas frecuencialmente, utilizando simuladores digitales.', 'Ejemplos de variables aleatorias discretas y sus distribuciones', '#t11'],
+    ['Interpreta el valor de la esperanza matemática y la desviación estándar en el contexto de una investigación o problema.', 'Esperanza matemática y desviación estándar', '#t12'],
+    ['Identifica las características de un proceso binomial.', 'Distribución binomial: experimentos Bernoulli y binomial', '#t13'],
+    ['Construye el modelo para la distribución binomial y visualiza su forma para distintos valores de n y p, apoyándose en simuladores digitales.', 'Función de distribución binomial, esperanza y desviación estándar', '#t13'],
+    ['Aplica el modelo binomial, su valor esperado y su desviación estándar en problemas contextualizados interpretando los resultados.', 'Aplicaciones de la binomial', '#t13'],
+    ['Comprende que, en el caso de variables aleatorias continuas, la probabilidad debe calcularse para valores dentro de un intervalo.', 'Variables aleatorias continuas: modelos continuos', '#t14'],
+    ['Identifica que la probabilidad de que una variable continua tome valores en un intervalo es el área debajo de su función de densidad y sobre el intervalo.', 'La probabilidad como área bajo la curva', '#t14'],
+    ['Esboza la curva de densidad para una variable aleatoria aproximadamente normal, a partir de la suavización de un polígono de frecuencias con ayuda de un simulador digital.', 'Distribución normal: características y utilidad', '#t14'],
+    ['Identifica a la media como el punto donde se levanta el eje de simetría y descubre que la probabilidad de obtener valores cercanos a esa media es grande.', 'Identificación geométrica de la esperanza y la desviación estándar', '#t15'],
+    ['Calcula probabilidades en una distribución normal aplicando la Regla Empírica, dentro de problemas contextualizados interpretando los resultados.', 'Características de la distribución normal (regla empírica)', '#t15'],
+    ['Calcula probabilidades en una distribución normal estándar.', 'Normal estándar y el cálculo de probabilidades', '#t16'],
+    ['Aplica el proceso de estandarización para resolver problemas con cualquier distribución normal.', 'Otras distribuciones normales y su relación con la normal estándar', '#t16'],
+    ['Contrasta el área bajo la gráfica para una situación de comportamiento normal con su correspondiente área en la gráfica del modelo estandarizado.', 'Problemas de aplicación', '#t16'] ] },
+ { u: 2, nombre: 'Distribuciones muestrales', h: 18,
+   prop: 'Comprenderá la relación de la probabilidad con la estadística mediante el análisis de las distribuciones de la media y la proporción muestrales a través del Teorema del Límite Central, para desarrollar su razonamiento estadístico.',
+   L: [
+    ['Identifica a los estadísticos como indicadores del posible valor puntual de sus correspondientes parámetros.', 'Población y muestra: parámetros y estadísticos', '#t21'],
+    ['Construye muestras aleatorias simples a partir de una población con distribución conocida y calcula los valores de un estimador en cada muestra.', 'Muestreo aleatorio simple', '#t21'],
+    ['Concluye que los estimadores son variables aleatorias.', 'Variabilidad muestral', '#t21'],
+    ['Elabora la distribución de probabilidad de un estimador en un ejemplo sencillo.', 'Cálculo de una distribución muestral', '#t22'],
+    ['Formula conjeturas acerca del comportamiento de una variable en la población, a partir de los datos de una muestra, en el contexto de una investigación o un problema.', 'Variabilidad muestral', '#t21'],
+    ['Comprueba que los estimadores media y proporción muestral se distribuyen de manera aproximadamente normal, al trabajar con muestras grandes con la ayuda de la simulación por computadora.', 'Teorema del Límite Central', '#t23'],
+    ['Construye las distribuciones muestrales para la media y la proporción, bajo las condiciones del Teorema del Límite Central.', 'Distribución muestral de medias y de proporciones', '#t24'],
+    ['Emplea las distribuciones muestrales para calcular probabilidades sobre la media y la proporción muestral cuando se conocen los parámetros.', 'Distribución muestral de medias y de proporciones', '#t24'] ] },
+ { u: 3, nombre: 'Inferencia estadística', h: 22,
+   prop: 'Realizará inferencias formales sobre los valores de los parámetros, a partir del análisis de los estimadores en una muestra aleatoria, para respaldar la toma de decisiones en una investigación estadística, iniciando el desarrollo de su pensamiento estadístico.',
+   L: [
+    ['Distingue los tipos de inferencias estadísticas que se abordarán y reconoce cuándo se requiere estimar un parámetro y cuándo verificar una hipótesis respecto a un parámetro desconocido.', 'Inferencia estadística: estimación y contraste de hipótesis', '#t31'],
+    ['Identifica el concepto de estimación por intervalos en el contexto de una investigación o un problema.', 'Estimación puntual y por intervalos', '#t32'],
+    ['Construye las expresiones para el cálculo de intervalos de confianza para la media y la proporción, bajo las condiciones del Teorema del Límite Central.', 'Significado del nivel de confianza; intervalo para la media y la proporción', '#t32'],
+    ['Calcula el intervalo de confianza para la media y la proporción e interpreta el resultado obtenido en el contexto de una investigación o problema.', 'Relaciones entre nivel de confianza, tamaño de muestra y amplitud; aplicación', '#t32'],
+    ['Comprende el concepto de contraste de hipótesis, para una media y para una proporción, bajo las condiciones del Teorema del Límite Central.', 'Contraste de hipótesis: tipos de parejas de hipótesis', '#t33'],
+    ['Construye contrastes de hipótesis para la media y para la proporción, preferentemente con el uso de herramientas tecnológicas, en el contexto de una investigación o un problema.', 'Nivel de significancia y estadístico de prueba', '#t33'],
+    ['Concluye si se rechaza o no una hipótesis estadística para la media o para la proporción, en el contexto de una investigación o un problema.', 'Región de rechazo o valor p; interpretación', '#t33'] ] }
+];
+
+/* ---------------- utilidades de esta página ---------------- */
+const zr = z => r2(z, 2);                 /* z redondeado a 2 decimales (como en tablas) */
+const PHI4 = z => fx(Phi(zr(z)), 4);      /* Φ del z redondeado, 4 decimales */
+const ZCRIT = { 90: 1.645, 95: 1.96, 99: 2.576 };
+function normalFig(node, m, s, a, b, label = 'X') {
+  /* dibuja la curva original y la estandarizada con la misma área sombreada (aprendizaje 14) */
+  const wrap = document.createElement('div'); wrap.className = 'row g-2'; node.appendChild(wrap);
+  const mk = t => { const c = document.createElement('div'); c.className = 'col-md-6'; c.innerHTML = `<div class="small fw-bold text-center">${t}</div>`; const svg = el('svg', {}); c.appendChild(svg); wrap.appendChild(c); return svg; };
+  const draw = (svg, mu, sd, lo, hi, xt) => { const P = plane(svg, { W: 420, H: 190, x0: mu - 3.8 * sd, x1: mu + 3.8 * sd, y0: 0, y1: normPdf(mu, mu, sd) * 1.12, xt, yaxis: false, grid: false, pad: { l: 12, r: 12, b: 30 } });
+    const L = Math.max(lo, mu - 3.8 * sd), H = Math.min(hi, mu + 3.8 * sd); if (H > L) el('path', { d: areaFn(x => normPdf(x, mu, sd), L, H, P.sx, P.sy), fill: css('--shade') }, P.g);
+    const p = el('path', { d: pathFn(x => normPdf(x, mu, sd), mu - 3.8 * sd, mu + 3.8 * sd, P.sx, P.sy), fill: 'none', stroke: css('--u1'), 'stroke-width': 2.5 }, P.g); animatePath(p); };
+  const za = a === -Infinity ? -Infinity : zr((a - m) / s), zb = b === Infinity ? Infinity : zr((b - m) / s);
+  draw(mk(`${label} ~ N(${fn(m, 3)}, ${fn(s, 4)})`), m, s, a, b, [-3, -2, -1, 0, 1, 2, 3].map(k => m + k * s));
+  draw(mk('Z ~ N(0, 1)'), 0, 1, za, zb, [-3, -2, -1, 0, 1, 2, 3]);
+}
+function probText(tipo, lo, hi, v = 'X') { return tipo === 'menor' ? `P(${v} < ${fn(hi, 4)})` : tipo === 'mayor' ? `P(${v} > ${fn(lo, 4)})` : `P(${fn(lo, 4)} < ${v} < ${fn(hi, 4)})`; }
+/* pasos estándar de un cálculo normal con estandarización */
+function normalSteps(tipo, m, s, lo, hi, v = 'X', se = null) {
+  const sTxt = se || fn(s, 4); const steps = []; let p;
+  const zf = x => `z = \\frac{${fn(x, 4)} - ${fn(m, 4)}}{${sTxt}} = ${fx((x - m) / s, 4)} \\approx ${fx(zr((x - m) / s), 2)}`;
+  if (tipo === 'menor') { const z = zr((hi - m) / s); p = Phi(z); steps.push({ h: 'Estandariza', b: MD(zf(hi)) }, { h: 'Busca en la tabla (área a la izquierda)', b: MD(`${probText(tipo, lo, hi, v)} = P(Z < ${fx(z, 2)}) = ${fx(p, 4)}`) }); }
+  else if (tipo === 'mayor') { const z = zr((lo - m) / s); p = 1 - Phi(z); steps.push({ h: 'Estandariza', b: MD(zf(lo)) }, { h: 'Usa el complemento', b: `La tabla da el área a la izquierda, así que restamos de 1: ${MD(`${probText(tipo, lo, hi, v)} = 1 - P(Z < ${fx(z, 2)}) = 1 - ${fx(Phi(z), 4)} = ${fx(p, 4)}`)}` }); }
+  else { const z1 = zr((lo - m) / s), z2 = zr((hi - m) / s); p = Phi(z2) - Phi(z1); steps.push({ h: 'Estandariza ambos límites', b: MD(zf(lo)) + MD(zf(hi)) }, { h: 'Resta las áreas acumuladas', b: MD(`${probText(tipo, lo, hi, v)} = \\Phi(${fx(z2, 2)}) - \\Phi(${fx(z1, 2)}) = ${fx(Phi(z2), 4)} - ${fx(Phi(z1), 4)} = ${fx(p, 4)}`) }); }
+  return { steps, p };
+}
+
+/* ---------------- problemas: Unidad 1 ---------------- */
+function juegoDist(coins, cost) {
+  const n = coins.length, map = new Map();
+  for (let m = 0; m < 2 ** n; m++) { let g = 0; for (let i = 0; i < n; i++) if (m >> i & 1) g += coins[i]; const net = g - cost; map.set(net, (map.get(net) || 0) + 1); }
+  const xs = [...map.keys()].sort((a, b) => a - b); return xs.map(x => ({ x, c: map.get(x), p: map.get(x) / 2 ** n }));
+}
+PROBLEMS.juego = () => {
+  const sets = [[1, 5, 10, 10], [1, 2, 5, 10], [2, 5, 5, 10], [1, 1, 5, 10], [5, 5, 10, 10]];
+  const coins = R.pick(sets), total = S.sum(coins), cost = R.int(Math.ceil(total / 2) - 3, Math.ceil(total / 2) + 2);
+  const D = juegoDist(coins, cost), E = S.sum(D.map(d => d.x * d.p)), V = S.sum(D.map(d => (d.x - E) ** 2 * d.p)), sd = Math.sqrt(V);
+  return {
+    enun: `En un juego se paga <b>$${cost}</b> para lanzar ${coins.length} monedas: ${coins.map(c => '$' + c).join(', ')}. Se ganan todas las monedas que caigan en <b>sol</b>. Sea \\(X\\) la ganancia neta (lo ganado menos lo pagado). Construye la distribución de \\(X\\) y calcula \\(E(X)\\). <b>¿Conviene jugar?</b>`,
+    ans: { label: 'E(X) = $', value: r2(E, 2), tol: 0.006 }, chk: { coins, cost },
+    steps: [
+      { h: 'Espacio muestral', b: `Cada moneda cae en águila o sol: ${M('2^{' + coins.length + '} = ' + 2 ** coins.length)} resultados igualmente probables.` },
+      { h: 'Distribución de probabilidad', b: `Para cada resultado sumamos las monedas en sol y restamos $${cost}. Agrupando:` + htable(['x (ganancia neta)', ...D.map(d => d.x)], [['casos', ...D.map(d => d.c)], ['P(X = x)', ...D.map(d => `${d.c}/${2 ** coins.length}`)]]) + `Comprobación: ${M('\\sum P(x) = 1')}.` },
+      { h: 'Esperanza', b: MD(`E(X) = \\sum x\\,P(x) = ${D.map(d => `(${d.x})\\tfrac{${d.c}}{${2 ** coins.length}}`).join(' + ')} = ${fx(E, 2)}`) + `<div class="note">Atajo: cada moneda cae en sol con probabilidad ${M('\\tfrac12')}, así que en promedio se gana ${M('\\tfrac{' + total + '}{2} = ' + fn(total / 2, 2))} y ${M('E(X) = ' + fn(total / 2, 2) + ' - ' + cost + ' = ' + fx(E, 2))}.</div>` },
+      { h: 'Desviación estándar', b: MD(`\\sigma = \\sqrt{\\sum (x-\\mu)^2P(x)} = \\sqrt{${fx(V, 4)}} = ${fx(sd, 2)}`) },
+      { h: 'Interpretación', b: E < 0 ? `${M('E(X) = ' + fx(E, 2))}: si se juega muchas veces, se <b>pierden en promedio $${fx(-E, 2)}</b> por juego. No conviene jugar.` : E > 0 ? `${M('E(X) = ' + fx(E, 2))}: a la larga se <b>gana en promedio $${fx(E, 2)}</b> por juego; conviene al jugador (no al organizador).` : 'E(X) = 0: es un <b>juego justo</b>; a la larga no se gana ni se pierde.' }
+    ]
+  };
+};
+PROBLEMS.discreta = () => {
+  const ctx = R.pick([{ t: 'número de clientes que llegan a una papelería en 5 minutos', x0: 0 }, { t: 'número de mensajes que recibe un estudiante en una hora de clase', x0: 0 }, { t: 'número de libros que pide prestados un estudiante en la biblioteca', x0: 0 }]);
+  const k = R.int(4, 5); let w; do { w = Array.from({ length: k }, () => R.int(1, 8)); } while (S.sum(w) > 20);
+  let ps = w.map(v => v * 5); ps[R.int(0, k - 1)] += 100 - S.sum(ps); if (ps.some(v => v <= 0)) return PROBLEMS.discreta();
+  ps = ps.map(v => v / 100); const xs = ps.map((_, i) => ctx.x0 + i);
+  const E = S.sum(xs.map((x, i) => x * ps[i])), V = S.sum(xs.map((x, i) => (x - E) ** 2 * ps[i])), sd = Math.sqrt(V);
+  const c = R.int(1, k - 2), pge = S.sum(ps.slice(c));
+  return {
+    enun: `Sea \\(X\\) el ${ctx.t}. Su distribución de probabilidad es:` + htable(['x', ...xs], [['P(X = x)', ...ps.map(p => fn(p, 2))]]) + `Calcula \\(E(X)\\), \\(\\sigma\\) y \\(P(X \\ge ${c})\\). <b>¿Cuánto vale la desviación estándar?</b> (2 decimales)`,
+    ans: { label: 'σ =', value: r2(sd, 2), tol: 0.011 }, chk: { xs, ps, c },
+    steps: [
+      { h: '¿Es una distribución válida?', b: `Todas las probabilidades están entre 0 y 1 y ${M('\\sum P(x) = ' + ps.map(p => fn(p, 2)).join('+') + ' = 1')}.` },
+      { h: 'Esperanza (media)', b: MD(`\\mu = E(X) = \\sum x\\,P(x) = ${xs.map((x, i) => `${x}(${fn(ps[i], 2)})`).join(' + ')} = ${fx(E, 2)}`) },
+      { h: 'Varianza', b: htable(['x', 'P(x)', 'x − μ', '(x − μ)²P(x)'], xs.map((x, i) => [x, fn(ps[i], 2), fx(x - E, 2), fx((x - E) ** 2 * ps[i], 4)])) + MD(`\\sigma^2 = \\sum (x-\\mu)^2P(x) = ${fx(V, 4)}`) },
+      { h: 'Desviación estándar', b: MD(`\\sigma = \\sqrt{${fx(V, 4)}} = ${fx(sd, 2)}`) },
+      { h: 'Probabilidad de un evento', b: MD(`P(X\\ge ${c}) = ${ps.slice(c).map(p => fn(p, 2)).join(' + ')} = ${fx(pge, 2)}`) },
+      { h: 'Interpretación', b: `En promedio se espera ${fx(E, 2)} (a la larga, en muchas observaciones). La desviación estándar (${fx(sd, 2)}) indica cuánto se alejan típicamente los valores de esa media.` }
+    ]
+  };
+};
+PROBLEMS.binomial = () => {
+  const ctx = R.pick([{ t: 'Un examen tiene {n} preguntas de opción múltiple con {k} opciones cada una. Un estudiante contesta todas al azar.', ev: 'aciertos', pf: () => { const o = R.pick([4, 5]); return { p: 1 / o, ptxt: `\\tfrac{1}{${o}}`, k: o }; } },
+    { t: 'El {pp} % de los estudiantes del plantel usa el Metro para llegar. Se eligen al azar {n} estudiantes.', ev: 'estudiantes que usan el Metro', pf: () => { const pp = R.pick([20, 25, 30, 40, 60]); return { p: pp / 100, ptxt: String(pp / 100), pp }; } },
+    { t: 'Una máquina produce piezas defectuosas con probabilidad {pp} %. Se revisan {n} piezas al azar.', ev: 'piezas defectuosas', pf: () => { const pp = R.pick([5, 8, 10, 15]); return { p: pp / 100, ptxt: String(pp / 100), pp }; } }]);
+  const n = R.int(6, 15), pr = ctx.pf(), p = pr.p, q = 1 - p, tipo = R.pick(['igual', 'menor', 'mayor']);
+  const mu = n * p, sd = Math.sqrt(n * p * q); let k = Math.max(1, Math.min(n - 1, Math.round(mu + R.int(-1, 2))));
+  const pk = j => binomPmf(n, p, j); let ans, qtxt, body;
+  if (tipo === 'igual') { ans = pk(k); qtxt = `exactamente ${k}`; body = MD(`P(X=${k}) = \\binom{${n}}{${k}}(${fn(p, 4)})^{${k}}(${fn(q, 4)})^{${n - k}} = ${comb(n, k)}\\,(${fn(p, 4)})^{${k}}(${fn(q, 4)})^{${n - k}} = ${fx(ans, 4)}`); }
+  else if (tipo === 'menor') { ans = S.sum(Array.from({ length: k + 1 }, (_, j) => pk(j))); qtxt = `a lo más ${k}`; body = MD(`P(X\\le ${k}) = \\sum_{j=0}^{${k}} \\binom{${n}}{j}(${fn(p, 4)})^{j}(${fn(q, 4)})^{${n}-j}`) + htable(['j', ...Array.from({ length: k + 1 }, (_, j) => j)], [['P(X = j)', ...Array.from({ length: k + 1 }, (_, j) => fx(pk(j), 4))]]) + MD(`P(X\\le ${k}) = ${fx(ans, 4)}`); }
+  else { const below = S.sum(Array.from({ length: k }, (_, j) => pk(j))); ans = 1 - below; qtxt = `al menos ${k}`; body = `Es más corto usar el complemento: ${M(`P(X\\ge ${k}) = 1 - P(X\\le ${k - 1})`)}.` + htable(['j', ...Array.from({ length: k }, (_, j) => j)], [['P(X = j)', ...Array.from({ length: k }, (_, j) => fx(pk(j), 4))]]) + MD(`P(X\\ge ${k}) = 1 - ${fx(below, 4)} = ${fx(ans, 4)}`); }
+  const enun = ctx.t.replace('{n}', n).replace('{k}', pr.k).replace('{pp}', pr.pp);
+  return {
+    enun: `${enun} Sea \\(X\\) el número de ${ctx.ev}. <b>¿Cuál es la probabilidad de obtener ${qtxt}?</b> (4 decimales) Calcula también \\(E(X)\\) y \\(\\sigma\\).`,
+    ans: { label: 'P =', value: r2(ans, 4), tol: 0.0006 }, chk: { n, p, k, tipo },
+    fig: node => { const svg = el('svg', {}); node.appendChild(svg); binomBars(svg, n, p, j => tipo === 'igual' ? j === k : tipo === 'menor' ? j <= k : j >= k); },
+    steps: [
+      { h: 'Verifica que es binomial', b: `<ul class="mb-0"><li>${n} ensayos independientes,</li><li>cada uno con dos resultados (éxito / fracaso),</li><li>probabilidad de éxito constante ${M('p = ' + pr.ptxt + (pr.ptxt === String(p) ? '' : ' \\approx ' + fn(p, 4)))}.</li></ul>Entonces ${M(`X \\sim B(n=${n},\\ p=${fn(p, 4)})`)}, con ${M('q = 1-p = ' + fn(q, 4))}.` },
+      { h: 'Fórmula', b: MD(`P(X=k) = \\binom{n}{k}p^k q^{\\,n-k},\\qquad \\binom{n}{k} = \\frac{n!}{k!\\,(n-k)!}`) },
+      { h: 'Calcula', b: body },
+      { h: 'Esperanza y desviación estándar', b: MD(`E(X) = np = ${n}(${fn(p, 4)}) = ${fx(mu, 2)},\\qquad \\sigma = \\sqrt{npq} = \\sqrt{${n}(${fn(p, 4)})(${fn(q, 4)})} = ${fx(sd, 2)}`) },
+      { h: 'Interpreta', b: `Si se repitiera la situación muchas veces, en promedio habría ${fx(mu, 2)} ${ctx.ev}. La probabilidad pedida es ${fx(ans, 4)} (≈ ${fx(100 * ans, 2)} % de las veces).` }
+    ]
+  };
+};
+function binomBars(svg, n, p, hl, overlay) {
+  const pm = Array.from({ length: n + 1 }, (_, j) => binomPmf(n, p, j)), ymax = Math.max(...pm) * 1.15;
+  const P = plane(svg, { W: 640, H: 240, x0: -0.7, x1: n + 0.7, y0: 0, y1: ymax, xt: n <= 25 ? Array.from({ length: n + 1 }, (_, j) => j) : niceTicks(0, n, 10), yl: 'P(X = k)', xl: 'k' });
+  const w = Math.max(1.5, (P.sx(1) - P.sx(0)) * 0.78);
+  pm.forEach((v, j) => { const r = el('rect', { x: P.sx(j) - w / 2, width: w, y: P.sy(0), height: 0, fill: hl && hl(j) ? css('--u2') : css('--u3'), opacity: hl && hl(j) ? .95 : .55, class: 'barr' }, P.g); setTimeout(() => { r.setAttribute('y', P.sy(v)); r.setAttribute('height', P.sy(0) - P.sy(v)); }, 30 + 12 * j); });
+  if (overlay) { const mu = n * p, sd = Math.sqrt(n * p * (1 - p)); if (sd > 0) { const c = el('path', { d: pathFn(x => normPdf(x, mu, sd), -0.7, n + 0.7, P.sx, P.sy, 300), fill: 'none', stroke: css('--u1'), 'stroke-width': 2.5 }, P.g); animatePath(c); } }
+  return P;
+}
+PROBLEMS.normal = () => {
+  const c = R.pick([{ t: 'La estatura de los estudiantes de un plantel', u: 'cm', m: 165, s: 8 }, { t: 'El tiempo que tardan los estudiantes en resolver un examen', u: 'min', m: 50, s: 9 }, { t: 'El peso de las bolsas de azúcar que llena una máquina', u: 'g', m: 1000, s: 12 }, { t: 'La calificación del examen de ingreso', u: 'puntos', m: 70, s: 10 }, { t: 'La duración de una batería', u: 'horas', m: 30, s: 4 }]);
+  const tipo = R.pick(['menor', 'mayor', 'entre']); const off = () => R.pick([-2.2, -1.8, -1.5, -1.2, -1, -0.8, -0.5, -0.3, 0.4, 0.6, 0.9, 1.1, 1.4, 1.7, 2.1]);
+  let lo = -Infinity, hi = Infinity;
+  if (tipo === 'menor') hi = Math.round(c.m + off() * c.s); else if (tipo === 'mayor') lo = Math.round(c.m + off() * c.s); else { let a = off(), b = off(); while (Math.abs(a - b) < 0.6) b = off(); lo = Math.round(c.m + Math.min(a, b) * c.s); hi = Math.round(c.m + Math.max(a, b) * c.s); }
+  const { steps, p } = normalSteps(tipo, c.m, c.s, lo, hi);
+  const q = tipo === 'menor' ? `menos de ${hi} ${c.u}` : tipo === 'mayor' ? `más de ${lo} ${c.u}` : `entre ${lo} y ${hi} ${c.u}`;
+  return {
+    enun: `${c.t} sigue una distribución normal con media \\(\\mu = ${c.m}\\) ${c.u} y desviación estándar \\(\\sigma = ${c.s}\\) ${c.u}. Si se elige uno al azar, <b>¿cuál es la probabilidad de que tenga ${q}?</b> (4 decimales)`,
+    ans: { label: 'P =', value: r2(p, 4), tol: 0.0006 }, chk: { m: c.m, s: c.s, lo, hi, tipo },
+    steps: [{ h: 'Plantea', b: `${M(`X \\sim N(${c.m},\\,${c.s})`)}. Buscamos ${M(probText(tipo, lo, hi))}. Estandarizamos con ${M('Z = \\dfrac{X-\\mu}{\\sigma}')} para usar la tabla de la normal estándar (redondeando ${M('z')} a 2 decimales).` }, ...steps,
+      { h: 'Contrasta las áreas e interpreta', b: `El área sombreada bajo ${M('X')} es igual al área bajo ${M('Z')} entre los valores estandarizados. Aproximadamente el <b>${fx(100 * p, 2)} %</b> tiene ${q}.`, fig: li => normalFig(li, c.m, c.s, lo, hi) }]
+  };
+};
+PROBLEMS.normalInv = () => {
+  const c = R.pick([{ t: 'Los puntajes de un examen de admisión', u: 'puntos', m: 600, s: 80 }, { t: 'El tiempo de traslado al plantel', u: 'min', m: 48, s: 12 }, { t: 'La estatura de jóvenes de 17 años', u: 'cm', m: 168, s: 7 }]);
+  const pc = R.pick([10, 15, 20, 80, 85, 90, 95]); const target = pc / 100;
+  /* buscar en tabla: z con Φ(z) más cercano a la proporción */
+  let best = 0, bd = 9; for (let z = -3.49; z <= 3.49; z += 0.01) { const zz = r2(z, 2), d = Math.abs(Phi(zz) - target); if (d < bd - 1e-12) { bd = d; best = zz; } }
+  const x = c.m + best * c.s;
+  return {
+    enun: `${c.t} se distribuye normalmente con \\(\\mu = ${c.m}\\) y \\(\\sigma = ${c.s}\\) ${c.u}. <b>¿Qué valor deja por debajo al ${pc} % de los casos</b> (percentil ${pc})? (2 decimales)`,
+    ans: { label: 'x =', value: r2(x, 2), tol: Math.max(0.02, c.s * 0.011) }, chk: { m: c.m, s: c.s, pc, z: best, x },
+    steps: [
+      { h: 'Busca z en la tabla (al revés)', b: `Buscamos el valor ${M('z')} cuya área a la izquierda sea lo más cercana a ${fn(target, 2)}: ${M(`\\Phi(${fx(best, 2)}) = ${fx(Phi(best), 4)}`)}, así que ${M('z \\approx ' + fx(best, 2))}.` },
+      { h: 'Despeja x de la estandarización', b: MD(`z = \\frac{x-\\mu}{\\sigma}\\ \\Rightarrow\\ x = \\mu + z\\sigma = ${c.m} + (${fx(best, 2)})(${c.s}) = ${fx(x, 2)}`) },
+      { h: 'Interpreta', b: `El ${pc} % de los casos tiene un valor menor que ${fx(x, 2)} ${c.u}.`, fig: li => normalFig(li, c.m, c.s, -Infinity, x) }
+    ]
+  };
+};
+
+/* ---------------- problemas: Unidad 2 ---------------- */
+PROBLEMS.muestral = () => {
+  const N = R.pick([3, 4]); let pop; do { pop = Array.from({ length: N }, () => R.int(0, 9)); } while (new Set(pop).size < N);
+  pop.sort((a, b) => a - b);
+  const mu = S.mean(pop), sig2 = S.varP(pop), sig = Math.sqrt(sig2), n = 2;
+  const samples = []; pop.forEach(a => pop.forEach(b => samples.push([a, b])));
+  const means = samples.map(s => (s[0] + s[1]) / 2); const dist = new Map(); means.forEach(m => dist.set(m, (dist.get(m) || 0) + 1));
+  const xs = [...dist.keys()].sort((a, b) => a - b), T = samples.length;
+  const Em = S.sum(xs.map(x => x * dist.get(x) / T)), Vm = S.sum(xs.map(x => (x - Em) ** 2 * dist.get(x) / T));
+  return {
+    enun: `Una población está formada por ${N} estudiantes que leyeron, respectivamente, <b>${pop.join(', ')}</b> libros este año. Se toman todas las muestras aleatorias simples posibles de tamaño \\(n=2\\) <b>con reemplazo</b>. Construye la distribución muestral de \\(\\bar{x}\\) y comprueba que \\(E(\\bar{x}) = \\mu\\) y \\(\\sigma_{\\bar{x}} = \\sigma/\\sqrt{n}\\). <b>¿Cuánto vale \\(\\sigma_{\\bar{x}}\\)?</b> (4 decimales)`,
+    ans: { label: 'σ_x̄ =', value: r2(Math.sqrt(Vm), 4), tol: 0.0006 }, chk: { pop },
+    steps: [
+      { h: 'Parámetros de la población', b: MD(`\\mu = \\frac{${pop.join('+')}}{${N}} = ${fx(mu, 4)},\\qquad \\sigma^2 = \\frac{\\sum (x-\\mu)^2}{N} = ${fx(sig2, 4)},\\qquad \\sigma = ${fx(sig, 4)}`) },
+      { h: `Todas las muestras (${N}² = ${T})`, b: htable(['muestra', ...samples.map(s => `(${s[0]}, ${s[1]})`)], [['x̄', ...means.map(m => fn(m, 2))]]) + 'Cada muestra da un valor distinto de ' + M('\\bar{x}') + ': <b>la media muestral es una variable aleatoria</b>.' },
+      { h: 'Distribución muestral de x̄', b: htable(['x̄', ...xs.map(x => fn(x, 2))], [['frecuencia', ...xs.map(x => dist.get(x))], ['P(x̄)', ...xs.map(x => `${dist.get(x)}/${T}`)]]), fig: li => { const svg = el('svg', {}); li.appendChild(svg); const P = plane(svg, { W: 640, H: 200, x0: xs[0] - 1, x1: xs[xs.length - 1] + 1, y0: 0, y1: Math.max(...dist.values()) / T * 1.2, xt: xs, yl: 'P(x̄)' }); xs.forEach(x => el('rect', { x: P.sx(x) - 9, width: 18, y: P.sy(dist.get(x) / T), height: P.sy(0) - P.sy(dist.get(x) / T), fill: css('--u3'), opacity: .75 }, P.g)); } },
+      { h: 'Esperanza de x̄', b: MD(`E(\\bar{x}) = \\sum \\bar{x}\\,P(\\bar{x}) = ${fx(Em, 4)} = \\mu \\ \\checkmark`) },
+      { h: 'Error estándar', b: MD(`\\sigma_{\\bar{x}} = \\sqrt{\\sum (\\bar{x}-\\mu)^2P(\\bar{x})} = \\sqrt{${fx(Vm, 4)}} = ${fx(Math.sqrt(Vm), 4)}`) + MD(`\\frac{\\sigma}{\\sqrt{n}} = \\frac{${fx(sig, 4)}}{\\sqrt{2}} = ${fx(sig / Math.SQRT2, 4)}\\ \\checkmark`) + 'Las medias muestrales varían <b>menos</b> que los datos individuales.' }
+    ]
+  };
+};
+PROBLEMS.probMedia = () => {
+  const c = R.pick([{ t: 'El gasto diario de los estudiantes en la cafetería', u: 'pesos', m: 60, s: 18 }, { t: 'El tiempo de traslado al plantel', u: 'min', m: 45, s: 15 }, { t: 'Las horas de sueño por noche de los jóvenes', u: 'h', m: 7, s: 1.2 }, { t: 'El número de horas semanales frente a pantallas', u: 'h', m: 30, s: 10 }]);
+  const n = R.pick([30, 36, 40, 49, 64, 100]), se = c.s / Math.sqrt(n), tipo = R.pick(['menor', 'mayor', 'entre']);
+  const dec = c.s < 3 ? 1 : 0; const pick = () => +(c.m + R.pick([-2, -1.6, -1.2, -0.8, -0.5, 0.5, 0.8, 1.2, 1.6, 2]) * se).toFixed(dec);
+  let lo = -Infinity, hi = Infinity; if (tipo === 'menor') hi = pick(); else if (tipo === 'mayor') lo = pick(); else { const a = pick(); let b = pick(); while (b === a) b = pick(); lo = Math.min(a, b); hi = Math.max(a, b); }
+  const { steps, p } = normalSteps(tipo, c.m, se, lo, hi, '\\bar{x}', `${c.s}/\\sqrt{${n}}`);
+  const q = tipo === 'menor' ? `menor que ${hi}` : tipo === 'mayor' ? `mayor que ${lo}` : `entre ${lo} y ${hi}`;
+  return {
+    enun: `${c.t} tiene media \\(\\mu = ${c.m}\\) ${c.u} y desviación estándar \\(\\sigma = ${c.s}\\) ${c.u}. Se toma una muestra aleatoria de \\(n = ${n}\\) estudiantes. <b>¿Cuál es la probabilidad de que la media muestral sea ${q} ${c.u}?</b> (4 decimales)`,
+    ans: { label: 'P =', value: r2(p, 4), tol: 0.0006 }, chk: { m: c.m, s: c.s, n, lo, hi, tipo },
+    steps: [
+      { h: 'Aplica el Teorema del Límite Central', b: `Como ${M('n = ' + n + '\\ge 30')}, la media muestral es aproximadamente normal: ${MD(`\\bar{x} \\sim N\\!\\left(\\mu_{\\bar{x}} = ${c.m},\\ \\sigma_{\\bar{x}} = \\frac{${c.s}}{\\sqrt{${n}}} = ${fx(se, 4)}\\right)`)}` },
+      ...steps,
+      { h: 'Interpreta', b: `En ≈${fx(100 * p, 2)} % de las muestras de ${n} estudiantes, la media sería ${q} ${c.u}. Observa que usamos el <b>error estándar</b> ${fx(se, 4)}, no ${M('\\sigma')}.`, fig: li => normalFig(li, c.m, se, lo, hi, 'x̄') }
+    ]
+  };
+};
+PROBLEMS.probProp = () => {
+  const c = R.pick([{ t: 'El {p} % de los estudiantes del Colegio practica algún deporte' }, { t: 'El {p} % de los jóvenes de la ciudad usa diariamente una red social de videos' }, { t: 'El {p} % de las piezas de un lote cumple con la norma de calidad' }]);
+  const pp = R.pick([20, 25, 30, 40, 45, 55, 60, 70]), p = pp / 100, n = R.pick([80, 100, 120, 150, 200]), se = Math.sqrt(p * (1 - p) / n);
+  const tipo = R.pick(['menor', 'mayor']); const v = +(p + R.pick([-1.8, -1.3, -0.9, -0.6, 0.6, 0.9, 1.3, 1.8]) * se).toFixed(2);
+  const lo = tipo === 'mayor' ? v : -Infinity, hi = tipo === 'menor' ? v : Infinity;
+  const { steps, p: pr } = normalSteps(tipo, p, se, lo, hi, '\\hat{p}', `\\sqrt{${p}(${fn(1 - p, 2)})/${n}}`);
+  return {
+    enun: `${c.t.replace('{p}', pp)}. Se toma una muestra aleatoria de \\(n = ${n}\\). <b>¿Cuál es la probabilidad de que la proporción muestral sea ${tipo === 'menor' ? 'menor' : 'mayor'} que ${v}?</b> (4 decimales)`,
+    ans: { label: 'P =', value: r2(pr, 4), tol: 0.0006 }, chk: { p, n, v, tipo },
+    steps: [
+      { h: 'Verifica las condiciones', b: `${M(`np = ${n}(${p}) = ${fn(n * p, 2)}`)} y ${M(`n(1-p) = ${fn(n * (1 - p), 2)}`)}; ambos son ≥ 10, así que ${M('\\hat{p}')} es aproximadamente normal.` },
+      { h: 'Distribución muestral de la proporción', b: MD(`\\hat{p} \\sim N\\!\\left(p = ${p},\\ \\sigma_{\\hat{p}} = \\sqrt{\\frac{p(1-p)}{n}} = \\sqrt{\\frac{${p}(${fn(1 - p, 2)})}{${n}}} = ${fx(se, 4)}\\right)`) },
+      ...steps,
+      { h: 'Interpreta', b: `Aproximadamente en ${fx(100 * pr, 2)} % de las muestras de tamaño ${n} la proporción muestral sería ${tipo === 'menor' ? 'menor' : 'mayor'} que ${v}.`, fig: li => normalFig(li, p, se, lo, hi, 'p̂') }
+    ]
+  };
+};
+
+/* ---------------- problemas: Unidad 3 ---------------- */
+PROBLEMS.icMedia = () => {
+  const c = R.pick([{ t: 'el tiempo (min) que los estudiantes dedican diariamente a estudiar', m: [60, 110], s: [20, 35] }, { t: 'el gasto semanal (pesos) en transporte', m: [150, 300], s: [40, 80] }, { t: 'las horas semanales de uso de redes sociales', m: [18, 32], s: [6, 12] }]);
+  const n = R.pick([36, 40, 49, 50, 64, 81, 100]), xb = R.float(c.m[0], c.m[1], 1), s = R.int(c.s[0], c.s[1]), cl = R.pick([90, 95, 99]), z = ZCRIT[cl];
+  const se = s / Math.sqrt(n), E = z * se, L = xb - E, U = xb + E;
+  return {
+    enun: `Para estimar ${c.t}, se encuestó a una muestra aleatoria de \\(n=${n}\\) estudiantes: \\(\\bar{x} = ${xb}\\). Por estudios previos se sabe que \\(\\sigma = ${s}\\). Construye un intervalo de confianza del <b>${cl} %</b> para la media \\(\\mu\\). <b>¿Cuál es el límite inferior?</b> (2 decimales)`,
+    ans: { label: 'límite inferior =', value: r2(L, 2), tol: 0.02 }, chk: { xb, s, n, cl, L, U },
+    steps: [
+      { h: 'Identifica los datos', b: `${M(`\\bar{x} = ${xb},\\ \\sigma = ${s},\\ n = ${n},\\ \\text{confianza} = ${cl}\\%`)}. Como ${M('n \\ge 30')}, por el TLC ${M('\\bar{x}')} es aproximadamente normal.` },
+      { h: 'Valor crítico', b: `Para ${cl} % de confianza quedan ${fn((100 - cl) / 2, 1)} % en cada cola: ${M(`z_{\\alpha/2} = ${z}`)}.` },
+      { h: 'Error estándar y margen de error', b: MD(`\\sigma_{\\bar{x}} = \\frac{${s}}{\\sqrt{${n}}} = ${fx(se, 4)},\\qquad E = z_{\\alpha/2}\\,\\frac{\\sigma}{\\sqrt{n}} = ${z}(${fx(se, 4)}) = ${fx(E, 2)}`) },
+      { h: 'Intervalo', b: MD(`\\bar{x} \\pm E = ${xb} \\pm ${fx(E, 2)} \\;\\Rightarrow\\; (${fx(L, 2)},\\ ${fx(U, 2)})`) },
+      { h: 'Interpretación correcta', b: `Tenemos ${cl} % de confianza en que la media poblacional está entre ${fx(L, 2)} y ${fx(U, 2)}. Significa que, si se repitiera el muestreo muchas veces, aproximadamente el ${cl} % de los intervalos construidos así contendrían a ${M('\\mu')}. <i>No</i> quiere decir que ${M('\\mu')} «tenga» ${cl} % de probabilidad de estar en este intervalo particular.` }
+    ]
+  };
+};
+PROBLEMS.icProp = () => {
+  const c = R.pick([{ t: 'están de acuerdo con ampliar el horario de la biblioteca' }, { t: 'han visto la película más reciente de superhéroes' }, { t: 'desayunan antes de llegar al plantel' }, { t: 'trabajan además de estudiar' }]);
+  const n = R.pick([100, 120, 150, 200, 250, 400]), x = R.int(Math.round(n * .2), Math.round(n * .8)), ph = x / n, cl = R.pick([90, 95, 99]), z = ZCRIT[cl];
+  const se = Math.sqrt(ph * (1 - ph) / n), E = z * se, L = ph - E, U = ph + E;
+  return {
+    enun: `En una muestra aleatoria de \\(n=${n}\\) estudiantes, <b>${x}</b> ${c.t}. Construye un intervalo de confianza del <b>${cl} %</b> para la proporción \\(p\\) de todos los estudiantes del plantel. <b>¿Cuál es el límite inferior?</b> (4 decimales)`,
+    ans: { label: 'límite inferior =', value: r2(L, 4), tol: 0.0006 }, chk: { x, n, cl, L, U },
+    steps: [
+      { h: 'Proporción muestral (estimación puntual)', b: MD(`\\hat{p} = \\frac{x}{n} = \\frac{${x}}{${n}} = ${fx(ph, 4)}`) + `Condiciones: ${M(`n\\hat{p} = ${x} \\ge 10`)} y ${M(`n(1-\\hat{p}) = ${n - x} \\ge 10`)} ✓` },
+      { h: 'Valor crítico', b: M(`z_{\\alpha/2} = ${z}`) + ` para ${cl} % de confianza.` },
+      { h: 'Margen de error', b: MD(`E = z_{\\alpha/2}\\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} = ${z}\\sqrt{\\frac{${fx(ph, 4)}(${fx(1 - ph, 4)})}{${n}}} = ${z}(${fx(se, 4)}) = ${fx(E, 4)}`) },
+      { h: 'Intervalo', b: MD(`\\hat{p}\\pm E = ${fx(ph, 4)} \\pm ${fx(E, 4)} \\;\\Rightarrow\\; (${fx(L, 4)},\\ ${fx(U, 4)})`) },
+      { h: 'Interpreta', b: `Con ${cl} % de confianza, entre el ${fx(100 * L, 2)} % y el ${fx(100 * U, 2)} % de los estudiantes del plantel ${c.t}.` }
+    ]
+  };
+};
+PROBLEMS.tamano = () => {
+  const tipo = R.pick(['media', 'prop']); const cl = R.pick([90, 95, 99]), z = ZCRIT[cl];
+  if (tipo === 'media') { const s = R.int(8, 30), E = R.pick([2, 3, 4, 5]); const raw = (z * s / E) ** 2, n = Math.ceil(raw - 1e-9);
+    return { enun: `Se quiere estimar el tiempo medio de traslado al plantel con un margen de error de <b>${E} minutos</b> y ${cl} % de confianza. Si \\(\\sigma \\approx ${s}\\) min, <b>¿cuántos estudiantes hay que encuestar como mínimo?</b>`, ans: { label: 'n =', value: n, tol: 0 }, chk: { tipo, s, E, cl, n },
+      steps: [{ h: 'Despeja n del margen de error', b: MD(`E = z\\frac{\\sigma}{\\sqrt{n}} \\;\\Rightarrow\\; n = \\left(\\frac{z\\,\\sigma}{E}\\right)^2`) }, { h: 'Sustituye', b: MD(`n = \\left(\\frac{${z}(${s})}{${E}}\\right)^2 = ${fx(raw, 2)}`) }, { h: 'Redondea hacia arriba', b: `Siempre se redondea hacia arriba para garantizar el margen: <b>${M('n = ' + n)}</b> estudiantes.` }] }; }
+  const E = R.pick([0.03, 0.04, 0.05]); const raw = z * z * 0.25 / (E * E), n = Math.ceil(raw - 1e-9);
+  return { enun: `Se desea estimar la proporción de estudiantes que trabajan, con un margen de error de <b>${E}</b> y ${cl} % de confianza. Sin información previa sobre \\(p\\), <b>¿qué tamaño de muestra se necesita?</b>`, ans: { label: 'n =', value: n, tol: 0 }, chk: { tipo, E, cl, n },
+    steps: [{ h: 'Fórmula', b: MD(`n = \\frac{z^2\\,\\hat{p}(1-\\hat{p})}{E^2}`) + `Sin información previa se usa ${M('\\hat{p} = 0.5')}, que da el valor máximo de ${M('\\hat{p}(1-\\hat{p}) = 0.25')} (caso más conservador).` }, { h: 'Sustituye', b: MD(`n = \\frac{(${z})^2(0.25)}{(${E})^2} = ${fx(raw, 2)}`) }, { h: 'Redondea hacia arriba', b: `<b>${M('n = ' + n)}</b> estudiantes.` }] };
+};
+function testSteps(o) {
+  /* o: {param:'μ'|'p', h0, alt:'≠'|'>'|'<', stat, se, seTxt, est, estTxt, alpha} */
+  const z = zr(o.stat), a = o.alpha, two = o.alt === '≠';
+  const zc = two ? (a === 0.05 ? 1.96 : 2.576) : (a === 0.05 ? 1.645 : 2.33);
+  const pv = two ? 2 * (1 - Phi(Math.abs(z))) : o.alt === '>' ? 1 - Phi(z) : Phi(z);
+  const rej = pv <= a; const altTex = { '≠': '\\neq', '>': '>', '<': '<' }[o.alt];
+  const region = two ? `|z| > ${zc}` : o.alt === '>' ? `z > ${zc}` : `z < -${zc}`;
+  const pvTex = two ? `2\\,P(Z > ${fx(Math.abs(z), 2)}) = 2(${fx(1 - Phi(Math.abs(z)), 4)})` : o.alt === '>' ? `P(Z > ${fx(z, 2)}) = 1 - ${fx(Phi(z), 4)}` : `P(Z < ${fx(z, 2)})`;
+  return { z, zc, pv, rej, steps: [
+    { h: '1. Hipótesis', b: MD(`H_0: ${o.param} = ${o.h0} \\qquad H_1: ${o.param} ${altTex} ${o.h0}`) + `Prueba ${two ? '<b>bilateral</b> (dos colas)' : '<b>unilateral</b> (' + (o.alt === '>' ? 'cola derecha' : 'cola izquierda') + ')'}.` },
+    { h: '2. Nivel de significancia', b: `${M('\\alpha = ' + a)}: es la probabilidad que aceptamos de cometer un <b>error tipo I</b> (rechazar ${M('H_0')} cuando es verdadera).` },
+    { h: '3. Estadístico de prueba', b: o.pre + MD(`z = \\frac{${o.estTxt} - ${o.h0}}{${o.seTxt}} = \\frac{${o.est} - ${o.h0}}{${fx(o.se, 4)}} = ${fx(o.stat, 4)} \\approx ${fx(z, 2)}`) },
+    { h: '4a. Región de rechazo', b: `Valor crítico ${M((two ? 'z_{\\alpha/2}' : 'z_{\\alpha}') + ' = ' + zc)}. Se rechaza ${M('H_0')} si ${M(region)}. Como ${M('z = ' + fx(z, 2))}, ${rej ? '<b>cae en la región de rechazo</b>' : '<b>no cae en la región de rechazo</b>'}.`, fig: li => testFig(li, o.alt, zc, z) },
+    { h: '4b. Valor p', b: MD(`\\text{valor } p = ${pvTex} = ${fx(pv, 4)}`) + `Como ${M(`${fx(pv, 4)} ${rej ? '\\le' : '>'} ${a}`)}, ${rej ? 'se <b>rechaza</b>' : '<b>no se rechaza</b>'} ${M('H_0')}. (Ambos métodos coinciden.)` },
+    { h: '5. Conclusión en contexto', b: o.concl(rej) }] };
+}
+function testFig(node, alt, zc, z) {
+  const svg = el('svg', {}); node.appendChild(svg); const lim = Math.max(3.8, Math.abs(z) + 0.6);
+  const P = plane(svg, { W: 640, H: 210, x0: -lim, x1: lim, y0: 0, y1: 0.45, xt: niceTicks(-lim, lim, 10), yaxis: false, grid: false, pad: { l: 12, r: 12 } });
+  const f = x => normPdf(x); const red = css('--bad');
+  const shade = (a, b) => el('path', { d: areaFn(f, a, b, P.sx, P.sy), fill: red, opacity: .28 }, P.g);
+  if (alt === '≠') { shade(-lim, -zc); shade(zc, lim); } else if (alt === '>') shade(zc, lim); else shade(-lim, -zc);
+  const c = el('path', { d: pathFn(f, -lim, lim, P.sx, P.sy), fill: 'none', stroke: css('--u3'), 'stroke-width': 2.5 }, P.g); animatePath(c);
+  el('line', { x1: P.sx(z), x2: P.sx(z), y1: P.sy(0), y2: P.sy(0.42), stroke: css('--u2'), 'stroke-width': 3 }, P.g);
+  el('text', { x: P.sx(z), y: P.sy(0.43) - 2, 'text-anchor': 'middle', style: 'font-size:12px;font-weight:700', text: 'z = ' + fx(z, 2) }, P.g);
+  el('text', { x: P.sx(0), y: P.sy(0.12), 'text-anchor': 'middle', class: 'tick', text: 'no rechazo' }, P.g);
+}
+PROBLEMS.pruebaMedia = () => {
+  const c = R.pick([{ t: 'Un fabricante afirma que sus baterías duran en promedio {m} horas', u: 'h', m: 40, s: 6 }, { t: 'Se afirma que los estudiantes duermen en promedio {m} horas', u: 'h', m: 7, s: 1.5 }, { t: 'La dirección afirma que el tiempo medio de traslado es de {m} minutos', u: 'min', m: 50, s: 18 }, { t: 'Una empacadora asegura que sus bolsas pesan en promedio {m} g', u: 'g', m: 500, s: 15 }]);
+  const alt = R.pick(['≠', '>', '<']), n = R.pick([36, 40, 49, 64, 100]), alpha = R.pick([0.05, 0.01]), se = c.s / Math.sqrt(n);
+  const shift = R.pick([0.4, 0.9, 1.5, 2.1, 2.7, 3.2]) * (alt === '<' ? -1 : alt === '>' ? 1 : R.pick([-1, 1]));
+  const dec = c.s < 3 ? 2 : 1; const xb = +(c.m + shift * se).toFixed(dec);
+  const T = testSteps({ param: '\\mu', h0: c.m, alt, stat: (xb - c.m) / se, se, seTxt: `\\sigma/\\sqrt{n}`, est: xb, estTxt: '\\bar{x}', alpha, pre: `Con ${M('\\sigma')} conocida y ${M('n \\ge 30')}, por el TLC: `,
+    concl: rej => rej ? `Con ${M('\\alpha = ' + alpha)}, hay evidencia estadística suficiente para afirmar que la media ${alt === '≠' ? 'es distinta de' : alt === '>' ? 'es mayor que' : 'es menor que'} ${c.m} ${c.u}.` : `Con ${M('\\alpha = ' + alpha)}, no hay evidencia suficiente para contradecir la afirmación (${M('\\mu = ' + c.m)}). No rechazar ${M('H_0')} no prueba que sea verdadera; solo que los datos son compatibles con ella.` });
+  const qH = alt === '≠' ? 'es distinta' : alt === '>' ? 'es mayor' : 'es menor';
+  return {
+    enun: `${c.t.replace('{m}', c.m)}, con \\(\\sigma = ${c.s}\\) ${c.u}. Se sospecha que la media real <b>${qH}</b>. En una muestra aleatoria de \\(n = ${n}\\) se obtuvo \\(\\bar{x} = ${xb}\\) ${c.u}. Con \\(\\alpha = ${alpha}\\), realiza el contraste de hipótesis. <b>¿Cuánto vale el estadístico de prueba z?</b> (2 decimales)`,
+    ans: { label: 'z =', value: T.z, tol: 0.011 }, chk: { m: c.m, s: c.s, n, xb, alt, alpha, z: T.z, pv: T.pv, rej: T.rej }, steps: T.steps
+  };
+};
+PROBLEMS.pruebaProp = () => {
+  const c = R.pick([{ t: 'Se afirma que el {p} % de los estudiantes del plantel tiene un empleo' }, { t: 'Una encuesta nacional reporta que el {p} % de los jóvenes lee al menos un libro al año' }, { t: 'Un refresco asegura que el {p} % de los jóvenes lo prefiere' }]);
+  const pp = R.pick([20, 25, 30, 40, 50, 60]), p0 = pp / 100, n = R.pick([100, 150, 200, 250, 300]), alt = R.pick(['≠', '>', '<']), alpha = R.pick([0.05, 0.01]);
+  const se = Math.sqrt(p0 * (1 - p0) / n), shift = R.pick([0.5, 1, 1.5, 2.2, 2.8, 3.3]) * (alt === '<' ? -1 : alt === '>' ? 1 : R.pick([-1, 1]));
+  const x = Math.max(1, Math.min(n - 1, Math.round(n * (p0 + shift * se)))), ph = x / n;
+  const T = testSteps({ param: 'p', h0: p0, alt, stat: (r2(ph, 4) - p0) / se, se, seTxt: `\\sqrt{p_0(1-p_0)/n}`, est: fx(ph, 4), estTxt: '\\hat{p}', alpha,
+    pre: `Se usa ${M('p_0')} (el valor de ${M('H_0')}) en el error estándar: ${M(`\\sqrt{${p0}(${fn(1 - p0, 2)})/${n}} = ${fx(se, 4)}`)}. Condiciones: ${M(`np_0 = ${fn(n * p0, 2)} \\ge 10`)}, ${M(`n(1-p_0) = ${fn(n * (1 - p0), 2)} \\ge 10`)}.`,
+    concl: rej => rej ? `Con ${M('\\alpha = ' + alpha)}, los datos muestran evidencia de que la proporción ${alt === '≠' ? 'es distinta de' : alt === '>' ? 'es mayor que' : 'es menor que'} ${pp} %.` : `Con ${M('\\alpha = ' + alpha)}, la diferencia entre ${M('\\hat{p} = ' + fx(ph, 4))} y ${p0} puede deberse al azar del muestreo: no se rechaza la afirmación.` });
+  /* el estadístico debe calcularse con p̂ sin redondear para coincidir con verificación */
+  return {
+    enun: `${c.t.replace('{p}', pp)}. Se sospecha que la proporción real ${alt === '≠' ? 'es distinta' : alt === '>' ? 'es mayor' : 'es menor'}. En una muestra aleatoria de \\(n = ${n}\\), <b>${x}</b> cumplen la característica. Con \\(\\alpha = ${alpha}\\), realiza el contraste. <b>¿Cuánto vale z?</b> (2 decimales)`,
+    ans: { label: 'z =', value: T.z, tol: 0.011 }, chk: { p0, n, x, alt, alpha, z: T.z, pv: T.pv, rej: T.rej },
+    steps: [{ h: 'Proporción muestral', b: MD(`\\hat{p} = \\frac{${x}}{${n}} = ${fx(ph, 4)}`) }, ...T.steps]
+  };
+};
+
+/* ---------------- laboratorios ---------------- */
+function labJuego() {
+  const root = $('#lab-juego'); if (!root) return; const coins = [1, 5, 10, 10], cost = 15, D = juegoDist(coins, cost);
+  const g = $('svg.grid', root), svg = $('svg.dist', root), svg2 = $('svg.run', root); let plays = [];
+  g.setAttribute('viewBox', '0 0 640 170'); clear(g);
+  for (let m = 0; m < 16; m++) { const x = 8 + (m % 8) * 79, y = 8 + Math.floor(m / 8) * 80; let gan = 0; el('rect', { x, y, width: 74, height: 74, rx: 10, fill: 'none', stroke: css('--line') }, g);
+    coins.forEach((c, i) => { const sol = m >> i & 1; if (sol) gan += c; el('circle', { cx: x + 19 + (i % 2) * 36, cy: y + 18 + Math.floor(i / 2) * 28, r: 12, fill: sol ? css('--u2') : css('--line'), stroke: css('--muted') }, g); el('text', { x: x + 19 + (i % 2) * 36, y: y + 22 + Math.floor(i / 2) * 28, 'text-anchor': 'middle', style: 'font-size:10px;font-weight:700', text: c }, g); });
+    el('text', { x: x + 37, y: y + 70, 'text-anchor': 'middle', style: 'font-size:11px;font-weight:700', text: (gan - cost >= 0 ? '+' : '') + (gan - cost) }, g); }
+  const E = S.sum(D.map(d => d.x * d.p));
+  const draw = () => { const P = plane(svg, { W: 640, H: 230, x0: D[0].x - 2, x1: D[D.length - 1].x + 2, y0: 0, y1: .3, xt: D.map(d => d.x), yl: 'probabilidad', xl: 'ganancia neta x ($)' });
+    const cnt = {}; plays.forEach(v => cnt[v] = (cnt[v] || 0) + 1);
+    D.forEach(d => { el('rect', { x: P.sx(d.x) - 11, width: 11, y: P.sy(d.p), height: P.sy(0) - P.sy(d.p), fill: css('--u3'), opacity: .8 }, P.g); const fr = (cnt[d.x] || 0) / Math.max(1, plays.length); if (plays.length) el('rect', { x: P.sx(d.x), width: 11, y: P.sy(fr), height: P.sy(0) - P.sy(fr), fill: css('--u2'), opacity: .8 }, P.g); });
+    el('rect', { x: 60, y: 10, width: 11, height: 11, fill: css('--u3') }, P.g); el('text', { x: 76, y: 20, class: 'tick', text: 'probabilidad teórica' }, P.g); el('rect', { x: 220, y: 10, width: 11, height: 11, fill: css('--u2') }, P.g); el('text', { x: 236, y: 20, class: 'tick', text: 'frecuencia relativa simulada' }, P.g);
+    const N = Math.max(10, plays.length); const P2 = plane(svg2, { W: 640, H: 200, x0: 0, x1: N, y0: -8, y1: 8, xl: 'número de juegos', yl: 'ganancia promedio' });
+    el('line', { x1: P2.sx(0), x2: P2.sx(N), y1: P2.sy(E), y2: P2.sy(E), stroke: css('--u3'), 'stroke-dasharray': '6 4', 'stroke-width': 2 }, P2.g); el('text', { x: P2.sx(N) - 4, y: P2.sy(E) - 5, 'text-anchor': 'end', class: 'tick', text: 'E(X) = −2' }, P2.g);
+    if (plays.length) { let s = 0, d = ''; plays.forEach((v, i) => { s += v; d += (i ? 'L' : 'M') + P2.sx(i + 1).toFixed(1) + ',' + P2.sy(Math.max(-8, Math.min(8, s / (i + 1)))).toFixed(1); }); el('path', { d, fill: 'none', stroke: css('--u2'), 'stroke-width': 2 }, P2.g); }
+    $('.res', root).innerHTML = plays.length ? `${plays.length} juegos simulados: ganancia promedio <b>$${fx(S.mean(plays), 2)}</b> (teórica: ${M('E(X) = -2')}).` : ''; tex($('.res', root)); };
+  const play = k => { for (let i = 0; i < k; i++) { let gsum = 0; coins.forEach(c => { if (Math.random() < .5) gsum += c; }); plays.push(gsum - cost); } draw(); };
+  $('.b1', root).onclick = () => play(1); $('.b100', root).onclick = () => play(100); $('.b1000', root).onclick = () => play(1000); $('.bclr', root).onclick = () => { plays = []; draw(); };
+  draw(); document.addEventListener('themechange', draw);
+}
+function labBinom() {
+  const root = $('#lab-binom'); if (!root) return; const svg = $('svg', root);
+  const draw = () => { const n = +$('.n', root).value, p = +$('.p', root).value, k = Math.min(+$('.k', root).value, n), tipo = $('.tipo', root).value, ov = $('.ov', root).checked;
+    $('.k', root).max = n; $('.n-v', root).textContent = n; $('.p-v', root).textContent = fx(p, 2); $('.k-v', root).textContent = k;
+    const hl = j => tipo === 'igual' ? j === k : tipo === 'menor' ? j <= k : j >= k; binomBars(svg, n, p, hl, ov);
+    let pr = 0; for (let j = 0; j <= n; j++) if (hl(j)) pr += binomPmf(n, p, j);
+    const sym = { igual: '=', menor: '\\le', mayor: '\\ge' }[tipo];
+    $('.res', root).innerHTML = `${M(`P(X ${sym} ${k}) = ${fx(pr, 4)}`)} &nbsp;·&nbsp; ${M(`E(X) = np = ${fx(n * p, 2)}`)} &nbsp;·&nbsp; ${M(`\\sigma = \\sqrt{npq} = ${fx(Math.sqrt(n * p * (1 - p)), 3)}`)}`; tex($('.res', root)); };
+  $$('input,select', root).forEach(i => i.oninput = draw); draw(); document.addEventListener('themechange', draw);
+}
+function labDensidad() {
+  const root = $('#lab-dens'); if (!root) return; const svg = $('svg', root); let data = [];
+  const gen = () => { const N = +$('.N', root).value; data = Array.from({ length: N }, () => 165 + 8 * R.normal()); draw(); };
+  const draw = () => { const k = +$('.k', root).value; $('.k-v', root).textContent = k; $('.N-v', root).textContent = $('.N', root).value; const a = 135, b = 195, w = (b - a) / k;
+    const P = plane(svg, { W: 640, H: 260, x0: a, x1: b, y0: 0, y1: 0.065, xl: 'estatura (cm)', yl: 'densidad = fr / ancho' });
+    const cnt = Array(k).fill(0); data.forEach(x => { const i = Math.floor((x - a) / w); if (i >= 0 && i < k) cnt[i]++; });
+    const pts = []; cnt.forEach((c, i) => { const h = c / data.length / w; el('rect', { x: P.sx(a + i * w), width: Math.max(.5, P.sx(a + (i + 1) * w) - P.sx(a + i * w) - .5), y: P.sy(h), height: P.sy(0) - P.sy(h), fill: css('--u3'), opacity: .45 }, P.g); pts.push([a + (i + .5) * w, h]); });
+    if ($('.pol', root).checked) el('path', { d: pts.map((q, i) => (i ? 'L' : 'M') + P.sx(q[0]) + ',' + P.sy(q[1])).join(''), fill: 'none', stroke: css('--u2'), 'stroke-width': 2 }, P.g);
+    if ($('.cur', root).checked) { const c = el('path', { d: pathFn(x => normPdf(x, 165, 8), a, b, P.sx, P.sy), fill: 'none', stroke: css('--u1'), 'stroke-width': 2.5 }, P.g); }
+    const inI = data.filter(x => x >= 160 && x <= 175).length / data.length;
+    $('.res', root).innerHTML = `Área total de las barras = ${M('\\sum \\frac{f_r}{\\text{ancho}}\\times\\text{ancho} = 1')}. Proporción de datos entre 160 y 175 cm: <b>${fx(inI, 4)}</b>; área bajo la curva en ese intervalo: <b>${fx(Phi((175 - 165) / 8) - Phi((160 - 165) / 8), 4)}</b>.`; tex($('.res', root)); };
+  $('.k', root).oninput = draw; $('.pol', root).onchange = draw; $('.cur', root).onchange = draw; $('.N', root).onchange = gen; $('.bnew', root).onclick = gen; gen(); document.addEventListener('themechange', draw);
+}
+function labNormal() {
+  const root = $('#lab-normal'); if (!root) return; const box = $('.figs', root);
+  const draw = () => { const m = +$('.m', root).value, s = +$('.s', root).value, tipo = $('.tipo', root).value; let a = +$('.a', root).value, b = +$('.b', root).value; if (a > b) [a, b] = [b, a];
+    const lo = tipo === 'menor' ? -Infinity : a, hi = tipo === 'mayor' ? Infinity : tipo === 'menor' ? a : b; $('.bwrap', root).style.display = tipo === 'entre' ? '' : 'none';
+    box.innerHTML = ''; normalFig(box, m, s, lo, hi);
+    const p = (hi === Infinity ? 1 : Phi((hi - m) / s)) - (lo === -Infinity ? 0 : Phi((lo - m) / s));
+    const zt = v => fx((v - m) / s, 2); const zs = tipo === 'menor' ? `P(Z < ${zt(hi)})` : tipo === 'mayor' ? `P(Z > ${zt(lo)})` : `P(${zt(lo)} < Z < ${zt(hi)})`;
+    $('.res', root).innerHTML = MD(`${probText(tipo, lo, hi)} = ${zs} = ${fx(p, 4)}`) + '<span class="small text-body-secondary">(cálculo con z sin redondear)</span>'; tex($('.res', root)); };
+  $$('input,select', root).forEach(i => i.oninput = draw); draw(); document.addEventListener('themechange', draw);
+}
+const POBL = {
+  uniforme: { t: 'Uniforme (0 a 10)', mu: 5, sd: 10 / Math.sqrt(12), r: () => 10 * Math.random(), pdf: x => (x >= 0 && x <= 10 ? .1 : 0), a: 0, b: 10 },
+  sesgada: { t: 'Sesgada a la derecha (exponencial, media 3)', mu: 3, sd: 3, r: () => -3 * Math.log(1 - Math.random()), pdf: x => x < 0 ? 0 : Math.exp(-x / 3) / 3, a: 0, b: 18 },
+  bimodal: { t: 'Bimodal (mezcla de dos normales)', mu: 5.5, sd: Math.sqrt(7.25), r: () => (Math.random() < .5 ? 3 : 8) + R.normal(), pdf: x => .5 * normPdf(x, 3, 1) + .5 * normPdf(x, 8, 1), a: -1, b: 12 },
+  dado: { t: 'Lanzamiento de un dado (discreta)', mu: 3.5, sd: Math.sqrt(35 / 12), r: () => R.int(1, 6), pdf: null, a: 0, b: 7 }
+};
+function labTLC() {
+  const root = $('#lab-tlc'); if (!root) return; const s1 = $('svg.pop', root), s2 = $('svg.means', root); let means = [], last = [];
+  const draw = () => { const P0 = POBL[$('.pob', root).value], n = +$('.n', root).value; $('.n-v', root).textContent = n;
+    const A = plane(s1, { W: 640, H: 170, x0: P0.a, x1: P0.b, y0: 0, y1: P0.pdf ? (P0 === POBL.uniforme ? .16 : P0 === POBL.sesgada ? .36 : .25) : .25, yaxis: false, grid: false, pad: { l: 12, r: 12, t: 20 } });
+    el('text', { x: 14, y: 14, class: 'tick', text: 'Población: ' + P0.t + `   (μ = ${fx(P0.mu, 3)}, σ = ${fx(P0.sd, 3)})` }, A.g);
+    if (P0.pdf) el('path', { d: areaFn(P0.pdf, P0.a, P0.b, A.sx, A.sy, 300), fill: css('--u3'), opacity: .3, stroke: css('--u3') }, A.g); else for (let k = 1; k <= 6; k++) el('rect', { x: A.sx(k - .3), width: A.sx(.6) - A.sx(0), y: A.sy(1 / 6), height: A.sy(0) - A.sy(1 / 6), fill: css('--u3'), opacity: .35 }, A.g);
+    last.forEach((v, i) => { const c = el('circle', { cx: A.sx(v), cy: 20, r: 4, fill: css('--u2') }, A.g); c.style.transition = 'cy .6s ease ' + (i * 15) + 'ms'; requestAnimationFrame(() => requestAnimationFrame(() => c.setAttribute('cy', A.sy(0) - 6))); });
+    const se = P0.sd / Math.sqrt(n);
+    const x0 = P0.a, x1 = P0.b, bins = 60, w = (x1 - x0) / bins, cnt = Array(bins).fill(0); means.forEach(m => { const i = Math.floor((m - x0) / w); if (i >= 0 && i < bins) cnt[i]++; });
+    const ymax = Math.max(normPdf(P0.mu, P0.mu, se) * 1.1, ...cnt.map(c => c / Math.max(1, means.length) / w * 1.05));
+    const B = plane(s2, { W: 640, H: 230, x0, x1, y0: 0, y1: ymax, yaxis: false, grid: false, pad: { l: 12, r: 12, t: 20 }, xl: 'medias muestrales x̄' });
+    cnt.forEach((c, i) => { if (!c) return; const h = c / means.length / w; el('rect', { x: B.sx(x0 + i * w), width: B.sx(w) - B.sx(0) - .5, y: B.sy(h), height: B.sy(0) - B.sy(h), fill: css('--u2'), opacity: .7 }, B.g); });
+    if ($('.ov', root).checked) el('path', { d: pathFn(x => normPdf(x, P0.mu, se), x0, x1, B.sx, B.sy, 300), fill: 'none', stroke: css('--u1'), 'stroke-width': 2.5 }, B.g);
+    el('line', { x1: B.sx(P0.mu), x2: B.sx(P0.mu), y1: B.sy(0), y2: 18, stroke: css('--u3'), 'stroke-dasharray': '5 4' }, B.g);
+    $('.st', root).innerHTML = `<div class="stat"><span>muestras</span><b>${means.length}</b></div><div class="stat"><span>media de las x̄</span><b>${means.length ? fx(S.mean(means), 3) : '—'}</b></div><div class="stat"><span>μ</span><b>${fx(P0.mu, 3)}</b></div><div class="stat"><span>desv. est. de las x̄</span><b>${means.length > 1 ? fx(S.sdP(means), 3) : '—'}</b></div><div class="stat"><span>σ/√n</span><b>${fx(se, 3)}</b></div>`; };
+  const take = k => { const P0 = POBL[$('.pob', root).value], n = +$('.n', root).value; for (let i = 0; i < k; i++) { const smp = Array.from({ length: n }, P0.r); means.push(S.mean(smp)); if (i === k - 1) last = k === 1 ? smp : []; } draw(); };
+  $('.b1', root).onclick = () => take(1); $('.b1000', root).onclick = () => take(1000); $('.pob', root).onchange = () => { means = []; last = []; draw(); };
+  $('.n', root).oninput = () => { means = []; last = []; draw(); }; $('.ov', root).onchange = draw; $('.bclr', root).onclick = () => { means = []; last = []; draw(); };
+  draw(); document.addEventListener('themechange', draw);
+}
+function labIC() {
+  const root = $('#lab-ic'); if (!root) return; const svg = $('svg', root); let ivs = [], tot = 0, hit = 0; const mu = 100, sg = 15;
+  const draw = () => { const cl = +$('.cl', root).value, n = +$('.n', root).value; $('.cl-v', root).textContent = cl; $('.n-v', root).textContent = n;
+    const P = plane(svg, { W: 640, H: 360, x0: 0, x1: 51, y0: 80, y1: 120, xt: [], yl: 'valor de la media', pad: { l: 44 } });
+    el('line', { x1: P.sx(0), x2: P.sx(51), y1: P.sy(mu), y2: P.sy(mu), stroke: css('--u3'), 'stroke-width': 2, 'stroke-dasharray': '6 4' }, P.g); el('text', { x: P.sx(51) - 4, y: P.sy(mu) - 6, 'text-anchor': 'end', class: 'tick', text: 'μ = 100 (desconocida en la práctica)' }, P.g);
+    ivs.forEach((v, i) => { const ok = v.L <= mu && mu <= v.U, x = P.sx(i + 1); el('line', { x1: x, x2: x, y1: P.sy(Math.max(80, v.L)), y2: P.sy(Math.min(120, v.U)), stroke: ok ? css('--u1') : css('--bad'), 'stroke-width': 3, 'stroke-linecap': 'round' }, P.g); el('circle', { cx: x, cy: P.sy(v.m), r: 3, fill: css('--ink') }, P.g); });
+    $('.res', root).innerHTML = ivs.length ? `En esta tanda: <b>${ivs.filter(v => v.L <= mu && mu <= v.U).length} de ${ivs.length}</b> intervalos contienen a μ. Acumulado: <b>${hit}/${tot} = ${fx(100 * hit / tot, 1)} %</b> (se espera ≈ ${cl} %).` : ''; };
+  const gen = () => { const cl = +$('.cl', root).value, n = +$('.n', root).value, z = invPhi(1 - (1 - cl / 100) / 2); ivs = [];
+    for (let i = 0; i < 50; i++) { let s = 0; for (let j = 0; j < n; j++) s += mu + sg * R.normal(); const m = s / n, E = z * sg / Math.sqrt(n); ivs.push({ m, L: m - E, U: m + E }); }
+    tot += 50; hit += ivs.filter(v => v.L <= mu && mu <= v.U).length; draw(); };
+  $('.bgen', root).onclick = gen; $('.cl', root).oninput = () => { tot = hit = 0; gen(); }; $('.n', root).oninput = () => { tot = hit = 0; gen(); }; gen(); document.addEventListener('themechange', draw);
+}
+function labPrueba() {
+  const root = $('#lab-prueba'); if (!root) return; const box = $('.fig', root);
+  const draw = () => { const alt = $('.alt', root).value, a = +$('.alpha', root).value, z = +$('.z', root).value; $('.z-v', root).textContent = fx(z, 2);
+    const zc = alt === '≠' ? invPhi(1 - a / 2) : invPhi(1 - a); box.innerHTML = ''; testFig(box, alt, +zc.toFixed(3), z);
+    const pv = alt === '≠' ? 2 * (1 - Phi(Math.abs(z))) : alt === '>' ? 1 - Phi(z) : Phi(z); const rej = pv <= a;
+    $('.res', root).innerHTML = `Valor crítico ${M('= ' + (alt === '<' ? '-' : alt === '≠' ? '\\pm' : '') + fx(zc, 3))} · valor ${M('p = ' + fx(pv, 4))} → ${rej ? '<b class="check-bad">se rechaza H₀</b>' : '<b class="check-ok">no se rechaza H₀</b>'} (${M('\\alpha = ' + a)}).`; tex($('.res', root)); };
+  $$('input,select', root).forEach(i => i.oninput = draw); draw(); document.addEventListener('themechange', draw);
+}
+function heroArt() {
+  const svg = $('#hero-svg'); if (!svg) return; svg.setAttribute('viewBox', '0 0 520 320');
+  const n = 14, p = .45; for (let k = 0; k <= n; k++) { const h = binomPmf(n, p, k) * 1150; el('rect', { x: 40 + k * 30, y: 280 - h, width: 24, height: h, rx: 3, fill: 'var(--u3)', opacity: .45, class: 'bar', style: `animation-delay:${.05 * k}s` }, svg); }
+  el('path', { d: pathFn(x => normPdf(x, n * p, Math.sqrt(n * p * (1 - p))) * 1150, -0.5, 14.5, x => 52 + x * 30, y => 280 - y), fill: 'none', stroke: 'var(--u2)', 'stroke-width': 4, class: 'draw' }, svg);
+  el('line', { x1: 20, x2: 500, y1: 280, y2: 280, stroke: 'var(--muted)', 'stroke-width': 2 }, svg);
+  [[60, 90, 'U1'], [420, 70, 'U2'], [470, 150, 'U3']].forEach(([x, y], i) => el('circle', { cx: x, cy: y, r: 8 + i * 2, fill: 'var(--u' + (i + 1) + ')', opacity: .55 }, svg));
+  el('line', { x1: 220, x2: 300, y1: 40, y2: 40, stroke: 'var(--u1)', 'stroke-width': 4, 'stroke-linecap': 'round' }, svg); el('circle', { cx: 262, cy: 40, r: 5, fill: 'var(--ink)' }, svg);
+}
+function renderLearn() {
+  const box = $('#learn-acc'); if (!box) return;
+  box.innerHTML = LEARN.map((U, k) => `<div class="accordion-item u${U.u}"><h2 class="accordion-header"><button class="accordion-button ${k ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#lu${U.u}"><span class="unit-tag me-2">Unidad ${U.u}</span><b>${U.nombre}</b><span class="chip ms-2">${U.h} h</span></button></h2>
+   <div id="lu${U.u}" class="accordion-collapse collapse ${k ? '' : 'show'}" data-bs-parent="#learn-acc"><div class="accordion-body"><p class="small"><b>Propósito:</b> ${U.prop}</p><ul class="learn">${U.L.map((l, i) => `<li><span class="n">${i + 1}.</span><span>${l[0]}<span class="tm"><a class="chip" href="${l[2]}">${l[1]}</a></span></span></li>`).join('')}</ul></div></div></div>`).join('');
+}
+function zTable() { const box = $('#ztable'); if (!box) return; let h = '<table class="tbl"><thead><tr><th>z</th>' + Array.from({ length: 10 }, (_, j) => `<th>.0${j}</th>`).join('') + '</tr></thead><tbody>'; for (let i = 0; i <= 34; i++) { h += `<tr><th>${(i / 10).toFixed(1)}</th>` + Array.from({ length: 10 }, (_, j) => `<td>${Phi(i / 10 + j / 100).toFixed(4)}</td>`).join('') + '</tr>'; } box.innerHTML = h + '</tbody></table>'; }
+document.addEventListener('DOMContentLoaded', () => { zTable(); renderLearn(); heroArt(); labJuego(); labBinom(); labDensidad(); labNormal(); labTLC(); labIC(); labPrueba(); initUI(); });
+
+</script>
+</body>
+</html>
