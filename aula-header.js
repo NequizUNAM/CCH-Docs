@@ -15,8 +15,12 @@
   const MENU = {
     brand: { label: 'Aula Digital', icon: 'bi-mortarboard-fill', href: 'index.html' },
     groups: [
-      { id: 'computo', label: 'Taller de Cómputo', icon: 'bi-pc-display', color: 'c-com', items: [
-        { label: 'Taller de Cómputo', href: 'taller_computo.html', icon: 'bi-laptop' } ] },
+      { id: 'cuadernillos', label: 'Cuadernillos', icon: 'bi-journal-bookmark-fill', color: 'c-com', items: [
+        { label: 'Cuadernillo Taller de Cómputo', href: 'cuadernillo_taller_computo.html', icon: 'bi-laptop' },
+        { label: 'Cuadernillo Cibernética 1', href: 'cuadernillo_cibernetica1.html', icon: 'bi-cpu' },
+        { label: 'Cuadernillo Cibernética 2', href: 'cuadernillo_cibernetica2.html', icon: 'bi-motherboard' },
+        { label: 'Cuadernillo Estadística 1', href: 'cuadernillo_estadistica1.html', icon: 'bi-bar-chart-line' },
+        { label: 'Cuadernillo Estadística 2', href: 'cuadernillo_estadistica2.html', icon: 'bi-graph-up' } ] },
       { id: 'matematicas', label: 'Matemáticas', icon: 'bi-calculator', color: 'c-mat', items: [
         { label: 'Los Números', href: 'los_numeros.html', icon: 'bi-hash' },
         { label: 'Fracciones', href: 'fracciones.html', icon: 'bi-pie-chart-fill' },
