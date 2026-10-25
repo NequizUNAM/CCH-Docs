@@ -1,4 +1,4 @@
-<!--- TEST --><!doctype html>
+<!doctype html>
 <html lang="es" data-bs-theme="light">
 <head>
 <meta charset="utf-8">
@@ -249,8 +249,40 @@ body{--cc:var(--u1)}
 
 :root{--acc:var(--u1)}
 </style>
+
+<style id="pbar-css">
+:root{--pbh:42px}
+html{scroll-padding-top:116px!important}
+#mainnav{top:var(--pbh)!important}
+.hero{padding-top:calc(7rem + var(--pbh))!important}
+.course-bar{top:calc(56px + var(--pbh))!important}
+.pbar{position:fixed;top:0;left:0;right:0;height:var(--pbh);z-index:1032;display:flex;align-items:center;gap:.35rem;padding:0 .5rem;
+ background:color-mix(in srgb,var(--ink) 94%,var(--paper));color:var(--paper);font-family:var(--font-body,system-ui);font-size:.86rem}
+.pbar .pb-tag{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.68rem;opacity:.65;padding:0 .35rem 0 .2rem;white-space:nowrap}
+.pbar .pb-links{display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;scroll-behavior:smooth;
+ -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 10px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 10px),transparent 100%);padding:0 6px}
+.pbar .pb-links::-webkit-scrollbar{display:none}
+.pbar a{color:inherit;text-decoration:none}
+.pbar .pb-link{white-space:nowrap;padding:.28rem .7rem;border-radius:99px;opacity:.78;transition:background .15s,opacity .15s;line-height:1.2}
+.pbar .pb-link:hover{opacity:1;background:color-mix(in srgb,var(--paper) 14%,transparent)}
+.pbar .pb-link.on{opacity:1;background:var(--paper);color:var(--ink);font-weight:700}
+.pbar .pb-link .s{display:none}
+.pbar .pb-arrow,.pbar .pb-qr{flex:none;display:inline-grid;place-items:center;width:32px;height:32px;border-radius:9px;border:0;background:transparent;color:inherit;opacity:.85;cursor:pointer}
+.pbar .pb-arrow:hover,.pbar .pb-qr:hover{opacity:1;background:color-mix(in srgb,var(--paper) 16%,transparent)}
+.pbar .pb-arrow:focus-visible,.pbar .pb-qr:focus-visible,.pbar .pb-link:focus-visible{outline:2px solid var(--paper);outline-offset:1px}
+.pbar .pb-qr{width:auto;padding:0 .55rem;gap:.35rem;display:inline-flex;align-items:center;border:1px solid color-mix(in srgb,var(--paper) 30%,transparent)}
+.pbar svg{width:18px;height:18px}
+@media (max-width:767px){.pbar .pb-tag{display:none}.pbar .pb-link .l{display:none}.pbar .pb-link .s{display:inline}.pbar .pb-qr .t{display:none}.pbar .pb-qr{width:32px;padding:0}}
+#qrModal .qr-box{background:#fff;border-radius:14px;padding:12px;display:inline-block;box-shadow:0 1px 0 var(--line),0 8px 24px rgba(0,0,0,.08)}
+#qrModal canvas{display:block;width:248px;height:248px;image-rendering:pixelated}
+#qrModal .qr-url{font-size:.8rem;color:var(--muted);word-break:break-all;max-width:320px;margin:.6rem auto 0}
+.pdf-btn svg{width:16px;height:16px;vertical-align:-3px;margin-right:.3rem}
+@media print{.pbar{display:none!important}}
+</style>
 </head>
 <body>
+<nav class="pbar" aria-label="Programas de estudio"><span class="pb-tag">Programas</span><a class="pb-arrow pb-prev" href="programa_estadistica2.html" title="Anterior: Estadística II (Alt+←)" aria-label="Programa anterior: Estadística II"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a><div class="pb-links"><a class="pb-link" href="programa_cibernetica1.html" title="Cibernética I"><span class="l">Cibernética I</span><span class="s">Cib I</span></a><a class="pb-link" href="programa_cibernetica2.html" title="Cibernética II"><span class="l">Cibernética II</span><span class="s">Cib II</span></a><a class="pb-link" href="programa_estadistica1.html" title="Estadística I"><span class="l">Estadística I</span><span class="s">Est I</span></a><a class="pb-link" href="programa_estadistica2.html" title="Estadística II"><span class="l">Estadística II</span><span class="s">Est II</span></a><a class="pb-link on" href="programa_matematicas1-4.html" aria-current="page" title="Matemáticas I–IV"><span class="l">Matemáticas I–IV</span><span class="s">Mat I–IV</span></a><a class="pb-link" href="programa_taller_computo.html" title="Taller de Cómputo"><span class="l">Taller de Cómputo</span><span class="s">Taller</span></a></div><a class="pb-arrow pb-next" href="programa_taller_computo.html" title="Siguiente: Taller de Cómputo (Alt+→)" aria-label="Programa siguiente: Taller de Cómputo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></a><button type="button" class="pb-qr" data-bs-toggle="modal" data-bs-target="#qrModal" title="Generar código QR de esta página" aria-label="Generar código QR de esta página"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg><span class="t">QR</span></button></nav>
+
 <div id="progress"></div>
 <nav class="navbar navbar-expand-lg fixed-top" id="mainnav">
  <div class="container">
@@ -1850,7 +1882,7 @@ body{--cc:var(--u1)}
 <button class="btn btn-ghost fab2" data-bs-toggle="modal" data-bs-target="#m1-cartaModal" title="Carta descriptiva del programa" hidden>📄 Carta descriptiva</button>
 <button class="btn btn-acc fab" data-bs-toggle="modal" data-bs-target="#m1-formulario" style="--uc:var(--cc)" hidden>∑ Formulario</button>
 <button class="btn btn-ghost btn-sm" id="toTop" aria-label="Volver arriba">▲</button>
-<div class="modal fade" id="m1-formulario" tabindex="-1" aria-labelledby="m1-formTitle" aria-hidden="true">
+<div class="modal fade" id="m1-formulario" data-course="(Matemáticas I)" tabindex="-1" aria-labelledby="m1-formTitle" aria-hidden="true">
  <div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="m1-formTitle">Formulario · Matemáticas I</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
@@ -1886,6 +1918,13 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Radicales</small>\[\sqrt[n]{ab}=\sqrt[n]{a}\sqrt[n]{b},\quad \sqrt[n]{\tfrac{a}{b}}=\tfrac{\sqrt[n]{a}}{\sqrt[n]{b}}\]</div>
    <div class="fcard"><small>Jerarquía</small>( ) → potencias y raíces → × ÷ → + −</div>
   </div>
+  <h5>Números reales</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Leyes de los signos</small>\[(+)(+)=+,\ (-)(-)=+,\ (+)(-)=-\]Igual para la división.</div>
+   <div class="fcard"><small>Propiedades de ℝ</small>\[a+b=b+a,\ ab=ba;\ (a+b)+c=a+(b+c)\]\[a+0=a,\ a\cdot1=a,\ a+(-a)=0,\ a\cdot\tfrac1a=1\ (a\neq0)\]</div>
+   <div class="fcard"><small>Decimal finito a fracción</small>\[0.d_1d_2\ldots d_k=\frac{d_1d_2\ldots d_k}{10^k}\]</div>
+   <div class="fcard"><small>Valor absoluto</small>\[|a|=\begin{cases}a,&a\ge0\\-a,&a\lt0\end{cases}\]</div>
+  </div>
  </div>
  <div class="tab-pane fade u2 fgroup" id="m1-f2">
   <div class="fgrid">
@@ -1894,6 +1933,11 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Función lineal</small>\[y=ax+b\]\(a\): razón de cambio · \(b\): condición inicial</div>
    <div class="fcard"><small>Modelo con dos puntos</small>\[a=\frac{y_2-y_1}{x_2-x_1},\quad b=y_1-ax_1\]</div>
   </div>
+  <h5>Variación</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Variación inversamente proporcional</small>\[y=\frac{k}{x},\quad k=xy\]</div>
+   <div class="fcard"><small>Tabla lineal</small>Si \(\Delta x\) es constante, \(\Delta y\) también lo es (diferencias constantes).</div>
+  </div>
  </div>
  <div class="tab-pane fade u3 fgroup" id="m1-f3">
   <div class="fgrid">
@@ -1901,6 +1945,12 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Propiedad multiplicativa</small>\[a=b\Rightarrow ac=bc;\ \ \tfrac{a}{c}=\tfrac{b}{c}\ (c\neq0)\]</div>
    <div class="fcard"><small>Forma general y solución</small>\[ax+b=0\Rightarrow x=-\frac{b}{a}\ (a\neq0)\]</div>
    <div class="fcard"><small>Distributiva</small>\[a(b+c)=ab+ac\]</div>
+  </div>
+  <h5>Más sobre ecuaciones</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Ecuaciones con fracciones</small>Multiplica ambos miembros por el m.c.m. de los denominadores.</div>
+   <div class="fcard"><small>Comprobación</small>Sustituye la solución en la ecuación original: ambos miembros deben dar lo mismo.</div>
+   <div class="fcard"><small>Despeje de fórmulas</small>Aplica la operación inversa a ambos miembros, de afuera hacia adentro.</div>
   </div>
  </div>
  <div class="tab-pane fade u4 fgroup" id="m1-f4">
@@ -1915,7 +1965,7 @@ body{--cc:var(--u1)}
  </div>
 </div>
 </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  <div class="modal-footer"><button class="btn btn-acc pdf-btn" style="--uc:var(--acc)" onclick="cchFormPDF(this)" title="Genera un PDF con todas las pestañas (elige «Guardar como PDF»)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Descargar PDF</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
  </div></div></div>
 <div class="modal fade" id="m1-cartaModal" tabindex="-1" aria-labelledby="m1-cartaTitle" aria-hidden="true">
  <div class="modal-dialog modal-fullscreen">
@@ -1945,7 +1995,7 @@ body{--cc:var(--u1)}
    <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
   </div>
  </div>
-</div><div class="modal fade" id="m2-formulario" tabindex="-1" aria-labelledby="m2-formTitle" aria-hidden="true">
+</div><div class="modal fade" id="m2-formulario" data-course="(Matemáticas II)" tabindex="-1" aria-labelledby="m2-formTitle" aria-hidden="true">
  <div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="m2-formTitle">Formulario · Matemáticas II</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
@@ -1964,6 +2014,13 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Factorización</small>\[x^2-(p+q)x+pq=(x-p)(x-q)\]</div>
    <div class="fcard"><small>Incompletas</small>\[ax^2=b\Rightarrow x=\pm\sqrt{\tfrac{b}{a}};\quad x(ax+b)=0\Rightarrow x=0,\ -\tfrac{b}{a}\]</div>
    <div class="fcard"><small>Suma y producto de raíces</small>\[x_1+x_2=-\frac{b}{a},\quad x_1x_2=\frac{c}{a}\]</div>
+  </div>
+  <h5>Otros métodos</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Producto cero</small>\[ab=0\iff a=0\ \text{ o }\ b=0\]</div>
+   <div class="fcard"><small>Completar el cuadrado</small>\[x^2+bx=c\Rightarrow\left(x+\tfrac b2\right)^2=c+\left(\tfrac b2\right)^2\]</div>
+   <div class="fcard"><small>Diferencia de cuadrados</small>\[a^2-b^2=(a+b)(a-b)\]</div>
+   <div class="fcard"><small>Ecuación con raíces dadas</small>\[x^2-(x_1+x_2)x+x_1x_2=0\]</div>
   </div>
  </div>
  <div class="tab-pane fade u2 fgroup" id="m2-f2">
@@ -1988,6 +2045,14 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Triángulo</small>\[A=\frac{b\,h}{2}\]</div>
    <div class="fcard"><small>Círculo</small>\[P=2\pi r=\pi d,\quad A=\pi r^2\]</div>
   </div>
+  <h5>Ángulos y polígonos (complemento)</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Clasificación de ángulos</small>agudo \(\lt90^\circ\) · recto \(=90^\circ\) · obtuso \(90^\circ\text{–}180^\circ\) · llano \(=180^\circ\)</div>
+   <div class="fcard"><small>Opuestos por el vértice</small>\[\alpha=\beta\]Adyacentes (par lineal): \(\alpha+\beta=180^\circ\)</div>
+   <div class="fcard"><small>Ángulo exterior (regular)</small>\[\theta_e=\frac{360^\circ}{n},\quad \theta_i+\theta_e=180^\circ\]</div>
+   <div class="fcard"><small>Diagonales</small>\[\text{desde un vértice: } n-3;\quad \text{total: } D=\frac{n(n-3)}{2}\]</div>
+   <div class="fcard"><small>Ángulo central (regular)</small>\[\theta_c=\frac{360^\circ}{n}\]</div>
+  </div>
  </div>
  <div class="tab-pane fade u4 fgroup" id="m2-f4">
   <div class="fgrid">
@@ -1998,10 +2063,16 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Pitágoras</small>\[c^2=a^2+b^2\]</div>
    <div class="fcard"><small>Altura sobre la hipotenusa</small>\[h^2=mn,\quad a^2=cn,\quad b^2=cm\]</div>
   </div>
+  <h5>Triángulos (complemento)</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Recíproco de Pitágoras</small>\(c\) lado mayor: \(c^2=a^2+b^2\) rectángulo · \(c^2\lt a^2+b^2\) acutángulo · \(c^2\gt a^2+b^2\) obtusángulo</div>
+   <div class="fcard"><small>Triángulo isósceles</small>Lados iguales \(\iff\) ángulos opuestos iguales.</div>
+   <div class="fcard"><small>Ternas pitagóricas</small>3-4-5 · 5-12-13 · 8-15-17 · 7-24-25 (y sus múltiplos)</div>
+  </div>
  </div>
 </div>
 </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  <div class="modal-footer"><button class="btn btn-acc pdf-btn" style="--uc:var(--acc)" onclick="cchFormPDF(this)" title="Genera un PDF con todas las pestañas (elige «Guardar como PDF»)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Descargar PDF</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
  </div></div></div>
 <div class="modal fade" id="m2-cartaModal" tabindex="-1" aria-labelledby="m2-cartaTitle" aria-hidden="true">
  <div class="modal-dialog modal-fullscreen">
@@ -2031,7 +2102,7 @@ body{--cc:var(--u1)}
    <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
   </div>
  </div>
-</div><div class="modal fade" id="m3-formulario" tabindex="-1" aria-labelledby="m3-formTitle" aria-hidden="true">
+</div><div class="modal fade" id="m3-formulario" data-course="(Matemáticas III)" tabindex="-1" aria-labelledby="m3-formTitle" aria-hidden="true">
  <div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="m3-formTitle">Formulario · Matemáticas III</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
@@ -2053,6 +2124,12 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Ley de cosenos</small>\[c^2=a^2+b^2-2ab\cos C\]</div>
    <div class="fcard"><small>Área</small>\[A=\tfrac12 ab\operatorname{sen}C\]</div>
   </div>
+  <h5>Aplicaciones</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Ángulos agudos del triángulo rectángulo</small>\[A+B=90^\circ,\quad \operatorname{sen}A=\cos B\]</div>
+   <div class="fcard"><small>Elevación y depresión</small>Se miden desde la horizontal; el de elevación desde abajo es igual al de depresión desde arriba (alternos internos).</div>
+   <div class="fcard"><small>Razones inversas</small>\[\theta=\operatorname{sen}^{-1}\tfrac{\text{op}}{\text{hip}}=\cos^{-1}\tfrac{\text{ady}}{\text{hip}}=\tan^{-1}\tfrac{\text{op}}{\text{ady}}\]</div>
+  </div>
  </div>
  <div class="tab-pane fade u2 fgroup" id="m3-f2">
   <div class="fgrid">
@@ -2061,6 +2138,12 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Punto medio</small>\[M=\left(\tfrac{x_1+x_2}{2},\tfrac{y_1+y_2}{2}\right)\]</div>
    <div class="fcard"><small>División en razón r</small>\[x=\frac{x_1+rx_2}{1+r},\ y=\frac{y_1+ry_2}{1+r}\]</div>
    <div class="fcard"><small>Extremo con L y θ</small>\[Q=(x_1+L\cos\theta,\ y_1+L\operatorname{sen}\theta)\]</div>
+  </div>
+  <h5>Complementos</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Ángulo de inclinación</small>\[m=\tan\theta,\quad \theta=\tan^{-1}m\ \ (+180^\circ\text{ si } m\lt0)\]</div>
+   <div class="fcard"><small>Área de un triángulo (vértices)</small>\[A=\tfrac12\left|x_1(y_2-y_3)+x_2(y_3-y_1)+x_3(y_1-y_2)\right|\]</div>
+   <div class="fcard"><small>Colineales</small>Tres puntos son colineales si \(m_{AB}=m_{BC}\) (o el área es 0).</div>
   </div>
  </div>
  <div class="tab-pane fade u3 fgroup" id="m3-f3">
@@ -2073,6 +2156,12 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Paralelas / perpendiculares</small>\[m_1=m_2;\quad m_1m_2=-1\]</div>
    <div class="fcard"><small>Distancia punto–recta</small>\[d=\frac{|Ax_1+By_1+C|}{\sqrt{A^2+B^2}}\]</div>
   </div>
+  <h5>Lugares geométricos</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Recta por un punto y un ángulo</small>\[y-y_1=\tan\theta\,(x-x_1)\]</div>
+   <div class="fcard"><small>Mediatriz de AB</small>Pasa por el punto medio y es perpendicular: \(m=-\tfrac{1}{m_{AB}}\); sus puntos equidistan de \(A\) y \(B\).</div>
+   <div class="fcard"><small>Rectas horizontal y vertical</small>\[y=k\ (m=0);\qquad x=h\ (m\ \text{no definida})\]</div>
+  </div>
  </div>
  <div class="tab-pane fade u4 fgroup" id="m3-f4">
   <div class="fgrid">
@@ -2080,6 +2169,12 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Eje horizontal</small>\[(y-k)^2=4p(x-h)\]\(F(h+p,k)\), directriz \(x=h-p\)</div>
    <div class="fcard"><small>Lado recto</small>\[LR=|4p|\]</div>
    <div class="fcard"><small>General</small>\[x^2+Dx+Ey+F=0\ \text{ o }\ y^2+Dx+Ey+F=0\]</div>
+  </div>
+  <h5>Definición y vértice en el origen</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Definición</small>\[d(P,F)=d(P,\text{directriz})\]</div>
+   <div class="fcard"><small>Vértice en el origen</small>\[x^2=4py\ \ (F(0,p));\qquad y^2=4px\ \ (F(p,0))\]</div>
+   <div class="fcard"><small>Apertura</small>\(p\gt0\): hacia arriba / derecha · \(p\lt0\): hacia abajo / izquierda</div>
   </div>
  </div>
  <div class="tab-pane fade u5 fgroup" id="m3-f5">
@@ -2091,10 +2186,17 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Relación y excentricidad</small>\[a^2=b^2+c^2,\quad e=\frac{c}{a}\]</div>
    <div class="fcard"><small>Lado recto · definición</small>\[LR=\frac{2b^2}{a};\quad PF_1+PF_2=2a\]</div>
   </div>
+  <h5>Elementos de la elipse</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Vértices y focos (eje horizontal)</small>\[V(h\pm a,k),\ F(h\pm c,k),\ B(h,k\pm b)\]</div>
+   <div class="fcard"><small>Vértices y focos (eje vertical)</small>\[V(h,k\pm a),\ F(h,k\pm c),\ B(h\pm b,k)\]</div>
+   <div class="fcard"><small>Forma general</small>\[Ax^2+Cy^2+Dx+Ey+F=0,\ \ AC\gt0,\ A\neq C\](\(A=C\): circunferencia)</div>
+   <div class="fcard"><small>Ejes</small>\[\text{mayor}=2a,\quad \text{menor}=2b,\quad \text{focal}=2c\]</div>
+  </div>
  </div>
 </div>
 </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  <div class="modal-footer"><button class="btn btn-acc pdf-btn" style="--uc:var(--acc)" onclick="cchFormPDF(this)" title="Genera un PDF con todas las pestañas (elige «Guardar como PDF»)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Descargar PDF</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
  </div></div></div>
 <div class="modal fade" id="m3-cartaModal" tabindex="-1" aria-labelledby="m3-cartaTitle" aria-hidden="true">
  <div class="modal-dialog modal-fullscreen">
@@ -2128,7 +2230,7 @@ body{--cc:var(--u1)}
    <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
   </div>
  </div>
-</div><div class="modal fade" id="m4-formulario" tabindex="-1" aria-labelledby="m4-formTitle" aria-hidden="true">
+</div><div class="modal fade" id="m4-formulario" data-course="(Matemáticas IV)" tabindex="-1" aria-labelledby="m4-formTitle" aria-hidden="true">
  <div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
   <div class="modal-header"><h2 class="modal-title fs-4 font-head" id="m4-formTitle">Formulario · Matemáticas IV</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
   <div class="modal-body"><ul class="nav nav-pills mb-3 flex-wrap" role="tablist">
@@ -2148,6 +2250,14 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Multiplicidad</small>impar: cruza el eje · par: rebota</div>
    <div class="fcard"><small>Extremos</small>grado par: ambos extremos igual · impar: opuestos (según el signo de \(a_n\))</div>
   </div>
+  <h5>Funciones y división</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Función</small>Regla que asigna a cada \(x\) del dominio exactamente un \(y\) (prueba de la recta vertical).</div>
+   <div class="fcard"><small>Intervalos</small>\[[a,b]:\ a\le x\le b;\quad (a,b):\ a\lt x\lt b;\quad [a,\infty):\ x\ge a\]</div>
+   <div class="fcard"><small>Teorema fundamental del álgebra</small>Un polinomio de grado \(n\) tiene exactamente \(n\) raíces (contando multiplicidad y complejas).</div>
+   <div class="fcard"><small>División sintética</small>Coeficientes completos → baja el primero → multiplica por \(r\) y suma → el último número es el residuo.</div>
+   <div class="fcard"><small>Raíces complejas</small>Si \(a+bi\) es raíz (coeficientes reales), \(a-bi\) también.</div>
+  </div>
  </div>
  <div class="tab-pane fade u2 fgroup" id="m4-f2">
   <div class="fgrid">
@@ -2156,6 +2266,13 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Asíntota horizontal</small>\(\text{gr}\,p\lt\text{gr}\,q\): \(y=0\) · iguales: \(y=\frac{a_n}{b_n}\)</div>
    <div class="fcard"><small>Radicales</small>\[f(x)=\sqrt{g(x)}:\ \text{dominio } g(x)\ge0,\ \text{rango}\subseteq[0,\infty)\]</div>
    <div class="fcard"><small>Péndulo</small>\[T=2\pi\sqrt{L/g}\]</div>
+  </div>
+  <h5>Complementos</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Hueco</small>Si \((x-r)\) se cancela: hueco en \(\left(r,\ \tilde f(r)\right)\) con \(\tilde f\) simplificada.</div>
+   <div class="fcard"><small>Asíntota oblicua</small>\(\text{gr}\,p=\text{gr}\,q+1\): cociente de \(p\div q\) (sin residuo).</div>
+   <div class="fcard"><small>Costo promedio</small>\[\bar{C}(x)=\frac{C(x)}{x}=\frac{CF+cv\,x}{x}\to cv\]</div>
+   <div class="fcard"><small>Variación inversa</small>\[y=\frac{k}{x^n}\]</div>
   </div>
  </div>
  <div class="tab-pane fade u3 fgroup" id="m4-f3">
@@ -2170,6 +2287,14 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Logarítmica</small>\[f(x)=k\log_bx;\ D=(0,\infty),\ R=\mathbb{R}\]</div>
    <div class="fcard"><small>Escalas</small>\[\text{pH}=-\log[\text{H}^+],\ M=\log\tfrac{A}{A_0},\ \beta=10\log\tfrac{I}{I_0}\]</div>
   </div>
+  <h5>Ecuaciones exponenciales y logarítmicas</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Valores especiales</small>\[\log_b1=0,\ \log_bb=1,\ \log_bb^x=x,\ b^{\log_bx}=x\]</div>
+   <div class="fcard"><small>Resolver bˣ = N</small>\[x=\log_bN=\frac{\log N}{\log b}=\frac{\ln N}{\ln b}\]</div>
+   <div class="fcard"><small>Crecimiento y decaimiento</small>\[N=N_0e^{kt}\ (k\gt0\text{ crece},\ k\lt0\text{ decae})\]</div>
+   <div class="fcard"><small>Tiempo de duplicación / vida media</small>\[t_2=\frac{\ln2}{k},\qquad T=\frac{\ln2}{|k|}\]</div>
+   <div class="fcard"><small>Inversas</small>\(y=b^x\) y \(y=\log_bx\) son simétricas respecto a \(y=x\).</div>
+  </div>
  </div>
  <div class="tab-pane fade u4 fgroup" id="m4-f4">
   <div class="fgrid">
@@ -2180,10 +2305,18 @@ body{--cc:var(--u1)}
    <div class="fcard"><small>Parámetros</small>\[|A|,\ T=\frac{2\pi}{|B|},\ f=\frac{|B|}{2\pi},\ -\frac{C}{B},\ D\]</div>
    <div class="fcard"><small>Máximo y mínimo</small>\[D\pm|A|\]</div>
   </div>
+  <h5>Complementos</h5>
+  <div class="fgrid">
+   <div class="fcard"><small>Longitud de arco y sector</small>\[s=r\theta,\qquad A=\tfrac12r^2\theta\ \ (\theta\text{ en rad})\]</div>
+   <div class="fcard"><small>Signos por cuadrante</small>I: todas \(+\) · II: sen \(+\) · III: tan \(+\) · IV: cos \(+\)</div>
+   <div class="fcard"><small>Ángulo de referencia</small>II: \(180^\circ-\theta\) · III: \(\theta-180^\circ\) · IV: \(360^\circ-\theta\)</div>
+   <div class="fcard"><small>Tangente</small>\[\tan x:\ T=\pi,\ \text{asíntotas en } x=\tfrac{\pi}{2}+k\pi\]</div>
+   <div class="fcard"><small>Velocidad angular</small>\[\omega=\frac{\theta}{t},\qquad v=r\omega\]</div>
+  </div>
  </div>
 </div>
 </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="window.print()">Imprimir</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
+  <div class="modal-footer"><button class="btn btn-acc pdf-btn" style="--uc:var(--acc)" onclick="cchFormPDF(this)" title="Genera un PDF con todas las pestañas (elige «Guardar como PDF»)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Descargar PDF</button><button class="btn btn-acc" style="--uc:var(--acc)" data-bs-dismiss="modal">Cerrar</button></div>
  </div></div></div>
 <div class="modal fade" id="m4-cartaModal" tabindex="-1" aria-labelledby="m4-cartaTitle" aria-hidden="true">
  <div class="modal-dialog modal-fullscreen">
@@ -4137,6 +4270,1020 @@ document.addEventListener('DOMContentLoaded', () => initUI());
   document.addEventListener('DOMContentLoaded', route);
 })();
 
+</script>
+
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+   <div class="modal-header"><h2 class="modal-title fs-5 font-head" id="qrTitle">Código QR de esta página</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+   <div class="modal-body text-center">
+    <p class="small mb-3" style="color:var(--muted)">Escanéalo con la cámara del celular para abrir esta página.</p>
+    <div class="qr-box"><canvas id="qrCanvas" width="496" height="496" role="img" aria-label="Código QR"></canvas></div>
+    <div class="qr-url" id="qrUrl"></div>
+    <div class="form-check form-switch d-inline-flex gap-2 mt-2 small" id="qrHashWrap"><input class="form-check-input" type="checkbox" id="qrHash" checked><label class="form-check-label" for="qrHash">Incluir la sección actual</label></div>
+    <div id="qrLocal" class="text-start mt-3 p-3 rounded-3 small d-none" style="background:color-mix(in srgb,var(--acc) 10%,var(--card));border:1px solid color-mix(in srgb,var(--acc) 35%,var(--line))">
+     <b>Estás viendo el archivo desde tu computadora</b> (<code>file://</code>): un celular no puede abrir esa ruta.
+     Pega la dirección pública de la carpeta donde publicaste los programas y el QR apuntará a esta página ahí.
+     <div class="input-group input-group-sm mt-2"><input type="url" class="form-control" id="qrBase" placeholder="https://tusitio.com/programas/" aria-label="URL pública de la carpeta"><button class="btn btn-acc" style="--uc:var(--acc)" id="qrApply" type="button">Usar</button></div>
+    </div>
+   </div>
+   <div class="modal-footer"><button class="btn btn-ghost" id="qrCopy" type="button">Copiar enlace</button><button class="btn btn-acc" style="--uc:var(--acc)" id="qrPng" type="button"><svg style="width:16px;height:16px;vertical-align:-3px;margin-right:.3rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Descargar PNG</button></div>
+  </div>
+ </div>
+</div>
+
+<script>
+/* ===== Barra de programas, QR y PDF del formulario ===== */
+(function(){
+"use strict";
+var QRB=(function(){ /* QR Code generator — (c) 2009 Kazuhiko Arase, MIT license (vendored) */
+var QRLIB=(function(){var M={};
+(function(){M['QRMode'] = {
+MODE_NUMBER :       1 << 0,
+MODE_ALPHA_NUM :    1 << 1,
+MODE_8BIT_BYTE :    1 << 2,
+MODE_KANJI :        1 << 3
+};
+})();
+(function(){M['QRErrorCorrectLevel'] = {
+L : 1,
+M : 0,
+Q : 3,
+H : 2
+};
+})();
+(function(){M['QRMaskPattern'] = {
+PATTERN000 : 0,
+PATTERN001 : 1,
+PATTERN010 : 2,
+PATTERN011 : 3,
+PATTERN100 : 4,
+PATTERN101 : 5,
+PATTERN110 : 6,
+PATTERN111 : 7
+};
+})();
+(function(){var QRMath = {
+glog : function(n) {
+if (n < 1) {
+throw new Error("glog(" + n + ")");
+}
+return QRMath.LOG_TABLE[n];
+},
+gexp : function(n) {
+while (n < 0) {
+n += 255;
+}
+while (n >= 256) {
+n -= 255;
+}
+return QRMath.EXP_TABLE[n];
+},
+EXP_TABLE : new Array(256),
+LOG_TABLE : new Array(256)
+};
+for (var i = 0; i < 8; i++) {
+QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+^ QRMath.EXP_TABLE[i - 5]
+^ QRMath.EXP_TABLE[i - 6]
+^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+M['QRMath'] = QRMath;
+})();
+(function(){var QRMath = M['QRMath'];
+function QRPolynomial(num, shift) {
+if (num.length === undefined) {
+throw new Error(num.length + "/" + shift);
+}
+var offset = 0;
+while (offset < num.length && num[offset] === 0) {
+offset++;
+}
+this.num = new Array(num.length - offset + shift);
+for (var i = 0; i < num.length - offset; i++) {
+this.num[i] = num[i + offset];
+}
+}
+QRPolynomial.prototype = {
+get : function(index) {
+return this.num[index];
+},
+getLength : function() {
+return this.num.length;
+},
+multiply : function(e) {
+var num = new Array(this.getLength() + e.getLength() - 1);
+for (var i = 0; i < this.getLength(); i++) {
+for (var j = 0; j < e.getLength(); j++) {
+num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+}
+}
+return new QRPolynomial(num, 0);
+},
+mod : function(e) {
+if (this.getLength() - e.getLength() < 0) {
+return this;
+}
+var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+var num = new Array(this.getLength() );
+for (var i = 0; i < this.getLength(); i++) {
+num[i] = this.get(i);
+}
+for (var x = 0; x < e.getLength(); x++) {
+num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+}
+return new QRPolynomial(num, 0).mod(e);
+}
+};
+M['QRPolynomial'] = QRPolynomial;
+})();
+(function(){var QRMode = M['QRMode'];
+function QR8bitByte(data) {
+this.mode = QRMode.MODE_8BIT_BYTE;
+this.data = data;
+}
+QR8bitByte.prototype = {
+getLength : function() {
+return this.data.length;
+},
+write : function(buffer) {
+for (var i = 0; i < this.data.length; i++) {
+buffer.put(this.data.charCodeAt(i), 8);
+}
+}
+};
+M['QR8bitByte'] = QR8bitByte;
+})();
+(function(){function QRBitBuffer() {
+this.buffer = [];
+this.length = 0;
+}
+QRBitBuffer.prototype = {
+get : function(index) {
+var bufIndex = Math.floor(index / 8);
+return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+},
+put : function(num, length) {
+for (var i = 0; i < length; i++) {
+this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+}
+},
+getLengthInBits : function() {
+return this.length;
+},
+putBit : function(bit) {
+var bufIndex = Math.floor(this.length / 8);
+if (this.buffer.length <= bufIndex) {
+this.buffer.push(0);
+}
+if (bit) {
+this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+}
+this.length++;
+}
+};
+M['QRBitBuffer'] = QRBitBuffer;
+})();
+(function(){var QRErrorCorrectLevel = M['QRErrorCorrectLevel'];
+function QRRSBlock(totalCount, dataCount) {
+this.totalCount = totalCount;
+this.dataCount  = dataCount;
+}
+QRRSBlock.RS_BLOCK_TABLE = [
+[1, 26, 19],
+[1, 26, 16],
+[1, 26, 13],
+[1, 26, 9],
+[1, 44, 34],
+[1, 44, 28],
+[1, 44, 22],
+[1, 44, 16],
+[1, 70, 55],
+[1, 70, 44],
+[2, 35, 17],
+[2, 35, 13],
+[1, 100, 80],
+[2, 50, 32],
+[2, 50, 24],
+[4, 25, 9],
+[1, 134, 108],
+[2, 67, 43],
+[2, 33, 15, 2, 34, 16],
+[2, 33, 11, 2, 34, 12],
+[2, 86, 68],
+[4, 43, 27],
+[4, 43, 19],
+[4, 43, 15],
+[2, 98, 78],
+[4, 49, 31],
+[2, 32, 14, 4, 33, 15],
+[4, 39, 13, 1, 40, 14],
+[2, 121, 97],
+[2, 60, 38, 2, 61, 39],
+[4, 40, 18, 2, 41, 19],
+[4, 40, 14, 2, 41, 15],
+[2, 146, 116],
+[3, 58, 36, 2, 59, 37],
+[4, 36, 16, 4, 37, 17],
+[4, 36, 12, 4, 37, 13],
+[2, 86, 68, 2, 87, 69],
+[4, 69, 43, 1, 70, 44],
+[6, 43, 19, 2, 44, 20],
+[6, 43, 15, 2, 44, 16],
+[4, 101, 81],
+[1, 80, 50, 4, 81, 51],
+[4, 50, 22, 4, 51, 23],
+[3, 36, 12, 8, 37, 13],
+[2, 116, 92, 2, 117, 93],
+[6, 58, 36, 2, 59, 37],
+[4, 46, 20, 6, 47, 21],
+[7, 42, 14, 4, 43, 15],
+[4, 133, 107],
+[8, 59, 37, 1, 60, 38],
+[8, 44, 20, 4, 45, 21],
+[12, 33, 11, 4, 34, 12],
+[3, 145, 115, 1, 146, 116],
+[4, 64, 40, 5, 65, 41],
+[11, 36, 16, 5, 37, 17],
+[11, 36, 12, 5, 37, 13],
+[5, 109, 87, 1, 110, 88],
+[5, 65, 41, 5, 66, 42],
+[5, 54, 24, 7, 55, 25],
+[11, 36, 12],
+[5, 122, 98, 1, 123, 99],
+[7, 73, 45, 3, 74, 46],
+[15, 43, 19, 2, 44, 20],
+[3, 45, 15, 13, 46, 16],
+[1, 135, 107, 5, 136, 108],
+[10, 74, 46, 1, 75, 47],
+[1, 50, 22, 15, 51, 23],
+[2, 42, 14, 17, 43, 15],
+[5, 150, 120, 1, 151, 121],
+[9, 69, 43, 4, 70, 44],
+[17, 50, 22, 1, 51, 23],
+[2, 42, 14, 19, 43, 15],
+[3, 141, 113, 4, 142, 114],
+[3, 70, 44, 11, 71, 45],
+[17, 47, 21, 4, 48, 22],
+[9, 39, 13, 16, 40, 14],
+[3, 135, 107, 5, 136, 108],
+[3, 67, 41, 13, 68, 42],
+[15, 54, 24, 5, 55, 25],
+[15, 43, 15, 10, 44, 16],
+[4, 144, 116, 4, 145, 117],
+[17, 68, 42],
+[17, 50, 22, 6, 51, 23],
+[19, 46, 16, 6, 47, 17],
+[2, 139, 111, 7, 140, 112],
+[17, 74, 46],
+[7, 54, 24, 16, 55, 25],
+[34, 37, 13],
+[4, 151, 121, 5, 152, 122],
+[4, 75, 47, 14, 76, 48],
+[11, 54, 24, 14, 55, 25],
+[16, 45, 15, 14, 46, 16],
+[6, 147, 117, 4, 148, 118],
+[6, 73, 45, 14, 74, 46],
+[11, 54, 24, 16, 55, 25],
+[30, 46, 16, 2, 47, 17],
+[8, 132, 106, 4, 133, 107],
+[8, 75, 47, 13, 76, 48],
+[7, 54, 24, 22, 55, 25],
+[22, 45, 15, 13, 46, 16],
+[10, 142, 114, 2, 143, 115],
+[19, 74, 46, 4, 75, 47],
+[28, 50, 22, 6, 51, 23],
+[33, 46, 16, 4, 47, 17],
+[8, 152, 122, 4, 153, 123],
+[22, 73, 45, 3, 74, 46],
+[8, 53, 23, 26, 54, 24],
+[12, 45, 15, 28, 46, 16],
+[3, 147, 117, 10, 148, 118],
+[3, 73, 45, 23, 74, 46],
+[4, 54, 24, 31, 55, 25],
+[11, 45, 15, 31, 46, 16],
+[7, 146, 116, 7, 147, 117],
+[21, 73, 45, 7, 74, 46],
+[1, 53, 23, 37, 54, 24],
+[19, 45, 15, 26, 46, 16],
+[5, 145, 115, 10, 146, 116],
+[19, 75, 47, 10, 76, 48],
+[15, 54, 24, 25, 55, 25],
+[23, 45, 15, 25, 46, 16],
+[13, 145, 115, 3, 146, 116],
+[2, 74, 46, 29, 75, 47],
+[42, 54, 24, 1, 55, 25],
+[23, 45, 15, 28, 46, 16],
+[17, 145, 115],
+[10, 74, 46, 23, 75, 47],
+[10, 54, 24, 35, 55, 25],
+[19, 45, 15, 35, 46, 16],
+[17, 145, 115, 1, 146, 116],
+[14, 74, 46, 21, 75, 47],
+[29, 54, 24, 19, 55, 25],
+[11, 45, 15, 46, 46, 16],
+[13, 145, 115, 6, 146, 116],
+[14, 74, 46, 23, 75, 47],
+[44, 54, 24, 7, 55, 25],
+[59, 46, 16, 1, 47, 17],
+[12, 151, 121, 7, 152, 122],
+[12, 75, 47, 26, 76, 48],
+[39, 54, 24, 14, 55, 25],
+[22, 45, 15, 41, 46, 16],
+[6, 151, 121, 14, 152, 122],
+[6, 75, 47, 34, 76, 48],
+[46, 54, 24, 10, 55, 25],
+[2, 45, 15, 64, 46, 16],
+[17, 152, 122, 4, 153, 123],
+[29, 74, 46, 14, 75, 47],
+[49, 54, 24, 10, 55, 25],
+[24, 45, 15, 46, 46, 16],
+[4, 152, 122, 18, 153, 123],
+[13, 74, 46, 32, 75, 47],
+[48, 54, 24, 14, 55, 25],
+[42, 45, 15, 32, 46, 16],
+[20, 147, 117, 4, 148, 118],
+[40, 75, 47, 7, 76, 48],
+[43, 54, 24, 22, 55, 25],
+[10, 45, 15, 67, 46, 16],
+[19, 148, 118, 6, 149, 119],
+[18, 75, 47, 31, 76, 48],
+[34, 54, 24, 34, 55, 25],
+[20, 45, 15, 61, 46, 16]
+];
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+if (rsBlock === undefined) {
+throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+}
+var length = rsBlock.length / 3;
+var list = [];
+for (var i = 0; i < length; i++) {
+var count = rsBlock[i * 3 + 0];
+var totalCount = rsBlock[i * 3 + 1];
+var dataCount  = rsBlock[i * 3 + 2];
+for (var j = 0; j < count; j++) {
+list.push(new QRRSBlock(totalCount, dataCount) );
+}
+}
+return list;
+};
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+switch(errorCorrectLevel) {
+case QRErrorCorrectLevel.L :
+return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+case QRErrorCorrectLevel.M :
+return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+case QRErrorCorrectLevel.Q :
+return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+case QRErrorCorrectLevel.H :
+return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+default :
+return undefined;
+}
+};
+M['QRRSBlock'] = QRRSBlock;
+})();
+(function(){var QRMode = M['QRMode'];
+var QRPolynomial = M['QRPolynomial'];
+var QRMath = M['QRMath'];
+var QRMaskPattern = M['QRMaskPattern'];
+var QRUtil = {
+PATTERN_POSITION_TABLE : [
+[],
+[6, 18],
+[6, 22],
+[6, 26],
+[6, 30],
+[6, 34],
+[6, 22, 38],
+[6, 24, 42],
+[6, 26, 46],
+[6, 28, 50],
+[6, 30, 54],
+[6, 32, 58],
+[6, 34, 62],
+[6, 26, 46, 66],
+[6, 26, 48, 70],
+[6, 26, 50, 74],
+[6, 30, 54, 78],
+[6, 30, 56, 82],
+[6, 30, 58, 86],
+[6, 34, 62, 90],
+[6, 28, 50, 72, 94],
+[6, 26, 50, 74, 98],
+[6, 30, 54, 78, 102],
+[6, 28, 54, 80, 106],
+[6, 32, 58, 84, 110],
+[6, 30, 58, 86, 114],
+[6, 34, 62, 90, 118],
+[6, 26, 50, 74, 98, 122],
+[6, 30, 54, 78, 102, 126],
+[6, 26, 52, 78, 104, 130],
+[6, 30, 56, 82, 108, 134],
+[6, 34, 60, 86, 112, 138],
+[6, 30, 58, 86, 114, 142],
+[6, 34, 62, 90, 118, 146],
+[6, 30, 54, 78, 102, 126, 150],
+[6, 24, 50, 76, 102, 128, 154],
+[6, 28, 54, 80, 106, 132, 158],
+[6, 32, 58, 84, 110, 136, 162],
+[6, 26, 54, 82, 110, 138, 166],
+[6, 30, 58, 86, 114, 142, 170]
+],
+G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+getBCHTypeInfo : function(data) {
+var d = data << 10;
+while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );
+}
+return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+},
+getBCHTypeNumber : function(data) {
+var d = data << 12;
+while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );
+}
+return (data << 12) | d;
+},
+getBCHDigit : function(data) {
+var digit = 0;
+while (data !== 0) {
+digit++;
+data >>>= 1;
+}
+return digit;
+},
+getPatternPosition : function(typeNumber) {
+return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+},
+getMask : function(maskPattern, i, j) {
+switch (maskPattern) {
+case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+default :
+throw new Error("bad maskPattern:" + maskPattern);
+}
+},
+getErrorCorrectPolynomial : function(errorCorrectLength) {
+var a = new QRPolynomial([1], 0);
+for (var i = 0; i < errorCorrectLength; i++) {
+a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+}
+return a;
+},
+getLengthInBits : function(mode, type) {
+if (1 <= type && type < 10) {
+switch(mode) {
+case QRMode.MODE_NUMBER     : return 10;
+case QRMode.MODE_ALPHA_NUM  : return 9;
+case QRMode.MODE_8BIT_BYTE  : return 8;
+case QRMode.MODE_KANJI      : return 8;
+default :
+throw new Error("mode:" + mode);
+}
+} else if (type < 27) {
+switch(mode) {
+case QRMode.MODE_NUMBER     : return 12;
+case QRMode.MODE_ALPHA_NUM  : return 11;
+case QRMode.MODE_8BIT_BYTE  : return 16;
+case QRMode.MODE_KANJI      : return 10;
+default :
+throw new Error("mode:" + mode);
+}
+} else if (type < 41) {
+switch(mode) {
+case QRMode.MODE_NUMBER     : return 14;
+case QRMode.MODE_ALPHA_NUM  : return 13;
+case QRMode.MODE_8BIT_BYTE  : return 16;
+case QRMode.MODE_KANJI      : return 12;
+default :
+throw new Error("mode:" + mode);
+}
+} else {
+throw new Error("type:" + type);
+}
+},
+getLostPoint : function(qrCode) {
+var moduleCount = qrCode.getModuleCount();
+var lostPoint = 0;
+var row = 0;
+var col = 0;
+for (row = 0; row < moduleCount; row++) {
+for (col = 0; col < moduleCount; col++) {
+var sameCount = 0;
+var dark = qrCode.isDark(row, col);
+for (var r = -1; r <= 1; r++) {
+if (row + r < 0 || moduleCount <= row + r) {
+continue;
+}
+for (var c = -1; c <= 1; c++) {
+if (col + c < 0 || moduleCount <= col + c) {
+continue;
+}
+if (r === 0 && c === 0) {
+continue;
+}
+if (dark === qrCode.isDark(row + r, col + c) ) {
+sameCount++;
+}
+}
+}
+if (sameCount > 5) {
+lostPoint += (3 + sameCount - 5);
+}
+}
+}
+for (row = 0; row < moduleCount - 1; row++) {
+for (col = 0; col < moduleCount - 1; col++) {
+var count = 0;
+if (qrCode.isDark(row,     col    ) ) count++;
+if (qrCode.isDark(row + 1, col    ) ) count++;
+if (qrCode.isDark(row,     col + 1) ) count++;
+if (qrCode.isDark(row + 1, col + 1) ) count++;
+if (count === 0 || count === 4) {
+lostPoint += 3;
+}
+}
+}
+for (row = 0; row < moduleCount; row++) {
+for (col = 0; col < moduleCount - 6; col++) {
+if (qrCode.isDark(row, col) &&
+!qrCode.isDark(row, col + 1) &&
+qrCode.isDark(row, col + 2) &&
+qrCode.isDark(row, col + 3) &&
+qrCode.isDark(row, col + 4) &&
+!qrCode.isDark(row, col + 5) &&
+qrCode.isDark(row, col + 6) ) {
+lostPoint += 40;
+}
+}
+}
+for (col = 0; col < moduleCount; col++) {
+for (row = 0; row < moduleCount - 6; row++) {
+if (qrCode.isDark(row, col) &&
+!qrCode.isDark(row + 1, col) &&
+qrCode.isDark(row + 2, col) &&
+qrCode.isDark(row + 3, col) &&
+qrCode.isDark(row + 4, col) &&
+!qrCode.isDark(row + 5, col) &&
+qrCode.isDark(row + 6, col) ) {
+lostPoint += 40;
+}
+}
+}
+var darkCount = 0;
+for (col = 0; col < moduleCount; col++) {
+for (row = 0; row < moduleCount; row++) {
+if (qrCode.isDark(row, col) ) {
+darkCount++;
+}
+}
+}
+var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+lostPoint += ratio * 10;
+return lostPoint;
+}
+};
+M['QRUtil'] = QRUtil;
+})();
+(function(){//---------------------------------------------------------------------
+var QR8bitByte = M['QR8bitByte'];
+var QRUtil = M['QRUtil'];
+var QRPolynomial = M['QRPolynomial'];
+var QRRSBlock = M['QRRSBlock'];
+var QRBitBuffer = M['QRBitBuffer'];
+function QRCode(typeNumber, errorCorrectLevel) {
+this.typeNumber = typeNumber;
+this.errorCorrectLevel = errorCorrectLevel;
+this.modules = null;
+this.moduleCount = 0;
+this.dataCache = null;
+this.dataList = [];
+}
+QRCode.prototype = {
+addData : function(data) {
+var newData = new QR8bitByte(data);
+this.dataList.push(newData);
+this.dataCache = null;
+},
+isDark : function(row, col) {
+if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+throw new Error(row + "," + col);
+}
+return this.modules[row][col];
+},
+getModuleCount : function() {
+return this.moduleCount;
+},
+make : function() {
+if (this.typeNumber < 1 ){
+var typeNumber = 1;
+for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+var buffer = new QRBitBuffer();
+var totalDataCount = 0;
+for (var i = 0; i < rsBlocks.length; i++) {
+totalDataCount += rsBlocks[i].dataCount;
+}
+for (var x = 0; x < this.dataList.length; x++) {
+var data = this.dataList[x];
+buffer.put(data.mode, 4);
+buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+data.write(buffer);
+}
+if (buffer.getLengthInBits() <= totalDataCount * 8)
+break;
+}
+this.typeNumber = typeNumber;
+}
+this.makeImpl(false, this.getBestMaskPattern() );
+},
+makeImpl : function(test, maskPattern) {
+this.moduleCount = this.typeNumber * 4 + 17;
+this.modules = new Array(this.moduleCount);
+for (var row = 0; row < this.moduleCount; row++) {
+this.modules[row] = new Array(this.moduleCount);
+for (var col = 0; col < this.moduleCount; col++) {
+this.modules[row][col] = null;//(col + row) % 3;
+}
+}
+this.setupPositionProbePattern(0, 0);
+this.setupPositionProbePattern(this.moduleCount - 7, 0);
+this.setupPositionProbePattern(0, this.moduleCount - 7);
+this.setupPositionAdjustPattern();
+this.setupTimingPattern();
+this.setupTypeInfo(test, maskPattern);
+if (this.typeNumber >= 7) {
+this.setupTypeNumber(test);
+}
+if (this.dataCache === null) {
+this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+}
+this.mapData(this.dataCache, maskPattern);
+},
+setupPositionProbePattern : function(row, col)  {
+for (var r = -1; r <= 7; r++) {
+if (row + r <= -1 || this.moduleCount <= row + r) continue;
+for (var c = -1; c <= 7; c++) {
+if (col + c <= -1 || this.moduleCount <= col + c) continue;
+if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) ||
+(0 <= c && c <= 6 && (r === 0 || r === 6) ) ||
+(2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+this.modules[row + r][col + c] = true;
+} else {
+this.modules[row + r][col + c] = false;
+}
+}
+}
+},
+getBestMaskPattern : function() {
+var minLostPoint = 0;
+var pattern = 0;
+for (var i = 0; i < 8; i++) {
+this.makeImpl(true, i);
+var lostPoint = QRUtil.getLostPoint(this);
+if (i === 0 || minLostPoint >  lostPoint) {
+minLostPoint = lostPoint;
+pattern = i;
+}
+}
+return pattern;
+},
+createMovieClip : function(target_mc, instance_name, depth) {
+var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+var cs = 1;
+this.make();
+for (var row = 0; row < this.modules.length; row++) {
+var y = row * cs;
+for (var col = 0; col < this.modules[row].length; col++) {
+var x = col * cs;
+var dark = this.modules[row][col];
+if (dark) {
+qr_mc.beginFill(0, 100);
+qr_mc.moveTo(x, y);
+qr_mc.lineTo(x + cs, y);
+qr_mc.lineTo(x + cs, y + cs);
+qr_mc.lineTo(x, y + cs);
+qr_mc.endFill();
+}
+}
+}
+return qr_mc;
+},
+setupTimingPattern : function() {
+for (var r = 8; r < this.moduleCount - 8; r++) {
+if (this.modules[r][6] !== null) {
+continue;
+}
+this.modules[r][6] = (r % 2 === 0);
+}
+for (var c = 8; c < this.moduleCount - 8; c++) {
+if (this.modules[6][c] !== null) {
+continue;
+}
+this.modules[6][c] = (c % 2 === 0);
+}
+},
+setupPositionAdjustPattern : function() {
+var pos = QRUtil.getPatternPosition(this.typeNumber);
+for (var i = 0; i < pos.length; i++) {
+for (var j = 0; j < pos.length; j++) {
+var row = pos[i];
+var col = pos[j];
+if (this.modules[row][col] !== null) {
+continue;
+}
+for (var r = -2; r <= 2; r++) {
+for (var c = -2; c <= 2; c++) {
+if (Math.abs(r) === 2 ||
+Math.abs(c) === 2 ||
+(r === 0 && c === 0) ) {
+this.modules[row + r][col + c] = true;
+} else {
+this.modules[row + r][col + c] = false;
+}
+}
+}
+}
+}
+},
+setupTypeNumber : function(test) {
+var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+var mod;
+for (var i = 0; i < 18; i++) {
+mod = (!test && ( (bits >> i) & 1) === 1);
+this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+}
+for (var x = 0; x < 18; x++) {
+mod = (!test && ( (bits >> x) & 1) === 1);
+this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+}
+},
+setupTypeInfo : function(test, maskPattern) {
+var data = (this.errorCorrectLevel << 3) | maskPattern;
+var bits = QRUtil.getBCHTypeInfo(data);
+var mod;
+for (var v = 0; v < 15; v++) {
+mod = (!test && ( (bits >> v) & 1) === 1);
+if (v < 6) {
+this.modules[v][8] = mod;
+} else if (v < 8) {
+this.modules[v + 1][8] = mod;
+} else {
+this.modules[this.moduleCount - 15 + v][8] = mod;
+}
+}
+for (var h = 0; h < 15; h++) {
+mod = (!test && ( (bits >> h) & 1) === 1);
+if (h < 8) {
+this.modules[8][this.moduleCount - h - 1] = mod;
+} else if (h < 9) {
+this.modules[8][15 - h - 1 + 1] = mod;
+} else {
+this.modules[8][15 - h - 1] = mod;
+}
+}
+this.modules[this.moduleCount - 8][8] = (!test);
+},
+mapData : function(data, maskPattern) {
+var inc = -1;
+var row = this.moduleCount - 1;
+var bitIndex = 7;
+var byteIndex = 0;
+for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+if (col === 6) col--;
+while (true) {
+for (var c = 0; c < 2; c++) {
+if (this.modules[row][col - c] === null) {
+var dark = false;
+if (byteIndex < data.length) {
+dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+}
+var mask = QRUtil.getMask(maskPattern, row, col - c);
+if (mask) {
+dark = !dark;
+}
+this.modules[row][col - c] = dark;
+bitIndex--;
+if (bitIndex === -1) {
+byteIndex++;
+bitIndex = 7;
+}
+}
+}
+row += inc;
+if (row < 0 || this.moduleCount <= row) {
+row -= inc;
+inc = -inc;
+break;
+}
+}
+}
+}
+};
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+var buffer = new QRBitBuffer();
+for (var i = 0; i < dataList.length; i++) {
+var data = dataList[i];
+buffer.put(data.mode, 4);
+buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+data.write(buffer);
+}
+var totalDataCount = 0;
+for (var x = 0; x < rsBlocks.length; x++) {
+totalDataCount += rsBlocks[x].dataCount;
+}
+if (buffer.getLengthInBits() > totalDataCount * 8) {
+throw new Error("code length overflow. (" +
+buffer.getLengthInBits() +
+">" +
+totalDataCount * 8 +
+")");
+}
+if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+buffer.put(0, 4);
+}
+while (buffer.getLengthInBits() % 8 !== 0) {
+buffer.putBit(false);
+}
+while (true) {
+if (buffer.getLengthInBits() >= totalDataCount * 8) {
+break;
+}
+buffer.put(QRCode.PAD0, 8);
+if (buffer.getLengthInBits() >= totalDataCount * 8) {
+break;
+}
+buffer.put(QRCode.PAD1, 8);
+}
+return QRCode.createBytes(buffer, rsBlocks);
+};
+QRCode.createBytes = function(buffer, rsBlocks) {
+var offset = 0;
+var maxDcCount = 0;
+var maxEcCount = 0;
+var dcdata = new Array(rsBlocks.length);
+var ecdata = new Array(rsBlocks.length);
+for (var r = 0; r < rsBlocks.length; r++) {
+var dcCount = rsBlocks[r].dataCount;
+var ecCount = rsBlocks[r].totalCount - dcCount;
+maxDcCount = Math.max(maxDcCount, dcCount);
+maxEcCount = Math.max(maxEcCount, ecCount);
+dcdata[r] = new Array(dcCount);
+for (var i = 0; i < dcdata[r].length; i++) {
+dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+}
+offset += dcCount;
+var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+var modPoly = rawPoly.mod(rsPoly);
+ecdata[r] = new Array(rsPoly.getLength() - 1);
+for (var x = 0; x < ecdata[r].length; x++) {
+var modIndex = x + modPoly.getLength() - ecdata[r].length;
+ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+}
+}
+var totalCodeCount = 0;
+for (var y = 0; y < rsBlocks.length; y++) {
+totalCodeCount += rsBlocks[y].totalCount;
+}
+var data = new Array(totalCodeCount);
+var index = 0;
+for (var z = 0; z < maxDcCount; z++) {
+for (var s = 0; s < rsBlocks.length; s++) {
+if (z < dcdata[s].length) {
+data[index++] = dcdata[s][z];
+}
+}
+}
+for (var xx = 0; xx < maxEcCount; xx++) {
+for (var t = 0; t < rsBlocks.length; t++) {
+if (xx < ecdata[t].length) {
+data[index++] = ecdata[t][xx];
+}
+}
+}
+return data;
+};
+M['index'] = QRCode;
+})();
+return {QRCode:M['index'],ECL:M['QRErrorCorrectLevel']};})();
+ return QRLIB;})();
+function qrMatrix(text){
+  var bytes=new TextEncoder().encode(text),s='';
+  for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);
+  for(var v=1;v<=40;v++){try{var q=new QRB.QRCode(v,QRB.ECL.M);q.addData(s);q.make();return q;}catch(e){}}
+  throw new Error('Texto demasiado largo para QR');
+}
+function drawQR(cv,text){
+  var q=qrMatrix(text),n=q.getModuleCount(),qz=4,tot=n+2*qz,px=Math.floor(cv.width/tot)||1,size=px*tot;
+  var ctx=cv.getContext('2d');cv.width=cv.height=size;ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);ctx.fillStyle='#000';
+  for(var r=0;r<n;r++)for(var c=0;c<n;c++)if(q.isDark(r,c))ctx.fillRect((c+qz)*px,(r+qz)*px,px,px);
+  return q;
+}
+var LSK='cch-programas-url-base';
+function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function fileName(){var p=location.pathname.split('/');return decodeURIComponent(p[p.length-1]||'');}
+function qrTarget(){
+  var withHash=document.getElementById('qrHash').checked,h=withHash?location.hash:'';
+  if(location.protocol==='file:'){
+    var b=lsGet(LSK);if(!b)return '';
+    if(!/\/$/.test(b))b+='/';
+    return b+encodeURI(fileName())+h;
+  }
+  return location.href.split('#')[0]+h;
+}
+function renderQR(){
+  var cv=document.getElementById('qrCanvas'),u=qrTarget(),local=location.protocol==='file:';
+  document.getElementById('qrLocal').classList.toggle('d-none',!local);
+  document.getElementById('qrHashWrap').classList.toggle('d-none',!location.hash);
+  var box=cv.parentNode;
+  if(!u){box.style.opacity=.25;cv.width=cv.height=496;var x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,496,496);
+    document.getElementById('qrUrl').textContent='Ingresa la URL pública para generar el código.';return;}
+  box.style.opacity=1;cv.width=cv.height=496;drawQR(cv,u);cv.dataset.url=u;
+  document.getElementById('qrUrl').textContent=u;
+}
+function initQR(){
+  var m=document.getElementById('qrModal');if(!m)return;
+  m.addEventListener('show.bs.modal',function(){var b=document.getElementById('qrBase');b.value=lsGet(LSK);renderQR();});
+  document.getElementById('qrHash').addEventListener('change',renderQR);
+  document.getElementById('qrApply').addEventListener('click',function(){var v=document.getElementById('qrBase').value.trim();
+    if(v&&!/^https?:\/\//i.test(v))v='https://'+v;lsSet(LSK,v);document.getElementById('qrBase').value=v;renderQR();});
+  document.getElementById('qrBase').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('qrApply').click();}});
+  document.getElementById('qrPng').addEventListener('click',function(){var cv=document.getElementById('qrCanvas');if(!cv.dataset.url)return;
+    var a=document.createElement('a');a.download='QR_'+(fileName().replace(/\.html?$/i,'')||'pagina')+'.png';a.href=cv.toDataURL('image/png');document.body.appendChild(a);a.click();a.remove();});
+  document.getElementById('qrCopy').addEventListener('click',function(){var cv=document.getElementById('qrCanvas'),u=cv.dataset.url||location.href,btn=this;
+    var done=function(){var t=btn.textContent;btn.textContent='¡Copiado!';setTimeout(function(){btn.textContent=t;},1400);};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).then(done,function(){prompt('Copia el enlace:',u);});else prompt('Copia el enlace:',u);});
+}
+/* --- PDF del formulario: documento limpio con todas las pestañas, impreso desde un iframe --- */
+window.cchFormPDF=function(btn){
+  var modal=btn.closest('.modal'),body=modal.querySelector('.modal-body');if(!body)return;
+  var clone=body.cloneNode(true),tabs=[];
+  clone.querySelectorAll('.nav-pills .nav-link').forEach(function(b){tabs.push([b.getAttribute('data-bs-target'),b.textContent.trim()]);});
+  var pills=clone.querySelector('.nav-pills');if(pills)pills.remove();
+  tabs.forEach(function(t){var p=clone.querySelector(t[0]);if(!p)return;var h=document.createElement('h3');h.className='pdf-sec';h.textContent=t[1];p.insertBefore(h,p.firstChild);});
+  clone.querySelectorAll('.tab-pane').forEach(function(p){p.classList.add('show','active');p.style.display='block';p.style.opacity=1;});
+  var mt=modal.querySelector('.modal-title'),title=(mt?mt.textContent.trim():'Formulario');
+  var prog=document.querySelector('.pb-link.on .l'),progName=prog?prog.textContent:document.title;
+  var sub=modal.getAttribute('data-course')||'';
+  var head='';document.querySelectorAll('link[rel="stylesheet"],style').forEach(function(el){if(el.id!=='pbar-css')head+=el.outerHTML;});
+  var css='<style>html,body{background:#fff!important;color:#111}body{padding:0;margin:0;font-size:12px}'+
+   '.pdf-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:10px}'+
+   '.pdf-head h1{font-size:20px;margin:0}.pdf-head .m{font-size:11px;color:#555;text-align:right}'+
+   '.pdf-sec{font-size:15px;margin:14px 0 6px;padding:4px 8px;border-left:4px solid var(--uc,#333);background:#f3f4f6;break-after:avoid}'+
+   '.tab-pane{break-inside:auto}.fgrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}'+
+   '.fcard{break-inside:avoid;box-shadow:none!important;background:#fff!important;border:1px solid #ccc!important;padding:6px 8px!important}'+
+   '.fcard .katex-display{margin:.3em 0!important}h5{break-after:avoid;font-size:13px;margin:10px 0 4px}'+
+   'pre.code{white-space:pre-wrap;font-size:10.5px;break-inside:avoid}table{break-inside:auto}tr{break-inside:avoid}'+
+   '.row{display:flex;flex-wrap:wrap}.col-md-6{width:50%}.col-md-5{width:41.6%}.col-md-7{width:58.3%}'+
+   '.katex-display{overflow:visible!important}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+   '@page{size:letter;margin:12mm}</style>';
+  var fecha=new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+  var docTitle=(sub?title:title+' - '+progName).replace(/[\\/:*?"<>|]/g,'');
+  var html='<!doctype html><html lang="es" data-bs-theme="light"><head><meta charset="utf-8"><title>'+docTitle+'</title>'+head+css+'</head><body>'+
+   '<div class="pdf-head"><div><h1>'+title+'</h1><div>Programa de '+progName+'</div></div><div class="m">CCH · UNAM<br>'+fecha+'</div></div>'+clone.innerHTML+'</body></html>';
+  var old=document.getElementById('pdfFrame');if(old)old.remove();
+  var f=document.createElement('iframe');f.id='pdfFrame';f.setAttribute('aria-hidden','true');f.title='PDF';
+  f.style.cssText='position:fixed;right:0;bottom:0;width:816px;height:1056px;border:0;opacity:0;pointer-events:none;z-index:-1';
+  document.body.appendChild(f);
+  var d=f.contentWindow.document;d.open();d.write(html);d.close();
+  var lbl=btn.innerHTML;btn.disabled=true;btn.innerHTML='Preparando…';
+  var fired=false,go=function(){if(fired)return;fired=true;
+    var w=f.contentWindow,fin=function(){btn.disabled=false;btn.innerHTML=lbl;};
+    (w.document.fonts&&w.document.fonts.ready?w.document.fonts.ready:Promise.resolve()).then(function(){
+      setTimeout(function(){fin();try{w.focus();w.print();}catch(e){window.print();}},250);});};
+  f.onload=go;setTimeout(go,2500);
+};
+function initPbar(){
+  var on=document.querySelector('.pb-links .pb-link.on');
+  if(on){var L=on.parentNode;L.scrollLeft=on.offsetLeft-(L.clientWidth-on.offsetWidth)/2;}
+  document.addEventListener('keydown',function(e){
+    if(!e.altKey||e.ctrlKey||e.metaKey)return;var t=e.target;if(t&&/input|textarea|select/i.test(t.tagName))return;
+    var a=e.key==='ArrowLeft'?document.querySelector('.pb-prev'):e.key==='ArrowRight'?document.querySelector('.pb-next'):null;
+    if(a){e.preventDefault();location.href=a.getAttribute('href');}});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){initQR();initPbar();});else{initQR();initPbar();}
+})();
 </script>
 </body>
 </html>
