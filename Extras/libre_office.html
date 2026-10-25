@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Curso LibreOffice para docentes</title>
+<meta name="description" content="Sitio interactivo del curso intersemestral: uso de LibreOffice para elaborar materiales didácticos y recursos educativos digitales.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+/* ===== Paleta de LibreOffice ===== */
+:root{
+  --lo-green:#18A303;        /* verde institucional / Calc */
+  --lo-green-dark:#0D6E02; --lo-green-fill:#0F7A02; --code:#9c1a57;
+  --lo-green-soft:#CCF4C6;
+  --lo-blue:#0369AE;         /* Writer / hipervínculos */
+  --lo-blue-soft:#98D4F5;
+  --lo-sky:#0E9CEE;
+  --lo-gold:#C29600;         /* Draw */
+  --lo-gold-soft:#F7D568;
+  --lo-rust:#9E3C03;         /* Impress */
+  --lo-rust-soft:#F8E9DF;
+  --lo-gray:#F2F2F2;
+  --bs-primary:#18A303; --bs-primary-rgb:24,163,3;
+  --bs-link-color:#0369AE; --bs-link-hover-color:#02508a;
+  --bs-body-font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --card-bg:#fff; --soft-bg:#F2F2F2; --page-bg:#E3E7EA; --page-bg-alt:#ECEFF1; --ink:#1b1f23; --muted:#4a555f;
+  --app:var(--lo-green); --app-soft:var(--lo-green-soft); --app-dark:var(--lo-green-dark);
+  --app-fill:var(--lo-green-fill); --app-on:#fff; --app-ink:#0B5F02;
+  --grad-a:#0369AE; --grad-b:#0D6E02;
+}
+[data-bs-theme="dark"]{
+  --card-bg:#1d2329; --soft-bg:#2a323a; --page-bg:#13181c; --page-bg-alt:#181e23; --ink:#e8edf1; --muted:#a9b6c1;
+  --lo-green-soft:#12320c; --lo-blue-soft:#0d3350; --lo-gold-soft:#3a2f08; --lo-rust-soft:#3a1d0d;
+  --lo-green-dark:#4fd23a; --code:#ff8fc0; --grad-a:#5cb8f5; --grad-b:#4fd23a; --bs-link-color:#5cb8f5; --bs-link-hover-color:#8fd0fa;
+}
+.app-writer{--app:var(--lo-blue);--app-soft:var(--lo-blue-soft);--app-dark:var(--lo-blue);--app-fill:#0369AE;--app-on:#fff;--app-ink:#02467A}
+.app-calc{--app:var(--lo-green);--app-soft:var(--lo-green-soft);--app-dark:var(--lo-green-dark);--app-fill:#0F7A02;--app-on:#fff;--app-ink:#0B5F02}
+.app-impress{--app:var(--lo-rust);--app-soft:var(--lo-rust-soft);--app-dark:var(--lo-rust);--app-fill:#9E3C03;--app-on:#fff;--app-ink:#7A2E02}
+.app-draw{--app:var(--lo-gold);--app-soft:var(--lo-gold-soft);--app-dark:#8a6a00;--app-fill:#C29600;--app-on:#1b1f23;--app-ink:#5C4500}
+.app-general{--app:var(--lo-green);--app-soft:var(--lo-green-soft);--app-dark:var(--lo-green-dark);--app-fill:#0F7A02;--app-on:#fff;--app-ink:#0B5F02}
+[data-bs-theme="dark"] .app-writer{--app-ink:#8fd0fa}
+[data-bs-theme="dark"] .app-calc,[data-bs-theme="dark"] .app-general{--app-ink:#7be46a}
+[data-bs-theme="dark"] .app-impress{--app-ink:#f0a070}
+[data-bs-theme="dark"] .app-draw{--app-ink:#f0cf5a}
+[data-bs-theme="dark"] .app-impress{--app-dark:#f0a070}
+[data-bs-theme="dark"] .app-draw{--app-dark:#f0cf5a}
+[data-bs-theme="dark"] .app-writer{--app-dark:#5cb8f5}
+
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{background:var(--page-bg);color:var(--ink)}
+.btn-lo{--bs-btn-bg:var(--lo-green-fill);--bs-btn-border-color:var(--lo-green-fill);--bs-btn-color:#fff;
+  --bs-btn-hover-bg:#0B5F02;--bs-btn-hover-border-color:#0B5F02;--bs-btn-hover-color:#fff;
+  --bs-btn-active-bg:#0b5f02;--bs-btn-active-border-color:#0b5f02;font-weight:600}
+[data-bs-theme="dark"] .btn-lo{--bs-btn-hover-color:#06240a;--bs-btn-color:#06240a;--bs-btn-bg:#4fd23a;--bs-btn-border-color:#4fd23a;--bs-btn-hover-bg:#7be46a}
+.text-lo{color:var(--lo-green-dark)}
+.text-secondary{color:var(--muted)!important}
+.btn-outline-secondary{--bs-btn-color:var(--muted);--bs-btn-border-color:var(--muted);--bs-btn-hover-bg:var(--muted);--bs-btn-hover-border-color:var(--muted);--bs-btn-hover-color:var(--page-bg);--bs-btn-active-bg:var(--muted);--bs-btn-active-color:var(--page-bg)}
+.btn-outline-success{--bs-btn-color:var(--lo-green-dark);--bs-btn-border-color:var(--lo-green-dark);--bs-btn-hover-bg:var(--lo-green-fill);--bs-btn-hover-border-color:var(--lo-green-fill);--bs-btn-hover-color:#fff;--bs-btn-active-bg:var(--lo-green-fill);--bs-btn-active-color:#fff}
+code{color:var(--code)}
+.card,.modal-content,.popover{background:var(--card-bg)}
+.card{border:1px solid rgba(128,128,128,.22);border-radius:16px}
+
+/* barra de progreso de lectura */
+#readbar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--lo-blue),var(--lo-green),var(--lo-gold),var(--lo-rust));z-index:2000;transition:width .1s}
+
+/* navbar */
+.navbar{backdrop-filter:blur(10px);background:color-mix(in srgb,var(--card-bg) 88%,transparent);border-bottom:1px solid rgba(128,128,128,.2)}
+.navbar-brand{font-weight:800;letter-spacing:-.02em}
+.brand-dot{display:inline-block;width:14px;height:14px;border-radius:4px;background:var(--lo-green);margin-right:8px;box-shadow:12px 0 0 -3px var(--lo-blue)}
+.nav-link{font-weight:600;font-size:.92rem;border-radius:8px}
+.navbar .nav-link.active{color:var(--lo-green-dark)!important;background:var(--lo-green-soft)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:7.5rem 0 5.5rem;
+  background:radial-gradient(1200px 500px at 85% -10%,var(--lo-green-soft),transparent 60%),
+             radial-gradient(900px 500px at -10% 110%,var(--lo-blue-soft),transparent 60%),var(--page-bg-alt)}
+.hero h1{font-weight:800;letter-spacing:-.03em;font-size:clamp(2rem,4.6vw,3.5rem);line-height:1.08}
+.hero h1 span{background:linear-gradient(90deg,var(--grad-a),var(--grad-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.badge-soft{background:var(--lo-green-soft);color:var(--lo-green-dark);font-weight:700;border-radius:999px;padding:.45rem .9rem}
+.apps-orbit{position:relative;height:340px;max-width:420px;margin:auto}
+.app-tile{position:absolute;width:132px;height:132px;border-radius:28px;display:grid;place-items:center;text-align:center;
+  font-weight:800;color:#fff;box-shadow:0 18px 40px -14px rgba(0,0,0,.35);cursor:pointer;border:0;
+  animation:float 6s ease-in-out infinite;transition:transform .25s}
+.app-tile i{font-size:2.4rem;display:block;margin-bottom:2px}
+.app-tile small{display:block;font-weight:600;opacity:.92}
+.app-tile:hover{transform:scale(1.08) rotate(-3deg)}
+.t-writer{background:var(--lo-blue);left:0;top:10px}
+.t-calc{background:var(--lo-green-fill);right:0;top:0;animation-delay:-1.5s}
+.t-impress{background:var(--lo-rust);left:20px;bottom:0;animation-delay:-3s}
+.t-draw{background:var(--lo-gold);color:#1b1f23;right:14px;bottom:14px;animation-delay:-4.5s}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -14px}}
+
+/* secciones */
+section{padding:4.5rem 0}
+.sec-title{font-weight:800;letter-spacing:-.02em}
+.sec-kicker{color:var(--lo-green-dark);font-weight:700;text-transform:uppercase;font-size:.8rem;letter-spacing:.12em}
+.sec-bar{width:64px;height:5px;border-radius:5px;background:linear-gradient(90deg,var(--lo-green),var(--lo-blue));margin:.6rem 0 1.4rem}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+.stat{text-align:center;padding:1.4rem 1rem}
+.stat b{display:block;font-size:2.6rem;font-weight:800;color:var(--lo-green-dark);line-height:1}
+.stat span{color:var(--muted);font-weight:600}
+.info-card{height:100%;padding:1.3rem}
+.info-card i{font-size:1.6rem;color:var(--lo-green)}
+.info-card h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:.5rem 0 .2rem}
+.info-card p{margin:0;font-weight:600}
+.term{border-bottom:2px dotted var(--lo-sky);cursor:help;color:inherit;font-weight:600}
+.check-list{list-style:none;padding:0;margin:0}
+.check-list li{padding:.45rem 0 .45rem 2rem;position:relative}
+.check-list li::before{content:"\F26A";font-family:"bootstrap-icons";position:absolute;left:0;color:var(--lo-green)}
+
+/* ruta */
+.session-pills .nav-link{border:1px solid rgba(128,128,128,.25);margin:0 .4rem .5rem 0;color:var(--ink);text-align:left}
+.session-pills .nav-link.active{color:var(--app-on)!important;background:var(--app-fill)!important;border-color:var(--app-fill)}
+.session-pills .nav-link small{display:block;font-weight:500;opacity:.85}
+.session-panel{border-top:6px solid var(--app);animation:fadeUp .45s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.app-chip{background:var(--app-soft);color:var(--app-ink);font-weight:700;border-radius:999px;padding:.3rem .8rem;font-size:.85rem;display:inline-block}
+.act-item{display:flex;gap:.8rem;padding:.75rem .9rem;border-radius:12px;background:var(--soft-bg);margin-bottom:.55rem;transition:transform .2s,box-shadow .2s}
+.act-item:hover{transform:translateX(5px);box-shadow:-4px 0 0 var(--app)}
+.act-num{flex:0 0 32px;height:32px;border-radius:50%;background:var(--app-fill);color:var(--app-on);display:grid;place-items:center;font-weight:800;font-size:.9rem}
+.evidence{background:var(--app-soft);border-radius:14px;padding:1rem 1.2rem;color:var(--ink)}
+.evidence .bi-patch-check{color:var(--app-ink)}
+
+/* conceptos */
+.filter-chip{border:1px solid rgba(128,128,128,.3);background:var(--card-bg);color:var(--ink);border-radius:999px;padding:.4rem 1rem;font-weight:600;margin:0 .3rem .5rem 0;transition:.2s}
+.filter-chip:hover{transform:translateY(-2px)}
+.filter-chip.active{background:var(--app-fill);border-color:var(--app-fill);color:var(--app-on)}
+.concept{height:100%;cursor:pointer;border-left:6px solid var(--app);transition:transform .25s,box-shadow .25s;text-align:left;width:100%;padding:1.1rem;background:var(--card-bg);color:var(--ink)}
+.concept:hover{transform:translateY(-6px);box-shadow:0 16px 30px -16px rgba(0,0,0,.35)}
+.concept .tag{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--app-ink)}
+.concept h3{font-size:1.1rem;font-weight:800;margin:.25rem 0 .4rem}
+.concept p{font-size:.92rem;color:var(--muted);margin:0}
+.concept .more{display:inline-block;margin-top:.6rem;font-size:.82rem;font-weight:700;color:var(--bs-link-color)}
+.cwrap.hide{display:none}
+
+/* atajos */
+kbd.key{background:linear-gradient(#fff,#e9edf0);color:#1b1f23;border:1px solid #aab4bd;border-bottom-width:3px;border-radius:7px;padding:.12rem .5rem;font-weight:700;font-size:.82rem;font-family:ui-monospace,Consolas,monospace;display:inline-block;margin:0 1px}
+[data-bs-theme="dark"] kbd.key{background:linear-gradient(#3a444e,#2a323a);color:#f1f5f8;border-color:#55616c}
+.sc-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.65rem .9rem;border-radius:12px;background:var(--card-bg);border:1px solid rgba(128,128,128,.2);margin-bottom:.5rem;cursor:help;transition:transform .2s,border-color .2s}
+.sc-row:hover{transform:scale(1.015);border-color:var(--app)}
+.sc-row.hide{display:none}
+.sc-keys{white-space:nowrap}
+.tab-app .nav-link{color:var(--ink);border:1px solid rgba(128,128,128,.25);margin:0 .4rem .5rem 0;font-weight:700}
+.tab-app .nav-link.active{background:var(--app-fill);color:var(--app-on)!important;border-color:var(--app-fill)}
+
+/* laboratorio calc */
+.sheet{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;background:var(--card-bg)}
+.sheet th,.sheet td{border:1px solid rgba(128,128,128,.35);padding:.35rem .5rem;text-align:center;min-width:70px}
+.sheet thead th,.sheet .rn{background:var(--lo-green-soft);color:var(--lo-green-dark);font-weight:700}
+.sheet input{width:100%;border:0;background:transparent;text-align:center;color:var(--ink);padding:.1rem}
+.sheet input:focus{outline:2px solid var(--lo-green);border-radius:4px;background:var(--card-bg)}
+.sheet .calc{background:rgba(24,163,3,.08);font-weight:700}
+.ok{background:var(--lo-green-soft)!important;color:var(--lo-green-dark);font-weight:800}
+.bad{background:#fbd8d4!important;color:#a1170b;font-weight:800}
+[data-bs-theme="dark"] .bad{background:#4a1612!important;color:#ff9a90}
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding:.5rem 0;border-bottom:2px solid rgba(128,128,128,.4)}
+.bar{flex:1;background:var(--lo-blue);border-radius:8px 8px 0 0;position:relative;min-height:4px;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+.bar b{position:absolute;top:-22px;left:0;right:0;text-align:center;font-size:.78rem;color:var(--ink)}
+.bar-label{flex:1;text-align:center;font-size:.78rem;color:var(--muted)}
+
+/* retos */
+.quiz-opt{display:block;width:100%;text-align:left;background:var(--card-bg);color:var(--ink);border:2px solid rgba(128,128,128,.3);border-radius:12px;padding:.7rem 1rem;margin-bottom:.55rem;font-weight:600;transition:.2s}
+.quiz-opt:hover:not(:disabled){border-color:var(--lo-blue);transform:translateX(4px)}
+.quiz-opt.right{border-color:var(--lo-green);background:var(--lo-green-soft);color:var(--ink)}
+.quiz-opt.wrong{border-color:#d4372a;background:#fbd8d4;color:#5c0d06}
+[data-bs-theme="dark"] .quiz-opt.wrong{border-color:#ff6b5e;background:#4a1612;color:#ffd5d0}
+.text-danger{color:#b02a1c!important}
+[data-bs-theme="dark"] .text-danger{color:#ff8a80!important}
+.progress{height:.8rem;border-radius:999px}
+.progress-bar{background:var(--lo-green)}
+
+/* ejercicios */
+.ex-card{height:100%;display:flex;flex-direction:column;padding:1.2rem;border-top:6px solid var(--app);transition:transform .25s,box-shadow .25s}
+.ex-card:hover{transform:translateY(-6px);box-shadow:0 16px 30px -16px rgba(0,0,0,.35)}
+.ex-card .mid{flex:1}
+.ex-done{color:var(--lo-green-dark);font-weight:700}
+.step{display:flex;gap:.7rem;align-items:flex-start;padding:.6rem .8rem;border-radius:10px;margin-bottom:.4rem;background:var(--soft-bg);cursor:pointer}
+.step input{margin-top:.28rem;accent-color:var(--lo-green);width:1.1rem;height:1.1rem;flex:0 0 auto}
+.step.done span{text-decoration:line-through;color:var(--muted)}
+.modal-header{border-bottom:6px solid var(--app)}
+.modal-title{font-weight:800}
+.theory,.practice{border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem}
+.theory{background:var(--lo-blue-soft);color:#04243b}
+.practice{background:var(--lo-green-soft);color:#0a3b03}
+[data-bs-theme="dark"] .theory{color:#cfe9fb}[data-bs-theme="dark"] .practice{color:#d4f3cf}
+.theory h4,.practice h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+
+/* tablas de evaluación */
+.table{--bs-table-bg:transparent}
+.table thead th{background:var(--lo-green-fill);color:#fff;border:0}
+[data-bs-theme="dark"] .table thead th{background:#1f6b12}
+.ref li{margin-bottom:.8rem;padding-left:1.5rem;text-indent:-1.5rem}
+footer{background:#13261a;color:#d7e6da;padding:3rem 0}
+[data-bs-theme="dark"] footer{background:#0b130e}
+footer a{color:#8fd0fa}
+.to-top{position:fixed;right:18px;bottom:18px;z-index:1500;border-radius:50%;width:46px;height:46px;display:grid;place-items:center;opacity:0;pointer-events:none;transition:.3s}
+.to-top.show{opacity:1;pointer-events:auto}
+.popover{--bs-popover-max-width:300px;border-radius:12px}
+.popover-header{font-weight:800}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+@media (max-width:575px){.apps-orbit{height:300px}.app-tile{width:110px;height:110px}.sc-row{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div id="readbar"></div>
+
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#inicio"><span class="brand-dot"></span>Curso LibreOffice</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Menú"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1" id="navlinks">
+        <li class="nav-item"><a class="nav-link" href="#curso">Curso</a></li>
+        <li class="nav-item"><a class="nav-link" href="#ruta">Sesiones</a></li>
+        <li class="nav-item"><a class="nav-link" href="#conceptos">Conceptos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#atajos">Atajos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#laboratorio">Laboratorio</a></li>
+        <li class="nav-item"><a class="nav-link" href="#retos">Retos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#ejercicios">Ejercicios</a></li>
+        <li class="nav-item"><a class="nav-link" href="#evaluacion">Evaluación</a></li>
+        <li class="nav-item"><a class="nav-link" href="#recursos">Recursos</a></li>
+        <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-outline-secondary" id="themeBtn" aria-label="Cambiar tema"><i class="bi bi-moon-stars"></i></button></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="badge-soft mb-3 d-inline-block"><i class="bi bi-calendar-event me-1"></i>Curso intersemestral · En línea</span>
+        <h1 class="mb-3">Uso de <span>LibreOffice</span> para la elaboración de materiales didácticos y recursos educativos digitales</h1>
+        <p class="lead mb-4">Formación y actualización para docentes de la Escuela Nacional Colegio de Ciencias y Humanidades. Aprende
+          <span class="term" data-bs-toggle="popover" data-bs-title="Suite ofimática" data-bs-content="Conjunto de aplicaciones de oficina que trabajan juntas: texto, hojas de cálculo, presentaciones y dibujo.">suite ofimática</span>
+          de
+          <span class="term" data-bs-toggle="popover" data-bs-title="Software libre" data-bs-content="LibreOffice es una suite de productividad de oficina libre y de código abierto, desarrollada por The Document Foundation.">software libre</span>
+          para crear tus propios materiales.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="#ruta" class="btn btn-lo btn-lg px-4"><i class="bi bi-signpost-split me-2"></i>Ver las sesiones</a>
+          <a href="#atajos" class="btn btn-outline-secondary btn-lg px-4"><i class="bi bi-keyboard me-2"></i>Atajos de teclado</a>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="apps-orbit" aria-label="Aplicaciones de LibreOffice">
+          <button class="app-tile t-writer" data-open-concept="writer"><div><i class="bi bi-file-earmark-text"></i>Writer<small>Texto</small></div></button>
+          <button class="app-tile t-calc" data-open-concept="calc"><div><i class="bi bi-table"></i>Calc<small>Hojas de cálculo</small></div></button>
+          <button class="app-tile t-impress" data-open-concept="impress"><div><i class="bi bi-easel"></i>Impress<small>Presentaciones</small></div></button>
+          <button class="app-tile t-draw" data-open-concept="draw"><div><i class="bi bi-bezier2"></i>Draw<small>Dibujo</small></div></button>
+        </div>
+        <p class="text-center text-secondary small mt-2 mb-0">Toca una aplicación para conocerla</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- Cifras -->
+<section class="py-4">
+  <div class="container">
+    <div class="row g-3 text-center">
+      <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="5">0</b><span>Sesiones</span></div></div>
+      <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="4">0</b><span>Aplicaciones de LibreOffice</span></div></div>
+      <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="5">0</b><span>Evidencias de aprendizaje</span></div></div>
+      <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="1">0</b><span>Portafolio digital final</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Curso -->
+<section id="curso">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">El curso</div><h2 class="sec-title">Datos generales</h2><div class="sec-bar"></div></div>
+    <div class="row g-3 mb-5">
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-mortarboard"></i><h3>Tipo de actividad</h3><p>Formación y actualización docente</p></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-camera-video"></i><h3>Modalidad y plataforma</h3><p>En línea, a través de Microsoft Teams</p></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-people"></i><h3>Dirigido a</h3><p>Profesores de la ENCCH de todas las áreas</p></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-laptop"></i><h3>Requisitos</h3><p>Computadora, conexión a internet y conocimientos básicos de manejo de archivos</p></div></div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6 reveal">
+        <div class="card h-100 p-4">
+          <h3 class="h4 fw-bold"><i class="bi bi-bullseye text-lo me-2"></i>Objetivo general</h3>
+          <p>Desarrollar y fortalecer las competencias digitales del profesorado de la ENCCH mediante el uso de las herramientas principales con las que cuenta LibreOffice para elaborar documentos académicos, hojas de cálculo, presentaciones electrónicas y recursos didácticos que contribuyan a mejorar la planeación, el desarrollo y la evaluación de los procesos de enseñanza y aprendizaje.</p>
+          <h4 class="h6 fw-bold mt-3">Objetivos específicos</h4>
+          <ul class="check-list">
+            <li>Identificar las características principales de LibreOffice y sus aplicaciones.</li>
+            <li>Elaborar documentos académicos y materiales de apoyo mediante Writer.</li>
+            <li>Organizar información, realizar operaciones y generar gráficas mediante Calc.</li>
+            <li>Diseñar presentaciones electrónicas didácticas con Impress.</li>
+            <li>Elaborar recursos visuales con Draw.</li>
+            <li>Crear un portafolio digital de recursos educativos y compartirlo para su revisión.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal">
+        <div class="card h-100 p-4">
+          <h3 class="h4 fw-bold"><i class="bi bi-stars text-lo me-2"></i>Competencias que desarrollarás</h3>
+          <p class="text-secondary">Haz clic en una competencia para ver cómo se trabaja en el curso.</p>
+          <div id="compList" class="d-grid gap-2"></div>
+          <div class="mt-4 p-3 rounded-3" style="background:var(--lo-green-soft)">
+            <b><i class="bi bi-trophy me-1"></i>Producto final:</b> portafolio digital de materiales didácticos elaborados con LibreOffice.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-4 mt-4 reveal">
+      <h3 class="h4 fw-bold">¿Por qué este curso?</h3>
+      <p class="mb-2">Las herramientas digitales son un apoyo importante para fortalecer la práctica docente, organizar la información y diseñar materiales didácticos que favorezcan el aprendizaje del estudiantado. Con LibreOffice podrás preparar actividades, instrumentos de evaluación, reportes, presentaciones y otros recursos de apoyo a la enseñanza.</p>
+      <p class="mb-0">La modalidad en línea combina explicación y demostración con ejercicios individuales, colaboración entre colegas y elaboración de productos digitales, para promover el aprendizaje autónomo y el intercambio de experiencias.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Ruta -->
+<section id="ruta" style="background:var(--page-bg-alt)">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Programa</div><h2 class="sec-title">Ruta de las cinco sesiones</h2><div class="sec-bar"></div>
+    <p class="text-secondary">Cada sesión integra explicación de conceptos, demostración de herramientas, práctica individual y elaboración de evidencias relacionadas con la actividad docente.</p></div>
+    <div class="nav session-pills mb-3 reveal" id="sessionPills" role="tablist"></div>
+    <div id="sessionPanel"></div>
+  </div>
+</section>
+
+<!-- Conceptos -->
+<section id="conceptos">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Glosario interactivo</div><h2 class="sec-title">Conceptos clave</h2><div class="sec-bar"></div>
+    <p class="text-secondary">Filtra por aplicación y abre cada tarjeta para ver la explicación y una práctica sugerida.</p></div>
+    <div class="mb-3 reveal" id="conceptFilters"></div>
+    <div class="row g-3" id="conceptGrid"></div>
+  </div>
+</section>
+
+<!-- Atajos -->
+<section id="atajos" style="background:var(--page-bg-alt)">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Trabaja más rápido</div><h2 class="sec-title">Atajos de teclado</h2><div class="sec-bar"></div>
+    <p class="text-secondary mb-2">Pasa el cursor (o toca) sobre un atajo para ver su descripción.</p>
+    <div class="alert alert-info py-2 small"><i class="bi bi-info-circle me-1"></i>Se muestran los atajos para Windows y Linux. Algunos atajos pueden estar asignados al sistema operativo y no funcionar en LibreOffice, y las letras de algunos atajos de formato pueden variar según el idioma de la interfaz.</div></div>
+    <div class="row g-3 align-items-center mb-3 reveal">
+      <div class="col-lg-7"><div class="nav tab-app" id="scTabs"></div></div>
+      <div class="col-lg-5"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input type="search" class="form-control" id="scSearch" placeholder="Buscar un atajo o una función…" aria-label="Buscar atajo"></div></div>
+    </div>
+    <div class="row g-2" id="scList"></div>
+    <p class="text-secondary small mt-2" id="scEmpty" hidden>No se encontraron atajos con esa búsqueda.</p>
+  </div>
+</section>
+
+<!-- Laboratorio -->
+<section id="laboratorio">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Práctica guiada · Calc</div><h2 class="sec-title">Laboratorio: seguimiento académico</h2><div class="sec-bar"></div>
+    <p class="text-secondary">Simula la tabla de la Sesión 2: captura calificaciones <b>ficticias</b> y observa cómo se calculan las funciones <code>SUMA</code> y <code>PROMEDIO</code>. Tú defines el criterio de aprobación.</p></div>
+    <div class="row g-4">
+      <div class="col-lg-8 reveal">
+        <div class="card p-3">
+          <div class="table-responsive">
+            <table class="sheet" id="sheet">
+              <thead><tr><th></th><th>A · Alumno</th><th>B · Cal. 1</th><th>C · Cal. 2</th><th>D · Cal. 3</th><th>E · SUMA</th><th>F · PROMEDIO</th><th>G · Resultado</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="row g-2 mt-3 align-items-end">
+            <div class="col-sm-5"><label class="form-label small fw-bold mb-1" for="thr">Criterio de aprobación (promedio mínimo)</label>
+              <input type="number" class="form-control" id="thr" min="0" max="10" step="0.1" placeholder="Define tu criterio"></div>
+            <div class="col-sm-7 d-flex flex-wrap gap-2">
+              <button class="btn btn-lo" id="fillDemo"><i class="bi bi-magic me-1"></i>Llenar con datos ficticios</button>
+              <button class="btn btn-outline-secondary" id="clearSheet"><i class="bi bi-eraser me-1"></i>Limpiar</button>
+            </div>
+          </div>
+          <p class="small text-secondary mt-3 mb-0">En LibreOffice Calc, una fórmula comienza con <code>=</code>. Aquí: <code>=SUMA(B2:D2)</code> y <code>=PROMEDIO(B2:D2)</code>. Los colores de la última columna simulan un formato condicional.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 reveal">
+        <div class="card p-3 h-100">
+          <h3 class="h6 fw-bold">Gráfica de promedios</h3>
+          <div class="bars" id="bars"></div>
+          <div class="d-flex" id="barLabels"></div>
+          <div class="mt-3 small" id="sheetStats"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Retos -->
+<section id="retos" style="background:var(--page-bg-alt)">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Autoevaluación</div><h2 class="sec-title">Retos rápidos</h2><div class="sec-bar"></div></div>
+    <div class="row g-4">
+      <div class="col-lg-6 reveal"><div class="card p-4 h-100" id="quizConcept"></div></div>
+      <div class="col-lg-6 reveal"><div class="card p-4 h-100" id="quizKeys"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Ejercicios -->
+<section id="ejercicios">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Teórico-prácticos</div><h2 class="sec-title">Ejercicios del curso</h2><div class="sec-bar"></div>
+    <p class="text-secondary">Abre cada ejercicio para leer la teoría, seguir la práctica y marcar tus pasos. Tu avance se guarda en este navegador.</p></div>
+    <div class="card p-3 mb-4 reveal">
+      <div class="d-flex justify-content-between fw-bold mb-1"><span>Avance total</span><span id="totalPct">0%</span></div>
+      <div class="progress" role="progressbar" aria-label="Avance total"><div class="progress-bar" id="totalBar" style="width:0%"></div></div>
+    </div>
+    <div class="row g-3" id="exGrid"></div>
+    <div class="text-end mt-3"><button class="btn btn-sm btn-outline-secondary" id="resetProgress"><i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar avance</button></div>
+  </div>
+</section>
+
+<!-- Evaluación -->
+<section id="evaluacion" style="background:var(--page-bg-alt)">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Evaluación</div><h2 class="sec-title">Criterios de evaluación</h2><div class="sec-bar"></div>
+    <p class="text-secondary">Se evalúan las evidencias de cada sesión y el portafolio digital que las integra, con revisión entre pares, retroalimentación del grupo, rúbrica, autoevaluación y coevaluación.</p></div>
+    <div class="table-responsive reveal">
+      <table class="table align-middle">
+        <thead><tr><th>Sesión</th><th>Evidencia</th><th>Aspectos a valorar</th></tr></thead>
+        <tbody id="evalBody"></tbody>
+      </table>
+    </div>
+    <div class="row g-3 mt-2" id="instruments"></div>
+  </div>
+</section>
+
+<!-- Recursos -->
+<section id="recursos">
+  <div class="container">
+    <div class="reveal"><div class="sec-kicker">Material de apoyo</div><h2 class="sec-title">Recursos y bibliografía</h2><div class="sec-bar"></div></div>
+    <div class="row g-4">
+      <div class="col-lg-5 reveal">
+        <div class="card p-4 h-100">
+          <h3 class="h5 fw-bold">Recursos materiales y digitales</h3>
+          <ul class="check-list mt-2">
+            <li><b>Microsoft Teams</b>: plataforma en la que se imparte el curso.</li>
+            <li><b>LibreOffice</b>: Writer, Calc, Impress y Draw.</li>
+            <li>Computadora con conexión a internet.</li>
+            <li>Imágenes y contenidos de tu asignatura.</li>
+            <li>Datos ficticios de calificaciones para la práctica de Calc.</li>
+            <li>Ejemplos de presentaciones para analizar.</li>
+            <li>Rúbrica, autoevaluación, cuestionario de salida y encuesta del curso.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-7 reveal">
+        <div class="card p-4 h-100">
+          <h3 class="h5 fw-bold">Bibliografía y fuentes</h3>
+          <ul class="list-unstyled ref mt-2 mb-0">
+            <li>LibreOffice Documentation Team. (2026). <i>Guía de iniciación 26.2</i>. The Document Foundation. <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/iniciacion/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
+            <li>LibreOffice Documentation Team. (2026). <i>Guía de Writer 26.2</i>. The Document Foundation. <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/writer/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
+            <li>LibreOffice Documentation Team. (2021). <i>Guía de Impress 7.0</i>. The Document Foundation. <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/impress/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
+            <li>The Document Foundation. (s. f.). <i>Documentación en español</i> (guías de Calc, Draw y otros componentes). <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
+            <li>LibreOffice Documentation Team. <i>Calc Guide 26.2</i>, apéndice de atajos de teclado. <a href="https://books.libreoffice.org/en/CG262/CG26218-KeyboardShortcuts.html" target="_blank" rel="noopener">books.libreoffice.org</a></li>
+            <li>The Document Foundation. <i>Ayuda de LibreOffice Impress: uso de atajos de teclado</i>. <a href="https://help.libreoffice.org/7.2/en-US/text/simpress/guide/keyboard.html" target="_blank" rel="noopener">help.libreoffice.org</a></li>
+            <li>The Document Foundation. (s. f.). <i>Descargar LibreOffice</i>. <a href="https://es.libreoffice.org/descarga/libreoffice/" target="_blank" rel="noopener">es.libreoffice.org</a></li>
+            <li>Colegio de Ciencias y Humanidades, UNAM. (s. f.). <i>Microsoft Teams: guía para compartir pantalla en una reunión</i>. <a href="https://www.cch.unam.mx/sites/default/files/3.pdf" target="_blank" rel="noopener">cch.unam.mx</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="row g-3">
+      <div class="col-md-8">
+        <h2 class="h5 fw-bold">Uso de LibreOffice para la elaboración de materiales didácticos y recursos educativos digitales</h2>
+        <p class="mb-1">Curso intersemestral en línea · Escuela Nacional Colegio de Ciencias y Humanidades.</p>
+        <p class="small mb-0 opacity-75">Sitio de apoyo con fines educativos. LibreOffice y The Document Foundation son marcas de sus respectivos propietarios. La paleta de colores se inspira en la de las aplicaciones de LibreOffice. Fuentes consultadas el 24 de octubre de 2026.</p>
+      </div>
+      <div class="col-md-4 text-md-end"><a href="#inicio" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-up me-1"></i>Volver al inicio</a></div>
+    </div>
+  </div>
+</footer>
+
+<button class="btn btn-lo to-top" id="toTop" aria-label="Subir"><i class="bi bi-arrow-up"></i></button>
+
+<!-- Modal genérico -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h2 class="modal-title h4" id="infoTitle"></h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+      <div class="modal-body" id="infoBody"></div>
+      <div class="modal-footer" id="infoFooter"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const APPS={writer:{n:"Writer",c:"app-writer",i:"bi-file-earmark-text"},calc:{n:"Calc",c:"app-calc",i:"bi-table"},impress:{n:"Impress",c:"app-impress",i:"bi-easel"},draw:{n:"Draw",c:"app-draw",i:"bi-bezier2"},general:{n:"General",c:"app-general",i:"bi-grid"}};
+
+/* ===================== DATOS ===================== */
+const COMPETENCIAS=[
+ ["Manejo de herramientas digitales para el trabajo académico","Se desarrolla en todo el curso al usar las cuatro aplicaciones de LibreOffice para tareas reales de la docencia."],
+ ["Elaboración y edición de documentos con formato profesional","Sesión 1: plan de clase con estilos, tablas, imágenes, encabezados, pies de página y numeración, exportado a PDF."],
+ ["Organización, análisis y representación gráfica de datos","Sesión 2: tabla de seguimiento académico con fórmulas, filtros, formato condicional y gráficas."],
+ ["Diseño de presentaciones claras y visualmente comprensibles","Sesión 3: análisis de ejemplos y diseño de una presentación de 6 a 8 diapositivas."],
+ ["Desarrollo de materiales educativos digitales","Sesión 4 y portafolio: infografías, diagramas de flujo o mapas conceptuales y su integración final."],
+ ["Evaluación y mejora de los propios productos mediante retroalimentación","Revisión entre pares, retroalimentación del grupo, rúbrica, autoevaluación y coevaluación."]
+];
+
+const SESSIONS=[
+ {n:1,app:"writer",title:"Introducción a LibreOffice y elaboración de documentos con Writer",
+  purpose:"Reconocer el entorno de LibreOffice y elaborar documentos académicos con formato adecuado.",
+  contents:["Características de LibreOffice y sus aplicaciones.","Interfaz, menús, barras de herramientas y administración de archivos.","Formato de texto, párrafos, títulos, listas y tablas.","Inserción de imágenes, encabezados, pies de página y numeración.","Guardado, exportación a PDF y compatibilidad de formatos."],
+  acts:[["Exploración guiada","Identificar las aplicaciones de LibreOffice y localizar sus herramientas principales."],["Demostración del impartidor","Crear un documento, configurar la página, aplicar estilos e insertar elementos."],["Práctica individual","Elaborar un plan de clase de algún aprendizaje de una asignatura de su elección, con título, objetivos, instrucciones, tabla e imágenes."],["Revisión entre pares","Intercambiar documentos y revisar su organización, legibilidad y presentación."],["Cierre y entrega","Corregir el documento y entregar los archivos en formato editable y PDF."]],
+  evidence:"Plan de clase elaborado con Writer.",ex:"ex1"},
+ {n:2,app:"calc",title:"Organización de información y evaluación con Calc",
+  purpose:"Utilizar hojas de cálculo para organizar información académica, realizar operaciones y presentar resultados.",
+  contents:["Estructura de filas, columnas, celdas y rangos.","Tipos de datos, formato de celdas y organización de tablas.","Fórmulas y funciones básicas.","Ordenamiento, filtros y formato condicional.","Elaboración de gráficas."],
+  acts:[["Recuperación de conocimientos","Identificar situaciones docentes que requieren organizar datos."],["Demostración práctica","Capturar información, aplicar formatos y construir fórmulas."],["Ejercicio individual","Crear una tabla de seguimiento académico con calificaciones ficticias, promedios, funciones SUMA y PROMEDIO, y criterios de aprobación."],["Representación gráfica","Generar una gráfica para visualizar los resultados del grupo."],["Revisión y cierre","Verificar fórmulas, interpretación de resultados y presentación del archivo."]],
+  evidence:"Hoja de cálculo para el seguimiento académico.",ex:"ex2"},
+ {n:3,app:"impress",title:"Diseño de presentaciones educativas con Impress",
+  purpose:"Diseñar presentaciones electrónicas que apoyen la explicación de contenidos y faciliten la comprensión del alumnado.",
+  contents:["Interfaz, diapositivas y diseños predeterminados.","Inserción de imágenes, tablas, diagramas y gráficas.","Transiciones y animaciones pertinentes.","Presentación, exportación y revisión de archivos."],
+  acts:[["Análisis de ejemplos","Reconocer características de presentaciones claras y otras que dificultan la lectura."],["Demostración del impartidor","Configurar diapositivas, utilizar diseños e insertar elementos visuales."],["Diseño individual","Elaborar una presentación de entre 6 y 8 diapositivas sobre un tema de la asignatura que imparte cada participante."],["Exposición y retroalimentación","Compartir la presentación y recibir comentarios de los participantes."],["Ajustes y entrega","Mejorar el diseño conforme a las observaciones propuestas."]],
+  evidence:"Presentación didáctica en formato editable.",ex:"ex3"},
+ {n:4,app:"draw",title:"Elaboración de recursos visuales y materiales integradores",
+  purpose:"Crear recursos gráficos y articular las herramientas de LibreOffice para resolver necesidades de la práctica docente.",
+  contents:["Herramientas básicas de LibreOffice Draw.","Formas, conectores, diagramas y cuadros de texto.","Diseño de organizadores gráficos e infografías sencillas."],
+  acts:[["Identificación de necesidades","Seleccionar un contenido que pueda representarse mediante un recurso visual."],["Demostración","Elaborar diagramas, utilizar conectores y organizar elementos gráficos."],["Producción individual","Diseñar una infografía, un diagrama de flujo o un mapa conceptual para una clase."],["Evaluación entre pares","Revisar claridad, pertinencia, legibilidad y utilidad didáctica del material creado."]],
+  evidence:"Recurso visual.",ex:"ex4"},
+ {n:5,app:"general",title:"Integración del portafolio y evaluación final",
+  purpose:"Integrar los productos elaborados, valorar los aprendizajes y establecer compromisos de aplicación en la práctica docente.",
+  contents:["Integración y organización de evidencias.","Revisión de formatos editables y PDF.","Criterios de calidad de materiales didácticos.","Presentación de productos y evaluación por rúbrica.","Autoevaluación, coevaluación y reflexión final."],
+  acts:[["Organización del portafolio","Reunir y clasificar los productos de las cuatro sesiones anteriores."],["Revisión técnica","Comprobar la apertura de archivos, fórmulas, formato, legibilidad y exportación."],["Integración del producto final","Completar el portafolio con el plan de clase, la hoja de cálculo, la presentación y el recurso visual."],["Presentación de resultados","Explicar la utilidad de los materiales en una situación concreta de enseñanza."],["Evaluación y reflexión","Completar la autoevaluación, el cuestionario de salida y la encuesta del curso."]],
+  evidence:"Portafolio digital completo y reflexión sobre su aplicación docente.",ex:"ex5"}
+];
+
+/* conceptos: [id, app, título, resumen, detalle, práctica] */
+const CONCEPTS=[
+ ["libreoffice","general","LibreOffice","Suite de productividad de oficina libre y de código abierto.","LibreOffice es desarrollada por The Document Foundation e integra aplicaciones para texto (Writer), hojas de cálculo (Calc), presentaciones (Impress), dibujo (Draw), fórmulas (Math) y bases de datos (Base). En este curso se trabajan Writer, Calc, Impress y Draw.","Abre LibreOffice e identifica las aplicaciones disponibles en su pantalla de inicio."],
+ ["writer","writer","Writer","El procesador de textos de LibreOffice.","Writer sirve para elaborar documentos académicos: planes de clase, guías, instrucciones, reportes. Permite dar formato a texto y párrafos, usar estilos, insertar tablas e imágenes, y exportar a PDF.","Crea un documento nuevo y escribe el título de un plan de clase."],
+ ["calc","calc","Calc","La hoja de cálculo de LibreOffice.","Calc organiza datos en filas y columnas, realiza operaciones con fórmulas y funciones, y genera gráficas que pueden integrarse en otros documentos de LibreOffice. También puede exportar hojas de cálculo a PDF.","Captura tres calificaciones ficticias y calcula su promedio."],
+ ["impress","impress","Impress","La aplicación de presentaciones de LibreOffice.","Impress permite crear diapositivas con texto, listas, tablas, gráficas y otros objetos. Puede abrir y guardar en formatos de PowerPoint y exportar a PDF, HTML y diversos formatos gráficos.","Crea una diapositiva de título y una de contenido sobre un tema de tu asignatura."],
+ ["draw","draw","Draw","Aplicación de dibujo y gráficos vectoriales.","Draw permite crear una gran variedad de imágenes gráficas, diagramas y organizadores. Está integrado con Writer, Calc e Impress, lo que simplifica el intercambio de gráficos, y puede exportar imágenes en muchos formatos.","Dibuja dos formas y únelas con un conector."],
+ ["estilo","writer","Estilos","Formatos con nombre que se aplican de forma consistente.","En lugar de dar formato a mano cada párrafo, se aplican estilos como Título 1, Título 2 o Cuerpo de texto. Así el documento se ve uniforme y es más fácil de modificar. En Writer, F11 abre la barra lateral en la página de Estilos.","Aplica Título 1 al nombre de tu plan de clase y Título 2 a sus apartados."],
+ ["tabla","writer","Tablas en Writer","Organizan información en filas y columnas dentro de un documento.","En un plan de clase, una tabla permite presentar de forma ordenada, por ejemplo, actividades, materiales o instrucciones.","Inserta una tabla de tres columnas con las actividades de una clase."],
+ ["encabezado","writer","Encabezados, pies de página y numeración","Elementos que se repiten en las páginas de un documento.","Dan identidad y orden a un documento académico: nombre del curso o de la asignatura, autor y número de página.","Agrega a tu plan de clase un pie de página con numeración."],
+ ["pdf","general","PDF y formato editable","Dos formatos para dos usos.","El formato editable permite seguir modificando el archivo; el PDF sirve para compartir o imprimir un documento tal como se ve. En el curso se entregan ambos formatos para su revisión.","Guarda tu plan de clase en formato editable y expórtalo también a PDF."],
+ ["celda","calc","Celda, fila, columna y rango","La estructura básica de una hoja de cálculo.","Una celda es la intersección de una fila y una columna. Un rango es un conjunto de celdas, por ejemplo B2:D2, que abarca de B2 a D2.","Selecciona un rango de celdas y observa cómo se nombra."],
+ ["formula","calc","Fórmula","Expresión que realiza un cálculo y comienza con =","Una fórmula puede combinar valores, referencias a celdas y funciones. Ejemplo: =B2+C2+D2. Si cambias un dato, el resultado se actualiza.","Escribe una fórmula que sume tres celdas."],
+ ["funcion","calc","Funciones SUMA y PROMEDIO","Funciones básicas para totalizar y promediar.","SUMA(B2:D2) suma los valores del rango. PROMEDIO(B2:D2) calcula su media aritmética. Son las funciones que se usan en la tabla de seguimiento académico.","Calcula con ambas funciones el resultado de cinco alumnos ficticios."],
+ ["referencia","calc","Referencias de celda","Indican de qué celdas toma datos una fórmula.","Una referencia puede ser relativa o absoluta. En Calc, F4 alterna entre los tipos de referencia mientras editas una fórmula.","Escribe una fórmula, selecciona una referencia y pulsa F4 para ver cómo cambia."],
+ ["formatocond","calc","Formato condicional","Cambia la apariencia de una celda según su contenido.","Permite resaltar resultados, por ejemplo, distinguir visualmente a quienes cumplen un criterio de aprobación. En el laboratorio de esta página se simula con colores.","Define un criterio y resalta los promedios que lo cumplen."],
+ ["filtro","calc","Ordenamiento y filtros","Ordenar y mostrar solo los datos que interesan.","Ordenar coloca los datos en un orden determinado; filtrar muestra únicamente las filas que cumplen una condición.","Ordena de mayor a menor una lista de promedios ficticios."],
+ ["grafica","calc","Gráficas","Representación visual de datos.","Calc genera gráficas en 2D y 3D que pueden integrarse en otros documentos de LibreOffice, como una presentación de Impress.","Genera una gráfica con los promedios del grupo ficticio."],
+ ["diapositiva","impress","Diapositiva y diseño","Cada página de una presentación y su distribución de elementos.","Los diseños predeterminados organizan título, texto e imágenes. En Impress, Ctrl+Enter pasa de un marcador de posición al siguiente y, tras el último, inserta una diapositiva nueva con el mismo diseño.","Crea una presentación de 6 a 8 diapositivas con diseños predeterminados."],
+ ["transicion","impress","Transiciones y animaciones","Efectos al cambiar de diapositiva o al mostrar objetos.","Deben ser pertinentes: apoyar la explicación y no distraer ni dificultar la lectura.","Aplica una transición discreta y explica por qué es adecuada."],
+ ["presentacion","impress","Presentación de diapositivas","Mostrar la presentación a pantalla completa.","En Impress, F5 inicia la presentación desde el principio y Mayús+F5 desde la diapositiva actual.","Ensaya tu presentación con F5 y luego con Mayús+F5."],
+ ["conector","draw","Formas y conectores","Piezas básicas para diagramas.","Las formas representan elementos y los conectores las unen; al mover una forma, el conector se mantiene unido. Son la base de diagramas de flujo y mapas conceptuales.","Une tres formas con conectores para crear un diagrama de flujo."],
+ ["organizador","draw","Organizadores gráficos e infografías","Recursos visuales para estructurar y comunicar ideas.","Un mapa conceptual relaciona conceptos; un diagrama de flujo muestra pasos; una infografía sencilla combina texto e imágenes. Deben ser claros, pertinentes, legibles y útiles didácticamente.","Elige un contenido de tu clase y decide cuál de los tres recursos lo representa mejor."],
+ ["portafolio","general","Portafolio digital","Colección organizada de evidencias.","Integra el plan de clase, la hoja de cálculo, la presentación y el recurso visual, más una reflexión sobre su aplicación docente. Se revisa en formato editable y PDF.","Crea una carpeta con tus cuatro productos y comprueba que todos abren correctamente."],
+ ["rubrica","general","Rúbrica, autoevaluación y coevaluación","Instrumentos para valorar el aprendizaje.","La rúbrica describe criterios de calidad; la autoevaluación es la valoración del propio trabajo y la coevaluación la que realizan los compañeros. Se complementan con la retroalimentación.","Valora uno de tus productos con los criterios de claridad, pertinencia y legibilidad."]
+];
+
+/* atajos [app, teclas, función, detalle] (fuentes: Guía de Calc 26.2, Guía de Writer 26.2, Ayuda de Impress) */
+const SHORTCUTS=[
+ ["general","Ctrl+C","Copiar",""],["general","Ctrl+X","Cortar",""],["general","Ctrl+V","Pegar",""],
+ ["general","Ctrl+Shift+V","Pegado especial",""],["general","Ctrl+Alt+Shift+V","Pegar sin formato",""],
+ ["general","Ctrl+Z","Deshacer",""],["general","Ctrl+Y","Rehacer",""],
+ ["general","Ctrl+B","Negrita","Letra según la interfaz en inglés; puede cambiar en otros idiomas."],["general","Ctrl+I","Cursiva",""],["general","Ctrl+U","Subrayado","Letra según la interfaz en inglés; puede cambiar en otros idiomas."],
+ ["general","Ctrl+M","Quitar formato directo",""],
+ ["general","Ctrl+Shift+S","Guardar como",""],
+ ["general","F1","Ayuda",""],["general","Shift+F1","Ayuda contextual",""],
+ ["general","F6","Cambiar el foco entre barra de menús, barras de herramientas y documento","Permite controlar LibreOffice solo con el teclado."],
+ ["general","F7","Revisión ortográfica",""],["general","F11","Estilos (barra lateral)",""],
+ ["writer","Ctrl+H","Buscar y reemplazar",""],["writer","Ctrl+Shift+F","Buscar siguiente",""],
+ ["writer","Ctrl+0","Estilo Cuerpo de texto",""],["writer","Ctrl+1","Estilo Título 1",""],["writer","Ctrl+2","Estilo Título 2",""],["writer","Ctrl+3","Estilo Título 3",""],
+ ["writer","F11","Abrir la barra lateral en la página Estilos",""],["writer","Shift+F11","Nuevo estilo de párrafo desde la selección",""],["writer","Ctrl+Shift+F11","Actualizar el estilo seleccionado",""],
+ ["writer","Shift+Enter","Salto de línea",""],["writer","Ctrl+Enter","Salto de página manual",""],["writer","Ctrl+Shift+Enter","Salto de columna",""],
+ ["writer","Ctrl+F12","Insertar tabla",""],
+ ["writer","F12","Lista numerada",""],["writer","Shift+F12","Lista con viñetas",""],["writer","Ctrl+Shift+F12","Quitar la lista del párrafo",""],
+ ["writer","F5","Navegador",""],["writer","Ctrl+F5","Barra lateral",""],["writer","F7","Revisión ortográfica",""],["writer","Ctrl+F7","Sinónimos",""],
+ ["writer","F3","Texto automático",""],["writer","F9","Actualizar campos",""],
+ ["writer","Ctrl+Shift+P","Superíndice",""],["writer","Ctrl+Shift+B","Subíndice",""],
+ ["calc","F2","Editar la celda",""],["calc","Esc","Cancelar la edición de la celda",""],["calc","F4","Alternar tipos de referencia de celda","Útil al editar fórmulas."],
+ ["calc","Alt+=","Función Suma",""],["calc","Ctrl+F2","Insertar función",""],
+ ["calc","F9","Recalcular",""],["calc","Ctrl+`","Mostrar fórmulas",""],
+ ["calc","Ctrl+;","Insertar la fecha actual",""],["calc","Ctrl+Shift+;","Insertar la hora actual",""],
+ ["calc","Ctrl+1","Formato de celdas",""],["calc","Ctrl+Shift+3","Aplicar formato de fecha",""],["calc","Ctrl+Shift+6","Aplicar formato General",""],
+ ["calc","Ctrl+D","Rellenar hacia abajo",""],["calc","Alt+Enter","Rellenar el rango seleccionado con la fórmula de la línea de entrada",""],
+ ["calc","Ctrl+Enter","Insertar un salto de línea al editar una celda",""],
+ ["calc","Ctrl+Space","Seleccionar columna",""],["calc","Shift+Space","Seleccionar fila",""],["calc","Ctrl+Shift+Space","Seleccionar todo",""],
+ ["calc","F5","Navegador",""],["calc","Ctrl+Alt+C","Insertar comentario",""],["calc","Ctrl+F1","Mostrar comentario",""],
+ ["impress","F5","Iniciar la presentación desde el principio",""],["impress","Shift+F5","Iniciar la presentación desde la diapositiva actual",""],
+ ["impress","Ctrl+Enter","Pasar al siguiente marcador de posición o insertar una diapositiva nueva con el mismo diseño","Tras el último marcador de posición se inserta la diapositiva."],
+ ["impress","Alt+PageDown","Ir a la diapositiva siguiente",""],["impress","Alt+PageUp","Ir a la diapositiva anterior",""],
+ ["impress","Ctrl+C","Copiar la diapositiva seleccionada (clasificador)",""],["impress","Ctrl+X","Cortar la diapositiva seleccionada (clasificador)",""],["impress","Ctrl+V","Pegar la diapositiva (clasificador)",""],
+ ["draw","Ctrl+C","Copiar el objeto seleccionado","Atajo común a las aplicaciones."],["draw","Ctrl+Z","Deshacer","Atajo común a las aplicaciones."],["draw","Ctrl+Y","Rehacer","Atajo común a las aplicaciones."],["draw","F1","Ayuda","Atajo común a las aplicaciones."]
+];
+
+/* ejercicios */
+const EXERCISES=[
+ {id:"ex1",app:"writer",title:"Plan de clase en Writer",short:"Elabora un documento académico con título, objetivos, instrucciones, tabla e imágenes.",
+  theory:"Un documento académico bien organizado usa estilos (títulos y cuerpo de texto) para dar estructura y uniformidad. Los encabezados, pies de página y la numeración dan orden, y la exportación a PDF permite compartirlo tal como se ve, además de conservar la versión editable.",
+  practice:"Elabora un plan de clase de algún aprendizaje de una asignatura de tu elección.",
+  steps:["Crear un documento nuevo y configurar la página.","Escribir el título del plan de clase y aplicar estilos de título.","Redactar los objetivos de aprendizaje.","Escribir las instrucciones de la actividad con una lista numerada o con viñetas.","Insertar una tabla (por ejemplo, de actividades o materiales).","Insertar al menos una imagen pertinente.","Agregar encabezado, pie de página y numeración.","Intercambiar el documento con un compañero y revisar organización, legibilidad y presentación.","Corregir y guardar en formato editable y exportar a PDF."],
+  tip:"Atajos útiles: Ctrl+1 / Ctrl+2 (títulos), F12 (lista numerada), Shift+F12 (viñetas), Ctrl+F12 (tabla), Ctrl+Enter (salto de página)."},
+ {id:"ex2",app:"calc",title:"Tabla de seguimiento académico en Calc",short:"Organiza calificaciones ficticias con SUMA, PROMEDIO, criterios de aprobación y una gráfica.",
+  theory:"Una hoja de cálculo organiza datos en filas, columnas y celdas. Las fórmulas (que empiezan con =) y funciones como SUMA y PROMEDIO calculan automáticamente; si cambia un dato, cambia el resultado. El formato condicional y las gráficas ayudan a interpretar los resultados del grupo.",
+  practice:"Crea una tabla de seguimiento con calificaciones ficticias. Puedes ensayar primero en el laboratorio de esta página.",
+  steps:["Capturar los nombres de alumnos ficticios y sus calificaciones.","Aplicar formato a las celdas y organizar la tabla.","Calcular el total de cada alumno con la función SUMA.","Calcular el promedio de cada alumno con la función PROMEDIO.","Definir y aplicar un criterio de aprobación.","Resaltar resultados con formato condicional.","Ordenar o filtrar los datos.","Generar una gráfica para visualizar los resultados del grupo.","Verificar fórmulas, interpretar resultados y revisar la presentación del archivo."],
+  tip:"Atajos útiles: F2 (editar celda), F4 (tipos de referencia), Alt+= (suma), Ctrl+Shift+; (hora) y Ctrl+; (fecha)."},
+ {id:"ex3",app:"impress",title:"Presentación didáctica en Impress",short:"Diseña de 6 a 8 diapositivas claras sobre un tema de tu asignatura.",
+  theory:"Una buena presentación apoya la explicación y facilita la comprensión del alumnado: usa diseños predeterminados, elementos visuales pertinentes y transiciones o animaciones que no dificulten la lectura.",
+  practice:"Elabora una presentación de entre 6 y 8 diapositivas sobre un tema de la asignatura que impartes.",
+  steps:["Analizar ejemplos de presentaciones claras y otras que dificultan la lectura.","Elegir el tema y definir las ideas principales.","Configurar las diapositivas y elegir diseños predeterminados.","Insertar imágenes, tablas, diagramas o gráficas.","Aplicar transiciones y animaciones solo si son pertinentes.","Verificar que el total sea de 6 a 8 diapositivas.","Compartir la presentación y recibir comentarios del grupo.","Realizar los ajustes y guardar en formato editable."],
+  tip:"Atajos útiles: Ctrl+Enter (siguiente marcador o nueva diapositiva), F5 (iniciar desde el principio), Mayús+F5 (desde la actual)."},
+ {id:"ex4",app:"draw",title:"Recurso visual en Draw",short:"Diseña una infografía, un diagrama de flujo o un mapa conceptual para una clase.",
+  theory:"Los organizadores gráficos transforman un contenido en una representación visual. En Draw se construyen con formas, conectores y cuadros de texto. Su calidad se valora por claridad, pertinencia, legibilidad y utilidad didáctica.",
+  practice:"Selecciona un contenido de tu clase y represéntalo con un recurso visual.",
+  steps:["Seleccionar el contenido que se representará.","Decidir el tipo de recurso: infografía, diagrama de flujo o mapa conceptual.","Insertar las formas necesarias.","Agregar cuadros de texto con las ideas clave.","Unir las formas con conectores.","Organizar y alinear los elementos gráficos.","Intercambiar con un compañero y revisar claridad, pertinencia, legibilidad y utilidad didáctica.","Ajustar y guardar el recurso."],
+  tip:"Atajos comunes: Ctrl+C (copiar), Ctrl+Z (deshacer), Ctrl+Y (rehacer)."},
+ {id:"ex5",app:"general",title:"Portafolio digital y reflexión",short:"Reúne, revisa y presenta tus cuatro productos y reflexiona sobre su aplicación.",
+  theory:"El portafolio integra las evidencias del curso. Antes de entregarlo se revisa que los archivos abran, que las fórmulas funcionen y que el formato, la legibilidad y la exportación sean correctos, tanto en formato editable como en PDF.",
+  practice:"Integra y presenta tu portafolio digital.",
+  steps:["Reunir y clasificar los productos de las sesiones anteriores.","Comprobar que cada archivo abre correctamente.","Revisar fórmulas, formato y legibilidad.","Verificar las versiones en formato editable y en PDF.","Completar el portafolio con plan de clase, hoja de cálculo, presentación y recurso visual.","Explicar la utilidad de los materiales en una situación concreta de enseñanza.","Completar la autoevaluación, el cuestionario de salida y la encuesta del curso.","Redactar la reflexión sobre la aplicación docente."],
+  tip:"Para compartir el portafolio se usa Microsoft Teams, la plataforma del curso."}
+];
+
+const EVAL=[
+ ["1","Plan de clase elaborado con Writer","Organización, legibilidad y presentación del documento; título, objetivos, instrucciones, tabla e imágenes; entrega en formato editable y PDF."],
+ ["2","Hoja de cálculo para el seguimiento académico","Uso correcto de fórmulas y funciones (SUMA y PROMEDIO); criterios de aprobación; gráfica de resultados del grupo; interpretación y presentación del archivo."],
+ ["3","Presentación didáctica en formato editable","Presentación de entre 6 y 8 diapositivas sobre un tema de la asignatura; claridad y legibilidad; ajustes conforme a la retroalimentación."],
+ ["4","Recurso visual (infografía, diagrama de flujo o mapa conceptual)","Claridad, pertinencia, legibilidad y utilidad didáctica del material."],
+ ["5","Portafolio digital completo y reflexión sobre su aplicación docente","Apertura de archivos, fórmulas, formato, legibilidad y exportación; utilidad de los materiales en una situación concreta de enseñanza."]
+];
+const INSTR=[["bi-people","Revisión entre pares","Sesiones 1 y 4"],["bi-chat-dots","Retroalimentación del grupo","Sesión 3"],["bi-clipboard-check","Revisión técnica del portafolio","Sesión 5"],["bi-list-check","Rúbrica","Sesión 5"],["bi-person-check","Autoevaluación y coevaluación","Sesión 5"],["bi-question-circle","Cuestionario de salida y encuesta","Sesión 5"]];
+
+const QUIZ=[
+ {q:"¿Qué aplicación de LibreOffice sirve para elaborar presentaciones electrónicas?",o:["Writer","Calc","Impress","Draw"],a:2,e:"Impress es la aplicación de presentaciones de LibreOffice."},
+ {q:"¿Con qué símbolo comienza una fórmula en Calc?",o:["#","=","@","$"],a:1,e:"Las fórmulas en Calc comienzan con el signo igual (=)."},
+ {q:"¿Qué función calcula la media aritmética de un rango de calificaciones?",o:["SUMA","MAX","CONTAR","PROMEDIO"],a:3,e:"PROMEDIO calcula la media de los valores del rango."},
+ {q:"¿Qué aplicación es la más adecuada para construir un diagrama de flujo con conectores?",o:["Draw","Writer","Calc","Impress"],a:0,e:"Draw cuenta con formas y conectores para diagramas y organizadores gráficos."},
+ {q:"¿Para qué sirve exportar un documento a PDF en el curso?",o:["Para modificar las fórmulas","Para compartirlo tal como se ve, además de la versión editable","Para convertirlo en presentación","Para eliminar las imágenes"],a:1,e:"Se entregan ambos formatos: editable y PDF."},
+ {q:"¿Cuántas diapositivas debe tener la presentación de la Sesión 3?",o:["De 1 a 3","De 4 a 5","De 6 a 8","Más de 20"],a:2,e:"La actividad pide una presentación de entre 6 y 8 diapositivas."},
+ {q:"¿Qué plataforma se usa para impartir el curso?",o:["Microsoft Teams","Solo correo electrónico","Un programa de radio","Ninguna"],a:0,e:"El curso en línea se imparte en Microsoft Teams."},
+ {q:"¿Qué evalúa la revisión entre pares de la Sesión 4?",o:["La velocidad de escritura","Claridad, pertinencia, legibilidad y utilidad didáctica","El tamaño del archivo","El color del fondo"],a:1,e:"Son los criterios con que se revisa el recurso visual."}
+];
+
+/* ===================== UTILIDADES UI ===================== */
+const modalEl=$("#infoModal"), modal=new bootstrap.Modal(modalEl);
+function openModal({title,body,app="general",footer}){
+  modalEl.className="modal fade "+APPS[app].c;
+  $("#infoTitle").textContent=title; $("#infoBody").innerHTML=body;
+  $("#infoFooter").innerHTML=footer||'<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>';
+  modal.show();
+}
+function initPopovers(root=document){
+  $$('[data-bs-toggle="popover"]',root).forEach(el=>{ if(!bootstrap.Popover.getInstance(el)) new bootstrap.Popover(el,{trigger:"hover focus",placement:"top",container:"body"}); });
+}
+const keycaps=k=>k.split("+").map(x=>`<kbd class="key">${esc(x)}</kbd>`).join('<span class="text-secondary">+</span>');
+
+/* ===================== TEMA ===================== */
+(function(){
+  const root=document.documentElement,btn=$("#themeBtn");
+  const set=t=>{root.setAttribute("data-bs-theme",t);btn.innerHTML=t==="dark"?'<i class="bi bi-sun"></i>':'<i class="bi bi-moon-stars"></i>';store.set("lo-theme",t)};
+  set(store.get("lo-theme","light"));
+  btn.addEventListener("click",()=>set(root.getAttribute("data-bs-theme")==="dark"?"light":"dark"));
+})();
+
+/* ===================== COMPETENCIAS ===================== */
+$("#compList").innerHTML=COMPETENCIAS.map((c,i)=>`<button class="btn btn-outline-success text-start" data-comp="${i}"><i class="bi bi-check2-circle me-2"></i>${esc(c[0])}</button>`).join("");
+$("#compList").addEventListener("click",e=>{const b=e.target.closest("[data-comp]");if(!b)return;const c=COMPETENCIAS[b.dataset.comp];
+  openModal({title:c[0],body:`<div class="theory"><h4>Cómo se trabaja en el curso</h4><p class="mb-0">${esc(c[1])}</p></div>`});});
+
+/* ===================== RUTA ===================== */
+function renderSession(i){
+  const s=SESSIONS[i],a=APPS[s.app];
+  $("#sessionPanel").innerHTML=`<div class="card session-panel ${a.c} p-4">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="app-chip"><i class="bi ${a.i} me-1"></i>${s.app==="general"?"Integración":a.n}</span><span class="text-secondary fw-bold">Sesión ${s.n}</span></div>
+    <h3 class="fw-bold">${esc(s.title)}</h3>
+    <p class="text-secondary"><b>Propósito:</b> ${esc(s.purpose)}</p>
+    <div class="row g-4">
+      <div class="col-lg-5"><h4 class="h6 fw-bold text-uppercase">Contenidos</h4><ul class="check-list">${s.contents.map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>
+      <div class="col-lg-7"><h4 class="h6 fw-bold text-uppercase">Actividades de aprendizaje</h4>${s.acts.map((x,k)=>`<div class="act-item"><div class="act-num">${k+1}</div><div><b>${esc(x[0])}</b><br><span class="text-secondary">${esc(x[1])}</span></div></div>`).join("")}</div>
+    </div>
+    <div class="evidence mt-3 d-flex flex-wrap justify-content-between align-items-center gap-2"><div><i class="bi bi-patch-check me-1"></i><b>Evidencia:</b> ${esc(s.evidence)}</div>
+      <button class="btn btn-lo btn-sm" data-open-ex="${s.ex}"><i class="bi bi-pencil-square me-1"></i>Abrir ejercicio</button></div></div>`;
+  $$("#sessionPills .nav-link").forEach((b,k)=>b.classList.toggle("active",k===i));
+}
+$("#sessionPills").innerHTML=SESSIONS.map((s,i)=>`<button class="nav-link ${APPS[s.app].c}" role="tab" data-s="${i}">Sesión ${s.n}<small>${s.app==="general"?"Portafolio":APPS[s.app].n}</small></button>`).join("");
+$("#sessionPills").addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(b)renderSession(+b.dataset.s)});
+renderSession(0);
+
+/* ===================== CONCEPTOS ===================== */
+let cFilter="all";
+function renderConcepts(){
+  const keys=["all",...Object.keys(APPS)];
+  $("#conceptFilters").innerHTML=keys.map(k=>`<button class="filter-chip ${k==="all"?"":APPS[k].c} ${k===cFilter?"active":""}" data-f="${k}">${k==="all"?"Todos":APPS[k].n}</button>`).join("");
+  $("#conceptGrid").innerHTML=CONCEPTS.map(c=>`<div class="col-sm-6 col-lg-4 col-xl-3 cwrap ${cFilter!=="all"&&c[1]!==cFilter?"hide":""}"><button class="card concept ${APPS[c[1]].c}" data-c="${c[0]}"><span class="tag">${APPS[c[1]].n}</span><h3>${esc(c[2])}</h3><p>${esc(c[3])}</p><span class="more">Ver más <i class="bi bi-arrow-right"></i></span></button></div>`).join("");
+}
+function showConcept(id){
+  const c=CONCEPTS.find(x=>x[0]===id);if(!c)return;
+  openModal({app:c[1],title:c[2],body:`<p class="lead">${esc(c[3])}</p><div class="theory"><h4><i class="bi bi-book me-1"></i>Concepto</h4><p class="mb-0">${esc(c[4])}</p></div><div class="practice"><h4><i class="bi bi-pencil me-1"></i>Pruébalo</h4><p class="mb-0">${esc(c[5])}</p></div>`});
+}
+$("#conceptFilters").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;cFilter=b.dataset.f;renderConcepts()});
+$("#conceptGrid").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(b)showConcept(b.dataset.c)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-open-concept]");if(b)showConcept(b.dataset.openConcept)});
+renderConcepts();
+
+/* ===================== ATAJOS ===================== */
+let scApp="general";
+function renderTabs(){ $("#scTabs").innerHTML=Object.keys(APPS).map(k=>`<button class="nav-link ${APPS[k].c} ${k===scApp?"active":""}" data-a="${k}"><i class="bi ${APPS[k].i} me-1"></i>${APPS[k].n==="General"?"Generales":APPS[k].n}</button>`).join(""); }
+function renderShortcuts(){
+  const q=$("#scSearch").value.trim().toLowerCase();
+  const list=SHORTCUTS.filter(s=>q?(s[1]+" "+s[2]).toLowerCase().includes(q):s[0]===scApp);
+  $("#scList").innerHTML=list.map(s=>`<div class="col-md-6"><div class="sc-row ${APPS[s[0]].c}" data-bs-toggle="popover" data-bs-title="${esc(s[2])}" data-bs-content="${esc((APPS[s[0]].n==="General"?"Generales":APPS[s[0]].n)+(s[3]?" · "+s[3]:""))}"><span>${esc(s[2])}</span><span class="sc-keys">${keycaps(s[1])}</span></div></div>`).join("");
+  $("#scEmpty").hidden=list.length>0; initPopovers($("#scList"));
+}
+$("#scTabs").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;scApp=b.dataset.a;$("#scSearch").value="";renderTabs();renderShortcuts()});
+$("#scSearch").addEventListener("input",renderShortcuts);
+renderTabs();renderShortcuts();
+
+/* ===================== LABORATORIO CALC ===================== */
+(function(){
+  const N=6, tb=$("#sheet tbody");
+  tb.innerHTML=Array.from({length:N},(_,i)=>`<tr><td class="rn">${i+2}</td><td><input data-r="${i}" data-c="0" type="text" aria-label="Alumno ${i+1}"></td>${[1,2,3].map(c=>`<td><input data-r="${i}" data-c="${c}" type="number" min="0" max="10" step="0.1" aria-label="Calificación ${c}, alumno ${i+1}"></td>`).join("")}<td class="calc" id="s${i}">—</td><td class="calc" id="p${i}">—</td><td id="g${i}">—</td></tr>`).join("");
+  const num=v=>v===""||v==null||isNaN(+v)?null:+v;
+  function recalc(){
+    const thr=num($("#thr").value),avgs=[],names=[];
+    for(let i=0;i<N;i++){
+      const vals=[1,2,3].map(c=>num($(`input[data-r="${i}"][data-c="${c}"]`).value)).filter(v=>v!==null);
+      const name=$(`input[data-r="${i}"][data-c="0"]`).value||`Al. ${i+1}`;
+      const sum=vals.reduce((a,b)=>a+b,0), avg=vals.length?sum/vals.length:null;
+      $("#s"+i).textContent=vals.length?+sum.toFixed(2):"—"; $("#p"+i).textContent=avg!==null?avg.toFixed(2):"—";
+      const g=$("#g"+i); g.className="";
+      if(avg===null||thr===null){g.textContent="—"}else if(avg>=thr){g.textContent="Aprobado";g.className="ok"}else{g.textContent="No aprobado";g.className="bad"}
+      avgs.push(avg);names.push(name);
+    }
+    const max=10;
+    $("#bars").innerHTML=avgs.map(a=>`<div class="bar" style="height:${a===null?2:Math.max(2,a/max*100)}%">${a!==null?`<b>${a.toFixed(1)}</b>`:""}</div>`).join("");
+    $("#barLabels").innerHTML=names.map(n=>`<div class="bar-label text-truncate">${esc(n)}</div>`).join("");
+    const valid=avgs.filter(a=>a!==null);
+    $("#sheetStats").innerHTML=valid.length?`<b>Promedio del grupo:</b> ${(valid.reduce((a,b)=>a+b,0)/valid.length).toFixed(2)}<br><b>Más alto:</b> ${Math.max(...valid).toFixed(2)} · <b>Más bajo:</b> ${Math.min(...valid).toFixed(2)}`:'<span class="text-secondary">Captura calificaciones para ver las estadísticas.</span>';
+  }
+  tb.addEventListener("input",recalc);$("#thr").addEventListener("input",recalc);
+  $("#fillDemo").addEventListener("click",()=>{
+    const demo=[["Alumno 1",7,8,9],["Alumno 2",5,6,5.5],["Alumno 3",9,10,9.5],["Alumno 4",6,7,6],["Alumno 5",4,5,6],["Alumno 6",8,7,9]];
+    demo.forEach((r,i)=>r.forEach((v,c)=>$(`input[data-r="${i}"][data-c="${c}"]`).value=v)); recalc();
+  });
+  $("#clearSheet").addEventListener("click",()=>{$$("#sheet input").forEach(i=>i.value="");$("#thr").value="";recalc()});
+  recalc();
+})();
+
+/* ===================== RETOS ===================== */
+function quiz(root,{title,icon,sub,items,gen}){
+  let i=0,score=0,order=[...items.keys()].sort(()=>Math.random()-.5).slice(0,gen||items.length),answered=false;
+  const el=$(root);
+  function draw(){
+    if(i>=order.length){
+      const pct=Math.round(score/order.length*100);
+      el.innerHTML=`<h3 class="h5 fw-bold"><i class="bi ${icon} text-lo me-2"></i>${title}</h3><div class="text-center py-4"><div class="display-4 fw-bold text-lo">${score}/${order.length}</div><p class="mb-3">${pct>=80?"¡Excelente trabajo!":pct>=50?"¡Buen avance! Repasa los conceptos y vuelve a intentarlo.":"Revisa el glosario y los atajos, y vuelve a intentarlo."}</p><button class="btn btn-lo" data-r>Reintentar</button></div>`;
+      el.querySelector("[data-r]").onclick=()=>{i=0;score=0;order=[...items.keys()].sort(()=>Math.random()-.5).slice(0,gen||items.length);draw()};return;
+    }
+    const q=items[order[i]];answered=false;
+    el.innerHTML=`<h3 class="h5 fw-bold"><i class="bi ${icon} text-lo me-2"></i>${title}</h3><p class="small text-secondary">${sub}</p>
+      <div class="progress mb-3"><div class="progress-bar" style="width:${i/order.length*100}%"></div></div>
+      <p class="fw-bold">${i+1}. ${q.q}</p><div>${q.o.map((o,k)=>`<button class="quiz-opt" data-k="${k}">${o}</button>`).join("")}</div><div id="fb" class="small mt-2" style="min-height:3rem"></div>`;
+    $$(".quiz-opt",el).forEach(b=>b.onclick=()=>{
+      if(answered)return;answered=true;const k=+b.dataset.k;
+      $$(".quiz-opt",el).forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add("right")});
+      if(k===q.a){score++;$("#fb",el).innerHTML='<span class="text-lo fw-bold"><i class="bi bi-check-circle"></i> ¡Correcto!</span> '+(q.e?esc(q.e):"")}
+      else{b.classList.add("wrong");$("#fb",el).innerHTML='<span class="text-danger fw-bold"><i class="bi bi-x-circle"></i> Casi.</span> '+(q.e?esc(q.e):"")}
+      $("#fb",el).insertAdjacentHTML("beforeend",' <button class="btn btn-sm btn-outline-secondary ms-2" data-n>Siguiente</button>');
+      el.querySelector("[data-n]").onclick=()=>{i++;draw()};
+    });
+  }
+  draw();
+}
+quiz("#quizConcept",{title:"Reto de conceptos",icon:"bi-lightbulb",sub:"Preguntas sobre el contenido del curso.",items:QUIZ});
+/* reto de atajos generado a partir de los datos verificados */
+(function(){
+  const pool=SHORTCUTS.filter(s=>s[0]!=="draw");
+  const uniq=[...new Set(pool.map(s=>s[1]))];
+  const items=pool.filter((s,i)=>pool.findIndex(x=>x[1]===s[1]&&x[2]===s[2])===i&&pool.filter(x=>x[1]===s[1]).length===1).map(s=>{
+    const wrong=uniq.filter(k=>k!==s[1]).sort(()=>Math.random()-.5).slice(0,3);
+    const opts=[...wrong,s[1]].sort(()=>Math.random()-.5);
+    return{q:`En ${APPS[s[0]].n==="General"?"LibreOffice":APPS[s[0]].n}, ¿qué atajo permite: «${s[2]}»?`,o:opts.map(keycapsText),a:opts.indexOf(s[1]),e:`${s[1]}: ${s[2]}.`};
+  });
+  function keycapsText(k){return k.split("+").map(x=>`<kbd class="key">${esc(x)}</kbd>`).join(" + ")}
+  quiz("#quizKeys",{title:"Reto de atajos",icon:"bi-keyboard",sub:"Elige la combinación correcta (5 preguntas al azar).",items,gen:5});
+})();
+
+/* ===================== EJERCICIOS ===================== */
+let prog=store.get("lo-progress",{});
+const stepsDone=id=>(prog[id]||[]).filter(Boolean).length;
+function renderEx(){
+  $("#exGrid").innerHTML=EXERCISES.map(x=>{const d=stepsDone(x.id),t=x.steps.length,p=Math.round(d/t*100);
+    return `<div class="col-md-6 col-xl-4"><div class="card ex-card ${APPS[x.app].c}"><div class="mid"><span class="app-chip mb-2"><i class="bi ${APPS[x.app].i} me-1"></i>${x.app==="general"?"Integración":APPS[x.app].n}</span><h3 class="h5 fw-bold">${esc(x.title)}</h3><p class="text-secondary">${esc(x.short)}</p></div>
+    <div class="progress mb-2" style="height:.6rem"><div class="progress-bar" style="width:${p}%;background:var(--app)"></div></div>
+    <div class="d-flex justify-content-between align-items-center"><small class="${p===100?"ex-done":"text-secondary"}">${p===100?'<i class="bi bi-check-circle-fill"></i> Completado':`${d} de ${t} pasos`}</small><button class="btn btn-lo btn-sm" data-ex="${x.id}">${d?"Continuar":"Comenzar"}</button></div></div></div>`}).join("");
+  const all=EXERCISES.reduce((a,x)=>a+x.steps.length,0),done=EXERCISES.reduce((a,x)=>a+stepsDone(x.id),0),pct=Math.round(done/all*100);
+  $("#totalPct").textContent=pct+"%";$("#totalBar").style.width=pct+"%";
+}
+function openEx(id){
+  const x=EXERCISES.find(e=>e.id===id);if(!x)return;
+  const st=prog[id]||[];
+  openModal({app:x.app,title:x.title,body:`<div class="theory"><h4><i class="bi bi-book me-1"></i>Teoría</h4><p class="mb-0">${esc(x.theory)}</p></div>
+    <div class="practice"><h4><i class="bi bi-pencil me-1"></i>Práctica</h4><p class="mb-2">${esc(x.practice)}</p><div class="small"><i class="bi bi-lightning-charge"></i> ${esc(x.tip)}</div></div>
+    <h4 class="h6 fw-bold text-uppercase">Pasos <span class="text-secondary fw-normal" id="stepCount"></span></h4>
+    <div id="steps">${x.steps.map((s,i)=>`<label class="step ${st[i]?"done":""}"><input type="checkbox" data-i="${i}" ${st[i]?"checked":""}><span>${esc(s)}</span></label>`).join("")}</div>`});
+  const upd=()=>{$("#stepCount").textContent=`(${stepsDone(id)} de ${x.steps.length})`};upd();
+  $("#steps").onchange=e=>{const c=e.target.closest("input[data-i]");if(!c)return;(prog[id]=prog[id]||[])[+c.dataset.i]=c.checked;c.closest(".step").classList.toggle("done",c.checked);store.set("lo-progress",prog);upd();renderEx();
+    if(stepsDone(id)===x.steps.length)$("#stepCount").insertAdjacentHTML("afterend",' <span class="badge text-bg-success">¡Ejercicio completado!</span>')};
+}
+$("#exGrid").addEventListener("click",e=>{const b=e.target.closest("[data-ex]");if(b)openEx(b.dataset.ex)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-open-ex]");if(b)openEx(b.dataset.openEx)});
+$("#resetProgress").addEventListener("click",()=>{prog={};store.set("lo-progress",prog);renderEx()});
+renderEx();
+
+/* ===================== EVALUACIÓN ===================== */
+$("#evalBody").innerHTML=EVAL.map(r=>`<tr><td><b>${r[0]}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
+$("#instruments").innerHTML=INSTR.map(i=>`<div class="col-sm-6 col-lg-4 reveal"><div class="card p-3 d-flex flex-row align-items-center gap-3"><i class="bi ${i[0]} fs-2 text-lo"></i><div><b>${i[1]}</b><br><small class="text-secondary">${i[2]}</small></div></div></div>`).join("");
+
+/* ===================== EFECTOS ===================== */
+initPopovers();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12});
+$$(".reveal").forEach(el=>io.observe(el));
+const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,to=+el.dataset.count;let n=0;const t=setInterval(()=>{n++;el.textContent=n;if(n>=to)clearInterval(t)},180);cio.unobserve(el)}),{threshold:.6});
+$$("[data-count]").forEach(el=>cio.observe(el));
+const bar=$("#readbar"),top=$("#toTop");
+addEventListener("scroll",()=>{const h=document.documentElement,p=h.scrollTop/(h.scrollHeight-h.clientHeight);bar.style.width=(p*100)+"%";top.classList.toggle("show",h.scrollTop>600)},{passive:true});
+top.addEventListener("click",()=>scrollTo({top:0,behavior:"smooth"}));
+/* enlace activo en la navbar */
+const links=$$("#navlinks .nav-link"),secs=links.map(a=>$(a.getAttribute("href")));
+const so=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-45% 0px -50% 0px"});
+secs.forEach(s=>s&&so.observe(s));
+/* cierra el menú móvil al navegar */
+links.forEach(a=>a.addEventListener("click",()=>{const c=$("#nav");if(c.classList.contains("show"))bootstrap.Collapse.getOrCreateInstance(c).hide()}));
+})();
+</script>
+</body>
+</html>
