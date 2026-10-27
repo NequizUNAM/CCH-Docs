@@ -232,38 +232,15 @@ textarea:focus,input:focus{border-color:var(--accent)}
 <!-- MEMORIA -->
 <section class="view" id="v-memoria">
   <h2>Memoria</h2>
-  <p class="lead">Lo aprendido vive en un JSON en tu Google Drive. Esta sección está protegida: se desbloquea con tu clave y se vuelve a ocultar al salir.</p>
-
-  <div class="card stack" id="memLocked" style="max-width:520px">
-    <div class="row" style="gap:12px;flex-wrap:nowrap">
-      <span class="lock" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
-      <div><h3 style="margin:0">Memoria protegida</h3><div class="muted small" id="lockStatus"></div></div>
-    </div>
-    <div>
-      <label class="small muted" for="lockKey">Clave</label>
-      <input type="password" id="lockKey" autocomplete="off" placeholder="Tu clave secreta">
-    </div>
-    <label class="check"><input type="checkbox" id="rememberKey"> Recordar la clave en este dispositivo</label>
-    <div class="row"><button class="btn primary" id="btnUnlock">Desbloquear</button></div>
-  </div>
-
-  <div class="stack" id="memOpen" hidden>
-    <div class="row spread"><span class="tag">Desbloqueada</span><button class="btn sm" id="btnLock">Bloquear ahora</button></div>
-
+  <p class="lead">Lo aprendido vive en un JSON en tu Google Drive y se sincroniza automáticamente a través de tu script de Apps Script.</p>
+  <div class="stack" id="memOpen">
     <div class="card stack">
       <div class="row spread">
         <div><h3 style="margin:0">Estado y sincronización</h3><div class="muted small" id="memStatus"></div><div class="muted small" id="cloudStatus"></div></div>
-        <div class="row"><button class="btn" id="cloudPull">Cargar de la nube</button><button class="btn primary" id="cloudPush">Guardar en la nube</button></div>
+        <div class="row"><button class="btn" id="cloudTest">Probar conexión</button><button class="btn" id="cloudPull">Cargar de la nube</button><button class="btn primary" id="cloudPush">Guardar en la nube</button></div>
       </div>
       <label class="check"><input type="checkbox" id="cloudAuto"> Sincronizar automáticamente en cada análisis</label>
-    </div>
-
-    <div class="card stack">
-      <h3 style="margin:0">Clave de acceso a la nube</h3>
-      <div><label class="small muted" for="cloudKey">Clave (déjala vacía para conservar la actual)</label><input type="password" id="cloudKey" autocomplete="off" placeholder="••••••••"></div>
-      <label class="check"><input type="checkbox" id="cloudRemember"> Recordar la clave en este dispositivo</label>
-      <div class="row"><button class="btn primary" id="cloudSave">Guardar configuración</button><button class="btn" id="cloudTest">Probar conexión</button><button class="btn ghost" id="cloudForget">Olvidar configuración</button></div>
-      <p class="hint" style="margin:0">La clave no está en el código: vive solo en este navegador, en la sesión (se borra al cerrar la pestaña) salvo que marques «Recordar». Nunca se incluye en el JSON. La protección real es la <b>CLAVE</b> que valida tu script.</p>
+      <div class="hint" id="cloudWarn" hidden>Falta la clave: abre <code>index.html</code>, busca <code>APP_KEY</code> y pega ahí la <code>CLAVE</code> de tu script.</div>
     </div>
 
     <div class="card">
@@ -354,18 +331,16 @@ function downloadJSON(){
 }
 
 /* ============ nube (Google Apps Script) ============ */
-// Destino fijo (aplicación web de Apps Script). Sin clave, la URL no da acceso a nada.
-// En este código NO hay claves, ni datos de memoria, ni el ID del archivo de Drive (ese vive en el script).
+// Conexión fija. La clave NO debe quedar en un repositorio público (ver README).
 const APP_URL='https://script.google.com/macros/s/AKfycbz6azbT3ak7bXHvNGpIpBCSgxHpsRSpxuKUxHPSPJVEUdwPu65-u0bHXP_RB0UvgMUiGg/exec';
-const CLOUD_KEY='promptlab.cloud.v1', SK='promptlab.sk';
+const APP_KEY='PEGA_AQUI_TU_CLAVE'; // ← la misma que la propiedad CLAVE de tu script
+const CLOUD_KEY='promptlab.cloud.v1';
 const URLRE=/^https:\/\/script\.google\.com\/macros\/s\/[^\s]+\/exec$/;
-let cloud={url:'',key:'',keyHash:'',auto:true,remember:false,lastRemote:null};
-let unlocked=false;
-try{Object.assign(cloud,JSON.parse(localStorage.getItem(CLOUD_KEY)||'{}'));if(!cloud.key)cloud.key=sessionStorage.getItem(SK)||''}catch{}
-cloud.url=APP_URL;
-const sha=async t=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('promptlab:'+t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return 'h'+hash('promptlab:'+t)}};
-const saveCloudCfg=()=>{try{const{key,...rest}=cloud;localStorage.setItem(CLOUD_KEY,JSON.stringify({...rest,key:cloud.remember?key:''}));key?sessionStorage.setItem(SK,key):sessionStorage.removeItem(SK)}catch{}};
-const cloudOn=()=>URLRE.test(cloud.url)&&!!cloud.key;
+let cloud={url:APP_URL,key:APP_KEY,auto:true,lastRemote:null};
+try{const c=JSON.parse(localStorage.getItem(CLOUD_KEY)||'{}');if(typeof c.auto==='boolean')cloud.auto=c.auto;cloud.lastRemote=c.lastRemote||null}catch{}
+const saveCloudCfg=()=>{try{localStorage.setItem(CLOUD_KEY,JSON.stringify({auto:cloud.auto,lastRemote:cloud.lastRemote}))}catch{}};
+const keySet=()=>!!APP_KEY&&APP_KEY!=='PEGA_AQUI_TU_CLAVE';
+const cloudOn=()=>URLRE.test(cloud.url)&&keySet();
 async function cloudGet(){
   const r=await fetch(cloud.url+'?key='+encodeURIComponent(cloud.key),{cache:'no-store'});
   const j=await r.json(); if(!j.ok)throw new Error(j.error||'error'); return j.data;
@@ -376,7 +351,7 @@ async function cloudPut(){
 }
 function cloudMsg(e){return /clave/.test(e.message)?'Clave incorrecta':'No se pudo conectar (revisa la URL y que el acceso sea «Cualquier persona»)'}
 async function cloudPull(){
-  if(!cloudOn())return toast('Configura la URL y la clave primero');
+  if(!cloudOn())return toast('Falta pegar la clave en APP_KEY dentro de index.html');
   try{
     const d=await cloudGet();
     if(!d.schema)return toast('La nube está vacía: usa «Guardar en la nube»');
@@ -388,7 +363,7 @@ async function cloudPull(){
   }catch(e){toast(cloudMsg(e))}
 }
 async function cloudPush(auto){
-  if(!cloudOn()){if(!auto)toast('Configura la URL y la clave primero');return false}
+  if(!cloudOn()){if(!auto)toast('Falta pegar la clave en APP_KEY dentro de index.html');return false}
   try{
     const d=await cloudGet();
     if(d.updatedAt&&cloud.lastRemote!==d.updatedAt){
@@ -831,18 +806,13 @@ function bindInteg(){
 
 /* ============ render: memoria ============ */
 function renderMemory(){
-  const conf=!!cloud.keyHash;
-  $('#memLocked').hidden=unlocked; $('#memOpen').hidden=!unlocked;
-  $('#lockStatus').textContent=!conf?'Primer ingreso: escribe tu clave para vincular este navegador.':(cloud.key&&cloud.auto?'Nube conectada · sincronización activa.':'Nube configurada · desbloquea para sincronizar.');
-  if(!unlocked){ // nada sensible en el DOM mientras está bloqueada
-    $('#jsonPreview').textContent='';$('#profileBox').textContent='';$('#cloudKey').value='';return;
-  }
   const u=mem.updatedAt?new Date(mem.updatedAt).toLocaleString('es-MX'):'sin guardar';
   $('#memStatus').textContent=`${mem.stats.total} análisis · actualizado ${u}`;
-  $('#cloudStatus').textContent=cloudOn()?(cloud.auto?'Nube: conectada · sincronización automática':'Nube: conectada · manual'):'Nube: sin conectar';
+  $('#cloudStatus').textContent=cloudOn()?(cloud.auto?'Nube: conectada · sincronización automática':'Nube: conectada · manual'):'Nube: sin clave';
+  $('#cloudWarn').hidden=keySet();
   $('#linkInfo').textContent=fileHandle?`Vinculado a «${fileHandle.name}»: se sobrescribe en cada análisis.`:(window.showSaveFilePicker?'Sin archivo vinculado. Opción avanzada para Chrome o Edge con Drive para escritorio.':'Tu navegador no permite vincular archivos; usa Descargar/Importar.');
   $('#jsonPreview').textContent=JSON.stringify(mem,null,2);
-  $('#cloudAuto').checked=!!cloud.auto; $('#cloudRemember').checked=!!cloud.remember;
+  $('#cloudAuto').checked=!!cloud.auto;
   const st=mem.profile.stack;
   $('#profileBox').innerHTML=`<div class="small"><b>Dominio:</b> ${esc(mem.profile.dominio)}</div>
    <div class="small"><b>Bootstrap:</b> ${esc(st.bootstrap)} · <b>Idioma:</b> ${esc(st.idioma)}</div>
@@ -854,7 +824,6 @@ function renderMemory(){
 
 /* ============ vistas y eventos ============ */
 function showView(v){
-  if(v!=='memoria')unlocked=false;
   $$('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
   $$('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.view===v));
   if(v==='progreso')renderProgress(); if(v==='manuales')renderManuals(); if(v==='memoria')renderMemory();
@@ -899,37 +868,10 @@ $('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{mem=f
 $('#btnReset').onclick=async()=>{if(confirm('¿Borrar toda la memoria aprendida? Esta acción no se puede deshacer.')){mem=defaultMem();await persist();renderAll();toast('Memoria restablecida')}};
 
 
-$('#btnUnlock').onclick=async()=>{
-  const k=$('#lockKey').value; if(!k)return toast('Escribe la clave');
-  if(cloud.keyHash){
-    if((await sha(k))!==cloud.keyHash)return toast('Clave incorrecta');
-    cloud.key=k;
-  }else{ // primer ingreso: el servidor valida la clave
-    const prev=cloud.key;cloud.key=k;
-    try{await cloudGet()}catch(e){cloud.key=prev;return toast(cloudMsg(e))}
-    cloud.keyHash=await sha(k);
-  }
-  cloud.remember=$('#rememberKey').checked||cloud.remember;
-  saveCloudCfg();unlocked=true;$('#lockKey').value='';renderMemory();toast('Memoria desbloqueada');
-};
-$('#lockKey').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnUnlock').click()});
-$('#btnLock').onclick=()=>{unlocked=false;renderMemory();toast('Memoria bloqueada')};
 $('#cloudAuto').onchange=e=>{cloud.auto=e.target.checked;saveCloudCfg();renderMemory()};
-async function applyCfg(){
-  const k=$('#cloudKey').value;
-  if(k){cloud.key=k;cloud.keyHash=await sha(k);$('#cloudKey').value=''}
-  cloud.remember=$('#cloudRemember').checked; saveCloudCfg(); renderMemory(); return true;
-}
-$('#cloudSave').onclick=async()=>{if(await applyCfg())toast('Configuración guardada')};
 $('#cloudTest').onclick=async()=>{
-  if(!(await applyCfg()))return; if(!cloudOn())return toast('Falta la clave');
+  if(!cloudOn())return toast(keySet()?'URL de la nube no válida':'Falta pegar la clave en APP_KEY dentro de index.html');
   try{const d=await cloudGet();toast(d.schema?`Conexión correcta · ${d.stats?.total??0} análisis en la nube`:'Conexión correcta · la nube está vacía')}catch(e){toast(cloudMsg(e))}
-};
-$('#cloudForget').onclick=()=>{
-  if(!confirm('Se borrará de este navegador la clave y la configuración de la nube. Tu archivo en Drive no se toca. ¿Continuar?'))return;
-  cloud={url:APP_URL,key:'',keyHash:'',auto:true,remember:false,lastRemote:null};
-  try{localStorage.removeItem(CLOUD_KEY);sessionStorage.removeItem(SK)}catch{}
-  unlocked=false;renderMemory();toast('Clave olvidada en este navegador');
 };
 $('#cloudPull').onclick=cloudPull; $('#cloudPush').onclick=()=>cloudPush(false);
 const pr=$('#prompt'),cnt=()=>{const t=pr.value.trim();$('#count').textContent=t?`${t.split(/\s+/).length} palabras · ${pr.value.length} caracteres · Ctrl + Enter para analizar`:'Ctrl + Enter para analizar';};
@@ -939,8 +881,6 @@ pr.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.
 /* ============ arranque ============ */
 (async function init(){
   loadLocal();
-  if(cloud.url&&cloud.key&&!cloud.keyHash)cloud.keyHash=await sha(cloud.key);
-  saveCloudCfg();
   renderAll();
   await cloudStartup();
   const v=(location.hash||'').slice(1);if(['analizar','progreso','manuales','memoria'].includes(v))showView(v);
