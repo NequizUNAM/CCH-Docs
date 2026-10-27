@@ -6,11 +6,13 @@
 <title>Prompt Lab · Diseño web interactivo</title>
 <meta name="description" content="Analiza tus prompts para crear páginas web interactivas, detecta qué te falta y aprende de tus propios patrones.">
 <style>
+/* Paleta inspirada en los colores institucionales UNAM: azul (≈Pantone 281) y oro (≈Pantone 124).
+   Son aproximaciones; ajusta los hex si necesitas el valor exacto del manual de identidad. */
 :root{
   color-scheme:light;
-  --bg:#e9eaec; --surface:#f5f5f6; --ink:#25262a; --muted:#686a70; --line:#d6d7db;
-  --accent:#46626d; --accent-soft:#dbe3e7; --warn:#87591f; --warn-soft:#ebe2d2;
-  --bad:#93414a; --bad-soft:#ebdcdd; --radius:10px;
+  --bg:#eceef1; --surface:#f7f8f9; --ink:#1c2333; --muted:#5f6776; --line:#d4d8df;
+  --accent:#00205b; --accent-soft:#dde4f0; --gold:#e8a900; --gold-soft:#fbf0cd;
+  --warn:#7d5200; --warn-soft:#fbf0cd; --bad:#a3332f; --bad-soft:#f4dedd; --radius:10px;
   --font:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
@@ -135,6 +137,35 @@ dialog::backdrop{background:rgba(20,20,18,.45)}
 .toast.on{opacity:1;transform:translateX(-50%)}
 footer{border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;padding:20px 0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ---- tema UNAM + mejoras de UX ---- */
+[hidden]{display:none!important}
+.top{background:var(--accent);backdrop-filter:none;border-bottom:3px solid var(--gold)}
+.brand h1{color:#fff} .brand .muted{color:rgba(255,255,255,.72)}
+.dot{background:var(--gold)}
+.tab{color:rgba(255,255,255,.78)} .tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tab[aria-selected="true"]{color:#fff;background:rgba(255,255,255,.12);box-shadow:inset 0 -2px 0 var(--gold)}
+.btn.onblue{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.btn.onblue:hover{border-color:var(--gold);color:var(--gold)}
+.top .btn:focus-visible,.top .tab:focus-visible{outline-color:var(--gold)}
+.btn.primary:hover{background:#0a3478;filter:none}
+.btn:active{transform:translateY(1px)}
+.big{color:var(--accent)}
+.kpi b{color:var(--accent)}
+.fill{background:var(--accent)} .fill.warn{background:var(--gold)} .fill.bad{background:var(--bad)}
+.tag{background:var(--accent-soft);color:var(--accent)} .tag.warn{background:var(--gold-soft);color:var(--warn)}
+.snip{background:var(--gold-soft);border-left:3px solid var(--gold)}
+.fwb.best{border-color:var(--gold);background:var(--gold-soft)}
+.fwb:hover{border-color:var(--accent)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mh{border-bottom:2px solid var(--gold)}
+.card h3{color:var(--accent)}
+h2{color:var(--accent)}
+h2::after{content:"";display:block;width:36px;height:3px;background:var(--gold);margin-top:8px;border-radius:2px}
+.lock{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);flex:none}
+.hint{border-left:3px solid var(--gold);background:var(--gold-soft);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.85rem}
+textarea:focus,input:focus{border-color:var(--accent)}
+.todo input,label.check input{accent-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -148,7 +179,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;padd
       <button class="tab" role="tab" data-view="manuales" aria-selected="false">Manuales</button>
       <button class="tab" role="tab" data-view="memoria" aria-selected="false">Memoria</button>
     </nav>
-    <button class="btn sm" id="openMethods">Métodos de prompt</button>
+    <button class="btn sm onblue" id="openMethods">Métodos de prompt</button>
   </div>
 </header>
 
@@ -162,9 +193,10 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;padd
   <div class="stack">
     <div class="card">
       <textarea id="prompt" placeholder="Pega aquí tu prompt…" aria-label="Prompt a analizar"></textarea>
+      <div class="small muted" id="count" style="margin-top:6px"></div>
       <div class="row spread" style="margin-top:12px">
         <div class="row">
-          <button class="btn primary" id="btnAnalyze">Analizar y aprender</button>
+          <button class="btn primary" id="btnAnalyze" title="Ctrl + Enter">Analizar y aprender</button>
           <button class="btn" id="btnSample">Cargar mi prompt base</button>
           <button class="btn ghost" id="btnClear">Limpiar</button>
         </div>
@@ -200,66 +232,59 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;padd
 <!-- MEMORIA -->
 <section class="view" id="v-memoria">
   <h2>Memoria</h2>
-  <p class="lead">Todo lo aprendido vive en un solo JSON que se sobrescribe en cada análisis. Guárdalo en Google Drive (vía Apps Script o archivo vinculado) para que siga mejorando entre dispositivos.</p>
-  <div class="stack">
+  <p class="lead">Lo aprendido vive en un JSON en tu Google Drive. Esta sección está protegida: se desbloquea con tu clave y se vuelve a ocultar al salir.</p>
+
+  <div class="card stack" id="memLocked" style="max-width:520px">
+    <div class="row" style="gap:12px;flex-wrap:nowrap">
+      <span class="lock" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+      <div><h3 style="margin:0">Memoria protegida</h3><div class="muted small" id="lockStatus"></div></div>
+    </div>
+    <div>
+      <label class="small muted" for="lockKey">Clave</label>
+      <input type="password" id="lockKey" autocomplete="off" placeholder="Tu clave secreta">
+    </div>
+    <label class="check"><input type="checkbox" id="rememberKey"> Recordar la clave en este dispositivo</label>
+    <div class="row"><button class="btn primary" id="btnUnlock">Desbloquear</button></div>
+  </div>
+
+  <div class="stack" id="memOpen" hidden>
+    <div class="row spread"><span class="tag">Desbloqueada</span><button class="btn sm" id="btnLock">Bloquear ahora</button></div>
+
     <div class="card stack">
       <div class="row spread">
-        <div><h3 style="margin:0">Estado</h3><div class="muted small" id="memStatus"></div></div>
-        <div class="row">
-          <button class="btn primary" id="btnLink">Vincular archivo y guardar</button>
-          <button class="btn" id="btnOpenFile">Abrir JSON</button>
-          <button class="btn" id="btnDownload">Descargar</button>
-          <button class="btn" id="btnUpload">Importar…</button>
-          <input type="file" id="fileIn" accept="application/json,.json" hidden>
-        </div>
+        <div><h3 style="margin:0">Estado y sincronización</h3><div class="muted small" id="memStatus"></div><div class="muted small" id="cloudStatus"></div></div>
+        <div class="row"><button class="btn" id="cloudPull">Cargar de la nube</button><button class="btn primary" id="cloudPush">Guardar en la nube</button></div>
       </div>
-      <div class="small muted" id="linkInfo"></div>
+      <label class="check"><input type="checkbox" id="cloudAuto"> Sincronizar automáticamente en cada análisis</label>
     </div>
 
-    <div class="card stack" id="cloudCard">
-      <div class="row spread"><div><h3 style="margin:0">Nube · Google Apps Script</h3><div class="muted small" id="cloudStatus"></div></div>
-        <label class="check"><input type="checkbox" id="cloudAuto"> Sincronizar automáticamente</label></div>
-      <div class="grid g2">
-        <div><label class="small muted" for="cloudUrl">URL de la aplicación web (termina en /exec)</label><input type="url" id="cloudUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></div>
-        <div><label class="small muted" for="cloudKey">Clave secreta</label><input type="password" id="cloudKey" placeholder="La misma que pusiste en el script" autocomplete="off"></div>
-      </div>
-      <div class="row"><button class="btn primary" id="cloudSave">Guardar configuración</button><button class="btn" id="cloudTest">Probar conexión</button><button class="btn" id="cloudPull">Cargar de la nube</button><button class="btn" id="cloudPush">Guardar en la nube</button></div>
-      <p class="small muted" style="margin:0">La URL y la clave se guardan solo en este navegador, nunca dentro del JSON.</p>
-      <details><summary class="small" style="cursor:pointer;color:var(--accent)">Código del script y pasos de publicación</summary>
-        <ol class="small" style="padding-left:18px;margin:10px 0">
-          <li>Entra a <b>script.google.com</b> → <b>Nuevo proyecto</b>. Borra el contenido y pega el código de abajo.</li>
-          <li><b>Configuración del proyecto</b> (engrane) → <b>Propiedades del script</b> → <b>Añadir propiedad</b>: nombre <code>CLAVE</code>, valor una contraseña larga inventada por ti. El ID del archivo de Drive ya viene incluido en el código; solo cámbialo si usas otro archivo.</li>
-          <li><b>Implementar</b> → <b>Nueva implementación</b> → tipo <b>Aplicación web</b>. Ejecutar como: <b>Yo</b>. Quién tiene acceso: <b>Cualquier persona</b>.</li>
-          <li>Pulsa <b>Implementar</b> y autoriza los permisos (si ves «app no verificada»: Avanzado → Ir al proyecto). Es tu propio script.</li>
-          <li>Copia la <b>URL de la aplicación web</b>, pégala arriba con la clave y pulsa <b>Probar conexión</b>.</li>
-          <li>Si luego editas el código: <b>Implementar → Administrar implementaciones → Editar → Nueva versión</b>; si no, la URL sigue usando el código anterior.</li>
-        </ol>
-        <div class="row spread"><span class="small muted">Code.gs</span><button class="btn sm" id="gsCopy">Copiar código</button></div>
-        <pre id="gsCode" style="margin-top:8px;max-height:280px"></pre>
-      </details>
-    </div>
-
-    <div class="grid g2">
-      <div class="card">
-        <h3>Cómo llevarlo a Google Drive</h3>
-        <ol class="small" style="padding-left:18px;margin:0">
-          <li><b>Recomendado:</b> instala Drive para escritorio y pulsa <i>Vincular archivo</i>; elige <code>memoria-prompts.json</code> dentro de tu carpeta de Drive. Cada análisis lo sobrescribe y Drive lo sincroniza (Chrome o Edge).</li>
-          <li><b>Manual:</b> pulsa <i>Descargar</i> y súbelo a Drive con el mismo nombre; Drive lo guarda como nueva versión del archivo.</li>
-          <li><b>Repositorio:</b> haz commit de <code>memoria-prompts.json</code> junto a <code>index.html</code>; la página lo carga al abrirse si no hay datos locales.</li>
-        </ol>
-        <p class="small muted" style="margin-top:10px">Una página estática no puede escribir en Drive por sí sola sin iniciar sesión con Google; por eso se usa el archivo vinculado.</p>
-      </div>
-      <div class="card">
-        <h3>Perfil aprendido</h3>
-        <p class="small muted">Se actualiza solo con lo que detecta en tus prompts y alimenta los fragmentos sugeridos.</p>
-        <div class="stack" id="profileBox"></div>
-      </div>
+    <div class="card stack">
+      <h3 style="margin:0">Clave de acceso a la nube</h3>
+      <div><label class="small muted" for="cloudKey">Clave (déjala vacía para conservar la actual)</label><input type="password" id="cloudKey" autocomplete="off" placeholder="••••••••"></div>
+      <label class="check"><input type="checkbox" id="cloudRemember"> Recordar la clave en este dispositivo</label>
+      <div class="row"><button class="btn primary" id="cloudSave">Guardar configuración</button><button class="btn" id="cloudTest">Probar conexión</button><button class="btn ghost" id="cloudForget">Olvidar configuración</button></div>
+      <p class="hint" style="margin:0">La clave no está en el código: vive solo en este navegador, en la sesión (se borra al cerrar la pestaña) salvo que marques «Recordar». Nunca se incluye en el JSON. La protección real es la <b>CLAVE</b> que valida tu script.</p>
     </div>
 
     <div class="card">
-      <div class="row spread"><h3 style="margin:0">Vista previa del JSON</h3><button class="btn sm ghost" id="btnReset">Restablecer memoria</button></div>
-      <pre id="jsonPreview" style="margin-top:12px;max-height:340px"></pre>
+      <h3>Perfil aprendido</h3>
+      <p class="small muted">Se actualiza solo con lo que detecta en tus prompts y alimenta los fragmentos sugeridos.</p>
+      <div class="stack" id="profileBox"></div>
     </div>
+
+    <details class="card">
+      <summary style="cursor:pointer;font-weight:600;color:var(--accent)">Archivo local (avanzado)</summary>
+      <div class="stack" style="margin-top:12px">
+        <div class="row"><button class="btn" id="btnLink">Vincular archivo y guardar</button><button class="btn" id="btnOpenFile">Abrir JSON</button><button class="btn" id="btnDownload">Descargar</button><button class="btn" id="btnUpload">Importar…</button><input type="file" id="fileIn" accept="application/json,.json" hidden></div>
+        <div class="small muted" id="linkInfo"></div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary style="cursor:pointer;font-weight:600;color:var(--accent)">Vista previa del JSON</summary>
+      <div class="row spread" style="margin-top:12px"><span class="small muted">Contiene el texto de tus prompts.</span><button class="btn sm ghost" id="btnReset">Restablecer memoria</button></div>
+      <pre id="jsonPreview" style="margin-top:10px;max-height:340px"></pre>
+    </details>
   </div>
 </section>
 </main>
@@ -292,7 +317,7 @@ const MEM_KEY='promptlab.memory.v1';
 const defaultMem=()=>({
   schema:'promptlab-memory/1', updatedAt:null,
   profile:{dominio:'Diseño de páginas web interactivas',
-    stack:{bootstrap:'5.3.2',iconos:'Bootstrap Icons',idioma:'español',archivos:['auth-config.js','aula-header.js'],componentes:['sec-nav']},
+    stack:{bootstrap:'5.3.2',iconos:'Bootstrap Icons',idioma:'español',archivos:[],componentes:[]},
     notas:''},
   stats:{total:0,criterios:{}}, historial:[], integrado:[]
 });
@@ -329,11 +354,18 @@ function downloadJSON(){
 }
 
 /* ============ nube (Google Apps Script) ============ */
-const CLOUD_KEY='promptlab.cloud.v1';
-let cloud={url:'https://script.google.com/macros/s/AKfycbz6azbT3ak7bXHvNGpIpBCSgxHpsRSpxuKUxHPSPJVEUdwPu65-u0bHXP_RB0UvgMUiGg/exec',key:'',auto:true,lastRemote:null};
-try{Object.assign(cloud,JSON.parse(localStorage.getItem(CLOUD_KEY)||'{}'))}catch{}
-const saveCloudCfg=()=>{try{localStorage.setItem(CLOUD_KEY,JSON.stringify(cloud))}catch{}};
-const cloudOn=()=>/^https:\/\/script\.google\.com\/macros\/s\/[^\s]+\/exec$/.test(cloud.url)&&!!cloud.key;
+// Destino fijo (aplicación web de Apps Script). Sin clave, la URL no da acceso a nada.
+// En este código NO hay claves, ni datos de memoria, ni el ID del archivo de Drive (ese vive en el script).
+const APP_URL='https://script.google.com/macros/s/AKfycbz6azbT3ak7bXHvNGpIpBCSgxHpsRSpxuKUxHPSPJVEUdwPu65-u0bHXP_RB0UvgMUiGg/exec';
+const CLOUD_KEY='promptlab.cloud.v1', SK='promptlab.sk';
+const URLRE=/^https:\/\/script\.google\.com\/macros\/s\/[^\s]+\/exec$/;
+let cloud={url:'',key:'',keyHash:'',auto:true,remember:false,lastRemote:null};
+let unlocked=false;
+try{Object.assign(cloud,JSON.parse(localStorage.getItem(CLOUD_KEY)||'{}'));if(!cloud.key)cloud.key=sessionStorage.getItem(SK)||''}catch{}
+cloud.url=APP_URL;
+const sha=async t=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('promptlab:'+t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch{return 'h'+hash('promptlab:'+t)}};
+const saveCloudCfg=()=>{try{const{key,...rest}=cloud;localStorage.setItem(CLOUD_KEY,JSON.stringify({...rest,key:cloud.remember?key:''}));key?sessionStorage.setItem(SK,key):sessionStorage.removeItem(SK)}catch{}};
+const cloudOn=()=>URLRE.test(cloud.url)&&!!cloud.key;
 async function cloudGet(){
   const r=await fetch(cloud.url+'?key='+encodeURIComponent(cloud.key),{cache:'no-store'});
   const j=await r.json(); if(!j.ok)throw new Error(j.error||'error'); return j.data;
@@ -379,7 +411,6 @@ async function cloudStartup(){
     cloud.lastRemote=d.updatedAt||null;saveCloudCfg();renderAll();
   }catch(e){toast('Nube no disponible: '+cloudMsg(e))}
 }
-const GS_CODE="/**\n * Prompt Lab · puente con Google Drive\n * Lee y escribe memoria-prompts.json en tu Drive.\n * Propiedades del script (Configuración del proyecto → Propiedades del script):\n *   CLAVE       (obligatoria) contraseña que también pegas en la página.\n *   ARCHIVO_ID  (opcional) ID de otro archivo; si no existe se usa DEFAULT_FILE_ID.\n */\nconst FILE_NAME = 'memoria-prompts.json';\nconst DEFAULT_FILE_ID = '1ZJZI4Lu2y5v-EfnTisvL-eoBOGrGXLNm'; // tu memoria-prompts.json en Drive\nconst MAX_BYTES = 2000000; // límite de seguridad (2 MB)\n\nfunction out_(o) {\n  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);\n}\nfunction keyOk_(k) {\n  const real = PropertiesService.getScriptProperties().getProperty('CLAVE');\n  return !!real && k === real;\n}\nfunction file_() {\n  const id = (PropertiesService.getScriptProperties().getProperty('ARCHIVO_ID') || DEFAULT_FILE_ID).trim();\n  if (id) return DriveApp.getFileById(id);\n  const it = DriveApp.getFilesByName(FILE_NAME);\n  return it.hasNext() ? it.next() : DriveApp.createFile(FILE_NAME, '{}', 'application/json');\n}\n\nfunction doGet(e) {\n  if (!keyOk_(e.parameter.key)) return out_({ ok: false, error: 'clave incorrecta' });\n  const txt = file_().getBlob().getDataAsString() || '{}';\n  try { return out_({ ok: true, data: JSON.parse(txt) }); }\n  catch (_) { return out_({ ok: false, error: 'el archivo no es JSON válido' }); }\n}\n\nfunction doPost(e) {\n  let b;\n  try { b = JSON.parse(e.postData.contents); } catch (_) { return out_({ ok: false, error: 'JSON inválido' }); }\n  if (!keyOk_(b.key)) return out_({ ok: false, error: 'clave incorrecta' });\n  if (!b.data || typeof b.data !== 'object' || b.data.schema !== 'promptlab-memory/1')\n    return out_({ ok: false, error: 'datos no reconocidos' });\n  const body = JSON.stringify(b.data, null, 2);\n  if (body.length > MAX_BYTES) return out_({ ok: false, error: 'archivo demasiado grande' });\n  const lock = LockService.getScriptLock();\n  lock.waitLock(10000);\n  try { file_().setContent(body); } finally { lock.releaseLock(); }\n  return out_({ ok: true, updatedAt: b.data.updatedAt || null });\n}\n";
 
 /* ============ criterios de análisis ============ */
 const chk=pairs=>{const ok=pairs.filter(p=>p[1]);return{score:ok.length/pairs.length,missing:pairs.filter(p=>!p[1]).map(p=>p[0]),found:ok.map(p=>p[0])}};
@@ -404,11 +435,11 @@ const CRIT=[
  {id:'ux',g:'Formato técnico',n:'Consistencia con tus páginas',w:2,
   why:'Explicar el porqué mejora el resultado: «mantén el diseño» funciona mejor si nombras qué componentes compartidos usar.',
   test:t=>chk([['mantener diseño y UX de tus otras páginas',/(manten|mismo diseno|mis demas paginas|consistente|misma ux)/.test(t)],['header o componentes compartidos',/(header|auth-config|aula-header|componente compartido)/.test(t)]]),
-  snip:()=>`Mantén el diseño y la UX de mis demás páginas del Aula Digital, con el header compartido (${S().archivos.join(' y ')}).`},
+  snip:()=>`Mantén el diseño y la UX de mis demás páginas del Aula Digital, con el header compartido (${S().archivos.slice(0,2).join(' y ')||'[archivos .js del header]'}).`},
  {id:'nav',g:'Formato técnico',n:'Navegación',w:1,
   why:'Nombrar la clase o componente (sec-nav) deja menos margen a reinterpretaciones.',
   test:t=>chk([['barra de navegación por secciones',/(sec-nav|barra de navegacion|navegacion por secciones|indice)/.test(t)],['marcadores o anclas',/(marcador|ancla|desplaz|scroll)/.test(t)]]),
-  snip:()=>`Barra de navegación por secciones (${S().componentes[0]||'sec-nav'}) con marcadores para desplazarme.`},
+  snip:()=>`Barra de navegación por secciones (${S().componentes[0]||'[componente de navegación]'}) con marcadores para desplazarme.`},
  {id:'interact',g:'Interactividad',n:'Simulador o render visual',w:2,
   why:'Pide la interactividad explícitamente y «ve más allá de lo básico»: Claude no infiere extras por sí solo.',
   test:t=>chk([['un simulador o render visual por tema',/(simulador|render|visualizacion|interactiv|animacion)/.test(t)],['tipo concreto (gráficas, SVG, calculadora, juego…)',/(grafica|svg|diagrama|calculadora|juego|clasificar|arrastrar|canvas|slider)/.test(t)]]),
@@ -432,7 +463,7 @@ const CRIT=[
  {id:'entrega',g:'Control',n:'Entrega',w:1,
   why:'Indica exactamente qué debe pasar al terminar (menú, resumen, solo el archivo).',
   test:t=>chk([['qué hacer al terminar',/(al terminar|entregame|entrega|agregalo|menu)/.test(t)]]),
-  snip:()=>`Al terminar: [agrégalo al menú de ${S().archivos[1]||'aula-header.js'} en el grupo [nombre_grupo] / solo entrégame el archivo], y resume en 3 líneas lo que incluiste.`},
+  snip:()=>`Al terminar: [agrégalo al menú de ${S().archivos[1]||'[archivo del menú]'} en el grupo [nombre_grupo] / solo entrégame el archivo], y resume en 3 líneas lo que incluiste.`},
  {id:'placeholders',g:'Control',n:'Campos sin completar',w:2,
   why:'Los [campos] sin llenar llegan literalmente al modelo. Reemplázalos o marca el prompt como plantilla.',
   test:(t,raw)=>{const m=(raw.match(/\[[^\]\n]{2,}\]/g)||[]);return{score:m.length?0:1,missing:m.length?[`${m.length} campo(s): ${[...new Set(m)].slice(0,4).join(' ')}${m.length>4?' …':''}`]:[],found:m.length?[]:['sin campos pendientes']}},
@@ -582,7 +613,7 @@ function renderResult(r){
     <div class="row spread"><h3 style="margin:0">Prompt mejorado (borrador)</h3>
       <div class="row"><button class="btn sm" id="btnAll">Añadir todo lo que falta</button><button class="btn sm" id="btnReset2">Volver al original</button><button class="btn sm primary" id="btnCopyImp">Copiar</button><button class="btn sm" id="btnReanalyze">Re-analizar</button></div></div>
     <textarea id="improved" class="mono" style="margin-top:12px;min-height:240px" aria-label="Prompt mejorado"></textarea>
-    <p class="small muted" style="margin:8px 0 0">Los fragmentos usan tu perfil aprendido (Bootstrap ${esc(S().bootstrap)}, ${esc(S().archivos.join(', '))}). Completa los [campos] antes de usarlo.</p>
+    <p class="small muted" style="margin:8px 0 0">Los fragmentos usan tu perfil aprendido (Bootstrap ${esc(S().bootstrap)}${S().archivos.length?', '+esc(S().archivos.join(', ')):''}). Completa los [campos] antes de usarlo.</p>
   </div>`;
   improved=improved||r.raw;
   $('#improved').value=improved;
@@ -800,14 +831,18 @@ function bindInteg(){
 
 /* ============ render: memoria ============ */
 function renderMemory(){
+  const conf=!!cloud.keyHash;
+  $('#memLocked').hidden=unlocked; $('#memOpen').hidden=!unlocked;
+  $('#lockStatus').textContent=!conf?'Primer ingreso: escribe tu clave para vincular este navegador.':(cloud.key&&cloud.auto?'Nube conectada · sincronización activa.':'Nube configurada · desbloquea para sincronizar.');
+  if(!unlocked){ // nada sensible en el DOM mientras está bloqueada
+    $('#jsonPreview').textContent='';$('#profileBox').textContent='';$('#cloudKey').value='';return;
+  }
   const u=mem.updatedAt?new Date(mem.updatedAt).toLocaleString('es-MX'):'sin guardar';
   $('#memStatus').textContent=`${mem.stats.total} análisis · actualizado ${u}`;
-  $('#linkInfo').textContent=fileHandle?`Vinculado a «${fileHandle.name}»: se sobrescribe en cada análisis.`:(window.showSaveFilePicker?'Sin archivo vinculado: los datos se guardan en este navegador. Vincula un archivo para sobrescribirlo en Drive.':'Tu navegador no permite vincular archivos; usa Descargar/Importar (Chrome o Edge sí lo permiten).');
+  $('#cloudStatus').textContent=cloudOn()?(cloud.auto?'Nube: conectada · sincronización automática':'Nube: conectada · manual'):'Nube: sin conectar';
+  $('#linkInfo').textContent=fileHandle?`Vinculado a «${fileHandle.name}»: se sobrescribe en cada análisis.`:(window.showSaveFilePicker?'Sin archivo vinculado. Opción avanzada para Chrome o Edge con Drive para escritorio.':'Tu navegador no permite vincular archivos; usa Descargar/Importar.');
   $('#jsonPreview').textContent=JSON.stringify(mem,null,2);
-  $('#cloudStatus').textContent=cloudOn()?(cloud.auto?'Configurada · sincronización automática activa':'Configurada · sincronización manual'):'Sin configurar';
-  if(document.activeElement!==$('#cloudUrl'))$('#cloudUrl').value=cloud.url;
-  if(document.activeElement!==$('#cloudKey'))$('#cloudKey').value=cloud.key;
-  $('#cloudAuto').checked=!!cloud.auto;
+  $('#cloudAuto').checked=!!cloud.auto; $('#cloudRemember').checked=!!cloud.remember;
   const st=mem.profile.stack;
   $('#profileBox').innerHTML=`<div class="small"><b>Dominio:</b> ${esc(mem.profile.dominio)}</div>
    <div class="small"><b>Bootstrap:</b> ${esc(st.bootstrap)} · <b>Idioma:</b> ${esc(st.idioma)}</div>
@@ -819,6 +854,7 @@ function renderMemory(){
 
 /* ============ vistas y eventos ============ */
 function showView(v){
+  if(v!=='memoria')unlocked=false;
   $$('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
   $$('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.view===v));
   if(v==='progreso')renderProgress(); if(v==='manuales')renderManuals(); if(v==='memoria')renderMemory();
@@ -833,8 +869,8 @@ $('#mdClose').onclick=()=>md.close();
 md.addEventListener('click',e=>{if(e.target===md)md.close()});
 $('#mdTabs').addEventListener('click',e=>{const b=e.target.closest('[data-mt]');if(b){mdTab=b.dataset.mt;renderModal()}});
 
-$('#btnSample').onclick=()=>{$('#prompt').value=SAMPLE;$('#isTemplate').checked=false;toast('Prompt base cargado')};
-$('#btnClear').onclick=()=>{$('#prompt').value='';improved='';last=null;$('#result').innerHTML='<div class="empty">Aún no hay análisis. Pega un prompt y pulsa <b>Analizar</b>.</div>'};
+$('#btnSample').onclick=()=>{$('#prompt').value=SAMPLE;setTimeout(()=>$('#prompt').dispatchEvent(new Event('input')));$('#isTemplate').checked=false;toast('Prompt base cargado')};
+$('#btnClear').onclick=()=>{$('#prompt').value='';$('#prompt').dispatchEvent(new Event('input'));improved='';last=null;$('#result').innerHTML='<div class="empty">Aún no hay análisis. Pega un prompt y pulsa <b>Analizar</b>.</div>'};
 async function runAnalysis(raw){
   if(!raw.trim())return toast('Escribe o pega un prompt primero');
   const r=analyze(raw,$('#isTemplate').checked);
@@ -863,21 +899,48 @@ $('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{mem=f
 $('#btnReset').onclick=async()=>{if(confirm('¿Borrar toda la memoria aprendida? Esta acción no se puede deshacer.')){mem=defaultMem();await persist();renderAll();toast('Memoria restablecida')}};
 
 
-$('#gsCode').textContent=GS_CODE; $('#gsCopy').onclick=()=>copy(GS_CODE);
-$('#cloudSave').onclick=()=>{cloud.url=$('#cloudUrl').value.trim();cloud.key=$('#cloudKey').value;cloud.auto=$('#cloudAuto').checked;saveCloudCfg();renderMemory();toast(cloudOn()?'Configuración guardada':'URL no válida: debe ser https://script.google.com/macros/s/…/exec')};
+$('#btnUnlock').onclick=async()=>{
+  const k=$('#lockKey').value; if(!k)return toast('Escribe la clave');
+  if(cloud.keyHash){
+    if((await sha(k))!==cloud.keyHash)return toast('Clave incorrecta');
+    cloud.key=k;
+  }else{ // primer ingreso: el servidor valida la clave
+    const prev=cloud.key;cloud.key=k;
+    try{await cloudGet()}catch(e){cloud.key=prev;return toast(cloudMsg(e))}
+    cloud.keyHash=await sha(k);
+  }
+  cloud.remember=$('#rememberKey').checked||cloud.remember;
+  saveCloudCfg();unlocked=true;$('#lockKey').value='';renderMemory();toast('Memoria desbloqueada');
+};
+$('#lockKey').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnUnlock').click()});
+$('#btnLock').onclick=()=>{unlocked=false;renderMemory();toast('Memoria bloqueada')};
 $('#cloudAuto').onchange=e=>{cloud.auto=e.target.checked;saveCloudCfg();renderMemory()};
+async function applyCfg(){
+  const k=$('#cloudKey').value;
+  if(k){cloud.key=k;cloud.keyHash=await sha(k);$('#cloudKey').value=''}
+  cloud.remember=$('#cloudRemember').checked; saveCloudCfg(); renderMemory(); return true;
+}
+$('#cloudSave').onclick=async()=>{if(await applyCfg())toast('Configuración guardada')};
 $('#cloudTest').onclick=async()=>{
-  cloud.url=$('#cloudUrl').value.trim();cloud.key=$('#cloudKey').value;saveCloudCfg();
-  if(!cloudOn())return toast('URL no válida: debe terminar en /exec');
-  try{const d=await cloudGet();toast(d.schema?`Conexión correcta · ${d.stats?.total??0} análisis en la nube`:'Conexión correcta · la nube está vacía');}catch(e){toast(cloudMsg(e))}
+  if(!(await applyCfg()))return; if(!cloudOn())return toast('Falta la clave');
+  try{const d=await cloudGet();toast(d.schema?`Conexión correcta · ${d.stats?.total??0} análisis en la nube`:'Conexión correcta · la nube está vacía')}catch(e){toast(cloudMsg(e))}
+};
+$('#cloudForget').onclick=()=>{
+  if(!confirm('Se borrará de este navegador la clave y la configuración de la nube. Tu archivo en Drive no se toca. ¿Continuar?'))return;
+  cloud={url:APP_URL,key:'',keyHash:'',auto:true,remember:false,lastRemote:null};
+  try{localStorage.removeItem(CLOUD_KEY);sessionStorage.removeItem(SK)}catch{}
+  unlocked=false;renderMemory();toast('Clave olvidada en este navegador');
 };
 $('#cloudPull').onclick=cloudPull; $('#cloudPush').onclick=()=>cloudPush(false);
+const pr=$('#prompt'),cnt=()=>{const t=pr.value.trim();$('#count').textContent=t?`${t.split(/\s+/).length} palabras · ${pr.value.length} caracteres · Ctrl + Enter para analizar`:'Ctrl + Enter para analizar';};
+pr.addEventListener('input',cnt);cnt();
+pr.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runAnalysis(pr.value)}});
 
 /* ============ arranque ============ */
 (async function init(){
-  if(!loadLocal()){
-    try{const r=await fetch('memoria-prompts.json',{cache:'no-store'});if(r.ok)mem=fixMem(await r.json())}catch{}
-  }
+  loadLocal();
+  if(cloud.url&&cloud.key&&!cloud.keyHash)cloud.keyHash=await sha(cloud.key);
+  saveCloudCfg();
   renderAll();
   await cloudStartup();
   const v=(location.hash||'').slice(1);if(['analizar','progreso','manuales','memoria'].includes(v))showView(v);
