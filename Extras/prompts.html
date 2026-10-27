@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt Lab · Diseño web interactivo</title>
+<meta name="description" content="Analiza tus prompts para crear páginas web interactivas, detecta qué te falta y aprende de tus propios patrones.">
+<style>
+:root{
+  --bg:#fafaf8; --surface:#ffffff; --ink:#1d1d1b; --muted:#6c6b66; --line:#e8e6e0;
+  --accent:#2f5d50; --accent-soft:#e8f0ec; --warn:#9a6420; --warn-soft:#f6eddf;
+  --bad:#9b3f3f; --bad-soft:#f6e6e4; --radius:10px;
+  --font:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121211; --surface:#1a1a18; --ink:#ecebe6; --muted:#9a9890; --line:#2b2a27;
+    --accent:#8bbfab; --accent-soft:#1d2a25; --warn:#d9a35c; --warn-soft:#2b2318;
+    --bad:#d98a8a; --bad-soft:#2d1d1d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121211; --surface:#1a1a18; --ink:#ecebe6; --muted:#9a9890; --line:#2b2a27;
+  --accent:#8bbfab; --accent-soft:#1d2a25; --warn:#d9a35c; --warn-soft:#2b2318;
+  --bad:#d98a8a; --bad-soft:#2d1d1d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--font);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+h1,h2,h3,h4{line-height:1.25;margin:0 0 .5em;font-weight:600;letter-spacing:-.01em}
+h1{font-size:1.15rem;margin:0}
+h2{font-size:1.35rem}
+h3{font-size:1.02rem}
+h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+p{margin:0 0 .8em}
+a{color:var(--accent)}
+code,pre,textarea.mono{font-family:var(--mono);font-size:.84rem}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.tabs{display:flex;gap:2px;flex-wrap:wrap}
+.tab{background:none;border:0;color:var(--muted);font:inherit;padding:8px 12px;border-radius:8px;cursor:pointer}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--accent-soft)}
+main{padding:28px 0 72px}
+.view{display:none}
+.view.on{display:block}
+.lead{color:var(--muted);max-width:68ch;margin-bottom:1.4em}
+
+/* base components */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.stack>*+*{margin-top:16px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.spread{justify-content:space-between}
+.btn{font:inherit;font-size:.9rem;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#0f1a16}}
+:root[data-theme="dark"] .btn.primary{color:#0f1a16}
+.btn.ghost{border-color:transparent;background:none;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink);background:var(--accent-soft)}
+.btn.sm{padding:4px 10px;font-size:.8rem}
+.btn:focus-visible,.tab:focus-visible,.chip:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip{font:inherit;font-size:.8rem;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.chip:hover{border-color:var(--muted);color:var(--ink)}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.tag{display:inline-block;font-size:.72rem;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-left:6px;vertical-align:middle}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.bad{background:var(--bad-soft);color:var(--bad)}
+textarea,input[type=search],input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+textarea{resize:vertical;min-height:210px;line-height:1.55}
+textarea.mono{line-height:1.5}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:0}
+label.check{display:inline-flex;gap:8px;align-items:center;color:var(--muted);font-size:.88rem;cursor:pointer}
+
+/* result */
+.score{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.big{font-size:3rem;font-weight:600;letter-spacing:-.03em;line-height:1}
+.big small{font-size:1rem;color:var(--muted);font-weight:400}
+.bars{flex:1;min-width:240px;display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:130px 1fr 38px;gap:10px;align-items:center;font-size:.85rem}
+.track{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:3px;transition:width .5s ease}
+.fill.warn{background:var(--warn)} .fill.bad{background:var(--bad)}
+.gap{border-top:1px solid var(--line);padding:14px 0;display:grid;gap:6px}
+.gap:first-child{border-top:0;padding-top:0}
+.gap .head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.snip{background:var(--accent-soft);border-radius:8px;padding:8px 12px;font-size:.88rem;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.snip span{white-space:pre-wrap}
+.ok-list{display:flex;flex-wrap:wrap;gap:6px}
+.fw{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.fwb{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;cursor:pointer;font:inherit;color:var(--ink)}
+.fwb:hover{border-color:var(--accent)}
+.fwb b{display:block;font-size:.95rem}
+.fwb .track{margin-top:8px}
+.fwb.best{border-color:var(--accent);background:var(--accent-soft)}
+.empty{color:var(--muted);text-align:center;padding:28px 12px;border:1px dashed var(--line);border-radius:var(--radius)}
+
+/* manuals */
+details.m{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:0 16px}
+details.m+details.m{margin-top:10px}
+details.m summary{cursor:pointer;padding:14px 0;list-style:none;display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+details.m summary::-webkit-details-marker{display:none}
+details.m summary::after{content:"+";color:var(--muted);font-size:1.2rem;line-height:1}
+details.m[open] summary::after{content:"–"}
+details.m .body{padding:0 0 16px;display:grid;gap:12px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:640px){.ba{grid-template-columns:1fr}}
+.ba div{border-radius:8px;padding:10px 12px;font-size:.88rem;white-space:pre-wrap}
+.ba .before{background:var(--bad-soft)} .ba .after{background:var(--accent-soft)}
+.ba b{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;color:var(--muted)}
+
+/* progress */
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(4,1fr)}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.kpi b{display:block;font-size:1.6rem;letter-spacing:-.02em}
+.todo{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.todo:first-child{border-top:0}
+.todo input{margin-top:4px;accent-color:var(--accent)}
+svg.trend{width:100%;height:120px}
+
+/* modal */
+dialog{border:1px solid var(--line);border-radius:14px;padding:0;background:var(--surface);color:var(--ink);width:min(860px,calc(100vw - 24px));max-height:calc(100vh - 32px);box-shadow:0 20px 60px rgba(0,0,0,.18)}
+dialog::backdrop{background:rgba(20,20,18,.45)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:2}
+.mb{padding:18px;display:grid;gap:16px;overflow:auto;max-height:calc(100vh - 140px)}
+.mtabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--line)}
+.part{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.part:first-child{border-top:0}
+.ico{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.7rem;margin-top:3px}
+.ico.y{background:var(--accent-soft);color:var(--accent)} .ico.n{background:var(--bad-soft);color:var(--bad)}
+.q{font-style:italic;color:var(--muted)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:.88rem;opacity:0;pointer-events:none;transition:.25s;z-index:100}
+.toast.on{opacity:1;transform:translateX(-50%)}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;padding:20px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span><h1>Prompt Lab</h1><span class="muted small">diseño web interactivo</span></div>
+    <nav class="tabs" role="tablist" aria-label="Secciones">
+      <button class="tab" role="tab" data-view="analizar" aria-selected="true">Analizar</button>
+      <button class="tab" role="tab" data-view="progreso" aria-selected="false">Progreso</button>
+      <button class="tab" role="tab" data-view="manuales" aria-selected="false">Manuales</button>
+      <button class="tab" role="tab" data-view="memoria" aria-selected="false">Memoria</button>
+    </nav>
+    <button class="btn sm" id="openMethods">Métodos de prompt</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ANALIZAR -->
+<section class="view on" id="v-analizar">
+  <h2>Analiza tu prompt</h2>
+  <p class="lead">Pega un prompt para crear una página web interactiva. Verás qué piezas incluiste, cuáles faltan, cómo cubre cada método (APEX, CRISP, PROMPT…) y una versión mejorada que puedes construir paso a paso.</p>
+
+  <div class="stack">
+    <div class="card">
+      <textarea id="prompt" placeholder="Pega aquí tu prompt…" aria-label="Prompt a analizar"></textarea>
+      <div class="row spread" style="margin-top:12px">
+        <div class="row">
+          <button class="btn primary" id="btnAnalyze">Analizar y aprender</button>
+          <button class="btn" id="btnSample">Cargar mi prompt base</button>
+          <button class="btn ghost" id="btnClear">Limpiar</button>
+        </div>
+        <label class="check"><input type="checkbox" id="isTemplate"> Es una plantilla (permite [campos])</label>
+      </div>
+    </div>
+
+    <div id="result"><div class="empty">Aún no hay análisis. Pega un prompt o carga tu prompt base y pulsa <b>Analizar</b>.</div></div>
+  </div>
+</section>
+
+<!-- PROGRESO -->
+<section class="view" id="v-progreso">
+  <h2>Tu progreso</h2>
+  <p class="lead">Lo que la página ha aprendido de tus análisis: dónde fallas con más frecuencia y qué mejoras vas integrando.</p>
+  <div class="stack" id="progressBody"></div>
+</section>
+
+<!-- MANUALES -->
+<section class="view" id="v-manuales">
+  <h2>Manuales</h2>
+  <p class="lead">La guía oficial de prompting, reordenada y aplicada a tus páginas interactivas. Se omitió lo que no aplica al diseño web (dosificación de medicamentos, migración de API, subagentes).</p>
+  <div class="stack">
+    <div class="card" id="masterCard"></div>
+    <div class="row">
+      <input type="search" id="mSearch" placeholder="Buscar en los manuales…" aria-label="Buscar" style="max-width:320px">
+      <div class="row" id="mChips"></div>
+    </div>
+    <div id="manualList"></div>
+  </div>
+</section>
+
+<!-- MEMORIA -->
+<section class="view" id="v-memoria">
+  <h2>Memoria</h2>
+  <p class="lead">Todo lo aprendido vive en un solo JSON que se sobrescribe en cada análisis. Guárdalo en tu carpeta de Google Drive para que siga mejorando entre dispositivos.</p>
+  <div class="stack">
+    <div class="card stack">
+      <div class="row spread">
+        <div><h3 style="margin:0">Estado</h3><div class="muted small" id="memStatus"></div></div>
+        <div class="row">
+          <button class="btn primary" id="btnLink">Vincular archivo y guardar</button>
+          <button class="btn" id="btnOpenFile">Abrir JSON</button>
+          <button class="btn" id="btnDownload">Descargar</button>
+          <button class="btn" id="btnUpload">Importar…</button>
+          <input type="file" id="fileIn" accept="application/json,.json" hidden>
+        </div>
+      </div>
+      <div class="small muted" id="linkInfo"></div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3>Cómo llevarlo a Google Drive</h3>
+        <ol class="small" style="padding-left:18px;margin:0">
+          <li><b>Recomendado:</b> instala Drive para escritorio y pulsa <i>Vincular archivo</i>; elige <code>memoria-prompts.json</code> dentro de tu carpeta de Drive. Cada análisis lo sobrescribe y Drive lo sincroniza (Chrome o Edge).</li>
+          <li><b>Manual:</b> pulsa <i>Descargar</i> y súbelo a Drive con el mismo nombre; Drive lo guarda como nueva versión del archivo.</li>
+          <li><b>Repositorio:</b> haz commit de <code>memoria-prompts.json</code> junto a <code>index.html</code>; la página lo carga al abrirse si no hay datos locales.</li>
+        </ol>
+        <p class="small muted" style="margin-top:10px">Una página estática no puede escribir en Drive por sí sola sin iniciar sesión con Google; por eso se usa el archivo vinculado.</p>
+      </div>
+      <div class="card">
+        <h3>Perfil aprendido</h3>
+        <p class="small muted">Se actualiza solo con lo que detecta en tus prompts y alimenta los fragmentos sugeridos.</p>
+        <div class="stack" id="profileBox"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row spread"><h3 style="margin:0">Vista previa del JSON</h3><button class="btn sm ghost" id="btnReset">Restablecer memoria</button></div>
+      <pre id="jsonPreview" style="margin-top:12px;max-height:340px"></pre>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Prompt Lab · estático, sin servidor · tus datos se quedan en tu navegador y en tu JSON.</div></footer>
+
+<!-- MODAL MÉTODOS -->
+<dialog id="mdMethods" aria-labelledby="mdTitle">
+  <div class="mh"><h3 id="mdTitle" style="margin:0">Métodos de prompt</h3><button class="btn sm ghost" id="mdClose" aria-label="Cerrar">Cerrar ✕</button></div>
+  <div class="mtabs" id="mdTabs" role="tablist"></div>
+  <div class="mb" id="mdBody"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+/* ============ utilidades ============ */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const hash=s=>{let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36)};
+let toastT;const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2400)};
+const copy=async txt=>{try{await navigator.clipboard.writeText(txt);toast('Copiado')}catch{toast('No se pudo copiar')}};
+const pct=n=>Math.round(n*100);
+const cls=n=>n>=.75?'':n>=.4?'warn':'bad';
+
+/* ============ memoria ============ */
+const MEM_KEY='promptlab.memory.v1';
+const defaultMem=()=>({
+  schema:'promptlab-memory/1', updatedAt:null,
+  profile:{dominio:'Diseño de páginas web interactivas',
+    stack:{bootstrap:'5.3.2',iconos:'Bootstrap Icons',idioma:'español',archivos:['auth-config.js','aula-header.js'],componentes:['sec-nav']},
+    notas:''},
+  stats:{total:0,criterios:{}}, historial:[], integrado:[]
+});
+let mem=defaultMem(), fileHandle=null;
+const fixMem=m=>{const d=defaultMem();return {...d,...m,profile:{...d.profile,...(m.profile||{}),stack:{...d.profile.stack,...((m.profile||{}).stack||{})}},stats:{...d.stats,...(m.stats||{}),criterios:{...((m.stats||{}).criterios||{})}},historial:m.historial||[],integrado:m.integrado||[]}};
+function loadLocal(){try{const r=localStorage.getItem(MEM_KEY);if(r){mem=fixMem(JSON.parse(r));return true}}catch{}return false}
+async function persist(){
+  mem.updatedAt=new Date().toISOString();
+  try{localStorage.setItem(MEM_KEY,JSON.stringify(mem))}catch{}
+  if(fileHandle){try{await writeHandle()}catch(e){toast('No se pudo escribir el archivo vinculado')}}
+  renderMemory();
+}
+async function writeHandle(){const w=await fileHandle.createWritable();await w.write(JSON.stringify(mem,null,2));await w.close()}
+async function linkFile(){
+  if(!window.showSaveFilePicker){downloadJSON();toast('Tu navegador no permite vincular; se descargó el JSON');return}
+  try{
+    fileHandle=await showSaveFilePicker({suggestedName:'memoria-prompts.json',types:[{description:'JSON',accept:{'application/json':['.json']}}]});
+    await persist();toast('Archivo vinculado y guardado');
+  }catch(e){if(e.name!=='AbortError')toast('No se pudo vincular')}
+}
+async function openFile(){
+  if(!window.showOpenFilePicker){$('#fileIn').click();return}
+  try{
+    const [h]=await showOpenFilePicker({types:[{description:'JSON',accept:{'application/json':['.json']}}]});
+    const f=await h.getFile();mem=fixMem(JSON.parse(await f.text()));
+    try{if((await h.requestPermission({mode:'readwrite'}))==='granted')fileHandle=h}catch{}
+    await persist();renderAll();toast(fileHandle?'Memoria cargada y vinculada':'Memoria cargada (solo lectura)');
+  }catch(e){if(e.name!=='AbortError')toast('JSON no válido')}
+}
+function downloadJSON(){
+  const b=new Blob([JSON.stringify(mem,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='memoria-prompts.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+/* ============ criterios de análisis ============ */
+const chk=pairs=>{const ok=pairs.filter(p=>p[1]);return{score:ok.length/pairs.length,missing:pairs.filter(p=>!p[1]).map(p=>p[0]),found:ok.map(p=>p[0])}};
+const S=()=>mem.profile.stack;
+const CRIT=[
+ {id:'archivo',g:'Contenido',n:'Archivo y tema',w:2,
+  why:'Claude responde mejor a instrucciones explícitas: un nombre de archivo y un tema concretos evitan que adivine.',
+  test:t=>chk([['nombre del archivo .html',/[\w-]+\.html\b/.test(t)],['tema o materia',/\b(sobre|tema|materia|unidad|asignatura)\b/.test(t)]]),
+  snip:()=>'Crea la página [nombre_archivo].html sobre [tema o materia].'},
+ {id:'audiencia',g:'Contenido',n:'Nivel o grupo',w:2,
+  why:'El nivel define vocabulario, profundidad y tipo de preguntas. Es el «conocimiento» de los métodos TAKE y PROMPT.',
+  test:t=>chk([['nivel, grado o grupo de destino',/\b(semestre|bachillerato|secundaria|primaria|prepa|preparatoria|universidad|licenciatura|grado|grupo|nivel|alumnos|estudiantes)\b/.test(t)]]),
+  snip:()=>'Dirigida a [nivel / grupo, p. ej. 2.º semestre de bachillerato].'},
+ {id:'material',g:'Contenido',n:'Material base',w:2,
+  why:'Si hay documentos largos, ponlos arriba y la petición al final (mejora hasta 30 %). Pide también que se marque lo dudoso en lugar de inventarlo.',
+  test:t=>chk([['material base (adjunto, PDF, texto…)',/(adjunto|pdf|material base|texto|apuntes|lista de temas|documento)/.test(t)],['dividir en secciones con conceptos y definiciones',/(secciones|conceptos|definiciones)/.test(t)],['qué limpiar o corregir (créditos, gramática)',/(quita|elimina|autores|creditos|referencias|corrige|gramatica)/.test(t)]]),
+  snip:()=>'Material base: [adjunto PDF / texto]. Divídelo en secciones con conceptos y definiciones claros. Quita autores, créditos y referencias; corrige gramática y errores de información. Si dudas de un dato, márcalo en lugar de inventarlo.'},
+ {id:'stack',g:'Formato técnico',n:'Stack técnico',w:2,
+  why:'Versión exacta de librerías y tipo de entrega evitan incompatibilidades y archivos fragmentados.',
+  test:t=>chk([['Bootstrap con versión',/bootstrap\s*\d(\.\d+)*/.test(t)],['iconos',/(icono|icons)/.test(t)],['archivo único',/(unico|un solo archivo|single)/.test(t)],['idioma',/(espanol|idioma)/.test(t)]]),
+  snip:()=>`Archivo único .html, en ${S().idioma}, con Bootstrap ${S().bootstrap} e iconos de Bootstrap.`},
+ {id:'ux',g:'Formato técnico',n:'Consistencia con tus páginas',w:2,
+  why:'Explicar el porqué mejora el resultado: «mantén el diseño» funciona mejor si nombras qué componentes compartidos usar.',
+  test:t=>chk([['mantener diseño y UX de tus otras páginas',/(manten|mismo diseno|mis demas paginas|consistente|misma ux)/.test(t)],['header o componentes compartidos',/(header|auth-config|aula-header|componente compartido)/.test(t)]]),
+  snip:()=>`Mantén el diseño y la UX de mis demás páginas del Aula Digital, con el header compartido (${S().archivos.join(' y ')}).`},
+ {id:'nav',g:'Formato técnico',n:'Navegación',w:1,
+  why:'Nombrar la clase o componente (sec-nav) deja menos margen a reinterpretaciones.',
+  test:t=>chk([['barra de navegación por secciones',/(sec-nav|barra de navegacion|navegacion por secciones|indice)/.test(t)],['marcadores o anclas',/(marcador|ancla|desplaz|scroll)/.test(t)]]),
+  snip:()=>`Barra de navegación por secciones (${S().componentes[0]||'sec-nav'}) con marcadores para desplazarme.`},
+ {id:'interact',g:'Interactividad',n:'Simulador o render visual',w:2,
+  why:'Pide la interactividad explícitamente y «ve más allá de lo básico»: Claude no infiere extras por sí solo.',
+  test:t=>chk([['un simulador o render visual por tema',/(simulador|render|visualizacion|interactiv|animacion)/.test(t)],['tipo concreto (gráficas, SVG, calculadora, juego…)',/(grafica|svg|diagrama|calculadora|juego|clasificar|arrastrar|canvas|slider)/.test(t)]]),
+  snip:()=>'Un simulador o render visual en cada tema: [gráficas / diagramas SVG / calculadoras / juegos de clasificar]. Ve más allá de lo básico: incluye interacciones y retroalimentación visual relevantes.'},
+ {id:'quiz',g:'Interactividad',n:'Quiz por sección',w:2,
+  why:'Cantidad, tipo y explicación son los tres datos que más cambian el resultado del quiz.',
+  test:t=>chk([['quiz al final de cada sección',/(quiz|cuestionario|preguntas|evaluacion)/.test(t)],['cantidad de preguntas',/\b\d+\s*(preguntas|reactivos)/.test(t)],['tipo de pregunta',/(opcion multiple|verdadero|falso|ordenar|relacionar|numerica|abiertas)/.test(t)],['explicación de la respuesta',/(explicacion|retroalimentacion|justificacion)/.test(t)]]),
+  snip:()=>'Quiz al final de cada sección: [5] preguntas de [opción múltiple / verdadero-falso / ordenar / relacionar / numérica], con explicación de cada respuesta. Guarda las preguntas en un arreglo de datos y usa una sola lógica genérica para todos los quices.'},
+ {id:'extras',g:'Interactividad',n:'Extras opcionales',w:1,
+  why:'Si quieres glosario, examen final o progreso guardado, pídelo: no aparecen por defecto.',
+  test:t=>chk([['extras (examen final, glosario, pantalla completa, notas, progreso)',/(examen final|glosario|pantalla completa|notas|progreso|modo oscuro|imprimir)/.test(t)]]),
+  snip:()=>'Extras: [examen final, glosario, botón de pantalla completa, notas, progreso guardado en localStorage].'},
+ {id:'prioridad',g:'Control',n:'Prioridad',w:1,
+  why:'Cuando hay tensión entre información, diseño e interactividad, la prioridad declarada decide.',
+  test:t=>chk([['prioridad (información / diseño / interactividad)',/(prioridad|lo mas importante|enfocate en)/.test(t)]]),
+  snip:()=>'Prioridad: [la información / el diseño / la interactividad].'},
+ {id:'ambig',g:'Control',n:'Política ante ambigüedad',w:1,
+  why:'Define si prefieres que pregunte o que decida y avise; si no, elegirá por ti.',
+  test:t=>chk([['qué hacer si algo es ambiguo',/(ambiguo|preguntame|pregunta antes|decide tu|avisame)/.test(t)]]),
+  snip:()=>'Si algo es ambiguo, [pregúntame antes / decide tú y avísame].'},
+ {id:'entrega',g:'Control',n:'Entrega',w:1,
+  why:'Indica exactamente qué debe pasar al terminar (menú, resumen, solo el archivo).',
+  test:t=>chk([['qué hacer al terminar',/(al terminar|entregame|entrega|agregalo|menu)/.test(t)]]),
+  snip:()=>`Al terminar: [agrégalo al menú de ${S().archivos[1]||'aula-header.js'} en el grupo [nombre_grupo] / solo entrégame el archivo], y resume en 3 líneas lo que incluiste.`},
+ {id:'placeholders',g:'Control',n:'Campos sin completar',w:2,
+  why:'Los [campos] sin llenar llegan literalmente al modelo. Reemplázalos o marca el prompt como plantilla.',
+  test:(t,raw)=>{const m=(raw.match(/\[[^\]\n]{2,}\]/g)||[]);return{score:m.length?0:1,missing:m.length?[`${m.length} campo(s): ${[...new Set(m)].slice(0,4).join(' ')}${m.length>4?' …':''}`]:[],found:m.length?[]:['sin campos pendientes']}},
+  snip:null},
+ {id:'rol',g:'Mejoras',n:'Rol',w:1,
+  why:'Una sola frase de rol enfoca el tono y el criterio técnico.',
+  test:t=>chk([['rol o experiencia asumida',/(eres un|eres una|actua como|como si fueras|rol:|<rol>|experto|especialista|disenador|desarrollador)/.test(t)]]),
+  snip:()=>'Eres un diseñador instruccional y desarrollador front-end que crea páginas web interactivas, claras y accesibles para el Aula Digital.'},
+ {id:'proposito',g:'Mejoras',n:'Propósito (el porqué)',w:1,
+  why:'Dar contexto o motivación permite a Claude generalizar y tomar mejores decisiones donde no especificaste.',
+  test:t=>chk([['para qué se usará la página',/(para que (los|las|mis|se|puedan|practiquen|sirva|el|la)\b|con el fin|objetivo|proposito|porque|se usara|usaran)/.test(t)]]),
+  snip:()=>'Propósito: [p. ej. los alumnos la usarán en el celular durante clase y para repasar antes del examen, por eso los controles deben ser grandes y táctiles].'},
+ {id:'ejemplo',g:'Mejoras',n:'Ejemplo o referencia',w:1,
+  why:'3–5 ejemplos relevantes y diversos son la forma más fiable de fijar estructura y estilo. Envuélvelos en <example>.',
+  test:t=>chk([['una página o fragmento de referencia',/(como en|similar a|igual que|ejemplo|referencia|<example|basate en|ej\.)/.test(t)]]),
+  snip:()=>'<example>\nUsa [pagina_existente.html] como referencia de estructura, quiz y estilo.\n</example>'},
+ {id:'calidad',g:'Mejoras',n:'Calidad: móvil y accesibilidad',w:1.5,
+  why:'Si no lo pides, no se garantiza. Es el tipo de «extra» que Claude no asume.',
+  test:t=>chk([['responsive / móvil',/(responsive|movil|celular|tablet|adaptable)/.test(t)],['accesibilidad (contraste, teclado, aria)',/(accesib|contraste|teclado|aria|lector de pantalla)/.test(t)]]),
+  snip:()=>'Calidad: diseño responsive (móvil primero), accesible (contraste suficiente, navegación con teclado, atributos aria) y sin dependencias externas aparte de las indicadas.'},
+ {id:'verificacion',g:'Mejoras',n:'Autoverificación',w:1,
+  why:'«Antes de terminar, verifica contra [criterios]» detecta errores de forma fiable, sobre todo en código.',
+  test:t=>chk([['criterios de verificación antes de entregar',/(verifica|valida|antes de entregar|sin errores|consola|checklist|revisa que)/.test(t)]]),
+  snip:()=>'Antes de entregar, verifica: sin errores en consola, todos los quices califican y explican, los enlaces de sec-nav llevan a su sección y la vista móvil se ve bien.'},
+ {id:'xml',g:'Mejoras',n:'Estructura con etiquetas',w:1,
+  why:'Las etiquetas XML (<tarea>, <formato>, <interactividad>) separan instrucciones, contexto y datos y reducen malas interpretaciones.',
+  test:(t,raw)=>chk([['etiquetas XML para separar secciones',/<\/?[a-z_]+>/i.test(raw)]]),
+  snip:()=>'Organiza el prompt con etiquetas: <rol>, <tarea>, <material_base>, <formato>, <interactividad>, <prioridad>, <entrega>. (Ver plantilla maestra en Manuales).'}
+];
+const GROUPS=['Contenido','Formato técnico','Interactividad','Control','Mejoras'];
+
+/* ============ métodos (frameworks) ============ */
+const EL={
+ accion:{l:'Acción',re:/\b(crea|crear|disena|genera|construye|haz|elabora|desarrolla|arma)\b/,fix:'Empieza con un verbo concreto: «Crea…», «Diseña…».'},
+ tarea:{l:'Tarea',re:/(crea|pagina|sobre|tema)/,fix:'Resume la tarea en una línea: «Crea la página X sobre Y».'},
+ proposito:{l:'Propósito',re:/(para que (los|las|mis|se|puedan|practiquen|sirva|el|la)\b|con el fin|objetivo|proposito|porque|se usara|usaran)/,fix:'Di para qué servirá (p. ej. «para que practiquen en clase y repasen antes del examen»).'},
+ rol:{l:'Rol / Experiencia',re:/(eres un|eres una|actua como|como si fueras|rol|experto|especialista|disenador|desarrollador)/,fix:'Una frase basta: «Eres un diseñador instruccional y desarrollador front-end…».'},
+ contexto:{l:'Contexto',re:/(semestre|bachillerato|grupo|nivel|alumnos|materia|aula|clase|sobre)/,fix:'Describe materia, grupo y situación de uso (clase, celular, proyector).'},
+ conocimiento:{l:'Conocimiento',re:/(nivel|semestre|bachillerato|bootstrap|conceptos|definiciones)/,fix:'Indica el nivel técnico y de contenido esperado (p. ej. «2.º semestre de bachillerato»).'},
+ ejemplo:{l:'Ejemplo',re:/(como en|similar a|igual que|ejemplo|referencia|<example|ej\.)/,fix:'Pega o nombra una página tuya como referencia dentro de <example>.'},
+ pasos:{l:'Pasos',re:/(^\s*([-*•]|\d+[.)])\s)|paso a paso|\bpasos?\b|primero|luego|despues/m,fix:'Enumera el orden: 1) estructurar contenido, 2) maquetar, 3) simuladores, 4) quiz, 5) verificar.'},
+ expectativa:{l:'Expectativa',re:/(calidad|detalle|claro|completo|ve mas alla|profesional|prioridad|sin errores)/,fix:'Define la calidad esperada: «ve más allá de lo básico», criterios de éxito.'},
+ salida:{l:'Tipo de salida',re:/(formato|archivo|\.html|tabla|lista|entrega|entregame)/,fix:'Especifica el entregable: «archivo único .html en español con Bootstrap 5.3.2».'},
+ modo:{l:'Modo / estilo',re:/(tono|estilo|minimalista|formal|diseno|ux|manten)/,fix:'Indica estilo: «minimalista, mismo diseño y UX que mis otras páginas».'},
+ escenario:{l:'Escenario',re:/(escenario|situacion|caso|aula|clase|alumnos|celular|proyector)/,fix:'Describe el escenario real de uso: quién la abre, en qué dispositivo, para qué.'},
+ persona:{l:'Persona (destinatario)',re:/(alumnos|estudiantes|grupo|semestre|nivel|dirigid)/,fix:'Nombra a quién va dirigida y qué saben ya.'},
+ instrucciones:{l:'Instrucciones',re:/(divide|quita|corrige|agrega|manten|incluye|elimina)/,fix:'Lista instrucciones concretas: secciones, limpiar créditos, corregir errores.'}
+};
+const FW=[
+ {k:'APEX',name:'Acción · Propósito · Experiencia',parts:[['accion','Acción: qué debe hacer la IA'],['proposito','Propósito: objetivo final'],['rol','Experiencia: rol o nivel de experto']],
+  ex:'Diseña un programa de seguimiento de actividades (Acción) para mejorar la productividad del equipo (Propósito) como si fueras un director de operaciones con 10 años de experiencia (Experiencia).',
+  use:'Prompts sencillos donde basta definir qué, para qué y quién.',web:'Bueno para ediciones rápidas de una página existente.'},
+ {k:'TAKE',name:'Tarea · Acción · Knowledge · Ejemplo',parts:[['tarea','Tarea: descripción general'],['salida','Acción: formato o tipo de respuesta'],['conocimiento','Conocimiento: nivel técnico o de fondo'],['ejemplo','Ejemplo: muestra de la salida esperada']],
+  ex:'Tarea: crear un programa de seguimiento. Acción: en formato de lista numerada. Conocimiento: nivel administrativo. Ejemplo: «1. Reunión semanal… 2. Reporte mensual…».',
+  use:'Cuando quieres incluir ejemplos y fijar el nivel de conocimiento.',web:'Útil para nuevas páginas si tienes una página modelo que imitar.'},
+ {k:'CRISP',name:'Contexto · Rol · Instrucciones · Steps · Propósito',parts:[['contexto','Contexto: escenario o trasfondo'],['rol','Rol: quién habla'],['instrucciones','Instrucciones: qué debe hacer'],['pasos','Steps: pasos detallados'],['proposito','Propósito: meta última']],
+  ex:'Contexto: empresa mediana. Rol: jefe de operaciones. Instrucciones: elaborar plan de seguimiento. Pasos: detallar objetivos, asignar responsables, definir plazos. Propósito: garantizar cumplimiento.',
+  use:'Cuando necesitas un desglose muy detallado con pasos.',web:'Muy buen encaje para crear páginas completas: casi todo tu prompt base cabe aquí.'},
+ {k:'RACE',name:'Rol · Acción · Contexto · Expectativa',parts:[['rol','Rol: perfil o cargo'],['accion','Acción: tarea concreta'],['contexto','Contexto: entorno o situación'],['expectativa','Expectativa: nivel de detalle o calidad']],
+  ex:'Rol: coordinador administrativo. Acción: crear calendario de revisiones. Contexto: equipo de 10 personas. Expectativa: instrucciones claras y breves.',
+  use:'Prompts sencillos: quién, qué, dónde y con qué calidad.',web:'Ideal para pedir un componente suelto (un simulador, un quiz).'},
+ {k:'PROMPT',name:'Persona · Rol · Objetivo · Modo · Paso a paso · Tipo de salida',parts:[['persona','Persona: a quién va dirigido o voz'],['rol','Rol: función que asume la IA'],['proposito','Objetivo: qué se quiere lograr'],['modo','Modo: estilo o tono'],['pasos','Paso a paso: nivel de granularidad'],['salida','Tipo de salida: formato final']],
+  ex:'Persona: gerente de proyecto. Rol: consultor experto. Objetivo: diseñar un flujo de trabajo. Modo: paso a paso. Salida: tabla con columnas «fase», «tarea», «responsable», «fecha».',
+  use:'Desglose muy detallado: estilo, granularidad y formato de salida.',web:'Excelente cuando el diseño y el formato final importan tanto como el contenido.'},
+ {k:'TARS',name:'Tarea · Acción · Rol · Scenario',parts:[['tarea','Tarea: descripción amplia'],['accion','Acción: qué debe generar'],['rol','Rol: perfil o nivel de experto'],['escenario','Escenario: contexto concreto']],
+  ex:'Tarea: programa de seguimiento. Acción: detallar cada paso. Rol: analista senior. Escenario: proyecto con retrasos y recursos limitados.',
+  use:'Escenarios concretos y muy situacionales.',web:'Sirve para páginas con un caso de uso muy específico (p. ej. proyector en aula sin internet).'}
+];
+const sentences=raw=>raw.split(/\n+|(?<!\bej)(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);
+const findEl=(raw,key)=>{const re=EL[key].re;return sentences(raw).find(s=>re.test(norm(s)))||null};
+function fwCoverage(raw,f){
+  const parts=f.parts.map(([key,desc])=>({key,desc,found:raw.trim()?findEl(raw,key):null}));
+  return{parts,score:parts.filter(p=>p.found).length/parts.length};
+}
+
+/* ============ análisis ============ */
+let last=null, improved='';
+function analyze(raw,template){
+  const t=norm(raw);
+  const list=CRIT.filter(c=>!(c.id==='placeholders'&&template)).map(c=>({...c,...c.test(t,raw)}));
+  const wsum=list.reduce((a,c)=>a+c.w,0);
+  const score=list.reduce((a,c)=>a+c.w*c.score,0)/wsum;
+  const groups=GROUPS.map(g=>{const l=list.filter(c=>c.g===g),ws=l.reduce((a,c)=>a+c.w,0);return{g,score:l.reduce((a,c)=>a+c.w*c.score,0)/ws}});
+  const fw=FW.map(f=>({f,...fwCoverage(raw,f)}));
+  return{raw,template,list,score,groups,fw,id:hash(raw)};
+}
+const level=s=>s>=.75?'Sólido':s>=.5?'En buen camino':s>=.25?'Básico':'Muy corto';
+
+function learn(r){
+  const st=mem.stats;
+  const entry={id:r.id,fecha:new Date().toISOString(),puntaje:pct(r.score),
+    faltantes:r.list.filter(c=>c.score<1).map(c=>c.id),
+    marcos:Object.fromEntries(r.fw.map(x=>[x.f.k,pct(x.score)])),texto:r.raw.slice(0,4000)};
+  const prev=mem.historial.findIndex(h=>h.id===r.id);
+  if(prev>=0){ // mismo prompt: sobrescribe la entrada
+    mem.historial[prev]=entry;
+  }else{
+    mem.historial.push(entry); st.total++;
+    for(const c of r.list){
+      const s=st.criterios[c.id]||(st.criterios[c.id]={vistos:0,faltantes:0});
+      s.vistos++; if(c.score<1){s.faltantes++;s.ultimaVez=entry.fecha}
+    }
+  }
+  if(mem.historial.length>100)mem.historial=mem.historial.slice(-100);
+  // perfil: detectar stack real (sin placeholders)
+  const raw=r.raw, stk=mem.profile.stack;
+  const b=raw.match(/bootstrap\s*(\d+\.\d+(?:\.\d+)?)/i); if(b)stk.bootstrap=b[1];
+  (raw.match(/[\w-]+\.js\b/gi)||[]).forEach(f=>{if(!/^\[/.test(f)&&!stk.archivos.includes(f))stk.archivos.push(f)});
+  if(/\bsec-nav\b/.test(raw)&&!stk.componentes.includes('sec-nav'))stk.componentes.push('sec-nav');
+  return persist();
+}
+
+/* ============ render: analizador ============ */
+function renderResult(r){
+  const gaps=r.list.filter(c=>c.score<1).sort((a,b)=>b.w*(1-b.score)-a.w*(1-a.score));
+  const ok=r.list.filter(c=>c.score>=1);
+  const best=[...r.fw].sort((a,b)=>b.score-a.score)[0];
+  $('#result').innerHTML=`
+  <div class="card">
+    <div class="score">
+      <div><div class="big">${pct(r.score)}<small>/100</small></div><div class="muted small">${level(r.score)} · ${gaps.length} áreas por mejorar</div></div>
+      <div class="bars">${r.groups.map(x=>`<div class="bar"><span>${x.g}</span><div class="track"><div class="fill ${cls(x.score)}" style="width:${pct(x.score)}%"></div></div><span class="muted">${pct(x.score)}</span></div>`).join('')}</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="row spread"><h3 style="margin:0">Áreas de mejora</h3><span class="muted small">ordenadas por impacto</span></div>
+    <div style="margin-top:12px">
+    ${gaps.length?gaps.map(c=>`
+      <div class="gap">
+        <div class="head"><b>${esc(c.n)}</b><span class="tag ${c.score===0?'bad':'warn'}">${c.score===0?'falta':'parcial'}</span><span class="muted small">${esc(c.g)}</span></div>
+        <div class="small">${c.missing.map(esc).join(' · ')?`<span class="muted">Falta:</span> ${c.missing.map(esc).join(' · ')}`:''}</div>
+        <div class="small muted">${esc(c.why)}</div>
+        ${c.snip?`<div class="snip"><span>${esc(c.snip())}</span><button class="btn sm" data-add="${c.id}">Añadir</button></div>`:''}
+      </div>`).join(''):'<div class="empty">Sin huecos detectados. Revisa que el contenido sea específico, no solo que mencione las palabras.</div>'}
+    </div>
+    ${ok.length?`<h4 style="margin-top:16px">Ya incluido</h4><div class="ok-list">${ok.map(c=>`<span class="tag">${esc(c.n)}</span>`).join('')}</div>`:''}
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="row spread"><h3 style="margin:0">Cobertura por método</h3><button class="btn sm" id="openMethods2">Ver métodos</button></div>
+    <p class="small muted" style="margin:6px 0 12px">Pulsa un método para ver qué te falta y cómo reescribirlo. Mejor encaje por texto: <b>${best.f.k}</b>. Para crear páginas completas suelen rendir mejor <b>CRISP</b> o <b>PROMPT</b>.</p>
+    <div class="fw">${r.fw.map(x=>`<button class="fwb ${x===best?'best':''}" data-fw="${x.f.k}"><b>${x.f.k}</b><span class="muted small">${pct(x.score)} % cubierto</span><div class="track"><div class="fill ${cls(x.score)}" style="width:${pct(x.score)}%"></div></div></button>`).join('')}</div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="row spread"><h3 style="margin:0">Prompt mejorado (borrador)</h3>
+      <div class="row"><button class="btn sm" id="btnAll">Añadir todo lo que falta</button><button class="btn sm" id="btnReset2">Volver al original</button><button class="btn sm primary" id="btnCopyImp">Copiar</button><button class="btn sm" id="btnReanalyze">Re-analizar</button></div></div>
+    <textarea id="improved" class="mono" style="margin-top:12px;min-height:240px" aria-label="Prompt mejorado"></textarea>
+    <p class="small muted" style="margin:8px 0 0">Los fragmentos usan tu perfil aprendido (Bootstrap ${esc(S().bootstrap)}, ${esc(S().archivos.join(', '))}). Completa los [campos] antes de usarlo.</p>
+  </div>`;
+  improved=improved||r.raw;
+  $('#improved').value=improved;
+  $('#improved').addEventListener('input',e=>improved=e.target.value);
+}
+function addSnippet(id){
+  const c=CRIT.find(x=>x.id===id);if(!c||!c.snip)return;
+  const s=c.snip();if(improved.includes(s))return toast('Ya está añadido');
+  improved=improved.replace(/\s+$/,'')+'\n\n'+s;$('#improved').value=improved;toast('Añadido: '+c.n);
+}
+
+/* ============ modal métodos ============ */
+const md=$('#mdMethods');let mdTab='APEX';
+function openMethods(k){mdTab=k||mdTab;renderModal();if(!md.open)md.showModal()}
+function renderModal(){
+  const tabs=[...FW.map(f=>f.k),'Elegir'];
+  $('#mdTabs').innerHTML=tabs.map(k=>`<button class="chip ${k===mdTab?'on':''}" data-mt="${k}" role="tab" aria-selected="${k===mdTab}">${k==='Elegir'?'¿Cuál elegir?':k}</button>`).join('');
+  const raw=$('#prompt').value;
+  if(mdTab==='Elegir'){
+    $('#mdBody').innerHTML=`
+      <p class="muted">Todos estos marcos ayudan a que la IA entienda mejor el encuadre y devuelva respuestas más precisas.</p>
+      <div class="grid g2">${FW.map(f=>`<div class="card"><h3>${f.k}</h3><p class="small muted" style="margin-bottom:6px">${esc(f.use)}</p><p class="small" style="margin:0"><b>En tus páginas:</b> ${esc(f.web)}</p></div>`).join('')}</div>
+      <div class="card" style="background:var(--accent-soft);border-color:var(--accent)"><b>Recomendación para diseño web interactivo</b><p class="small" style="margin:6px 0 0">Usa <b>CRISP</b> o <b>PROMPT</b> como esqueleto (necesitas pasos y formato de salida), y añade etiquetas XML y un <b>ejemplo</b> de TAKE. La plantilla maestra de la pestaña Manuales ya combina las tres ideas.</p></div>`;
+    return;
+  }
+  const f=FW.find(x=>x.k===mdTab),cov=fwCoverage(raw,f);
+  const rewrite=cov.parts.map(p=>`${EL[p.key].l}: ${p.found||'['+EL[p.key].fix.replace(/[«»]/g,'')+']'}`).join('\n');
+  $('#mdBody').innerHTML=`
+    <div><h3>${f.k} <span class="muted small">· ${esc(f.name)}</span></h3><p class="small muted">${esc(f.use)}</p></div>
+    <div><h4>Ejemplo del manual</h4><pre>${esc(f.ex)}</pre></div>
+    <div class="card" style="padding:0 16px">
+      <div class="row spread" style="padding:14px 0 4px"><h3 style="margin:0">En tu prompt</h3>${raw.trim()?`<span class="tag ${cls(cov.score)}">${pct(cov.score)} % cubierto</span>`:''}</div>
+      ${raw.trim()?cov.parts.map(p=>`<div class="part"><span class="ico ${p.found?'y':'n'}">${p.found?'✓':'✕'}</span><div><b>${esc(p.desc)}</b>
+        ${p.found?`<div class="q small">«${esc(p.found.length>160?p.found.slice(0,160)+'…':p.found)}»</div>`:`<div class="small"><span class="muted">Cómo mejorarlo:</span> ${esc(EL[p.key].fix)}</div>`}</div></div>`).join(''):'<p class="muted small" style="padding:8px 0 16px">Pega un prompt en el analizador para ver aquí qué incluiste y qué te falta en este método.</p>'}
+    </div>
+    ${raw.trim()?`<div><h4>Reescritura sugerida con ${f.k}</h4><pre id="rw">${esc(rewrite)}</pre><div class="row" style="margin-top:8px"><button class="btn sm" id="rwCopy">Copiar</button><button class="btn sm primary" id="rwUse">Usar como prompt mejorado</button></div></div>`:''}`;
+  const rw=$('#rw');
+  if(rw){ $('#rwCopy').onclick=()=>copy(rewrite);
+    $('#rwUse').onclick=()=>{improved=rewrite;if(last){const ta=$('#improved');if(ta)ta.value=improved}md.close();showView('analizar');toast('Reescritura cargada en el prompt mejorado')} }
+}
+
+/* ============ manuales ============ */
+const MG=['Claridad','Estructura','Calidad','Proyectos largos','Frontend'];
+const MAN=[
+ {id:'claro',g:'Claridad',t:'Sé claro y directo',s:'Claude responde a instrucciones explícitas, como un empleado brillante pero nuevo sin contexto. Prueba clave: dale tu prompt a un colega sin contexto; si se confunde, Claude también.',
+  a:'Nombra archivo, nivel, cantidad y tipo de preguntas. Si quieres más de lo mínimo, pídelo.',b:'Haz una página de fracciones con quiz.',d:'Crea fracciones.html para 1.º de secundaria con 3 simuladores (pizza, recta numérica, equivalencias) y un quiz de 5 preguntas de opción múltiple con explicación.'},
+ {id:'contexto',g:'Claridad',t:'Explica el porqué',s:'Dar la motivación detrás de una instrucción permite a Claude generalizar: «nunca uses puntos suspensivos» mejora con «se leerá en voz alta y el sintetizador no los pronuncia».',
+  a:'Di cómo se usará: celular, proyector, repaso, examen.',b:'Botones grandes.',d:'Los alumnos la abren en el celular durante clase; usa botones grandes y evita interacciones que dependan de hover.'},
+ {id:'ejemplos',g:'Claridad',t:'Usa ejemplos (3 a 5)',s:'Los ejemplos fijan formato, tono y estructura. Deben ser relevantes, diversos y estar envueltos en <example> (varios en <examples>).',
+  a:'Pega un quiz o sección que ya te gustó de otra página dentro de <example>.',b:'Con el estilo de mis otras páginas.',d:'<example>[fragmento HTML de un quiz tuyo]</example>\nReplica esta estructura y estilo.'},
+ {id:'xml',g:'Estructura',t:'Etiquetas XML',s:'Envuelve cada tipo de contenido en su etiqueta (<instrucciones>, <contexto>, <material>). Usa nombres consistentes y anida cuando haya jerarquía natural.',
+  a:'Separa material base, formato, interactividad y entrega.',b:'Todo en un párrafo largo.',d:'<material_base>…</material_base>\n<formato>…</formato>\n<interactividad>…</interactividad>'},
+ {id:'rol',g:'Estructura',t:'Dale un rol',s:'Una sola frase en el prompt de sistema o al inicio enfoca comportamiento y tono.',
+  a:'«Eres un diseñador instruccional y desarrollador front-end…»',b:'(sin rol)',d:'Eres un diseñador instruccional y desarrollador front-end especializado en material educativo accesible.'},
+ {id:'largo',g:'Estructura',t:'Contexto largo: datos arriba, pregunta al final',s:'Con documentos grandes (más de 20k tokens) coloca el material antes de la consulta; la consulta al final mejora la calidad hasta un 30 %. Pide citar primero las partes relevantes para fundamentar.',
+  a:'Pega tu PDF o texto primero y, debajo, las instrucciones. Pide «cita primero los fragmentos que usarás».',b:'Instrucciones → PDF.',d:'<documento>…texto del tema…</documento>\nCon base solo en el documento, crea…'},
+ {id:'positivo',g:'Estructura',t:'Di qué sí, no qué no',s:'«Escribe en prosa fluida» funciona mejor que «no uses markdown». El estilo de tu prompt influye en el de la salida.',
+  a:'Describe el resultado deseado en positivo.',b:'No hagas el diseño recargado.',d:'Diseño sobrio: pocos colores, mucho espacio en blanco, un solo color de acento.'},
+ {id:'accion',g:'Estructura',t:'Pide acción, no sugerencias',s:'«¿Puedes sugerir cambios?» produce sugerencias; «Cambia esta función» produce cambios. Sé explícito sobre si quieres implementar o solo aconsejar.',
+  a:'Al editar una página existente, di «modifica el archivo y entrégalo completo».',b:'¿Podrías mejorar el quiz?',d:'Mejora el quiz de la sección 2 y entrega el archivo completo.'},
+ {id:'mas',g:'Estructura',t:'Pide «más allá de lo básico»',s:'Los modelos recientes siguen la instrucción de forma literal. Los modificadores de calidad y las funciones específicas (animaciones, interacciones) deben pedirse.',
+  a:'«Incluye tantas interacciones relevantes como sea posible. Ve más allá de lo básico.»',b:'Crea un panel de analítica.',d:'Crea un panel de analítica. Incluye tantas funciones e interacciones relevantes como sea posible; ve más allá de lo básico.'},
+ {id:'verif',g:'Calidad',t:'Pide autoverificación',s:'«Antes de terminar, verifica tu respuesta contra [criterios]» detecta errores de forma fiable, sobre todo en código y matemáticas.',
+  a:'Lista de chequeo: consola limpia, quices funcionando, sec-nav, vista móvil.',b:'(sin verificación)',d:'Antes de entregar, verifica: sin errores en consola, quices con explicación, anclas de sec-nav y vista móvil.'},
+ {id:'alucina',g:'Calidad',t:'Reduce errores e invenciones',s:'Haz que investigue antes de responder y que no afirme lo que no pueda sustentar. Para contenido educativo: fundamenta en el material y marca lo dudoso.',
+  a:'Al «corregir errores de información», pide marcar lo que no pueda verificar.',b:'Corrige los errores.',d:'Corrige errores de gramática e información; si no puedes verificar un dato, márcalo con «(verificar)» en lugar de inventarlo.'},
+ {id:'general',g:'Calidad',t:'Soluciones generales, sin valores fijos',s:'Pide lógica que funcione para todas las entradas válidas, no solo para los casos de prueba; sin datos «hardcodeados» por pregunta.',
+  a:'Datos de quiz en un arreglo y una sola lógica de calificación.',b:'(preguntas escritas una a una en HTML)',d:'Guarda las preguntas en un arreglo JS y usa una función genérica para renderizar y calificar cualquier quiz.'},
+ {id:'minimo',g:'Calidad',t:'Evita la sobreingeniería',s:'Sin guía, el modelo puede añadir archivos, abstracciones y flexibilidad no pedida. Al editar, limita el alcance: sin refactorizar lo que no se pidió.',
+  a:'Al modificar una página tuya: «solo cambia X; no toques el resto».',b:'Arregla el quiz.',d:'Arregla solo el cálculo del quiz 3. No refactorices ni cambies estilos.'},
+ {id:'ambig',g:'Calidad',t:'Ambigüedad: decide y avisa, o pregunta',s:'Define la política. «Decide tú y avísame» da velocidad; «pregúntame antes» da control cuando el costo de equivocarse es alto.',
+  a:'Ya la usas en tu prompt base; mantenla.',b:'(sin política)',d:'Si algo es ambiguo, decide tú, continúa y avísame al final qué supuestos tomaste.'},
+ {id:'cadena',g:'Proyectos largos',t:'Encadena: borrador → revisión → refinamiento',s:'El patrón más útil: generar, hacer que Claude revise contra criterios y luego refine. Cada paso es una llamada separada para poder inspeccionar.',
+  a:'Primero estructura el contenido; después la maqueta; luego simuladores; por último quices.',b:'Todo en un solo mensaje enorme.',d:'Paso 1: solo el esquema de secciones. (Aprobado) Paso 2: maqueta. Paso 3: simuladores. Paso 4: quices.'},
+ {id:'estado',g:'Proyectos largos',t:'Guarda estado en JSON y usa git',s:'Para tareas largas usa JSON para datos estructurados (tests.json), texto libre para notas de progreso y git para checkpoints. Es la idea detrás de la memoria de esta página.',
+  a:'Versiona tus páginas y mantén un progress.txt con lo hecho y pendiente.',b:'(sin registro)',d:'Mantén progress.txt con lo hecho y lo pendiente, y tests.json con los casos a verificar.'},
+ {id:'seguro',g:'Proyectos largos',t:'Confirma antes de lo irreversible',s:'Pide confirmación antes de borrar, sobrescribir o modificar sistemas compartidos; las acciones locales y reversibles no la necesitan.',
+  a:'Al editar aula-header.js (compartido por todas tus páginas), pide confirmar antes de cambiarlo.',b:'Agrégalo al menú.',d:'Antes de editar aula-header.js muéstrame el cambio exacto y espera mi confirmación.'},
+ {id:'front',g:'Frontend',t:'Diseño frontend con intención',s:'Sin guía, el modelo converge a estética genérica. Pide decisiones concretas: tipografía, paleta con variables CSS, movimiento con CSS puro y fondos con profundidad. Evita fuentes y gradientes sobreusados.',
+  a:'Tu caso es particular: quieres consistencia con el Aula Digital. Pide conservar los tokens (colores, tipografía) y variar solo composición y micro-interacciones.',b:'Hazla bonita.',d:'Conserva las variables CSS y tipografía de mis páginas. Añade animación CSS sutil al revelar secciones y estados hover/focus claros. Evita gradientes morados genéricos.'},
+ {id:'piensa',g:'Frontend',t:'Pensamiento y esfuerzo',s:'Para páginas grandes, un esfuerzo alto mejora el resultado. Prefiere «piensa a fondo» a planes paso a paso escritos a mano: el razonamiento del modelo suele superar lo que prescribirías.',
+  a:'Usa esfuerzo alto para páginas completas y bajo para retoques.',b:'(plan prescrito de 20 pasos)',d:'Piensa con cuidado la estructura antes de escribir el HTML; luego implementa.'}
+];
+const MASTER=`<rol>
+Eres un diseñador instruccional y desarrollador front-end que crea páginas web interactivas, claras y accesibles para el Aula Digital.
+</rol>
+
+<tarea>
+Crea la página [nombre_archivo].html sobre [tema o materia] para [nivel / grupo].
+</tarea>
+
+<proposito>
+[Para qué se usará: p. ej. practicar en clase desde el celular y repasar antes del examen.]
+</proposito>
+
+<material_base>
+[Adjunto PDF / texto / lista de temas.] Divídelo en secciones con conceptos y definiciones claros. Quita autores, créditos y referencias; corrige gramática y errores de información. Si dudas de un dato, márcalo en lugar de inventarlo.
+</material_base>
+
+<formato>
+- Archivo único .html, en español, con Bootstrap 5.3.2 e iconos de Bootstrap.
+- Mantén el diseño y la UX de mis demás páginas del Aula Digital, con el header compartido (auth-config.js y aula-header.js).
+- Barra de navegación por secciones (sec-nav) y marcadores para desplazarme.
+- Responsive (móvil primero), accesible (contraste, teclado, aria) y sin dependencias extra.
+</formato>
+
+<interactividad>
+- Un simulador o render visual en cada tema: [gráficas / diagramas SVG / calculadoras / juegos de clasificar].
+- Quiz al final de cada sección: [5] preguntas de [opción múltiple / verdadero-falso / ordenar / relacionar / numérica], con explicación de la respuesta. Preguntas en un arreglo de datos con lógica genérica.
+- Opcional: [examen final, glosario, pantalla completa, notas, progreso guardado].
+- Ve más allá de lo básico: incluye interacciones y retroalimentación visual relevantes.
+</interactividad>
+
+<ejemplo>
+Usa [pagina_existente.html] como referencia de estructura, quiz y estilo.
+</ejemplo>
+
+<prioridad>
+[La información / el diseño / la interactividad]. Si algo es ambiguo, [pregúntame antes / decide tú y avísame].
+</prioridad>
+
+<verificacion>
+Antes de entregar, verifica: sin errores en consola, quices que califican y explican, enlaces de sec-nav correctos y vista móvil.
+</verificacion>
+
+<entrega>
+[Agrégalo al menú de aula-header.js en el grupo [nombre_grupo] (muéstrame el cambio antes de aplicarlo) / solo entrégame el archivo]. Al terminar, resume en 3 líneas lo que incluiste.
+</entrega>`;
+const SAMPLE=`Crea una nueva página [nombre_archivo].html sobre [tema o materia] para [nivel / grupo, ej. 2.º semestre de bachillerato].
+
+Material base: [adjunto un PDF / texto / lista de temas]. Divídelo en secciones, con conceptos y definiciones claros. Quita [autores, créditos, referencias], y corrige errores de gramática o de información para que todo tenga sentido.
+
+Formato:
+- Archivo único .html con Bootstrap 5.3.2 e iconos de Bootstrap, en español.
+- Mantén el diseño y la UX de mis demás páginas del Aula Digital, con el header compartido (auth-config.js y aula-header.js).
+- Barra de navegación por secciones (sec-nav) y marcadores para desplazarme.
+
+Interactividad:
+- Un simulador o render visual en cada tema: [ej. gráficas, diagramas SVG, calculadoras, juegos de clasificar].
+- Quiz al final de cada sección: [cantidad] preguntas de [opción múltiple / verdadero-falso / ordenar / relacionar / numérica], con explicación de la respuesta.
+- [Opcional: examen final, glosario, botón de pantalla completa, notas, progreso guardado].
+
+Prioridad: [la información / el diseño / la interactividad]. Si algo es ambiguo, [pregúntame antes / decide tú y avísame].
+Al terminar: [agrégalo al menú de aula-header.js en el grupo [nombre_grupo] / solo entrégame el archivo].`;
+
+let mFilter='Todos';
+function renderManuals(){
+  $('#masterCard').innerHTML=`<div class="row spread"><div><h3 style="margin:0">Plantilla maestra para páginas interactivas</h3><p class="small muted" style="margin:4px 0 0">Tu prompt base, reordenado con CRISP + etiquetas XML, y con lo que le faltaba: rol, propósito, ejemplo, calidad y verificación.</p></div>
+    <div class="row"><button class="btn sm" id="mCopy">Copiar</button><button class="btn sm primary" id="mUse">Analizarla</button></div></div>
+    <details style="margin-top:12px"><summary class="small muted" style="cursor:pointer">Ver plantilla</summary><pre style="margin-top:8px">${esc(MASTER)}</pre></details>`;
+  $('#mChips').innerHTML=['Todos',...MG].map(g=>`<button class="chip ${g===mFilter?'on':''}" data-mf="${g}">${g}</button>`).join('');
+  const q=norm($('#mSearch').value.trim());
+  const rec=recurring();
+  const items=MAN.filter(m=>(mFilter==='Todos'||m.g===mFilter)&&(!q||norm(m.t+' '+m.s+' '+m.a).includes(q)));
+  $('#manualList').innerHTML=items.length?items.map(m=>`<details class="m" id="m-${m.id}"><summary><span><b>${esc(m.t)}</b> <span class="tag">${m.g}</span>${rec.has(m.id)?'<span class="tag warn">recurrente en ti</span>':''}</span></summary>
+    <div class="body"><p style="margin:0">${esc(m.s)}</p><p class="small" style="margin:0"><b>En tus páginas:</b> ${esc(m.a)}</p>
+    <div class="ba"><div class="before"><b>Menos efectivo</b>${esc(m.b)}</div><div class="after"><b>Más efectivo</b>${esc(m.d)}</div></div></div></details>`).join(''):'<div class="empty">Sin resultados.</div>';
+}
+function recurring(){ // ids de manual ligados a criterios con fallo frecuente
+  const map={archivo:'claro',audiencia:'claro',material:'largo',stack:'claro',ux:'contexto',nav:'claro',interact:'mas',quiz:'general',extras:'mas',prioridad:'ambig',ambig:'ambig',entrega:'seguro',placeholders:'claro',rol:'rol',proposito:'contexto',ejemplo:'ejemplos',calidad:'mas',verificacion:'verif',xml:'xml'};
+  const s=new Set();
+  for(const [id,v] of Object.entries(mem.stats.criterios)) if(v.vistos>=1&&v.faltantes/v.vistos>=.5&&map[id])s.add(map[id]);
+  return s;
+}
+
+/* ============ progreso ============ */
+const INTEG=[
+ {id:'xml',c:'xml',t:'Estructurar el prompt con etiquetas XML',d:'Separa <tarea>, <formato>, <interactividad>… Reduce malas interpretaciones.'},
+ {id:'proposito',c:'proposito',t:'Explicar el porqué de la página',d:'Una línea con el uso real (celular, proyector, repaso) mejora decisiones de diseño.'},
+ {id:'ejemplo',c:'ejemplo',t:'Dar una página o quiz de referencia',d:'3–5 ejemplos relevantes y diversos dentro de <example>.'},
+ {id:'rol',c:'rol',t:'Definir un rol en una frase',d:'«Eres un diseñador instruccional y desarrollador front-end…»'},
+ {id:'verificacion',c:'verificacion',t:'Añadir criterios de autoverificación',d:'Consola limpia, quices funcionando, sec-nav, vista móvil.'},
+ {id:'calidad',c:'calidad',t:'Pedir móvil y accesibilidad explícitamente',d:'Responsive, contraste, teclado, aria.'},
+ {id:'interact',c:'interact',t:'Pedir «más allá de lo básico»',d:'Las interacciones extra no se infieren: se piden.'},
+ {id:'placeholders',c:'placeholders',t:'Completar todos los [campos] antes de enviar',d:'O marca el prompt como plantilla.'},
+ {id:'ambig',c:'ambig',t:'Definir política ante ambigüedad',d:'Preguntar antes o decidir y avisar.'},
+ {id:'material',c:'material',t:'Poner el material arriba y la petición al final',d:'Pide también citar primero los fragmentos que usará y marcar lo dudoso.'},
+ {id:'front',c:null,t:'Fijar tokens de diseño (colores, tipografía) para conservarlos',d:'Consistencia con el Aula Digital y variación solo en composición.'},
+ {id:'cadena',c:null,t:'Trabajar por etapas: esquema → maqueta → simuladores → quices',d:'Aprueba cada etapa antes de seguir.'},
+ {id:'datos',c:'quiz',t:'Separar datos de lógica en los quices',d:'Arreglo de preguntas y una sola función genérica; fácil de reutilizar.'},
+ {id:'seguro',c:'entrega',t:'Confirmar antes de modificar aula-header.js',d:'Es un archivo compartido por todas tus páginas.'}
+];
+function renderProgress(){
+  const h=mem.historial, n=h.length;
+  if(!n){ $('#progressBody').innerHTML='<div class="empty">Todavía no hay análisis guardados. Analiza un prompt y aquí verás tu evolución.</div>'+integHTML(); bindInteg(); return }
+  const avg=Math.round(h.reduce((a,x)=>a+x.puntaje,0)/n), lastS=h[n-1].puntaje, delta=lastS-h[0].puntaje;
+  const gaps=Object.entries(mem.stats.criterios).filter(([,v])=>v.faltantes>0).map(([id,v])=>({id,rate:v.faltantes/v.vistos,v,c:CRIT.find(c=>c.id===id)})).filter(x=>x.c).sort((a,b)=>b.rate-a.rate||b.c.w-a.c.w).slice(0,7);
+  $('#progressBody').innerHTML=`
+   <div class="kpis"><div class="kpi"><span class="muted small">Análisis</span><b>${mem.stats.total}</b></div><div class="kpi"><span class="muted small">Promedio</span><b>${avg}</b></div><div class="kpi"><span class="muted small">Último</span><b>${lastS}</b></div><div class="kpi"><span class="muted small">Cambio vs. primero</span><b>${delta>0?'+':''}${delta}</b></div></div>
+   <div class="grid g2">
+     <div class="card"><h3>Evolución del puntaje</h3>${trendSVG(h)}</div>
+     <div class="card"><h3>Áreas de mejora recurrentes</h3>${gaps.length?`<div class="bars" style="margin-top:8px">${gaps.map(g=>`<div class="bar" style="grid-template-columns:150px 1fr 40px"><span>${esc(g.c.n)}</span><div class="track"><div class="fill ${g.rate>.6?'bad':'warn'}" style="width:${pct(g.rate)}%"></div></div><span class="muted">${pct(g.rate)}%</span></div>`).join('')}</div><p class="small muted" style="margin-top:10px">% de análisis en los que faltó o quedó parcial.</p>`:'<p class="muted small">Sin huecos recurrentes. Bien.</p>'}</div>
+   </div>${integHTML()}`;
+  bindInteg();
+}
+function trendSVG(h){
+  const pts=h.slice(-20),W=400,H=120,p=14,max=100;
+  if(pts.length<2)return`<div class="empty" style="margin-top:8px">Necesitas al menos 2 análisis para ver la tendencia.</div>`;
+  const x=i=>p+i*(W-2*p)/(pts.length-1),y=v=>H-p-(v/max)*(H-2*p);
+  const d=pts.map((q,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(q.puntaje).toFixed(1)}`).join(' ');
+  return`<svg class="trend" viewBox="0 0 ${W} ${H}" role="img" aria-label="Puntaje de tus últimos ${pts.length} análisis"><line x1="${p}" x2="${W-p}" y1="${y(50)}" y2="${y(50)}" stroke="var(--line)" stroke-dasharray="3 4"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>${pts.map((q,i)=>`<circle cx="${x(i)}" cy="${y(q.puntaje)}" r="3" fill="var(--accent)"><title>${q.puntaje}</title></circle>`).join('')}</svg>`;
+}
+function integHTML(){
+  const done=new Set(mem.integrado);
+  const prio=id=>{const s=mem.stats.criterios[id];return s&&s.vistos&&s.faltantes/s.vistos>=.5};
+  const items=[...INTEG].sort((a,b)=>(done.has(a.id)-done.has(b.id))||(prio(b.c)-prio(a.c)));
+  return`<div class="card"><div class="row spread"><div><h3 style="margin:0">Qué puedes ir integrando</h3><p class="small muted" style="margin:4px 0 0">Márcalo cuando ya lo uses en tus prompts. Los sugeridos por tus análisis aparecen primero.</p></div><span class="tag">${done.size}/${INTEG.length}</span></div><div style="margin-top:10px">
+  ${items.map(i=>`<label class="todo"><input type="checkbox" data-int="${i.id}" ${done.has(i.id)?'checked':''}><div><b>${esc(i.t)}</b>${prio(i.c)&&!done.has(i.id)?'<span class="tag warn">sugerido</span>':''}<div class="small muted">${esc(i.d)}</div></div></label>`).join('')}</div></div>`;
+}
+function bindInteg(){
+  $$('[data-int]').forEach(cb=>cb.onchange=async()=>{
+    const s=new Set(mem.integrado);cb.checked?s.add(cb.dataset.int):s.delete(cb.dataset.int);mem.integrado=[...s];await persist();renderProgress();
+  });
+}
+
+/* ============ render: memoria ============ */
+function renderMemory(){
+  const u=mem.updatedAt?new Date(mem.updatedAt).toLocaleString('es-MX'):'sin guardar';
+  $('#memStatus').textContent=`${mem.stats.total} análisis · actualizado ${u}`;
+  $('#linkInfo').textContent=fileHandle?`Vinculado a «${fileHandle.name}»: se sobrescribe en cada análisis.`:(window.showSaveFilePicker?'Sin archivo vinculado: los datos se guardan en este navegador. Vincula un archivo para sobrescribirlo en Drive.':'Tu navegador no permite vincular archivos; usa Descargar/Importar (Chrome o Edge sí lo permiten).');
+  $('#jsonPreview').textContent=JSON.stringify(mem,null,2);
+  const st=mem.profile.stack;
+  $('#profileBox').innerHTML=`<div class="small"><b>Dominio:</b> ${esc(mem.profile.dominio)}</div>
+   <div class="small"><b>Bootstrap:</b> ${esc(st.bootstrap)} · <b>Idioma:</b> ${esc(st.idioma)}</div>
+   <div class="small"><b>Archivos compartidos:</b> ${st.archivos.map(esc).join(', ')||'—'}</div>
+   <div class="small"><b>Componentes:</b> ${st.componentes.map(esc).join(', ')||'—'}</div>
+   <div><label class="small muted" for="notas">Notas personales (se guardan en el JSON)</label><textarea id="notas" style="min-height:70px;margin-top:4px">${esc(mem.profile.notas||'')}</textarea></div>`;
+  const nt=$('#notas');if(nt)nt.onchange=()=>{mem.profile.notas=nt.value;persist()};
+}
+
+/* ============ vistas y eventos ============ */
+function showView(v){
+  $$('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
+  $$('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.view===v));
+  if(v==='progreso')renderProgress(); if(v==='manuales')renderManuals(); if(v==='memoria')renderMemory();
+  try{history.replaceState(null,'','#'+v)}catch{}
+  window.scrollTo({top:0});
+}
+function renderAll(){renderMemory();renderManuals();renderProgress()}
+
+$$('.tab').forEach(t=>t.onclick=()=>showView(t.dataset.view));
+$('#openMethods').onclick=()=>openMethods();
+$('#mdClose').onclick=()=>md.close();
+md.addEventListener('click',e=>{if(e.target===md)md.close()});
+$('#mdTabs').addEventListener('click',e=>{const b=e.target.closest('[data-mt]');if(b){mdTab=b.dataset.mt;renderModal()}});
+
+$('#btnSample').onclick=()=>{$('#prompt').value=SAMPLE;$('#isTemplate').checked=false;toast('Prompt base cargado')};
+$('#btnClear').onclick=()=>{$('#prompt').value='';improved='';last=null;$('#result').innerHTML='<div class="empty">Aún no hay análisis. Pega un prompt y pulsa <b>Analizar</b>.</div>'};
+async function runAnalysis(raw){
+  if(!raw.trim())return toast('Escribe o pega un prompt primero');
+  const r=analyze(raw,$('#isTemplate').checked);
+  last=r; improved=raw; renderResult(r); await learn(r);
+  toast(`Puntaje ${pct(r.score)}/100 · memoria actualizada`);
+}
+$('#btnAnalyze').onclick=()=>runAnalysis($('#prompt').value);
+$('#result').addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]'); if(a)return addSnippet(a.dataset.add);
+  const f=e.target.closest('[data-fw]'); if(f)return openMethods(f.dataset.fw);
+  if(e.target.id==='openMethods2')return openMethods();
+  if(e.target.id==='btnAll'){CRIT.filter(c=>c.snip&&last&&last.list.find(x=>x.id===c.id&&x.score<1)).forEach(c=>{const s=c.snip();if(!improved.includes(s))improved=improved.replace(/\s+$/,'')+'\n\n'+s});$('#improved').value=improved;return toast('Se añadió todo lo que faltaba')}
+  if(e.target.id==='btnReset2'){improved=last.raw;$('#improved').value=improved;return}
+  if(e.target.id==='btnCopyImp')return copy(improved);
+  if(e.target.id==='btnReanalyze'){$('#prompt').value=improved;return runAnalysis(improved)}
+});
+$('#mChips').addEventListener('click',e=>{const b=e.target.closest('[data-mf]');if(b){mFilter=b.dataset.mf;renderManuals()}});
+$('#mSearch').addEventListener('input',renderManuals);
+$('#masterCard').addEventListener('click',e=>{
+  if(e.target.id==='mCopy')copy(MASTER);
+  if(e.target.id==='mUse'){$('#prompt').value=MASTER;$('#isTemplate').checked=true;showView('analizar');toast('Plantilla cargada; marcada como plantilla')}
+});
+$('#btnLink').onclick=linkFile; $('#btnOpenFile').onclick=openFile; $('#btnDownload').onclick=()=>{downloadJSON()};
+$('#btnUpload').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{mem=fixMem(JSON.parse(await f.text()));await persist();renderAll();toast('Memoria importada')}catch{toast('JSON no válido')}e.target.value=''};
+$('#btnReset').onclick=async()=>{if(confirm('¿Borrar toda la memoria aprendida? Esta acción no se puede deshacer.')){mem=defaultMem();await persist();renderAll();toast('Memoria restablecida')}};
+
+/* ============ arranque ============ */
+(async function init(){
+  if(!loadLocal()){
+    try{const r=await fetch('memoria-prompts.json',{cache:'no-store'});if(r.ok)mem=fixMem(await r.json())}catch{}
+  }
+  renderAll();
+  const v=(location.hash||'').slice(1);if(['analizar','progreso','manuales','memoria'].includes(v))showView(v);
+})();
+</script>
+</body>
+</html>
