@@ -531,6 +531,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
+  <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 
 <script>
 
@@ -961,7 +962,9 @@
     function byCalc() { const rows = BY.rows.slice(0, BY.n), W = rows.reduce((s, r) => s + r.w, 0); const pri = rows.map(r => F(r.w, W)), lik = rows.map(r => F(r.l, 100)), joint = pri.map((p, i) => fmul(p, lik[i])), pE = joint.reduce((a, b) => fadd(a, b), F0); return { rows, pri, lik, joint, pE, post: joint.map(j => pE.n === 0 ? null : fdiv(j, pE)) }; }
     function byR() { const C = byCalc(), n = BY.n, el = $('#by-rows');
       if (!el.dataset.built || +el.dataset.n !== n) { el.dataset.built = 1; el.dataset.n = n; el.innerHTML = C.rows.map((r, i) => `<div class="hyp-row" style="--c:${PAL[i]}"><span class="hn">H<sub>${i + 1}</sub></span><div><label>Hipótesis (nombre) · peso</label><div class="input-group input-group-sm"><input class="form-control by-nm" data-i="${i}" value="${escH(r.name)}" maxlength="16"><input type="number" class="form-control by-w" data-i="${i}" value="${r.w}" min="1" max="999" style="max-width:70px"></div></div><div><label>P(E | H<sub>${i + 1}</sub>) = <b class="by-lv">${r.l}</b> %</label><input type="range" class="form-range by-l" data-i="${i}" min="0" max="100" value="${r.l}"></div></div>`).join(''); }
-      $('#by-ev').innerHTML = `Evidencia <b>E</b>: <input class="form-control form-control-sm d-inline-block" id="by-evt" style="width:260px" value="${escH(BY.ev)}" maxlength="40">`;
+      /* el campo de evidencia no se vuelve a dibujar mientras se escribe en él (si no, perdía el foco tras cada letra) */
+      if (!$('#by-evt')) $('#by-ev').innerHTML = `Evidencia <b>E</b>: <input class="form-control form-control-sm d-inline-block" id="by-evt" style="width:260px" value="${escH(BY.ev)}" maxlength="40">`;
+      else if (document.activeElement !== $('#by-evt')) $('#by-evt').value = BY.ev;
       $$('#by-n button').forEach(b => b.classList.toggle('active', +b.dataset.n === n));
       const out = $('#by-out'); if (C.pE.n === 0) { out.innerHTML = '<div class="alert alert-warning">P(E) = 0: con esos datos la evidencia es imposible y Bayes no se puede calcular.</div>'; return; }
       const terms = C.rows.map((r, i) => `${ptex(C.pri[i])} \\cdot ${ptex(C.lik[i])}`).join(' + '), tj = C.joint.map(j => ptex(j)).join(' + ');
@@ -1481,12 +1484,20 @@
     function revealInit() { const els = $$('.reveal'); if (!('IntersectionObserver' in window)) { els.forEach(r => r.classList.add('in')); return; }
       const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .15 }); els.forEach(r => io.observe(r)); }
 
+    /* Datos temporales del navegador: las tablas y datos de ejemplo se usan hasta que el usuario capture otros */
+    AulaDatos.link('CUS', CUS, ['n', 'items']);
+    AulaDatos.link('BY', BY, ['n', 'ev', 'rows']);
+    AulaDatos.link('EN', EN, ['tab', 'exp', 'n', 'pri', 'pEH', 'pEN']);
+    AulaDatos.link('TC', TC, ['tab', 'v', 'x', 'y', 'op', 'sel']);
+    AulaDatos.link('TR', TR, ['k', 'probs']);
+    AulaDatos.link('IN', IN, ['N', 'B']);
     (function boot() {
       s1cards(); s2setup(); trSetup(); f4Setup(); vnSetup(); advSetup(); bySetup(); mmSetup(); fmSetup(); enSetup(); tcSetup(); inSetup(); manSetup(); menuInit(); customInit(); switchesInit();
       setSpace('dado'); navInit(); math(document.body); revealInit();
       $$('section.sec:not([hidden]) .reveal').forEach(r => r.classList.add('in'));
     })();
 
+    AulaDatos.controls({ skip: '#by-evt,#cu-n,#un-n,#un-b,#sub-pri,#sub-en,#sub-eh,#dec-sw' });
 </script>
 </body>
 </html>

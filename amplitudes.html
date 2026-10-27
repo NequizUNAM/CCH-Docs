@@ -533,6 +533,7 @@
 <!-- ===================== HEADER DINÁMICO ===================== -->
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
+  <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 
   <script>
 /*FX*/
@@ -1287,7 +1288,13 @@
     addTab(20, 5, [3, 7, 12, 10, 6, 2], false, 'Tabla'); addTab(100, 10, [5, 12, 20, 9, 4], false, 'Tabla'); addTab(45, 5, [2, 5, 9, 13, 8, 3], true, 'Fronteras reales');
     EXS.forEach(ex => $('#ex-list').insertAdjacentHTML('beforeend', exCard(ex)));
     renderManIndex();
-    S.fi = genFi('bell');
+    /* Datos temporales del navegador: los valores de ejemplo se usan hasta que el usuario capture algo */
+    AulaDatos.controls({ early: true, skip: '#k,#nn,[id^="q-"]' });
+    AulaDatos.link('S', S, ['k', 'fi', 'dist', 'real', 'm', 'sel', 'vt', 'var', 'ws', 'wKey']);
+        S.fi = genFi('bell');
+    /* Datos temporales del navegador: se usan los valores de ejemplo hasta que el usuario capture algo */
+    AulaDatos.controls({ early: true, skip: '#k,#nn,[id^="q-"]' });
+    AulaDatos.link('S', S, ['k', 'fi', 'dist', 'real', 'm', 'sel', 'vt', 'var', 'ws', 'wKey']);
     update(true);
   </script>
 

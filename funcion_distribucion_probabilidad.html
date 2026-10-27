@@ -528,6 +528,7 @@
     .allidx { display:flex; flex-wrap:wrap; gap:.4rem; } .allchip { text-decoration:none; border:2px solid var(--c); color:var(--c); background:#fff; border-radius:999px; padding:.1rem .7rem; font-size:.82rem; font-weight:700; } .allchip:hover { background:var(--c); color:#fff; }
     .fl { font-size:15px; font-weight:700; font-family:'Segoe UI',Arial,sans-serif; } .fbig { font-size:22px; font-weight:600; font-family:'Segoe UI',Arial,sans-serif; } .fpick { cursor:pointer; } .fnsvg { max-width:900px; }
     .route { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:.7rem .9rem; margin-bottom:1rem; box-shadow:0 2px 8px rgba(15,23,42,.05); } .rt-h { font-weight:800; color:#0f172a; margin-bottom:.4rem; } .rt-h span { font-weight:500; font-size:.78rem; color:#64748b; } .rt-c { display:flex; flex-wrap:wrap; align-items:center; gap:.3rem; } .rt-c a { display:inline-flex; align-items:center; gap:.35rem; padding:.2rem .65rem .2rem .25rem; border-radius:999px; border:2px solid var(--g); color:var(--g); font-size:.78rem; font-weight:700; text-decoration:none; background:#fff; } .rt-c a b { background:var(--g); color:#fff; border-radius:50%; width:1.4rem; height:1.4rem; display:inline-flex; align-items:center; justify-content:center; font-size:.72rem; } .rt-c a:hover { background:color-mix(in srgb,var(--g) 10%,#fff); } .rt-s { color:#94a3b8; font-size:.7rem; }
+.exn { background:var(--c,#7048e8); color:#fff; border-radius:999px; min-width:1.7rem; height:1.7rem; display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:.85rem; } .exg { font-weight:800; color:#0f172a; border-bottom:2px solid #e2e8f0; padding-bottom:.2rem; margin-top:.4rem; } .exg span { font-weight:500; font-size:.78rem; color:#64748b; } .dg-c.skip { background:repeating-linear-gradient(45deg,#f1f5f9,#f1f5f9 4px,#e2e8f0 4px,#e2e8f0 8px); color:#94a3b8; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:default; } .dgrid.sm .dg-c, .dgrid.sm .dg-c.col { font-size:.78rem; border-radius:7px; }
   </style>
 </head><body>
   <div id="app-header"></div>
@@ -626,6 +627,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
+  <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 
 <script>
     const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -809,15 +811,117 @@
         interp: m => `El costo promedio por persona es <b>${decT(m.E, 2)} pesos</b>. Aunque el falso negativo (X = 3000) tiene solo probabilidad $\\frac{1}{50}$, aporta $\\frac{3000}{50}=60$ pesos al promedio: los eventos raros pero muy costosos pesan. Además $P(\\text{error de la prueba})=P(X\\ge 800)=\\frac{1}{10}$.`,
         sym: null }
     ];
+
+    /* ===================== Hoja de ejercicios 6–14 ===================== */
+    const OK = '#2f9e44', BAD = '#e03131', BLU = '#1c7ed6', ORG = '#e8590c', PUR = '#7048e8';
+    const bin2 = (a, b) => ex => [a, b];
+    const ctr = (counts, tot) => ({ D: counts.D, C: counts.C, M: counts.M });
+    const coinBr = (cnt, name) => pre => { const c = Object.assign({}, cnt); pre.forEach(k => c[k]--); const n = Object.values(c).reduce((a, b) => a + b, 0);
+      return Object.keys(c).filter(k => c[k] > 0).map(k => ({ s: k, t: name[k].t, n: name[k].n, p: F(c[k], n), c: name[k].c })); };
+    const CNAME = { D: { t: '10', n: 'moneda de 10 pesos', c: OK }, C: { t: '5', n: 'moneda de 5 pesos', c: BLU }, M: { t: '2', n: 'moneda de 2 pesos', c: ORG } };
+    const ANAME = { a: { t: '17', n: 'estudiante de 17', c: OK }, b: { t: '19', n: 'estudiante de 19', c: BLU }, c: { t: '21', n: 'estudiante de 21', c: ORG } };
+    EXS.push(
+      { id: 'maq', ico: '⚙️', tit: 'Tres máquinas (A, B y C)', lv: 2, kind: 'tree', L: 3, lev: ['máquina A (p = 0.9)', 'máquina B (p = 0.8)', 'máquina C (p = 0.7)'],
+        br: pre => { const p = [F(9, 10), F(4, 5), F(7, 10)][pre.length]; return [{ s: 'T', n: 'Trabaja', p, c: OK }, { s: 'N', n: 'No trabaja', p: fsub(F(1), p), c: BAD }]; },
+        xf: s => s.filter(c => c === 'T').length,
+        exp: 'Observar <b>3 máquinas independientes</b>: A, B y C trabajan (T) con probabilidades <b>distintas</b> $0.9=\\frac{9}{10}$, $0.8=\\frac{4}{5}$ y $0.7=\\frac{7}{10}$; si no trabajan (N) es el complemento. Hay $2^3=8$ resultados.',
+        enun: `Se tienen <span class="hl hl-e">3 máquinas A, B y C que trabajan independientemente</span> en una empresa. Por observaciones anteriores, la probabilidad de que cada una trabaje es <b>P(A) = 0.9</b>, <b>P(B) = 0.8</b> y <b>P(C) = 0.7</b>. Sea <span class="hl hl-v">X la variable aleatoria que asocia el número de máquinas que trabajan</span>.<br><span class="hl hl-q"><b>a)</b> Construye la función de distribución de probabilidad (FDP) de X. <b>b)</b> (Extra) Calcula E(X) y σ.</span>`,
+        va: 'X = número de máquinas que trabajan (0, 1, 2 o 3).',
+        rule: 'X = número de «T» (máquinas que trabajan)',
+        asks: ['Construir la FDP de X', 'FDP acumulada', 'E(X) y σ'],
+        interp: m => `Se espera que trabajen <b>${decT(m.E, 2)}</b> de las 3 máquinas: $E(X)=0.9+0.8+0.7=${ftx(m.E)}$ (suma de las probabilidades individuales). Como las probabilidades son distintas, <b>no es binomial</b>: se necesita el árbol. La probabilidad de que trabajen las tres es $0.9\\cdot 0.8\\cdot 0.7=0.504$.`, sym: null },
+      { id: 'dro', ico: '🧪', tit: 'Tres drogas: adivinar el sabor', lv: 2, kind: 'tree', L: 3,
+        opts: () => [{ s: 'A', n: 'Acierta', p: F(1, 3), c: OK }, { s: 'F', n: 'Falla', p: F(2, 3), c: BAD }],
+        xf: s => s.filter(c => c === 'A').length,
+        exp: 'Se prueban <b>3 drogas</b> (con remplazo). Cada una sabe a <i>ácido</i>, <i>dulce</i> o <i>amarga</i>, y el estudiante <b>adivina al azar</b>: acierta (A) con probabilidad $\\frac{1}{3}$ y falla (F) con $\\frac{2}{3}$, independientemente. Hay $2^3=8$ resultados.',
+        enun: `A un estudiante se le pide que diga qué sabor tienen <span class="hl hl-e">3 drogas diferentes</span>: ácido, dulce o amarga (cada una corresponde a una de las drogas). El experimento se realiza <b>con remplazo</b>: se le da una droga y se vuelve a mezclar, de modo que una droga puede salir dos o más veces. El estudiante desconoce las drogas y su sentido del gusto es defectuoso, por lo que <b>adivina</b>. Sea <span class="hl hl-v">X la variable aleatoria que asocia el número de veces que acierta</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP. <b>b)</b> Calcula la varianza σ² de la FDP (y σ).</span>`,
+        va: 'X = número de aciertos del estudiante (0, 1, 2 o 3).',
+        rule: 'X = número de «A» (aciertos)',
+        asks: ['Construir la FDP', 'Esperanza E(X)', 'Varianza σ² y σ'],
+        interp: m => `Adivinando al azar se acierta en promedio <b>${decT(m.E, 2)}</b> de 3 veces ($E=np=3\\cdot\\frac{1}{3}=1$). Es binomial $B(3,\\frac{1}{3})$: $\\sigma^2=npq=3\\cdot\\frac{1}{3}\\cdot\\frac{2}{3}=${ftx(m.V)}$.`,
+        sym: (x, m) => `\\binom{3}{${x}}\\left(\\frac{1}{3}\\right)^{${x}}\\left(\\frac{2}{3}\\right)^{${3 - x}}` },
+      { id: 'caj', ico: '🔢', tit: 'Caja con 9 etiquetas: la suma', lv: 3, kind: 'grid', grid: { n: 9, skipEq: true, rowL: '1.ª etiqueta', colL: '2.ª etiqueta',
+          t1: 'La caja tiene 9 etiquetas. Se extraen 2 <b>sin reemplazamiento</b>: la 1.ª puede ser cualquiera de las 9 y la 2.ª una de las 8 restantes. Hay $9\\cdot 8=72$ pares ordenados $(a,b)$ con $a\\ne b$, <b>igualmente probables</b>: $P(a,b)=\\frac{1}{9}\\cdot\\frac{1}{8}=\\frac{1}{72}$. (La diagonal $a=b$ queda vacía: no se repite etiqueta.)',
+          rule: 'X = a + b', t2: 'Cada color es un valor de la suma. Las celdas con la misma suma forman una <b>diagonal</b> (↙): la suma 10 es la más larga, con 8 celdas.' },
+        xf: s => s[0] + s[1],
+        exp: 'Extraer <b>2 etiquetas</b> de una caja con las etiquetas 1 a 9, <b>sin reemplazamiento</b>. Hay $9\\cdot 8=72$ pares ordenados igualmente probables.',
+        enun: `Una caja contiene <span class="hl hl-e">9 etiquetas numeradas del 1 al 9</span>. Se extraen <b>dos</b> de ellas al azar, <b>sin reemplazamiento</b>. Sea <span class="hl hl-v">X la variable aleatoria que asocia la suma de las dos etiquetas</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP de X. <b>b)</b> (Extra) Calcula E(X) y σ.</span>`,
+        va: 'X = a + b, la suma de las dos etiquetas extraídas (de 3 a 17).',
+        rule: 'X = a + b',
+        asks: ['Construir la FDP de X', 'FDP acumulada', 'E(X) y σ'],
+        interp: m => `La suma se espera en <b>${decT(m.E, 2)}</b>: el doble del promedio de una etiqueta (5). La FDP es <b>simétrica</b> alrededor de 10, y la suma 10 es la más probable porque tiene más formas de obtenerse (8 pares).`, sym: null },
+      { id: 'san', ico: '🩸', tit: 'Grupos sanguíneos (tipo O)', lv: 2, kind: 'tree', L: 4,
+        opts: () => [{ s: 'O', n: 'Tipo O', p: F(9, 20), c: BAD }, { s: 'x', n: 'No es O (A, B o AB)', p: F(11, 20), c: '#868e96' }],
+        xf: s => s.filter(c => c === 'O').length,
+        exp: 'Analizar la sangre de <b>4 personas</b>. Para contar el tipo O basta distinguir <b>«O»</b> ($0.45=\\frac{9}{20}$) de <b>«no O»</b> (A, B o AB: $0.40+0.10+0.05=0.55=\\frac{11}{20}$). Hay $2^4=16$ resultados.',
+        enun: `Los cuatro grupos sanguíneos básicos se distribuyen con probabilidades <b>P(O) = 0.45</b>, <b>P(A) = 0.40</b>, <b>P(B) = 0.10</b> y <b>P(AB) = 0.05</b>. Se dispone de <span class="hl hl-e">4 personas</span> a las que se les hará un análisis sanguíneo. Sea <span class="hl hl-v">X la variable aleatoria que asocia el número de personas con sangre tipo «O»</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP de X. <b>b)</b> Calcula σ (la desviación estándar).</span>`,
+        va: 'X = número de personas con sangre tipo O (0, 1, 2, 3 o 4).',
+        rule: 'X = número de «O» en el resultado',
+        asks: ['Construir la FDP', 'Esperanza E(X)', 'Desviación estándar σ'],
+        interp: m => `Se esperan <b>${decT(m.E, 2)}</b> personas tipo O de 4. Es binomial $B(4,0.45)$: $\\sigma^2=npq=4\\cdot 0.45\\cdot 0.55=${decT(m.V, 4)}$ y $\\sigma=\\sqrt{0.99}\\approx ${dec(m.sd, 4)}$. Los otros grupos (A, B, AB) se agrupan en «no O».`,
+        sym: (x, m) => `\\binom{4}{${x}}\\left(\\frac{9}{20}\\right)^{${x}}\\left(\\frac{11}{20}\\right)^{${4 - x}}` },
+      { id: 'mo4', ico: '🎯', tit: 'Moneda: hasta 4 lanzamientos', lv: 3, kind: 'tree', L: 4, stop: s => s[s.length - 1] === 'A',
+        opts: () => [{ s: 'A', n: 'Acierta', p: F(1, 2), c: OK }, { s: 'F', n: 'Falla', p: F(1, 2), c: BAD }],
+        xf: s => s.length,
+        treeNote: 'Las ramas «A» terminan en cuanto la persona acierta; el árbol <b>no es completo</b>. Con 4 lanzamientos se acaba aunque falle',
+        exp: 'Lanzar una moneda <b>hasta 4 veces</b>; antes de cada lanzamiento la persona adivina la cara. Acierta (A) con probabilidad $\\frac{1}{2}$ o falla (F) con $\\frac{1}{2}$. <b>Se deja de lanzar cuando acierta</b> o al llegar a 4 lanzamientos.',
+        enun: `Se lanza una moneda <span class="hl hl-e">hasta un máximo de 4 veces</span>. Antes de cada lanzamiento se le pide a una persona que adivine la cara que aparecerá. <b>Se deja de lanzar la moneda cuando la persona acierta</b> la cara que apareció (o al llegar a 4 lanzamientos). Sea <span class="hl hl-v">X la variable aleatoria que asocia el número de veces que se lanza la moneda</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP de X. <b>b)</b> Calcula σ.</span>`,
+        va: 'X = número de lanzamientos realizados (1, 2, 3 o 4).',
+        rule: 'X = longitud del resultado (cuántos lanzamientos hubo)',
+        asks: ['Construir la FDP', 'Esperanza E(X)', 'Desviación estándar σ'],
+        interp: m => `En promedio se lanza la moneda <b>${decT(m.E, 3)}</b> veces. Fíjate: $P(X=4)=\\frac{1}{8}$ junta <b>dos</b> hojas (FFFA y FFFF), porque en el 4.º lanzamiento el experimento termina acierte o no. Es una distribución <b>geométrica truncada</b>.`, sym: null },
+      { id: 'fab', ico: '🏭', tit: 'Tres fábricas: aparatos de C', lv: 2, kind: 'tree', L: 3,
+        opts: () => [{ s: 'C', n: 'De la fábrica C', p: F(1, 8), c: ORG }, { s: 'x', n: 'De A o B', p: F(7, 8), c: '#868e96' }],
+        xf: s => s.filter(c => c === 'C').length,
+        exp: 'Elegir <b>3 aparatos al azar</b>. Cada uno viene de C con probabilidad $\\frac{1}{8}$ o de A o B con probabilidad $\\frac{5}{8}+\\frac{2}{8}=\\frac{7}{8}$. Hay $2^3=8$ resultados.',
+        enun: `Tres fábricas A, B y C producen aparatos eléctricos: A produce <b>5/8</b> de los aparatos, B produce <b>2/8</b> y C produce <b>1/8</b>. <span class="hl hl-e">Se seleccionan 3 aparatos al azar</span>. Sea <span class="hl hl-v">X la variable aleatoria que asocia el número de aparatos producidos por la fábrica C</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP de X. <b>b)</b> Construye la <b>gráfica acumulada</b> F(x) (paso «FDP acumulada»).</span>`,
+        va: 'X = número de aparatos de la fábrica C entre los 3 seleccionados (0, 1, 2 o 3).',
+        rule: 'X = número de «C» en el resultado',
+        asks: ['Construir la FDP', 'Gráfica de la FDP acumulada', 'E(X) y σ'],
+        interp: m => `Casi siempre ningún aparato es de C: $P(X=0)=\\left(\\frac{7}{8}\\right)^3=${ftx(m.rows[0].p)}\\approx ${dec(fval(m.rows[0].p), 3)}$. Es binomial $B(3,\\frac{1}{8})$ con $E(X)=3\\cdot\\frac{1}{8}=${ftx(m.E)}$. La acumulada sube casi toda en $x=0$.`,
+        sym: (x, m) => `\\binom{3}{${x}}\\left(\\frac{1}{8}\\right)^{${x}}\\left(\\frac{7}{8}\\right)^{${3 - x}}` },
+      { id: 'doc', ico: '🫁', tit: 'Pacientes de bronquios', lv: 2, kind: 'tree', L: 4,
+        opts: () => [{ s: 'S', n: 'No enfermo', p: F(2, 3), c: OK }, { s: 'E', n: 'Enfermo de bronquios', p: F(1, 3), c: BAD }],
+        xf: s => s.filter(c => c === 'S').length,
+        exp: 'Visitan al doctor <b>4 pacientes</b>. Cada uno está <b>enfermo de los bronquios (E)</b> con probabilidad $\\frac{1}{3}$ o <b>NO enfermo (S)</b> con probabilidad $\\frac{2}{3}$. Hay $2^4=16$ resultados. Ojo: la V.A. cuenta a los que <b>no</b> están enfermos.',
+        enun: `Un doctor ha observado que <b>la tercera parte</b> de sus pacientes están enfermos de los bronquios. De <span class="hl hl-e">cuatro pacientes que visitan al doctor</span>, sea <span class="hl hl-v">X la variable aleatoria que asocia el número de pacientes que NO están enfermos de los bronquios</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP de X. <b>b)</b> Calcula la desviación estándar σ.</span>`,
+        va: 'X = número de pacientes que NO están enfermos de los bronquios (0 a 4).',
+        rule: 'X = número de «S» (no enfermos)',
+        asks: ['Construir la FDP', 'E(X)', 'Desviación estándar σ'],
+        interp: m => `Se esperan <b>${decT(m.E, 2)}</b> pacientes sanos de 4 ($E=4\\cdot\\frac{2}{3}=\\frac{8}{3}$). Con $p=\\frac{2}{3}$ de «éxito»: $\\sigma^2=4\\cdot\\frac{2}{3}\\cdot\\frac{1}{3}=${ftx(m.V)}$ y $\\sigma\\approx ${dec(m.sd, 4)}$. Contar a los enfermos daría la misma σ (E = 4/3): la varianza no cambia al intercambiar éxito y fracaso.`,
+        sym: (x, m) => `\\binom{4}{${x}}\\left(\\frac{2}{3}\\right)^{${x}}\\left(\\frac{1}{3}\\right)^{${4 - x}}` },
+      { id: 'mnd', ico: '👛', tit: 'Monedero: dos monedas sin remplazo', lv: 3, kind: 'tree', L: 2, cond: true, sep: ',',
+        br: coinBr({ D: 5, C: 4, M: 1 }, CNAME),
+        xf: s => s.reduce((a, k) => a + { D: 10, C: 5, M: 2 }[k], 0),
+        exp: 'Un monedero tiene <b>10 monedas</b>: 5 de $10, 4 de $5 y 1 de $2. Se extraen <b>2 al azar sin remplazo</b>: la 2.ª extracción depende de la 1.ª (probabilidad <b>condicional</b>, con 9 monedas restantes). La rama «$2 y luego $2» es imposible (solo hay una).',
+        enun: `Un monedero contiene diferentes denominaciones: <b>5 monedas de <span class="cx">$10.00</span></b>, <b>4 de <span class="cx">$5.00</span></b> y <b>1 de <span class="cx">$2.00</span></b>. <span class="hl hl-e">Se extraen dos monedas al azar sin remplazo</span>. Sea <span class="hl hl-v">X la variable aleatoria que asocia la cantidad de dinero extraído</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP de X. <b>b)</b> Calcula la <b>media</b> de la FDP (media poblacional μ).</span>`,
+        va: 'X = suma del dinero de las dos monedas extraídas (en pesos).',
+        rule: 'X = valor de la 1.ª moneda + valor de la 2.ª',
+        asks: ['Construir la FDP', 'Media μ = E(X)', 'σ'],
+        interp: m => `La media es <b>${decT(m.E, 2)} pesos</b>: justo el doble del valor medio de una moneda del monedero ($\\frac{5\\cdot 10+4\\cdot 5+1\\cdot 2}{10}=7.20$), porque la esperanza de una suma es la suma de las esperanzas, aun sin remplazo.`, sym: null },
+      { id: 'est', ico: '🎓', tit: 'Estudiantes: edad promedio', lv: 3, kind: 'tree', L: 2, cond: true, sep: ',',
+        br: coinBr({ a: 5, b: 4, c: 1 }, ANAME),
+        xf: s => s.reduce((a, k) => a + { a: 17, b: 19, c: 21 }[k], 0) / 2,
+        exp: 'En la clase hay <b>10 estudiantes</b>: 5 de 17 años, 4 de 19 y 1 de 21. Se eligen <b>2 al azar sin reemplazamiento</b>: la 2.ª elección depende de la 1.ª (probabilidades condicionales con 9 restantes). X es el <b>promedio de edades</b> de los dos elegidos.',
+        enun: `Hay 10 estudiantes inscritos en una clase de estadística: <b>5 tienen 17 años</b>, <b>4 tienen 19 años</b> y <b>1 tiene 21</b>. De esta clase <span class="hl hl-e">se seleccionan dos estudiantes al azar sin reemplazamiento</span>. Sea <span class="hl hl-v">X la variable aleatoria que asocia la edad promedio de los dos estudiantes seleccionados</span>.<br><span class="hl hl-q"><b>a)</b> Construye la FDP de X. <b>b)</b> Calcula μ de la FDP.</span>`,
+        va: 'X = (edad del 1.º + edad del 2.º) / 2 (valores 17, 18, 19 o 20).',
+        rule: 'X = promedio de las dos edades',
+        asks: ['Construir la FDP', 'Media μ', 'σ'],
+        interp: m => `$\\mu=${decT(m.E, 2)}$ años: coincide con la edad promedio de <b>todo el grupo</b> $\\frac{5\\cdot 17+4\\cdot 19+21}{10}=18.2$. Es una propiedad útil: el promedio de una muestra aleatoria sin reemplazo tiene como media la <b>media poblacional</b>. Nota que X = 19 junta dos casos: (17, 21) y (19, 19).`, sym: null }
+    );
+    const ORDER = ['mon', 'dad', 'rat', 'ber', 'cer', 'maq', 'dro', 'caj', 'san', 'mo4', 'fab', 'doc', 'mnd', 'est', 'jue', 'med1', 'med2'];
+    EXS.sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id)); EXS.forEach((e, i) => { e.num = i + 1; e.grp = i < 14 ? 'Hoja de ejercicios' : 'Extras'; });
+    EXS.find(e => e.id === 'dad').grid = { n: 6, rowL: '1.er dado', colL: '2.º dado', t1: 'Un dado tiene 6 caras, así que el experimento tiene $6\\cdot 6=36$ pares $(a,b)$ <b>igualmente probables</b>: $P(a,b)=\\frac{1}{6}\\cdot\\frac{1}{6}=\\frac{1}{36}$. (Con 36 hojas, un árbol sería enorme: se usa una <b>cuadrícula</b>.)', rule: 'X = máx(a, b)', t2: 'Cada color es un valor de X. Toca un color o una celda: las celdas con el mismo máximo forman una <b>escuadra</b> (L) con $2x-1$ celdas.' };
     EXS.forEach(e => { if (!e.br) e.br = (pre, ex) => e.opts(ex || e); });
-    const PQ = { mon: [['ge', 4], ['le', 2]], dad: [['le', 3], ['ge', 5]], rat: [['ge', 2], ['le', 1]], ber: [['le', 0], ['ge', 1]], jue: [['ge', 5], ['le', -1]], cer: [['le', 2], ['ge', 2]], med1: [['ge', 2], ['eq', 0]], med2: [['ge', 800], ['le', 500]] };
+    const PQ = { mon: [['ge', 4], ['le', 2]], dad: [['le', 3], ['ge', 5]], rat: [['ge', 2], ['le', 1]], ber: [['le', 0], ['ge', 1]], jue: [['ge', 5], ['le', -1]], cer: [['le', 2], ['ge', 2]], med1: [['ge', 2], ['eq', 0]], med2: [['ge', 800], ['le', 500]],
+      maq: [['ge', 2], ['eq', 3]], dro: [['ge', 2], ['le', 1]], caj: [['le', 5], ['ge', 15]], san: [['ge', 2], ['le', 1]], mo4: [['le', 2], ['ge', 3]], fab: [['eq', 0], ['ge', 1]], doc: [['ge', 3], ['le', 2]], mnd: [['ge', 15], ['le', 10]], est: [['ge', 19], ['le', 18]] };
     EXS.forEach(e => { e.pq = PQ[e.id]; });
 
     function outcomesOf(ex) {
-      if (ex.kind === 'grid') { const o = []; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) o.push({ lab: `${a},${b}`, a, b, parts: [F(1, 6), F(1, 6)], pr: F(1, 36), x: ex.xf([a, b]) }); return o; }
-      const out = []; (function rec(syms, parts, pr) {
-        if (syms.length === ex.L) { out.push({ lab: syms.map(q => q.s).join(''), syms: syms.slice(), parts: parts.slice(), pr, x: ex.xf(syms.map(q => q.s)) }); return; }
-        ex.br(syms.map(z => z.s), ex).forEach(q => { syms.push(q); parts.push(q.p); rec(syms, parts, fmul(pr, q.p)); syms.pop(); parts.pop(); });
+      if (ex.kind === 'grid') { const g = ex.grid, o = []; for (let a = 1; a <= g.n; a++) for (let b = 1; b <= g.n; b++) { if (g.skipEq && a === b) continue; const parts = g.skipEq ? [F(1, g.n), F(1, g.n - 1)] : [F(1, g.n), F(1, g.n)]; o.push({ lab: `${a},${b}`, a, b, parts, pr: fmul(parts[0], parts[1]), x: ex.xf([a, b]) }); } return o; }
+      const out = [], sep = ex.sep || ''; (function rec(syms, parts, pr) {
+        if (syms.length === ex.L || (ex.stop && syms.length && ex.stop(syms.map(q => q.s)))) { out.push({ lab: syms.map(q => q.t || q.s).join(sep), syms: syms.slice(), parts: parts.slice(), pr, x: ex.xf(syms.map(q => q.s)) }); return; }
+        ex.br(syms.map(z => z.s), ex).filter(q => q.p.n > 0).forEach(q => { syms.push(q); parts.push(q.p); rec(syms, parts, fmul(pr, q.p)); syms.pop(); parts.pop(); });
       })([], [], F(1)); return out;
     }
     function modelOf(ex) {
@@ -892,25 +996,23 @@
     /* ===================== 1. Problema guiado ===================== */
     const COLS = ['#e8590c', '#1c7ed6', '#2f9e44', '#7048e8', '#e03131', '#f08c00', '#0ca678', '#d6336c', '#4263eb', '#74b816'];
     function treeSvg(m, st) {
-      const ex = m.ex, L = ex.L, N = 1 << L, rowH = 26, H = N * rowH + 30, W = 740, X0 = 36, colw = (W - 330) / L;
-      const pathOpts = (d, j) => { const out = [], pre = []; for (let l = 1; l <= d; l++) { const o = ex.br(pre.slice(), ex)[(j >> (d - l)) & 1]; out.push(o); pre.push(o.s); } return out; };
-      const nx = d => X0 + d * colw, ny = (d, j) => 15 + (j * (1 << (L - d)) + (1 << (L - d)) / 2) * rowH;
-      let s = '', node = (d, j) => ({ x: nx(d), y: ny(d, j) });
-      for (let d = 1; d <= Math.min(st, L); d++) for (let j = 0; j < (1 << d); j++) {
-        const par = node(d - 1, j >> 1), me = node(d, j), o = pathOpts(d, j)[d - 1], fresh = d === st ? 'fresh' : '', mx = (par.x + me.x) / 2 + 4, my = (par.y + me.y) / 2 + (j & 1 ? 12 : -5);
-        s += `<path class="ed ${fresh}" pathLength="1" d="M${par.x} ${par.y}L${me.x} ${me.y}" stroke="${o.c}"/><text class="ctx edl ${fresh}" x="${mx}" y="${my}" text-anchor="middle" style="fill:${o.c}">${o.p.n}/${o.p.d}</text>`;
-      }
-      s += `<circle class="nd" cx="${nx(0)}" cy="${ny(0, 0)}" r="9" fill="#0f172a"/>`;
-      for (let d = 1; d <= Math.min(st, L); d++) for (let j = 0; j < (1 << d); j++) { const me = node(d, j), o = pathOpts(d, j)[d - 1], fresh = d === st ? 'fresh' : ''; s += `<g class="nd ${fresh}"><circle cx="${me.x}" cy="${me.y}" r="11" fill="${o.c}"/><text x="${me.x}" y="${me.y + 4}" text-anchor="middle" class="ctx b" style="fill:#fff">${o.s}</text></g>`; }
-      if (st > L) m.outs.forEach((o, i) => { const y = ny(L, i), x = nx(L) + 20, sel = i === S.leaf;
-        s += `<g class="leaf fresh ${sel ? 'sel' : ''}" data-a="leaf" data-v="${i}" style="--d:${i * 40}ms"><rect x="${x - 6}" y="${y - 12}" width="300" height="24" rx="8" class="lrect"/><text x="${x + 4}" y="${y + 4}" class="ctx b" style="fill:#0f172a">${o.lab}</text><text x="${x + 62}" y="${y + 4}" class="ctx" style="fill:${CP}">P = ${o.pr.n}/${o.pr.d}</text><text x="${x + 180}" y="${y + 4}" class="ctx b" style="fill:${CX}">X = ${xs_(o.x)}</text></g>`; });
+      const ex = m.ex, L = ex.L, nl = m.outs.length, rowH = nl > 12 ? 24 : 26, H = nl * rowH + 30, W = 740, X0 = 36, colw = (W - 330) / L, nx = d => X0 + d * colw, yRow = i => 15 + (i + 0.5) * rowH;
+      const nodes = {}; m.outs.forEach((o, i) => o.syms.forEach((q, d) => { const key = o.syms.slice(0, d + 1).map(z => z.s).join('|'); (nodes[key] = nodes[key] || { d: d + 1, q, par: o.syms.slice(0, d).map(z => z.s).join('|'), lo: i, hi: i }).hi = i; }));
+      const ny = n => yRow((n.lo + n.hi) / 2), root = { x: nx(0), y: yRow((nl - 1) / 2) }, pos = k => k === '' ? root : { x: nx(nodes[k].d), y: ny(nodes[k]) }, list = Object.keys(nodes).filter(k => nodes[k].d <= Math.min(st, L));
+      let s = ''; const nodesOfPar = {}; Object.keys(nodes).forEach(k => { nodesOfPar[nodes[k].par] = (nodesOfPar[nodes[k].par] || 0) + 1; });
+      list.forEach(k => { const n = nodes[k], par = pos(n.par), me = pos(k), o = n.q, fresh = n.d === st ? 'fresh' : '', tt = nodesOfPar[n.par] > 2 ? 0.6 : 0.5, mx = par.x + (me.x - par.x) * tt + 4, my = par.y + (me.y - par.y) * tt + (me.y > par.y ? 12 : me.y < par.y ? -5 : -6);
+        s += `<path class="ed ${fresh}" pathLength="1" d="M${par.x} ${par.y}L${me.x} ${me.y}" stroke="${o.c}"/><text class="ctx edl ${fresh}" x="${mx}" y="${my}" text-anchor="middle" style="fill:${o.c}">${o.p.n}/${o.p.d}</text>`; });
+      s += `<circle class="nd" cx="${root.x}" cy="${root.y}" r="9" fill="#0f172a"/>`;
+      list.forEach(k => { const n = nodes[k], me = pos(k), o = n.q, fresh = n.d === st ? 'fresh' : '', tx = o.t || o.s; s += `<g class="nd ${fresh}"><circle cx="${me.x}" cy="${me.y}" r="11" fill="${o.c}"/><text x="${me.x}" y="${me.y + 4}" text-anchor="middle" class="ctx b" style="fill:#fff;${tx.length > 1 ? 'font-size:10px' : ''}">${tx}</text></g>`; });
+      if (st > L) m.outs.forEach((o, i) => { const y = yRow(i), x = nx(L) + 20, sel = i === S.leaf;
+        s += `<g class="leaf fresh ${sel ? 'sel' : ''}" data-a="leaf" data-v="${i}" style="--d:${i * 40}ms"><rect x="${x - 6}" y="${y - 12}" width="300" height="24" rx="8" class="lrect"/><text x="${x + 4}" y="${y + 4}" class="ctx b" style="fill:#0f172a">${o.lab}</text><text x="${x + 62}" y="${y + 4}" class="ctx" style="fill:${CP}">P = ${o.pr.n}/${o.pr.d}</text><text x="${x + 190}" y="${y + 4}" class="ctx b" style="fill:${CX}">X = ${xs_(o.x)}</text></g>`; });
       return `<svg class="tree" viewBox="0 0 ${W} ${H}" role="img">${s}</svg>`;
     }
     function gridHTML(m, st) {
-      const pal = {}; m.xs.forEach((x, i) => pal[x] = COLS[i % 10]); let h = '<div class="dgrid"><div class="dg-h"></div>';
-      for (let b = 1; b <= 6; b++) h += `<div class="dg-h">${b}</div>`;
-      for (let a = 1; a <= 6; a++) { h += `<div class="dg-h">${a}</div>`; for (let b = 1; b <= 6; b++) { const x = Math.max(a, b), on = S.hx === x; h += `<div class="dg-c ${st > 1 ? 'col' : ''} ${on ? 'on' : ''} ${S.hx !== null && !on ? 'dim' : ''}" style="${st > 1 ? `background:${pal[x]};` : ''}--i:${(a - 1) * 6 + b - 1}" data-a="hx" data-v="${x}">${st > 1 ? x : `${a},${b}`}</div>`; } }
-      return h + '</div><div class="small text-muted mt-1">Filas: 1.er dado · columnas: 2.º dado. Cada celda es un resultado con probabilidad $\\frac{1}{36}$.</div>';
+      const ex = m.ex, g = ex.grid, n = g.n, pal = {}; m.xs.forEach((x, i) => pal[x] = COLS[i % 10]); let h = `<div class="dgrid ${n > 6 ? 'sm' : ''}" style="grid-template-columns:30px repeat(${n},1fr);${n > 6 ? 'max-width:560px' : ''}"><div class="dg-h"></div>`;
+      for (let b = 1; b <= n; b++) h += `<div class="dg-h">${b}</div>`;
+      for (let a = 1; a <= n; a++) { h += `<div class="dg-h">${a}</div>`; for (let b = 1; b <= n; b++) { if (g.skipEq && a === b) { h += '<div class="dg-c skip">—</div>'; continue; } const x = ex.xf([a, b]), on = S.hx === x; h += `<div class="dg-c ${st > 1 ? 'col' : ''} ${on ? 'on' : ''} ${S.hx !== null && !on ? 'dim' : ''}" style="${st > 1 ? `background:${pal[x]};` : ''}--i:${(a - 1) * n + b - 1}" data-a="hx" data-v="${x}">${st > 1 ? x : `${a},${b}`}</div>`; } }
+      return h + `</div><div class="small text-muted mt-1">Filas: ${g.rowL} · columnas: ${g.colL}. Cada celda es un resultado con probabilidad $\\frac{1}{${m.outs.length}}$.${g.skipEq ? ' La diagonal (a = b) no existe: no se puede sacar la misma etiqueta dos veces.' : ''}</div>`;
     }
     function pqCalc(m, mode, xv) {
       const rs = m.rows, i = rs.findIndex(r => r.x === xv), a = rs[i], xa = xs_(xv), pv = i > 0 ? rs[i - 1] : null, Fp = pv ? pv.F : F(0), xp = pv ? xs_(pv.x) : '';
@@ -929,13 +1031,17 @@
             + (st > 2 ? rv(2, st, stp(3, CE, '¿Qué se va a calcular?', '<ol class="mb-0">' + ex.asks.map(a => `<li>${a}</li>`).join('') + '</ol><div class="small mt-1 text-muted">Orden de trabajo: árbol → espacio muestral Ω → agrupar → FDP → acumulada → E(X) → σ.</div>')) : '') + '</div></div>'; } },
       { t: 'Árbol / espacio muestral', ic: 'bi-diagram-3-fill', c: CP, r: (m, st) => { const ex = m.ex;
           if (ex.kind === 'grid') return `<div class="row g-3"><div class="col-lg-6">${gridHTML(m, st)}</div><div class="col-lg-6">`
-            + rv(0, st, stp(1, CP, 'Espacio muestral Ω', `Un dado tiene 6 caras, así que el experimento tiene $6\\cdot 6=36$ pares $(a,b)$ <b>igualmente probables</b>: $P(a,b)=\\frac{1}{6}\\cdot\\frac{1}{6}=\\frac{1}{36}$. (Con 36 hojas, un árbol sería enorme: se usa una <b>cuadrícula</b>.)`))
-            + (st > 1 ? rv(1, st, stp(2, CX, 'Se colorea según X = máx(a, b)', `Cada color es un valor de X. Toca un color o una celda: las celdas con el mismo máximo forman una <b>escuadra</b> (L) con $2x-1$ celdas.<div class="stchips mt-2">${m.rows.map((r, i) => `<button class="${S.hx === r.x ? 'on' : ''}" style="background:${COLS[i % 10]};color:#fff" data-a="hx" data-v="${r.x}">X=${r.x}: ${r.n} celdas</button>`).join('')}</div>`)) : '') + '</div></div>';
-          const L = ex.L, o = m.outs[S.leaf] || m.outs[0], lvTxt = () => { if (!ex.cond || st === 1) { const op = ex.br([], ex); return `<b>Nivel ${st}:</b> ${st === 1 ? 'se parte del inicio' : 'se abre cada rama otra vez'} con las opciones ${op.map(q => `<b style="color:${q.c}">${q.s}</b> (${q.n}, probabilidad ${fi(ftx(q.p))})`).join(' y ')}. Las ramas que salen de un mismo nodo <b>suman 1</b>: $${op.map(q => ftx(q.p)).join('+')}=1$.`; }
-            const pres = [...new Set(m.outs.map(q => q.lab.slice(0, st - 1)))]; return `<b>Nivel ${st}:</b> las probabilidades ahora son <b>condicionales</b>: dependen de la rama anterior.<ul class="mb-1">${pres.map(pr => { const op = ex.br(pr.split(''), ex), prev = ex.br(pr.slice(0, -1).split('').filter(Boolean), ex).find(q => q.s === pr[pr.length - 1]); return `<li>Si <b>${prev.n}</b>: ${op.map(q => `P(${q.n}) = ${fi(ftx(q.p))}`).join(' y ')} (suman 1)</li>`; }).join('')}</ul>`; };
+            + rv(0, st, stp(1, CP, 'Espacio muestral Ω', ex.grid.t1))
+            + (st > 1 ? rv(1, st, stp(2, CX, `Se colorea según ${ex.grid.rule}`, `${ex.grid.t2}<div class="stchips mt-2">${m.rows.map((r, i) => `<button class="${S.hx === r.x ? 'on' : ''}" style="background:${COLS[i % 10]};color:#fff" data-a="hx" data-v="${r.x}">X=${r.x}: ${r.n} celdas</button>`).join('')}</div>`)) : '') + '</div></div>';
+          const L = ex.L, o = m.outs[S.leaf] || m.outs[0], lvTxt = () => {
+            const pres = []; m.outs.forEach(q => { if (q.syms.length >= st) { const p = q.syms.slice(0, st - 1).map(z => z.s), k = p.join('|'); if (!pres.some(z => z.k === k)) pres.push({ k, p }); } });
+            const opsOf = p => ex.br(p, ex).filter(q => q.p.n > 0), opTxt = op => op.map(q => `<b style="color:${q.c}">${q.t || q.s}</b> (${q.n}, probabilidad ${fi(ftx(q.p))})`).join(', ');
+            if (ex.cond && st > 1) return `<b>Nivel ${st}:</b> las probabilidades ahora son <b>condicionales</b>: dependen de lo que ya se sacó (sin remplazo).<ul class="mb-1">${pres.map(z => { const prev = ex.br(z.p.slice(0, -1), ex).find(q => q.s === z.p[z.p.length - 1]); return `<li>Si salió <b>${prev.n}</b>: ${opsOf(z.p).map(q => `P(${q.n}) = ${fi(ftx(q.p))}`).join('; ')} (suman 1)</li>`; }).join('')}</ul>`;
+            const op = opsOf(pres[0].p), head = ex.lev ? `<b>Nivel ${st}: ${ex.lev[st - 1]}.</b> ` : `<b>Nivel ${st}:</b> ${st === 1 ? 'se parte del inicio' : 'se abre cada rama otra vez'} con las opciones `;
+            return `${head}${ex.lev ? 'Opciones: ' : ''}${opTxt(op)}. Las ramas que salen de un mismo nodo <b>suman 1</b>: $${op.map(q => ftx(q.p)).join('+')}=1$.${ex.stop && st > 1 ? ' <i>Si acierta (A), esa rama termina: ya no se lanza más.</i>' : ''}`; };
           const txtL = st <= L ? lvTxt() : '';
           return `<div class="row g-3"><div class="col-lg-8"><div class="tree-wrap">${treeSvg(m, st)}</div></div><div class="col-lg-4">`
-            + (st <= L ? rv(0, 1, stp(st, CP, `Nivel ${st} de ${L}`, txtL)) : rv(0, 1, stp('Ω', CP, 'Cada trayectoria es un resultado', `Al final hay $2^{${L}}=${m.outs.length}$ hojas (resultados). Por la <b>regla del producto</b> (intersección de eventos independientes) la probabilidad de cada hoja es el producto de sus ramas${ex.cond ? ' (aquí con <b>probabilidades condicionales</b>: $P(E\\cap P)=P(E)\\cdot P(P\\mid E)$)' : ''}. <i>Toca una hoja:</i><div class="my-2 p-2 rounded" style="background:#fff4e6"><b>${o.lab}</b>: ${fd(`P(${o.lab})=${o.parts.map(ftx).join('\\cdot ')}`)}${fd(`=${ftx(o.pr)}\\qquad X=${xs_(o.x)}`)}</div>`))) + '</div></div>'; } },
+            + (st <= L ? rv(0, 1, stp(st, CP, `Nivel ${st} de ${L}`, txtL)) : rv(0, 1, stp('Ω', CP, 'Cada trayectoria es un resultado', `Al final hay <b>${m.outs.length}</b> hojas (resultados)${ex.treeNote ? '. ' + ex.treeNote : ''}. Por la <b>regla del producto</b> (intersección de eventos independientes) la probabilidad de cada hoja es el producto de sus ramas${ex.cond ? ' (aquí con <b>probabilidades condicionales</b>: ' + (ex.id === 'med2' ? '$P(E\\cap P)=P(E)\\cdot P(P\\mid E)$' : '$P(A\\cap B)=P(A)\\cdot P(B\\mid A)$') + ')' : ''}. <i>Toca una hoja:</i><div class="my-2 p-2 rounded" style="background:#fff4e6"><b>${o.lab}</b>: ${fd(`P(${o.lab})=${o.parts.map(ftx).join('\\cdot ')}`)}${fd(`=${ftx(o.pr)}\\qquad X=${xs_(o.x)}`)}</div>`))) + '</div></div>'; } },
       { t: 'Ω → X (dominio y rango)', ic: 'bi-arrow-left-right', c: CX, r: (m, st) => { const ex = m.ex, tall = m.outs.length > 12;
           const head = `<tr><th>#</th><th>Resultado ω</th><th>P(ω)</th>${st > 1 ? '<th></th><th>X(ω)</th>' : ''}</tr>`;
           const body = m.outs.map((o, i) => `<tr class="${S.leaf === i ? 'cur' : ''}" data-a="leaf" data-v="${i}" style="--i:${i}"><td>${i + 1}</td><td><b>${ex.kind === 'grid' ? '(' + o.lab + ')' : o.lab}</b></td><td>${fi(o.parts.map(ftx).join('\\cdot ') + '=' + ftx(o.pr))}</td>${st > 1 ? `<td class="arr">→</td><td><b style="color:${CX}">${xs_(o.x)}</b></td>` : ''}</tr>`).join('');
@@ -1021,11 +1127,14 @@
     ACT.setp = el => { EXS[S.ex].par.p = F(+el.dataset.n, +el.dataset.d); S.ans = {}; renderAll(); };
     ACT.ex = el => { labStop(); S.ex = +el.dataset.v; S.step = 0; S.stage = 1; S.leaf = 0; S.hx = null; renderAll(); const t = $('#lab'); if (t && el.dataset.scroll) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
     function exCards() {
-      $('#ex-cards').innerHTML = EXS.map((e, i) => `<div class="col-6 col-md-3"><div class="ex-card exsel lv${e.lv} ${S.ex === i ? 'on' : ''}" role="button" data-a="ex" data-v="${i}" data-scroll="1"><div class="fs-2">${e.ico}</div><div class="fw-bold small">${e.tit}</div><span class="lvb">${['', 'Básico', 'Intermedio', 'Avanzado'][e.lv]}</span></div></div>`).join('');
+      const card = (e, i) => `<div class="col-6 col-md-4 col-lg-3"><div class="ex-card exsel lv${e.lv} ${S.ex === i ? 'on' : ''}" role="button" data-a="ex" data-v="${i}" data-scroll="1" style="padding:.7rem"><div class="d-flex align-items-center gap-2"><span class="exn">${e.num}</span><span class="fs-3">${e.ico}</span></div><div class="fw-bold small mt-1">${e.tit}</div><span class="lvb">${['', 'Básico', 'Intermedio', 'Avanzado'][e.lv]}</span></div></div>`;
+      let h = '', g = ''; EXS.forEach((e, i) => { if (e.grp !== g) { g = e.grp; h += `<div class="col-12"><div class="exg"><i class="bi ${g === 'Extras' ? 'bi-stars' : 'bi-journal-check'} me-1"></i>${g} <span>${g === 'Extras' ? '(15–17: más ejemplos, incluidos de medicina)' : '(1–14, en orden de dificultad creciente de los temas)'}</span></div></div>`; } h += card(e, i); });
+      $('#ex-cards').innerHTML = h;
     }
     RENDERS.push(exCards, labR);
     /* Selector global de ejemplo para secciones de conceptos */
-    const exBar = () => `<div class="d-flex flex-wrap gap-2 align-items-center mb-2"><span class="small fw-bold">Ejemplo:</span><div class="stchips">${EXS.map((e, i) => `<button class="${S.ex === i ? 'on' : ''}" data-a="ex" data-v="${i}">${e.ico} ${e.tit}</button>`).join('')}</div></div>`;
+    ACT.exGo = el => { const k = Math.max(0, Math.min(EXS.length - 1, S.ex + (+el.dataset.v))); el.dataset.v = k; ACT.ex(el); };
+    const exBar = () => `<div class="d-flex flex-wrap gap-2 align-items-center mb-2"><span class="small fw-bold">Ejercicio:</span><button class="btn btn-sm btn-outline-secondary rounded-pill py-0" data-a="exGo" data-v="-1" ${S.ex === 0 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i></button><div class="stchips">${EXS.map((e, i) => `<button class="${S.ex === i ? 'on' : ''}" data-a="ex" data-v="${i}" title="${e.tit}">${e.num}</button>`).join('')}</div><button class="btn btn-sm btn-outline-secondary rounded-pill py-0" data-a="exGo" data-v="1" ${S.ex === EXS.length - 1 ? 'disabled' : ''}><i class="bi bi-chevron-right"></i></button><span class="small"><b>${EXS[S.ex].num}.</b> ${EXS[S.ex].ico} ${EXS[S.ex].tit}</span></div>`;
 
 
     /* ===================== Función: dominio, codominio y rango (SVG vectorial) ===================== */
@@ -1352,7 +1461,7 @@
     const tabTx = m => `x: ${m.xs.map(xs_).join(', ')} · p(x): ${m.rows.map(r => r.p.d === 1 ? r.p.n : r.p.n + '/' + r.p.d).join(', ')}`;
     function manDefs() {
       const m = M, ex = m.ex, D = m.D, r1 = m.rows[Math.min(1, m.rows.length - 1)];
-      const ORD = ['funcion', 'reales', 'intervalos', 'espacio', 'arbol', 'condic', 'va', 'dominio', 'fdp', 'cond', 'acum', 'prob', 'esp', 'eprop', 'juego', 'lgn', 'var', 'sd', 'cheb', 'bern', 'bin', 'unif'];
+      const ORD = ['funcion', 'reales', 'intervalos', 'espacio', 'arbol', 'condic', 'sinrem', 'va', 'dominio', 'fdp', 'cond', 'acum', 'prob', 'esp', 'eprop', 'juego', 'lgn', 'var', 'sd', 'cheb', 'bern', 'bin', 'unif'];
       return [
         { k: 'funcion', cat: 'a', t: 'Función: dominio, codominio y rango', c: '#2f9e44',
           def: R`Una <b>función</b> $f:A\to B$ es una <b>regla de correspondencia</b> que asigna a <b>cada</b> elemento $x$ del conjunto $A$ <b>un único</b> elemento $f(x)$ del conjunto $B$. El conjunto $A$ es el <b>dominio</b>; $B$ es el <b>codominio</b> (o contradominio); y el conjunto de imágenes que realmente se alcanzan es el <b>rango</b> (o imagen).`,
@@ -1372,6 +1481,12 @@
           f: [R`x<a\iff x\in(-\infty,a)\qquad x\le a\iff x\in(-\infty,a]`, R`x>a\iff x\in(a,\infty)\qquad x\ge a\iff x\in[a,\infty)`, R`a<x<b\iff x\in(a,b)\qquad a\le x\le b\iff x\in[a,b]`, R`P(X\le a)-P(X<a)=P(X=a)`], dn: [['a, b', 'extremos del intervalo'], ['( )', 'extremo no incluido: círculo vacío'], ['[ ]', 'extremo incluido: círculo relleno'], [R`F(a)`, 'FDP acumulada, P(X ≤ a)']],
           use: 'Traduce la desigualdad del enunciado: ¿trae «o igual»? entonces corchete y círculo relleno; si no, paréntesis y círculo vacío. Luego marca qué valores de X caen en el intervalo y suma sus probabilidades.',
           ex: () => { const xs = m.xs, v = xs[Math.min(1, xs.length - 1)], lt = m.rows.filter(r => r.x < v), le = m.rows.filter(r => r.x <= v); return `«${exT()}», con $a=${xs_(v)}$: $P(X<${xs_(v)})$ usa solo {${lt.map(r => xs_(r.x)).join(', ') || '∅'}} (círculo vacío); $P(X\\le ${xs_(v)})$ usa {${le.map(r => xs_(r.x)).join(', ')}} (círculo relleno): la diferencia es el valor ${xs_(v)} mismo.`; } },
+        { k: 'sinrem', cat: 'a', t: 'Con y sin remplazo; árbol que se detiene', c: '#e8590c',
+          def: R`Un muestreo es <b>con remplazo</b> cuando lo extraído se devuelve: las extracciones son <b>independientes</b> y las probabilidades no cambian. Es <b>sin remplazo</b> cuando no se devuelve: cada extracción <b>depende</b> de las anteriores y se usan probabilidades <b>condicionales</b>.`,
+          thm: [R`<b>Sin remplazo</b> (monedero, etiquetas, estudiantes): en la 2.ª extracción quedan $N-1$ elementos, y las probabilidades se calculan con lo que queda: $P(B\mid A)=\frac{\text{quedan de }B}{N-1}$.`, R`<b>Con remplazo</b> (las 3 drogas, ratones, pacientes): cada nivel repite las mismas probabilidades y el modelo es binomial $B(n,p)$.`, R`<b>Árbol que se detiene:</b> si el experimento termina al ocurrir algo (acertar la cara), esa rama no se sigue abriendo. Hay <b>menos hojas</b> y varias hojas pueden dar el mismo valor de $X$ (p. ej. $X=4$ junta FFFA y FFFF).`, R`<b>Ramas imposibles:</b> si una combinación no puede ocurrir (sacar dos veces la única moneda de $2), su probabilidad es 0 y no se dibuja.`],
+          f: [R`P(A\cap B)=P(A)\cdot P(B\mid A)`, R`E(X_1+X_2)=E(X_1)+E(X_2)`], dn: [[R`P(B\mid A)`, 'probabilidad de B sabiendo que ya ocurrió A'], [R`N`, 'total de elementos antes de extraer']],
+          use: 'Pregunta primero: ¿se devuelve lo extraído? Si no, en cada nivel actualiza cuántos quedan y cuántos son de cada tipo. Luego multiplica a lo largo de la rama y agrupa por el valor de X.',
+          ex: () => { const e = EXS.find(q => q.id === 'mnd'), mm = modelOf(e); return `Monedero (5 de 10 pesos, 4 de 5, 1 de 2), sin remplazo: $P(10,10)=\\frac{5}{10}\\cdot\\frac{4}{9}=\\frac{2}{9}$; la media es $\\mu=${ftx(mm.E)}=${dec(fval(mm.E), 2)}$ pesos.`; } },
         { k: 'va', cat: 'a', t: 'Variable aleatoria (V.A.)', c: CX,
           def: R`Una <b>variable aleatoria</b> es una función $X$ que asigna un <b>número real</b> a cada resultado $\omega$ del espacio muestral $\Omega$. Es <b>discreta</b> si solo puede tomar un número finito (o numerable) de valores.`,
           thm: [R`<b>Notación:</b> la mayúscula $X$ es la variable; la minúscula $x$ es uno de sus valores. $\{X=x\}$ es el evento formado por los resultados cuyo valor es $x$.`, R`<b>Una experiencia, muchas V.A.:</b> con 3 monedas, «n.º de águilas», «dinero ganado» o «águilas − soles» son variables distintas con FDP distintas.`],
@@ -1550,6 +1665,8 @@
     const origRA = renderAll;
     window.addEventListener('DOMContentLoaded', () => { refreshM(); navInit(); eventsInit(); prNew(); lgReset(); renderAll(); prR(); math(document.body); });
 
+    /* Datos temporales del navegador: los valores de ejemplo se usan hasta que el usuario cambie algo */
+    AulaDatos.controls();
 </script>
 </body>
 </html>

@@ -441,6 +441,7 @@
 <!-- ===================== HEADER DINÁMICO ===================== -->
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
+  <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 <script>
 /*FX*/
     /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
@@ -1247,6 +1248,8 @@
 
     /* ---------- Arranque ---------- */
     $('#hero-bars').innerHTML = [30, 55, 80, 100, 80, 55, 30].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    /* Datos temporales del navegador: se usan los valores de ejemplo hasta que el usuario capture algo */
+    AulaDatos.link('estado', { get DS() { return DS; }, set DS(v) { DS = v; }, get DS_K() { return DS_K; }, set DS_K(v) { DS_K = v; }, get QM() { return QM; }, set QM(v) { QM = v; }, get K2() { return K2; }, set K2(v) { K2 = v; }, get T3() { return T3; }, set T3(v) { T3 = v; }, get K3() { return K3; }, set K3(v) { K3 = v; }, get V3() { return V3; }, set V3(v) { V3 = v; }, get G4() { return G4; }, set G4(v) { G4 = v; }, get T4() { return T4; }, set T4(v) { T4 = v; }, get K4() { return K4; }, set K4(v) { K4 = v; }, get MU() { return MU; }, set MU(v) { MU = v; }, get SD() { return SD; }, set SD(v) { SD = v; }, get BAND() { return BAND; }, set BAND(v) { BAND = v; }, get SIMD() { return SIMD; }, set SIMD(v) { SIMD = v; }, get SIMN() { return SIMN; }, set SIMN(v) { SIMN = v; }, get S7n() { return S7n; }, set S7n(v) { S7n = v; }, get S7m() { return S7m; }, set S7m(v) { S7m = v; }, get K8() { return K8; }, set K8(v) { K8 = v; }, get C8A() { return C8A; }, set C8A(v) { C8A = v; }, get C8B() { return C8B; }, set C8B(v) { C8B = v; }, get FP() { return FP; }, set FP(v) { FP = v; }, get FK() { return FK; }, set FK(v) { FK = v; }, get FZ() { return FZ; }, set FZ(v) { FZ = v; }, get TG() { return TG; }, set TG(v) { TG = v; } }, ['DS', 'DS_K', 'QM', 'K2', 'T3', 'K3', 'V3', 'G4', 'T4', 'K4', 'MU', 'SD', 'BAND', 'SIMD', 'SIMN', 'S7n', 'S7m', 'K8', 'C8A', 'C8B', 'FP', 'FK', 'FZ', 'TG']);
     renderS0(); renderS1(); renderDataPanel(); renderS2(); renderS3(); renderS4(); renderST(); renderS5(); renderS6(); renderS7(); renderS8(); renderS9();
     renderAllData(); $$('[data-g4]').length; renderForm();
     math(document.body); $$('section.lesson').forEach(s => io.observe(s));

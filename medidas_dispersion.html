@@ -402,6 +402,7 @@
 <!-- ===================== HEADER DINÁMICO ===================== -->
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
+  <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 
   <script>
 /*FX*/
@@ -1061,6 +1062,9 @@
     $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
     renderForm();
     S.fi = genFi('bell');
+    /* Datos temporales del navegador */
+    AulaDatos.controls({ early: true, skip: '#k,#nn' });
+    AulaDatos.link('S', S, ['k', 'fi', 'dist', 'real', 'pop', 'm', 'chart']);
     update();
   </script>
 </body>

@@ -387,6 +387,7 @@
   <!-- ===================== HEADER DINÁMICO ===================== -->
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
+  <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 
   <!-- ===================== LÓGICA ===================== -->
   <script>
@@ -1043,6 +1044,8 @@
     $$('[data-f]').forEach(el => el.innerHTML = fd(F[el.dataset.f]));
     $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
     $('#data').value = SAMPLE.join(', ');
+    /* Datos temporales del navegador: los datos de ejemplo se usan hasta que el usuario capture otros */
+    AulaDatos.controls({ early: true, skip: '#k2,#c2' });
     document.addEventListener('DOMContentLoaded', () => { update(); });
   </script>
 </body>

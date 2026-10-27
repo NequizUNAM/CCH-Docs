@@ -431,6 +431,7 @@
 <!-- ===================== HEADER DINÁMICO ===================== -->
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
+  <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 <script>
 /*FX*/
     /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
@@ -950,6 +951,9 @@
 
     /* ---------- Arranque ---------- */
     $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
+    /* Datos temporales del navegador: la tabla (x, y) de ejemplo se usa hasta que el usuario capture otra */
+    AulaDatos.controls({ early: true });
+    AulaDatos.link('S', S, ['xs', 'ys', 'pop', 'v', 'px']);
     renderForm();
     update({ anim: true });
 
