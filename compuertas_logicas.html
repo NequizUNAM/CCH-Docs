@@ -126,6 +126,80 @@
     .wz-hover { min-height: 1.6rem; color: #475569; font-family: 'Courier New', monospace; }
     @media (prefers-reduced-motion: reduce) { .km-box, .km-cell-drop .km-v, .wz-panel, .wz-tt tr.wz-on td { animation-duration: .01ms !important; animation-delay: 0ms !important; } }
 
+    /* ===== Guía de Karnaugh en pasos ===== */
+    .kg { background:#fff; border:1px solid #e2e8f0; border-radius:22px; box-shadow:var(--shadow-sm); overflow:hidden; }
+    .kg-steps { display:flex; gap:.4rem; overflow-x:auto; padding:.9rem 1rem; background:#f8fafc; border-bottom:1px solid #e2e8f0; scrollbar-width:thin; }
+    .kg-pill-step { flex:1 0 auto; display:flex; align-items:center; gap:.5rem; border:2px solid #e2e8f0; background:#fff; color:#475569; border-radius:999px; padding:.35rem .8rem .35rem .4rem; font-weight:700; font-size:.82rem; white-space:nowrap; transition:all .2s; cursor:pointer; }
+    .kg-pill-step .n { width:26px; height:26px; border-radius:50%; background:#e2e8f0; color:#475569; display:inline-flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:800; }
+    .kg-pill-step:hover { transform:translateY(-1px); border-color:var(--c); }
+    .kg-pill-step.done .n { background:color-mix(in srgb, var(--c) 18%, #fff); color:var(--c); }
+    .kg-pill-step.on { border-color:var(--c); background:color-mix(in srgb, var(--c) 10%, #fff); color:var(--c); box-shadow:0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); }
+    .kg-pill-step.on .n { background:var(--c); color:#fff; }
+    .kg-pill-step .t { display:inline; }
+    @media (max-width:767px) { .kg-pill-step:not(.on) .t { display:none; } .kg-pill-step:not(.on) { padding-right:.4rem; } }
+    .kg-body { padding:1.5rem; min-height:340px; }
+    .kg-step { animation:wzIn .35s both; }
+    .kg-step[hidden] { display:none; }
+    .kg-head { display:flex; align-items:center; gap:.9rem; margin-bottom:1.1rem; }
+    .kg-head h3 { font-size:1.3rem; font-weight:800; margin:0; color:#0f172a; }
+    .kg-head p { margin:0; color:#64748b; font-size:.88rem; }
+    .kg-num { width:46px; height:46px; flex-shrink:0; border-radius:50%; background:var(--c); color:#fff; font-weight:800; font-size:1.35rem; display:inline-flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); }
+    .kg-def, .kg-exp, .kg-lab { position:relative; border-radius:16px; padding:1.15rem 1.25rem 1.1rem; margin-bottom:1rem; }
+    .kg-def p, .kg-exp p { margin-bottom:.6rem; line-height:1.6; }
+    .kg-def { background:#eff6ff; border:1px solid #bfdbfe; border-left:6px solid #1c7ed6; }
+    .kg-exp { background:#fffbeb; border:1px solid #fde68a; border-left:6px solid #f59f00; }
+    .kg-lab { background:#faf5ff; border:2px dashed #c4b5fd; }
+    .kg-lab-flat { border-style:solid; border-width:1px; }
+    .kg-tag { display:inline-flex; align-items:center; gap:.35rem; font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em; padding:.2rem .65rem; border-radius:999px; margin-bottom:.6rem; }
+    .kg-tag.def { background:#1c7ed6; color:#fff; } .kg-tag.exp { background:#f59f00; color:#fff; } .kg-tag.lab { background:#7048e8; color:#fff; }
+    .kg-route { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin-top:.4rem; }
+    .kg-route span { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:.4rem .8rem; font-weight:700; font-size:.85rem; box-shadow:var(--shadow-sm); }
+    .kg-route span i { margin-right:.4rem; color:#7048e8; }
+    .kg-route > i { color:#94a3b8; }
+    .kg-nav { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.9rem 1.25rem; background:#f8fafc; border-top:1px solid #e2e8f0; }
+    .kg-count { font-size:.85rem; font-weight:700; color:#64748b; text-align:center; }
+    .kg-rules { list-style:none; padding:0; margin:0 0 1rem; display:grid; gap:.5rem; }
+    .kg-rules li { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:.55rem .8rem; }
+    .kg-pill { display:inline-block; min-width:5.6rem; text-align:center; font-size:.72rem; font-weight:800; padding:.15rem .55rem; border-radius:999px; margin-right:.5rem; }
+    .kg-pill.keep { background:#dcfce7; color:#166534; } .kg-pill.drop { background:#fee2e2; color:#b91c1c; }
+    .kg-example { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:.8rem 1rem; text-align:center; overflow-x:auto; }
+    .kg-read { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:.8rem 1rem; font-size:.9rem; min-height:5.2rem; }
+    .kg-read .mono, .kg-read code { font-family:'Courier New',monospace; }
+    .kg-read .nb { display:inline-block; margin:.1rem .25rem .1rem 0; padding:.1rem .5rem; border-radius:999px; background:#f3e8ff; color:#6d28d9; font-weight:700; font-size:.8rem; }
+    .kp-tt-wrap { max-height:360px; overflow:auto; border:1px solid #e2e8f0; border-radius:12px; background:#fff; }
+    .kp-tt { margin:0; font-family:'Courier New',monospace; text-align:center; font-size:.85rem; }
+    .kp-tt th { position:sticky; top:0; background:#1e293b; color:#fff; padding:.3rem .55rem; }
+    .kp-tt td { padding:.2rem .5rem; }
+    .kp-f { border:0; width:34px; height:28px; border-radius:8px; font-weight:800; background:#f1f5f9; color:#94a3b8; transition:all .15s; }
+    .kp-f.one { background:#22c55e; color:#fff; box-shadow:0 0 8px rgba(34,197,94,.45); }
+    .kp-f:hover { transform:scale(1.1); }
+    .kp-tt tr.hl td { background:#fef9c3; }
+
+    /* Mapa con fila de minitérminos */
+    .km-block { display:inline-block; max-width:100%; }
+    .km-block .km-wrap { max-width:100%; }
+    .kmap-table td[data-m], .km-chip { cursor:pointer; }
+    .kmap-table td[data-m]:focus-visible, .km-chip:focus-visible { outline:3px solid #7048e8; outline-offset:-3px; }
+    .kmap-table td.km-hl { background:#fef08a !important; box-shadow:inset 0 0 0 3px #eab308; }
+    .kmap-table td.km-nb { box-shadow:inset 0 0 0 3px #a78bfa; background:#f3e8ff; }
+    .kmap-table th.km-hl { background:#fde68a; color:#92400e; }
+    .km-b { display:block; font-size:.58rem; font-weight:700; color:#94a3b8; letter-spacing:.03em; line-height:1; margin-top:2px; }
+    .kmap-table td.lbl .km-v { font-size:1.05rem; color:#334155; }
+    .kmap-table td.lbl.km-hl .km-b, .kmap-table td.km-nb .km-b { color:#6d28d9; }
+    .km-strip { display:flex; flex-wrap:wrap; gap:.3rem; justify-content:center; align-items:center; margin-top:.9rem; padding:.55rem .6rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; }
+    .km-strip-l { width:100%; font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:#64748b; }
+    .km-chip { border:1px solid #cbd5e1; background:#fff; color:#475569; border-radius:8px; padding:.12rem .45rem; font-family:'Courier New',monospace; font-weight:700; font-size:.8rem; min-width:2.6rem; transition:all .15s; }
+    .km-chip.one { background:#dcfce7; border-color:#86efac; color:#166534; }
+    .km-chip:hover, .km-chip.km-hl { background:#fef08a; border-color:#eab308; color:#713f12; transform:translateY(-2px); }
+    .km-chip.km-nb { background:#f3e8ff; border-color:#a78bfa; color:#6d28d9; }
+    .km-ping { animation:kmPing .7s ease; } @keyframes kmPing { 40% { transform:scale(1.12); } }
+    .km-pop { --bs-popover-max-width:230px; font-size:.82rem; }
+    .km-pop .popover-header { font-family:'Courier New',monospace; font-weight:800; background:#1e293b; color:#fff; }
+    .km-pop .popover-body { padding:.55rem .75rem; line-height:1.5; }
+    .km-pop .bits { font-family:'Courier New',monospace; font-weight:700; }
+    .km-pop .ov { text-decoration:overline; }
+    @media (max-width:575px) { .kmap-table th, .kmap-table td { width:46px; height:46px; } .kmap-table th.km-corner { width:48px; font-size:.6rem; } .kg-body { padding:1rem; } .kg-def, .kg-exp, .kg-lab { padding:.9rem .85rem; } .kg-head h3 { font-size:1.1rem; } }
+
     /* Modals Component Cards */
     .ic-btn { border:0; border-radius:14px; background:#fff; box-shadow:var(--shadow-sm); padding:1rem; transition:all .2s; height:100%; text-align:left; display:flex; align-items:center; gap:1rem; border-left:5px solid #0d6efd; cursor:pointer; }
     .ic-btn:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); background:#f8fafc; }
@@ -283,170 +357,114 @@
         </div>
       </section>
 
-      <!-- ===================== 5. MAPAS DE KARNAUGH ===================== -->
-      <section class="mb-5">
-        <div class="d-flex flex-wrap justify-content-between align-items-center section-title mb-3" style="padding-bottom:.5rem;">
-          <h2 class="fw-bold border-0 mb-0"><i class="bi bi-grid-3x3 text-purple me-2" style="color:#6f42c1"></i>5. Mapas de Karnaugh (K-Maps)</h2>
-          <button class="btn btn-sm text-white rounded-pill px-3 shadow-sm mt-2 mt-md-0 hover-lift" style="background-color: #6f42c1; transition: transform 0.2s;" data-bs-toggle="modal" data-bs-target="#kmapTutorialModal" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-            <i class="bi bi-journal-bookmark-fill me-1"></i>Aprender Paso a Paso
-          </button>
+      <!-- ===================== 5. MAPAS DE KARNAUGH (guía en pasos) ===================== -->
+      <section class="mb-5" id="kg-section">
+        <div class="section-title mb-3" style="padding-bottom:.5rem;">
+          <h2 class="fw-bold border-0 mb-0"><i class="bi bi-grid-3x3 me-2" style="color:#6f42c1"></i>5. Mapas de Karnaugh (K-Maps)</h2>
         </div>
-        <p class="text-muted">El Mapa de Karnaugh es una herramienta visual para la simplificación de funciones algebraicas booleanas. Al agrupar los unos ($1$) adyacentes en bloques de $2^n$ ($1, 2, 4, 8...$), eliminamos las variables que cambian de estado, logrando la expresión mínima (Suma de Productos).</p>
-        
-        <div class="row g-4 align-items-start">
-          <div class="col-lg-7">
-            <div class="card border-0 shadow-sm p-4 h-100 bg-white text-center">
-              <h5 class="fw-bold mb-4 text-dark">Mapa Interactivo para la Función Generada</h5>
-              <div id="kmap-container" style="position: relative; display: inline-block;">
-                <!-- Tabla K-map inyectada por JS -->
+
+        <div class="kg" id="kg">
+          <!-- Barra de pasos -->
+          <nav class="kg-steps" id="kg-steps" aria-label="Pasos de la guía de Karnaugh"></nav>
+
+          <div class="kg-body">
+
+            <!-- ============ PASO 1 · Definición ============ -->
+            <article class="kg-step" data-step="0" hidden>
+              <header class="kg-head"><span class="kg-num" style="--c:#6f42c1">1</span><div><h3>¿Qué es un Mapa de Karnaugh?</h3><p>Primero la definición y después la explicación.</p></div></header>
+              <div class="kg-def">
+                <span class="kg-tag def"><i class="bi bi-book-fill"></i>Definición</span>
+                <p>El <strong>Mapa de Karnaugh</strong> (K-map) es una tabla donde cada celda representa una combinación de las variables de entrada (un <em>minitérmino</em>). Las celdas se ordenan de modo que <strong>dos vecinas difieren en un solo bit</strong>. Se usa para simplificar funciones booleanas de 2 a 4 variables de forma visual.</p>
               </div>
-              <p class="small text-muted mt-4 mb-2"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Cada color es un <strong>grupo (implicante primo)</strong>. Los recuadros punteados cruzan el borde del mapa (efecto Pac-Man). Pasa el cursor por la lista de grupos para resaltarlos.</p>
-              <button class="btn btn-sm text-white rounded-pill px-3 shadow-sm" id="kmap-solve-mine" style="background-color:#6f42c1;"><i class="bi bi-play-circle-fill me-1"></i>Resolver esta función paso a paso</button>
-            </div>
-          </div>
-          <div class="col-lg-5">
-            <div class="card border-0 shadow-sm p-4 h-100 bg-light">
-              <h5 class="fw-bold text-primary border-bottom border-primary pb-2 mb-3"><i class="bi bi-funnel-fill me-1"></i>Expresión Mínima Simplificada</h5>
-              <div class="p-3 bg-white rounded shadow-sm text-center mb-4">
-                <div class="fs-4 fw-bold text-success mono" id="kmap-simplified-expr">F = ...</div>
+              <div class="kg-exp">
+                <span class="kg-tag exp"><i class="bi bi-lightbulb-fill"></i>Explicación</span>
+                <p>En lugar de aplicar leyes del álgebra de Boole una por una, pasas los <code>1</code> de la tabla de verdad al mapa, <strong>agrupas los vecinos</strong> y cada grupo te da un término sencillo. El resultado es la <strong>expresión mínima en suma de productos</strong> (SOP): menos compuertas, circuito más barato y rápido.</p>
+                <div class="kg-route" aria-label="Ruta de trabajo">
+                  <span><i class="bi bi-table"></i>Tabla de verdad</span><i class="bi bi-chevron-right"></i>
+                  <span><i class="bi bi-grid-3x3"></i>Mapa</span><i class="bi bi-chevron-right"></i>
+                  <span><i class="bi bi-bounding-box"></i>Grupos</span><i class="bi bi-chevron-right"></i>
+                  <span><i class="bi bi-flag-fill"></i>Ecuación mínima</span>
+                </div>
               </div>
-              
-              <h6 class="fw-bold text-secondary">Grupos Identificados (Suma de Productos):</h6>
-              <ul class="list-group list-group-flush small" id="kmap-groups-list">
-                <!-- Lista de grupos generada dinámicamente -->
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+            </article>
 
-      <!-- ===================== 6. CIRCUITOS ELECTRÓNICOS Y PINOUTS (TTL Modales) ===================== -->
-      <section class="mb-5">
-        <h2 class="section-title"><i class="bi bi-motherboard text-dark me-2"></i>6. Estructura Interna, Transistores y Chips TTL (74XX)</h2>
-        <p class="text-muted">Haz clic en cualquiera de las tarjetas para desplegar su esquema electrónico interno a nivel de transistores (BJT), basado en la familia comercial estandarizada TTL (Lógica Transistor-Transistor).</p>
-
-        <div class="row g-3" id="ic-buttons-container">
-          <!-- Generado dinámicamente -->
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Modal Detalle de Ley Booleana -->
-  <div class="modal fade" id="lawDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="modal-header text-white" id="lawDetailModalHeader">
-          <h5 class="modal-title fw-bold" id="lawDetailModalLabel">Explicación de la Ley</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body p-4 bg-white" id="lawDetailModalBody">
-          <!-- Contenido inyectado con JS -->
-        </div>
-        <div class="modal-footer bg-light border-0">
-          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Entendido</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Tutorial Mapas de Karnaugh -->
-  <div class="modal fade" id="kmapTutorialModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="modal-header text-white" style="background-color:#6f42c1;">
-          <h5 class="modal-title fw-bold"><i class="bi bi-map-fill me-2"></i>Guía Interactiva: ¿Cómo resolver Mapas de Karnaugh?</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body p-4 bg-light text-dark">
-          
-          <div class="text-center mb-5 mt-2">
-            <h3 class="fw-bold text-dark">Simplifica circuitos jugando a "atrapar números"</h3>
-            <p class="text-muted fs-6 mx-auto" style="max-width: 800px;">Un Mapa de Karnaugh te evita hacer largas ecuaciones matemáticas llenas de leyes confusas. Funciona como un rompecabezas visual donde "agrupas celdas" para reducir tu circuito a lo mínimo indispensable.</p>
-            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="wz-goto"><i class="bi bi-arrow-down-circle me-1"></i>Ir directo al ejemplo animado</button>
-          </div>
-
-          <div class="row g-4">
-            <!-- Paso 1 -->
-            <div class="col-md-6">
-              <div class="card h-100 border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                  <div class="d-flex align-items-center mb-3">
-                    <div class="text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="background-color:#1c7ed6; width:45px; height:45px; font-size:1.4rem;">1</div>
-                    <h5 class="fw-bold mb-0" style="color:#1c7ed6;">El Tablero y los Minitérminos</h5>
+            <!-- ============ PASO 2 · Minitérminos y Gray ============ -->
+            <article class="kg-step" data-step="1" hidden>
+              <header class="kg-head"><span class="kg-num" style="--c:#1c7ed6">2</span><div><h3>El tablero: minitérminos y código Gray</h3><p>Cada celda es una fila de la tabla de verdad.</p></div></header>
+              <div class="kg-def">
+                <span class="kg-tag def"><i class="bi bi-book-fill"></i>Definición</span>
+                <p>Un <strong>minitérmino</strong> <code>m<sub>i</sub></code> es el producto (AND) de <em>todas</em> las variables, cada una directa o negada, que vale 1 en una sola combinación. El subíndice <em>i</em> es el <strong>valor decimal</strong> de esa combinación. Ejemplo: <code>ABC = 101</code> → <span class="mono">$m_5 = A\overline{B}C$</span>.</p>
+                <p class="mb-0">El <strong>código Gray</strong> es una secuencia binaria en la que de un valor al siguiente cambia <strong>un solo bit</strong>: <code>00, 01, 11, 10</code>.</p>
+              </div>
+              <div class="kg-exp">
+                <span class="kg-tag exp"><i class="bi bi-lightbulb-fill"></i>Explicación</span>
+                <p>Los encabezados del mapa no van en orden natural (<code>00, 01, 10, 11</code>) sino en Gray. Por eso el <code>m<sub>3</sub></code> aparece antes que el <code>m<sub>2</sub></code>. Gracias a esto, <strong>cualquier par de celdas vecinas cambia solo una variable</strong>, y esa variable es justo la que se elimina al agruparlas. Los bordes también son vecinos entre sí (<em>efecto Pac-Man</em>).</p>
+              </div>
+              <div class="kg-lab">
+                <span class="kg-tag lab"><i class="bi bi-joystick"></i>Practica · Explorador</span>
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                  <span class="small fw-bold text-secondary">Variables:</span>
+                  <div class="btn-group btn-group-sm" role="group" aria-label="Número de variables" id="kx-n">
+                    <button type="button" class="btn btn-outline-primary" data-n="2">2</button>
+                    <button type="button" class="btn btn-outline-primary" data-n="3">3</button>
+                    <button type="button" class="btn btn-outline-primary active" data-n="4">4</button>
                   </div>
-                  <p class="small">El mapa es una cuadrícula donde cada cuadro es una fila de tu Tabla de Verdad, a esto se le llama <strong>minitérmino ($m$)</strong>. Presta atención a los bordes: no van en orden normal, sino en <strong>Código Gray</strong> (<code>00, 01, 11, 10</code>).</p>
-                  
-                  <div class="text-center my-3 p-3 bg-white rounded border shadow-sm overflow-auto">
-                    <h6 class="fw-bold text-secondary mb-2 small">Distribución de Minitérminos</h6>
-                    <div class="d-flex flex-wrap justify-content-center gap-3">
-                      <!-- Tabla 3 Variables -->
-                      <div>
-                        <span class="d-block small text-muted mb-1">3 Variables (A, BC)</span>
-                        <table class="table table-bordered table-sm text-center font-monospace mb-0" style="font-size:0.75rem; border-color:#cbd5e1; width: max-content;">
-                          <thead class="bg-light">
-                            <tr><th class="border-0 bg-transparent"></th><th colspan="4" class="text-muted pb-0">BC</th></tr>
-                            <tr><th class="border-0 bg-transparent align-middle text-muted pe-2">A</th><th>00</th><th>01</th><th class="text-primary">11</th><th class="text-primary">10</th></tr>
-                          </thead>
-                          <tbody>
-                            <tr><th class="bg-light align-middle">0</th><td>$m_0$</td><td>$m_1$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_3$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_2$</td></tr>
-                            <tr><th class="bg-light align-middle">1</th><td>$m_4$</td><td>$m_5$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_7$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_6$</td></tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <!-- Tabla 4 Variables -->
-                      <div>
-                        <span class="d-block small text-muted mb-1">4 Variables (AB, CD)</span>
-                        <table class="table table-bordered table-sm text-center font-monospace mb-0" style="font-size:0.75rem; border-color:#cbd5e1; width: max-content;">
-                          <thead class="bg-light">
-                            <tr><th class="border-0 bg-transparent"></th><th colspan="4" class="text-muted pb-0">CD</th></tr>
-                            <tr><th class="border-0 bg-transparent align-middle text-muted pe-2">AB</th><th>00</th><th>01</th><th class="text-primary">11</th><th class="text-primary">10</th></tr>
-                          </thead>
-                          <tbody>
-                            <tr><th class="bg-light align-middle">00</th><td>$m_0$</td><td>$m_1$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_3$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_2$</td></tr>
-                            <tr><th class="bg-light align-middle">01</th><td>$m_4$</td><td>$m_5$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_7$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_6$</td></tr>
-                            <tr><th class="bg-light align-middle text-primary">11</th><td class="bg-primary bg-opacity-10 fw-bold">$m_{12}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{13}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{15}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{14}$</td></tr>
-                            <tr><th class="bg-light align-middle text-primary">10</th><td class="bg-primary bg-opacity-10 fw-bold">$m_8$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_9$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{11}$</td><td class="bg-primary bg-opacity-10 fw-bold">$m_{10}$</td></tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    <p class="text-muted mt-3 mb-0" style="font-size: 0.75rem;"><i class="bi bi-info-circle-fill text-primary"></i> Nota cómo las columnas "11" y "10" invierten su orden natural. Por ello, el minitérmino 3 aparece antes que el 2.</p>
+                  <span class="small text-muted ms-1"><i class="bi bi-hand-index-thumb me-1"></i>Pasa el cursor o toca una celda o un <b>m</b> de la fila inferior.</span>
+                </div>
+                <div class="row g-3 align-items-start">
+                  <div class="col-lg-7 text-center">
+                    <div class="km-block" id="kx-block"></div>
                   </div>
-
-                  <div class="alert alert-primary p-3 small mb-0 border-0 bg-primary bg-opacity-10 text-primary-emphasis rounded-3">
-                    <i class="bi bi-lightbulb-fill me-1 text-primary"></i><strong>¿Por qué este orden raro?</strong> Para asegurar que entre cualquier celda vecina, <em>solo cambie un bit a la vez</em>.
+                  <div class="col-lg-5">
+                    <div class="kg-read" id="kx-read" aria-live="polite"></div>
                   </div>
                 </div>
               </div>
-            </div>
+            </article>
 
-            <!-- Paso 2 -->
-            <div class="col-md-6">
-              <div class="card h-100 border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                  <div class="d-flex align-items-center mb-3">
-                    <div class="text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="background-color:#2f9e44; width:45px; height:45px; font-size:1.4rem;">2</div>
-                    <h5 class="fw-bold mb-0" style="color:#2f9e44;">Colocar los "1"s</h5>
+            <!-- ============ PASO 3 · Colocar los 1s ============ -->
+            <article class="kg-step" data-step="2" hidden>
+              <header class="kg-head"><span class="kg-num" style="--c:#2f9e44">3</span><div><h3>Colocar los «1» en el mapa</h3><p>De la tabla de verdad al tablero.</p></div></header>
+              <div class="kg-def">
+                <span class="kg-tag def"><i class="bi bi-book-fill"></i>Definición</span>
+                <p>Pasar la tabla de verdad al mapa consiste en escribir un <code>1</code> en la celda de cada minitérmino donde la salida <strong>F</strong> vale 1 y un <code>0</code> (o dejar vacía) la celda donde vale 0. La función queda descrita como <span class="mono">$F=\sum m(\dots)$</span>, la suma de los minitérminos que valen 1.</p>
+              </div>
+              <div class="kg-exp">
+                <span class="kg-tag exp"><i class="bi bi-lightbulb-fill"></i>Explicación</span>
+                <p>Solo los <code>1</code> nos interesan: son los que vamos a encerrar en grupos. Los ceros quedan fuera. Lo importante es colocar cada <code>1</code> en la celda correcta; para eso sirve el número <code>m</code> de cada celda.</p>
+              </div>
+              <div class="kg-lab">
+                <span class="kg-tag lab"><i class="bi bi-joystick"></i>Practica · Pon los 1s tú mismo</span>
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                  <span class="small fw-bold text-secondary">Variables:</span>
+                  <div class="btn-group btn-group-sm" role="group" aria-label="Número de variables" id="kp-n">
+                    <button type="button" class="btn btn-outline-success" data-n="3">3</button>
+                    <button type="button" class="btn btn-outline-success active" data-n="4">4</button>
                   </div>
-                  <p class="small">Revisa la última columna de tu Tabla de Verdad (tu resultado <strong>$F$</strong>). Busca todas las combinaciones que hayan dado <code>1</code> (Verdadero) y dibuja un <code>1</code> en la celda correspondiente al minitérmino de esa fila en el tablero.</p>
-                  <p class="small text-muted mb-0 mt-3 p-3 bg-light rounded border"><i class="bi bi-info-circle text-success me-1"></i>Las celdas cuyo resultado sea <code>0</code> se dejan vacías o se rellenan con ceros, pero <strong>no nos interesan</strong> para agrupar. Enfócate exclusivamente en "atrapar" los unos.</p>
+                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" id="kp-ex"><i class="bi bi-bookmark-star me-1"></i>Ejemplo</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" id="kp-clear"><i class="bi bi-eraser me-1"></i>Limpiar</button>
+                  <span class="small text-muted"><i class="bi bi-hand-index-thumb me-1"></i>Toca un valor de <b>F</b> en la tabla o una celda del mapa para cambiarlo.</span>
+                </div>
+                <div class="row g-3 align-items-start">
+                  <div class="col-md-5"><div class="kp-tt-wrap" id="kp-tt"></div></div>
+                  <div class="col-md-7 text-center"><div class="km-block" id="kp-block"></div>
+                    <div class="kg-read mt-3" id="kp-read" aria-live="polite"></div></div>
                 </div>
               </div>
-            </div>
+            </article>
 
-            <!-- Paso 3 -->
-            <div class="col-12">
-              <div class="card border-0 shadow-sm rounded-4 border-start border-5" style="border-color:#6f42c1 !important;">
-                <div class="card-body p-4">
-                  <div class="d-flex align-items-center mb-4">
-                    <div class="text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="background-color:#6f42c1; width:45px; height:45px; font-size:1.4rem;">3</div>
-                    <h5 class="fw-bold mb-0" style="color:#6f42c1;">¡A Agrupar! (Reglas y Casos de Solapamiento)</h5>
-                  </div>
-                  <p class="small mb-3">Tu misión es "encerrar" absolutamente todos los <code>1</code> del tablero dibujando círculos o rectángulos. Se permite <strong>compartir unos (solapamiento)</strong> entre varios grupos si eso ayuda a que el grupo sea más grande. Observa las siguientes reglas visuales:</p>
-                  
-                  <div class="d-flex flex-wrap justify-content-center gap-4 mb-4 p-4 bg-light rounded-4 border">
+            <!-- ============ PASO 4 · Agrupar ============ -->
+            <article class="kg-step" data-step="3" hidden>
+              <header class="kg-head"><span class="kg-num" style="--c:#6f42c1">4</span><div><h3>¡A agrupar! Reglas y casos</h3><p>Encierra todos los 1 con los grupos más grandes posibles.</p></div></header>
+              <div class="kg-def">
+                <span class="kg-tag def"><i class="bi bi-book-fill"></i>Definición</span>
+                <p>Un <strong>grupo</strong> (implicante) es un bloque rectangular de celdas con <code>1</code> adyacentes cuyo tamaño es una potencia de 2 (1, 2, 4, 8 o 16). Un grupo que no se puede agrandar más sin incluir ceros se llama <strong>implicante primo</strong>. Se permite que los grupos compartan unos (<em>solapamiento</em>).</p>
+              </div>
+              <div class="kg-exp">
+                <span class="kg-tag exp"><i class="bi bi-lightbulb-fill"></i>Explicación</span>
+                <p>Tu misión es cubrir <strong>todos</strong> los unos con la menor cantidad de grupos, y que cada grupo sea lo más grande posible: cada vez que duplicas el tamaño del grupo, <strong>eliminas una variable</strong>.</p>
+                <p class="small text-muted mb-2">Casos permitidos y prohibidos:</p>
+                                  <div class="d-flex flex-wrap justify-content-center gap-4 mb-4 p-4 bg-light rounded-4 border">
                     
                     <div class="text-center">
                       <span class="d-block small fw-bold mb-2">✔️ Permitido (2x2)</span>
@@ -515,44 +533,47 @@
                       </div>
                     </div>
                   </div>
+
+              </div>
+            </article>
+
+            <!-- ============ PASO 5 · Extraer ecuación ============ -->
+            <article class="kg-step" data-step="4" hidden>
+              <header class="kg-head"><span class="kg-num" style="--c:#212529">5</span><div><h3>Extraer la ecuación final</h3><p>De cada grupo sale un término; todos se suman.</p></div></header>
+              <div class="kg-def">
+                <span class="kg-tag def"><i class="bi bi-book-fill"></i>Definición</span>
+                <p>La <strong>suma de productos</strong> (SOP) es una expresión formada por términos AND unidos con OR. Cada grupo del mapa produce <strong>un término producto</strong>, y la función simplificada es la suma (OR) de esos términos.</p>
+              </div>
+              <div class="kg-exp">
+                <span class="kg-tag exp"><i class="bi bi-lightbulb-fill"></i>Explicación</span>
+                <p class="mb-2">Para cada grupo, observa los valores de las variables en las celdas que abarca:</p>
+                <ul class="kg-rules">
+                  <li><span class="kg-pill drop">cambia</span> Si una variable pasa de 0 a 1 dentro del grupo, <strong>se elimina</strong>.</li>
+                  <li><span class="kg-pill keep">1 constante</span> Si vale siempre 1, se escribe <strong>directa</strong> (por ejemplo, $A$).</li>
+                  <li><span class="kg-pill keep">0 constante</span> Si vale siempre 0, se escribe <strong>negada</strong> (por ejemplo, $\overline{A}$).</li>
+                </ul>
+                <div class="kg-example">
+                  <div class="small fw-bold mb-1">Ejemplo: grupo de 4 celdas con <span class="mono">m<sub>0</sub>, m<sub>1</sub>, m<sub>8</sub>, m<sub>9</sub></span> (4 variables)</div>
+                  <table class="wz-bin"><thead><tr><th>m</th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead><tbody>
+                    <tr><td>m0</td><td class="wz-drop">0</td><td class="wz-keep">0</td><td class="wz-keep">0</td><td class="wz-drop">0</td></tr>
+                    <tr><td>m1</td><td class="wz-drop">0</td><td class="wz-keep">0</td><td class="wz-keep">0</td><td class="wz-drop">1</td></tr>
+                    <tr><td>m8</td><td class="wz-drop">1</td><td class="wz-keep">0</td><td class="wz-keep">0</td><td class="wz-drop">0</td></tr>
+                    <tr><td>m9</td><td class="wz-drop">1</td><td class="wz-keep">0</td><td class="wz-keep">0</td><td class="wz-drop">1</td></tr>
+                    <tr><th>Queda</th><td class="wz-drop">—</td><td class="wz-keep">$\overline{B}$</td><td class="wz-keep">$\overline{C}$</td><td class="wz-drop">—</td></tr>
+                  </tbody></table>
+                  <div class="text-center fs-5 fw-bold mt-1">Término del grupo: $\overline{B}\,\overline{C}$</div>
                 </div>
               </div>
-            </div>
+            </article>
 
-            <!-- Paso 4 -->
-            <div class="col-12">
-              <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                  <div class="d-flex align-items-center mb-3">
-                    <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="width:45px; height:45px; font-size:1.4rem;">4</div>
-                    <h5 class="fw-bold mb-0 text-dark">Extraer la Ecuación Final (Suma de Productos)</h5>
-                  </div>
-                  <p class="small mb-3">Una vez que todos tus unos están encerrados, analizaremos <strong>cada grupo individualmente</strong> para extraer y agrupar cada elemento en una fórmula final:</p>
-                  
-                  <div class="bg-white p-3 rounded-3 border border-secondary border-opacity-25">
-                    <ul class="small mb-0 lh-lg text-secondary-emphasis">
-                      <li>Observa un grupo y revisa qué valores tienen sus variables ($A, B, C, D$) en los encabezados de su fila/columna.</li>
-                      <li><strong>La regla mágica de extracción:</strong> Si una variable <strong>cambia de valor</strong> (por ejemplo, pasa de 0 a 1) en las celdas que abarca tu grupo... <strong>¡Elimínala!</strong> Es irrelevante para ese subcircuito.</li>
-                      <li>Si una variable <strong>se mantiene constante</strong>, se queda. Si vale <code>1</code>, se escribe normal (e.g., $A$). Si vale <code>0</code>, se escribe negada (e.g., $\overline{A}$).</li>
-                      <li>Haz esto por cada grupo formado. Finalmente, une las expresiones resultantes con un signo de suma (<code>+</code>, es decir, compuertas OR).</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Paso 5: Laboratorio paso a paso (dinámico) -->
-            <div class="col-12 mt-2" id="wz-root">
+            <!-- ============ PASO 6 · Laboratorio ============ -->
+            <article class="kg-step" data-step="5" hidden>
+              <header class="kg-head"><span class="kg-num" style="--c:#0d6efd">6</span><div><h3>Laboratorio paso a paso</h3><p>Todo el proceso animado, con el ejemplo guiado o con tu función.</p></div></header>
+              <div id="wz-root">
               <div class="card border-0 shadow-sm rounded-4 border-start border-5" style="border-color:#0d6efd !important;">
                 <div class="card-body p-4">
                   <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                    <div class="d-flex align-items-center">
-                      <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 shadow-sm" style="width:45px; height:45px; font-size:1.4rem;">5</div>
-                      <div>
-                        <h5 class="fw-bold mb-0 text-primary">Laboratorio Paso a Paso</h5>
-                        <small class="text-muted">De la tabla de verdad a la función simplificada, con animaciones</small>
-                      </div>
-                    </div>
+                    <span class="small fw-bold text-secondary">Función a resolver:</span>
                     <div class="btn-group btn-group-sm" role="group" aria-label="Función a resolver">
                       <button type="button" class="btn btn-outline-primary" id="wz-src-example"><i class="bi bi-bookmark-star me-1"></i>Ejemplo guiado</button>
                       <button type="button" class="btn btn-outline-primary" id="wz-src-mine"><i class="bi bi-cpu me-1"></i>Mi función (constructor)</button>
@@ -572,19 +593,81 @@
 
                   <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4">
                     <button class="btn btn-outline-secondary rounded-pill px-3" id="wz-restart" title="Reiniciar"><i class="bi bi-skip-start-fill"></i></button>
-                    <button class="btn btn-outline-primary rounded-pill px-3" id="wz-prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button>
-                    <button class="btn btn-primary rounded-pill px-4" id="wz-next">Siguiente<i class="bi bi-chevron-right ms-1"></i></button>
+                    <button class="btn btn-outline-primary rounded-pill px-3" id="wz-prev"><i class="bi bi-chevron-left me-1"></i>Atrás</button>
+                    <button class="btn btn-primary rounded-pill px-4" id="wz-next">Avanzar<i class="bi bi-chevron-right ms-1"></i></button>
                     <button class="btn btn-dark rounded-pill px-3" id="wz-play"><i class="bi bi-play-fill me-1"></i>Reproducir</button>
                     <span class="small text-muted ms-2" id="wz-count"></span>
                   </div>
                 </div>
               </div>
             </div>
+            </article>
 
-          </div> <!-- row final -->
+            <!-- ============ PASO 7 · Mi función ============ -->
+            <article class="kg-step" data-step="6" hidden>
+              <header class="kg-head"><span class="kg-num" style="--c:#198754">7</span><div><h3>Tu función en el mapa</h3><p>Se genera con la función que escribiste en el Generador de Diagramas (sección 3).</p></div></header>
+              <div class="kg-lab kg-lab-flat">
+                <span class="kg-tag lab"><i class="bi bi-joystick"></i>Interactivo</span>
+                <div class="row g-4 align-items-start">
+                  <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm p-3 p-md-4 h-100 bg-white text-center">
+                      <h5 class="fw-bold mb-3 text-dark">Mapa de tu función</h5>
+                      <div id="kmap-container" style="position: relative; display: inline-block; max-width:100%;"></div>
+                      <p class="small text-muted mt-3 mb-2"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Cada color es un <strong>grupo</strong>. Los recuadros punteados cruzan el borde del mapa (Pac-Man). Pasa el cursor por la lista de grupos para resaltarlos, o por una celda o un <b>m</b> para ver su binario.</p>
+                      <div><button class="btn btn-sm text-white rounded-pill px-3 shadow-sm" id="kmap-solve-mine" style="background-color:#6f42c1;"><i class="bi bi-play-circle-fill me-1"></i>Resolver esta función paso a paso</button></div>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm p-3 p-md-4 h-100 bg-light">
+                      <h5 class="fw-bold text-primary border-bottom border-primary pb-2 mb-3"><i class="bi bi-funnel-fill me-1"></i>Expresión mínima simplificada</h5>
+                      <div class="p-3 bg-white rounded shadow-sm text-center mb-4">
+                        <div class="fs-4 fw-bold text-success mono" id="kmap-simplified-expr">F = ...</div>
+                      </div>
+                      <h6 class="fw-bold text-secondary">Grupos identificados (suma de productos):</h6>
+                      <ul class="list-group list-group-flush small" id="kmap-groups-list"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+          </div><!-- /kg-body -->
+
+          <!-- Navegación -->
+          <div class="kg-nav">
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="kg-prev"><i class="bi bi-chevron-left me-1"></i>Anterior</button>
+            <span class="kg-count" id="kg-count" aria-live="polite"></span>
+            <button type="button" class="btn btn-primary rounded-pill px-4" id="kg-next">Siguiente<i class="bi bi-chevron-right ms-1"></i></button>
+          </div>
         </div>
-        <div class="modal-footer bg-light border-0 py-3">
-          <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">¡Entendido, vamos a practicar!</button>
+      </section>
+
+      <!-- ===================== 6. CIRCUITOS ELECTRÓNICOS Y PINOUTS (TTL Modales) ===================== -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-motherboard text-dark me-2"></i>6. Estructura Interna, Transistores y Chips TTL (74XX)</h2>
+        <p class="text-muted">Haz clic en cualquiera de las tarjetas para desplegar su esquema electrónico interno a nivel de transistores (BJT), basado en la familia comercial estandarizada TTL (Lógica Transistor-Transistor).</p>
+
+        <div class="row g-3" id="ic-buttons-container">
+          <!-- Generado dinámicamente -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modal Detalle de Ley Booleana -->
+  <div class="modal fade" id="lawDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" id="lawDetailModalHeader">
+          <h5 class="modal-title fw-bold" id="lawDetailModalLabel">Explicación de la Ley</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-4 bg-white" id="lawDetailModalBody">
+          <!-- Contenido inyectado con JS -->
+        </div>
+        <div class="modal-footer bg-light border-0">
+          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Entendido</button>
         </div>
       </div>
     </div>
@@ -1033,7 +1116,8 @@
         L.co.forEach((cc, c) => {
           const m = L.idx(r, c), v = tt[m];
           const drop = o.drop && v === 1 ? ` km-cell-drop" style="--d:${(k++) * 130}ms` : '';
-          h += `<td id="${pre}-c-${m}" data-r="${r}" data-c="${c}" data-m="${m}" title="m${m} = ${kmBin(m, n)}" class="kmap-cell-${v}${drop}"><span class="km-m">m${m}</span><span class="km-v">${v}</span></td>`;
+          const inner = o.label ? `<span class="km-v">m${m}</span><span class="km-b">${kmBin(m, n)}</span>` : `<span class="km-m">m${m}</span><span class="km-v">${v}</span>`;
+          h += `<td id="${pre}-c-${m}" tabindex="0" data-r="${r}" data-c="${c}" data-m="${m}" data-n="${n}" ${o.noF ? '' : `data-f="${v}"`} class="kmap-cell-${v}${o.label ? ' lbl' : ''}${drop}">${inner}</td>`;
         });
         h += '</tr>';
       });
@@ -1070,7 +1154,8 @@
       const exprEl = document.getElementById('kmap-simplified-expr');
       const sol = kmSolve(n, tt);
       window.KM_MAIN = { n, sol };
-      cont.innerHTML = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'km' })}<div class="km-ov"></div></div>`;
+      document.querySelectorAll('.km-pop').forEach(p => p.remove());
+      cont.innerHTML = `<div class="km-block"><div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'km' })}<div class="km-ov"></div></div>${kmStrip(n, tt, 'km')}</div>`;
 
       if (sol.constant !== undefined && sol.constant !== null) {
         exprEl.innerHTML = `F = ${sol.constant}`;
@@ -1121,12 +1206,13 @@
     function wzRender() {
       if (!WZ.sol) return;
       const { n, tt, sol, frames, i } = WZ, f = frames[i], G = sol.groups.length, N = 1 << n;
+      document.querySelectorAll('.km-pop').forEach(p => p.remove());
       const stage = document.getElementById('wz-stage'), panel = document.getElementById('wz-panel');
       document.getElementById('wz-src-example').classList.toggle('active', WZ.src === 'example');
       document.getElementById('wz-src-mine').classList.toggle('active', WZ.src === 'mine');
       document.getElementById('wz-prev').disabled = i === 0;
       document.getElementById('wz-next').disabled = i === frames.length - 1;
-      document.getElementById('wz-count').textContent = `Paso ${i + 1} de ${frames.length}`;
+      document.getElementById('wz-count').textContent = `Animación: paso ${i + 1} de ${frames.length}`;
 
       // Barra de progreso (puntos clicables)
       const icon = fr => ({ table: '<i class="bi bi-table"></i>', map: '<i class="bi bi-grid-3x3"></i>', final: '<i class="bi bi-flag-fill"></i>' }[fr.t] || (fr.t === 'group' ? fr.g + 1 : '<i class="bi bi-scissors"></i>'));
@@ -1150,7 +1236,7 @@
           <p class="small text-muted mt-3 mb-0"><i class="bi bi-calculator me-1"></i>Sin simplificar: ${ones.length} términos × ${n} variables = <strong>${ones.length * n} literales</strong>. ¡Veamos cuánto podemos reducir!</p>`;
       } else if (f.t === 'map') {
         title = '2 · Colocar los 1s en el mapa';
-        st = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'wz', drop: true })}<div class="km-ov"></div></div><div class="wz-hover mt-3 small" id="wz-hover">Pasa el cursor sobre una celda…</div>`;
+        st = `<div class="km-block"><div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'wz', drop: true })}<div class="km-ov"></div></div>${kmStrip(n, tt, 'wz')}</div><div class="wz-hover mt-3 small" id="wz-hover">Pasa el cursor sobre una celda…</div>`;
         body = `<p>Cada celda del mapa es un minitérmino: <code>m<sub>i</sub></code> ya trae su lugar. Los encabezados usan <strong>código Gray</strong> (<code>00, 01, 11, 10</code>) para que <em>entre vecinas solo cambie un bit</em>.</p>
           <p>Los <strong class="text-success">${ones.length} unos</strong> caen en: ${ones.map(m => wzChip(m)).join('')}</p>
           <div class="alert alert-light border small mb-0"><i class="bi bi-hand-index-thumb me-1 text-primary"></i><strong>Interactivo:</strong> pasa el cursor sobre cualquier celda para ver su minitérmino y el valor de cada variable.</div>`;
@@ -1251,16 +1337,143 @@
       document.getElementById('wz-play').onclick = wzPlay;
       document.getElementById('wz-src-example').onclick = () => wzLoad('example');
       document.getElementById('wz-src-mine').onclick = () => wzLoad('mine');
-      const modal = document.getElementById('kmapTutorialModal');
-      modal.addEventListener('shown.bs.modal', () => { wzRender(); if (WZ.scroll) { WZ.scroll = false; root.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
-      modal.addEventListener('hidden.bs.modal', wzStop);
-      document.getElementById('kmap-solve-mine').onclick = () => { WZ.scroll = true; wzLoad('mine'); bootstrap.Modal.getOrCreateInstance(modal).show(); };
-      document.getElementById('wz-goto').onclick = () => root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('kmap-solve-mine').onclick = () => { wzLoad('mine'); kgGo(5, true); };
       let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
-        if (window.KM_MAIN) kmDraw(document.querySelector('#kmap-container .km-wrap'), KM_MAIN.n, KM_MAIN.sol.groups, {});
-        if (modal.classList.contains('show')) wzRender();
+        if (window.KM_MAIN && KG.i === 6) kmDraw(document.querySelector('#kmap-container .km-wrap'), KM_MAIN.n, KM_MAIN.sol.groups, {});
+        if (KG.i === 5) wzRender();
       }, 150); });
       wzLoad('example');
+    })();
+
+
+    /* ===================== GUÍA DE KARNAUGH EN PASOS ===================== */
+    // Fila de minitérminos m0, m1, … en orden numérico (junto al mapa)
+    function kmStrip(n, tt, pre) {
+      const N = 1 << n;
+      return `<div class="km-strip" aria-label="Minitérminos en orden numérico"><span class="km-strip-l">Minitérminos en orden numérico <span class="text-lowercase fw-normal">(pasa el cursor para ver su binario)</span></span>` +
+        Array.from({ length: N }, (_, m) => `<button type="button" class="km-chip ${tt && tt[m] === 1 ? 'one' : ''}" data-m="${m}" data-n="${n}" ${tt ? `data-f="${tt[m]}"` : ''} data-pre="${pre}">m${m}</button>`).join('') + '</div>';
+    }
+    const kmLitHTML = (v, b) => b === '1' ? KM_VARS[v] : `<span class="ov">${KM_VARS[v]}</span>`;
+
+    // Popover con la numeración binaria (celdas del mapa y fila de minitérminos)
+    // Bootstrap 5.3.2 pasa el elemento como argumento (versiones posteriores lo pasan como this): se admiten ambos
+    const kmEl = (el, self) => (el && el.dataset ? el : self);
+    function kmPopTitle(el) { el = kmEl(el, this); const m = +el.dataset.m, n = +el.dataset.n; return `m${m} = ${kmBin(m, n)}₂`; }
+    function kmPopContent(el) {
+      el = kmEl(el, this); const m = +el.dataset.m, n = +el.dataset.n, b = kmBin(m, n).split('');
+      return `<div class="bits">${b.map((x, v) => `${KM_VARS[v]}=${x}`).join(' ')}</div>` +
+        `<div>Decimal: <b>${m}</b></div><div>Término: <span class="bits">${b.map((x, v) => kmLitHTML(v, x)).join('·')}</span></div>` +
+        (el.dataset.f !== undefined && el.dataset.f !== '' ? `<div>Salida <b>F = ${el.dataset.f}</b></div>` : '');
+    }
+    if (window.bootstrap) new bootstrap.Popover(document.body, { selector: 'td[data-m], .km-chip[data-m]', trigger: 'hover focus', container: 'body', html: true, placement: (...a) => a.some(x => x && x.classList && x.classList.contains('km-chip')) ? 'bottom' : 'top', customClass: 'km-pop', title: kmPopTitle, content: kmPopContent });
+
+    // Resaltado cruzado celda ↔ chip ↔ encabezados
+    function kmHL(el, on) {
+      const box = el.closest('.km-block, #wz-stage'); if (!box) return;
+      const m = el.dataset.m;
+      box.querySelectorAll(`[data-m="${m}"]`).forEach(x => x.classList.toggle('km-hl', on));
+      const td = box.querySelector(`td[data-m="${m}"]`);
+      box.querySelectorAll('th.km-hl').forEach(x => x.classList.remove('km-hl'));
+      if (on && td) { const t = td.closest('table'); const th1 = t.querySelector(`th[data-r="${td.dataset.r}"]`), th2 = t.querySelector(`th[data-c="${td.dataset.c}"]`); th1 && th1.classList.add('km-hl'); th2 && th2.classList.add('km-hl'); }
+    }
+    ['mouseover', 'focusin'].forEach(ev => document.addEventListener(ev, e => { const el = e.target.closest && e.target.closest('[data-m]'); if (el && el.closest('.km-block, #wz-stage')) { kmHL(el, true); kgHover(el); } }));
+    ['mouseout', 'focusout'].forEach(ev => document.addEventListener(ev, e => { const el = e.target.closest && e.target.closest('[data-m]'); if (el && el.closest('.km-block, #wz-stage')) { kmHL(el, false); kgHover(null, el); } }));
+    document.addEventListener('click', e => { const c = e.target.closest && e.target.closest('.km-chip'); if (!c) return; const box = c.closest('.km-block'); const td = box && box.querySelector(`td[data-m="${c.dataset.m}"]`); if (td) { td.classList.remove('km-ping'); void td.offsetWidth; td.classList.add('km-ping'); } });
+
+    // ---- Paso 2: Explorador ----
+    const KX = { n: 4 };
+    const kxVar = v => KM_VARS[v];
+    function kmClosePops() { document.querySelectorAll('.km-pop').forEach(p => p.remove()); }
+    function kxRender() {
+      kmClosePops();
+      const n = KX.n, tt = Array(1 << n).fill(0);
+      document.getElementById('kx-block').innerHTML = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'kx', label: true, noF: true })}<div class="km-ov"></div></div>${kmStrip(n, null, 'kx')}`;
+      document.querySelectorAll('#kx-n button').forEach(b => b.classList.toggle('active', +b.dataset.n === n));
+      kxRead(null);
+    }
+    function kxNeighbors(m) {
+      const n = KX.n, L = kmLay(n), p = L.pos(m), out = new Map();
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dr, dc]) => {
+        const r = (p.r + dr + L.R) % L.R, c = (p.c + dc + L.C) % L.C, q = L.idx(r, c);
+        if (q !== m && !out.has(q)) { const x = q ^ m; out.set(q, KM_VARS[n - 1 - Math.log2(x)]); }
+      });
+      return out;
+    }
+    function kxRead(m) {
+      const n = KX.n, box = document.getElementById('kx-read'); if (!box) return;
+      document.querySelectorAll('#kx-block .km-nb').forEach(x => x.classList.remove('km-nb'));
+      if (m === null) { box.innerHTML = `<div class="text-muted">Cada celda muestra su número <b>m</b> y su <b>valor binario</b>. Pasa el cursor sobre una: se marcan sus <span class="nb">vecinas</span> (incluso al otro lado del borde) y verás que entre ellas <b>solo cambia un bit</b>.</div>`; return; }
+      const b = kmBin(m, n).split(''), nb = kxNeighbors(m);
+      nb.forEach((v, q) => document.querySelectorAll(`#kx-block [data-m="${q}"]`).forEach(x => x.classList.add('km-nb')));
+      box.innerHTML = `<div class="fw-bold fs-5 mono">m${m} = ${b.join('')}₂</div>
+        <div class="mono">${b.map((x, v) => `${kxVar(v)}=${x}`).join('  ')}</div>
+        <div class="mt-1">Término: <span class="mono fw-bold">${b.map((x, v) => kmLitHTML(v, x).replace('class="ov"', 'style="text-decoration:overline"')).join('·')}</span></div>
+        <div class="mt-2 small">Vecinas (cambia un bit): ${[...nb].map(([q, v]) => `<span class="nb">m${q} · cambia ${v}</span>`).join('')}</div>`;
+    }
+    function kgHover(el, leaving) {
+      if (el && el.closest('#kx-block')) kxRead(+el.dataset.m);
+      // en el explorador la última celda consultada se conserva (útil al tocar en pantallas táctiles)
+      else if (el && el.closest('#kp-block')) kpHover(+el.dataset.m, true);
+      else if (!el && leaving && leaving.closest('#kp-block')) kpHover(+leaving.dataset.m, false);
+    }
+
+    // ---- Paso 3: Practica «pon los 1s» ----
+    const KP = { n: 4, tt: [] };
+    const KP_EX = { 3: [1, 3, 5, 7], 4: [0, 1, 2, 5, 8, 9, 10] };
+    function kpSet(n, ones) { KP.n = n; KP.tt = Array.from({ length: 1 << n }, (_, m) => ones.includes(m) ? 1 : 0); }
+    function kpRender(drop) {
+      kmClosePops();
+      const n = KP.n, tt = KP.tt;
+      document.getElementById('kp-tt').innerHTML = `<table class="kp-tt table table-sm"><thead><tr><th>m</th>${KM_VARS.slice(0, n).map(v => `<th>${v}</th>`).join('')}<th>F</th></tr></thead><tbody>` +
+        tt.map((v, m) => `<tr data-row="${m}"><td>${m}</td>${kmBin(m, n).split('').map(b => `<td>${b}</td>`).join('')}<td><button type="button" class="kp-f ${v ? 'one' : ''}" data-tog="${m}" aria-pressed="${!!v}" aria-label="Salida de m${m}">${v}</button></td></tr>`).join('') + '</tbody></table>';
+      document.getElementById('kp-block').innerHTML = `<div class="km-wrap">${kmTableHTML(n, tt, { prefix: 'kp', drop })}<div class="km-ov"></div></div>${kmStrip(n, tt, 'kp')}`;
+      document.querySelectorAll('#kp-n button').forEach(b => b.classList.toggle('active', +b.dataset.n === n));
+      const ones = tt.map((v, m) => v ? m : -1).filter(m => m >= 0);
+      document.getElementById('kp-read').innerHTML = ones.length
+        ? `<div class="mono fw-bold">$F(${KM_VARS.slice(0, n).join(',')}) = \\sum m(${ones.join(', ')})$</div><div class="small text-muted">${ones.length} ${ones.length === 1 ? 'uno' : 'unos'} de ${tt.length} celdas.</div>`
+        : '<div class="text-muted small">Todavía no hay unos: la función vale 0 en todas las combinaciones. Toca la columna <b>F</b> o una celda del mapa.</div>';
+      kmMath(document.getElementById('kp-read'));
+    }
+    function kpHover(m, on) { const tr = document.querySelector(`#kp-tt tr[data-row="${m}"]`); if (tr) tr.classList.toggle('hl', on); }
+    function kpToggle(m, from) {
+      KP.tt[m] = KP.tt[m] ? 0 : 1; kpRender(false);
+      const t = from === 'tt' ? document.querySelector(`#kp-tt [data-tog="${m}"]`) : document.querySelector(`#kp-block td[data-m="${m}"]`);
+      if (t && document.activeElement === document.body) t.focus({ preventScroll: true });
+    }
+
+    // ---- Navegación por pasos ----
+    const KG = { i: 0, seen: new Set(), steps: [['¿Qué es?', '#6f42c1'], ['Tablero', '#1c7ed6'], ['Colocar 1s', '#2f9e44'], ['Agrupar', '#6f42c1'], ['Ecuación', '#212529'], ['Laboratorio', '#0d6efd'], ['Tu función', '#198754']] };
+    function kgGo(i, scroll) {
+      i = Math.max(0, Math.min(KG.steps.length - 1, i)); const prev = KG.i; KG.i = i;
+      document.querySelectorAll('#kg .kg-step').forEach(a => { a.hidden = +a.dataset.step !== i; });
+      document.getElementById('kg-steps').innerHTML = KG.steps.map(([t, c], k) => `<button type="button" class="kg-pill-step ${k === i ? 'on' : k < i ? 'done' : ''}" style="--c:${c}" data-kgo="${k}" ${k === i ? 'aria-current="step"' : ''}><span class="n">${k < i ? '<i class="bi bi-check-lg"></i>' : k + 1}</span><span class="t">${t}</span></button>`).join('');
+      { const nav = document.getElementById('kg-steps'), on = nav.querySelector('.on'); if (on) nav.scrollLeft = on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2; }
+      document.getElementById('kg-count').textContent = `Paso ${i + 1} de ${KG.steps.length}`;
+      document.getElementById('kg-prev').disabled = i === 0;
+      const nx = document.getElementById('kg-next'); nx.disabled = i === KG.steps.length - 1;
+      nx.innerHTML = i === KG.steps.length - 2 ? 'Tu función<i class="bi bi-chevron-right ms-1"></i>' : 'Siguiente<i class="bi bi-chevron-right ms-1"></i>';
+      const art = document.querySelector(`#kg .kg-step[data-step="${i}"]`);
+      if (i !== 5) wzStop();
+      if (i === 1) kxRender();
+      if (i === 2 && !KG.seen.has(2)) { kpSet(3, []); kpRender(false); }
+      if (i === 5) wzRender();
+      if (i === 6 && window.KM_MAIN) requestAnimationFrame(() => kmDraw(document.querySelector('#kmap-container .km-wrap'), KM_MAIN.n, KM_MAIN.sol.groups, {}));
+      if (!KG.seen.has(i)) kmMath(art);
+      KG.seen.add(i);
+      if (scroll) { const sec = document.getElementById('kg-section'); const top = sec.getBoundingClientRect().top; if (top < 0 || top > window.innerHeight * .4) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
+    (function kgInit() {
+      document.getElementById('kg-prev').onclick = () => kgGo(KG.i - 1, true);
+      document.getElementById('kg-next').onclick = () => kgGo(KG.i + 1, true);
+      document.getElementById('kg-steps').addEventListener('click', e => { const b = e.target.closest('[data-kgo]'); if (b) kgGo(+b.dataset.kgo, true); });
+      document.getElementById('kx-n').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (b) { KX.n = +b.dataset.n; kxRender(); } });
+      document.getElementById('kp-n').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (b) { kpSet(+b.dataset.n, []); kpRender(false); } });
+      document.getElementById('kp-ex').onclick = () => { kpSet(KP.n, KP_EX[KP.n]); kpRender(true); };
+      document.getElementById('kp-clear').onclick = () => { kpSet(KP.n, []); kpRender(false); };
+      document.getElementById('kp-tt').addEventListener('click', e => { const b = e.target.closest('[data-tog]'); if (b) kpToggle(+b.dataset.tog, 'tt'); });
+      document.getElementById('kp-block').addEventListener('click', e => { const td = e.target.closest('td[data-m]'); if (td) kpToggle(+td.dataset.m); });
+      document.getElementById('kp-block').addEventListener('keydown', e => { const td = e.target.closest('td[data-m]'); if (td && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); kpToggle(+td.dataset.m); } });
+      kgGo(0, false);
     })();
 
     /* 6. Circuitos Internos TTL */
