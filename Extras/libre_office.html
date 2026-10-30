@@ -771,10 +771,10 @@ const QUIZ=[
 /* ===================== UTILIDADES UI ===================== */
 const modalEl=$("#infoModal"), modal=new bootstrap.Modal(modalEl);
 function openModal({title,body,app="general",footer}){
-  modalEl.className="modal fade "+APPS[app].c;
-  $("#infoTitle").textContent=title; $("#infoBody").innerHTML=body;
+  [...modalEl.classList].filter(c=>c.indexOf("app-")===0).forEach(c=>modalEl.classList.remove(c));modalEl.classList.add(APPS[app].c);
+  $("#infoTitle").textContent=title; $("#infoBody").innerHTML=body; $(".modal-body",modalEl).scrollTop=0;
   $("#infoFooter").innerHTML=footer||'<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>';
-  modal.show();
+  if(modalEl.classList.contains("show")){modalEl.focus({preventScroll:true})}else{modal.show()}
 }
 function initPopovers(root=document){
   $$('[data-bs-toggle="popover"]',root).forEach(el=>{ if(!bootstrap.Popover.getInstance(el)) new bootstrap.Popover(el,{trigger:"hover focus",placement:"top",container:"body"}); });
