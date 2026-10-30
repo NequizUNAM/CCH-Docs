@@ -179,6 +179,54 @@ kbd.key{background:linear-gradient(#fff,#e9edf0);color:#1b1f23;border:1px solid 
 .pillar:hover{border-color:var(--lo-green-fill);transform:translateX(4px)}
 .pillar i{color:var(--lo-green-dark);font-size:1.3rem}
 
+
+/* guía visual */
+.guide-wrap{border-top:6px solid var(--app);animation:fadeUp .4s ease}
+.svg-wrap{overflow-x:auto;border-radius:14px;background:var(--soft-bg);padding:.6rem}
+.svg-wrap svg{display:block;width:100%;min-width:540px;height:auto}
+.gx-win{fill:var(--card-bg);stroke:rgba(128,128,128,.55);stroke-width:1.5}
+.gx-title{fill:var(--app-fill)}
+.gx-title-t{fill:var(--app-on);font:700 11px system-ui,sans-serif}
+.gx-dot{fill:var(--app-on);opacity:.8}
+.gx-deco{fill:rgba(128,128,128,.22)}
+.gx-page{fill:var(--card-bg);stroke:rgba(128,128,128,.5)}
+.gx-line{stroke:rgba(128,128,128,.45);stroke-width:1.5;fill:none}
+.gx-shape{fill:var(--app-soft);stroke:var(--app-fill);stroke-width:2}
+.hs{cursor:pointer;outline:none}
+.hs rect.hr{fill:var(--app-soft);stroke:var(--app);stroke-width:1.5;transition:fill .2s,stroke-width .2s}
+.hs text{fill:var(--ink);font:600 11px system-ui,sans-serif;text-anchor:middle;pointer-events:none}
+.hs:hover rect.hr,.hs:focus-visible rect.hr{stroke-width:3;fill:var(--app-soft);filter:brightness(.94)}
+.hs.active rect.hr{fill:var(--app-fill);stroke-width:3;animation:pulse 1.6s ease-in-out infinite}
+.hs.active text{fill:var(--app-on)}
+@keyframes pulse{50%{stroke-opacity:.35}}
+.parts{display:flex;flex-wrap:wrap;gap:.4rem}
+.part-btn{border:1px solid rgba(128,128,128,.35);background:var(--card-bg);color:var(--ink);border-radius:999px;padding:.25rem .75rem;font-size:.82rem;font-weight:600;transition:.2s}
+.part-btn:hover{border-color:var(--app)}
+.part-btn.active{background:var(--app-fill);color:var(--app-on);border-color:var(--app-fill)}
+.guide-panel{background:var(--soft-bg);border-radius:14px;padding:1.2rem;min-height:250px;animation:fadeUp .35s ease}
+.guide-panel h4{font-weight:800}
+.chip-link{border:1px solid var(--app);background:var(--app-soft);color:var(--app-ink);border-radius:999px;padding:.25rem .8rem;font-size:.82rem;font-weight:700;margin:0 .35rem .4rem 0;transition:.2s}
+.chip-link:hover{transform:translateY(-2px)}
+.keyrow{display:flex;justify-content:space-between;gap:.6rem;align-items:center;font-size:.85rem;padding:.3rem 0;border-bottom:1px dashed rgba(128,128,128,.35)}
+/* glosario mejorado */
+.c-ico{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--app-soft);color:var(--app-ink);font-size:1.4rem;flex:0 0 46px;transition:transform .3s}
+.concept{position:relative;border-left:0!important;border-top:5px solid var(--app)!important;display:flex;flex-direction:column;gap:.15rem}
+.concept:hover .c-ico{transform:rotate(-8deg) scale(1.12)}
+.concept .c-ico{margin-bottom:.5rem}
+.seen-badge{position:absolute;top:.8rem;right:.8rem;color:var(--lo-green-dark);font-size:1.25rem;opacity:0;transform:scale(.5);transition:.3s}
+.concept.seen .seen-badge{opacity:1;transform:none}
+.concept.seen{background:linear-gradient(180deg,var(--app-soft) -80%,var(--card-bg) 40%)}
+.c-hero{display:flex;gap:1rem;align-items:center;margin-bottom:1rem}
+.c-hero .c-ico{width:64px;height:64px;font-size:2rem;flex-basis:64px;animation:float 5s ease-in-out infinite}
+.c-hero .tag{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--app-ink)}
+.count-pill{background:rgba(128,128,128,.2);border-radius:999px;padding:0 .5rem;font-size:.75rem;margin-left:.35rem}
+.filter-chip.active .count-pill{background:transparent;border:1px solid currentColor}
+.pref-box{background:var(--soft-bg);border-radius:12px;padding:1rem;margin-bottom:.8rem}
+
+.form-check-input:checked{background-color:var(--lo-green-fill);border-color:var(--lo-green-fill)}
+.form-check-input:focus,.form-control:focus{border-color:var(--lo-green-fill);box-shadow:0 0 0 .22rem rgba(24,163,3,.25)}
+.btn-outline-danger{--bs-btn-color:#b02a1c;--bs-btn-border-color:#b02a1c;--bs-btn-hover-bg:#b02a1c;--bs-btn-hover-border-color:#b02a1c;--bs-btn-hover-color:#fff}
+[data-bs-theme="dark"] .btn-outline-danger{--bs-btn-color:#ff8a80;--bs-btn-border-color:#ff8a80;--bs-btn-hover-bg:#ff8a80;--bs-btn-hover-color:#1b1f23}
 /* retos */
 .quiz-opt{display:block;width:100%;text-align:left;background:var(--card-bg);color:var(--ink);border:2px solid rgba(128,128,128,.3);border-radius:12px;padding:.7rem 1rem;margin-bottom:.55rem;font-weight:600;transition:.2s}
 .quiz-opt:hover:not(:disabled){border-color:var(--lo-blue);transform:translateX(4px)}
@@ -240,7 +288,7 @@ footer a{color:#8fd0fa}
         <li class="nav-item"><a class="nav-link" href="#ejercicios">Ejercicios</a></li>
         <li class="nav-item"><a class="nav-link" href="#evaluacion">Evaluación</a></li>
         <li class="nav-item"><a class="nav-link" href="#creditos">Créditos</a></li>
-        <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-outline-secondary" id="themeBtn" aria-label="Cambiar tema"><i class="bi bi-moon-stars"></i></button></li>
+        <li class="nav-item ms-lg-2 d-flex gap-1"><button class="btn btn-sm btn-outline-secondary" id="prefBtn" aria-label="Mis preferencias y avance" title="Mis preferencias y avance"><i class="bi bi-sliders"></i></button><button class="btn btn-sm btn-outline-secondary" id="themeBtn" aria-label="Cambiar tema"><i class="bi bi-moon-stars"></i></button></li>
       </ul>
     </div>
   </div>
@@ -337,10 +385,36 @@ footer a{color:#8fd0fa}
 <!-- Conceptos -->
 <section id="conceptos">
   <div class="container">
-    <div class="reveal"><div class="sec-kicker">Glosario interactivo</div><h2 class="sec-title">Conceptos clave</h2><div class="sec-bar"></div>
-    <p class="text-secondary">Filtra por aplicación y abre cada tarjeta para ver la explicación y una práctica sugerida.</p></div>
+    <div class="reveal"><div class="sec-kicker">Guía visual y glosario</div><h2 class="sec-title">Conceptos clave</h2><div class="sec-bar"></div>
+    <p class="text-secondary">Empieza por la guía visual: toca las partes de la ventana de cada aplicación. Después revisa el glosario; tu avance se guarda en este navegador.</p></div>
+
+    <div class="card guide-wrap p-3 p-lg-4 mb-5 reveal" id="guide">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="h5 fw-bold mb-0"><i class="bi bi-compass text-lo me-2"></i>Guía visual de la interfaz</h3>
+        <div class="nav tab-app" id="guideTabs" role="tablist"></div>
+      </div>
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-7"><div class="svg-wrap" id="guideSvg"></div><div class="parts mt-3" id="guideParts"></div></div>
+        <div class="col-lg-5">
+          <div class="guide-panel" id="guidePanel" aria-live="polite"></div>
+          <div class="d-flex align-items-center gap-2 mt-3">
+            <button class="btn btn-outline-secondary btn-sm" id="gPrev"><i class="bi bi-arrow-left me-1"></i>Anterior</button>
+            <button class="btn btn-lo btn-sm" id="gNext">Siguiente<i class="bi bi-arrow-right ms-1"></i></button>
+            <span class="small text-secondary ms-auto" id="gCount"></span>
+          </div>
+        </div>
+      </div>
+      <p class="small text-secondary mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Esquema ilustrativo y simplificado: la apariencia real puede variar según la versión de LibreOffice y la configuración de cada computadora.</p>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-2 reveal">
+      <div><h3 class="h4 fw-bold mb-1">Glosario</h3><div class="small text-secondary" id="seenText"></div></div>
+      <div class="input-group" style="max-width:340px"><span class="input-group-text"><i class="bi bi-search"></i></span><input type="search" class="form-control" id="cSearch" placeholder="Buscar un concepto…" aria-label="Buscar concepto"></div>
+    </div>
+    <div class="progress mb-3 reveal" role="progressbar" aria-label="Conceptos revisados"><div class="progress-bar" id="seenBar" style="width:0%"></div></div>
     <div class="mb-3 reveal" id="conceptFilters"></div>
     <div class="row g-3" id="conceptGrid"></div>
+    <p class="text-secondary mt-3" id="cEmpty" hidden>No se encontraron conceptos con esa búsqueda.</p>
   </div>
 </section>
 
@@ -497,6 +571,7 @@ footer a{color:#8fd0fa}
 </footer>
 
 <button class="btn btn-lo to-top" id="toTop" aria-label="Subir"><i class="bi bi-arrow-up"></i></button>
+<div class="toast-container position-fixed bottom-0 start-0 p-3" style="z-index:2100"><div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"><div class="toast-body fw-semibold"></div></div></div>
 
 <!-- Modal genérico -->
 <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoTitle" aria-hidden="true">
@@ -515,7 +590,22 @@ footer a{color:#8fd0fa}
 "use strict";
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+/* ===== Almacenamiento local con caducidad de 30 días (desde la última actividad) ===== */
+const LS_P="locurso:", TTL=30*24*60*60*1000;
+const store={
+  get(k,d){try{const raw=localStorage.getItem(LS_P+k);if(raw===null)return d;const o=JSON.parse(raw);if(!o||typeof o.exp!=="number"||o.exp<=Date.now()){localStorage.removeItem(LS_P+k);return d}return o.v}catch(e){return d}},
+  on(){return this.get("remember",true)!==false},
+  set(k,v){try{if(k!=="remember"&&!this.on())return;localStorage.setItem(LS_P+k,JSON.stringify({v,exp:Date.now()+TTL}))}catch(e){}},
+  keys(){try{return Object.keys(localStorage).filter(x=>x.indexOf(LS_P)===0)}catch(e){return[]}},
+  purge(){let n=0;this.keys().forEach(k=>{try{const o=JSON.parse(localStorage.getItem(k));if(!o||!(o.exp>Date.now())){localStorage.removeItem(k);n++}}catch(e){try{localStorage.removeItem(k)}catch(_){}n++}});return n},
+  clear(keep){this.keys().forEach(k=>{if(!keep||k!==LS_P+keep){try{localStorage.removeItem(k)}catch(e){}}})},
+  lastExp(){let m=0;this.keys().forEach(k=>{if(k===LS_P+"remember")return;try{const o=JSON.parse(localStorage.getItem(k));if(o&&o.exp>m)m=o.exp}catch(e){}});return m}
+};
+const purgedOnLoad=store.purge();
+/* migración de claves de la versión anterior */
+try{[["lo-theme","theme"],["lo-progress","progress"]].forEach(([o,n])=>{const raw=localStorage.getItem(o);if(raw!==null){if(store.get(n,null)===null)store.set(n,JSON.parse(raw));localStorage.removeItem(o)}})}catch(e){}
+let seen=store.get("seen",[]); if(!Array.isArray(seen))seen=[];
+let bestScores=store.get("best",{}); if(!bestScores||typeof bestScores!=="object")bestScores={};
 const APPS={writer:{n:"Writer",c:"app-writer",i:"bi-file-earmark-text"},calc:{n:"Calc",c:"app-calc",i:"bi-table"},impress:{n:"Impress",c:"app-impress",i:"bi-easel"},draw:{n:"Draw",c:"app-draw",i:"bi-bezier2"},general:{n:"General",c:"app-general",i:"bi-grid"}};
 
 /* ===================== DATOS ===================== */
@@ -605,6 +695,7 @@ const SHORTCUTS=[
  ["general","Ctrl+M","Quitar formato directo",""],
  ["general","Ctrl+Shift+S","Guardar como",""],
  ["general","F1","Ayuda",""],["general","Shift+F1","Ayuda contextual",""],
+ ["general","F10","Activar o salir de la barra de menús","Permite controlar LibreOffice solo con el teclado."],
  ["general","F6","Cambiar el foco entre barra de menús, barras de herramientas y documento","Permite controlar LibreOffice solo con el teclado."],
  ["general","F7","Revisión ortográfica",""],["general","F11","Estilos (barra lateral)",""],
  ["writer","Ctrl+H","Buscar y reemplazar",""],["writer","Ctrl+Shift+F","Buscar siguiente",""],
@@ -616,6 +707,7 @@ const SHORTCUTS=[
  ["writer","F5","Navegador",""],["writer","Ctrl+F5","Barra lateral",""],["writer","F7","Revisión ortográfica",""],["writer","Ctrl+F7","Sinónimos",""],
  ["writer","F3","Texto automático",""],["writer","F9","Actualizar campos",""],
  ["writer","Ctrl+Shift+P","Superíndice",""],["writer","Ctrl+Shift+B","Subíndice",""],
+ ["calc","Ctrl+Shift+F5","Ir al cuadro de nombre",""],["calc","Ctrl+Shift+F2","Ir a la línea de entrada",""],
  ["calc","F2","Editar la celda",""],["calc","Esc","Cancelar la edición de la celda",""],["calc","F4","Alternar tipos de referencia de celda","Útil al editar fórmulas."],
  ["calc","Alt+=","Función Suma",""],["calc","Ctrl+F2","Insertar función",""],
  ["calc","F9","Recalcular",""],["calc","Ctrl+`","Mostrar fórmulas",""],
@@ -690,12 +782,11 @@ function initPopovers(root=document){
 const keycaps=k=>k.split("+").map(x=>`<kbd class="key">${esc(x)}</kbd>`).join('<span class="text-secondary">+</span>');
 
 /* ===================== TEMA ===================== */
-(function(){
-  const root=document.documentElement,btn=$("#themeBtn");
-  const set=t=>{root.setAttribute("data-bs-theme",t);btn.innerHTML=t==="dark"?'<i class="bi bi-sun"></i>':'<i class="bi bi-moon-stars"></i>';store.set("lo-theme",t)};
-  set(store.get("lo-theme","light"));
-  btn.addEventListener("click",()=>set(root.getAttribute("data-bs-theme")==="dark"?"light":"dark"));
-})();
+const themeRoot=document.documentElement;
+function setTheme(t){themeRoot.setAttribute("data-bs-theme",t);$("#themeBtn").innerHTML=t==="dark"?'<i class="bi bi-sun"></i>':'<i class="bi bi-moon-stars"></i>';store.set("theme",t)}
+setTheme(store.get("theme","light")==="dark"?"dark":"light");
+$("#themeBtn").addEventListener("click",()=>setTheme(themeRoot.getAttribute("data-bs-theme")==="dark"?"light":"dark"));
+function toast(msg){$("#toast .toast-body").textContent=msg;bootstrap.Toast.getOrCreateInstance($("#toast"),{delay:5000}).show()}
 
 /* ===================== PRINCIPIOS Y PRESENTACIÓN ===================== */
 $("#compList").innerHTML=PRINCIPIOS.map((c,i)=>`<button class="pillar" data-comp="${i}"><i class="bi ${c[0]}"></i>${esc(c[1])}</button>`).join("");
@@ -725,27 +816,119 @@ function renderSession(i){
   $$("#sessionPills .nav-link").forEach((b,k)=>b.classList.toggle("active",k===i));
 }
 $("#sessionPills").innerHTML=SESSIONS.map((s,i)=>`<button class="nav-link ${APPS[s.app].c}" role="tab" data-s="${i}">Sesión ${s.n}<small>${s.short}</small></button>`).join("");
-$("#sessionPills").addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(b)renderSession(+b.dataset.s)});
-renderSession(0);
+$("#sessionPills").addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(b){renderSession(+b.dataset.s);store.set("session",+b.dataset.s)}});
+{const ss=+store.get("session",0);renderSession(ss>=0&&ss<SESSIONS.length?ss:0)}
 
 /* ===================== CONCEPTOS ===================== */
-let cFilter="all";
+const ICONS={libreoffice:"bi-stack",writer:"bi-file-earmark-text",calc:"bi-table",impress:"bi-easel",draw:"bi-bezier2",instalar:"bi-download",toc:"bi-list-ol",secuencia:"bi-signpost-split",estilo:"bi-fonts",tabla:"bi-grid-3x3",encabezado:"bi-layout-text-window-reverse",pdf:"bi-filetype-pdf",celda:"bi-grid",formula:"bi-plus-slash-minus",funcion:"bi-calculator",referencia:"bi-link-45deg",formatocond:"bi-palette",filtro:"bi-funnel",grafica:"bi-bar-chart-line",diapositiva:"bi-card-image",transicion:"bi-magic",presentacion:"bi-play-circle",conector:"bi-diagram-2",organizador:"bi-columns-gap"};
+/* atajos verificados que se relacionan con cada concepto */
+const KEYMAP={libreoffice:[["F1","Ayuda"]],estilo:[["F11","Abrir Estilos"],["Ctrl+1","Estilo Título 1"]],tabla:[["Ctrl+F12","Insertar tabla (Writer)"]],celda:[["Ctrl+Space","Seleccionar columna"],["Shift+Space","Seleccionar fila"]],formula:[["F2","Editar la celda"]],funcion:[["Alt+=","Función Suma"],["Ctrl+F2","Insertar función"]],referencia:[["F4","Alternar tipos de referencia"]],diapositiva:[["Ctrl+Enter","Siguiente marcador o nueva diapositiva (Impress)"]],presentacion:[["F5","Iniciar desde el principio"],["Shift+F5","Iniciar desde la diapositiva actual"]],pdf:[["Ctrl+Shift+S","Guardar como"]],encabezado:[["Ctrl+Enter","Salto de página manual (Writer)"]]};
+const markSeen=(id,flag)=>{const i=seen.indexOf(id);if(flag&&i<0)seen.push(id);if(!flag&&i>=0)seen.splice(i,1);store.set("seen",seen)};
+
+/* ---- Guía visual: esquemas SVG con zonas interactivas ---- */
+const NS_BASE=(label)=>`<rect class="gx-win" x="10" y="10" width="620" height="360" rx="12"/><path class="gx-title" d="M10 22a12 12 0 0 1 12-12h596a12 12 0 0 1 12 12v14H10z"/><circle class="gx-dot" cx="26" cy="23" r="4"/><circle class="gx-dot" cx="40" cy="23" r="4"/><circle class="gx-dot" cx="54" cy="23" r="4"/><text class="gx-title-t" x="320" y="27" text-anchor="middle">${label}</text>`;
+const COMMON=[
+ {id:"menu",label:"Barra de menús",x:18,y:40,w:604,h:22,desc:"Reúne las órdenes de la aplicación. F10 activa o sale de la barra de menús.",rel:["libreoffice"],keys:[["F10","Activar o salir de la barra de menús"]]},
+ {id:"tools",label:"Barras de herramientas",x:18,y:66,w:604,h:28,desc:"Dan acceso rápido a las herramientas principales de la aplicación. F6 cambia el foco entre la barra de menús, las barras de herramientas y el documento.",rel:[],keys:[["F6","Cambiar el foco entre menús, herramientas y documento"]]},
+ {id:"status",label:"Barra de estado",x:18,y:340,w:604,h:24,desc:"Muestra información sobre el documento y la vista actuales, como el número de página o el nivel de zoom.",rel:[],keys:[]}
+];
+const SIDEBAR={id:"side",label:"Barra lateral",x:476,y:100,w:146,h:236};
+const GUIDE={
+ writer:{name:"Writer",
+  deco:'<rect class="gx-deco" x="18" y="100" width="452" height="236" rx="6"/><rect class="gx-page" x="110" y="106" width="260" height="226" rx="3"/><path class="gx-line" d="M130 170h220M130 186h200M130 202h220M130 218h170"/><rect class="gx-shape" x="130" y="238" width="90" height="42" rx="4"/>',
+  parts:[
+   {id:"head",label:"Encabezado",x:118,y:112,w:244,h:22,desc:"Zona que se repite en la parte superior de las páginas; sirve, por ejemplo, para el nombre del curso o de la asignatura.",rel:["encabezado"],keys:[]},
+   {id:"body",label:"Documento: texto, imágenes y tablas",x:118,y:140,w:244,h:150,desc:"Aquí escribes y das formato al texto; también insertas imágenes y tablas. Los estilos (Título 1, Cuerpo de texto…) dan uniformidad al documento.",rel:["writer","estilo","tabla","toc"],keys:[["Ctrl+1","Estilo Título 1"],["Ctrl+Enter","Salto de página manual"],["Ctrl+F12","Insertar tabla"]]},
+   {id:"foot",label:"Pie de página y numeración",x:118,y:296,w:244,h:30,desc:"Zona inferior que se repite en cada página; es el lugar habitual para el número de página.",rel:["encabezado"],keys:[]},
+   {...SIDEBAR,desc:"Panel con varias páginas, entre ellas la de Estilos. En Writer, F11 la abre en la página de Estilos y Ctrl+F5 abre la Barra lateral.",rel:["estilo"],keys:[["F11","Abrir la barra lateral en Estilos"],["Ctrl+F5","Barra lateral"]]}]},
+ calc:{name:"Calc",
+  deco:'<rect class="gx-deco" x="18" y="126" width="452" height="184" rx="4"/><path class="gx-line" d="M70 126v184M122 126v184M174 126v184M226 126v184M278 126v184M330 126v184M382 126v184M434 126v184M18 150h452M18 174h452M18 198h452M18 222h452M18 246h452M18 270h452M18 294h452"/>',
+  parts:[
+   {id:"name",label:"Cuadro de nombre",x:18,y:100,w:108,h:22,desc:"Muestra la referencia de la celda o del rango seleccionado, por ejemplo B2 o B2:D2.",rel:["celda","referencia"],keys:[["Ctrl+Shift+F5","Ir al cuadro de nombre"]]},
+   {id:"input",label:"Línea de entrada",x:130,y:100,w:340,h:22,desc:"Aquí se escribe y se ve el contenido de la celda, incluidas las fórmulas, que comienzan con =.",rel:["formula","funcion"],keys:[["F2","Editar la celda"],["Ctrl+Shift+F2","Ir a la línea de entrada"],["Alt+=","Función Suma"]]},
+   {id:"grid",label:"Celdas, filas y columnas",x:112,y:178,w:250,h:36,desc:"Aquí se capturan los datos. Cada celda se identifica por su columna y su fila; un conjunto de celdas forma un rango. Sobre ellas se aplican formatos, filtros y gráficas.",rel:["celda","formatocond","filtro","grafica"],keys:[["Ctrl+Space","Seleccionar columna"],["Shift+Space","Seleccionar fila"]]},
+   {id:"tabs",label:"Pestañas de hoja",x:18,y:314,w:452,h:22,desc:"Un documento de Calc puede tener varias hojas; cada una se identifica con una pestaña.",rel:["calc"],keys:[]},
+   {...SIDEBAR,desc:"Panel con propiedades, estilos, galería y navegador. En Calc, F11 abre los estilos y F5 el navegador.",rel:[],keys:[["F11","Estilos"],["F5","Navegador"]]}]},
+ impress:{name:"Impress",
+  deco:'<rect class="gx-deco" x="18" y="100" width="110" height="236" rx="4"/><rect class="gx-page" x="30" y="110" width="86" height="52" rx="3"/><rect class="gx-page" x="30" y="172" width="86" height="52" rx="3"/><rect class="gx-page" x="30" y="234" width="86" height="52" rx="3"/><rect class="gx-deco" x="134" y="100" width="336" height="236" rx="4"/><rect class="gx-page" x="170" y="150" width="264" height="148" rx="3"/><path class="gx-line" d="M196 190h140M196 214h180M196 238h120"/>',
+  parts:[
+   {id:"pane",label:"Panel de diapositivas",x:18,y:100,w:110,h:236,desc:"Muestra las diapositivas de la presentación para seleccionarlas y reordenarlas.",rel:["diapositiva"],keys:[["Alt+PageDown","Ir a la diapositiva siguiente"],["Alt+PageUp","Ir a la diapositiva anterior"]]},
+   {id:"work",label:"Área de trabajo",x:134,y:100,w:336,h:48,desc:"Aquí se diseña la diapositiva: títulos, texto, imágenes, tablas y gráficas, con diseños predeterminados. Desde aquí se aplican también las transiciones y animaciones.",rel:["diapositiva","transicion","presentacion"],keys:[["Ctrl+Enter","Siguiente marcador o nueva diapositiva"],["F5","Iniciar la presentación"],["Shift+F5","Iniciar desde la diapositiva actual"]]},
+   {...SIDEBAR,desc:"Panel con propiedades, estilos, galería y navegador.",rel:[],keys:[]}]},
+ draw:{name:"Draw",
+  deco:'<rect class="gx-deco" x="18" y="132" width="452" height="204" rx="4"/><rect class="gx-page" x="60" y="144" width="368" height="180" rx="3"/><rect class="gx-shape" x="90" y="176" width="90" height="48" rx="6"/><ellipse class="gx-shape" cx="330" cy="200" rx="52" ry="30"/><path class="gx-line" d="M180 200h96" style="stroke:var(--app-fill);stroke-width:2.5"/><path class="gx-line" d="M268 196l8 4-8 4" style="stroke:var(--app-fill);stroke-width:2.5"/>',
+  parts:[
+   {id:"dtools",label:"Barra de dibujo",x:18,y:100,w:452,h:28,desc:"Contiene las herramientas para insertar formas, líneas, conectores y cuadros de texto.",rel:["conector","draw"],keys:[]},
+   {id:"canvas",label:"Página de dibujo",x:60,y:272,w:368,h:44,desc:"Aquí se compone el recurso visual: formas unidas con conectores y cuadros de texto que forman diagramas, mapas conceptuales o infografías.",rel:["organizador","conector"],keys:[["Ctrl+Z","Deshacer"],["Ctrl+Y","Rehacer"]]},
+   {...SIDEBAR,desc:"Panel con propiedades, estilos, galería y navegador.",rel:[],keys:[]}]}
+};
+Object.keys(GUIDE).forEach(k=>{GUIDE[k].parts=[...COMMON.slice(0,2),...GUIDE[k].parts,COMMON[2]]});
+let gApp=store.get("gApp","writer"); if(!GUIDE[gApp])gApp="writer";
+let gIdx=0;
+function renderGuide(){
+  const g=GUIDE[gApp],a=APPS[gApp];
+  $("#guide").className=`card guide-wrap p-3 p-lg-4 mb-5 reveal in ${a.c}`;
+  $("#guideTabs").innerHTML=Object.keys(GUIDE).map(k=>`<button class="nav-link ${APPS[k].c} ${k===gApp?"active":""}" role="tab" data-g="${k}"><i class="bi ${APPS[k].i} me-1"></i>${APPS[k].n}</button>`).join("");
+  const parts=g.parts.map((pt,i)=>{const ty=pt.h<40?pt.y+pt.h/2+4:pt.y+16;
+    return `<g class="hs ${i===gIdx?"active":""}" data-i="${i}" tabindex="0" role="button" aria-label="${esc(pt.label)}"><rect class="hr" x="${pt.x}" y="${pt.y}" width="${pt.w}" height="${pt.h}" rx="5"/><text x="${pt.x+pt.w/2}" y="${ty}">${esc(pt.label)}</text></g>`}).join("");
+  /* las partes pequeñas dentro de zonas deco quedan encima de la decoración; la decoración no recibe clics */
+  $("#guideSvg").innerHTML=`<svg viewBox="0 0 640 380" role="group" aria-label="Esquema de la ventana de ${g.name}">${NS_BASE("LibreOffice "+g.name)}<g style="pointer-events:none">${g.deco}</g>${parts}</svg>`;
+  $("#guideParts").innerHTML=g.parts.map((pt,i)=>`<button class="part-btn ${i===gIdx?"active":""}" data-i="${i}">${esc(pt.label)}</button>`).join("");
+  renderPanel();
+}
+function renderPanel(){
+  const g=GUIDE[gApp],pt=g.parts[gIdx];
+  $("#guidePanel").innerHTML=`<span class="app-chip mb-2"><i class="bi ${APPS[gApp].i} me-1"></i>${g.name}</span><h4 class="h5">${esc(pt.label)}</h4><p>${esc(pt.desc)}</p>`+
+   (pt.rel.length?`<div class="mb-2"><div class="small fw-bold text-secondary mb-1">Conceptos relacionados</div>${pt.rel.map(id=>{const c=CONCEPTS.find(x=>x[0]===id);return c?`<button class="chip-link" data-open-concept="${id}"><i class="bi ${ICONS[id]} me-1"></i>${esc(c[2])}</button>`:""}).join("")}</div>`:"")+
+   (pt.keys.length?`<div><div class="small fw-bold text-secondary mb-1">Atajos útiles</div>${pt.keys.map(k=>`<div class="keyrow"><span>${esc(k[1])}</span><span class="sc-keys">${keycaps(k[0])}</span></div>`).join("")}</div>`:"");
+  $("#gCount").textContent=`Parte ${gIdx+1} de ${g.parts.length}`;
+  $$("#guideSvg .hs").forEach((el,i)=>el.classList.toggle("active",i===gIdx));
+  $$("#guideParts .part-btn").forEach((el,i)=>el.classList.toggle("active",i===gIdx));
+}
+function gGo(i){const n=GUIDE[gApp].parts.length;gIdx=(i+n)%n;renderPanel()}
+$("#guideTabs").addEventListener("click",e=>{const b=e.target.closest("[data-g]");if(!b)return;gApp=b.dataset.g;gIdx=0;store.set("gApp",gApp);renderGuide()});
+$("#guide").addEventListener("click",e=>{const h=e.target.closest(".hs,.part-btn");if(h)gGo(+h.dataset.i)});
+$("#guide").addEventListener("keydown",e=>{const h=e.target.closest(".hs");if(h&&(e.key==="Enter"||e.key===" ")){e.preventDefault();gGo(+h.dataset.i)}});
+$("#gPrev").addEventListener("click",()=>gGo(gIdx-1));
+$("#gNext").addEventListener("click",()=>gGo(gIdx+1));
+
+/* ---- Glosario ---- */
+let cFilter=store.get("cfilter","all"); if(cFilter!=="all"&&!APPS[cFilter])cFilter="all";
 function renderConcepts(){
+  const q=$("#cSearch").value.trim().toLowerCase();
+  const matches=c=>!q||(c[2]+" "+c[3]+" "+c[4]).toLowerCase().includes(q);
   const keys=["all",...Object.keys(APPS)];
-  $("#conceptFilters").innerHTML=keys.map(k=>`<button class="filter-chip ${k==="all"?"":APPS[k].c} ${k===cFilter?"active":""}" data-f="${k}">${k==="all"?"Todos":APPS[k].n}</button>`).join("");
-  $("#conceptGrid").innerHTML=CONCEPTS.map(c=>`<div class="col-sm-6 col-lg-4 col-xl-3 cwrap ${cFilter!=="all"&&c[1]!==cFilter?"hide":""}"><button class="card concept ${APPS[c[1]].c}" data-c="${c[0]}"><span class="tag">${APPS[c[1]].n}</span><h3>${esc(c[2])}</h3><p>${esc(c[3])}</p><span class="more">Ver más <i class="bi bi-arrow-right"></i></span></button></div>`).join("");
+  const cnt=k=>CONCEPTS.filter(c=>(k==="all"||c[1]===k)&&matches(c)).length;
+  $("#conceptFilters").innerHTML=keys.map(k=>`<button class="filter-chip ${k==="all"?"":APPS[k].c} ${k===cFilter?"active":""}" data-f="${k}">${k==="all"?"Todos":APPS[k].n}<span class="count-pill">${cnt(k)}</span></button>`).join("");
+  const list=CONCEPTS.filter(c=>(cFilter==="all"||c[1]===cFilter)&&matches(c));
+  $("#conceptGrid").innerHTML=list.map(c=>`<div class="col-sm-6 col-lg-4 col-xl-3"><button class="card concept ${APPS[c[1]].c} ${seen.includes(c[0])?"seen":""}" data-c="${c[0]}"><span class="seen-badge" title="Revisado"><i class="bi bi-check-circle-fill"></i></span><span class="c-ico"><i class="bi ${ICONS[c[0]]||"bi-journal"}"></i></span><span class="tag">${APPS[c[1]].n}</span><h3>${esc(c[2])}</h3><p>${esc(c[3])}</p><span class="more">Ver más <i class="bi bi-arrow-right"></i></span></button></div>`).join("");
+  $("#cEmpty").hidden=list.length>0;
+  const n=seen.filter(id=>CONCEPTS.some(c=>c[0]===id)).length,t=CONCEPTS.length;
+  $("#seenText").textContent=`Has revisado ${n} de ${t} conceptos`;
+  $("#seenBar").style.width=Math.round(n/t*100)+"%";
 }
 function showConcept(id){
-  const c=CONCEPTS.find(x=>x[0]===id);if(!c)return;
-  openModal({app:c[1],title:c[2],body:`<p class="lead">${esc(c[3])}</p><div class="theory"><h4><i class="bi bi-book me-1"></i>Concepto</h4><p class="mb-0">${esc(c[4])}</p></div><div class="practice"><h4><i class="bi bi-pencil me-1"></i>Pruébalo</h4><p class="mb-0">${esc(c[5])}</p></div>`});
+  const idx=CONCEPTS.findIndex(x=>x[0]===id);if(idx<0)return;
+  const c=CONCEPTS[idx];markSeen(id,true);renderConcepts();
+  const same=CONCEPTS.filter(x=>x[1]===c[1]&&x[0]!==id).slice(0,3);
+  const keys=KEYMAP[id]||[];
+  openModal({app:c[1],title:c[2],body:`<div class="c-hero"><span class="c-ico"><i class="bi ${ICONS[id]||"bi-journal"}"></i></span><div><span class="tag">${APPS[c[1]].n}</span><p class="lead mb-0">${esc(c[3])}</p></div></div>
+    <div class="theory"><h4><i class="bi bi-book me-1"></i>Concepto</h4><p class="mb-0">${esc(c[4])}</p></div>
+    <div class="practice"><h4><i class="bi bi-pencil me-1"></i>Pruébalo</h4><p class="mb-0">${esc(c[5])}</p></div>
+    ${keys.length?`<div class="mb-3"><h4 class="h6 fw-bold text-uppercase">Atajos relacionados</h4>${keys.map(k=>`<div class="keyrow"><span>${esc(k[1])}</span><span class="sc-keys">${keycaps(k[0])}</span></div>`).join("")}</div>`:""}
+    ${same.length?`<div><h4 class="h6 fw-bold text-uppercase">Sigue explorando</h4>${same.map(x=>`<button class="chip-link" data-open-concept="${x[0]}"><i class="bi ${ICONS[x[0]]||"bi-journal"} me-1"></i>${esc(x[2])}</button>`).join("")}</div>`:""}`,
+    footer:`<button type="button" class="btn btn-outline-secondary me-auto" id="seenBtn"><i class="bi bi-check2-circle me-1"></i>Revisado · quitar marca</button><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button><button type="button" class="btn btn-lo" id="nextConcept">Siguiente concepto<i class="bi bi-arrow-right ms-1"></i></button>`});
+  const sb=$("#seenBtn");sb.onclick=()=>{const on=seen.includes(id);markSeen(id,!on);sb.innerHTML=on?'<i class="bi bi-circle me-1"></i>Marcar como revisado':'<i class="bi bi-check2-circle me-1"></i>Revisado · quitar marca';renderConcepts()};
+  $("#nextConcept").onclick=()=>showConcept(CONCEPTS[(idx+1)%CONCEPTS.length][0]);
 }
-$("#conceptFilters").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;cFilter=b.dataset.f;renderConcepts()});
+$("#conceptFilters").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;cFilter=b.dataset.f;store.set("cfilter",cFilter);renderConcepts()});
 $("#conceptGrid").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(b)showConcept(b.dataset.c)});
+$("#cSearch").addEventListener("input",renderConcepts);
 document.addEventListener("click",e=>{const b=e.target.closest("[data-open-concept]");if(b)showConcept(b.dataset.openConcept)});
-renderConcepts();
+renderGuide();renderConcepts();
 
 /* ===================== ATAJOS ===================== */
-let scApp="general";
+let scApp=store.get("scApp","general"); if(!APPS[scApp])scApp="general";
 function renderTabs(){ $("#scTabs").innerHTML=Object.keys(APPS).map(k=>`<button class="nav-link ${APPS[k].c} ${k===scApp?"active":""}" data-a="${k}"><i class="bi ${APPS[k].i} me-1"></i>${APPS[k].n==="General"?"Generales":APPS[k].n}</button>`).join(""); }
 function renderShortcuts(){
   const q=$("#scSearch").value.trim().toLowerCase();
@@ -753,7 +936,7 @@ function renderShortcuts(){
   $("#scList").innerHTML=list.map(s=>`<div class="col-md-6"><div class="sc-row ${APPS[s[0]].c}" data-bs-toggle="popover" data-bs-title="${esc(s[2])}" data-bs-content="${esc((APPS[s[0]].n==="General"?"Generales":APPS[s[0]].n)+(s[3]?" · "+s[3]:""))}"><span>${esc(s[2])}</span><span class="sc-keys">${keycaps(s[1])}</span></div></div>`).join("");
   $("#scEmpty").hidden=list.length>0; initPopovers($("#scList"));
 }
-$("#scTabs").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;scApp=b.dataset.a;$("#scSearch").value="";renderTabs();renderShortcuts()});
+$("#scTabs").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;scApp=b.dataset.a;store.set("scApp",scApp);$("#scSearch").value="";renderTabs();renderShortcuts()});
 $("#scSearch").addEventListener("input",renderShortcuts);
 renderTabs();renderShortcuts();
 
@@ -789,13 +972,15 @@ renderTabs();renderShortcuts();
 })();
 
 /* ===================== RETOS ===================== */
-function quiz(root,{title,icon,sub,items,gen}){
+function quiz(root,{title,icon,sub,items,gen,key}){
   let i=0,score=0,order=[...items.keys()].sort(()=>Math.random()-.5).slice(0,gen||items.length),answered=false;
   const el=$(root);
   function draw(){
     if(i>=order.length){
       const pct=Math.round(score/order.length*100);
-      el.innerHTML=`<h3 class="h5 fw-bold"><i class="bi ${icon} text-lo me-2"></i>${title}</h3><div class="text-center py-4"><div class="display-4 fw-bold text-lo">${score}/${order.length}</div><p class="mb-3">${pct>=80?"¡Excelente trabajo!":pct>=50?"¡Buen avance! Repasa los conceptos y vuelve a intentarlo.":"Revisa el glosario y los atajos, y vuelve a intentarlo."}</p><button class="btn btn-lo" data-r>Reintentar</button></div>`;
+      if(key){const b=bestScores[key];if(!b||b.t!==order.length||score>b.s){bestScores[key]={s:score,t:order.length};store.set("best",bestScores)}}
+      const bb=key&&bestScores[key]?`<p class="small text-secondary">Mejor resultado guardado: <b>${bestScores[key].s}/${bestScores[key].t}</b></p>`:"";
+      el.innerHTML=`<h3 class="h5 fw-bold"><i class="bi ${icon} text-lo me-2"></i>${title}</h3><div class="text-center py-4"><div class="display-4 fw-bold text-lo">${score}/${order.length}</div><p class="mb-3">${pct>=80?"¡Excelente trabajo!":pct>=50?"¡Buen avance! Repasa los conceptos y vuelve a intentarlo.":"Revisa el glosario y los atajos, y vuelve a intentarlo."}</p>${bb}<button class="btn btn-lo" data-r>Reintentar</button></div>`;
       el.querySelector("[data-r]").onclick=()=>{i=0;score=0;order=[...items.keys()].sort(()=>Math.random()-.5).slice(0,gen||items.length);draw()};return;
     }
     const q=items[order[i]];answered=false;
@@ -813,7 +998,7 @@ function quiz(root,{title,icon,sub,items,gen}){
   }
   draw();
 }
-quiz("#quizConcept",{title:"Reto de conceptos",icon:"bi-lightbulb",sub:"Preguntas sobre el contenido del curso.",items:QUIZ});
+quiz("#quizConcept",{title:"Reto de conceptos",icon:"bi-lightbulb",sub:"Preguntas sobre el contenido del curso.",items:QUIZ,key:"concept"});
 /* reto de atajos generado a partir de los datos verificados */
 (function(){
   const pool=SHORTCUTS.filter(s=>s[0]!=="draw");
@@ -824,11 +1009,11 @@ quiz("#quizConcept",{title:"Reto de conceptos",icon:"bi-lightbulb",sub:"Pregunta
     return{q:`En ${APPS[s[0]].n==="General"?"LibreOffice":APPS[s[0]].n}, ¿qué atajo permite: «${s[2]}»?`,o:opts.map(keycapsText),a:opts.indexOf(s[1]),e:`${s[1]}: ${s[2]}.`};
   });
   function keycapsText(k){return k.split("+").map(x=>`<kbd class="key">${esc(x)}</kbd>`).join(" + ")}
-  quiz("#quizKeys",{title:"Reto de atajos",icon:"bi-keyboard",sub:"Elige la combinación correcta (5 preguntas al azar).",items,gen:5});
+  quiz("#quizKeys",{title:"Reto de atajos",icon:"bi-keyboard",sub:"Elige la combinación correcta (5 preguntas al azar).",items,gen:5,key:"keys"});
 })();
 
 /* ===================== EJERCICIOS ===================== */
-let prog=store.get("lo-progress",{});
+let prog=store.get("progress",{}); if(!prog||typeof prog!=="object")prog={};
 const stepsDone=id=>(prog[id]||[]).filter(Boolean).length;
 function renderEx(){
   $("#exGrid").innerHTML=EXERCISES.map(x=>{const d=stepsDone(x.id),t=x.steps.length,p=Math.round(d/t*100);
@@ -846,13 +1031,42 @@ function openEx(id){
     <h4 class="h6 fw-bold text-uppercase">Pasos <span class="text-secondary fw-normal" id="stepCount"></span></h4>
     <div id="steps">${x.steps.map((s,i)=>`<label class="step ${st[i]?"done":""}"><input type="checkbox" data-i="${i}" ${st[i]?"checked":""}><span>${esc(s)}</span></label>`).join("")}</div>`});
   const upd=()=>{$("#stepCount").textContent=`(${stepsDone(id)} de ${x.steps.length})`};upd();
-  $("#steps").onchange=e=>{const c=e.target.closest("input[data-i]");if(!c)return;(prog[id]=prog[id]||[])[+c.dataset.i]=c.checked;c.closest(".step").classList.toggle("done",c.checked);store.set("lo-progress",prog);upd();renderEx();
+  $("#steps").onchange=e=>{const c=e.target.closest("input[data-i]");if(!c)return;(prog[id]=prog[id]||[])[+c.dataset.i]=c.checked;c.closest(".step").classList.toggle("done",c.checked);store.set("progress",prog);upd();renderEx();
     if(stepsDone(id)===x.steps.length)$("#stepCount").insertAdjacentHTML("afterend",' <span class="badge text-bg-success">¡Ejercicio completado!</span>')};
 }
 $("#exGrid").addEventListener("click",e=>{const b=e.target.closest("[data-ex]");if(b)openEx(b.dataset.ex)});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-open-ex]");if(b)openEx(b.dataset.openEx)});
-$("#resetProgress").addEventListener("click",()=>{prog={};store.set("lo-progress",prog);renderEx()});
+$("#resetProgress").addEventListener("click",()=>{prog={};store.set("progress",prog);renderEx()});
 renderEx();
+
+
+/* ===================== PREFERENCIAS Y AVANCE ===================== */
+function persistAll(){store.set("theme",themeRoot.getAttribute("data-bs-theme"));store.set("session",+(($("#sessionPills .active")||{dataset:{s:0}}).dataset.s||0));store.set("cfilter",cFilter);store.set("scApp",scApp);store.set("gApp",gApp);store.set("progress",prog);store.set("seen",seen);store.set("best",bestScores)}
+function openPrefs(){
+  const on=store.on();
+  const allSteps=EXERCISES.reduce((a,x)=>a+x.steps.length,0),doneSteps=EXERCISES.reduce((a,x)=>a+stepsDone(x.id),0);
+  const exPct=Math.round(doneSteps/allSteps*100);
+  const nSeen=seen.filter(id=>CONCEPTS.some(c=>c[0]===id)).length,cPct=Math.round(nSeen/CONCEPTS.length*100);
+  const bc=bestScores.concept,bk=bestScores.keys;
+  const exp=store.lastExp();
+  const expTxt=exp?new Date(exp).toLocaleDateString("es-MX",{day:"numeric",month:"long",year:"numeric"}):null;
+  const bar=(p)=>`<div class="progress" style="height:.6rem"><div class="progress-bar" style="width:${p}%"></div></div>`;
+  openModal({app:"general",title:"Mis preferencias y avance",body:`
+    <div class="pref-box"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="remSw" ${on?"checked":""}><label class="form-check-label fw-bold" for="remSw">Recordar mi avance y preferencias en este navegador</label></div>
+      <p class="small text-secondary mb-0 mt-2">Los datos se guardan solo en este navegador y caducan <b>30 días después de tu última actividad</b>. ${on&&expTxt?`Si no vuelves a usar la página, se borrarán el ${expTxt}.`:(!on?"El guardado está desactivado.":"Aún no hay datos guardados.")}</p></div>
+    <div class="pref-box"><div class="fw-bold mb-2">Tema</div><div class="btn-group" role="group" aria-label="Tema"><button class="btn btn-outline-secondary" data-theme="light"><i class="bi bi-sun me-1"></i>Claro</button><button class="btn btn-outline-secondary" data-theme="dark"><i class="bi bi-moon-stars me-1"></i>Oscuro</button></div></div>
+    <div class="pref-box"><div class="fw-bold mb-3">Mi avance</div>
+      <div class="d-flex justify-content-between small"><span>Ejercicios: ${doneSteps} de ${allSteps} pasos</span><b>${exPct}%</b></div>${bar(exPct)}
+      <div class="d-flex justify-content-between small mt-3"><span>Conceptos revisados: ${nSeen} de ${CONCEPTS.length}</span><b>${cPct}%</b></div>${bar(cPct)}
+      <div class="small mt-3"><i class="bi bi-lightbulb me-1"></i>Reto de conceptos: <b>${bc?bc.s+"/"+bc.t:"sin intentos"}</b> · <i class="bi bi-keyboard ms-2 me-1"></i>Reto de atajos: <b>${bk?bk.s+"/"+bk.t:"sin intentos"}</b></div></div>
+    <p class="small text-secondary mb-0">Se guardan: tema, sesión consultada, filtros, ejercicios, conceptos revisados y mejores resultados de los retos.</p>`,
+    footer:`<button type="button" class="btn btn-outline-danger me-auto" id="wipeBtn"><i class="bi bi-trash3 me-1"></i>Borrar mis datos</button><button type="button" class="btn btn-lo" data-bs-dismiss="modal">Listo</button>`});
+  $$("[data-theme]",$("#infoBody")).forEach(b=>{b.classList.toggle("active",b.dataset.theme===themeRoot.getAttribute("data-bs-theme"));b.onclick=()=>{setTheme(b.dataset.theme);$$("[data-theme]",$("#infoBody")).forEach(x=>x.classList.toggle("active",x===b))}});
+  $("#remSw").onchange=e=>{if(e.target.checked){store.set("remember",true);persistAll();toast("Guardado activado: tu avance se recordará 30 días.")}else{store.set("remember",false);store.clear("remember");toast("Guardado desactivado: se borraron los datos guardados.")}};
+  $("#wipeBtn").onclick=()=>{store.clear();prog={};seen=[];bestScores={};renderEx();renderConcepts();modal.hide();toast("Se borraron tus datos guardados en este navegador.")};
+}
+$("#prefBtn").addEventListener("click",openPrefs);
+if(purgedOnLoad>0)toast("Tus datos guardados superaron los 30 días sin actividad y se borraron.");
 
 /* ===================== EVALUACIÓN ===================== */
 $("#criteria").innerHTML=CRITERIA.map(c=>`<div class="col-md-4 reveal"><div class="card crit"><i class="bi ${c[0]}"></i><div class="fw-bold">${esc(c[1])}</div></div></div>`).join("");
