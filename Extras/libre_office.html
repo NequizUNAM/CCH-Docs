@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Curso LibreOffice para docentes</title>
-<meta name="description" content="Sitio interactivo del curso intersemestral: uso de LibreOffice para elaborar materiales didácticos y recursos educativos digitales.">
+<meta name="description" content="Curso-taller en línea para el profesorado de la ENCCH: uso de LibreOffice para elaborar materiales didácticos y recursos educativos digitales.">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <style>
@@ -160,6 +160,25 @@ kbd.key{background:linear-gradient(#fff,#e9edf0);color:#1b1f23;border:1px solid 
 .bar b{position:absolute;top:-22px;left:0;right:0;text-align:center;font-size:.78rem;color:var(--ink)}
 .bar-label{flex:1;text-align:center;font-size:.78rem;color:var(--muted)}
 
+
+.doc-tabs .nav-link{color:var(--ink);border:1px solid rgba(128,128,128,.3);font-weight:700;font-size:.88rem;padding:.35rem .8rem}
+.doc-tabs .nav-link.active{background:var(--lo-green-fill);color:#fff;border-color:var(--lo-green-fill)}
+.doc-body{animation:fadeUp .4s ease}
+.doc-body p{margin-bottom:.8rem}
+.credit-card .people li{display:flex;align-items:center;gap:.8rem;padding:.55rem 0;font-weight:600}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--lo-green-fill);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.85rem;flex:0 0 42px}
+.credit-card .avatar{background:var(--lo-blue)}
+.credit-card.alt .avatar{background:var(--lo-green-fill)}
+.crit{height:100%;padding:1.3rem;display:flex;gap:1rem;align-items:flex-start;border-left:6px solid var(--lo-green-fill);transition:transform .25s}
+.crit:hover{transform:translateY(-4px)}
+.crit i{font-size:1.8rem;color:var(--lo-green-dark)}
+.ev-card{width:100%;text-align:left;padding:1rem;border-left:6px solid var(--app);background:var(--card-bg);color:var(--ink);height:100%;transition:transform .25s}
+.ev-card:hover{transform:translateY(-4px)}
+.ev-card .tag{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--app-ink)}
+.pillar{text-align:left;display:flex;gap:.7rem;align-items:center;background:var(--card-bg);color:var(--ink);border:1px solid rgba(128,128,128,.3);border-radius:12px;padding:.7rem 1rem;font-weight:700;transition:.2s}
+.pillar:hover{border-color:var(--lo-green-fill);transform:translateX(4px)}
+.pillar i{color:var(--lo-green-dark);font-size:1.3rem}
+
 /* retos */
 .quiz-opt{display:block;width:100%;text-align:left;background:var(--card-bg);color:var(--ink);border:2px solid rgba(128,128,128,.3);border-radius:12px;padding:.7rem 1rem;margin-bottom:.55rem;font-weight:600;transition:.2s}
 .quiz-opt:hover:not(:disabled){border-color:var(--lo-blue);transform:translateX(4px)}
@@ -220,7 +239,7 @@ footer a{color:#8fd0fa}
         <li class="nav-item"><a class="nav-link" href="#retos">Retos</a></li>
         <li class="nav-item"><a class="nav-link" href="#ejercicios">Ejercicios</a></li>
         <li class="nav-item"><a class="nav-link" href="#evaluacion">Evaluación</a></li>
-        <li class="nav-item"><a class="nav-link" href="#recursos">Recursos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#creditos">Créditos</a></li>
         <li class="nav-item ms-lg-2"><button class="btn btn-sm btn-outline-secondary" id="themeBtn" aria-label="Cambiar tema"><i class="bi bi-moon-stars"></i></button></li>
       </ul>
     </div>
@@ -231,9 +250,9 @@ footer a{color:#8fd0fa}
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-7">
-        <span class="badge-soft mb-3 d-inline-block"><i class="bi bi-calendar-event me-1"></i>Curso intersemestral · En línea</span>
+        <span class="badge-soft mb-3 d-inline-block"><i class="bi bi-laptop me-1"></i>Curso-taller · En línea</span>
         <h1 class="mb-3">Uso de <span>LibreOffice</span> para la elaboración de materiales didácticos y recursos educativos digitales</h1>
-        <p class="lead mb-4">Formación y actualización para docentes de la Escuela Nacional Colegio de Ciencias y Humanidades. Aprende
+        <p class="lead mb-4">Curso-taller de actualización en la disciplina y la didáctica para el profesorado de la Escuela Nacional Colegio de Ciencias y Humanidades. Aprende
           <span class="term" data-bs-toggle="popover" data-bs-title="Suite ofimática" data-bs-content="Conjunto de aplicaciones de oficina que trabajan juntas: texto, hojas de cálculo, presentaciones y dibujo.">suite ofimática</span>
           de
           <span class="term" data-bs-toggle="popover" data-bs-title="Software libre" data-bs-content="LibreOffice es una suite de productividad de oficina libre y de código abierto, desarrollada por The Document Foundation.">software libre</span>
@@ -264,7 +283,7 @@ footer a{color:#8fd0fa}
       <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="5">0</b><span>Sesiones</span></div></div>
       <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="4">0</b><span>Aplicaciones de LibreOffice</span></div></div>
       <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="5">0</b><span>Evidencias de aprendizaje</span></div></div>
-      <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="1">0</b><span>Portafolio digital final</span></div></div>
+      <div class="col-6 col-md-3 reveal"><div class="card stat"><b data-count="1">0</b><span>Secuencia didáctica final</span></div></div>
     </div>
   </div>
 </section>
@@ -273,45 +292,34 @@ footer a{color:#8fd0fa}
 <section id="curso">
   <div class="container">
     <div class="reveal"><div class="sec-kicker">El curso</div><h2 class="sec-title">Datos generales</h2><div class="sec-bar"></div></div>
-    <div class="row g-3 mb-5">
-      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-mortarboard"></i><h3>Tipo de actividad</h3><p>Formación y actualización docente</p></div></div>
-      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-camera-video"></i><h3>Modalidad y plataforma</h3><p>En línea, a través de Microsoft Teams</p></div></div>
-      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-people"></i><h3>Dirigido a</h3><p>Profesores de la ENCCH de todas las áreas</p></div></div>
-      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-laptop"></i><h3>Requisitos</h3><p>Computadora, conexión a internet y conocimientos básicos de manejo de archivos</p></div></div>
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-diagram-3"></i><h3>Eje temático</h3><p>Actualización en la disciplina y la didáctica</p></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-camera-video"></i><h3>Modalidad</h3><p>En línea</p></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-display"></i><h3>Plataforma en donde se impartirá</h3><p>Zoom</p></div></div>
+      <div class="col-sm-6 col-lg-3 reveal"><div class="card info-card"><i class="bi bi-tools"></i><h3>Herramientas</h3><p>Microsoft Teams y LibreOffice</p></div></div>
+    </div>
+    <div class="card p-3 mb-5 reveal d-flex flex-row align-items-center gap-3">
+      <i class="bi bi-box-seam fs-3 text-lo"></i>
+      <div><b>Recursos materiales y digitales:</b> Microsoft Teams y LibreOffice (Writer, Calc, Impress y Draw).</div>
     </div>
 
     <div class="row g-4">
-      <div class="col-lg-6 reveal">
+      <div class="col-lg-5 reveal">
         <div class="card h-100 p-4">
-          <h3 class="h4 fw-bold"><i class="bi bi-bullseye text-lo me-2"></i>Objetivo general</h3>
-          <p>Desarrollar y fortalecer las competencias digitales del profesorado de la ENCCH mediante el uso de las herramientas principales con las que cuenta LibreOffice para elaborar documentos académicos, hojas de cálculo, presentaciones electrónicas y recursos didácticos que contribuyan a mejorar la planeación, el desarrollo y la evaluación de los procesos de enseñanza y aprendizaje.</p>
-          <h4 class="h6 fw-bold mt-3">Objetivos específicos</h4>
-          <ul class="check-list">
-            <li>Identificar las características principales de LibreOffice y sus aplicaciones.</li>
-            <li>Elaborar documentos académicos y materiales de apoyo mediante Writer.</li>
-            <li>Organizar información, realizar operaciones y generar gráficas mediante Calc.</li>
-            <li>Diseñar presentaciones electrónicas didácticas con Impress.</li>
-            <li>Elaborar recursos visuales con Draw.</li>
-            <li>Crear un portafolio digital de recursos educativos y compartirlo para su revisión.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-lg-6 reveal">
-        <div class="card h-100 p-4">
-          <h3 class="h4 fw-bold"><i class="bi bi-stars text-lo me-2"></i>Competencias que desarrollarás</h3>
-          <p class="text-secondary">Haz clic en una competencia para ver cómo se trabaja en el curso.</p>
+          <h3 class="h4 fw-bold"><i class="bi bi-bullseye text-lo me-2"></i>Propósito</h3>
+          <p>El profesorado participante, al finalizar este curso podrá: fortalecer sus habilidades digitales mediante el uso de las herramientas de LibreOffice (Writer, Calc, Impress y Draw), a través de actividades prácticas que les permitan elaborar documentos académicos, organizar y analizar información, diseñar presentaciones electrónicas y crear recursos didácticos digitales, con la finalidad de optimizar la planeación, el desarrollo y la evaluación de los procesos de enseñanza y aprendizaje.</p>
+          <h4 class="h6 fw-bold mt-4">Principios pedagógicos de la ENCCH en los que se apoya el curso</h4>
+          <p class="text-secondary small mb-2">Toca un principio para leer cómo se retoma.</p>
           <div id="compList" class="d-grid gap-2"></div>
-          <div class="mt-4 p-3 rounded-3" style="background:var(--lo-green-soft)">
-            <b><i class="bi bi-trophy me-1"></i>Producto final:</b> portafolio digital de materiales didácticos elaborados con LibreOffice.
-          </div>
         </div>
       </div>
-    </div>
-
-    <div class="card p-4 mt-4 reveal">
-      <h3 class="h4 fw-bold">¿Por qué este curso?</h3>
-      <p class="mb-2">Las herramientas digitales son un apoyo importante para fortalecer la práctica docente, organizar la información y diseñar materiales didácticos que favorezcan el aprendizaje del estudiantado. Con LibreOffice podrás preparar actividades, instrumentos de evaluación, reportes, presentaciones y otros recursos de apoyo a la enseñanza.</p>
-      <p class="mb-0">La modalidad en línea combina explicación y demostración con ejercicios individuales, colaboración entre colegas y elaboración de productos digitales, para promover el aprendizaje autónomo y el intercambio de experiencias.</p>
+      <div class="col-lg-7 reveal">
+        <div class="card h-100 p-4">
+          <h3 class="h4 fw-bold mb-3"><i class="bi bi-journal-text text-lo me-2"></i>Presentación y justificación</h3>
+          <ul class="nav nav-pills mb-3 gap-1 doc-tabs" id="docTabs" role="tablist"></ul>
+          <div id="docBody" class="doc-body"></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -416,52 +424,60 @@ footer a{color:#8fd0fa}
 <!-- Evaluación -->
 <section id="evaluacion" style="background:var(--page-bg-alt)">
   <div class="container">
-    <div class="reveal"><div class="sec-kicker">Evaluación</div><h2 class="sec-title">Criterios de evaluación</h2><div class="sec-bar"></div>
-    <p class="text-secondary">Se evalúan las evidencias de cada sesión y el portafolio digital que las integra, con revisión entre pares, retroalimentación del grupo, rúbrica, autoevaluación y coevaluación.</p></div>
-    <div class="table-responsive reveal">
-      <table class="table align-middle">
-        <thead><tr><th>Sesión</th><th>Evidencia</th><th>Aspectos a valorar</th></tr></thead>
-        <tbody id="evalBody"></tbody>
-      </table>
-    </div>
-    <div class="row g-3 mt-2" id="instruments"></div>
+    <div class="reveal"><div class="sec-kicker">Evaluación</div><h2 class="sec-title">Criterios de evaluación</h2><div class="sec-bar"></div></div>
+    <div class="row g-3 mb-4" id="criteria"></div>
+    <h3 class="h5 fw-bold reveal"><i class="bi bi-patch-check text-lo me-2"></i>Evidencias de cada sesión</h3>
+    <p class="text-secondary reveal">Abre una evidencia para consultar el ejercicio correspondiente.</p>
+    <div class="row g-3" id="evidences"></div>
   </div>
 </section>
 
-<!-- Recursos -->
-<section id="recursos">
+<!-- Créditos -->
+<section id="creditos">
   <div class="container">
-    <div class="reveal"><div class="sec-kicker">Material de apoyo</div><h2 class="sec-title">Recursos y bibliografía</h2><div class="sec-bar"></div></div>
-    <div class="row g-4">
-      <div class="col-lg-5 reveal">
-        <div class="card p-4 h-100">
-          <h3 class="h5 fw-bold">Recursos materiales y digitales</h3>
-          <ul class="check-list mt-2">
-            <li><b>Microsoft Teams</b>: plataforma en la que se imparte el curso.</li>
-            <li><b>LibreOffice</b>: Writer, Calc, Impress y Draw.</li>
-            <li>Computadora con conexión a internet.</li>
-            <li>Imágenes y contenidos de tu asignatura.</li>
-            <li>Datos ficticios de calificaciones para la práctica de Calc.</li>
-            <li>Ejemplos de presentaciones para analizar.</li>
-            <li>Rúbrica, autoevaluación, cuestionario de salida y encuesta del curso.</li>
+    <div class="reveal"><div class="sec-kicker">Reconocimientos</div><h2 class="sec-title">Créditos</h2><div class="sec-bar"></div></div>
+    <div class="row g-4 mb-4">
+      <div class="col-md-6 reveal">
+        <div class="card p-4 h-100 credit-card">
+          <h3 class="h5 fw-bold"><i class="bi bi-person-video3 text-lo me-2"></i>Impartidores</h3>
+          <ul class="list-unstyled mb-0 mt-3 people">
+            <li><span class="avatar">RO</span>Ramírez Ortega César</li>
+            <li><span class="avatar">ZH</span>Zavaleta Hernández Angélica Vianey</li>
           </ul>
         </div>
       </div>
-      <div class="col-lg-7 reveal">
-        <div class="card p-4 h-100">
-          <h3 class="h5 fw-bold">Bibliografía y fuentes</h3>
-          <ul class="list-unstyled ref mt-2 mb-0">
-            <li>LibreOffice Documentation Team. (2026). <i>Guía de iniciación 26.2</i>. The Document Foundation. <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/iniciacion/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
-            <li>LibreOffice Documentation Team. (2026). <i>Guía de Writer 26.2</i>. The Document Foundation. <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/writer/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
-            <li>LibreOffice Documentation Team. (2021). <i>Guía de Impress 7.0</i>. The Document Foundation. <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/impress/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
-            <li>The Document Foundation. (s. f.). <i>Documentación en español</i> (guías de Calc, Draw y otros componentes). <a href="https://documentation.libreoffice.org/es/documentacion-en-espanol/" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
-            <li>LibreOffice Documentation Team. <i>Calc Guide 26.2</i>, apéndice de atajos de teclado. <a href="https://books.libreoffice.org/en/CG262/CG26218-KeyboardShortcuts.html" target="_blank" rel="noopener">books.libreoffice.org</a></li>
-            <li>The Document Foundation. <i>Ayuda de LibreOffice Impress: uso de atajos de teclado</i>. <a href="https://help.libreoffice.org/7.2/en-US/text/simpress/guide/keyboard.html" target="_blank" rel="noopener">help.libreoffice.org</a></li>
-            <li>The Document Foundation. (s. f.). <i>Descargar LibreOffice</i>. <a href="https://es.libreoffice.org/descarga/libreoffice/" target="_blank" rel="noopener">es.libreoffice.org</a></li>
-            <li>Colegio de Ciencias y Humanidades, UNAM. (s. f.). <i>Microsoft Teams: guía para compartir pantalla en una reunión</i>. <a href="https://www.cch.unam.mx/sites/default/files/3.pdf" target="_blank" rel="noopener">cch.unam.mx</a></li>
+      <div class="col-md-6 reveal">
+        <div class="card p-4 h-100 credit-card alt">
+          <h3 class="h5 fw-bold"><i class="bi bi-pencil-square text-lo me-2"></i>Diseñadores</h3>
+          <ul class="list-unstyled mb-0 mt-3 people">
+            <li><span class="avatar">NM</span>Nequiz Medina Pedro Ernesto</li>
+            <li><span class="avatar">RO</span>Ramírez Ortega César</li>
           </ul>
         </div>
       </div>
+    </div>
+    <div class="card p-4 reveal">
+      <h3 class="h5 fw-bold"><i class="bi bi-book text-lo me-2"></i>Referencias bibliográficas</h3>
+      <ul class="list-unstyled ref mt-3 mb-0">
+            <li>SUSE. (2026). LibreOffice Calc. En GNOME User Guide. <a href="https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-lo-calc.html" target="_blank" rel="noopener">https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-lo-calc.html</a></li>
+            <li>The Document Foundation. (2026). Features – Draw. En LibreOffice. <a href="https://el.libreoffice.org/features/draw/" target="_blank" rel="noopener">https://el.libreoffice.org/features/draw/</a></li>
+            <li>The Document Foundation. (2026). Getting started with Writer. En Getting Started Guide 5.1. <a href="https://documentation.libreoffice.org/assets/Uploads/Documentation/en/GS5.1/HTML/GS5104-GettingStartedWithWriter.html" target="_blank" rel="noopener">https://documentation.libreoffice.org/assets/Uploads/Documentation/en/GS5.1/HTML/GS5104-GettingStartedWithWriter.html</a></li>
+            <li>The Document Foundation. (2026). Getting started with Writer. En Getting Started Guide 5.2. Recuperado el 30 de octubre de 2026, de <a href="https://documentation.libreoffice.org/assets/Uploads/Documentation/en/GS5.2/HTML/GS5204-GettingStartedWithWriter.html" target="_blank" rel="noopener">https://documentation.libreoffice.org/assets/Uploads/Documentation/en/GS5.2/HTML/GS5204-GettingStartedWithWriter.html</a></li>
+            <li>The Document Foundation. (2026). Introducing Impress. En Impress Guide 24.2. <a href="https://books.libreoffice.org/en/IG242/IG2401-IntroducingImpress.html" target="_blank" rel="noopener">https://books.libreoffice.org/en/IG242/IG2401-IntroducingImpress.html</a></li>
+            <li>The Document Foundation. (2026). Introducing Writer. En Writer Guide 7.2. <a href="https://books.libreoffice.org/en/WG72/WG7201-IntroducingWriter.html" target="_blank" rel="noopener">https://books.libreoffice.org/en/WG72/WG7201-IntroducingWriter.html</a></li>
+            <li>The Document Foundation. (2026). LibreOffice Calc features. En LibreOffice Help. <a href="https://help.libreoffice.org/latest/hr/text/scalc/main0503.html" target="_blank" rel="noopener">https://help.libreoffice.org/latest/hr/text/scalc/main0503.html</a></li>
+            <li>The Document Foundation. (2026). LibreOffice Draw features. En LibreOffice Help. <a href="https://help.libreoffice.org/latest/lo/text/sdraw/main0503.html" target="_blank" rel="noopener">https://help.libreoffice.org/latest/lo/text/sdraw/main0503.html</a></li>
+            <li>The Document Foundation. (2026). LibreOffice Impress features. En LibreOffice Help. <a href="https://help.libreoffice.org/latest/si/text/simpress/main0503.html" target="_blank" rel="noopener">https://help.libreoffice.org/latest/si/text/simpress/main0503.html</a></li>
+            <li>The Document Foundation. (2026). LibreOffice Writer features. En LibreOffice Help. <a href="https://help.libreoffice.org/latest/hi/text/swriter/main0503.html" target="_blank" rel="noopener">https://help.libreoffice.org/latest/hi/text/swriter/main0503.html</a></li>
+      </ul>
+    </div>
+    <div class="card p-4 mt-4 reveal">
+      <h3 class="h6 fw-bold"><i class="bi bi-keyboard text-lo me-2"></i>Fuentes adicionales consultadas para los atajos de teclado</h3>
+      <ul class="list-unstyled ref mt-2 mb-0 small">
+        <li>LibreOffice Documentation Team. <i>Calc Guide 26.2</i>, apéndice de atajos de teclado. <a href="https://books.libreoffice.org/en/CG262/CG26218-KeyboardShortcuts.html" target="_blank" rel="noopener">books.libreoffice.org</a></li>
+        <li>LibreOffice Documentation Team. <i>Guía de Writer 26.2</i>, apéndice de atajos de teclado. <a href="https://documentation.libreoffice.org/assets/Uploads/Documentation/es/WG262/PDF/WG26222-AtajosTeclado.pdf" target="_blank" rel="noopener">documentation.libreoffice.org</a></li>
+        <li>The Document Foundation. <i>Ayuda de LibreOffice Impress: uso de atajos de teclado</i>. <a href="https://help.libreoffice.org/7.2/en-US/text/simpress/guide/keyboard.html" target="_blank" rel="noopener">help.libreoffice.org</a></li>
+      </ul>
     </div>
   </div>
 </section>
@@ -472,8 +488,8 @@ footer a{color:#8fd0fa}
     <div class="row g-3">
       <div class="col-md-8">
         <h2 class="h5 fw-bold">Uso de LibreOffice para la elaboración de materiales didácticos y recursos educativos digitales</h2>
-        <p class="mb-1">Curso intersemestral en línea · Escuela Nacional Colegio de Ciencias y Humanidades.</p>
-        <p class="small mb-0 opacity-75">Sitio de apoyo con fines educativos. LibreOffice y The Document Foundation son marcas de sus respectivos propietarios. La paleta de colores se inspira en la de las aplicaciones de LibreOffice. Fuentes consultadas el 24 de octubre de 2026.</p>
+        <p class="mb-1">Curso-taller en línea · Escuela Nacional Colegio de Ciencias y Humanidades.</p>
+        <p class="small mb-0 opacity-75">Sitio de apoyo con fines educativos. LibreOffice y The Document Foundation son marcas de sus respectivos propietarios. La paleta de colores se inspira en la de las aplicaciones de LibreOffice.</p>
       </div>
       <div class="col-md-4 text-md-end"><a href="#inicio" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-up me-1"></i>Volver al inicio</a></div>
     </div>
@@ -503,41 +519,53 @@ const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v)
 const APPS={writer:{n:"Writer",c:"app-writer",i:"bi-file-earmark-text"},calc:{n:"Calc",c:"app-calc",i:"bi-table"},impress:{n:"Impress",c:"app-impress",i:"bi-easel"},draw:{n:"Draw",c:"app-draw",i:"bi-bezier2"},general:{n:"General",c:"app-general",i:"bi-grid"}};
 
 /* ===================== DATOS ===================== */
-const COMPETENCIAS=[
- ["Manejo de herramientas digitales para el trabajo académico","Se desarrolla en todo el curso al usar las cuatro aplicaciones de LibreOffice para tareas reales de la docencia."],
- ["Elaboración y edición de documentos con formato profesional","Sesión 1: plan de clase con estilos, tablas, imágenes, encabezados, pies de página y numeración, exportado a PDF."],
- ["Organización, análisis y representación gráfica de datos","Sesión 2: tabla de seguimiento académico con fórmulas, filtros, formato condicional y gráficas."],
- ["Diseño de presentaciones claras y visualmente comprensibles","Sesión 3: análisis de ejemplos y diseño de una presentación de 6 a 8 diapositivas."],
- ["Desarrollo de materiales educativos digitales","Sesión 4 y portafolio: infografías, diagramas de flujo o mapas conceptuales y su integración final."],
- ["Evaluación y mejora de los propios productos mediante retroalimentación","Revisión entre pares, retroalimentación del grupo, rúbrica, autoevaluación y coevaluación."]
+const PRINCIPIOS=[
+ ["bi-lightbulb","Aprender a aprender","El curso retoma este principio al promover el aprendizaje autónomo: cada participante explora las herramientas de LibreOffice y decide cómo aplicarlas a su asignatura."],
+ ["bi-hammer","Aprender a hacer","El enfoque del curso es práctico: en cada sesión se realizan demostraciones guiadas y ejercicios que terminan en una evidencia elaborada con LibreOffice."],
+ ["bi-person-heart","Aprender a ser","Se busca una práctica docente reflexiva, autónoma y comprometida con la formación integral del estudiantado, con intercambio de experiencias y retroalimentación entre el profesorado."]
+];
+const DOCS=[
+ ["Presentación",[
+  "El curso “Uso de LibreOffice para la elaboración de materiales didácticos y recursos educativos digitales” se fundamenta en los principios del Modelo Educativo de la Escuela Nacional Colegio de Ciencias y Humanidades (ENCCH), que reconoce al estudiantado como protagonista de su aprendizaje y al profesorado como orientador y facilitador de experiencias educativas que favorecen la autonomía, el pensamiento crítico y la construcción significativa del conocimiento. Desde esta perspectiva, la formación y actualización del profesorado constituye una oportunidad para fortalecer las competencias digitales del profesorado e incorporar herramientas tecnológicas que contribuyan a mejorar la planeación, el desarrollo y la evaluación de los procesos de enseñanza y aprendizaje.",
+  "El enfoque del curso es práctico y formativo. Ya que se retoman los principios pedagógicos de la ENCCH, particularmente aprender a aprender, aprender a hacer y aprender a ser, como referentes para promover una práctica docente reflexiva, autónoma y comprometida con la formación integral del estudiantado. Asimismo, se considera la orientación interdisciplinaria del colegio, mediante la elaboración de recursos digitales que permitan organizar, representar y comunicar información de distintas áreas del conocimiento.",
+  "Desde el punto de vista metodológico, el curso se desarrollará mediante demostraciones guiadas, ejercicios prácticos, resolución de problemas, elaboración de materiales didácticos y actividades de intercambio de experiencias entre el profesorado participante. Como una opción alterna a la suite de Microsoft Office, el uso de LibreOffice Writer, Calc, Impress y Draw, los participantes diseñarán documentos académicos, hojas de cálculo, presentaciones electrónicas y recursos gráficos que respondan a necesidades concretas de su práctica docente. La evaluación tendrá un carácter formativo y continuo, considerando las evidencias de aprendizaje y la retroalimentación como medios para reconocer avances y mejorar los productos elaborados.",
+  "La finalidad del curso es contribuir a la actualización permanente del profesorado de la ENCCH mediante el desarrollo de habilidades para utilizar herramientas digitales de manera crítica, creativa y pertinente. Se busca que los conocimientos adquiridos trasciendan el manejo técnico de las aplicaciones y se traduzcan en recursos educativos que favorezcan la participación activa del estudiantado, el aprendizaje autónomo, la organización del conocimiento y el desarrollo de habilidades para resolver problemas. De esta manera, la incorporación de LibreOffice se plantea como un medio para fortalecer la práctica docente, en congruencia con los principios formativos del Modelo Educativo del Colegio."]],
+ ["Justificación",[
+  "La actualización continua del profesorado es fundamental para responder a las necesidades educativas actuales y fortalecer la formación integral del estudiantado de la ENCCH. En un contexto en el que las tecnologías digitales forman parte de las actividades académicas, resulta pertinente que el profesorado desarrolle habilidades para seleccionar, utilizar y adaptar herramientas tecnológicas que contribuyan al diseño de experiencias de aprendizaje significativas. En este sentido, el curso “Uso de LibreOffice para la elaboración de materiales didácticos y recursos educativos digitales” responde a la necesidad de fortalecer las capacidades digitales del profesorado y ampliar sus posibilidades para elaborar materiales de apoyo a la enseñanza."]],
+ ["Pertinencia",[
+  "El curso es pertinente porque atiende necesidades concretas de la práctica del profesorado, como la elaboración de guías de trabajo, instrumentos de evaluación, tablas para el análisis de información, presentaciones electrónicas y recursos gráficos. El uso de LibreOffice ofrece herramientas accesibles para desarrollar estas actividades y permite que el profesorado adapte los materiales a las características de sus asignaturas y a las necesidades de aprendizaje de su alumnado. Además, la propuesta se vincula con los principios de ENCCH al promover el aprendizaje autónomo, la aplicación práctica de los conocimientos y la búsqueda de alternativas para resolver situaciones educativas diferentes."]],
+ ["Calidad",[
+  "La calidad del curso se sustenta en una organización progresiva de los contenidos, una metodología centrada en la práctica y una evaluación basada en evidencias de aprendizaje. Las cinco sesiones permitirán que el profesorado participante conozca las funciones principales de LibreOffice, desarrollen ejercicios guiados y elaboren productos que puedan incorporarse a su trabajo académico. La retroalimentación y el diseño de una secuencia didáctica favorecerá la reflexión sobre la calidad, claridad, accesibilidad y pertinencia pedagógica de los materiales elaborados. Asimismo, la evaluación de los resultados permitirá identificar logros y aspectos susceptibles de mejora."]],
+ ["Trascendencia",[
+  "La trascendencia del curso radica en que los aprendizajes adquiridos pueden aplicarse más allá de las sesiones de formación, al incorporarse en la planeación didáctica, el desarrollo de actividades, la elaboración de materiales y el seguimiento del aprendizaje del estudiantado. La utilización de herramientas digitales puede contribuir a optimizar el trabajo académico, diversificar los recursos educativos y fortalecer la comunicación de información. De igual manera, el intercambio de experiencias entre el profesorado puede favorecer la colaboración y la construcción de propuestas didácticas-pedagógicas que respondan a las características interdisciplinarias de la ENCCH."]]
 ];
 
 const SESSIONS=[
- {n:1,app:"writer",title:"Introducción a LibreOffice y elaboración de documentos con Writer",
+ {n:1,app:"writer",short:"Writer",title:"Introducción a LibreOffice y elaboración de documentos con Writer",
   purpose:"Reconocer el entorno de LibreOffice y elaborar documentos académicos con formato adecuado.",
-  contents:["Características de LibreOffice y sus aplicaciones.","Interfaz, menús, barras de herramientas y administración de archivos.","Formato de texto, párrafos, títulos, listas y tablas.","Inserción de imágenes, encabezados, pies de página y numeración.","Guardado, exportación a PDF y compatibilidad de formatos."],
-  acts:[["Exploración guiada","Identificar las aplicaciones de LibreOffice y localizar sus herramientas principales."],["Demostración del impartidor","Crear un documento, configurar la página, aplicar estilos e insertar elementos."],["Práctica individual","Elaborar un plan de clase de algún aprendizaje de una asignatura de su elección, con título, objetivos, instrucciones, tabla e imágenes."],["Revisión entre pares","Intercambiar documentos y revisar su organización, legibilidad y presentación."],["Cierre y entrega","Corregir el documento y entregar los archivos en formato editable y PDF."]],
+  contents:["Características de LibreOffice y sus aplicaciones.","Descargar e instalar LibreOffice en tu computadora.","Descripción de la interfaz gráfica de Writer.","Formato de texto, párrafos, títulos, tablas de contenido, listas y viñetas.","Inserción de imágenes, encabezados, pies de página y numeración.","Guardado, exportación a PDF y compatibilidad de formatos."],
+  acts:[["Exploración guiada","Identificar las aplicaciones de LibreOffice y localizar sus herramientas principales."],["Demostración del impartidor","Crear un documento, configurar la página, aplicar estilos e insertar elementos."],["Práctica individual","Elaborar una secuencia didáctica de algún aprendizaje correspondiente a una asignatura de su elección."],["Revisión entre pares","Intercambiar documentos y revisar su organización, legibilidad y presentación."],["Cierre y entrega","Corregir el documento y entregar en formato PDF."]],
   evidence:"Plan de clase elaborado con Writer.",ex:"ex1"},
- {n:2,app:"calc",title:"Organización de información y evaluación con Calc",
+ {n:2,app:"calc",short:"Calc",title:"Organización de información y evaluación con Calc",
   purpose:"Utilizar hojas de cálculo para organizar información académica, realizar operaciones y presentar resultados.",
-  contents:["Estructura de filas, columnas, celdas y rangos.","Tipos de datos, formato de celdas y organización de tablas.","Fórmulas y funciones básicas.","Ordenamiento, filtros y formato condicional.","Elaboración de gráficas."],
-  acts:[["Recuperación de conocimientos","Identificar situaciones docentes que requieren organizar datos."],["Demostración práctica","Capturar información, aplicar formatos y construir fórmulas."],["Ejercicio individual","Crear una tabla de seguimiento académico con calificaciones ficticias, promedios, funciones SUMA y PROMEDIO, y criterios de aprobación."],["Representación gráfica","Generar una gráfica para visualizar los resultados del grupo."],["Revisión y cierre","Verificar fórmulas, interpretación de resultados y presentación del archivo."]],
+  contents:["Descripción de la interfaz gráfica de Calc.","Estructura de filas, columnas, celdas y rangos.","Tipos de datos, formato de celdas y organización de tablas.","Fórmulas y funciones básicas.","Ordenamiento, filtros y formato condicional.","Elaboración de gráficas.","Guardado, exportación a PDF y compatibilidad de formatos."],
+  acts:[["Recuperación de conocimientos","Identificar situaciones docentes que requieren organizar datos."],["Demostración práctica","Capturar información, aplicar formatos y construir fórmulas."],["Ejercicio individual","Crear una tabla de seguimiento académico con calificaciones ficticias, promedios, funciones SUMA y PROMEDIO, y criterios de aprobación."],["Representación gráfica","Generar una gráfica para visualizar los resultados del grupo."],["Revisión y cierre","En plenaria verificar fórmulas, interpretación de resultados y presentación del archivo."]],
   evidence:"Hoja de cálculo para el seguimiento académico.",ex:"ex2"},
- {n:3,app:"impress",title:"Diseño de presentaciones educativas con Impress",
+ {n:3,app:"impress",short:"Impress",title:"Diseño de presentaciones educativas con Impress",
   purpose:"Diseñar presentaciones electrónicas que apoyen la explicación de contenidos y faciliten la comprensión del alumnado.",
-  contents:["Interfaz, diapositivas y diseños predeterminados.","Inserción de imágenes, tablas, diagramas y gráficas.","Transiciones y animaciones pertinentes.","Presentación, exportación y revisión de archivos."],
-  acts:[["Análisis de ejemplos","Reconocer características de presentaciones claras y otras que dificultan la lectura."],["Demostración del impartidor","Configurar diapositivas, utilizar diseños e insertar elementos visuales."],["Diseño individual","Elaborar una presentación de entre 6 y 8 diapositivas sobre un tema de la asignatura que imparte cada participante."],["Exposición y retroalimentación","Compartir la presentación y recibir comentarios de los participantes."],["Ajustes y entrega","Mejorar el diseño conforme a las observaciones propuestas."]],
-  evidence:"Presentación didáctica en formato editable.",ex:"ex3"},
- {n:4,app:"draw",title:"Elaboración de recursos visuales y materiales integradores",
+  contents:["Descripción de la interfaz gráfica de Impress.","Diapositivas y diseños predeterminados.","Inserción de imágenes, tablas, diagramas y gráficas.","Transiciones y animaciones.","Guardado, exportación a PDF y compatibilidad de formatos."],
+  acts:[["Recuperación de conocimientos","Identificar situaciones docentes que requieren presentar información."],["Demostración del impartidor","Configurar diapositivas, utilizar diseños e insertar elementos visuales."],["Diseño individual","Elaborar una presentación de entre 6 y 8 diapositivas sobre un tema de la asignatura que imparte cada participante."],["Exposición y retroalimentación","Revisión entre pares, compartir la presentación y recibir comentarios."],["Ajustes y entrega","Mejorar el diseño conforme a las observaciones propuestas."]],
+  evidence:"Presentación y entrega.",ex:"ex3"},
+ {n:4,app:"draw",short:"Draw",title:"Elaboración de recursos visuales con Draw",
   purpose:"Crear recursos gráficos y articular las herramientas de LibreOffice para resolver necesidades de la práctica docente.",
-  contents:["Herramientas básicas de LibreOffice Draw.","Formas, conectores, diagramas y cuadros de texto.","Diseño de organizadores gráficos e infografías sencillas."],
+  contents:["Descripción de la interfaz gráfica de Draw.","Formas, conectores, diagramas y cuadros de texto.","Diseño de organizadores gráficos e infografías sencillas.","Guardado, exportación a PDF y compatibilidad de formatos."],
   acts:[["Identificación de necesidades","Seleccionar un contenido que pueda representarse mediante un recurso visual."],["Demostración","Elaborar diagramas, utilizar conectores y organizar elementos gráficos."],["Producción individual","Diseñar una infografía, un diagrama de flujo o un mapa conceptual para una clase."],["Evaluación entre pares","Revisar claridad, pertinencia, legibilidad y utilidad didáctica del material creado."]],
-  evidence:"Recurso visual.",ex:"ex4"},
- {n:5,app:"general",title:"Integración del portafolio y evaluación final",
-  purpose:"Integrar los productos elaborados, valorar los aprendizajes y establecer compromisos de aplicación en la práctica docente.",
-  contents:["Integración y organización de evidencias.","Revisión de formatos editables y PDF.","Criterios de calidad de materiales didácticos.","Presentación de productos y evaluación por rúbrica.","Autoevaluación, coevaluación y reflexión final."],
-  acts:[["Organización del portafolio","Reunir y clasificar los productos de las cuatro sesiones anteriores."],["Revisión técnica","Comprobar la apertura de archivos, fórmulas, formato, legibilidad y exportación."],["Integración del producto final","Completar el portafolio con el plan de clase, la hoja de cálculo, la presentación y el recurso visual."],["Presentación de resultados","Explicar la utilidad de los materiales en una situación concreta de enseñanza."],["Evaluación y reflexión","Completar la autoevaluación, el cuestionario de salida y la encuesta del curso."]],
-  evidence:"Portafolio digital completo y reflexión sobre su aplicación docente.",ex:"ex5"}
+  evidence:"Recurso visual en formato PDF.",ex:"ex4"},
+ {n:5,app:"general",short:"Secuencia",title:"Diseño de una secuencia didáctica",
+  purpose:"Integrar los productos elaborados en una secuencia didáctica, valorar los aprendizajes y establecer compromisos de aplicación en la práctica docente.",
+  contents:["Integración y organización de evidencias.","Criterios de calidad de materiales didácticos.","Presentación de la secuencia didáctica.","Evaluación y reflexión final."],
+  acts:[["Diseño de la secuencia didáctica","Reunir y clasificar los productos de las cuatro sesiones anteriores."],["Presentación de resultados","Explicar la utilidad de los materiales en una situación concreta de enseñanza."],["Evaluación y reflexión","En plenaria exponer la secuencia didáctica desarrollada."]],
+  evidence:"Secuencia didáctica.",ex:"ex5"}
 ];
 
 /* conceptos: [id, app, título, resumen, detalle, práctica] */
@@ -547,10 +575,13 @@ const CONCEPTS=[
  ["calc","calc","Calc","La hoja de cálculo de LibreOffice.","Calc organiza datos en filas y columnas, realiza operaciones con fórmulas y funciones, y genera gráficas que pueden integrarse en otros documentos de LibreOffice. También puede exportar hojas de cálculo a PDF.","Captura tres calificaciones ficticias y calcula su promedio."],
  ["impress","impress","Impress","La aplicación de presentaciones de LibreOffice.","Impress permite crear diapositivas con texto, listas, tablas, gráficas y otros objetos. Puede abrir y guardar en formatos de PowerPoint y exportar a PDF, HTML y diversos formatos gráficos.","Crea una diapositiva de título y una de contenido sobre un tema de tu asignatura."],
  ["draw","draw","Draw","Aplicación de dibujo y gráficos vectoriales.","Draw permite crear una gran variedad de imágenes gráficas, diagramas y organizadores. Está integrado con Writer, Calc e Impress, lo que simplifica el intercambio de gráficos, y puede exportar imágenes en muchos formatos.","Dibuja dos formas y únelas con un conector."],
+ ["instalar","general","Descargar e instalar LibreOffice","Cómo obtener LibreOffice en tu computadora.","LibreOffice Community se puede descargar gratuitamente desde el sitio oficial (es.libreoffice.org/descarga/libreoffice), en versiones para Windows, Linux y macOS. Es el primer paso de la Sesión 1.","Descarga e instala LibreOffice y abre cada una de sus aplicaciones."],
+ ["toc","writer","Tabla de contenido","Lista de los títulos de un documento con su número de página.","Se genera a partir de los títulos del documento, por eso es importante aplicar estilos de título (Título 1, Título 2…) en lugar de dar formato a mano.","Aplica estilos de título a tu documento e inserta una tabla de contenido."],
+ ["secuencia","general","Secuencia didáctica","Conjunto organizado de actividades de enseñanza y aprendizaje.","En la Sesión 5 se integran en una secuencia didáctica los productos de las sesiones anteriores, se explica su utilidad en una situación concreta de enseñanza y se expone en plenaria. Los criterios de calidad de los materiales (claridad, accesibilidad y pertinencia) guían su revisión.","Elige un aprendizaje de tu asignatura y ubica en qué momento usarías cada uno de tus materiales."],
  ["estilo","writer","Estilos","Formatos con nombre que se aplican de forma consistente.","En lugar de dar formato a mano cada párrafo, se aplican estilos como Título 1, Título 2 o Cuerpo de texto. Así el documento se ve uniforme y es más fácil de modificar. En Writer, F11 abre la barra lateral en la página de Estilos.","Aplica Título 1 al nombre de tu plan de clase y Título 2 a sus apartados."],
  ["tabla","writer","Tablas en Writer","Organizan información en filas y columnas dentro de un documento.","En un plan de clase, una tabla permite presentar de forma ordenada, por ejemplo, actividades, materiales o instrucciones.","Inserta una tabla de tres columnas con las actividades de una clase."],
  ["encabezado","writer","Encabezados, pies de página y numeración","Elementos que se repiten en las páginas de un documento.","Dan identidad y orden a un documento académico: nombre del curso o de la asignatura, autor y número de página.","Agrega a tu plan de clase un pie de página con numeración."],
- ["pdf","general","PDF y formato editable","Dos formatos para dos usos.","El formato editable permite seguir modificando el archivo; el PDF sirve para compartir o imprimir un documento tal como se ve. En el curso se entregan ambos formatos para su revisión.","Guarda tu plan de clase en formato editable y expórtalo también a PDF."],
+ ["pdf","general","PDF y formato editable","Dos formatos para dos usos.","El formato editable permite seguir modificando el archivo; el PDF sirve para compartir o imprimir un documento tal como se ve. En cada sesión se contempla el guardado, la exportación a PDF y la compatibilidad de formatos, y varias entregas del curso se hacen en PDF.","Guarda tu documento en formato editable y expórtalo también a PDF."],
  ["celda","calc","Celda, fila, columna y rango","La estructura básica de una hoja de cálculo.","Una celda es la intersección de una fila y una columna. Un rango es un conjunto de celdas, por ejemplo B2:D2, que abarca de B2 a D2.","Selecciona un rango de celdas y observa cómo se nombra."],
  ["formula","calc","Fórmula","Expresión que realiza un cálculo y comienza con =","Una fórmula puede combinar valores, referencias a celdas y funciones. Ejemplo: =B2+C2+D2. Si cambias un dato, el resultado se actualiza.","Escribe una fórmula que sume tres celdas."],
  ["funcion","calc","Funciones SUMA y PROMEDIO","Funciones básicas para totalizar y promediar.","SUMA(B2:D2) suma los valores del rango. PROMEDIO(B2:D2) calcula su media aritmética. Son las funciones que se usan en la tabla de seguimiento académico.","Calcula con ambas funciones el resultado de cinco alumnos ficticios."],
@@ -563,8 +594,6 @@ const CONCEPTS=[
  ["presentacion","impress","Presentación de diapositivas","Mostrar la presentación a pantalla completa.","En Impress, F5 inicia la presentación desde el principio y Mayús+F5 desde la diapositiva actual.","Ensaya tu presentación con F5 y luego con Mayús+F5."],
  ["conector","draw","Formas y conectores","Piezas básicas para diagramas.","Las formas representan elementos y los conectores las unen; al mover una forma, el conector se mantiene unido. Son la base de diagramas de flujo y mapas conceptuales.","Une tres formas con conectores para crear un diagrama de flujo."],
  ["organizador","draw","Organizadores gráficos e infografías","Recursos visuales para estructurar y comunicar ideas.","Un mapa conceptual relaciona conceptos; un diagrama de flujo muestra pasos; una infografía sencilla combina texto e imágenes. Deben ser claros, pertinentes, legibles y útiles didácticamente.","Elige un contenido de tu clase y decide cuál de los tres recursos lo representa mejor."],
- ["portafolio","general","Portafolio digital","Colección organizada de evidencias.","Integra el plan de clase, la hoja de cálculo, la presentación y el recurso visual, más una reflexión sobre su aplicación docente. Se revisa en formato editable y PDF.","Crea una carpeta con tus cuatro productos y comprueba que todos abren correctamente."],
- ["rubrica","general","Rúbrica, autoevaluación y coevaluación","Instrumentos para valorar el aprendizaje.","La rúbrica describe criterios de calidad; la autoevaluación es la valoración del propio trabajo y la coevaluación la que realizan los compañeros. Se complementan con la retroalimentación.","Valora uno de tus productos con los criterios de claridad, pertinencia y legibilidad."]
 ];
 
 /* atajos [app, teclas, función, detalle] (fuentes: Guía de Calc 26.2, Guía de Writer 26.2, Ayuda de Impress) */
@@ -605,51 +634,46 @@ const SHORTCUTS=[
 
 /* ejercicios */
 const EXERCISES=[
- {id:"ex1",app:"writer",title:"Plan de clase en Writer",short:"Elabora un documento académico con título, objetivos, instrucciones, tabla e imágenes.",
-  theory:"Un documento académico bien organizado usa estilos (títulos y cuerpo de texto) para dar estructura y uniformidad. Los encabezados, pies de página y la numeración dan orden, y la exportación a PDF permite compartirlo tal como se ve, además de conservar la versión editable.",
-  practice:"Elabora un plan de clase de algún aprendizaje de una asignatura de tu elección.",
-  steps:["Crear un documento nuevo y configurar la página.","Escribir el título del plan de clase y aplicar estilos de título.","Redactar los objetivos de aprendizaje.","Escribir las instrucciones de la actividad con una lista numerada o con viñetas.","Insertar una tabla (por ejemplo, de actividades o materiales).","Insertar al menos una imagen pertinente.","Agregar encabezado, pie de página y numeración.","Intercambiar el documento con un compañero y revisar organización, legibilidad y presentación.","Corregir y guardar en formato editable y exportar a PDF."],
+ {id:"ex1",app:"writer",title:"Documento académico en Writer",short:"Instala LibreOffice y elabora una secuencia didáctica de un aprendizaje de tu asignatura.",
+  theory:"Un documento académico bien organizado usa estilos (títulos y cuerpo de texto) para dar estructura y uniformidad, y permite generar tablas de contenido. Los encabezados, pies de página y la numeración dan orden, y la exportación a PDF permite compartir el documento tal como se ve.",
+  practice:"Elabora una secuencia didáctica de algún aprendizaje correspondiente a una asignatura de tu elección. La evidencia de la sesión es el plan de clase elaborado con Writer.",
+  steps:["Descargar e instalar LibreOffice en tu computadora.","Identificar las aplicaciones de LibreOffice y localizar sus herramientas principales.","Crear un documento y configurar la página.","Aplicar estilos de título, párrafo y texto.","Insertar listas, viñetas y, si corresponde, una tabla de contenido.","Insertar imágenes, encabezado, pie de página y numeración.","Intercambiar el documento con un compañero y revisar organización, legibilidad y presentación.","Corregir el documento y exportarlo a PDF para su entrega."],
   tip:"Atajos útiles: Ctrl+1 / Ctrl+2 (títulos), F12 (lista numerada), Shift+F12 (viñetas), Ctrl+F12 (tabla), Ctrl+Enter (salto de página)."},
  {id:"ex2",app:"calc",title:"Tabla de seguimiento académico en Calc",short:"Organiza calificaciones ficticias con SUMA, PROMEDIO, criterios de aprobación y una gráfica.",
   theory:"Una hoja de cálculo organiza datos en filas, columnas y celdas. Las fórmulas (que empiezan con =) y funciones como SUMA y PROMEDIO calculan automáticamente; si cambia un dato, cambia el resultado. El formato condicional y las gráficas ayudan a interpretar los resultados del grupo.",
   practice:"Crea una tabla de seguimiento con calificaciones ficticias. Puedes ensayar primero en el laboratorio de esta página.",
-  steps:["Capturar los nombres de alumnos ficticios y sus calificaciones.","Aplicar formato a las celdas y organizar la tabla.","Calcular el total de cada alumno con la función SUMA.","Calcular el promedio de cada alumno con la función PROMEDIO.","Definir y aplicar un criterio de aprobación.","Resaltar resultados con formato condicional.","Ordenar o filtrar los datos.","Generar una gráfica para visualizar los resultados del grupo.","Verificar fórmulas, interpretar resultados y revisar la presentación del archivo."],
-  tip:"Atajos útiles: F2 (editar celda), F4 (tipos de referencia), Alt+= (suma), Ctrl+Shift+; (hora) y Ctrl+; (fecha)."},
+  steps:["Identificar situaciones docentes que requieren organizar datos.","Capturar los nombres de alumnos ficticios y sus calificaciones.","Aplicar formato a las celdas y organizar la tabla.","Calcular el total con SUMA y el promedio con PROMEDIO.","Definir y aplicar criterios de aprobación.","Ordenar, filtrar o resaltar con formato condicional.","Generar una gráfica para visualizar los resultados del grupo.","En plenaria, verificar fórmulas, interpretar resultados y revisar la presentación del archivo.","Guardar y exportar a PDF."],
+  tip:"Atajos útiles: F2 (editar celda), F4 (tipos de referencia), Alt+= (suma), Ctrl+; (fecha) y Ctrl+Shift+; (hora)."},
  {id:"ex3",app:"impress",title:"Presentación didáctica en Impress",short:"Diseña de 6 a 8 diapositivas claras sobre un tema de tu asignatura.",
-  theory:"Una buena presentación apoya la explicación y facilita la comprensión del alumnado: usa diseños predeterminados, elementos visuales pertinentes y transiciones o animaciones que no dificulten la lectura.",
+  theory:"Una buena presentación apoya la explicación y facilita la comprensión del alumnado: usa diapositivas con diseños predeterminados, elementos visuales pertinentes y transiciones o animaciones que no dificulten la lectura.",
   practice:"Elabora una presentación de entre 6 y 8 diapositivas sobre un tema de la asignatura que impartes.",
-  steps:["Analizar ejemplos de presentaciones claras y otras que dificultan la lectura.","Elegir el tema y definir las ideas principales.","Configurar las diapositivas y elegir diseños predeterminados.","Insertar imágenes, tablas, diagramas o gráficas.","Aplicar transiciones y animaciones solo si son pertinentes.","Verificar que el total sea de 6 a 8 diapositivas.","Compartir la presentación y recibir comentarios del grupo.","Realizar los ajustes y guardar en formato editable."],
+  steps:["Identificar situaciones docentes que requieren presentar información.","Elegir el tema y definir las ideas principales.","Configurar las diapositivas y elegir diseños predeterminados.","Insertar imágenes, tablas, diagramas o gráficas.","Aplicar transiciones y animaciones solo si son pertinentes.","Verificar que el total sea de 6 a 8 diapositivas.","Compartir la presentación, revisarla entre pares y recibir comentarios.","Realizar los ajustes, guardar y entregar (puede exportarse a PDF)."],
   tip:"Atajos útiles: Ctrl+Enter (siguiente marcador o nueva diapositiva), F5 (iniciar desde el principio), Mayús+F5 (desde la actual)."},
  {id:"ex4",app:"draw",title:"Recurso visual en Draw",short:"Diseña una infografía, un diagrama de flujo o un mapa conceptual para una clase.",
   theory:"Los organizadores gráficos transforman un contenido en una representación visual. En Draw se construyen con formas, conectores y cuadros de texto. Su calidad se valora por claridad, pertinencia, legibilidad y utilidad didáctica.",
-  practice:"Selecciona un contenido de tu clase y represéntalo con un recurso visual.",
-  steps:["Seleccionar el contenido que se representará.","Decidir el tipo de recurso: infografía, diagrama de flujo o mapa conceptual.","Insertar las formas necesarias.","Agregar cuadros de texto con las ideas clave.","Unir las formas con conectores.","Organizar y alinear los elementos gráficos.","Intercambiar con un compañero y revisar claridad, pertinencia, legibilidad y utilidad didáctica.","Ajustar y guardar el recurso."],
+  practice:"Selecciona un contenido de tu clase y represéntalo con un recurso visual. La evidencia es el recurso visual en formato PDF.",
+  steps:["Seleccionar el contenido que se representará.","Decidir el tipo de recurso: infografía, diagrama de flujo o mapa conceptual.","Insertar las formas necesarias.","Agregar cuadros de texto con las ideas clave.","Unir las formas con conectores.","Organizar y alinear los elementos gráficos.","Intercambiar con un compañero y revisar claridad, pertinencia, legibilidad y utilidad didáctica.","Ajustar y exportar el recurso a PDF."],
   tip:"Atajos comunes: Ctrl+C (copiar), Ctrl+Z (deshacer), Ctrl+Y (rehacer)."},
- {id:"ex5",app:"general",title:"Portafolio digital y reflexión",short:"Reúne, revisa y presenta tus cuatro productos y reflexiona sobre su aplicación.",
-  theory:"El portafolio integra las evidencias del curso. Antes de entregarlo se revisa que los archivos abran, que las fórmulas funcionen y que el formato, la legibilidad y la exportación sean correctos, tanto en formato editable como en PDF.",
-  practice:"Integra y presenta tu portafolio digital.",
-  steps:["Reunir y clasificar los productos de las sesiones anteriores.","Comprobar que cada archivo abre correctamente.","Revisar fórmulas, formato y legibilidad.","Verificar las versiones en formato editable y en PDF.","Completar el portafolio con plan de clase, hoja de cálculo, presentación y recurso visual.","Explicar la utilidad de los materiales en una situación concreta de enseñanza.","Completar la autoevaluación, el cuestionario de salida y la encuesta del curso.","Redactar la reflexión sobre la aplicación docente."],
-  tip:"Para compartir el portafolio se usa Microsoft Teams, la plataforma del curso."}
+ {id:"ex5",app:"general",title:"Secuencia didáctica integradora",short:"Integra tus productos, preséntalos en plenaria y reflexiona sobre su aplicación.",
+  theory:"La secuencia didáctica integra los productos elaborados en las sesiones anteriores. Se revisan con criterios de calidad de materiales didácticos (claridad, accesibilidad y pertinencia) y se explica su utilidad en una situación concreta de enseñanza.",
+  practice:"Diseña tu secuencia didáctica con los productos de las cuatro sesiones anteriores y exponla en plenaria.",
+  steps:["Reunir y clasificar los productos de las cuatro sesiones anteriores.","Revisar los materiales con criterios de calidad.","Organizar los productos dentro de la secuencia didáctica.","Explicar la utilidad de los materiales en una situación concreta de enseñanza.","Exponer en plenaria la secuencia didáctica desarrollada.","Participar en la evaluación y reflexión final.","Establecer compromisos de aplicación en tu práctica docente."],
+  tip:"Recuerda: la entrega del proyecto final es uno de los criterios de evaluación del curso."}
 ];
 
-const EVAL=[
- ["1","Plan de clase elaborado con Writer","Organización, legibilidad y presentación del documento; título, objetivos, instrucciones, tabla e imágenes; entrega en formato editable y PDF."],
- ["2","Hoja de cálculo para el seguimiento académico","Uso correcto de fórmulas y funciones (SUMA y PROMEDIO); criterios de aprobación; gráfica de resultados del grupo; interpretación y presentación del archivo."],
- ["3","Presentación didáctica en formato editable","Presentación de entre 6 y 8 diapositivas sobre un tema de la asignatura; claridad y legibilidad; ajustes conforme a la retroalimentación."],
- ["4","Recurso visual (infografía, diagrama de flujo o mapa conceptual)","Claridad, pertinencia, legibilidad y utilidad didáctica del material."],
- ["5","Portafolio digital completo y reflexión sobre su aplicación docente","Apertura de archivos, fórmulas, formato, legibilidad y exportación; utilidad de los materiales en una situación concreta de enseñanza."]
-];
-const INSTR=[["bi-people","Revisión entre pares","Sesiones 1 y 4"],["bi-chat-dots","Retroalimentación del grupo","Sesión 3"],["bi-clipboard-check","Revisión técnica del portafolio","Sesión 5"],["bi-list-check","Rúbrica","Sesión 5"],["bi-person-check","Autoevaluación y coevaluación","Sesión 5"],["bi-question-circle","Cuestionario de salida y encuesta","Sesión 5"]];
+const CRITERIA=[["bi-calendar-check","Asistencia mínima del 80 por ciento."],["bi-hand-index-thumb","Participación activa en todas las actividades prácticas."],["bi-trophy","Entrega del proyecto final."]];
 
 const QUIZ=[
  {q:"¿Qué aplicación de LibreOffice sirve para elaborar presentaciones electrónicas?",o:["Writer","Calc","Impress","Draw"],a:2,e:"Impress es la aplicación de presentaciones de LibreOffice."},
  {q:"¿Con qué símbolo comienza una fórmula en Calc?",o:["#","=","@","$"],a:1,e:"Las fórmulas en Calc comienzan con el signo igual (=)."},
  {q:"¿Qué función calcula la media aritmética de un rango de calificaciones?",o:["SUMA","MAX","CONTAR","PROMEDIO"],a:3,e:"PROMEDIO calcula la media de los valores del rango."},
  {q:"¿Qué aplicación es la más adecuada para construir un diagrama de flujo con conectores?",o:["Draw","Writer","Calc","Impress"],a:0,e:"Draw cuenta con formas y conectores para diagramas y organizadores gráficos."},
- {q:"¿Para qué sirve exportar un documento a PDF en el curso?",o:["Para modificar las fórmulas","Para compartirlo tal como se ve, además de la versión editable","Para convertirlo en presentación","Para eliminar las imágenes"],a:1,e:"Se entregan ambos formatos: editable y PDF."},
  {q:"¿Cuántas diapositivas debe tener la presentación de la Sesión 3?",o:["De 1 a 3","De 4 a 5","De 6 a 8","Más de 20"],a:2,e:"La actividad pide una presentación de entre 6 y 8 diapositivas."},
- {q:"¿Qué plataforma se usa para impartir el curso?",o:["Microsoft Teams","Solo correo electrónico","Un programa de radio","Ninguna"],a:0,e:"El curso en línea se imparte en Microsoft Teams."},
- {q:"¿Qué evalúa la revisión entre pares de la Sesión 4?",o:["La velocidad de escritura","Claridad, pertinencia, legibilidad y utilidad didáctica","El tamaño del archivo","El color del fondo"],a:1,e:"Son los criterios con que se revisa el recurso visual."}
+ {q:"¿Cuál es la asistencia mínima requerida en el curso?",o:["50 por ciento","70 por ciento","80 por ciento","100 por ciento"],a:2,e:"El criterio de evaluación es una asistencia mínima del 80 por ciento."},
+ {q:"¿Qué plataforma se indica para impartir el curso?",o:["Zoom","Un programa de radio","Solo correo electrónico","Ninguna"],a:0,e:"El curso en línea se imparte en Zoom; Microsoft Teams y LibreOffice son los recursos y herramientas."},
+ {q:"¿Cuál es el eje temático del curso?",o:["Actualización en la disciplina y la didáctica","Gestión administrativa","Orientación educativa","Deporte y recreación"],a:0,e:"El eje temático es Actualización en la disciplina y la didáctica."},
+ {q:"¿Qué se elabora en la Sesión 5?",o:["Una hoja de cálculo","Una secuencia didáctica","Una infografía","Un tutorial en video"],a:1,e:"La Sesión 5 se titula «Diseño de una secuencia didáctica»."},
+ {q:"¿Cuáles son los principios pedagógicos de la ENCCH que retoma el curso?",o:["Aprender a aprender, a hacer y a ser","Memorizar, repetir y copiar","Evaluar, calificar y sancionar","Leer, escribir y contar"],a:0,e:"El curso retoma aprender a aprender, aprender a hacer y aprender a ser."}
 ];
 
 /* ===================== UTILIDADES UI ===================== */
@@ -673,27 +697,34 @@ const keycaps=k=>k.split("+").map(x=>`<kbd class="key">${esc(x)}</kbd>`).join('<
   btn.addEventListener("click",()=>set(root.getAttribute("data-bs-theme")==="dark"?"light":"dark"));
 })();
 
-/* ===================== COMPETENCIAS ===================== */
-$("#compList").innerHTML=COMPETENCIAS.map((c,i)=>`<button class="btn btn-outline-success text-start" data-comp="${i}"><i class="bi bi-check2-circle me-2"></i>${esc(c[0])}</button>`).join("");
-$("#compList").addEventListener("click",e=>{const b=e.target.closest("[data-comp]");if(!b)return;const c=COMPETENCIAS[b.dataset.comp];
-  openModal({title:c[0],body:`<div class="theory"><h4>Cómo se trabaja en el curso</h4><p class="mb-0">${esc(c[1])}</p></div>`});});
+/* ===================== PRINCIPIOS Y PRESENTACIÓN ===================== */
+$("#compList").innerHTML=PRINCIPIOS.map((c,i)=>`<button class="pillar" data-comp="${i}"><i class="bi ${c[0]}"></i>${esc(c[1])}</button>`).join("");
+$("#compList").addEventListener("click",e=>{const b=e.target.closest("[data-comp]");if(!b)return;const c=PRINCIPIOS[b.dataset.comp];
+  openModal({title:c[1],body:`<div class="theory"><h4>Cómo se retoma en el curso</h4><p class="mb-0">${esc(c[2])}</p></div>`});});
+function renderDoc(i){
+  $("#docBody").innerHTML=DOCS[i][1].map(t=>`<p>${esc(t)}</p>`).join("");
+  $$("#docTabs .nav-link").forEach((b,k)=>b.classList.toggle("active",k===i));
+}
+$("#docTabs").innerHTML=DOCS.map((d,i)=>`<li class="nav-item"><button class="nav-link" role="tab" data-d="${i}">${d[0]}</button></li>`).join("");
+$("#docTabs").addEventListener("click",e=>{const b=e.target.closest("[data-d]");if(b)renderDoc(+b.dataset.d)});
+renderDoc(0);
 
 /* ===================== RUTA ===================== */
 function renderSession(i){
   const s=SESSIONS[i],a=APPS[s.app];
   $("#sessionPanel").innerHTML=`<div class="card session-panel ${a.c} p-4">
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="app-chip"><i class="bi ${a.i} me-1"></i>${s.app==="general"?"Integración":a.n}</span><span class="text-secondary fw-bold">Sesión ${s.n}</span></div>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="app-chip"><i class="bi ${a.i} me-1"></i>${s.app==="general"?"Secuencia didáctica":a.n}</span><span class="text-secondary fw-bold">Sesión ${s.n}</span></div>
     <h3 class="fw-bold">${esc(s.title)}</h3>
-    <p class="text-secondary"><b>Propósito:</b> ${esc(s.purpose)}</p>
+    <p class="text-secondary"><b>Objetivo:</b> ${esc(s.purpose)}</p>
     <div class="row g-4">
-      <div class="col-lg-5"><h4 class="h6 fw-bold text-uppercase">Contenidos</h4><ul class="check-list">${s.contents.map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>
+      <div class="col-lg-5"><h4 class="h6 fw-bold text-uppercase">Temática</h4><ul class="check-list">${s.contents.map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>
       <div class="col-lg-7"><h4 class="h6 fw-bold text-uppercase">Actividades de aprendizaje</h4>${s.acts.map((x,k)=>`<div class="act-item"><div class="act-num">${k+1}</div><div><b>${esc(x[0])}</b><br><span class="text-secondary">${esc(x[1])}</span></div></div>`).join("")}</div>
     </div>
     <div class="evidence mt-3 d-flex flex-wrap justify-content-between align-items-center gap-2"><div><i class="bi bi-patch-check me-1"></i><b>Evidencia:</b> ${esc(s.evidence)}</div>
       <button class="btn btn-lo btn-sm" data-open-ex="${s.ex}"><i class="bi bi-pencil-square me-1"></i>Abrir ejercicio</button></div></div>`;
   $$("#sessionPills .nav-link").forEach((b,k)=>b.classList.toggle("active",k===i));
 }
-$("#sessionPills").innerHTML=SESSIONS.map((s,i)=>`<button class="nav-link ${APPS[s.app].c}" role="tab" data-s="${i}">Sesión ${s.n}<small>${s.app==="general"?"Portafolio":APPS[s.app].n}</small></button>`).join("");
+$("#sessionPills").innerHTML=SESSIONS.map((s,i)=>`<button class="nav-link ${APPS[s.app].c}" role="tab" data-s="${i}">Sesión ${s.n}<small>${s.short}</small></button>`).join("");
 $("#sessionPills").addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(b)renderSession(+b.dataset.s)});
 renderSession(0);
 
@@ -801,7 +832,7 @@ let prog=store.get("lo-progress",{});
 const stepsDone=id=>(prog[id]||[]).filter(Boolean).length;
 function renderEx(){
   $("#exGrid").innerHTML=EXERCISES.map(x=>{const d=stepsDone(x.id),t=x.steps.length,p=Math.round(d/t*100);
-    return `<div class="col-md-6 col-xl-4"><div class="card ex-card ${APPS[x.app].c}"><div class="mid"><span class="app-chip mb-2"><i class="bi ${APPS[x.app].i} me-1"></i>${x.app==="general"?"Integración":APPS[x.app].n}</span><h3 class="h5 fw-bold">${esc(x.title)}</h3><p class="text-secondary">${esc(x.short)}</p></div>
+    return `<div class="col-md-6 col-xl-4"><div class="card ex-card ${APPS[x.app].c}"><div class="mid"><span class="app-chip mb-2"><i class="bi ${APPS[x.app].i} me-1"></i>${x.app==="general"?"Secuencia didáctica":APPS[x.app].n}</span><h3 class="h5 fw-bold">${esc(x.title)}</h3><p class="text-secondary">${esc(x.short)}</p></div>
     <div class="progress mb-2" style="height:.6rem"><div class="progress-bar" style="width:${p}%;background:var(--app)"></div></div>
     <div class="d-flex justify-content-between align-items-center"><small class="${p===100?"ex-done":"text-secondary"}">${p===100?'<i class="bi bi-check-circle-fill"></i> Completado':`${d} de ${t} pasos`}</small><button class="btn btn-lo btn-sm" data-ex="${x.id}">${d?"Continuar":"Comenzar"}</button></div></div></div>`}).join("");
   const all=EXERCISES.reduce((a,x)=>a+x.steps.length,0),done=EXERCISES.reduce((a,x)=>a+stepsDone(x.id),0),pct=Math.round(done/all*100);
@@ -824,8 +855,8 @@ $("#resetProgress").addEventListener("click",()=>{prog={};store.set("lo-progress
 renderEx();
 
 /* ===================== EVALUACIÓN ===================== */
-$("#evalBody").innerHTML=EVAL.map(r=>`<tr><td><b>${r[0]}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
-$("#instruments").innerHTML=INSTR.map(i=>`<div class="col-sm-6 col-lg-4 reveal"><div class="card p-3 d-flex flex-row align-items-center gap-3"><i class="bi ${i[0]} fs-2 text-lo"></i><div><b>${i[1]}</b><br><small class="text-secondary">${i[2]}</small></div></div></div>`).join("");
+$("#criteria").innerHTML=CRITERIA.map(c=>`<div class="col-md-4 reveal"><div class="card crit"><i class="bi ${c[0]}"></i><div class="fw-bold">${esc(c[1])}</div></div></div>`).join("");
+$("#evidences").innerHTML=SESSIONS.map(x=>`<div class="col-sm-6 col-lg-4 reveal"><button class="card ev-card ${APPS[x.app].c}" data-open-ex="${x.ex}"><span class="tag">Sesión ${x.n} · ${x.short}</span><div class="fw-bold mt-1">${esc(x.evidence)}</div><span class="small" style="color:var(--bs-link-color)">Ver ejercicio <i class="bi bi-arrow-right"></i></span></button></div>`).join("");
 
 /* ===================== EFECTOS ===================== */
 initPopovers();
