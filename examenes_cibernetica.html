@@ -73,6 +73,25 @@
     }
     .ov { text-decoration:overline; text-decoration-thickness:2px; text-underline-offset:0; }
     .mono { font-family:'Courier New',monospace; }
+    .tt-tbl td, .tt-tbl th { text-align:center; padding:.25rem .7rem !important; }
+    .tt-in { width:3.1rem; height:2.5rem; text-align:center; font:800 1.25rem 'Courier New',monospace; border:2px solid #cbd5e1; border-radius:10px; background:#fff; }
+    .tt-in:focus { border-color:var(--vio); outline:3px solid rgba(124,58,237,.25); }
+    .tt-in.filled { border-color:#a78bfa; background:#f5f3ff; }
+    .tt-in.okk { border-color:#16a34a; background:#dcfce7; color:#166534; }
+    .cb-pal { display:flex; flex-wrap:wrap; gap:.5rem; margin:.7rem 0; align-items:center; }
+    .cb-btn { border:2px solid #cbd5e1; background:#fff; border-radius:12px; padding:.3rem .7rem; font-weight:800; display:inline-flex; align-items:center; gap:.4rem; cursor:pointer; transition:all .15s; font-size:.95rem; }
+    .cb-btn:hover { border-color:#a78bfa; background:#faf5ff; transform:translateY(-2px); }
+    .cb-btn:active { transform:scale(.96); }
+    .cb-btn:focus-visible { outline:3px solid rgba(124,58,237,.4); }
+    .cb-btn.var { min-width:2.6rem; justify-content:center; font-size:1.1rem; color:#0f172a; }
+    .cb-btn.clr { border-color:#fca5a5; color:#b91c1c; margin-left:auto; }
+    .cb-btn.clr:hover { background:#fef2f2; border-color:#ef4444; }
+    .cb-sep { width:2px; height:1.8rem; background:#e2e8f0; border-radius:2px; }
+    .cb-stage { min-height:96px; border:2px dashed #cbd5e1; border-radius:14px; padding:.6rem; display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; background:#f8fafc; overflow-x:auto; }
+    .cb-piece { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:.3rem; animation:rise .25s ease; }
+    .cb-leaf { display:inline-flex; width:2.6rem; height:2.6rem; border-radius:50%; background:#ede9fe; color:#5b21b6; font-weight:800; align-items:center; justify-content:center; border:2px solid #a78bfa; animation:rise .25s ease; }
+    .cb-empty { color:#94a3b8; font-size:.9rem; }
+    .cb-expr { margin-top:.4rem; font-size:.95rem; }
     .circ { max-width:100%; height:auto; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:.4rem; }
     .km-wrap { overflow-x:auto; margin:.6rem 0; }
     .km { border-collapse:separate; border-spacing:3px; font-family:'Courier New',monospace; text-align:center; }
@@ -155,7 +174,7 @@
       </div>
       <hr class="my-4">
       <h2 class="h6 fw-bold mb-2"><i class="bi bi-list-check me-1 text-primary"></i>Reglas del examen</h2>
-      <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b>35 preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
+      <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">41</span> preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
       <div class="rule"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b>. El reloj arranca al pulsar «Comenzar» y el examen se entregará en automático al llegar el reloj a 0.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo la respuesta, sin espacios</b>, con los símbolos que indique cada pregunta (solo 0 y 1, solo números, o números y letras A–F).</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
@@ -276,10 +295,11 @@
    Las contraseñas del examen y la del administrador YA NO están en esta página:
    viven en tu hoja de Google (contraseñas de alumnos) y en el script de Apps Script (administrador).
    ========================================================================== */
+const TOTAL = () => (typeof EXAM !== 'undefined' && EXAM && EXAM.length) || 0;
 const CFG = {
   ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
   DURACION_MIN: 120,               // duración del examen en minutos (cuenta regresiva)
-  TOTAL: 35
+  TOTAL: 0                       // se calcula solo con el número de preguntas de cada examen
 };
 
 /* ===== Utilidades ===== */
@@ -403,6 +423,7 @@ function buildP1(tipo, seed) {
     } while (seen.has(key)); seen.add(key);
     qs.push(openQ('sum', `Suma en binario: <span class="num">${a.toString(2)}<sub>2</sub></span> + <span class="num">${b.toString(2)}<sub>2</sub></span> = ?`, (a + b).toString(2), OPEN[2], 'norm', 'Aplicar'));
   }
+  qs.push(...buildNew(tipo, 1, rnd));
   return qs;
 }
 
@@ -822,20 +843,145 @@ function buildP2(tipo, seed) {
   { const e = EQV[tipo], bad = e.bad.map(b => b[0]);
     const f = e.ok[1], col = colOfFn(f); if (col !== colOfPats(e.pats)) throw new Error('eqv ok'); e.bad.forEach(b => { if (colOfFn(b[1]) === col) throw new Error('eqv bad'); });
     push(mcQ('dis', `El circuito de la figura es ${e.what}, dibujado en su forma canónica. ¿Qué expresión equivale a esa función, ya simplificada?<div class="my-2">${sopSVG(e.pats)}</div>`, e.ok[0], bad, rnd, 'Evaluar')); }
+  qs.push(...buildNew(tipo, 2, rnd));
   return qs;
+}
+
+
+/* ==========================================================================
+   EJERCICIOS NUEVOS (ambos parciales): tabla de verdad, armado de circuito y sumatoria binaria
+   - Tabla de verdad: 2 variables, solo AND, NAND y NOT. Se llena la columna F (4 casillas, solo 0 y 1) y cuenta como 1 acierto.
+   - Armado de circuito: con clics en entradas y compuertas (AND, NAND, NOT). «Borrar todo» reinicia.
+   - Sumatoria de 3 números binarios: respuesta abierta limitada a 0 y 1.
+   ========================================================================== */
+const SECS_NEW = [
+  { id: 'ttv', t: 'Tablas de verdad con AND, NAND y NOT', d: 'Completa la columna F escribiendo solo 0 y 1. La tabla completa vale 1 acierto: las 4 salidas deben ser correctas.', ic: 'bi-table', c: '#ea580c' },
+  { id: 'arm', t: 'Arma el circuito', d: 'Haz clic en las entradas (A, B, C) y en las compuertas (AND, NAND, NOT) para armar la función. Cada compuerta toma las últimas entradas que colocaste. Si te equivocas, pulsa «Borrar todo» y empieza de nuevo.', ic: 'bi-diagram-2-fill', c: '#0d9488' },
+  { id: 'sig', t: 'Sumatoria de números binarios', d: 'Respuesta abierta: suma los tres números y escribe solo el resultado, con 0 y 1 y sin espacios.', ic: 'bi-plus-slash-minus', c: '#16a34a' }
+];
+const gA = Lf('A'), gB = Lf('B'), gC = Lf('C'), gAND = (a, b) => Gt('and', a, b), gNAND = (a, b) => Gt('nand', a, b), gNOT = a => Gt('not', a);
+/* Fórmulas distintas por parcial y por tipo (A/B). Cada una es una función que devuelve su árbol de compuertas. */
+const TT_POOL = {
+  1: { A: [() => gAND(gA, gNOT(gB)), () => gNAND(gA, gNOT(gB)), () => gAND(gNAND(gA, gB), gA)],
+       B: [() => gAND(gNOT(gA), gB), () => gNAND(gNOT(gA), gB), () => gAND(gNAND(gA, gB), gB)] },
+  2: { A: [() => gAND(gNOT(gA), gNOT(gB)), () => gAND(gNAND(gA, gNOT(gB)), gA), () => gNAND(gA, gB)],
+       B: [() => gNAND(gNOT(gA), gNOT(gB)), () => gAND(gNAND(gNOT(gA), gB), gB), () => gAND(gNOT(gB), gNAND(gA, gB))] }
+};
+const CB_POOL = {
+  1: { A: [() => gAND(gNAND(gA, gB), gC), () => gAND(gAND(gA, gNOT(gB)), gC), () => gNAND(gNOT(gA), gAND(gB, gC))],
+       B: [() => gAND(gNAND(gA, gC), gB), () => gAND(gAND(gNOT(gA), gB), gC), () => gNAND(gA, gAND(gNOT(gB), gC))] },
+  2: { A: [() => gAND(gNOT(gA), gNAND(gB, gC)), () => gAND(gAND(gA, gB), gNOT(gC)), () => gNAND(gAND(gA, gNOT(gB)), gC)],
+       B: [() => gAND(gNOT(gB), gNAND(gA, gC)), () => gAND(gAND(gNOT(gA), gB), gNOT(gC)), () => gNAND(gAND(gA, gB), gNOT(gC))] }
+};
+const CB_VARS = ['A', 'B', 'C'];
+const bin3 = (rnd, lo, hi) => { const n = lo + Math.floor(rnd() * (hi - lo + 1)); return (1 << (n - 1)) + Math.floor(rnd() * (1 << (n - 1))); };
+function buildNew(tipo, parcial, rnd) {
+  const out = [];
+  shuffle(TT_POOL[parcial][tipo], rnd).slice(0, 2).forEach(f => {
+    const t = f(), col = ttOf(t, ['A', 'B']);
+    out.push({ sec: 'ttv', kind: 'tt', html: `Completa la tabla de verdad de la función <span class="num">F = ${exprOf(t)}</span>. Escribe en la columna F solo <b>0 o 1</b>.`, expect: col, tree: t, bl: 'Aplicar' });
+  });
+  shuffle(CB_POOL[parcial][tipo], rnd).slice(0, 2).forEach(f => {
+    const t = f(), vars = CB_VARS;
+    out.push({ sec: 'arm', kind: 'circ', html: `Arma el circuito de la función <span class="num">F = ${exprOf(t)}</span> usando únicamente compuertas AND, NAND y NOT.`, expect: exprOf(t), tt: ttOf(t, vars), tree: t, bl: 'Crear' });
+  });
+  const [lo, hi] = parcial === 1 ? [3, 5] : [4, 6], seen = new Set();
+  for (let i = 0; i < 2; i++) {
+    let a, b, c, key; do { a = bin3(rnd, lo, hi); b = bin3(rnd, lo, hi); c = bin3(rnd, lo, hi); key = [a, b, c].sort().join(); } while (seen.has(key)); seen.add(key);
+    out.push(openQ('sig', `Realiza la sumatoria en binario: <span class="num">${a.toString(2)}<sub>2</sub> + ${b.toString(2)}<sub>2</sub> + ${c.toString(2)}<sub>2</sub> = ?</span>`, (a + b + c).toString(2), OPEN[2], 'norm', 'Aplicar'));
+  }
+  return out;
+}
+
+/* ----- Tabla de verdad (4 casillas verticales) ----- */
+const ttNorm = v => String(v || '').padEnd(4, '_').slice(0, 4);
+function ttHTML(q, p, key) {
+  const rows = [[0, 0], [0, 1], [1, 0], [1, 1]];
+  return `<div class="km-wrap"><table class="km tv tt-tbl"><tr><th>A</th><th>B</th><th>F</th></tr>${rows.map(([a, b], i) =>
+    `<tr><td>${a}</td><td>${b}</td><td>${key ? `<input class="tt-in okk" value="${q.expect[i]}" disabled aria-label="Salida F">` : `<input class="tt-in" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" data-tt="${q.id}" data-i="${i}" aria-label="Salida F cuando A = ${a} y B = ${b}">`}</td></tr>`).join('')}</table></div>` +
+    (key ? '' : '<div class="ans-hint"><i class="bi bi-1-circle-fill"></i><span>Escribe <b>solo 0 y 1</b> en cada casilla de F. Cuenta como 1 acierto si las 4 son correctas.</span></div>');
+}
+document.addEventListener('input', e => {
+  const i = e.target.closest && e.target.closest('input.tt-in[data-tt]'); if (!i || !S || S.fin) return;
+  const raw = i.value, v = raw.replace(/[^01]/g, '').slice(-1), id = i.dataset.tt, k = +i.dataset.i;
+  if (raw !== v) toast('Solo se permite 0 y 1.', 'bi-keyboard-fill', 1500);
+  i.value = v; i.classList.toggle('filled', v !== '');
+  const cur = ttNorm(S.answers[id]).split(''); cur[k] = v === '' ? '_' : v; const str = cur.join('');
+  S.answers[id] = str === '____' ? '' : str; save(); refreshMarks(); updateProgress();
+  if (v !== '') { const nx = $(`input.tt-in[data-tt="${id}"][data-i="${k + 1}"]`); if (nx) nx.focus(); }
+});
+document.addEventListener('keydown', e => {
+  const i = e.target.closest && e.target.closest('input.tt-in[data-tt]'); if (!i) return;
+  const id = i.dataset.tt, k = +i.dataset.i, go = d => { const n = $(`input.tt-in[data-tt="${id}"][data-i="${k + d}"]`); if (n) { e.preventDefault(); n.focus(); n.select(); } };
+  if (e.key === 'ArrowDown' || e.key === 'Enter') go(1); else if (e.key === 'ArrowUp') go(-1); else if (e.key === 'Backspace' && i.value === '') go(-1);
+});
+
+/* ----- Armado de circuito por clics (pila de piezas) ----- */
+const CB_G = { NOT: { k: 'not', n: 1 }, AND: { k: 'and', n: 2 }, NAND: { k: 'nand', n: 2 } };
+const cbToks = v => String(v || '').split(' ').filter(Boolean);
+function cbStack(toks) {
+  const st = [];
+  for (const t of toks) {
+    if (CB_VARS.includes(t)) st.push(Lf(t));
+    else if (CB_G[t]) { const g = CB_G[t]; if (st.length < g.n) return { st, bad: true }; const ch = st.splice(st.length - g.n, g.n); st.push(Gt(g.k, ...ch)); }
+  }
+  return { st, bad: false };
+}
+const cbGates = toks => toks.filter(t => CB_G[t]).length, cbLeaves = toks => toks.filter(t => CB_VARS.includes(t)).length;
+function cbGate(q, v) {
+  const toks = cbToks(v), r = cbStack(toks); if (r.bad || r.st.length !== 1 || !cbGates(toks)) return false;
+  return ttOf(r.st[0], CB_VARS) === q.tt;
+}
+const cbMini = k => `<svg viewBox="-2 -2 70 44" width="40" height="26" aria-hidden="true">${gateShape(k)}</svg>`;
+function circHTML(q, p, key) {
+  if (key) return `<div class="my-2">${circuitSVG(q.tree, 'F')}</div><div class="key-box"><i class="bi bi-key-fill me-1"></i>Se acepta cualquier circuito equivalente. Referencia: <b>F = ${q.expect}</b></div>`;
+  return `<div class="cb" id="cb-${q.id}" data-cbq="${q.id}"><div class="cb-pal" role="group" aria-label="Entradas y compuertas">` +
+    CB_VARS.map(v => `<button type="button" class="cb-btn var" data-cb="${v}" title="Colocar la entrada ${v}">${v}</button>`).join('') + '<span class="cb-sep"></span>' +
+    [['NOT', 'not'], ['AND', 'and'], ['NAND', 'nand']].map(([n, k]) => `<button type="button" class="cb-btn" data-cb="${n}" title="Colocar una compuerta ${n}">${cbMini(k)}${n}</button>`).join('') +
+    `<button type="button" class="cb-btn clr" data-cb="clear"><i class="bi bi-trash3-fill"></i>Borrar todo</button></div>` +
+    `<div class="cb-stage" id="cbs-${q.id}" aria-live="polite"></div><div class="cb-expr small" id="cbe-${q.id}"></div>` +
+    `<div class="ans-hint mt-2"><i class="bi bi-hand-index-thumb-fill"></i><span>Primero haz clic en las <b>entradas</b>; luego en una <b>compuerta</b>: toma las últimas entradas colocadas (NOT toma 1; AND y NAND toman 2).</span></div></div>`;
+}
+function cbRender(id) {
+  const st = $('#cbs-' + id), ex_ = $('#cbe-' + id); if (!st) return;
+  const toks = cbToks(S.answers[id]), r = cbStack(toks), one = r.st.length === 1;
+  st.innerHTML = r.st.length ? r.st.map(t => t.v !== undefined ? `<span class="cb-leaf">${t.v}</span>` : `<div class="cb-piece">${circuitSVG(t, one ? 'F' : '')}</div>`).join('') : '<span class="cb-empty">Aquí aparecerá tu circuito. Empieza colocando una entrada.</span>';
+  ex_.innerHTML = one && r.st[0].v === undefined ? `Tu circuito: <b class="num">F = ${exprOf(r.st[0])}</b>` : (r.st.length > 1 ? '<span class="text-muted">Tienes varias piezas sueltas: únelas con una compuerta AND o NAND hasta que quede una sola.</span>' : '');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-cb]'); if (!b || !S || S.fin) return;
+  const id = +b.closest('.cb').dataset.cbq, act = b.dataset.cb; let toks = cbToks(S.answers[id]);
+  if (act === 'clear') toks = [];
+  else if (CB_VARS.includes(act)) { if (cbLeaves(toks) >= 6) { toast('Ya colocaste el máximo de entradas (6). Usa «Borrar todo» para reiniciar.', 'bi-exclamation-triangle-fill', 2600); return; } toks.push(act); }
+  else {
+    const need = CB_G[act].n, have = cbStack(toks).st.length;
+    if (have < need) { toast(act === 'NOT' ? 'Primero coloca una entrada para negarla.' : `La compuerta ${act} necesita 2 piezas: coloca primero otra entrada.`, 'bi-exclamation-triangle-fill', 2600); return; }
+    if (cbGates(toks) >= 6) { toast('Ya usaste el máximo de compuertas (6). Usa «Borrar todo» para reiniciar.', 'bi-exclamation-triangle-fill', 2600); return; }
+    toks.push(act);
+  }
+  S.answers[id] = toks.join(' '); save(); cbRender(id); refreshMarks(); updateProgress();
+});
+function restoreAns(q, v) {
+  if (v === undefined || v === '') return;
+  if (q.kind === 'mc') { const r = $(`input[name="q${q.id}"][value="${v}"]`); if (r) r.checked = true; }
+  else if (q.kind === 'tt') ttNorm(v).split('').forEach((c, i) => { const n = $(`input.tt-in[data-tt="${q.id}"][data-i="${i}"]`); if (n && c !== '_') { n.value = c; n.classList.add('filled'); } });
+  else if (q.kind === 'circ') cbRender(q.id);
+  else { const n = $('#a-' + q.id); if (n) n.value = v; }
 }
 
 /* ==========================================================================
    CONFIGURACIÓN DE PARCIALES
    ========================================================================== */
 const EXAMS = {
-  1: { titulo: 'Primer parcial', secs: SECS1, build: buildP1 },
-  2: { titulo: 'Segundo parcial', secs: SECS2, build: buildP2 }
+  1: { titulo: 'Primer parcial', secs: [...SECS1, ...SECS_NEW], build: buildP1 },
+  2: { titulo: 'Segundo parcial', secs: [...SECS2, ...SECS_NEW], build: buildP2 }
 };
 const buildExam = (parcial, tipo, seed) => { const qs = EXAMS[parcial].build(tipo, seed); qs.forEach((q, i) => q.id = i + 1); return qs; };
 function gradeQ(q, v) {
   if (v === undefined || v === null || v === '') return false;
   if (q.kind === 'mc') return +v === q.correct;
+  if (q.kind === 'tt') return String(v) === q.expect;
+  if (q.kind === 'circ') return cbGate(q, v);
   const u = String(v).toUpperCase();
   if (q.cmp === 'exact') return u === q.expect;
   if (q.cmp === 'num') return parseInt(u, 10) === parseInt(q.expect, 10);
@@ -932,7 +1078,7 @@ $('#rs-otro').onclick = () => { if (confirm('Dejarás de ver el intento anterior
 /* ===== 2. Datos ===== */
 let PARCIAL = 1;
 function openDatos(parcial) {
-  PARCIAL = parcial; $('#d-parcial').textContent = EXAMS[parcial].titulo; $('#d-dur').textContent = CFG.DURACION_MIN;
+  PARCIAL = parcial; $('#d-parcial').textContent = EXAMS[parcial].titulo; try { $('#d-total').textContent = EXAMS[parcial].build('A', 1).length; } catch (e) { } $('#d-dur').textContent = CFG.DURACION_MIN;
   show('datos'); setTimeout(() => $('#d-nombre').focus(), 100);
 }
 $('#d-cuenta').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 9); });
@@ -974,6 +1120,8 @@ function questionsHTML(exam, secs, opt = {}) {
     html += `<div class="qcard" id="${p}-${q.id}" style="--c:${sec.c}"><div class="d-flex align-items-start gap-2"><span class="qnum">${q.id}</span><div class="flex-grow-1">${q.bl ? `<span class="bl bl-${q.bl}" title="Nivel de la taxonomía de Bloom">${q.bl}</span>` : ''}<div class="qtext">${q.html}</div>`;
     if (q.kind === 'mc') {
       html += q.opts.map((o, i) => `<label class="opt ${key && i === q.correct ? 'key' : ''}"><input type="radio" name="${p}${q.id}" value="${i}" ${key ? 'disabled' : `data-q="${q.id}"`}><span class="mark">${'ABCD'[i]}</span><span>${o}</span>${key && i === q.correct ? '<i class="bi bi-check-circle-fill ms-auto text-success"></i>' : ''}</label>`).join('');
+    } else if (q.kind === 'tt') { html += ttHTML(q, p, key);
+    } else if (q.kind === 'circ') { html += circHTML(q, p, key);
     } else if (key) {
       html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><div class="key-box"><i class="bi bi-key-fill me-1"></i>Respuesta correcta: <b class="mono">${q.expect}</b></div>`;
     } else {
@@ -992,7 +1140,7 @@ function startExam(resume) {
   $('#bar-alumno').textContent = `${S.nombre} · ${S.cuenta} · Gpo. ${S.grupo}`;
   $('#bar-tipo').innerHTML = `<i class="bi bi-file-earmark-text-fill me-1"></i>Tipo ${S.tipo}`;
   const { html, grid } = questionsHTML(EXAM, EXAMS[S.parcial].secs); $('#qlist').innerHTML = html; $('#qn-grid').innerHTML = grid;
-  EXAM.forEach(q => { const v = S.answers[q.id]; if (v !== undefined && v !== '') { if (q.kind === 'mc') { const r = $(`input[name="q${q.id}"][value="${v}"]`); if (r) r.checked = true; } else $('#a-' + q.id).value = v; } });
+  EXAM.forEach(q => restoreAns(q, S.answers[q.id]));
   refreshMarks(); updateProgress(); show('examen'); examActive = true;
   clearInterval(timerId); tick(); timerId = setInterval(tick, 500);
   if (resume) toast('Examen reanudado: tu reloj siguió corriendo.', 'bi-arrow-repeat', 3200);
@@ -1014,7 +1162,10 @@ function kickOut(code) {                          // otra sesión tomó este exa
   showAlert(code === 'sesion' ? 'Sesión cerrada' : 'Examen ya entregado', code === 'sesion' ? 'Este examen se <b>continuó en otro dispositivo</b> con tu número de cuenta, así que esta pantalla ya no puede enviar respuestas.' : 'Este examen ya fue entregado con ese número de cuenta.', 'bi-shield-lock-fill', '#d97706');
   $('#alertModal').addEventListener('hidden.bs.modal', () => location.reload(), { once: true });
 }
-const isAns = q => { const v = S.answers[q.id]; return v !== undefined && v !== '' && v !== null; };
+const isAns = q => { const v = S.answers[q.id]; if (v === undefined || v === '' || v === null) return false;
+  if (q.kind === 'tt') return /^[01]{4}$/.test(v);
+  if (q.kind === 'circ') { const t = cbToks(v), r = cbStack(t); return !r.bad && r.st.length === 1 && cbGates(t) > 0; }
+  return true; };
 function refreshMarks() {
   EXAM.forEach(q => {
     const a = isAns(q), f = !!S.flags[q.id];
@@ -1024,8 +1175,8 @@ function refreshMarks() {
   });
 }
 function updateProgress() {
-  const n = EXAM.filter(isAns).length, txt = `${n} / ${CFG.TOTAL} contestadas`;
-  $('#bar-prog').textContent = txt; $('#bar-prog2').textContent = txt; $('#bar-fill').style.width = (n / CFG.TOTAL * 100) + '%';
+  const n = EXAM.filter(isAns).length, txt = `${n} / ${TOTAL()} contestadas`;
+  $('#bar-prog').textContent = txt; $('#bar-prog2').textContent = txt; $('#bar-fill').style.width = (n / TOTAL() * 100) + '%';
 }
 document.addEventListener('change', e => {
   const r = e.target.closest('#qlist input[type="radio"][data-q]'); if (!r || !S || S.fin) return;
@@ -1057,7 +1208,7 @@ function tick() {
 let confirmModal = null;
 function openConfirm() {
   const un = EXAM.filter(q => !isAns(q)).map(q => q.id), fl = Object.keys(S.flags);
-  $('#confirm-body').innerHTML = `<p class="mb-2">Contestaste <b>${CFG.TOTAL - un.length}</b> de <b>${CFG.TOTAL}</b> preguntas.</p>` +
+  $('#confirm-body').innerHTML = `<p class="mb-2">Contestaste <b>${TOTAL() - un.length}</b> de <b>${TOTAL()}</b> preguntas.</p>` +
     (un.length ? `<div class="alert alert-warning py-2 small mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i><b>Sin responder (${un.length}):</b> ${un.join(', ')}</div>` : `<div class="alert alert-success py-2 small mb-2"><i class="bi bi-check-circle-fill me-1"></i>Todas las preguntas tienen respuesta.</div>`) +
     (fl.length ? `<div class="alert alert-info py-2 small mb-2"><i class="bi bi-bookmark-fill me-1"></i><b>Marcadas para revisar:</b> ${fl.join(', ')}</div>` : '') +
     `<p class="small text-muted mb-0">Al entregar ya no podrás cambiar tus respuestas.</p>`;
@@ -1068,13 +1219,13 @@ function grade() {
   let ok = 0, det = '';
   EXAM.forEach(q => { const g = gradeQ(q, S.answers[q.id]); if (g) ok++; det += g ? '1' : '0'; });
   const resp = EXAM.map(q => { const v = S.answers[q.id]; return q.id + ':' + (v === undefined || v === '' ? '-' : (q.kind === 'mc' ? 'ABCD'[+v] : v)); }).join(';');
-  return { ok, det, resp, nota: Math.round(ok / CFG.TOTAL * 100) / 10 };
+  return { ok, det, resp, nota: Math.round(ok / TOTAL() * 100) / 10 };
 }
 function finish(motivo) {
   if (!S || S.fin) return;
   const g = grade(), fin = Math.min(Date.now(), S.start + CFG.DURACION_MIN * 60000), usado = fin - S.start;
   S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId);
-  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: CFG.TOTAL, calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
+  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: TOTAL(), calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
   S.status = 'pend'; save(); renderFin(); show('fin'); sendResult(S);
 }
 
@@ -1098,7 +1249,7 @@ function renderMalas(r) {
   const bad = ex.filter((q, i) => det[i] === '0');
   if (!ex.length) { box.innerHTML = ''; return; }
   if (!bad.length) { box.innerHTML = '<div class="alert alert-success fw-bold text-center mb-0"><i class="bi bi-stars me-1"></i>¡Todas tus respuestas fueron correctas!</div>'; return; }
-  const mine = q => { const v = ans[q.id]; if (v === undefined || v === '' || v === null) return '<span class="text-muted">Sin responder</span>'; return q.kind === 'mc' ? `Elegiste la opción <b>${'ABCD'[+v]}</b>` : `Escribiste <b class="mono">${esc(v)}</b>`; };
+  const mine = q => { const v = ans[q.id]; if (v === undefined || v === '' || v === null) return '<span class="text-muted">Sin responder</span>'; return q.kind === 'mc' ? `Elegiste la opción <b>${'ABCD'[+v]}</b>` : q.kind === 'circ' ? `Tu circuito: <b class="mono">${esc(v)}</b>` : `Escribiste <b class="mono">${esc(String(v).replace(/_/g, '·'))}</b>`; };
   box.innerHTML = `<h2 class="h6 fw-bold mb-2"><i class="bi bi-x-circle-fill text-danger me-1"></i>Preguntas que estuvieron mal (${bad.length} de ${ex.length})</h2><div class="small text-muted mb-2">Aquí no se muestra la respuesta correcta; repasa estos temas con tu profesor(a).</div>` +
     bad.map(q => { const sec = secs.find(x => x.id === q.sec), t = plain(q.html); return `<div class="mal-item" style="--c:${sec.c}"><span class="mal-n">${q.id}</span><div><div class="small fw-bold" style="color:${sec.c}">${esc(sec.t)}</div><div>${esc(t.length > 130 ? t.slice(0, 127) + '…' : t)}</div><div class="small mt-1">${mine(q)}</div></div></div>`; }).join('');
 }
