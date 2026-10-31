@@ -30,6 +30,7 @@
     .exam-bar { position:sticky; top:0; z-index:1030; background:linear-gradient(90deg,var(--navy),var(--navy2)); color:#fff; box-shadow:0 6px 20px rgba(0,0,0,.3); }
     .exam-bar .inner { display:flex; align-items:center; gap:.8rem; padding:.55rem 0; flex-wrap:wrap; }
     .timer { font-family:'Courier New',monospace; font-weight:800; font-size:1.5rem; letter-spacing:.06em; background:rgba(255,255,255,.1); border:2px solid rgba(34,211,238,.5); padding:.1rem .8rem; border-radius:12px; display:inline-flex; align-items:center; gap:.45rem; min-width:9.2rem; justify-content:center; }
+    .timer.d-none { display:none !important; }
     .timer.warn { border-color:var(--warn); color:#fde68a; } .timer.low { border-color:var(--bad); color:#fecaca; animation:pulse 1s infinite; }
     @keyframes pulse { 50% { background:rgba(220,38,38,.35); } }
     .progress-thin { height:6px; background:rgba(255,255,255,.18); } .progress-thin .progress-bar { background:linear-gradient(90deg,var(--cy),#5eead4); transition:width .4s; }
@@ -172,10 +173,10 @@
       <hr class="my-4">
       <h2 class="h6 fw-bold mb-2"><i class="bi bi-list-check me-1 text-primary"></i>Reglas del examen</h2>
       <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b>30 preguntas</b> de opción múltiple y de respuesta abierta (numérica). Cada una vale lo mismo. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
-      <div class="rule"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b>. El reloj arranca al pulsar «Comenzar» y el examen se entregará en automático al llegar el reloj a 0.</div></div>
+      <div class="rule"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b> desde que pulsas «Comenzar». Pasado ese tiempo el examen se <b>cierra y se entrega en automático</b> con las respuestas que tengas.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo el número, sin espacios</b>, con <b>punto decimal</b> y el signo − si hace falta. Redondea a los decimales que indique cada pregunta. Puedes usar calculadora.</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
-      <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen y tu reloj continúan. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
+      <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen continúa y el tiempo sigue corriendo. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
       <div class="form-check my-3"><input class="form-check-input" type="checkbox" id="d-ok"><label class="form-check-label" for="d-ok">Leí las reglas y confirmo que mis datos son correctos.</label></div>
       <div class="text-danger fw-bold small mb-2" id="d-err" hidden></div>
       <button class="btn btn-lg w-100 text-white fw-bold" id="btn-comenzar" style="background:linear-gradient(90deg,#0891b2,#0f766e)" type="submit"><i class="bi bi-play-circle-fill me-1"></i>Comenzar examen</button>
@@ -202,11 +203,11 @@
       <div class="inner">
         <div class="d-flex align-items-center gap-2 me-auto">
           <i class="bi bi-bar-chart-line-fill fs-4" style="color:var(--cy)"></i>
-          <div class="lh-sm"><div class="fw-bold" id="bar-titulo">Estadística</div><small class="opacity-75" id="bar-alumno"></small></div>
+          <div class="lh-sm"><div class="fw-bold" id="bar-titulo">Estadística</div><small class="opacity-75" id="bar-alumno"></small> <button type="button" class="btn btn-link btn-sm p-0 align-baseline" id="bar-cambiar" style="font-size:.72rem;color:#67e8f9">¿Otro número de cuenta?</button></div>
           <span class="badge rounded-pill text-bg-light ms-1" id="bar-tipo"></span>
         </div>
         <span class="small fw-bold d-none d-sm-inline" id="bar-prog"></span>
-        <div class="timer" id="timer"><i class="bi bi-stopwatch"></i><span id="timer-txt">--:--:--</span></div>
+        <div class="timer d-none" id="timer"><i class="bi bi-stopwatch"></i><span id="timer-txt">--:--:--</span></div>
         <button class="btn btn-sm btn-warning fw-bold rounded-pill d-none d-md-inline-block" data-entregar><i class="bi bi-send-check-fill me-1"></i>Entregar</button>
       </div>
     </div>
@@ -240,6 +241,7 @@
     </div>
     <div class="gate-body text-center">
       <div id="fin-score"></div>
+      <div id="fin-aviso"></div>
       <div class="my-3" id="fin-datos"></div>
       <div class="text-start my-3" id="fin-malas"></div>
       <div id="fin-status" class="mb-3"></div>
@@ -295,6 +297,8 @@
 const CFG = {
   ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
   MATERIA: 'est',                  // 'est' = hojas «Resultados Estadística» y «Config Estadística»
+  PENA_MIN: 5,                     // minutos que se descuentan por CADA salida de la ventana
+  SALIDAS_CIERRE: 3,               // con más salidas que estas, el administrador puede cerrar el examen del alumno
   DURACION_MIN: 120,               // duración del examen en minutos (cuenta regresiva)
   TOTAL: 30                        // preguntas por examen
 };
@@ -811,11 +815,20 @@ const MSG = {
 const DEV = (() => { let d = LS.get('eq_dev'); if (!d) { d = [...randBytes()].map(x => x.toString(36)).join(''); LS.set('eq_dev', d); } return d; })();   // identifica este equipo para el límite de intentos
 
 /* ===== Estado local ===== */
-const KEY = 'eq_est_state_v1';
+const KEY = 'eq_est_state_v1', LAST = 'eq_est_last';
+/* Cada sesión (parcial + número de cuenta) se guarda aparte en este equipo, y LAST recuerda la que estaba activa:
+   al cerrar y volver a abrir la ventana se continúa solo con esa cuenta; si se escribe otra cuenta, se crea una sesión nueva. */
+const skey = (p, c) => `${KEY}:${p}:${c}`;
+const loadLocal = (p, c) => { try { return JSON.parse(LS.get(skey(p, c)) || 'null'); } catch (e) { return null; } };
+const limiteMs = () => S.start + (CFG.DURACION_MIN - CFG.PENA_MIN * (S.salidas || 0)) * 60000;   // cada salida resta PENA_MIN minutos
+let CLK = false;       // ¿el administrador activó el cronómetro visible? (por defecto NO)
+const applyClock = () => { const t = $('#timer'); if (t) t.classList.toggle('d-none', !CLK); };
 let S = null, EXAM = [], timerId = null, away = false, examActive = false, ADMIN = null;
-try { S = JSON.parse(LS.get(KEY) || 'null'); } catch (e) { S = null; }
-const save = () => { if (S) LS.set(KEY, JSON.stringify(S)); };
-const clearState = () => { S = null; LS.del(KEY); };
+try { const l = (LS.get(LAST) || '').split(':'); S = l.length === 2 ? loadLocal(l[0], l[1]) : JSON.parse(LS.get(KEY) || 'null'); } catch (e) { S = null; }
+const save = () => { if (S) { LS.set(skey(S.parcial, S.cuenta), JSON.stringify(S)); LS.set(LAST, S.parcial + ':' + S.cuenta); } };
+const clearState = () => { if (S) LS.del(skey(S.parcial, S.cuenta)); S = null; LS.del(LAST); LS.del(KEY); };
+/* Deja de usar esta sesión en pantalla pero conserva su avance guardado (se retoma al escribir de nuevo ese número de cuenta) */
+function detachState() { examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId); clearInterval(pollId); S = null; LS.del(LAST); LS.del(KEY); }
 
 function show(id) { ['clave', 'datos', 'resume', 'examen', 'fin', 'admin'].forEach(n => $('#scr-' + n).classList.toggle('d-none', n !== id)); window.scrollTo(0, 0); }
 function toast(msg, ic = 'bi-exclamation-triangle-fill', ms = 2600) {
@@ -849,7 +862,7 @@ $('#form-clave').addEventListener('submit', async e => {
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Entrar';
   if (r.code === 'bloqueado') { lockLogin(r.espera || 300); return; }
   if (r.ok && r.role === 'admin') { ADMIN = r.token; SS.set('eq_est_sess', JSON.stringify({ role: 'admin', token: r.token })); openAdmin(); return; }
-  if (r.ok && r.role === 'alumno') { SS.set('eq_est_sess', JSON.stringify({ role: 'alumno', parcial: r.parcial })); afterLogin(r.parcial, true); return; }
+  if (r.ok && r.role === 'alumno') { CLK = !!r.reloj; SS.set('eq_est_sess', JSON.stringify({ role: 'alumno', parcial: r.parcial })); afterLogin(r.parcial, true); return; }
   err.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i>${MSG[r.code] || r.msg || 'No se pudo entrar.'}${r.code === 'incorrecta' && r.restan !== undefined ? ` <b>Te ${r.restan === 1 ? 'queda 1 intento' : 'quedan ' + r.restan + ' intentos'}.</b>` : ''}`; err.hidden = false;
   const c = $('#clave-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); $('#clave').select();
 });
@@ -874,7 +887,12 @@ function afterLogin(parcial, fresh) {
   openDatos(parcial);
 }
 $('#rs-continuar').onclick = () => startExam(true);
-$('#rs-otro').onclick = () => { if (confirm('Dejarás de ver el intento anterior en este equipo (el avance sigue guardado en la hoja y se puede continuar con su número de cuenta y nombre). ¿Continuar?')) { clearState(); const s = JSON.parse(SS.get('eq_est_sess') || '{}'); openDatos(s.parcial || 1); } };
+$('#bar-cambiar').onclick = () => {
+  if (!S || S.fin) return;
+  if (!confirm('Vas a salir de esta sesión para usar otro número de cuenta. Tu avance queda guardado (en este equipo y en la hoja) y se retoma al escribir de nuevo este número de cuenta y tu nombre. El tiempo de este examen sigue corriendo. ¿Continuar?')) return;
+  const p = S.parcial; detachState(); openDatos(p);
+};
+$('#rs-otro').onclick = () => { if (confirm('Dejarás de ver el intento anterior en este equipo (el avance sigue guardado y se retoma con su número de cuenta y nombre). ¿Continuar?')) { const s = JSON.parse(SS.get('eq_sess') || '{}'), p = s.parcial || (S && S.parcial) || 1; detachState(); openDatos(p); } };
 
 /* ===== 2. Datos ===== */
 let PARCIAL = 1;
@@ -894,7 +912,7 @@ $('#form-datos').addEventListener('submit', async e => {
   if (!$('#d-ok').checked) { err.textContent = 'Marca la casilla para confirmar que leíste las reglas.'; err.hidden = false; return; }
   const btn = $('#btn-comenzar'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando…';
   const r = randBytes(), tipo = (r[1] & 1) ? 'B' : 'A', seed = r[0] >>> 0, inicio = new Date().toISOString();
-  const res = await api('start', { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, inicio, dev: DEV });
+  const res = await api('start', { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, inicio, dev: DEV }); if (res && res.ok) CLK = !!res.reloj;
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-circle-fill me-1"></i>Comenzar examen';
   if (!res.ok) {
     if (res.code === 'duplicado') showAlert('Examen ya respondido', `El examen del <b>${EXAMS[PARCIAL].titulo}</b> ya fue respondido anteriormente con el número de cuenta <b>${esc(cuenta)}</b>. No es posible presentarlo de nuevo.<br><small class="text-muted">Si crees que es un error, habla con tu profesor(a).</small>`);
@@ -904,9 +922,9 @@ $('#form-datos').addEventListener('submit', async e => {
     return;
   }
   if (res.resumed) {          // el servidor ya tenía este examen en curso: se continúa con el mismo tipo, reloj y respuestas
-    const pr = res.progreso || {};
-    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: pr.a || {}, flags: pr.f || {}, salidas: res.salidas || 0, fin: false, sent: false, result: null, sid: res.sid };
-    save(); startExam(true); return;
+    const pr = res.progreso || {}, loc = loadLocal(PARCIAL, cuenta), mismo = loc && !loc.fin && (loc.seed >>> 0) === (res.seed >>> 0);
+    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: Object.assign({}, pr.a || {}, mismo ? loc.answers : {}), flags: Object.assign({}, pr.f || {}, mismo ? loc.flags : {}), salidas: Math.max(res.salidas || 0, mismo ? loc.salidas || 0 : 0), fin: false, sent: false, result: null, sid: res.sid };
+    save(); startExam(true); if (res.cerrar) { toast('Tu profesor(a) cerró tu examen: tus respuestas se enviaron.', 'bi-lock-fill', 5000); finish('admin'); } return;
   }
   S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.now(), inicioISO: inicio, answers: {}, flags: {}, salidas: 0, fin: false, sent: false, result: null, sid: res.sid };
   save(); startExam(false);
@@ -940,23 +958,33 @@ function startExam(resume) {
   $('#bar-tipo').innerHTML = `<i class="bi bi-file-earmark-text-fill me-1"></i>Tipo ${S.tipo}`;
   const { html, grid } = questionsHTML(EXAM, EXAMS[S.parcial].secs); $('#qlist').innerHTML = html; $('#qn-grid').innerHTML = grid;
   EXAM.forEach(q => { const v = S.answers[q.id]; if (v !== undefined && v !== '') { if (q.kind === 'mc') { const r = $(`input[name="q${q.id}"][value="${v}"]`); if (r) r.checked = true; } else $('#a-' + q.id).value = v; } });
-  refreshMarks(); updateProgress(); show('examen'); examActive = true;
+  refreshMarks(); updateProgress(); applyClock(); show('examen'); examActive = true;
   clearInterval(timerId); tick(); timerId = setInterval(tick, 500);
   if (resume) toast('Examen reanudado: tu reloj siguió corriendo.', 'bi-arrow-repeat', 3200);
-  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); syncId = setInterval(() => syncProgress(false), 45000); if (resume) syncProgress(true);
+  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); syncId = setInterval(() => syncProgress(false), 45000); clearInterval(pollId); pollId = setInterval(pollCierre, 15000); if (resume) syncProgress(true);
 }
 /* Avance guardado en la hoja (ligado al número de cuenta): permite continuar aunque cierren o cambien de equipo */
-let syncId = null, lastSig = '', syncBusy = false;
+let syncId = null, pollId = null, lastSig = '', syncBusy = false;
+function progOk(r) {
+  if (r.reloj !== undefined) { CLK = !!r.reloj; applyClock(); }
+  if (r.cerrar && S && !S.fin) { toast('Tu profesor(a) cerró tu examen: tus respuestas se enviaron.', 'bi-lock-fill', 5000); finish('admin'); }
+}
+/* Con más de SALIDAS_CIERRE salidas se pregunta cada 15 s si el administrador cerró el examen (el resto solo sincroniza cuando hay cambios) */
+async function pollCierre() {
+  if (!S || S.fin || !CFG.ENDPOINT || syncBusy || S.salidas <= CFG.SALIDAS_CIERRE) return;
+  syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, salidas: S.salidas, ping: true }); syncBusy = false;
+  if (r.ok) progOk(r); else if (r.code === 'sesion' || r.code === 'duplicado') kickOut(r.code);
+}
 async function syncProgress(force) {
   if (!S || S.fin || !CFG.ENDPOINT || syncBusy) return;
   const prog = JSON.stringify({ a: S.answers, f: S.flags }), sig = prog + '|' + S.salidas;
   if (!force && sig === lastSig) return;
   syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, progreso: prog, salidas: S.salidas }); syncBusy = false;
-  if (r.ok) { lastSig = sig; return; }
+  if (r.ok) { lastSig = sig; progOk(r); return; }
   if (r.code === 'sesion' || r.code === 'duplicado') kickOut(r.code);
 }
 function kickOut(code) {                          // otra sesión tomó este examen (o ya se entregó): esta pantalla se cierra
-  if (!S || S.fin) return; examActive = false; clearInterval(timerId); clearInterval(syncId);
+  if (!S || S.fin) return; examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId);
   clearState(); SS.del('eq_est_sess');
   showAlert(code === 'sesion' ? 'Sesión cerrada' : 'Examen ya entregado', code === 'sesion' ? 'Este examen se <b>continuó en otro dispositivo</b> con tu número de cuenta, así que esta pantalla ya no puede enviar respuestas.' : 'Este examen ya fue entregado con ese número de cuenta.', 'bi-shield-lock-fill', '#d97706');
   $('#alertModal').addEventListener('hidden.bs.modal', () => location.reload(), { once: true });
@@ -993,7 +1021,7 @@ document.addEventListener('click', e => {
 /* ===== Reloj ===== */
 function tick() {
   if (!S || S.fin) return;
-  const left = S.start + CFG.DURACION_MIN * 60000 - Date.now(), t = $('#timer');
+  const left = limiteMs() - Date.now(), t = $('#timer');
   $('#timer-txt').textContent = fmtT(left);
   t.classList.toggle('warn', left <= 10 * 60000 && left > 5 * 60000); t.classList.toggle('low', left <= 5 * 60000);
   if (left <= 5 * 60000 && !S._w5) { S._w5 = true; toast('Quedan menos de 5 minutos.', 'bi-alarm-fill', 4000); }
@@ -1019,8 +1047,8 @@ function grade() {
 }
 function finish(motivo) {
   if (!S || S.fin) return;
-  const g = grade(), fin = Math.min(Date.now(), S.start + CFG.DURACION_MIN * 60000), usado = fin - S.start;
-  S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId);
+  const g = grade(), fin = Math.min(Date.now(), limiteMs()), usado = fin - S.start;
+  S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId);
   S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: CFG.TOTAL, calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
   S.status = 'pend'; save(); renderFin(); show('fin'); sendResult(S);
 }
@@ -1032,6 +1060,7 @@ function renderFin() {
   $('#fin-score').innerHTML = S.status === 'dup'
     ? `<div class="alert alert-danger d-inline-block"><i class="bi bi-x-octagon-fill me-1"></i>Este examen ya había sido respondido: no se guardó tu resultado.</div>`
     : `<div class="grade-ring" style="--p:${pct};--gc:${col}"><b style="color:${col}">${r.calificacion.toFixed(1)}</b><small class="text-muted fw-bold">de 10</small></div><div class="mt-2 fw-bold">${r.aciertos} aciertos de ${r.total}</div><div class="small text-muted">${pct >= 60 ? '¡Aprobado!' : 'Sigue practicando, ¡tú puedes!'}</div>`;
+  $('#fin-aviso') && ($('#fin-aviso').innerHTML = r.motivo === 'admin' ? '<div class="alert alert-warning small fw-bold"><i class="bi bi-lock-fill me-1"></i>Tu profesor(a) cerró este examen por exceder el límite de salidas de la ventana. Se calificó con lo que alcanzaste a responder.</div>' : '');
   $('#fin-datos').innerHTML = `<div class="fin-banner"><div><small>Número de cuenta</small><b>${esc(r.cuenta)}</b></div><div><small>Grupo</small><b>${esc(r.grupo)}</b></div></div>`;
   renderMalas(r);
   setStatus();
@@ -1110,7 +1139,7 @@ function adResumen() {
 function adResultados() {
   const q = AD.q.toLowerCase(), rows = rowsSel().filter(r => !q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)).sort((a, b) => String(b.inicio).localeCompare(String(a.inicio)));
   $('#ad-body').innerHTML = parBtns() + `<div class="nav-card"><div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><div class="input-group" style="max-width:340px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-q" class="form-control" placeholder="Buscar nombre, cuenta o grupo" value="${esc(AD.q)}" autocomplete="off"></div><span class="text-muted small">${rows.length} registro(s)</span><button class="btn btn-outline-success btn-sm ms-auto fw-bold rounded-pill" id="ad-csv"><i class="bi bi-filetype-csv me-1"></i>Descargar CSV</button></div>
-  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th>Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono">${r.estado === 'Entregado' ? esc(r.tiempo) : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : r.salidas}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td><button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th>Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono">${r.estado === 'Entregado' ? esc(r.tiempo) : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 15 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
   $('#ad-q').addEventListener('input', e => { AD.q = e.target.value; const p = e.target.selectionStart; adResultados(); const n = $('#ad-q'); n.focus(); n.setSelectionRange(p, p); });
   $('#ad-csv').onclick = () => {
     const H = ['Parcial', 'Nombre', 'Cuenta', 'Grupo', 'Tipo', 'Estado', 'Aciertos', 'Total', 'Calificación', 'Tiempo', 'Salidas', 'Inicio', 'Entrega'], q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
@@ -1132,11 +1161,20 @@ function adClaves() {
     <div class="small mb-2" id="st-${p}" aria-live="polite"></div>
     <div class="small text-muted mb-3">Cambió ${c['cambios' + p]} ${c['cambios' + p] === 1 ? 'vez' : 'veces'}. Quien use la anterior verá: «La contraseña ha cambiado. Solicita la nueva a tu profesor(a)».</div>
     <button class="btn btn-sm ${c['abierto' + p] === 'SI' ? 'btn-outline-danger' : 'btn-outline-success'} fw-bold rounded-pill" data-abierto="${p}|${c['abierto' + p] === 'SI' ? 'NO' : 'SI'}"><i class="bi ${c['abierto' + p] === 'SI' ? 'bi-lock-fill' : 'bi-unlock-fill'} me-1"></i>${c['abierto' + p] === 'SI' ? 'Cerrar acceso' : 'Abrir acceso'}</button></div></div>`;
-  $('#ad-body').innerHTML = `<div class="alert alert-info shadow-sm small"><i class="bi bi-info-circle-fill me-1"></i>Cada contraseña abre un examen distinto. Se guardan en la hoja <b>Config Estadística</b> de tu hoja de cálculo (la de Cibernética tiene la suya). Al cambiarla, nadie puede entrar con la anterior; los alumnos que ya están contestando pueden terminar.</div><div class="row g-3">${card(1)}${card(2)}</div>`;
+  $('#ad-body').innerHTML = `<div class="alert alert-info shadow-sm small"><i class="bi bi-info-circle-fill me-1"></i>Cada contraseña abre un examen distinto. Se guardan en la hoja <b>Config Estadística</b> de tu hoja de cálculo (la de Cibernética tiene la suya). Al cambiarla, nadie puede entrar con la anterior; los alumnos que ya están contestando pueden terminar.</div><div class="row g-3">${card(1)}${card(2)}</div>
+  <div class="nav-card mt-3 d-flex flex-wrap align-items-center gap-3"><div class="me-auto"><b><i class="bi bi-stopwatch-fill me-1"></i>Cronómetro visible para los alumnos</b><div class="small text-muted">Por defecto está oculto. Aunque esté oculto, el examen se cierra y se entrega solo a los ${CFG.DURACION_MIN} minutos. El cambio llega a quienes ya contestan en menos de un minuto.</div></div><span class="badge ${c.reloj === 'SI' ? 'text-bg-success' : 'text-bg-secondary'}">${c.reloj === 'SI' ? 'Visible' : 'Oculto'}</span><button class="btn btn-sm ${c.reloj === 'SI' ? 'btn-outline-danger' : 'btn-outline-success'} fw-bold rounded-pill" data-reloj="${c.reloj === 'SI' ? 'NO' : 'SI'}"><i class="bi ${c.reloj === 'SI' ? 'bi-eye-slash-fill' : 'bi-eye-fill'} me-1"></i>${c.reloj === 'SI' ? 'Ocultar cronómetro' : 'Mostrar cronómetro'}</button></div>`;
 }
 document.addEventListener('click', async e => {
   const eye = e.target.closest('[data-eye]'); if (eye) { const i = $('#' + eye.dataset.eye); i.type = i.type === 'password' ? 'text' : 'password'; }
   const sc = e.target.closest('[data-setclave]'); if (sc) saveClave(+sc.dataset.setclave);
+  const ce = e.target.closest('[data-cerrar]'); if (ce) {
+    const [parcial, cuenta] = ce.dataset.cerrar.split('|'), row = AD.rows.find(x => String(x.parcial) === parcial && String(x.cuenta) === cuenta);
+    if (!confirm(`¿Cerrar el examen de ${row ? row.nombre : cuenta} (cuenta ${cuenta})? Se entregará y calificará con lo que lleva respondido.`)) return;
+    const r = await adApi('admin_cerrar', { parcial: +parcial, cuenta });
+    if (r.ok) { toast('Cierre enviado. El examen se entregará en cuanto el alumno sincronice.', 'bi-lock-fill', 4500); loadAdmin(); }
+    else toast(r.code === 'accion' ? 'Actualiza el script de Apps Script (nueva versión de la implementación) para usar esta opción.' : (r.msg || MSG[r.code] || 'No se pudo cerrar.'), 'bi-exclamation-triangle-fill', 4500);
+  }
+  const rl = e.target.closest('[data-reloj]'); if (rl) { const r = await adApi('admin_reloj', { valor: rl.dataset.reloj }); if (r.ok) { toast(rl.dataset.reloj === 'SI' ? 'Cronómetro visible para los alumnos.' : 'Cronómetro oculto.', 'bi-check-circle-fill'); loadAdmin(); } else toast(r.code === 'accion' ? 'Actualiza el script de Apps Script (nueva versión de la implementación) para usar esta opción.' : (MSG[r.code] || r.msg || 'No se pudo cambiar.'), 'bi-exclamation-triangle-fill', 4500); }
   const ab = e.target.closest('[data-abierto]'); if (ab) { const [p, v] = ab.dataset.abierto.split('|'); const r = await adApi('admin_abierto', { parcial: +p, abierto: v }); if (r.ok) { toast(v === 'SI' ? 'Acceso abierto.' : 'Acceso cerrado.', 'bi-check-circle-fill'); loadAdmin(); } }
 });
 async function saveClave(p) {
@@ -1185,6 +1223,8 @@ window.addEventListener('beforeunload', e => { if (examActive) { e.preventDefaul
   let sess = null; try { sess = JSON.parse(SS.get('eq_est_sess') || 'null'); } catch (e) { }
   if (sess && sess.role === 'admin' && sess.token) { ADMIN = sess.token; openAdmin(); }
   else if (sess && sess.role === 'alumno') afterLogin(sess.parcial, false);
+  else if (S && !S.fin) { SS.set('eq_sess', JSON.stringify({ role: 'alumno', parcial: S.parcial })); startExam(true); }          // se cerró la ventana y se volvió a abrir: sigue la sesión de ese número de cuenta
+  else if (S && S.fin && S.result && !S.sent && S.status !== 'dup') { SS.set('eq_sess', JSON.stringify({ role: 'alumno', parcial: S.parcial })); renderFin(); show('fin'); sendResult(S); }
   else show('clave');
   flushQueue();
 })();
