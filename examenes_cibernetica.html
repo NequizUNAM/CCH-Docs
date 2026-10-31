@@ -92,6 +92,10 @@
     .cb-leaf { display:inline-flex; width:2.6rem; height:2.6rem; border-radius:50%; background:#ede9fe; color:#5b21b6; font-weight:800; align-items:center; justify-content:center; border:2px solid #a78bfa; animation:rise .25s ease; }
     .cb-empty { color:#94a3b8; font-size:.9rem; }
     .cb-expr { margin-top:.4rem; font-size:.95rem; }
+    .timer.d-none { display:none !important; }
+    .ov:has(.ov) { text-decoration:none; display:inline-block; border-top:2px solid currentColor; padding-top:3px; line-height:1.15; }
+    .bl-Bonus { background:#f59e0b; }
+    .cb-node { cursor:pointer; } .cb-node:hover rect { stroke:#7c3aed; } .cb-node:focus { outline:none; } .cb-node:focus-visible rect { stroke:#7c3aed; stroke-width:3; }
     .circ { max-width:100%; height:auto; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:.4rem; }
     .km-wrap { overflow-x:auto; margin:.6rem 0; }
     .km { border-collapse:separate; border-spacing:3px; font-family:'Courier New',monospace; text-align:center; }
@@ -174,11 +178,11 @@
       </div>
       <hr class="my-4">
       <h2 class="h6 fw-bold mb-2"><i class="bi bi-list-check me-1 text-primary"></i>Reglas del examen</h2>
-      <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">41</span> preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
-      <div class="rule"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b>. El reloj arranca al pulsar «Comenzar» y el examen se entregará en automático al llegar el reloj a 0.</div></div>
+      <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">35</span> preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Al final hay <b>1 pregunta bonus opcional</b> que vale por 2, sin pasar nunca de 10. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
+      <div class="rule"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b> desde que pulsas «Comenzar». Pasado ese tiempo el examen se <b>cierra y se entrega en automático</b> con las respuestas que tengas.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo la respuesta, sin espacios</b>, con los símbolos que indique cada pregunta (solo 0 y 1, solo números, o números y letras A–F).</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
-      <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen y tu reloj continúan. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
+      <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen continúa y el tiempo sigue corriendo. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
       <div class="form-check my-3"><input class="form-check-input" type="checkbox" id="d-ok"><label class="form-check-label" for="d-ok">Leí las reglas y confirmo que mis datos son correctos.</label></div>
       <div class="text-danger fw-bold small mb-2" id="d-err" hidden></div>
       <button class="btn btn-lg w-100 text-white fw-bold" id="btn-comenzar" style="background:linear-gradient(90deg,#0891b2,#4338ca)" type="submit"><i class="bi bi-play-circle-fill me-1"></i>Comenzar examen</button>
@@ -205,11 +209,11 @@
       <div class="inner">
         <div class="d-flex align-items-center gap-2 me-auto">
           <i class="bi bi-cpu-fill fs-4" style="color:var(--cy)"></i>
-          <div class="lh-sm"><div class="fw-bold" id="bar-titulo">Cibernética 1</div><small class="opacity-75" id="bar-alumno"></small></div>
+          <div class="lh-sm"><div class="fw-bold" id="bar-titulo">Cibernética 1</div><small class="opacity-75" id="bar-alumno"></small> <button type="button" class="btn btn-link btn-sm p-0 align-baseline" id="bar-cambiar" style="font-size:.72rem;color:#67e8f9">¿Otro número de cuenta?</button></div>
           <span class="badge rounded-pill text-bg-light ms-1" id="bar-tipo"></span>
         </div>
         <span class="small fw-bold d-none d-sm-inline" id="bar-prog"></span>
-        <div class="timer" id="timer"><i class="bi bi-stopwatch"></i><span id="timer-txt">--:--:--</span></div>
+        <div class="timer d-none" id="timer"><i class="bi bi-stopwatch"></i><span id="timer-txt">--:--:--</span></div>
         <button class="btn btn-sm btn-warning fw-bold rounded-pill d-none d-md-inline-block" data-entregar><i class="bi bi-send-check-fill me-1"></i>Entregar</button>
       </div>
     </div>
@@ -243,6 +247,7 @@
     </div>
     <div class="gate-body text-center">
       <div id="fin-score"></div>
+      <div id="fin-aviso"></div>
       <div class="my-3" id="fin-datos"></div>
       <div class="text-start my-3" id="fin-malas"></div>
       <div id="fin-status" class="mb-3"></div>
@@ -295,9 +300,11 @@
    Las contraseñas del examen y la del administrador YA NO están en esta página:
    viven en tu hoja de Google (contraseñas de alumnos) y en el script de Apps Script (administrador).
    ========================================================================== */
-const TOTAL = () => (typeof EXAM !== 'undefined' && EXAM && EXAM.length) || 0;
+const TOTAL = () => (typeof EXAM !== 'undefined' && EXAM) ? EXAM.filter(q => !q.bonus).length : 0;   // la pregunta bonus no cuenta en el total
 const CFG = {
   ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
+  PENA_MIN: 5,                     // minutos que se descuentan por CADA salida de la ventana
+  SALIDAS_CIERRE: 3,               // con más salidas que estas, el administrador puede cerrar el examen del alumno
   DURACION_MIN: 120,               // duración del examen en minutos (cuenta regresiva)
   TOTAL: 0                       // se calcula solo con el número de preguntas de cada examen
 };
@@ -336,38 +343,34 @@ const openQ = (sec, html, expect, rule, cmp = 'norm', bl) => ({ sec, kind: 'open
 const BANK = {
   prec: {
     A: [
-      { q: '¿Quién escribió en 1843 las notas con el que se considera el primer algoritmo pensado para una máquina (la Máquina Analítica de Babbage)?', ok: 'Ada Lovelace', bad: ['Jean Jennings Bartik', 'Kathleen Booth', 'Arturo Rosenblueth'] },
+      { q: '¿Quién es considerada la autora del primer algoritmo pensado para ser ejecutado por una máquina (la Máquina Analítica de Babbage)?', ok: 'Ada Lovelace', bad: ['Jean Jennings Bartik', 'Kathleen Booth', 'Arturo Rosenblueth'] },
       { q: 'Norbert Wiener es recordado principalmente por haber…', ok: 'fundado la cibernética, el estudio del control y la comunicación en animales y máquinas', bad: ['construido la computadora ENIAC', 'creado el primer lenguaje ensamblador', 'descifrado la máquina Enigma'] },
-      { q: '¿Qué científico mexicano fue coautor del artículo «Behavior, Purpose and Teleology» (1943) y primer director del Cinvestav?', ok: 'Arturo Rosenblueth', bad: ['Norbert Wiener', 'Alan Turing', 'Claude Shannon'] },
-      { q: 'La «máquina de Turing» (1936) introdujo la idea de…', ok: 'la computadora universal', bad: ['la teoría de la información', 'el primer lenguaje ensamblador', 'la programación de la ENIAC'] },
-      { q: 'El artículo «A Mathematical Theory of Communication» (1948) dio origen a…', ok: 'la teoría de la información (Claude Shannon)', bad: ['la máquina de Turing (Alan Turing)', 'la cibernética (Norbert Wiener)', 'el lenguaje Ada (Ada Lovelace)'] },
+      { q: '¿Qué científico mexicano fue coautor del artículo «Behavior, Purpose and Teleology», clave para la cibernética, y primer director del Cinvestav?', ok: 'Arturo Rosenblueth', bad: ['Norbert Wiener', 'Alan Turing', 'Claude Shannon'] },
+      { q: '¿Cuál es el aporte más destacado de la «máquina de Turing»?', ok: 'Introdujo la idea de una computadora universal capaz de ejecutar cualquier algoritmo', bad: ['Fue la primera computadora electrónica comercial', 'Creó la teoría de la información', 'Inventó el primer lenguaje ensamblador'] },
+      { q: 'El artículo «A Mathematical Theory of Communication» dio origen a…', ok: 'la teoría de la información (Claude Shannon)', bad: ['la máquina de Turing (Alan Turing)', 'la cibernética (Norbert Wiener)', 'el algoritmo de la Máquina Analítica (Ada Lovelace)'] },
       { q: '¿Quién creó el primer lenguaje ensamblador y su ensamblador para la computadora ARC?', ok: 'Kathleen Booth', bad: ['Ada Lovelace', 'Jean Jennings Bartik', 'Claude Shannon'] },
-      { q: 'Jean Jennings Bartik fue una de las seis primeras programadoras de la computadora…', ok: 'ENIAC', bad: ['ARC', 'Máquina Analítica', 'Enigma'] }
+      { q: 'Jean Jennings Bartik destaca por haber sido una de las seis primeras programadoras de la computadora…', ok: 'ENIAC', bad: ['ARC', 'Máquina Analítica', 'Enigma'] }
     ],
     B: [
-      { q: '¿Cuál es el periodo de vida de Ada Lovelace?', ok: '1815 – 1852', bad: ['1894 – 1964', '1912 – 1954', '1922 – 2022'] },
+      { q: '¿Qué aportación destaca más en el trabajo de Ada Lovelace?', ok: 'Describir cómo programar una máquina para calcular los números de Bernoulli, el primer algoritmo para una máquina', bad: ['Construir la primera computadora electrónica', 'Descifrar los mensajes de la máquina Enigma', 'Acuñar el término «cibernética»'] },
       { q: '¿Qué máquina logró descifrar Alan Turing en Bletchley Park durante la Segunda Guerra Mundial?', ok: 'La máquina Enigma', bad: ['La ENIAC', 'La Máquina Analítica', 'La computadora ARC'] },
-      { q: 'La tesis de Claude Shannon de 1937 unió…', ok: 'los circuitos eléctricos con el álgebra de Boole', bad: ['la fisiología con la cibernética', 'el ensamblador con la ENIAC', 'la Máquina Analítica con los números de Bernoulli'] },
-      { q: 'El libro <i>Cybernetics</i> (1948) de Norbert Wiener lleva el subtítulo «control y comunicación en…»', ok: 'el animal y la máquina', bad: ['la computadora y el programa', 'el circuito y la batería', 'el número y la ecuación'] },
-      { q: 'En 1979 se nombró «Ada» a un lenguaje de programación en honor a…', ok: 'Ada Lovelace', bad: ['Kathleen Booth', 'Jean Jennings Bartik', 'Alan Turing'] },
-      { q: 'El «juego de la imitación» (1950) planteado por Alan Turing es…', ok: 'una prueba para decidir si una máquina puede comportarse como un ser humano', bad: ['un método para descifrar la máquina Enigma', 'un lenguaje ensamblador para el ARC', 'una forma de medir la información en bits'] },
+      { q: 'La tesis de maestría de Claude Shannon unió…', ok: 'los circuitos eléctricos con el álgebra de Boole', bad: ['la fisiología con la cibernética', 'el ensamblador con la ENIAC', 'la Máquina Analítica con los números de Bernoulli'] },
+      { q: 'El libro <i>Cybernetics</i> de Norbert Wiener lleva el subtítulo «control y comunicación en…»', ok: 'el animal y la máquina', bad: ['la computadora y el programa', 'el circuito y la batería', 'el número y la ecuación'] },
+      { q: 'Un lenguaje de programación recibió el nombre «Ada» en honor a…', ok: 'Ada Lovelace', bad: ['Kathleen Booth', 'Jean Jennings Bartik', 'Alan Turing'] },
+      { q: 'El «juego de la imitación» planteado por Alan Turing es…', ok: 'una prueba para decidir si una máquina puede comportarse como un ser humano', bad: ['un método para descifrar la máquina Enigma', 'un lenguaje ensamblador para el ARC', 'una forma de medir la información en bits'] },
       { q: 'Kathleen Booth, además del ensamblador, diseñó las computadoras…', ok: 'ARC, SEC y APE(X)C', bad: ['ENIAC, BINAC y UNIVAC', 'ACE, Colossus y Enigma', 'Cybernetics, Teseo y Dartmouth'] }
     ]
   },
-  cvr: {
+  gen: {
     A: [
-      { q: '¿Qué es el <b>voltaje</b> (tensión) en un circuito?', ok: 'La «fuerza» o diferencia de potencial que empuja a los electrones por el circuito', bad: ['La cantidad de carga que pasa por un punto cada segundo', 'La oposición del material al paso de la corriente', 'El tiempo que tarda en agotarse una pila'] },
-      { q: '¿Qué es la <b>corriente eléctrica</b>?', ok: 'La cantidad de carga eléctrica que pasa por un punto cada segundo', bad: ['La diferencia de potencial entre dos puntos', 'La oposición que pone un material al paso de los electrones', 'La energía almacenada en una batería'] },
-      { q: '¿Qué es la <b>resistencia eléctrica</b>?', ok: 'La oposición que un material pone al paso de la corriente', bad: ['La cantidad de carga que circula por segundo', 'La «fuerza» que empuja a los electrones', 'El número de componentes de un circuito'] },
-      { q: '¿En qué unidad se mide el <b>voltaje</b>?', ok: 'Volt (V)', bad: ['Ampere (A)', 'Ohm (Ω)', 'Watt (W)'] },
-      { q: '¿Con qué instrumento se mide la corriente y cómo se conecta al circuito?', ok: 'Con un amperímetro, conectado en serie', bad: ['Con un amperímetro, conectado en paralelo', 'Con un voltímetro, conectado en serie', 'Con un óhmetro, con el circuito energizado'] }
+      { q: '¿Qué componente electrónico caracteriza a la <b>primera generación</b> de computadoras?', ok: 'Los tubos de vacío (bulbos)', bad: ['Los transistores', 'Los circuitos integrados', 'Los microprocesadores'] },
+      { q: '¿Qué invento distingue a la <b>segunda generación</b> de computadoras y las hizo más pequeñas, rápidas y con menos consumo de energía?', ok: 'El transistor', bad: ['El bulbo', 'El microprocesador', 'La tarjeta perforada'] },
+      { q: '¿Qué lenguaje de programación de alto nivel, pensado para cálculos científicos, destacó en la segunda generación?', ok: 'FORTRAN', bad: ['Python', 'El lenguaje máquina', 'Java'] }
     ],
     B: [
-      { q: '¿En qué unidad se mide la <b>corriente eléctrica</b>?', ok: 'Ampere (A)', bad: ['Volt (V)', 'Ohm (Ω)', 'Watt (W)'] },
-      { q: '¿En qué unidad se mide la <b>resistencia eléctrica</b>?', ok: 'Ohm (Ω)', bad: ['Volt (V)', 'Ampere (A)', 'Watt (W)'] },
-      { q: 'Según la Ley de Ohm, ¿cuál expresión es correcta?', ok: 'V = I × R', bad: ['V = I ÷ R', 'I = V × R', 'R = I ÷ V'] },
-      { q: 'En un circuito el voltaje es de 12 V y la resistencia es de 4 Ω. ¿Cuánta corriente circula?', ok: '3 A', bad: ['48 A', '8 A', '0.33 A'] },
-      { q: 'En la analogía del agua, el <b>voltaje</b> equivale a…', ok: 'la altura (presión) del tanque', bad: ['el caudal que sale del tubo', 'un tubo más estrecho', 'la rueda de agua que mueve un molino'] }
+      { q: '¿Qué avance caracteriza a la <b>tercera generación</b> de computadoras?', ok: 'Los circuitos integrados (chips)', bad: ['Los tubos de vacío', 'Los transistores sueltos', 'Las tarjetas perforadas'] },
+      { q: '¿Qué distingue a la <b>cuarta generación</b> de computadoras?', ok: 'El microprocesador: la unidad central de proceso en un solo chip', bad: ['Los tubos de vacío', 'Los relevadores electromecánicos', 'El transistor individual'] },
+      { q: '¿Con qué se programaba principalmente la <b>primera generación</b> de computadoras?', ok: 'Con lenguaje máquina (ceros y unos)', bad: ['Con Python', 'Con Java', 'Con HTML'] }
     ]
   },
   cdca: {
@@ -389,15 +392,15 @@ const BANK = {
 
 const SECS1 = [
   { id: 'prec', t: 'Precursores de la computación y la cibernética', d: 'Elige la respuesta correcta.', ic: 'bi-clock-history', c: '#7c3aed' },
-  { id: 'cvr',  t: 'Voltaje, corriente y resistencia', d: 'Elige la respuesta correcta.', ic: 'bi-lightning-charge-fill', c: '#d97706' },
+  { id: 'gen',  t: 'Generaciones de computadoras', d: 'Elige la respuesta correcta.', ic: 'bi-pc-display', c: '#db2777' },
   { id: 'cdca', t: 'Corriente directa y corriente alterna', d: 'Elige el enunciado que describe correctamente cada concepto.', ic: 'bi-activity', c: '#0891b2' },
   { id: 'conv', t: 'Conversiones entre sistemas de numeración', d: 'Respuesta abierta: escribe solo la respuesta, sin espacios y con los símbolos que se indican en cada pregunta.', ic: 'bi-arrow-left-right', c: '#2563eb' },
   { id: 'sum',  t: 'Suma de números binarios', d: 'Respuesta abierta: escribe solo el resultado, sin espacios y usando únicamente 0 y 1.', ic: 'bi-plus-slash-minus', c: '#16a34a' }
 ];
 const NAMES = { 2: 'binario', 8: 'octal', 10: 'decimal', 16: 'hexadecimal' };
 const PAIRS = {
-  A: [[10, 2], [2, 10], [10, 8], [8, 10], [10, 16], [16, 10], [2, 8], [8, 2], [2, 16], [16, 2], [8, 16], [16, 8], [10, 2], [16, 10]],
-  B: [[2, 10], [10, 2], [8, 10], [10, 8], [16, 10], [10, 16], [8, 2], [2, 8], [16, 2], [2, 16], [16, 8], [8, 16], [2, 10], [10, 16]]
+  A: [[10, 2], [2, 10], [10, 8], [8, 10], [10, 16], [16, 10], [2, 8], [8, 2], [2, 16], [16, 2], [16, 8]],
+  B: [[2, 10], [10, 2], [8, 10], [10, 8], [16, 10], [10, 16], [8, 2], [2, 8], [16, 2], [2, 16], [8, 16]]
 };
 const RANGE = { A: [19, 230], B: [27, 254] };
 const SUMBITS = { A: [4, 5], B: [5, 6] };
@@ -405,11 +408,11 @@ const SUMBITS = { A: [4, 5], B: [5, 6] };
 function buildP1(tipo, seed) {
   const rnd = mulberry32((seed ^ (tipo === 'A' ? 0x9E3779B1 : 0x85EBCA6B)) >>> 0), qs = [];
   const bloom = (sec, q) => {                    // nivel de la taxonomía de Bloom (revisada) de cada pregunta de opción múltiple
-    if (sec === 'prec') return /¿Quién|¿Qué científico|periodo de vida|¿Qué máquina|¿Cuál es el libro|además del ensamblador|Jean Jennings|En 1979/.test(q) ? 'Recordar' : 'Comprender';
-    if (sec === 'cvr') return /unidad|Ley de Ohm/.test(q) ? 'Recordar' : /12 V/.test(q) ? 'Aplicar' : 'Comprender';
+    if (sec === 'prec') return /¿Quién|¿Qué científico|¿Qué máquina|además del ensamblador|Jean Jennings|recibió el nombre/.test(q) ? 'Recordar' : 'Comprender';
+    if (sec === 'gen') return /¿Qué componente|¿Qué invento|¿Qué avance|¿Qué distingue/.test(q) ? 'Recordar' : 'Comprender';
     return /frecuencia/.test(q) ? 'Recordar' : /¿Cuál afirmación/.test(q) ? 'Analizar' : 'Comprender';
   };
-  ['prec', 'cvr', 'cdca'].forEach(sec => shuffle(BANK[sec][tipo], rnd).forEach(b => qs.push(mcQ(sec, b.q, b.ok, b.bad, rnd, bloom(sec, b.q)))));
+  ['prec', 'gen', 'cdca'].forEach(sec => shuffle(BANK[sec][tipo], rnd).forEach(b => qs.push(mcQ(sec, b.q, b.ok, b.bad, rnd, bloom(sec, b.q)))));
   const used = new Set(), [lo, hi] = RANGE[tipo];
   shuffle(PAIRS[tipo], rnd).forEach(([from, to]) => {
     let n; do { n = lo + Math.floor(rnd() * (hi - lo + 1)); } while (used.has(n)); used.add(n);
@@ -849,65 +852,78 @@ function buildP2(tipo, seed) {
 
 
 /* ==========================================================================
-   EJERCICIOS NUEVOS (ambos parciales): tabla de verdad, armado de circuito y sumatoria binaria
-   - Tabla de verdad: 2 variables, solo AND, NAND y NOT. Se llena la columna F (4 casillas, solo 0 y 1) y cuenta como 1 acierto.
-   - Armado de circuito: con clics en entradas y compuertas (AND, NAND, NOT). «Borrar todo» reinicia.
+   EJERCICIOS NUEVOS (ambos parciales): tablas de verdad, armado de circuito, sumatoria binaria y pregunta bonus
+   - Tabla de verdad: 2 entradas (A, B), expresiones con varios términos. Se llena la columna F (casillas verticales, solo 0 y 1) y vale 1 acierto.
+   - Armado de circuito: con clics. Se elige un espacio vacío o una pieza y se agregan compuertas AND, NAND o NOT. «Borrar todo» reinicia.
    - Sumatoria de 3 números binarios: respuesta abierta limitada a 0 y 1.
+   - Bonus (opcional): tabla de verdad de 3 entradas (A, B, C). Vale por 2 preguntas, pero la calificación nunca pasa de 10.
    ========================================================================== */
 const SECS_NEW = [
-  { id: 'ttv', t: 'Tablas de verdad con AND, NAND y NOT', d: 'Completa la columna F escribiendo solo 0 y 1. La tabla completa vale 1 acierto: las 4 salidas deben ser correctas.', ic: 'bi-table', c: '#ea580c' },
-  { id: 'arm', t: 'Arma el circuito', d: 'Haz clic en las entradas (A, B, C) y en las compuertas (AND, NAND, NOT) para armar la función. Cada compuerta toma las últimas entradas que colocaste. Si te equivocas, pulsa «Borrar todo» y empieza de nuevo.', ic: 'bi-diagram-2-fill', c: '#0d9488' },
-  { id: 'sig', t: 'Sumatoria de números binarios', d: 'Respuesta abierta: suma los tres números y escribe solo el resultado, con 0 y 1 y sin espacios.', ic: 'bi-plus-slash-minus', c: '#16a34a' }
+  { id: 'ttv', t: 'Evalúa la función: tablas de verdad', d: 'Evalúa cada función (puedes simplificarla antes) y completa la columna F escribiendo solo 0 y 1. La tabla completa vale 1 acierto: todas las salidas deben ser correctas.', ic: 'bi-table', c: '#ea580c' },
+  { id: 'arm', t: 'Arma el circuito', d: 'Selecciona un espacio vacío (?) o cualquier pieza y agrega una entrada (A, B, C) o una compuerta (AND, NAND, NOT) justo ahí. Si te equivocas, pulsa «Borrar todo» y empieza de nuevo.', ic: 'bi-diagram-2-fill', c: '#0d9488' },
+  { id: 'sig', t: 'Sumatoria de números binarios', d: 'Respuesta abierta: suma los tres números y escribe solo el resultado, con 0 y 1 y sin espacios.', ic: 'bi-plus-slash-minus', c: '#16a34a' },
+  { id: 'bon', t: 'Pregunta bonus (opcional)', d: 'Es opcional y vale por 2 preguntas, pero la calificación máxima sigue siendo 10. Puedes dejarla en blanco sin que te afecte.', ic: 'bi-star-fill', c: '#f59e0b' }
 ];
 const gA = Lf('A'), gB = Lf('B'), gC = Lf('C'), gAND = (a, b) => Gt('and', a, b), gNAND = (a, b) => Gt('nand', a, b), gNOT = a => Gt('not', a);
-/* Fórmulas distintas por parcial y por tipo (A/B). Cada una es una función que devuelve su árbol de compuertas. */
+/* Expresiones de suma de productos: mayúscula = variable directa, minúscula = variable negada (a = Ā). Distintas por parcial y por tipo. */
 const TT_POOL = {
-  1: { A: [() => gAND(gA, gNOT(gB)), () => gNAND(gA, gNOT(gB)), () => gAND(gNAND(gA, gB), gA)],
-       B: [() => gAND(gNOT(gA), gB), () => gNAND(gNOT(gA), gB), () => gAND(gNAND(gA, gB), gB)] },
-  2: { A: [() => gAND(gNOT(gA), gNOT(gB)), () => gAND(gNAND(gA, gNOT(gB)), gA), () => gNAND(gA, gB)],
-       B: [() => gNAND(gNOT(gA), gNOT(gB)), () => gAND(gNAND(gNOT(gA), gB), gB), () => gAND(gNOT(gB), gNAND(gA, gB))] }
+  1: { A: ['AB+aB+bA', 'ab+AbA', 'aB+ABA+AB'], B: ['Ab+aB+bAb', 'ab+aB+AB', 'AB+ab+BAB'] },
+  2: { A: ['Ab+AB+aBa', 'ab+Ab+AB', 'AB+ABA+aB'], B: ['ab+aB+Ab', 'Ab+ab+AbA', 'AB+Ab+ABA'] }
+};
+const BONUS_POOL = {
+  1: { A: ['ABC+aBC+bCA', 'abC+AbC+BcA'], B: ['ABc+aBC+bCA', 'aBc+Abc+ABC'] },
+  2: { A: ['abc+AbC+aBC', 'ABC+aBc+bcA'], B: ['ABC+abC+AbC+aBc', 'abc+aBC+ABc'] }
 };
 const CB_POOL = {
-  1: { A: [() => gAND(gNAND(gA, gB), gC), () => gAND(gAND(gA, gNOT(gB)), gC), () => gNAND(gNOT(gA), gAND(gB, gC))],
-       B: [() => gAND(gNAND(gA, gC), gB), () => gAND(gAND(gNOT(gA), gB), gC), () => gNAND(gA, gAND(gNOT(gB), gC))] },
-  2: { A: [() => gAND(gNOT(gA), gNAND(gB, gC)), () => gAND(gAND(gA, gB), gNOT(gC)), () => gNAND(gAND(gA, gNOT(gB)), gC)],
-       B: [() => gAND(gNOT(gB), gNAND(gA, gC)), () => gAND(gAND(gNOT(gA), gB), gNOT(gC)), () => gNAND(gAND(gA, gB), gNOT(gC))] }
+  1: { A: [() => gAND(gNAND(gA, gNOT(gB)), gNAND(gB, gC)), () => gAND(gNAND(gA, gC), gNAND(gNOT(gB), gC))],
+       B: [() => gAND(gNAND(gNOT(gA), gB), gNAND(gA, gC)), () => gAND(gNAND(gB, gC), gNAND(gNOT(gA), gC))] },
+  2: { A: [() => gAND(gNAND(gAND(gA, gB), gC), gNAND(gB, gNOT(gC))), () => gAND(gNAND(gA, gNOT(gB)), gNAND(gAND(gB, gC), gA))],
+       B: [() => gAND(gNAND(gAND(gA, gNOT(gB)), gC), gNAND(gA, gB)), () => gAND(gNAND(gAND(gNOT(gA), gB), gC), gNAND(gA, gC))] }
 };
 const CB_VARS = ['A', 'B', 'C'];
+const sopParse = s => s.split('+').map(t => [...t].map(ch => ({ v: ch.toUpperCase(), n: ch === ch.toLowerCase() })));
+const sopHTML = s => sopParse(s).map(t => t.map(l => l.n ? ov(l.v) : l.v).join('·')).join(' + ');
+function sopTT(s, vars) {
+  const T = sopParse(s); let o = '';
+  for (let i = 0; i < (1 << vars.length); i++) { const val = {}; vars.forEach((x, j) => val[x] = (i >> (vars.length - 1 - j)) & 1); o += T.some(t => t.every(l => (val[l.v] === 1) === !l.n)) ? '1' : '0'; }
+  return o;
+}
 const bin3 = (rnd, lo, hi) => { const n = lo + Math.floor(rnd() * (hi - lo + 1)); return (1 << (n - 1)) + Math.floor(rnd() * (1 << (n - 1))); };
 function buildNew(tipo, parcial, rnd) {
   const out = [];
-  shuffle(TT_POOL[parcial][tipo], rnd).slice(0, 2).forEach(f => {
-    const t = f(), col = ttOf(t, ['A', 'B']);
-    out.push({ sec: 'ttv', kind: 'tt', html: `Completa la tabla de verdad de la función <span class="num">F = ${exprOf(t)}</span>. Escribe en la columna F solo <b>0 o 1</b>.`, expect: col, tree: t, bl: 'Aplicar' });
+  shuffle(TT_POOL[parcial][tipo], rnd).slice(0, 2).forEach(sop => {
+    out.push({ sec: 'ttv', kind: 'tt', n: 2, html: `Completa la tabla de verdad de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificar la expresión antes de evaluarla.`, expect: sopTT(sop, ['A', 'B']), sop, bl: 'Aplicar' });
   });
-  shuffle(CB_POOL[parcial][tipo], rnd).slice(0, 2).forEach(f => {
-    const t = f(), vars = CB_VARS;
-    out.push({ sec: 'arm', kind: 'circ', html: `Arma el circuito de la función <span class="num">F = ${exprOf(t)}</span> usando únicamente compuertas AND, NAND y NOT.`, expect: exprOf(t), tt: ttOf(t, vars), tree: t, bl: 'Crear' });
-  });
+  { const t = pick(CB_POOL[parcial][tipo], rnd)();
+    out.push({ sec: 'arm', kind: 'circ', html: `Arma el circuito de la función <span class="num">F = ${exprOf(t)}</span> usando únicamente compuertas AND, NAND y NOT.`, expect: exprOf(t), tt: ttOf(t, CB_VARS), tree: t, bl: 'Crear' }); }
   const [lo, hi] = parcial === 1 ? [3, 5] : [4, 6], seen = new Set();
   for (let i = 0; i < 2; i++) {
     let a, b, c, key; do { a = bin3(rnd, lo, hi); b = bin3(rnd, lo, hi); c = bin3(rnd, lo, hi); key = [a, b, c].sort().join(); } while (seen.has(key)); seen.add(key);
     out.push(openQ('sig', `Realiza la sumatoria en binario: <span class="num">${a.toString(2)}<sub>2</sub> + ${b.toString(2)}<sub>2</sub> + ${c.toString(2)}<sub>2</sub> = ?</span>`, (a + b + c).toString(2), OPEN[2], 'norm', 'Aplicar'));
   }
+  { const sop = pick(BONUS_POOL[parcial][tipo], rnd);
+    out.push({ sec: 'bon', kind: 'tt', n: 3, bonus: true, html: `<b>Bonus (vale por 2 preguntas).</b> Completa la tabla de verdad de 3 entradas de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificarla antes de evaluarla.`, expect: sopTT(sop, CB_VARS), sop, bl: 'Bonus' }); }
   return out;
 }
 
-/* ----- Tabla de verdad (4 casillas verticales) ----- */
-const ttNorm = v => String(v || '').padEnd(4, '_').slice(0, 4);
+/* ----- Tabla de verdad (casillas verticales de F) ----- */
+const ttNorm = (v, len) => String(v || '').padEnd(len, '_').slice(0, len);
 function ttHTML(q, p, key) {
-  const rows = [[0, 0], [0, 1], [1, 0], [1, 1]];
-  return `<div class="km-wrap"><table class="km tv tt-tbl"><tr><th>A</th><th>B</th><th>F</th></tr>${rows.map(([a, b], i) =>
-    `<tr><td>${a}</td><td>${b}</td><td>${key ? `<input class="tt-in okk" value="${q.expect[i]}" disabled aria-label="Salida F">` : `<input class="tt-in" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" data-tt="${q.id}" data-i="${i}" aria-label="Salida F cuando A = ${a} y B = ${b}">`}</td></tr>`).join('')}</table></div>` +
-    (key ? '' : '<div class="ans-hint"><i class="bi bi-1-circle-fill"></i><span>Escribe <b>solo 0 y 1</b> en cada casilla de F. Cuenta como 1 acierto si las 4 son correctas.</span></div>');
+  const n = q.n, N = 1 << n, hd = ['A', 'B', 'C'].slice(0, n);
+  let h = `<div class="km-wrap"><table class="km tv tt-tbl"><tr>${hd.map(x => `<th>${x}</th>`).join('')}<th>F</th></tr>`;
+  for (let i = 0; i < N; i++) {
+    const b = [...i.toString(2).padStart(n, '0')];
+    h += `<tr>${b.map(x => `<td>${x}</td>`).join('')}<td>${key ? `<input class="tt-in okk" value="${q.expect[i]}" disabled aria-label="Salida F">` : `<input class="tt-in" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" data-tt="${q.id}" data-i="${i}" aria-label="Salida F cuando ${hd.map((x, j) => x + ' = ' + b[j]).join(', ')}">`}</td></tr>`;
+  }
+  return h + '</table></div>' + (key ? '' : `<div class="ans-hint"><i class="bi bi-1-circle-fill"></i><span>Escribe <b>solo 0 y 1</b> en cada casilla de F. ${q.bonus ? 'Vale por 2 preguntas y' : 'Cuenta como 1 acierto y'} se califica completa: las ${N} salidas deben ser correctas.</span></div>`);
 }
 document.addEventListener('input', e => {
   const i = e.target.closest && e.target.closest('input.tt-in[data-tt]'); if (!i || !S || S.fin) return;
-  const raw = i.value, v = raw.replace(/[^01]/g, '').slice(-1), id = i.dataset.tt, k = +i.dataset.i;
+  const raw = i.value, v = raw.replace(/[^01]/g, '').slice(-1), id = +i.dataset.tt, k = +i.dataset.i, q = EXAM.find(x => x.id === id), len = q.expect.length;
   if (raw !== v) toast('Solo se permite 0 y 1.', 'bi-keyboard-fill', 1500);
   i.value = v; i.classList.toggle('filled', v !== '');
-  const cur = ttNorm(S.answers[id]).split(''); cur[k] = v === '' ? '_' : v; const str = cur.join('');
-  S.answers[id] = str === '____' ? '' : str; save(); refreshMarks(); updateProgress();
+  const cur = ttNorm(S.answers[id], len).split(''); cur[k] = v === '' ? '_' : v; const str = cur.join('');
+  S.answers[id] = /^_+$/.test(str) ? '' : str; save(); refreshMarks(); updateProgress();
   if (v !== '') { const nx = $(`input.tt-in[data-tt="${id}"][data-i="${k + 1}"]`); if (nx) nx.focus(); }
 });
 document.addEventListener('keydown', e => {
@@ -916,56 +932,108 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown' || e.key === 'Enter') go(1); else if (e.key === 'ArrowUp') go(-1); else if (e.key === 'Backspace' && i.value === '') go(-1);
 });
 
-/* ----- Armado de circuito por clics (pila de piezas) ----- */
+/* ----- Armado de circuito flexible: se selecciona un espacio o una pieza y se agrega ahí ----- */
 const CB_G = { NOT: { k: 'not', n: 1 }, AND: { k: 'and', n: 2 }, NAND: { k: 'nand', n: 2 } };
-const cbToks = v => String(v || '').split(' ').filter(Boolean);
-function cbStack(toks) {
-  const st = [];
-  for (const t of toks) {
-    if (CB_VARS.includes(t)) st.push(Lf(t));
-    else if (CB_G[t]) { const g = CB_G[t]; if (st.length < g.n) return { st, bad: true }; const ch = st.splice(st.length - g.n, g.n); st.push(Gt(g.k, ...ch)); }
-  }
-  return { st, bad: false };
+const cbSer = n => n === null ? '_' : n.v !== undefined ? n.v : n.g.toUpperCase() + ' ' + n.c.map(cbSer).join(' ');
+function cbParse(str) {
+  const tk = String(str || '').split(' ').filter(Boolean); let i = 0, bad = false;
+  const rd = () => {
+    if (i >= tk.length) { bad = true; return null; }
+    const t = tk[i++]; if (t === '_') return null; if (CB_VARS.includes(t)) return Lf(t);
+    if (CB_G[t]) { const c = []; for (let k = 0; k < CB_G[t].n; k++) c.push(rd()); return Gt(CB_G[t].k, ...c); }
+    bad = true; return null;
+  };
+  const t = tk.length ? rd() : null; return bad || i !== tk.length ? null : t;
 }
-const cbGates = toks => toks.filter(t => CB_G[t]).length, cbLeaves = toks => toks.filter(t => CB_VARS.includes(t)).length;
-function cbGate(q, v) {
-  const toks = cbToks(v), r = cbStack(toks); if (r.bad || r.st.length !== 1 || !cbGates(toks)) return false;
-  return ttOf(r.st[0], CB_VARS) === q.tt;
-}
+const cbGet = (t, p) => p.reduce((n, i) => n.c[i], t);
+const cbPut = (t, p, nn) => p.length ? { ...t, c: t.c.map((k, i) => i === p[0] ? cbPut(k, p.slice(1), nn) : k) } : nn;
+const cbEmpty = (t, p = []) => t === null ? p : t.v !== undefined ? null : t.c.reduce((f, k, i) => f || cbEmpty(k, p.concat(i)), null);
+const cbCount = (t, f) => t === null ? 0 : t.v !== undefined ? (f === 'v' ? 1 : 0) : (f === 'g' ? 1 : 0) + t.c.reduce((s, k) => s + cbCount(k, f), 0);
+const cbDone = t => t !== null && cbEmpty(t) === null && t.v === undefined;
+const cbGate = (q, v) => { const t = cbParse(v); return !!t && cbDone(t) && ttOf(t, CB_VARS) === q.tt; };
 const cbMini = k => `<svg viewBox="-2 -2 70 44" width="40" height="26" aria-hidden="true">${gateShape(k)}</svg>`;
+const cbPk = p => p.length ? p.join('.') : 'r';
+function cbSVG(tree, sel) {
+  const sk = sel ? cbPk(sel) : null; let leafI = 0;
+  const lay = (n, p) => {
+    if (n === null || n.v !== undefined) return { leaf: true, e: n === null, v: n && n.v, p, y: 30 + leafI++ * 50, h: 0 };
+    const c = n.c.map((k, i) => lay(k, p.concat(i)));
+    return { g: n.g, c, p, h: 1 + Math.max(...c.map(k => k.h)), y: c.reduce((s, k) => s + k.y, 0) / c.length };
+  };
+  const t = lay(tree, []); (function xs(n) { if (n.g) { n.c.forEach(xs); n.x = 70 + (n.h - 1) * 125; } })(t);
+  let wires = '', nodes = '';
+  (function dr(n) {
+    const on = sk === cbPk(n.p);
+    if (n.leaf) {
+      nodes += `<g class="cb-node" data-cbp="${cbPk(n.p)}" tabindex="0" role="button" aria-label="${n.e ? 'Espacio vacío' : 'Entrada ' + n.v}"><rect x="3" y="${n.y - 17}" width="32" height="34" rx="9" fill="${on ? '#ede9fe' : n.e ? '#fff' : '#f1f5f9'}" stroke="${on ? '#7c3aed' : n.e ? '#94a3b8' : '#cbd5e1'}" stroke-width="${on ? 3 : 2}" ${n.e ? 'stroke-dasharray="4 3"' : ''}/><text x="19" y="${n.y + 6}" text-anchor="middle" font-size="17" font-weight="800" font-family="Segoe UI,Arial" fill="${n.e ? '#94a3b8' : '#0f172a'}">${n.e ? '?' : n.v}</text></g>`;
+      return;
+    }
+    n.c.forEach((k, i) => {
+      dr(k);
+      const sx = k.leaf ? 35 : k.x + OUTX[k.g], sy = k.y, ey = n.g === 'not' ? n.y : (i === 0 ? n.y - 10 : n.y + 10), mx = sx + (n.x - sx) / 2;
+      wires += `<path d="M${sx},${sy} H${mx} V${ey} H${n.x}" fill="none" stroke="#334155" stroke-width="2"/>`;
+    });
+    nodes += `<g class="cb-node" data-cbp="${cbPk(n.p)}" tabindex="0" role="button" aria-label="Compuerta ${n.g.toUpperCase()}"><g transform="translate(${n.x},${n.y - 20})">${on ? `<rect x="-6" y="-7" width="${OUTX[n.g] + 12}" height="54" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2.5"/>` : ''}${gateShape(n.g)}</g></g>`;
+  })(t);
+  const ox = t.leaf ? 35 : t.x + OUTX[t.g], W = Math.max(ox + 70, 130), H = leafI * 50 + 8;
+  wires += `<path d="M${ox},${t.y} H${ox + 36}" stroke="#334155" stroke-width="2" fill="none"/>`;
+  const lab = `<text x="${ox + 42}" y="${t.y + 5}" font-size="16" font-weight="700" font-family="Segoe UI,Arial" fill="#7c3aed">F</text>`;
+  return `<svg class="circ" viewBox="0 0 ${W} ${H}" width="${W}" role="group" aria-label="Circuito en construcción">${wires}${nodes}${lab}</svg>`;
+}
 function circHTML(q, p, key) {
   if (key) return `<div class="my-2">${circuitSVG(q.tree, 'F')}</div><div class="key-box"><i class="bi bi-key-fill me-1"></i>Se acepta cualquier circuito equivalente. Referencia: <b>F = ${q.expect}</b></div>`;
   return `<div class="cb" id="cb-${q.id}" data-cbq="${q.id}"><div class="cb-pal" role="group" aria-label="Entradas y compuertas">` +
-    CB_VARS.map(v => `<button type="button" class="cb-btn var" data-cb="${v}" title="Colocar la entrada ${v}">${v}</button>`).join('') + '<span class="cb-sep"></span>' +
-    [['NOT', 'not'], ['AND', 'and'], ['NAND', 'nand']].map(([n, k]) => `<button type="button" class="cb-btn" data-cb="${n}" title="Colocar una compuerta ${n}">${cbMini(k)}${n}</button>`).join('') +
+    CB_VARS.map(v => `<button type="button" class="cb-btn var" data-cb="${v}" title="Colocar la entrada ${v} en el espacio seleccionado">${v}</button>`).join('') + '<span class="cb-sep"></span>' +
+    [['NOT', 'not'], ['AND', 'and'], ['NAND', 'nand']].map(([n, k]) => `<button type="button" class="cb-btn" data-cb="${n}" title="Agregar una compuerta ${n} en la pieza seleccionada">${cbMini(k)}${n}</button>`).join('') +
     `<button type="button" class="cb-btn clr" data-cb="clear"><i class="bi bi-trash3-fill"></i>Borrar todo</button></div>` +
-    `<div class="cb-stage" id="cbs-${q.id}" aria-live="polite"></div><div class="cb-expr small" id="cbe-${q.id}"></div>` +
-    `<div class="ans-hint mt-2"><i class="bi bi-hand-index-thumb-fill"></i><span>Primero haz clic en las <b>entradas</b>; luego en una <b>compuerta</b>: toma las últimas entradas colocadas (NOT toma 1; AND y NAND toman 2).</span></div></div>`;
+    `<div class="cb-stage" id="cbs-${q.id}"></div><div class="cb-expr small" id="cbe-${q.id}" aria-live="polite"></div>` +
+    `<div class="ans-hint mt-2"><i class="bi bi-hand-index-thumb-fill"></i><span><b>1.</b> Toca un espacio vacío (<b>?</b>) o una pieza ya colocada (una letra o una compuerta). <b>2.</b> Elige qué agregar ahí: en un espacio vacío puedes poner una entrada o una compuerta; sobre una pieza, la compuerta se conecta a ella y te deja un espacio nuevo para continuar.</span></div></div>`;
 }
+const CBSEL = {};
 function cbRender(id) {
-  const st = $('#cbs-' + id), ex_ = $('#cbe-' + id); if (!st) return;
-  const toks = cbToks(S.answers[id]), r = cbStack(toks), one = r.st.length === 1;
-  st.innerHTML = r.st.length ? r.st.map(t => t.v !== undefined ? `<span class="cb-leaf">${t.v}</span>` : `<div class="cb-piece">${circuitSVG(t, one ? 'F' : '')}</div>`).join('') : '<span class="cb-empty">Aquí aparecerá tu circuito. Empieza colocando una entrada.</span>';
-  ex_.innerHTML = one && r.st[0].v === undefined ? `Tu circuito: <b class="num">F = ${exprOf(r.st[0])}</b>` : (r.st.length > 1 ? '<span class="text-muted">Tienes varias piezas sueltas: únelas con una compuerta AND o NAND hasta que quede una sola.</span>' : '');
+  const box = $('#cbs-' + id); if (!box) return;
+  const tree = cbParse(S.answers[id]); let sel = CBSEL[id];
+  try { if (sel) cbGet(tree, sel); } catch (e) { sel = null; }
+  if (sel === undefined) sel = cbEmpty(tree);
+  CBSEL[id] = sel; box.innerHTML = cbSVG(tree, sel);
+  const cur = sel ? cbGet(tree, sel) : undefined, nm = cur === undefined ? '' : cur === null ? 'un espacio vacío (?)' : cur.v !== undefined ? `la entrada ${cur.v}` : `una compuerta ${cur.g.toUpperCase()}`;
+  $('#cbe-' + id).innerHTML = (nm ? `<span class="text-muted">Seleccionado: <b>${nm}</b>. </span>` : '') + (cbDone(tree) ? `Tu circuito: <b class="num">F = ${exprOf(tree)}</b>` : tree === null || tree.v !== undefined || cbEmpty(tree) ? '<span class="text-muted">Faltan espacios vacíos (?) por llenar.</span>' : '');
+}
+function cbAct(id, act) {
+  let tree = cbParse(S.answers[id]), sel = CBSEL[id]; const ok = p => { try { cbGet(tree, p); return true; } catch (e) { return false; } };
+  if (act === 'clear') { tree = null; sel = []; }
+  else {
+    if (!sel || !ok(sel)) sel = cbEmpty(tree) || [];
+    const cur = cbGet(tree, sel), s0 = sel; let nxt = null;
+    if (CB_VARS.includes(act)) {
+      if (cur !== null) { toast('Para colocar una entrada, selecciona primero un espacio vacío (?).', 'bi-exclamation-triangle-fill', 2600); return; }
+      if (cbCount(tree, 'v') >= 8) { toast('Ya colocaste el máximo de entradas (8). Usa «Borrar todo» para reiniciar.', 'bi-exclamation-triangle-fill', 2600); return; }
+      tree = cbPut(tree, s0, Lf(act));
+    } else {
+      if (cbCount(tree, 'g') >= 8) { toast('Ya usaste el máximo de compuertas (8). Usa «Borrar todo» para reiniciar.', 'bi-exclamation-triangle-fill', 2600); return; }
+      const g = CB_G[act], rest = Array(g.n - (cur === null ? 0 : 1)).fill(null);
+      tree = cbPut(tree, s0, Gt(g.k, ...(cur === null ? rest : [cur, ...rest])));
+      nxt = cur === null ? s0.concat(0) : g.n === 2 ? s0.concat(1) : null;        // el espacio nuevo que acaba de aparecer
+    }
+    sel = nxt || cbEmpty(tree) || s0;
+  }
+  S.answers[id] = tree === null ? '' : cbSer(tree); CBSEL[id] = sel; save(); cbRender(id); refreshMarks(); updateProgress();
+}
+function cbPick(nd) {
+  if (!S || S.fin) return; const id = +nd.closest('.cb').dataset.cbq, k = nd.dataset.cbp;
+  CBSEL[id] = k === 'r' ? [] : k.split('.').map(Number); cbRender(id);
 }
 document.addEventListener('click', e => {
-  const b = e.target.closest('[data-cb]'); if (!b || !S || S.fin) return;
-  const id = +b.closest('.cb').dataset.cbq, act = b.dataset.cb; let toks = cbToks(S.answers[id]);
-  if (act === 'clear') toks = [];
-  else if (CB_VARS.includes(act)) { if (cbLeaves(toks) >= 6) { toast('Ya colocaste el máximo de entradas (6). Usa «Borrar todo» para reiniciar.', 'bi-exclamation-triangle-fill', 2600); return; } toks.push(act); }
-  else {
-    const need = CB_G[act].n, have = cbStack(toks).st.length;
-    if (have < need) { toast(act === 'NOT' ? 'Primero coloca una entrada para negarla.' : `La compuerta ${act} necesita 2 piezas: coloca primero otra entrada.`, 'bi-exclamation-triangle-fill', 2600); return; }
-    if (cbGates(toks) >= 6) { toast('Ya usaste el máximo de compuertas (6). Usa «Borrar todo» para reiniciar.', 'bi-exclamation-triangle-fill', 2600); return; }
-    toks.push(act);
-  }
-  S.answers[id] = toks.join(' '); save(); cbRender(id); refreshMarks(); updateProgress();
+  if (!S || S.fin) return;
+  const nd = e.target.closest('[data-cbp]'); if (nd) { cbPick(nd); return; }
+  const b = e.target.closest('[data-cb]'); if (b) cbAct(+b.closest('.cb').dataset.cbq, b.dataset.cb);
 });
+document.addEventListener('keydown', e => { const nd = e.target.closest && e.target.closest('[data-cbp]'); if (nd && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); cbPick(nd); } });
 function restoreAns(q, v) {
+  if (q.kind === 'circ') { cbRender(q.id); return; }
   if (v === undefined || v === '') return;
   if (q.kind === 'mc') { const r = $(`input[name="q${q.id}"][value="${v}"]`); if (r) r.checked = true; }
-  else if (q.kind === 'tt') ttNorm(v).split('').forEach((c, i) => { const n = $(`input.tt-in[data-tt="${q.id}"][data-i="${i}"]`); if (n && c !== '_') { n.value = c; n.classList.add('filled'); } });
-  else if (q.kind === 'circ') cbRender(q.id);
+  else if (q.kind === 'tt') ttNorm(v, q.expect.length).split('').forEach((c, i) => { const n = $(`input.tt-in[data-tt="${q.id}"][data-i="${i}"]`); if (n && c !== '_') { n.value = c; n.classList.add('filled'); } });
   else { const n = $('#a-' + q.id); if (n) n.value = v; }
 }
 
@@ -1010,11 +1078,20 @@ const MSG = {
 const DEV = (() => { let d = LS.get('eq_dev'); if (!d) { d = [...randBytes()].map(x => x.toString(36)).join(''); LS.set('eq_dev', d); } return d; })();   // identifica este equipo para el límite de intentos
 
 /* ===== Estado local ===== */
-const KEY = 'eq_cib1_state_v2';
+const KEY = 'eq_cib1_state_v2', LAST = 'eq_cib1_last';
+/* Cada sesión (parcial + número de cuenta) se guarda aparte en este equipo, y LAST recuerda la que estaba activa:
+   al cerrar y volver a abrir la ventana se continúa solo con esa cuenta; si se escribe otra cuenta, se crea una sesión nueva. */
+const skey = (p, c) => `${KEY}:${p}:${c}`;
+const loadLocal = (p, c) => { try { return JSON.parse(LS.get(skey(p, c)) || 'null'); } catch (e) { return null; } };
+const limiteMs = () => S.start + (CFG.DURACION_MIN - CFG.PENA_MIN * (S.salidas || 0)) * 60000;   // cada salida resta PENA_MIN minutos
+let CLK = false;       // ¿el administrador activó el cronómetro visible? (por defecto NO)
+const applyClock = () => { const t = $('#timer'); if (t) t.classList.toggle('d-none', !CLK); };
 let S = null, EXAM = [], timerId = null, away = false, examActive = false, ADMIN = null;
-try { S = JSON.parse(LS.get(KEY) || 'null'); } catch (e) { S = null; }
-const save = () => { if (S) LS.set(KEY, JSON.stringify(S)); };
-const clearState = () => { S = null; LS.del(KEY); };
+try { const l = (LS.get(LAST) || '').split(':'); S = l.length === 2 ? loadLocal(l[0], l[1]) : JSON.parse(LS.get(KEY) || 'null'); } catch (e) { S = null; }
+const save = () => { if (S) { LS.set(skey(S.parcial, S.cuenta), JSON.stringify(S)); LS.set(LAST, S.parcial + ':' + S.cuenta); } };
+const clearState = () => { if (S) LS.del(skey(S.parcial, S.cuenta)); S = null; LS.del(LAST); LS.del(KEY); };
+/* Deja de usar esta sesión en pantalla pero conserva su avance guardado (se retoma al escribir de nuevo ese número de cuenta) */
+function detachState() { examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId); S = null; LS.del(LAST); LS.del(KEY); }
 
 function show(id) { ['clave', 'datos', 'resume', 'examen', 'fin', 'admin'].forEach(n => $('#scr-' + n).classList.toggle('d-none', n !== id)); window.scrollTo(0, 0); }
 function toast(msg, ic = 'bi-exclamation-triangle-fill', ms = 2600) {
@@ -1048,7 +1125,7 @@ $('#form-clave').addEventListener('submit', async e => {
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Entrar';
   if (r.code === 'bloqueado') { lockLogin(r.espera || 300); return; }
   if (r.ok && r.role === 'admin') { ADMIN = r.token; SS.set('eq_sess', JSON.stringify({ role: 'admin', token: r.token })); openAdmin(); return; }
-  if (r.ok && r.role === 'alumno') { SS.set('eq_sess', JSON.stringify({ role: 'alumno', parcial: r.parcial })); afterLogin(r.parcial, true); return; }
+  if (r.ok && r.role === 'alumno') { CLK = !!r.reloj; SS.set('eq_sess', JSON.stringify({ role: 'alumno', parcial: r.parcial })); afterLogin(r.parcial, true); return; }
   err.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i>${MSG[r.code] || r.msg || 'No se pudo entrar.'}${r.code === 'incorrecta' && r.restan !== undefined ? ` <b>Te ${r.restan === 1 ? 'queda 1 intento' : 'quedan ' + r.restan + ' intentos'}.</b>` : ''}`; err.hidden = false;
   const c = $('#clave-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); $('#clave').select();
 });
@@ -1073,12 +1150,17 @@ function afterLogin(parcial, fresh) {
   openDatos(parcial);
 }
 $('#rs-continuar').onclick = () => startExam(true);
-$('#rs-otro').onclick = () => { if (confirm('Dejarás de ver el intento anterior en este equipo (el avance sigue guardado en la hoja y se puede continuar con su número de cuenta y nombre). ¿Continuar?')) { clearState(); const s = JSON.parse(SS.get('eq_sess') || '{}'); openDatos(s.parcial || 1); } };
+$('#bar-cambiar').onclick = () => {
+  if (!S || S.fin) return;
+  if (!confirm('Vas a salir de esta sesión para usar otro número de cuenta. Tu avance queda guardado (en este equipo y en la hoja) y se retoma al escribir de nuevo este número de cuenta y tu nombre. El tiempo de este examen sigue corriendo. ¿Continuar?')) return;
+  const p = S.parcial; detachState(); openDatos(p);
+};
+$('#rs-otro').onclick = () => { if (confirm('Dejarás de ver el intento anterior en este equipo (el avance sigue guardado y se retoma con su número de cuenta y nombre). ¿Continuar?')) { const s = JSON.parse(SS.get('eq_sess') || '{}'), p = s.parcial || (S && S.parcial) || 1; detachState(); openDatos(p); } };
 
 /* ===== 2. Datos ===== */
 let PARCIAL = 1;
 function openDatos(parcial) {
-  PARCIAL = parcial; $('#d-parcial').textContent = EXAMS[parcial].titulo; try { $('#d-total').textContent = EXAMS[parcial].build('A', 1).length; } catch (e) { } $('#d-dur').textContent = CFG.DURACION_MIN;
+  PARCIAL = parcial; $('#d-parcial').textContent = EXAMS[parcial].titulo; try { $('#d-total').textContent = EXAMS[parcial].build('A', 1).filter(q => !q.bonus).length; } catch (e) { } $('#d-dur').textContent = CFG.DURACION_MIN;
   show('datos'); setTimeout(() => $('#d-nombre').focus(), 100);
 }
 $('#d-cuenta').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 9); });
@@ -1093,7 +1175,7 @@ $('#form-datos').addEventListener('submit', async e => {
   if (!$('#d-ok').checked) { err.textContent = 'Marca la casilla para confirmar que leíste las reglas.'; err.hidden = false; return; }
   const btn = $('#btn-comenzar'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando…';
   const r = $('#d-ok') && randBytes(), tipo = (r[1] & 1) ? 'B' : 'A', seed = r[0] >>> 0, inicio = new Date().toISOString();
-  const res = await api('start', { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, inicio, dev: DEV });
+  const res = await api('start', { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, inicio, dev: DEV }); if (res && res.ok) CLK = !!res.reloj;
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-circle-fill me-1"></i>Comenzar examen';
   if (!res.ok) {
     if (res.code === 'duplicado') showAlert('Examen ya respondido', `El examen del <b>${EXAMS[PARCIAL].titulo}</b> ya fue respondido anteriormente con el número de cuenta <b>${esc(cuenta)}</b>. No es posible presentarlo de nuevo.<br><small class="text-muted">Si crees que es un error, habla con tu profesor(a).</small>`);
@@ -1103,9 +1185,9 @@ $('#form-datos').addEventListener('submit', async e => {
     return;
   }
   if (res.resumed) {          // el servidor ya tenía este examen en curso: se continúa con el mismo tipo, reloj y respuestas
-    const pr = res.progreso || {};
-    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: pr.a || {}, flags: pr.f || {}, salidas: res.salidas || 0, fin: false, sent: false, result: null, sid: res.sid };
-    save(); startExam(true); return;
+    const pr = res.progreso || {}, loc = loadLocal(PARCIAL, cuenta), mismo = loc && !loc.fin && (loc.seed >>> 0) === (res.seed >>> 0);
+    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: Object.assign({}, pr.a || {}, mismo ? loc.answers : {}), flags: Object.assign({}, pr.f || {}, mismo ? loc.flags : {}), salidas: Math.max(res.salidas || 0, mismo ? loc.salidas || 0 : 0), fin: false, sent: false, result: null, sid: res.sid };
+    save(); startExam(true); if (res.cerrar) { toast('Tu profesor(a) cerró tu examen: tus respuestas se enviaron.', 'bi-lock-fill', 5000); finish('admin'); } return;
   }
   S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.now(), inicioISO: inicio, answers: {}, flags: {}, salidas: 0, fin: false, sent: false, result: null, sid: res.sid };
   save(); startExam(false);
@@ -1141,30 +1223,40 @@ function startExam(resume) {
   $('#bar-tipo').innerHTML = `<i class="bi bi-file-earmark-text-fill me-1"></i>Tipo ${S.tipo}`;
   const { html, grid } = questionsHTML(EXAM, EXAMS[S.parcial].secs); $('#qlist').innerHTML = html; $('#qn-grid').innerHTML = grid;
   EXAM.forEach(q => restoreAns(q, S.answers[q.id]));
-  refreshMarks(); updateProgress(); show('examen'); examActive = true;
+  refreshMarks(); updateProgress(); applyClock(); show('examen'); examActive = true;
   clearInterval(timerId); tick(); timerId = setInterval(tick, 500);
   if (resume) toast('Examen reanudado: tu reloj siguió corriendo.', 'bi-arrow-repeat', 3200);
-  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); syncId = setInterval(() => syncProgress(false), 45000); if (resume) syncProgress(true);
+  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); syncId = setInterval(() => syncProgress(false), 45000); clearInterval(pollId); pollId = setInterval(pollCierre, 15000); if (resume) syncProgress(true);
 }
 /* Avance guardado en la hoja (ligado al número de cuenta): permite continuar aunque cierren o cambien de equipo */
-let syncId = null, lastSig = '', syncBusy = false;
+let syncId = null, pollId = null, lastSig = '', syncBusy = false;
+function progOk(r) {
+  if (r.reloj !== undefined) { CLK = !!r.reloj; applyClock(); }
+  if (r.cerrar && S && !S.fin) { toast('Tu profesor(a) cerró tu examen: tus respuestas se enviaron.', 'bi-lock-fill', 5000); finish('admin'); }
+}
+/* Con más de SALIDAS_CIERRE salidas se pregunta cada 15 s si el administrador cerró el examen (el resto solo sincroniza cuando hay cambios) */
+async function pollCierre() {
+  if (!S || S.fin || !CFG.ENDPOINT || syncBusy || S.salidas <= CFG.SALIDAS_CIERRE) return;
+  syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, salidas: S.salidas, ping: true }); syncBusy = false;
+  if (r.ok) progOk(r); else if (r.code === 'sesion' || r.code === 'duplicado') kickOut(r.code);
+}
 async function syncProgress(force) {
   if (!S || S.fin || !CFG.ENDPOINT || syncBusy) return;
   const prog = JSON.stringify({ a: S.answers, f: S.flags }), sig = prog + '|' + S.salidas;
   if (!force && sig === lastSig) return;
   syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, progreso: prog, salidas: S.salidas }); syncBusy = false;
-  if (r.ok) { lastSig = sig; return; }
+  if (r.ok) { lastSig = sig; progOk(r); return; }
   if (r.code === 'sesion' || r.code === 'duplicado') kickOut(r.code);
 }
 function kickOut(code) {                          // otra sesión tomó este examen (o ya se entregó): esta pantalla se cierra
-  if (!S || S.fin) return; examActive = false; clearInterval(timerId); clearInterval(syncId);
+  if (!S || S.fin) return; examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId);
   clearState(); SS.del('eq_sess');
   showAlert(code === 'sesion' ? 'Sesión cerrada' : 'Examen ya entregado', code === 'sesion' ? 'Este examen se <b>continuó en otro dispositivo</b> con tu número de cuenta, así que esta pantalla ya no puede enviar respuestas.' : 'Este examen ya fue entregado con ese número de cuenta.', 'bi-shield-lock-fill', '#d97706');
   $('#alertModal').addEventListener('hidden.bs.modal', () => location.reload(), { once: true });
 }
 const isAns = q => { const v = S.answers[q.id]; if (v === undefined || v === '' || v === null) return false;
-  if (q.kind === 'tt') return /^[01]{4}$/.test(v);
-  if (q.kind === 'circ') { const t = cbToks(v), r = cbStack(t); return !r.bad && r.st.length === 1 && cbGates(t) > 0; }
+  if (q.kind === 'tt') return new RegExp('^[01]{' + q.expect.length + '}$').test(v);
+  if (q.kind === 'circ') { const t = cbParse(v); return !!t && cbDone(t); }
   return true; };
 function refreshMarks() {
   EXAM.forEach(q => {
@@ -1175,7 +1267,7 @@ function refreshMarks() {
   });
 }
 function updateProgress() {
-  const n = EXAM.filter(isAns).length, txt = `${n} / ${TOTAL()} contestadas`;
+  const n = EXAM.filter(q => !q.bonus && isAns(q)).length, bq = EXAM.find(q => q.bonus), txt = `${n} / ${TOTAL()} contestadas${bq && isAns(bq) ? ' · bonus ✓' : ''}`;
   $('#bar-prog').textContent = txt; $('#bar-prog2').textContent = txt; $('#bar-fill').style.width = (n / TOTAL() * 100) + '%';
 }
 document.addEventListener('change', e => {
@@ -1197,7 +1289,7 @@ document.addEventListener('click', e => {
 /* ===== Reloj ===== */
 function tick() {
   if (!S || S.fin) return;
-  const left = S.start + CFG.DURACION_MIN * 60000 - Date.now(), t = $('#timer');
+  const left = limiteMs() - Date.now(), t = $('#timer');
   $('#timer-txt').textContent = fmtT(left);
   t.classList.toggle('warn', left <= 10 * 60000 && left > 5 * 60000); t.classList.toggle('low', left <= 5 * 60000);
   if (left <= 5 * 60000 && !S._w5) { S._w5 = true; toast('Quedan menos de 5 minutos.', 'bi-alarm-fill', 4000); }
@@ -1207,25 +1299,27 @@ function tick() {
 /* ===== Entrega ===== */
 let confirmModal = null;
 function openConfirm() {
-  const un = EXAM.filter(q => !isAns(q)).map(q => q.id), fl = Object.keys(S.flags);
+  const un = EXAM.filter(q => !q.bonus && !isAns(q)).map(q => q.id), fl = Object.keys(S.flags), bq = EXAM.find(q => q.bonus);
   $('#confirm-body').innerHTML = `<p class="mb-2">Contestaste <b>${TOTAL() - un.length}</b> de <b>${TOTAL()}</b> preguntas.</p>` +
     (un.length ? `<div class="alert alert-warning py-2 small mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i><b>Sin responder (${un.length}):</b> ${un.join(', ')}</div>` : `<div class="alert alert-success py-2 small mb-2"><i class="bi bi-check-circle-fill me-1"></i>Todas las preguntas tienen respuesta.</div>`) +
+    (bq ? `<div class="alert alert-warning py-2 small mb-2" style="--bs-alert-bg:#fffbeb"><i class="bi bi-star-fill me-1 text-warning"></i><b>Pregunta bonus (opcional):</b> ${isAns(bq) ? 'respondida; se calificará.' : 'sin responder. No te resta puntos.'}</div>` : '') +
     (fl.length ? `<div class="alert alert-info py-2 small mb-2"><i class="bi bi-bookmark-fill me-1"></i><b>Marcadas para revisar:</b> ${fl.join(', ')}</div>` : '') +
     `<p class="small text-muted mb-0">Al entregar ya no podrás cambiar tus respuestas.</p>`;
   confirmModal = confirmModal || new bootstrap.Modal($('#confirmModal')); confirmModal.show();
 }
 $('#btn-confirmar').onclick = () => { if (confirmModal) confirmModal.hide(); finish('manual'); };
 function grade() {
-  let ok = 0, det = '';
-  EXAM.forEach(q => { const g = gradeQ(q, S.answers[q.id]); if (g) ok++; det += g ? '1' : '0'; });
+  let okBase = 0, bon = false, det = '';
+  EXAM.forEach(q => { const g = gradeQ(q, S.answers[q.id]); if (q.bonus) bon = g; else if (g) okBase++; det += g ? '1' : '0'; });
+  const ok = Math.min(TOTAL(), okBase + (bon ? 2 : 0));        // el bonus vale por 2 aciertos, sin pasar del máximo
   const resp = EXAM.map(q => { const v = S.answers[q.id]; return q.id + ':' + (v === undefined || v === '' ? '-' : (q.kind === 'mc' ? 'ABCD'[+v] : v)); }).join(';');
-  return { ok, det, resp, nota: Math.round(ok / TOTAL() * 100) / 10 };
+  return { ok, det, resp, bon, base: okBase, nota: Math.round(ok / TOTAL() * 100) / 10 };
 }
 function finish(motivo) {
   if (!S || S.fin) return;
-  const g = grade(), fin = Math.min(Date.now(), S.start + CFG.DURACION_MIN * 60000), usado = fin - S.start;
-  S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId);
-  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: TOTAL(), calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
+  const g = grade(), fin = Math.min(Date.now(), limiteMs()), usado = fin - S.start;
+  S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId);
+  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, base: g.base, bonus: g.bon, total: TOTAL(), calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
   S.status = 'pend'; save(); renderFin(); show('fin'); sendResult(S);
 }
 
@@ -1235,7 +1329,8 @@ function renderFin() {
   $('#fin-sub').textContent = `${EXAMS[r.parcial].titulo}`;
   $('#fin-score').innerHTML = S.status === 'dup'
     ? `<div class="alert alert-danger d-inline-block"><i class="bi bi-x-octagon-fill me-1"></i>Este examen ya había sido respondido: no se guardó tu resultado.</div>`
-    : `<div class="grade-ring" style="--p:${pct};--gc:${col}"><b style="color:${col}">${r.calificacion.toFixed(1)}</b><small class="text-muted fw-bold">de 10</small></div><div class="mt-2 fw-bold">${r.aciertos} aciertos de ${r.total}</div><div class="small text-muted">${pct >= 60 ? '¡Aprobado!' : 'Sigue practicando, ¡tú puedes!'}</div>`;
+    : `<div class="grade-ring" style="--p:${pct};--gc:${col}"><b style="color:${col}">${r.calificacion.toFixed(1)}</b><small class="text-muted fw-bold">de 10</small></div><div class="mt-2 fw-bold">${r.aciertos} aciertos de ${r.total}</div>${r.bonus ? '<div class="small fw-bold" style="color:#b45309"><i class="bi bi-star-fill me-1"></i>Incluye la pregunta bonus (+2, máximo 10)</div>' : ''}<div class="small text-muted">${pct >= 60 ? '¡Aprobado!' : 'Sigue practicando, ¡tú puedes!'}</div>`;
+  $('#fin-aviso') && ($('#fin-aviso').innerHTML = r.motivo === 'admin' ? '<div class="alert alert-warning small fw-bold"><i class="bi bi-lock-fill me-1"></i>Tu profesor(a) cerró este examen por exceder el límite de salidas de la ventana. Se calificó con lo que alcanzaste a responder.</div>' : '');
   $('#fin-datos').innerHTML = `<div class="fin-banner"><div><small>Número de cuenta</small><b>${esc(r.cuenta)}</b></div><div><small>Grupo</small><b>${esc(r.grupo)}</b></div></div>`;
   renderMalas(r);
   setStatus();
@@ -1246,11 +1341,11 @@ function renderMalas(r) {
   let ex = []; try { ex = buildExam(r.parcial, r.tipo, r.seed); } catch (e) { }
   const secs = EXAMS[r.parcial].secs, det = String(r.detalle || ''), ans = (S && S.answers) || {};
   const plain = h => String(h).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<div class="datos">[\s\S]*?<\/div>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-  const bad = ex.filter((q, i) => det[i] === '0');
+  const bad = ex.filter((q, i) => det[i] === '0' && !(q.bonus && (ans[q.id] === undefined || ans[q.id] === '')));
   if (!ex.length) { box.innerHTML = ''; return; }
   if (!bad.length) { box.innerHTML = '<div class="alert alert-success fw-bold text-center mb-0"><i class="bi bi-stars me-1"></i>¡Todas tus respuestas fueron correctas!</div>'; return; }
   const mine = q => { const v = ans[q.id]; if (v === undefined || v === '' || v === null) return '<span class="text-muted">Sin responder</span>'; return q.kind === 'mc' ? `Elegiste la opción <b>${'ABCD'[+v]}</b>` : q.kind === 'circ' ? `Tu circuito: <b class="mono">${esc(v)}</b>` : `Escribiste <b class="mono">${esc(String(v).replace(/_/g, '·'))}</b>`; };
-  box.innerHTML = `<h2 class="h6 fw-bold mb-2"><i class="bi bi-x-circle-fill text-danger me-1"></i>Preguntas que estuvieron mal (${bad.length} de ${ex.length})</h2><div class="small text-muted mb-2">Aquí no se muestra la respuesta correcta; repasa estos temas con tu profesor(a).</div>` +
+  box.innerHTML = `<h2 class="h6 fw-bold mb-2"><i class="bi bi-x-circle-fill text-danger me-1"></i>Preguntas que estuvieron mal (${bad.length} de ${ex.filter(q => !q.bonus).length})</h2><div class="small text-muted mb-2">Aquí no se muestra la respuesta correcta; repasa estos temas con tu profesor(a).</div>` +
     bad.map(q => { const sec = secs.find(x => x.id === q.sec), t = plain(q.html); return `<div class="mal-item" style="--c:${sec.c}"><span class="mal-n">${q.id}</span><div><div class="small fw-bold" style="color:${sec.c}">${esc(sec.t)}</div><div>${esc(t.length > 130 ? t.slice(0, 127) + '…' : t)}</div><div class="small mt-1">${mine(q)}</div></div></div>`; }).join('');
 }
 function setStatus() {
@@ -1314,7 +1409,7 @@ function adResumen() {
 function adResultados() {
   const q = AD.q.toLowerCase(), rows = rowsSel().filter(r => !q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)).sort((a, b) => String(b.inicio).localeCompare(String(a.inicio)));
   $('#ad-body').innerHTML = parBtns() + `<div class="nav-card"><div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><div class="input-group" style="max-width:340px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-q" class="form-control" placeholder="Buscar nombre, cuenta o grupo" value="${esc(AD.q)}" autocomplete="off"></div><span class="text-muted small">${rows.length} registro(s)</span><button class="btn btn-outline-success btn-sm ms-auto fw-bold rounded-pill" id="ad-csv"><i class="bi bi-filetype-csv me-1"></i>Descargar CSV</button></div>
-  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th>Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono">${r.estado === 'Entregado' ? esc(r.tiempo) : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : r.salidas}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td><button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th>Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono">${r.estado === 'Entregado' ? esc(r.tiempo) : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 15 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
   $('#ad-q').addEventListener('input', e => { AD.q = e.target.value; const p = e.target.selectionStart; adResultados(); const n = $('#ad-q'); n.focus(); n.setSelectionRange(p, p); });
   $('#ad-csv').onclick = () => {
     const H = ['Parcial', 'Nombre', 'Cuenta', 'Grupo', 'Tipo', 'Estado', 'Aciertos', 'Total', 'Calificación', 'Tiempo', 'Salidas', 'Inicio', 'Entrega'], q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
@@ -1336,11 +1431,21 @@ function adClaves() {
     <div class="small mb-2" id="st-${p}" aria-live="polite"></div>
     <div class="small text-muted mb-3">Cambió ${c['cambios' + p]} ${c['cambios' + p] === 1 ? 'vez' : 'veces'}. Quien use la anterior verá: «La contraseña ha cambiado. Solicita la nueva a tu profesor(a)».</div>
     <button class="btn btn-sm ${c['abierto' + p] === 'SI' ? 'btn-outline-danger' : 'btn-outline-success'} fw-bold rounded-pill" data-abierto="${p}|${c['abierto' + p] === 'SI' ? 'NO' : 'SI'}"><i class="bi ${c['abierto' + p] === 'SI' ? 'bi-lock-fill' : 'bi-unlock-fill'} me-1"></i>${c['abierto' + p] === 'SI' ? 'Cerrar acceso' : 'Abrir acceso'}</button></div></div>`;
-  $('#ad-body').innerHTML = `<div class="alert alert-info shadow-sm small"><i class="bi bi-info-circle-fill me-1"></i>Cada contraseña abre un examen distinto. Se guardan en la hoja <b>Config</b> de tu hoja de cálculo. Al cambiarla, nadie puede entrar con la anterior; los alumnos que ya están contestando pueden terminar.</div><div class="row g-3">${card(1)}${card(2)}</div>`;
+  const clk = c.reloj === 'SI';
+  $('#ad-body').innerHTML = `<div class="alert alert-info shadow-sm small"><i class="bi bi-info-circle-fill me-1"></i>Cada contraseña abre un examen distinto. Se guardan en la hoja <b>Config</b> de tu hoja de cálculo. Al cambiarla, nadie puede entrar con la anterior; los alumnos que ya están contestando pueden terminar.</div><div class="row g-3">${card(1)}${card(2)}</div>
+  <div class="nav-card mt-3 d-flex flex-wrap align-items-center gap-3"><div class="me-auto"><b><i class="bi bi-stopwatch-fill me-1"></i>Cronómetro visible para los alumnos</b><div class="small text-muted">Por defecto está oculto. Aunque esté oculto, el examen se cierra y se entrega solo a los ${CFG.DURACION_MIN} minutos. El cambio llega a quienes ya contestan en menos de un minuto.</div></div><span class="badge ${clk ? 'text-bg-success' : 'text-bg-secondary'}">${clk ? 'Visible' : 'Oculto'}</span><button class="btn btn-sm ${clk ? 'btn-outline-danger' : 'btn-outline-success'} fw-bold rounded-pill" data-reloj="${clk ? 'NO' : 'SI'}"><i class="bi ${clk ? 'bi-eye-slash-fill' : 'bi-eye-fill'} me-1"></i>${clk ? 'Ocultar cronómetro' : 'Mostrar cronómetro'}</button></div>`;
 }
 document.addEventListener('click', async e => {
   const eye = e.target.closest('[data-eye]'); if (eye) { const i = $('#' + eye.dataset.eye); i.type = i.type === 'password' ? 'text' : 'password'; }
   const sc = e.target.closest('[data-setclave]'); if (sc) saveClave(+sc.dataset.setclave);
+  const ce = e.target.closest('[data-cerrar]'); if (ce) {
+    const [parcial, cuenta] = ce.dataset.cerrar.split('|'), row = AD.rows.find(x => String(x.parcial) === parcial && String(x.cuenta) === cuenta);
+    if (!confirm(`¿Cerrar el examen de ${row ? row.nombre : cuenta} (cuenta ${cuenta})? Se entregará y calificará con lo que lleva respondido.`)) return;
+    const r = await adApi('admin_cerrar', { parcial: +parcial, cuenta });
+    if (r.ok) { toast('Cierre enviado. El examen se entregará en cuanto el alumno sincronice.', 'bi-lock-fill', 4500); loadAdmin(); }
+    else toast(r.code === 'accion' ? 'Actualiza el script de Apps Script (nueva versión de la implementación) para usar esta opción.' : (r.msg || MSG[r.code] || 'No se pudo cerrar.'), 'bi-exclamation-triangle-fill', 4500);
+  }
+  const rl = e.target.closest('[data-reloj]'); if (rl) { const r = await adApi('admin_reloj', { valor: rl.dataset.reloj }); if (r.ok) { toast(rl.dataset.reloj === 'SI' ? 'Cronómetro visible para los alumnos.' : 'Cronómetro oculto.', 'bi-check-circle-fill'); loadAdmin(); } else toast(r.code === 'accion' ? 'Actualiza el script de Apps Script (nueva versión de la implementación) para usar esta opción.' : (MSG[r.code] || r.msg || 'No se pudo cambiar.'), 'bi-exclamation-triangle-fill', 4500); }
   const ab = e.target.closest('[data-abierto]'); if (ab) { const [p, v] = ab.dataset.abierto.split('|'); const r = await adApi('admin_abierto', { parcial: +p, abierto: v }); if (r.ok) { toast(v === 'SI' ? 'Acceso abierto.' : 'Acceso cerrado.', 'bi-check-circle-fill'); loadAdmin(); } }
 });
 async function saveClave(p) {
@@ -1378,7 +1483,7 @@ window.addEventListener('beforeprint', () => { document.body.style.display = 'no
 
 /* ===== Registro de salidas de la pestaña ===== */
 function leave() { if (!examActive || away) return; away = true; S.salidas++; save(); syncProgress(false); }
-function back() { if (!away) return; away = false; if (examActive) toast(`Saliste de la ventana del examen (${S.salidas} ${S.salidas === 1 ? 'vez' : 'veces'}). Queda registrado.`, 'bi-eye-fill', 4000); }
+function back() { if (!away) return; away = false; if (examActive) toast(`Saliste de la ventana del examen (${S.salidas} ${S.salidas === 1 ? 'vez' : 'veces'}). Queda registrado.`, 'bi-eye-fill', 6000); }
 document.addEventListener('visibilitychange', () => document.hidden ? leave() : back());
 window.addEventListener('blur', leave); window.addEventListener('focus', back);
 window.addEventListener('beforeunload', e => { if (examActive) { e.preventDefault(); e.returnValue = ''; } });
@@ -1389,6 +1494,8 @@ window.addEventListener('beforeunload', e => { if (examActive) { e.preventDefaul
   let sess = null; try { sess = JSON.parse(SS.get('eq_sess') || 'null'); } catch (e) { }
   if (sess && sess.role === 'admin' && sess.token) { ADMIN = sess.token; openAdmin(); }
   else if (sess && sess.role === 'alumno') afterLogin(sess.parcial, false);
+  else if (S && !S.fin) { SS.set('eq_sess', JSON.stringify({ role: 'alumno', parcial: S.parcial })); startExam(true); }          // se cerró la ventana y se volvió a abrir: sigue la sesión de ese número de cuenta
+  else if (S && S.fin && S.result && !S.sent && S.status !== 'dup') { SS.set('eq_sess', JSON.stringify({ role: 'alumno', parcial: S.parcial })); renderFin(); show('fin'); sendResult(S); }
   else show('clave');
   flushQueue();
 })();
