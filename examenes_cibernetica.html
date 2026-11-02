@@ -96,6 +96,13 @@
     .ov:has(.ov) { text-decoration:none; display:inline-block; border-top:2px solid currentColor; padding-top:3px; line-height:1.15; }
     .bl-Bonus { background:#f59e0b; }
     .cb-node { cursor:pointer; } .cb-node:hover rect { stroke:#7c3aed; } .cb-node:focus { outline:none; } .cb-node:focus-visible rect { stroke:#7c3aed; stroke-width:3; }
+    .circ-wrap { overflow-x:auto; padding-bottom:.2rem; } .circ-wrap .circ { min-width:560px; }
+    .fn-in { font-size:1.15rem; letter-spacing:.04em; border:2px solid #cbd5e1; border-radius:12px; padding:.55rem .8rem; } .fn-in:focus { border-color:#7c3aed; box-shadow:0 0 0 .25rem rgba(124,58,237,.18); }
+    .fn-pal { display:flex; flex-wrap:wrap; gap:.4rem; margin:.5rem 0; } .fn-btn { border:2px solid #cbd5e1; background:#fff; border-radius:10px; min-width:2.5rem; padding:.25rem .6rem; font-weight:800; font-family:'Courier New',monospace; font-size:1.05rem; transition:transform .12s,border-color .12s; }
+    .fn-btn:hover { border-color:#a78bfa; background:#faf5ff; transform:translateY(-2px); } .fn-btn.v { color:#5b21b6; background:#ede9fe; } .fn-btn.clr { margin-left:auto; border-color:#fca5a5; color:#b91c1c; font-family:inherit; font-size:.9rem; } .fn-btn.back { color:#475569; }
+    .fn-prev { min-height:1.9rem; font-size:.95rem; padding:.2rem 0; }
+    .fn-help { margin-top:.6rem; border:1px dashed #94a3b8; border-radius:12px; background:#f8fafc; } .fn-help summary { cursor:pointer; padding:.45rem .8rem; font-weight:700; color:#0f766e; } .fn-help-b { padding:.2rem .9rem .8rem; }
+    .fn-forms { display:grid; gap:.4rem; } .fn-forms>div { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:.4rem .7rem; display:flex; flex-wrap:wrap; gap:.2rem .8rem; align-items:baseline; } .fn-forms .mono { font-weight:800; color:#3730a3; word-break:break-all; } .fn-forms small { color:#64748b; }
     .circ { max-width:100%; height:auto; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:.4rem; }
     .km-wrap { overflow-x:auto; margin:.6rem 0; }
     .km { border-collapse:separate; border-spacing:3px; font-family:'Courier New',monospace; text-align:center; }
@@ -181,6 +188,7 @@
       <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">35</span> preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Al final hay <b>1 pregunta bonus opcional</b> que vale por 2, sin pasar nunca de 10. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
       <div class="rule" id="r-tiempo"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b> desde que pulsas «Comenzar». Pasado ese tiempo el examen se <b>cierra y se entrega en automático</b> con las respuestas que tengas.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo la respuesta, sin espacios</b>, con los símbolos que indique cada pregunta (solo 0 y 1, solo números, o números y letras A–F).</div></div>
+      <div class="rule"><i class="bi bi-braces"></i><div>En la sección de circuitos escribirás una <b>función booleana</b> con las letras A, B y C: usa <b>'</b> para negar, <b>*</b> para AND y <b>+</b> para OR, con paréntesis si los necesitas. Ejemplo: <span class="mono">A'*B*C + (A*B)'</span>. Cualquier función equivalente a la del circuito es correcta.</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
       <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen continúa y el tiempo sigue corriendo. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
       <div class="form-check my-3"><input class="form-check-input" type="checkbox" id="d-ok"><label class="form-check-label" for="d-ok">Leí las reglas y confirmo que mis datos son correctos.</label></div>
@@ -209,12 +217,11 @@
       <div class="inner">
         <div class="d-flex align-items-center gap-2 me-auto">
           <i class="bi bi-cpu-fill fs-4" style="color:var(--cy)"></i>
-          <div class="lh-sm"><div class="fw-bold" id="bar-titulo">Cibernética 1</div><small class="opacity-75" id="bar-alumno"></small> <button type="button" class="btn btn-link btn-sm p-0 align-baseline" id="bar-cambiar" style="font-size:.72rem;color:#67e8f9">¿Otro número de cuenta?</button></div>
+          <div class="lh-sm"><div class="fw-bold" id="bar-titulo">Cibernética 1</div><small class="opacity-75" id="bar-alumno"></small></div>
           <span class="badge rounded-pill text-bg-light ms-1" id="bar-tipo"></span>
         </div>
         <span class="small fw-bold d-none d-sm-inline" id="bar-prog"></span>
         <div class="timer d-none" id="timer"><i class="bi bi-stopwatch"></i><span id="timer-txt">--:--:--</span></div>
-        <button class="btn btn-sm btn-warning fw-bold rounded-pill d-none d-md-inline-block" data-entregar><i class="bi bi-send-check-fill me-1"></i>Entregar</button>
       </div>
     </div>
     <div class="progress progress-thin rounded-0"><div class="progress-bar" id="bar-fill" style="width:0"></div></div>
@@ -852,15 +859,15 @@ function buildP2(tipo, seed) {
 
 
 /* ==========================================================================
-   EJERCICIOS NUEVOS (ambos parciales): tablas de verdad, armado de circuito, sumatoria binaria y pregunta bonus
+   EJERCICIOS NUEVOS (ambos parciales): tablas de verdad, circuito → función escrita, sumatoria binaria y pregunta bonus
    - Tabla de verdad: 2 entradas (A, B), expresiones con varios términos. Se llena la columna F (casillas verticales, solo 0 y 1) y vale 1 acierto.
-   - Armado de circuito: con clics. Se elige un espacio vacío o una pieza y se agregan compuertas AND, NAND o NOT. «Borrar todo» reinicia.
+   - Circuito → función: se muestra un circuito (4 por parcial, solo AND, OR y NOT) y el alumno escribe F con ' * + ( ) (o ! & |). Se califica por equivalencia de tabla de verdad.
    - Sumatoria de 3 números binarios: respuesta abierta limitada a 0 y 1.
    - Bonus (opcional): tabla de verdad de 3 entradas (A, B, C). Vale por 2 preguntas, pero la calificación nunca pasa de 10.
    ========================================================================== */
 const SECS_NEW = [
   { id: 'ttv', t: 'Evalúa la función: tablas de verdad', d: 'Evalúa cada función (puedes simplificarla antes) y completa la columna F escribiendo solo 0 y 1. La tabla completa vale 1 acierto: todas las salidas deben ser correctas.', ic: 'bi-table', c: '#ea580c' },
-  { id: 'arm', t: 'Arma el circuito', d: 'Selecciona un espacio vacío (?) o cualquier pieza y agrega una entrada (A, B, C) o una compuerta (AND, NAND, NOT) justo ahí. Si te equivocas, pulsa «Borrar todo» y empieza de nuevo.', ic: 'bi-diagram-2-fill', c: '#0d9488' },
+  { id: 'arm', t: 'Lee el circuito y escribe su función', d: 'Cada circuito usa solo compuertas AND, OR y NOT. Escribe la función de salida F con las letras A, B y C: usa \' para negar, * para AND y + para OR, y paréntesis cuando los necesites. Abre «¿Cómo escribirlo?» para ver ejemplos. La respuesta es correcta si tu función equivale a la del circuito.', ic: 'bi-diagram-3-fill', c: '#0d9488' },
   { id: 'sig', t: 'Sumatoria de números binarios', d: 'Respuesta abierta: suma los tres números y escribe solo el resultado, con 0 y 1 y sin espacios.', ic: 'bi-plus-slash-minus', c: '#16a34a' },
   { id: 'bon', t: 'Pregunta bonus (opcional)', d: 'Es opcional y vale por 2 preguntas, pero la calificación máxima sigue siendo 10. Puedes dejarla en blanco sin que te afecte.', ic: 'bi-star-fill', c: '#f59e0b' }
 ];
@@ -881,6 +888,83 @@ const CB_POOL = {
        B: [() => gAND(gNAND(gAND(gA, gNOT(gB)), gC), gNAND(gA, gB)), () => gAND(gNAND(gAND(gNOT(gA), gB), gC), gNAND(gA, gC))] }
 };
 const CB_VARS = ['A', 'B', 'C'];
+/* Circuitos para escribir su función (solo AND, OR y NOT). Hay 4 por parcial (circuitos A, B, C y D); a cada alumno le toca uno al azar. */
+const gOR = (a, b) => Gt('or', a, b), gAND3 = (a, b, c) => gAND(gAND(a, b), c), gOR4 = (a, b, c, d) => gOR(gOR(a, b), gOR(c, d));
+const FN_POOL = {
+  1: [() => gOR(gAND(gA, gNOT(gB)), gAND(gB, gC)),                               // A·B̅ + B·C
+      () => gOR(gAND(gNOT(gA), gB), gAND(gA, gNOT(gC))),                         // A̅·B + A·C̅
+      () => gOR(gAND(gA, gB), gAND(gNOT(gA), gC)),                               // A·B + A̅·C
+      () => gAND(gOR(gA, gNOT(gB)), gOR(gB, gC))],                               // (A + B̅)·(B + C)
+  2: [() => gOR(gOR(gAND3(gNOT(gA), gB, gC), gAND3(gA, gNOT(gB), gNOT(gC))), gNOT(gOR(gOR(gA, gB), gC))),                                   // A̅BC + AB̅C̅ + (A+B+C)'
+      () => gOR4(gAND3(gA, gNOT(gB), gC), gAND3(gNOT(gA), gNOT(gB), gNOT(gC)), gAND3(gA, gB, gNOT(gC)), gNOT(gAND3(gNOT(gA), gB, gC))),    // AB̅C + A̅B̅C̅ + ABC̅ + (A̅BC)'
+      () => gOR(gOR(gAND(gNOT(gAND(gA, gB)), gC), gAND3(gA, gB, gNOT(gC))), gAND3(gNOT(gA), gNOT(gB), gNOT(gC))),                          // (AB)'C + ABC̅ + A̅B̅C̅
+      () => gOR(gAND(gA, gOR(gB, gNOT(gC))), gAND3(gNOT(gA), gNOT(gB), gC))]                                                               // A(B + C̅) + A̅B̅C
+};
+const FN_NOM = 'ABCD';
+/* ----- Función escrita por el alumno: se acepta ' ! ~ ¬ (NOT) · * . & o juntar letras (AND) · + | (OR) ----- */
+const FN_BAD = /[^ABC'’!~¬*·.&+|()\[\] ]/g;
+function fnParse(src) {
+  let s = String(src || '').toUpperCase().replace(/^\s*F\s*=/, '').replace(/\s+/g, '').replace(/’/g, "'").replace(/\[/g, '(').replace(/\]/g, ')'), i = 0;
+  if (!s) return { ok: false, err: '' };
+  const bad = m => { throw new Error(m); }, start = c => c !== undefined && /[ABC(!~¬]/.test(c);
+  const expr = () => { let t = term(); while (s[i] === '+' || s[i] === '|') { i++; t = Gt('or', t, term()); } return t; };
+  const term = () => { let t = factor(); for (; ;) { const c = s[i]; if (c === '*' || c === '·' || c === '.' || c === '&') { i++; t = Gt('and', t, factor()); } else if (start(c)) t = Gt('and', t, factor()); else break; } return t; };
+  const factor = () => {
+    const c = s[i]; if (c === '!' || c === '~' || c === '¬') { i++; return Gt('not', factor()); }
+    let t;
+    if (c === '(') { i++; t = expr(); if (s[i] !== ')') bad('falta cerrar un paréntesis «)»'); i++; }
+    else if (c !== undefined && CB_VARS.includes(c)) { i++; t = Lf(c); }
+    else bad(c === undefined ? 'la expresión está incompleta' : c === ')' ? 'hay un paréntesis «)» de más o falta algo antes de él' : `no se esperaba «${c}» en esa posición`);
+    while (s[i] === "'") { i++; t = Gt('not', t); }
+    return t;
+  };
+  try { const t = expr(); if (i < s.length) bad(s[i] === ')' ? 'hay un paréntesis «)» de más' : `no se esperaba «${s[i]}»`); return { ok: true, tree: t }; }
+  catch (e) { return { ok: false, err: e.message }; }
+}
+const fnTT = v => { const r = fnParse(v); return r.ok ? ttOf(r.tree, CB_VARS) : ''; };
+const FN_EJ = gOR(gOR(gOR(gAND3(gNOT(gA), gB, gC), gAND3(gNOT(gA), gNOT(gB), gNOT(gC))), gAND3(gA, gB, gNOT(gC))), gNOT(gAND3(gA, gB, gC)));
+function fnAyuda() {
+  return `<details class="fn-help"><summary><i class="bi bi-question-circle-fill me-1"></i>¿Cómo escribirlo? (ejemplo y formas válidas)</summary><div class="fn-help-b">
+    <p class="mb-2">Cada <b>compuerta del dibujo</b> se vuelve un operador. Las letras repetidas son la misma entrada. Ejemplo de un circuito complejo:</p>
+    <div class="circ-wrap">${circuitSVG(FN_EJ, 'F')}</div>
+    <p class="my-2">Se escribe, por ejemplo, así:</p>
+    <div class="fn-forms">
+      <div><span class="mono">A'*B*C + A'*B'*C' + A*B*C' + (A*B*C)'</span><small>con ' para negar, * para AND y + para OR</small></div>
+      <div><span class="mono">!A&amp;B&amp;C | !A&amp;!B&amp;!C | A&amp;B&amp;!C | !(A&amp;B&amp;C)</span><small>con ! para negar, &amp; para AND y | para OR</small></div>
+      <div><span class="mono">A'BC + A'B'C' + ABC' + (ABC)'</span><small>juntando las letras para el AND</small></div>
+    </div>
+    <ul class="small mb-0 mt-2"><li><b>NOT:</b> pon <b>'</b> después de la letra o del paréntesis (A', (A*B)'), o bien <b>!</b> antes.</li><li><b>AND:</b> <b>*</b>, <b>&amp;</b>, <b>·</b> o letras juntas. <b>OR:</b> <b>+</b> o <b>|</b>.</li><li>Primero se hace NOT, luego AND y al final OR; usa <b>paréntesis</b> para agrupar.</li><li>Puedes usar solo las letras A, B y C. Acepta mayúsculas o minúsculas.</li></ul>
+  </div></details>`;
+}
+function fnHTML(q, p, key) {
+  if (key) return `<div class="key-box"><i class="bi bi-key-fill me-1"></i>Circuito <b>${q.cname}</b>. Se acepta cualquier función equivalente. Referencia: <b class="num">F = ${q.expect}</b></div>`;
+  const btn = (t, l, c = '') => `<button type="button" class="fn-btn ${c}" data-fnins="${esc(t)}" aria-label="${l || t}">${t}</button>`;
+  return `<div class="fn" id="fn-${q.id}" data-fnq="${q.id}">
+    <label class="fw-bold small mb-1" for="a-${q.id}">F =</label>
+    <input type="text" class="form-control fn-in mono" id="a-${q.id}" data-fn="${q.id}" maxlength="100" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" placeholder="Escribe aquí la función, por ejemplo A'*B + C">
+    <div class="fn-pal" role="group" aria-label="Símbolos">${['A', 'B', 'C'].map(v => btn(v, '', 'v')).join('')}${btn("'", 'Negar (NOT)')}${btn('*', 'AND')}${btn('+', 'OR')}${btn('(')}${btn(')')}<button type="button" class="fn-btn back" data-fnins="@back" aria-label="Borrar un carácter"><i class="bi bi-backspace-fill"></i></button><button type="button" class="fn-btn clr" data-fnins="@clear">Borrar todo</button></div>
+    <div class="fn-prev" id="fnp-${q.id}" aria-live="polite"></div>
+    <div class="ans-hint mt-2"><i class="bi bi-braces"></i><span>Usa <b>'</b> para negar, <b>*</b> para AND y <b>+</b> para OR (o <b>!</b>, <b>&amp;</b> y <b>|</b>). Cualquier función equivalente a la del circuito cuenta como correcta.</span></div>
+    ${fnAyuda()}</div>`;
+}
+function fnPrev(id) {
+  const box = $('#fnp-' + id); if (!box) return; const v = (S && S.answers[id]) || '', r = fnParse(v);
+  box.innerHTML = !v ? '<span class="text-muted">Aquí verás cómo se interpreta lo que escribes.</span>' : r.ok ? `<span class="text-muted">Se lee como:</span> <b class="num">F = ${exprOf(r.tree)}</b>` : `<span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>Revisa: ${r.err}.</span>`;
+}
+document.addEventListener('input', e => {
+  const i = e.target.closest && e.target.closest('input.fn-in'); if (!i || !S || S.fin) return;
+  const id = +i.dataset.fn, before = i.value, up = before.toUpperCase().replace(FN_BAD, '');
+  if (up !== before.toUpperCase()) toast('Solo se permiten A, B, C y los símbolos \' ! * · & + | ( )', 'bi-keyboard-fill', 2200);
+  if (i.value !== up) i.value = up; S.answers[id] = up; save(); fnPrev(id); refreshMarks(); updateProgress();
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-fnins]'); if (!b || !S || S.fin) return;
+  const box = b.closest('.fn'), i = $('input.fn-in', box), t = b.dataset.fnins, a = i.selectionStart ?? i.value.length, z = i.selectionEnd ?? a;
+  if (t === '@clear') i.value = ''; else if (t === '@back') { if (a !== z) i.value = i.value.slice(0, a) + i.value.slice(z); else if (a > 0) { i.value = i.value.slice(0, a - 1) + i.value.slice(a); i.setSelectionRange(a - 1, a - 1); } }
+  else { i.value = i.value.slice(0, a) + t + i.value.slice(z); i.setSelectionRange(a + t.length, a + t.length); }
+  i.focus(); i.dispatchEvent(new Event('input', { bubbles: true }));
+});
+
 const sopParse = s => s.split('+').map(t => [...t].map(ch => ({ v: ch.toUpperCase(), n: ch === ch.toLowerCase() })));
 const sopHTML = s => sopParse(s).map(t => t.map(l => l.n ? ov(l.v) : l.v).join('·')).join(' + ');
 function sopTT(s, vars) {
@@ -894,8 +978,8 @@ function buildNew(tipo, parcial, rnd) {
   shuffle(TT_POOL[parcial][tipo], rnd).slice(0, 2).forEach(sop => {
     out.push({ sec: 'ttv', kind: 'tt', n: 2, html: `Completa la tabla de verdad de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificar la expresión antes de evaluarla.`, expect: sopTT(sop, ['A', 'B']), sop, bl: 'Aplicar' });
   });
-  { const t = pick(CB_POOL[parcial][tipo], rnd)();
-    out.push({ sec: 'arm', kind: 'circ', html: `Arma el circuito de la función <span class="num">F = ${exprOf(t)}</span> usando únicamente compuertas AND, NAND y NOT.`, expect: exprOf(t), tt: ttOf(t, CB_VARS), tree: t, bl: 'Crear' }); }
+  { const k = Math.floor(rnd() * FN_POOL[parcial].length), t = FN_POOL[parcial][k]();
+    out.push({ sec: 'arm', kind: 'fn', html: `<b>Circuito ${FN_NOM[k]}.</b> Escribe la <b>función de salida F</b> del circuito en términos de A, B y C. Solo tiene compuertas AND, OR y NOT; cada letra que se repite es la misma entrada.<div class="circ-wrap my-2">${circuitSVG(t, 'F')}</div>`, cname: FN_NOM[k], expect: exprOf(t), tt: ttOf(t, CB_VARS), tree: t, bl: 'Analizar' }); }
   const [lo, hi] = parcial === 1 ? [3, 5] : [4, 6], seen = new Set();
   for (let i = 0; i < 2; i++) {
     let a, b, c, key; do { a = bin3(rnd, lo, hi); b = bin3(rnd, lo, hi); c = bin3(rnd, lo, hi); key = [a, b, c].sort().join(); } while (seen.has(key)); seen.add(key);
@@ -1031,6 +1115,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { const nd = e.target.closest && e.target.closest('[data-cbp]'); if (nd && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); cbPick(nd); } });
 function restoreAns(q, v) {
   if (q.kind === 'circ') { cbRender(q.id); return; }
+  if (q.kind === 'fn') { const n = $('#a-' + q.id); if (n && v) { n.value = v; } fnPrev(q.id); return; }
   if (v === undefined || v === '') return;
   if (q.kind === 'mc') { const r = $(`input[name="q${q.id}"][value="${v}"]`); if (r) r.checked = true; }
   else if (q.kind === 'tt') ttNorm(v, q.expect.length).split('').forEach((c, i) => { const n = $(`input.tt-in[data-tt="${q.id}"][data-i="${i}"]`); if (n && c !== '_') { n.value = c; n.classList.add('filled'); } });
@@ -1066,6 +1151,7 @@ function gradeQ(q, v) {
   if (q.kind === 'mc') return +v === q.correct;
   if (q.kind === 'tt') return String(v) === q.expect;
   if (q.kind === 'circ') return cbGate(q, v);
+  if (q.kind === 'fn') return fnTT(v) === q.tt;
   const u = String(v).toUpperCase();
   if (q.cmp === 'exact') return u === q.expect;
   if (q.cmp === 'num') return parseInt(u, 10) === parseInt(q.expect, 10);
@@ -1173,11 +1259,6 @@ function afterLogin(parcial, fresh) {
   openDatos(parcial);
 }
 $('#rs-continuar').onclick = () => startExam(true);
-$('#bar-cambiar').onclick = () => {
-  if (!S || S.fin) return;
-  if (!confirm('Vas a salir de esta sesión para usar otro número de cuenta. Tu avance queda guardado (en este equipo y en la hoja) y se retoma al escribir de nuevo este número de cuenta y tu nombre. El tiempo de este examen sigue corriendo. ¿Continuar?')) return;
-  const p = S.parcial; detachState(); openDatos(p);
-};
 $('#rs-otro').onclick = () => { if (confirm('Dejarás de ver el intento anterior en este equipo (el avance sigue guardado y se retoma con su número de cuenta y nombre). ¿Continuar?')) { const s = JSON.parse(SS.get('eq_sess') || '{}'), p = s.parcial || (S && S.parcial) || 1; detachState(); openDatos(p); } };
 
 /* ===== 2. Datos ===== */
@@ -1238,6 +1319,7 @@ function questionsHTML(exam, secs, opt = {}) {
       html += q.opts.map((o, i) => `<label class="opt ${key && i === q.correct ? 'key' : ''}"><input type="radio" name="${p}${q.id}" value="${i}" ${key ? 'disabled' : `data-q="${q.id}"`}><span class="mark">${'ABCD'[i]}</span><span>${o}</span>${key && i === q.correct ? '<i class="bi bi-check-circle-fill ms-auto text-success"></i>' : ''}</label>`).join('');
     } else if (q.kind === 'tt') { html += ttHTML(q, p, key);
     } else if (q.kind === 'circ') { html += circHTML(q, p, key);
+    } else if (q.kind === 'fn') { html += fnHTML(q, p, key);
     } else if (key) {
       html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><div class="key-box"><i class="bi bi-key-fill me-1"></i>Respuesta correcta: <b class="mono">${q.expect}</b></div>`;
     } else {
@@ -1292,6 +1374,7 @@ function kickOut(code) {                          // otra sesión tomó este exa
 const isAns = q => { const v = S.answers[q.id]; if (v === undefined || v === '' || v === null) return false;
   if (q.kind === 'tt') return new RegExp('^[01]{' + q.expect.length + '}$').test(v);
   if (q.kind === 'circ') { const t = cbParse(v); return !!t && cbDone(t); }
+  if (q.kind === 'fn') return fnParse(v).ok;
   return true; };
 function refreshMarks() {
   EXAM.forEach(q => {
@@ -1379,7 +1462,7 @@ function renderMalas(r) {
   const bad = ex.filter((q, i) => det[i] === '0' && !(q.bonus && (ans[q.id] === undefined || ans[q.id] === '')));
   if (!ex.length) { box.innerHTML = ''; return; }
   if (!bad.length) { box.innerHTML = '<div class="alert alert-success fw-bold text-center mb-0"><i class="bi bi-stars me-1"></i>¡Todas tus respuestas fueron correctas!</div>'; return; }
-  const mine = q => { const v = ans[q.id]; if (v === undefined || v === '' || v === null) return '<span class="text-muted">Sin responder</span>'; return q.kind === 'mc' ? `Elegiste la opción <b>${'ABCD'[+v]}</b>` : q.kind === 'circ' ? `Tu circuito: <b class="mono">${esc(v)}</b>` : `Escribiste <b class="mono">${esc(String(v).replace(/_/g, '·'))}</b>`; };
+  const mine = q => { const v = ans[q.id]; if (v === undefined || v === '' || v === null) return '<span class="text-muted">Sin responder</span>'; return q.kind === 'mc' ? `Elegiste la opción <b>${'ABCD'[+v]}</b>` : q.kind === 'circ' ? `Tu circuito: <b class="mono">${esc(v)}</b>` : q.kind === 'fn' ? `Escribiste <b class="mono">F = ${esc(v)}</b>` : `Escribiste <b class="mono">${esc(String(v).replace(/_/g, '·'))}</b>`; };
   box.innerHTML = `<h2 class="h6 fw-bold mb-2"><i class="bi bi-x-circle-fill text-danger me-1"></i>Preguntas que estuvieron mal (${bad.length} de ${ex.filter(q => !q.bonus).length})</h2><div class="small text-muted mb-2">Aquí no se muestra la respuesta correcta; repasa estos temas con tu profesor(a).</div>` +
     bad.map(q => { const sec = secs.find(x => x.id === q.sec), t = plain(q.html); return `<div class="mal-item" style="--c:${sec.c}"><span class="mal-n">${q.id}</span><div><div class="small fw-bold" style="color:${sec.c}">${esc(sec.t)}</div><div>${esc(t.length > 130 ? t.slice(0, 127) + '…' : t)}</div><div class="small mt-1">${mine(q)}</div></div></div>`; }).join('');
 }
@@ -1436,19 +1519,22 @@ function adResumen() {
   const card = (ic, c, v, k) => `<div class="col-6 col-lg-3"><div class="stat" style="--c:${c}"><i class="bi ${ic}"></i><div><b>${v}</b><span>${k}</span></div></div></div>`;
   const buckets = Array(11).fill(0); notas.forEach(n => buckets[Math.min(10, Math.floor(n))]++); const mx = Math.max(1, ...buckets);
   const by = (key, label) => { const m = {}; ent.forEach(r => { (m[r[key]] = m[r[key]] || []).push(+r.nota); }); return Object.keys(m).sort().map(k => `<tr><td>${esc(label ? label(k) : k)}</td><td>${m[k].length}</td><td><b>${avg(m[k]).toFixed(2)}</b></td></tr>`).join('') || '<tr><td colspan="3" class="text-muted">Sin datos</td></tr>'; };
-  $('#ad-body').innerHTML = parBtns() + `<div class="row g-3 mb-3">${card('bi-check2-circle', '#16a34a', ent.length, 'Entregados')}${card('bi-hourglass-split', '#d97706', cur.length, 'En curso / sin entregar')}${card('bi-mortarboard-fill', '#7c3aed', ent.length ? prom.toFixed(2) : '—', 'Promedio (0–10)')}${card('bi-award-fill', '#0891b2', ent.length ? Math.round(apr / ent.length * 100) + '%' : '—', 'Aprobados (≥ 6)')}${card('bi-stopwatch-fill', '#2563eb', ent.length ? fmtT(avg(ent.map(r => +r.seg)) * 1000) : '—', 'Tiempo promedio')}${card('bi-box-arrow-up-right', '#dc2626', ent.length ? avg(ent.map(r => +r.salidas || 0)).toFixed(1) : '—', 'Salidas de pestaña (prom.)')}${card('bi-trophy-fill', '#16a34a', notas.length ? Math.max(...notas).toFixed(1) : '—', 'Calificación más alta')}${card('bi-graph-down', '#dc2626', notas.length ? Math.min(...notas).toFixed(1) : '—', 'Calificación más baja')}</div>
+  $('#ad-body').innerHTML = parBtns() + `<div class="row g-3 mb-3">${card('bi-check2-circle', '#16a34a', ent.length, 'Entregados')}${card('bi-hourglass-split', '#d97706', cur.length, 'En curso / sin entregar')}${card('bi-mortarboard-fill', '#7c3aed', ent.length ? prom.toFixed(2) : '—', 'Promedio (0–10)')}${card('bi-award-fill', '#0891b2', ent.length ? Math.round(apr / ent.length * 100) + '%' : '—', 'Aprobados (≥ 6)')}${card('bi-stopwatch-fill', '#2563eb', ent.length ? fmtT(avg(ent.map(segOf).filter(Number.isFinite)) * 1000) : '—', 'Tiempo promedio')}${card('bi-box-arrow-up-right', '#dc2626', ent.length ? avg(ent.map(r => +r.salidas || 0)).toFixed(1) : '—', 'Salidas de pestaña (prom.)')}${card('bi-trophy-fill', '#16a34a', notas.length ? Math.max(...notas).toFixed(1) : '—', 'Calificación más alta')}${card('bi-graph-down', '#dc2626', notas.length ? Math.min(...notas).toFixed(1) : '—', 'Calificación más baja')}</div>
   <div class="row g-3"><div class="col-lg-7"><div class="nav-card h-100"><b class="mb-2 d-block"><i class="bi bi-bar-chart-fill me-1 text-primary"></i>Distribución de calificaciones</b><div class="hist">${buckets.map((c, i) => `<div class="hcol"><span class="hv">${c || ''}</span><div class="hbar ${i < 6 ? 'bad' : ''}" style="height:${c / mx * 100}%"></div><span class="hl">${i === 10 ? '10' : i}</span></div>`).join('')}</div></div></div>
   <div class="col-lg-5"><div class="nav-card mb-3"><b class="mb-2 d-block"><i class="bi bi-people-fill me-1 text-primary"></i>Por grupo</b><table class="table table-sm mb-0"><thead><tr><th>Grupo</th><th>Entregados</th><th>Promedio</th></tr></thead><tbody>${by('grupo')}</tbody></table></div>
   <div class="nav-card"><b class="mb-2 d-block"><i class="bi bi-file-earmark-text-fill me-1 text-primary"></i>Por tipo de examen</b><table class="table table-sm mb-0"><thead><tr><th>Tipo</th><th>Entregados</th><th>Promedio</th></tr></thead><tbody>${by('tipo', k => 'Tipo ' + k)}</tbody></table></div></div></div>`;
 }
+/* Tiempo que tardó cada alumno en SU examen: sale de los segundos guardados (o de entrega − inicio) y no depende de cómo la hoja guarde el texto */
+const segOf = r => { let x = (r.seg === '' || r.seg == null) ? NaN : +r.seg; if (!(x >= 0)) { const a = Date.parse(r.inicio), b = Date.parse(r.entrega); x = a && b && b >= a ? (b - a) / 1000 : NaN; } return x; };
+const tiempoOf = r => { const x = segOf(r); return Number.isFinite(x) ? fmtT(x * 1000) : ''; };
 function adResultados() {
   const q = AD.q.toLowerCase(), rows = rowsSel().filter(r => !q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)).sort((a, b) => String(b.inicio).localeCompare(String(a.inicio)));
   $('#ad-body').innerHTML = parBtns() + `<div class="nav-card"><div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><div class="input-group" style="max-width:340px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-q" class="form-control" placeholder="Buscar nombre, cuenta o grupo" value="${esc(AD.q)}" autocomplete="off"></div><span class="text-muted small">${rows.length} registro(s)</span><button class="btn btn-outline-success btn-sm ms-auto fw-bold rounded-pill" id="ad-csv"><i class="bi bi-filetype-csv me-1"></i>Descargar CSV</button></div>
-  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th>Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono">${r.estado === 'Entregado' ? esc(r.tiempo) : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 15 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th title="Tiempo que tardó en contestar (horas:minutos:segundos)">Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono text-nowrap">${r.estado === 'Entregado' ? (tiempoOf(r) || '—') : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 15 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
   $('#ad-q').addEventListener('input', e => { AD.q = e.target.value; const p = e.target.selectionStart; adResultados(); const n = $('#ad-q'); n.focus(); n.setSelectionRange(p, p); });
   $('#ad-csv').onclick = () => {
-    const H = ['Parcial', 'Nombre', 'Cuenta', 'Grupo', 'Tipo', 'Estado', 'Aciertos', 'Total', 'Calificación', 'Tiempo', 'Salidas', 'Inicio', 'Entrega'], q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
-    const csv = '﻿' + [H.map(q).join(',')].concat(rows.map(r => [r.parcial, r.nombre, r.cuenta, r.grupo, r.tipo, r.estado, r.aciertos, r.total, r.nota, r.tiempo, r.salidas, fmtDT(r.inicio), fmtDT(r.entrega)].map(q).join(','))).join('\n');
+    const H = ['Parcial', 'Nombre', 'Cuenta', 'Grupo', 'Tipo', 'Estado', 'Aciertos', 'Total', 'Calificación', 'Tiempo (hh:mm:ss)', 'Segundos', 'Salidas', 'Inicio', 'Entrega'], q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+    const csv = '﻿' + [H.map(q).join(',')].concat(rows.map(r => [r.parcial, r.nombre, r.cuenta, r.grupo, r.tipo, r.estado, r.aciertos, r.total, r.nota, tiempoOf(r), Number.isFinite(segOf(r)) ? Math.round(segOf(r)) : '', r.salidas, fmtDT(r.inicio), fmtDT(r.entrega)].map(q).join(','))).join('\n');
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'resultados_examenes.csv'; document.body.appendChild(a); a.click(); a.remove();
   };
 }
