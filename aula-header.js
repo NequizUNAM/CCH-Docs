@@ -22,7 +22,8 @@
         { label: 'Programa Estadística 1', href: 'Programas_2024/programa_estadistica1.html', icon: 'bi-bar-chart-line' },
         { label: 'Programa Estadística 2', href: 'Programas_2024/programa_estadistica2.html', icon: 'bi-graph-up' } ] },
       { id: 'cuadernillos', label: 'Cuadernillos', icon: 'bi-journal-text', color: 'c-est', items: [
-        { label: 'Cuadernillo Estadística 1', href: 'Cuadernillos/cuadernillo_estadistica1.html', icon: 'bi-bar-chart-line' } ] },
+        { label: 'Cuadernillo Estadística 1', href: 'Cuadernillos/cuadernillo_estadistica1.html', icon: 'bi-bar-chart-line' },
+        { label: 'Cuadernillo Estadística 2', href: 'Cuadernillos/cuadernillo_estadistica2.html', icon: 'bi-graph-up' } ] },
       { id: 'matematicas', label: 'Matemáticas', icon: 'bi-calculator', color: 'c-mat', items: [
         { label: 'Los Números', href: 'los_numeros.html', icon: 'bi-hash' },
         { label: 'Fracciones', href: 'fracciones.html', icon: 'bi-pie-chart-fill' },
