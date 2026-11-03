@@ -684,6 +684,55 @@ textarea.form-control{min-height:110px;resize:vertical}
   .fine-row{align-items:flex-end}
 }
 
+/* ---------- Ícono discreto de métricas en el modal inicial ---------- */
+.login-hero{position:relative}
+.login-admin{position:absolute;top:8px;right:8px;width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:#fff;opacity:.28;display:grid;place-items:center;cursor:pointer;transition:opacity .2s,background .2s}
+.login-admin svg{width:15px;height:15px}
+.login-admin:hover,.login-admin:focus-visible{opacity:.9;background:rgba(255,255,255,.12)}
+
+/* ---------- Panel: acciones, pasteles, popovers y borrado ---------- */
+.dash-actions{display:flex;flex-wrap:wrap;gap:8px}
+.dash .modal-header .btn.danger{border-color:#ffb3bd;color:#ffd6dc}
+.dash .modal-header .btn.danger:hover{background:var(--rojo);border-color:var(--rojo);color:#fff}
+.pie-wrap{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center}
+.pie-wrap>*{min-width:0}
+.pie{width:100%;max-width:200px;height:auto;display:block;margin:auto}
+.pie path{stroke:#fff;stroke-width:2;cursor:pointer;transition:transform .2s,opacity .2s;transform-origin:100px 100px}
+.pie path:hover,.pie path:focus{transform:scale(1.04);outline:none}
+.pie:hover path:not(:hover){opacity:.75}
+.pie text{font-family:var(--f-display);font-weight:800}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:.84rem}
+.legend li{display:grid;grid-template-columns:14px 1fr auto;gap:8px;align-items:center;padding:3px 6px;border-radius:6px;cursor:pointer}
+.legend li:hover,.legend li:focus{background:var(--panel);outline:none}
+.legend .sw{width:12px;height:12px;border-radius:3px}
+.legend .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.legend .pc{font-family:var(--f-mono);font-size:.78rem;font-variant-numeric:tabular-nums}
+.chart-card.wide{grid-column:1/-1}
+.hbar.err .track i{background:var(--rojo)}
+.kpi[data-bs-toggle]{cursor:help}
+.popover{position:absolute;top:0;left:0;z-index:1080;display:block;max-width:300px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(19,32,59,.22);font-size:.84rem;line-height:1.45}
+.popover-arrow{display:none}
+.popover-header{margin:0;padding:8px 12px;font-size:.9rem;font-weight:700;color:var(--azul);background:var(--panel);border-bottom:1px solid var(--line);border-radius:12px 12px 0 0}
+.popover-body{padding:9px 12px;color:var(--ink)}
+.popover-body b{color:var(--azul)}
+.reset-box{border:2px solid var(--rojo);background:var(--rojo-soft);border-radius:14px;padding:16px 18px;margin-bottom:18px}
+.reset-box h4{color:var(--rojo);margin:0 0 6px}
+.reset-box .hrow{margin-top:10px}
+.btn.btn-danger{border-color:var(--rojo);background:var(--rojo);color:#fff}
+.btn.btn-danger:hover{background:#a50d26;border-color:#a50d26}
+.btn.btn-danger:disabled{opacity:.5;cursor:not-allowed}
+@media (max-width:760px){
+  .pie-wrap{grid-template-columns:1fr}
+  .dash .modal-header{position:relative;padding:12px 60px 12px 14px;gap:8px}
+  .dash .modal-header .btn-close{position:absolute;top:10px;right:10px}
+  .dash .modal-title{font-size:1.15rem}
+  .dash .eyebrow{font-size:.66rem}
+  .src-badge{font-size:.66rem}
+  .dash-actions{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .dash-actions .btn{padding:.3em .4em;font-size:.8rem;min-height:36px}
+  .dash-actions #dash-sheet:not([hidden]){grid-column:1/-1}
+}
+
 .apr{scroll-margin-top:52px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -1917,6 +1966,7 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
             <div class="eyebrow" style="margin:0">UNAM · CCH Oriente</div>
             <h2 class="modal-title" id="loginTitle">¡Te damos la bienvenida!</h2>
           </div>
+          <button type="button" class="login-admin" id="login-admin" aria-label="Panel de métricas" title="Panel de métricas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
         </div>
         <div class="modal-body">
           <p class="small muted">Antes de empezar, dinos quién eres. Usamos estos datos solo para registrar tu avance, tus resultados y tu encuesta.</p>
@@ -2024,7 +2074,12 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
       <div class="modal-header">
         <div><div class="eyebrow" style="margin:0">Cibernética y Computación II · uso de la guía</div><h2 class="modal-title" id="adminTitle">Panel de métricas</h2></div>
         <span class="src-badge" id="dash-src"></span>
-        <button class="btn sm" type="button" id="dash-refresh">Actualizar</button>
+        <div class="dash-actions">
+          <button class="btn sm" type="button" id="dash-refresh">Actualizar</button>
+          <button class="btn sm" type="button" id="dash-xlsx">Descargar Excel</button>
+          <a class="btn sm" id="dash-sheet" href="#" target="_blank" rel="noopener" hidden>Abrir hoja</a>
+          <button class="btn sm danger" type="button" id="dash-reset">Borrar datos</button>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar panel"></button>
       </div>
       <div class="modal-body"><div class="wrap" id="dash"></div></div>
@@ -3661,10 +3716,24 @@ const Survey = (function () {
 
 /* ---------- Panel de métricas (código de acceso) ---------- */
 const Admin = (function () {
-  let code = "", data = null, source = "";
+  let code = "", data = null, source = "", sheetUrl = "", toPanel = false, pops = [];
   const SHEETS = ["Sesiones", "Eventos", "Reactivos", "Examenes", "Encuestas"];
-  $("#admin-btn").addEventListener("click", () => { $("#adm-code").value = ""; $("#adm-code").classList.remove("is-invalid"); Modal("adminLogin").show(); });
+  const PIE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#9aa3b2"];   // 7 categorías + «Otras»
+  const L = "ABCDE";
+  /* Abrir: desde el pie de página o desde el modal inicial, sin obligar a iniciar sesión */
+  function openLogin() {
+    $("#adm-code").value = ""; $("#adm-code").classList.remove("is-invalid"); toPanel = false;
+    const login = $("#loginModal").classList.contains("show");
+    if (login) Modal("loginModal").hide();
+    setTimeout(() => Modal("adminLogin").show(), login ? 380 : 0);
+  }
+  $("#admin-btn").addEventListener("click", openLogin);
+  $("#login-admin").addEventListener("click", openLogin);
   $("#adminLogin").addEventListener("shown.bs.modal", () => $("#adm-code").focus());
+  const backToLogin = () => { if (!Session.valid() && !document.querySelector(".modal.show")) Login.open(); };
+  $("#adminLogin").addEventListener("hidden.bs.modal", () => { if (!toPanel) backToLogin(); });
+  $("#adminPanel").addEventListener("hidden.bs.modal", () => { killPops(); backToLogin(); });
+
   async function sha(t) { try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); } catch (e) { return ""; } }
   function local() { const g = {}; SHEETS.forEach(s => g[s] = []); Archive.all().forEach(r => { if (g[r.sheet]) g[r.sheet].push(r.row); }); return g; }
   async function load() {
@@ -3672,40 +3741,98 @@ const Admin = (function () {
       try {
         const r = await fetch(CONFIG.ENDPOINT + "?action=dashboard&code=" + encodeURIComponent(code));
         const j = await r.json();
-        if (j && j.ok) { data = j.data; source = "Google Sheets · " + new Date().toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }); return true; }
+        if (j && j.ok) { data = j.data; sheetUrl = j.url || ""; source = "Google Sheets · " + new Date().toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }); return true; }
         if (j && j.error === "codigo") return false;
       } catch (e) {}
     }
     if (await sha(code) !== CONFIG.ADMIN_HASH) return false;
-    data = local(); source = CONFIG.ENDPOINT ? "Sin conexión · datos de este dispositivo" : "Vista local · configura ENDPOINT"; return true;
+    data = local(); sheetUrl = ""; source = CONFIG.ENDPOINT ? "Sin conexión · datos de este dispositivo" : "Vista local · datos de este dispositivo"; return true;
   }
   $("#adminForm").addEventListener("submit", async e => {
     e.preventDefault(); code = $("#adm-code").value.trim(); $("#adm-go").disabled = true; $("#adm-go").textContent = "Verificando…";
     const ok = await load(); $("#adm-go").disabled = false; $("#adm-go").textContent = "Entrar";
     if (!ok) { $("#adm-code").classList.add("is-invalid"); return; }
-    Modal("adminLogin").hide(); render(); Modal("adminPanel").show();
+    toPanel = true; Modal("adminLogin").hide(); render(); setTimeout(() => Modal("adminPanel").show(), 300);
   });
   $("#dash-refresh").addEventListener("click", async () => { await Outbox.flush(); if (await load()) render(); });
+
+  /* ---------- cálculos ---------- */
   const num = v => { const n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; };
   const avg = a => { const v = a.map(num).filter(x => x !== null); return v.length ? v.reduce((p, c) => p + c, 0) / v.length : null; };
   const f1 = x => x === null ? "—" : (Math.round(x * 10) / 10).toLocaleString("es-MX");
+  const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
   function countBy(rows, key) { const m = {}; rows.forEach(r => { const k = r[key]; if (k !== "" && k != null) m[k] = (m[k] || 0) + 1; }); return m; }
-  function hbars(obj, max, fmt, sort = true) {
-    let e = Object.entries(obj); if (sort) e.sort((a, b) => b[1] - a[1]); e = e.slice(0, 12);
+  const short = (t, n = 90) => { t = String(t || ""); return t.length > n ? t.slice(0, n - 1) + "…" : t; };
+  // Dificultad del banco: intentos, errores y la respuesta equivocada más elegida por reactivo
+  function bankDifficulty(Rq) {
+    const m = {};
+    Rq.forEach(r => { const id = r["Reactivo"]; if (!id) return; const x = m[id] || (m[id] = { id, n: 0, err: 0, wrong: {} }); x.n++; if (r["Acierto"] !== "Sí") { x.err++; x.wrong[r["Respuesta"]] = (x.wrong[r["Respuesta"]] || 0) + 1; } });
+    return Object.values(m).map(x => { const q = BANK.find(b => b.id === x.id); const w = Object.entries(x.wrong).sort((a, b) => b[1] - a[1])[0]; return Object.assign(x, { label: (q && q.s !== "Banco" ? "Autoeval. " : "Reactivo ") + x.id.replace("G", ""), unit: q ? "U" + q.u : "", text: q ? q.q : "", correct: q ? L[q.a] : "", wrongTop: w ? w[0] + " (" + w[1] + ")" : "—", rate: pct(x.err, x.n) }); });
+  }
+  // Dificultad de los exámenes: se reconstruye con la columna «Respuestas» (1:A 2:- …)
+  function examDifficulty(Ex) {
+    const m = {};
+    Ex.forEach(r => {
+      const key = Object.keys(EXAMS).find(k => EXAMS[k].t === r["Examen"]); if (!key) return;
+      const E = EXAMS[key], short = { sim: "Simulador", m2: "Modelo 2", m3: "Modelo 3" }[key];
+      String(r["Respuestas"] || "").split(/\s+/).forEach(tok => {
+        const [i, a] = tok.split(":"); const q = E.q[+i - 1]; if (!q || !a) return;
+        const id = key + "-" + i, x = m[id] || (m[id] = { id, label: short + " · P" + i, text: q.q, correct: L[q.a], n: 0, err: 0, blank: 0, wrong: {} });
+        x.n++; if (a === "-") { x.err++; x.blank++; } else if (a !== L[q.a]) { x.err++; x.wrong[a] = (x.wrong[a] || 0) + 1; }
+      });
+    });
+    return Object.values(m).map(x => { const w = Object.entries(x.wrong).sort((a, b) => b[1] - a[1])[0]; return Object.assign(x, { wrongTop: w ? w[0] + " (" + w[1] + ")" : "—", rate: pct(x.err, x.n) }); });
+  }
+
+  /* ---------- piezas visuales ---------- */
+  const pop = (title, body) => `data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="auto" data-bs-html="true" data-bs-title="${esc(title)}" data-bs-content="${esc(body)}" tabindex="0"`;
+  function hbars(obj, max, fmt, opt = {}) {
+    let e = Object.entries(obj); if (opt.sort !== false) e.sort((a, b) => b[1] - a[1]); e = e.slice(0, 12);
     if (!e.length) return `<div class="dash-empty">Aún no hay datos.</div>`;
     const m = max || Math.max(...e.map(x => x[1]), 1);
-    return e.map(([k, v]) => `<div class="hbar" title="${esc(k)}: ${fmt ? fmt(v) : v}"><span class="lab-t">${esc(k)}</span><span class="track"><i style="width:${Math.max(1, v / m * 100)}%"></i></span><span class="v">${fmt ? fmt(v) : v}</span></div>`).join("");
+    return e.map(([k, v]) => `<div class="hbar ${opt.cls || ""}" ${pop(k, (opt.info ? opt.info(k, v) : "") || `Valor: <b>${fmt ? fmt(v) : v}</b>`)}><span class="lab-t">${esc(k)}</span><span class="track"><i style="width:${Math.max(1, v / m * 100)}%"></i></span><span class="v">${fmt ? fmt(v) : v}</span></div>`).join("");
   }
-  function vbars(labels, vals) {
+  function vbars(labels, vals, unit) {
     const m = Math.max(...vals, 1);
     if (!vals.some(v => v)) return `<div class="dash-empty">Aún no hay datos.</div>`;
-    return `<div class="vbars">${vals.map((v, i) => `<div class="col" title="${esc(labels[i])}: ${v}"><span>${v || ""}</span><i style="height:${v / m * 100}%"></i></div>`).join("")}</div><div class="vlabels">${labels.map(l => `<span>${esc(l)}</span>`).join("")}</div>`;
+    return `<div class="vbars">${vals.map((v, i) => `<div class="col" ${pop(labels[i], `<b>${v}</b> ${unit}`)}><span>${v || ""}</span><i style="height:${v / m * 100}%"></i></div>`).join("")}</div><div class="vlabels">${labels.map(l => `<span>${esc(l)}</span>`).join("")}</div>`;
+  }
+  // Pastel de errores: las 7 preguntas con más errores y el resto agrupado en «Otras»
+  function pie(items, what) {
+    const withErr = items.filter(x => x.err > 0).sort((a, b) => b.err - a.err || b.rate - a.rate);
+    if (!withErr.length) return `<div class="dash-empty">Todavía no hay respuestas incorrectas registradas.</div>`;
+    let slices = withErr.slice(0, 7);
+    const rest = withErr.slice(7);
+    if (rest.length) slices = slices.concat([{ label: "Otras " + rest.length + " " + what, err: rest.reduce((s, x) => s + x.err, 0), n: rest.reduce((s, x) => s + x.n, 0), other: true }]);
+    const total = slices.reduce((s, x) => s + x.err, 0);
+    let a0 = -Math.PI / 2, paths = "";
+    const info = x => x.other ? `Agrupa las preguntas restantes.<br><b>${x.err}</b> errores en ${x.n} intentos.` : `${esc(short(x.text, 140))}<br><br>Errores: <b>${x.err}</b> de ${x.n} intentos (<b>${x.rate}%</b>)<br>Correcta: <b>${x.correct}</b> · Más elegida por error: <b>${esc(x.wrongTop)}</b>${x.blank ? `<br>Sin contestar: ${x.blank}` : ""}`;
+    slices.forEach((x, i) => {
+      const frac = x.err / total, a1 = a0 + frac * Math.PI * 2, large = frac > .5 ? 1 : 0;
+      const p = (a) => [100 + 92 * Math.cos(a), 100 + 92 * Math.sin(a)].map(v => v.toFixed(2)).join(" ");
+      const d = slices.length === 1 ? "M100 8 A92 92 0 1 1 99.99 8 Z" : `M100 100 L${p(a0)} A92 92 0 ${large} 1 ${p(a1)} Z`;
+      paths += `<path d="${d}" fill="${PIE[x.other ? 7 : i]}" ${pop(x.label, info(x))} aria-label="${esc(x.label)}: ${Math.round(frac * 100)}% de los errores"></path>`;
+      a0 = a1;
+    });
+    const top = slices[0];
+    const legend = slices.map((x, i) => `<li ${pop(x.label, info(x))}><span class="sw" style="background:${PIE[x.other ? 7 : i]}"></span><span class="nm">${esc(x.label)}</span><span class="pc">${Math.round(x.err / total * 100)}%</span></li>`).join("");
+    return `<div class="pie-wrap"><svg class="pie" viewBox="0 0 200 200" role="img" aria-label="Distribución de errores">${paths}<circle cx="100" cy="100" r="44" fill="var(--bg)"/><text x="100" y="98" text-anchor="middle" font-size="22" fill="var(--rojo)">${top.other ? "" : top.rate + "%"}</text><text x="100" y="118" text-anchor="middle" font-size="9.5" fill="var(--muted)" style="font-family:var(--f-body);font-weight:600">${top.other ? "" : "error en la 1.ª"}</text></svg><ul class="legend">${legend}</ul></div>`;
   }
   function table(name, rows) {
     if (!rows.length) return `<div class="dash-empty">La hoja «${name}» todavía no tiene registros.</div>`;
     const cols = Object.keys(rows[0]); const list = rows.slice().reverse().slice(0, 400);
     return `<div class="hrow" style="margin-bottom:8px"><input type="text" class="form-control" data-filter="${name}" placeholder="Buscar en ${name} (nombre, cuenta, sección…)" aria-label="Buscar en ${name}" style="max-width:380px"><span class="small muted">${rows.length} registros${rows.length > 400 ? " · se muestran los 400 más recientes" : ""}</span></div><div class="dash-table"><table><thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${list.map(r => `<tr>${cols.map(c => `<td title="${esc(r[c] ?? "")}">${esc(r[c] ?? "")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
   }
+  function killPops() { pops.forEach(p => { try { p.dispose(); } catch (e) {} }); pops = []; }
+  function initPops() {
+    killPops();
+    $$('#dash [data-bs-toggle="popover"]').forEach(el => {
+      if (window.bootstrap && bootstrap.Popover) pops.push(new bootstrap.Popover(el, { container: "body", sanitize: true, customClass: "dash-pop" }));
+      else el.title = (el.dataset.bsTitle || "") + " — " + (el.dataset.bsContent || "").replace(/<[^>]+>/g, " ");
+    });
+  }
+
+  /* ---------- tablero ---------- */
   function render() {
     const d = data || {}; SHEETS.forEach(s => d[s] = d[s] || []);
     const S = d.Sesiones, Ev = d.Eventos, Rq = d.Reactivos, Ex = d.Examenes, Sv = d.Encuestas;
@@ -3714,39 +3841,112 @@ const Admin = (function () {
     const exFin = Ex.filter(r => r["Estado"] !== "Cerrado sin finalizar");
     const pend = Outbox.q().length;
     $("#dash-src").textContent = source;
-    // Distribuciones
+    $("#dash-sheet").hidden = !sheetUrl; if (sheetUrl) $("#dash-sheet").href = sheetUrl;
     const secc = countBy(Ev.filter(r => r["Evento"] === "seccion"), "Sección");
-    const unit = {}; ["U1", "U2", "U3", "U4"].forEach(u => { const r = Rq.filter(x => x["Unidad"] === u); if (r.length) unit[u] = Math.round(r.filter(x => x["Acierto"] === "Sí").length / r.length * 100); });
+    const unit = {}, unitInfo = {}; ["U1", "U2", "U3", "U4"].forEach(u => { const r = Rq.filter(x => x["Unidad"] === u); if (r.length) { const ok = r.filter(x => x["Acierto"] === "Sí").length; unit[u] = pct(ok, r.length); unitInfo[u] = `<b>${ok}</b> aciertos de ${r.length} respuestas`; } });
     const sat = {}; ["Claridad", "Laboratorios", "Preparación"].forEach(k => { const a = avg(Sv.map(r => r[k])); if (a !== null) sat[k] = Math.round(a * 100) / 100; });
     const grades = ["5", "6", "7", "8", "9", "9.5", "10"]; const gc = grades.map(g => exFin.filter(r => String(r["Calificación"]) === g).length);
     const days = []; for (let i = 13; i >= 0; i--) { const dt = new Date(Date.now() - i * 864e5); days.push(dt.toLocaleDateString("sv-SE", { timeZone: "America/Mexico_City" })); }
     const perDay = days.map(dd => S.filter(r => String(r["Inicio"]).slice(0, 10) === dd).length);
     const labs = countBy(Ev.filter(r => r["Evento"] === "laboratorio"), "Detalle");
     const perfil = countBy(S, "Perfil"), dev = countBy(S, "Dispositivo");
-    $("#dash").innerHTML = `
+    const bank = bankDifficulty(Rq), exq = examDifficulty(Ex);
+    const hardest = bank.concat(exq).filter(x => x.n >= 2).sort((a, b) => b.rate - a.rate || b.err - a.err).slice(0, 10);
+    const hardObj = {}; const hardInfo = {}; hardest.forEach(x => { hardObj[x.label] = x.rate; hardInfo[x.label] = `${esc(short(x.text, 140))}<br><br><b>${x.err}</b> errores de ${x.n} intentos · correcta: <b>${x.correct}</b> · más elegida por error: <b>${esc(x.wrongTop)}</b>`; });
+    $("#dash").innerHTML = `<div id="reset-zone"></div>
       <div class="kpis">
-        <div class="kpi"><b>${users}</b><span>usuarios distintos</span><small>${S.length} sesiones</small></div>
-        <div class="kpi"><b>${f1(avg(S.map(r => r["Duración activa (min)"])))}</b><span>min activos por sesión</span><small>promedio</small></div>
-        <div class="kpi"><b>${Rq.length}</b><span>reactivos contestados</span><small>${Rq.length ? Math.round(okRq / Rq.length * 100) : 0}% de aciertos</small></div>
-        <div class="kpi"><b>${exFin.length}</b><span>exámenes finalizados</span><small>calificación promedio ${f1(avg(exFin.map(r => r["Calificación"])))}</small></div>
-        <div class="kpi"><b>${Sv.length}</b><span>encuestas</span><small>satisfacción ${f1(avg(Sv.map(r => r["Promedio"])))} de 5</small></div>
-        <div class="kpi"><b>${Ev.length}</b><span>eventos de uso</span><small>${pend} pendientes en este dispositivo</small></div>
+        <div class="kpi" ${pop("Usuarios distintos", "Personas diferentes según su número de cuenta o de trabajador.")}><b>${users}</b><span>usuarios distintos</span><small>${S.length} sesiones</small></div>
+        <div class="kpi" ${pop("Tiempo activo", "Minutos con la página visible y en uso, promedio por sesión.")}><b>${f1(avg(S.map(r => r["Duración activa (min)"])))}</b><span>min activos por sesión</span><small>promedio</small></div>
+        <div class="kpi" ${pop("Reactivos", `<b>${okRq}</b> correctos de ${Rq.length} respuestas del banco y las autoevaluaciones.`)}><b>${Rq.length}</b><span>reactivos contestados</span><small>${pct(okRq, Rq.length)}% de aciertos</small></div>
+        <div class="kpi" ${pop("Exámenes", `${exFin.length} finalizados o con tiempo agotado · ${Ex.length - exFin.length} cerrados sin finalizar.`)}><b>${exFin.length}</b><span>exámenes finalizados</span><small>calificación promedio ${f1(avg(exFin.map(r => r["Calificación"])))}</small></div>
+        <div class="kpi" ${pop("Encuestas", "Promedio de las tres preguntas, de 1 a 5.")}><b>${Sv.length}</b><span>encuestas</span><small>satisfacción ${f1(avg(Sv.map(r => r["Promedio"])))} de 5</small></div>
+        <div class="kpi" ${pop("Eventos de uso", `Visitas a secciones, laboratorios, navegación, bloqueos y más. <b>${pend}</b> registros esperan envío en este dispositivo.`)}><b>${Ev.length}</b><span>eventos de uso</span><small>${pend} pendientes en este dispositivo</small></div>
       </div>
       <div class="charts">
-        <div class="chart-card"><h4>Visitas por sección</h4><p>Primeras visitas registradas en cada sesión.</p>${hbars(secc)}</div>
-        <div class="chart-card"><h4>Aciertos por unidad</h4><p>Porcentaje de reactivos correctos.</p>${hbars(unit, 100, v => v + "%", false)}</div>
-        <div class="chart-card"><h4>Sesiones por día</h4><p>Últimos 14 días (hora de la Ciudad de México).</p>${vbars(days.map(x => x.slice(8) + "/" + x.slice(5, 7)), perDay)}</div>
-        <div class="chart-card"><h4>Calificaciones de examen</h4><p>Exámenes finalizados o con tiempo agotado.</p>${vbars(grades, gc)}</div>
-        <div class="chart-card"><h4>Satisfacción por pregunta</h4><p>Promedio de 1 a 5.</p>${hbars(sat, 5, v => v.toFixed(2), false)}</div>
-        <div class="chart-card"><h4>Laboratorios más usados</h4><p>Primer uso de cada laboratorio por sesión.</p>${hbars(labs)}</div>
-        <div class="chart-card"><h4>Perfil</h4><p>Sesiones por tipo de usuario.</p>${hbars(perfil)}</div>
-        <div class="chart-card"><h4>Dispositivo</h4><p>Sesiones por tipo de equipo.</p>${hbars(dev)}</div>
+        <div class="chart-card"><h4>¿Qué reactivo se les complica más?</h4><p>Reparto de las respuestas incorrectas del banco y las autoevaluaciones. Pasa el cursor o toca una parte para ver la pregunta.</p>${pie(bank, "reactivos")}</div>
+        <div class="chart-card"><h4>¿Qué pregunta del examen se les complica más?</h4><p>Reparto de los errores en el simulador y los modelos (sin contestar cuenta como error).</p>${pie(exq, "preguntas")}</div>
+        <div class="chart-card wide"><h4>Preguntas con mayor porcentaje de error</h4><p>Solo preguntas con al menos 2 intentos.</p>${hbars(hardObj, 100, v => v + "%", { cls: "err", info: k => hardInfo[k] })}</div>
+        <div class="chart-card"><h4>Aciertos por unidad</h4><p>Porcentaje de reactivos correctos.</p>${hbars(unit, 100, v => v + "%", { sort: false, info: k => unitInfo[k] })}</div>
+        <div class="chart-card"><h4>Visitas por sección</h4><p>Primeras visitas registradas en cada sesión.</p>${hbars(secc, 0, null, { info: (k, v) => `<b>${v}</b> sesiones visitaron ${esc(k)}` })}</div>
+        <div class="chart-card"><h4>Sesiones por día</h4><p>Últimos 14 días (hora de la Ciudad de México).</p>${vbars(days.map(x => x.slice(8) + "/" + x.slice(5, 7)), perDay, "sesiones")}</div>
+        <div class="chart-card"><h4>Calificaciones de examen</h4><p>Exámenes finalizados o con tiempo agotado.</p>${vbars(grades, gc, "exámenes")}</div>
+        <div class="chart-card"><h4>Satisfacción por pregunta</h4><p>Promedio de 1 a 5.</p>${hbars(sat, 5, v => v.toFixed(2), { sort: false, info: (k, v) => `Promedio de <b>${v.toFixed(2)}</b> en ${Sv.length} encuestas` })}</div>
+        <div class="chart-card"><h4>Laboratorios más usados</h4><p>Primer uso de cada laboratorio por sesión.</p>${hbars(labs, 0, null, { info: (k, v) => `<b>${v}</b> sesiones lo usaron` })}</div>
+        <div class="chart-card"><h4>Perfil</h4><p>Sesiones por tipo de usuario.</p>${hbars(perfil, 0, null, { info: (k, v) => `<b>${v}</b> sesiones · ${pct(v, S.length)}%` })}</div>
+        <div class="chart-card"><h4>Dispositivo</h4><p>Sesiones por tipo de equipo.</p>${hbars(dev, 0, null, { info: (k, v) => `<b>${v}</b> sesiones · ${pct(v, S.length)}%` })}</div>
       </div>
       <h3 style="margin-top:24px">Registros</h3>
       <ul class="nav nav-tabs" role="tablist">${SHEETS.map((s, i) => `<li role="presentation"><button class="nav-link ${i ? "" : "active"}" id="tab-${s}" data-bs-toggle="tab" data-bs-target="#pane-${s}" type="button" role="tab" aria-controls="pane-${s}" aria-selected="${!i}">${s} <span class="mono small">${d[s].length}</span></button></li>`).join("")}</ul>
       <div class="tab-content">${SHEETS.map((s, i) => `<div class="tab-pane ${i ? "" : "active show"}" id="pane-${s}" role="tabpanel" aria-labelledby="tab-${s}">${table(s, d[s])}</div>`).join("")}</div>
-      <p class="dash-note">${CONFIG.ENDPOINT ? "Los datos vienen de la hoja de cálculo." : "Aún no hay un Web App configurado: el panel muestra solo lo registrado en este navegador. Pega la URL del Web App en CONFIG.ENDPOINT."}</p>`;
+      <p class="dash-note">${CONFIG.ENDPOINT ? "Los datos vienen de la hoja de cálculo; si no hay conexión se muestran los de este dispositivo." : "Aún no hay un Web App configurado: el panel muestra solo lo registrado en este navegador."}</p>`;
+    initPops();
   }
+
+  /* ---------- Descargar en Excel (.xlsx) ---------- */
+  function loadXLSX() {
+    if (window.XLSX) return Promise.resolve(true);
+    return new Promise(res => { const s = document.createElement("script"); s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"; s.onload = () => res(!!window.XLSX); s.onerror = () => res(false); document.head.appendChild(s); setTimeout(() => res(!!window.XLSX), 12000); });
+  }
+  function summaryRows() {
+    const d = data || {}; const Rq = d.Reactivos || [], Ex = d.Examenes || [];
+    const diff = bankDifficulty(Rq).concat(examDifficulty(Ex)).sort((a, b) => b.rate - a.rate || b.err - a.err);
+    return diff.map(x => ({ "Pregunta": x.label, "Unidad": x.unit || "", "Texto": x.text, "Intentos": x.n, "Errores": x.err, "% error": x.rate, "Correcta": x.correct, "Respuesta incorrecta más elegida": x.wrongTop }));
+  }
+  function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+  function xml2003(sheets) {   // respaldo sin librería: libro de Excel en formato XML 2003
+    const x = v => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const ws = Object.entries(sheets).map(([n, rows]) => { const cols = rows.length ? Object.keys(rows[0]) : ["Sin registros"]; return `<Worksheet ss:Name="${x(n).slice(0, 31)}"><Table><Row>${cols.map(c => `<Cell ss:StyleID="h"><Data ss:Type="String">${x(c)}</Data></Cell>`).join("")}</Row>${rows.map(r => `<Row>${cols.map(c => { const v = r[c]; const isN = typeof v === "number" || (v !== "" && v != null && /^-?\d+(\.\d+)?$/.test(String(v))); return `<Cell><Data ss:Type="${isN ? "Number" : "String"}">${x(v)}</Data></Cell>`; }).join("")}</Row>`).join("")}</Table></Worksheet>`; }).join("");
+    return `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/></Style></Styles>${ws}</Workbook>`;
+  }
+  $("#dash-xlsx").addEventListener("click", async () => {
+    const b = $("#dash-xlsx"); b.disabled = true; b.textContent = "Preparando…";
+    const d = data || {}; const name = "ciber2-datos-" + new Date().toLocaleDateString("sv-SE", { timeZone: "America/Mexico_City" });
+    const sheets = { "Dificultad": summaryRows() }; SHEETS.forEach(s => sheets[s] = d[s] || []);
+    try {
+      if (await loadXLSX()) {
+        const wb = XLSX.utils.book_new();
+        Object.entries(sheets).forEach(([n, rows]) => { const ws = XLSX.utils.json_to_sheet(rows.length ? rows : [{ "Sin registros": "" }]); const cols = Object.keys(rows[0] || { a: 1 }); ws["!cols"] = cols.map(c => ({ wch: Math.min(48, Math.max(10, c.length + 2)) })); XLSX.utils.book_append_sheet(wb, ws, n.slice(0, 31)); });
+        XLSX.writeFile(wb, name + ".xlsx");
+      } else {
+        download(new Blob([xml2003(sheets)], { type: "application/vnd.ms-excel" }), name + ".xls");
+      }
+      Track.event("descarga_excel", "Panel", "", Object.values(sheets).reduce((s, r) => s + r.length, 0));
+      toast("Descarga lista.");
+    } catch (e) { toast("No se pudo generar el archivo. Intenta de nuevo."); }
+    b.disabled = false; b.textContent = "Descargar Excel";
+  });
+
+  /* ---------- Borrar datos (con confirmación dentro del panel) ---------- */
+  $("#dash-reset").addEventListener("click", () => {
+    const z = $("#reset-zone"); if (!z) return;
+    z.innerHTML = `<div class="reset-box" role="alertdialog" aria-labelledby="rs-t">
+      <h4 id="rs-t">¿Deseas borrar todos los datos?</h4>
+      <p class="small" style="margin:0">Se eliminarán los registros de las cinco hojas (${CONFIG.ENDPOINT ? "en Google Sheets" : "en este dispositivo"}). Los encabezados se conservan. Esta acción no se puede deshacer.</p>
+      ${CONFIG.ENDPOINT ? `<label class="small" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:600"><input type="checkbox" id="rs-backup" checked> Crear antes una copia de respaldo de la hoja en tu Drive</label>` : ""}
+      <div class="hrow"><label for="rs-word" class="small">Escribe <b class="mono">BORRAR</b> para confirmar</label><input class="form-control mono" id="rs-word" style="max-width:180px" autocomplete="off">
+      <button class="btn btn-danger" type="button" id="rs-go" disabled>Sí, borrar todo</button><button class="btn" type="button" id="rs-no">Cancelar</button></div>
+      <div class="small" id="rs-msg" style="margin-top:8px"></div></div>`;
+    z.scrollIntoView({ behavior: "smooth", block: "start" }); $("#rs-word").focus();
+    $("#rs-word").addEventListener("input", e => $("#rs-go").disabled = e.target.value.trim().toUpperCase() !== "BORRAR");
+    $("#rs-no").addEventListener("click", () => z.innerHTML = "");
+    $("#rs-go").addEventListener("click", async () => {
+      const go = $("#rs-go"), msg = $("#rs-msg"); go.disabled = true; go.textContent = "Borrando…";
+      let backup = "";
+      if (CONFIG.ENDPOINT) {
+        try {
+          const r = await fetch(CONFIG.ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "reset", code, backup: $("#rs-backup").checked }) });
+          const j = await r.json();
+          if (!j || !j.ok) { msg.textContent = j && j.error === "codigo" ? "El código no permite borrar." : "La hoja está ocupada o no respondió. Intenta en unos segundos."; go.disabled = false; go.textContent = "Sí, borrar todo"; return; }
+          backup = j.backupUrl || "";
+        } catch (e) { msg.textContent = "Sin conexión con la hoja. Intenta cuando haya internet."; go.disabled = false; go.textContent = "Sí, borrar todo"; return; }
+      }
+      LS.del(K.archive);
+      await load(); render();
+      if (backup) $("#reset-zone").innerHTML = `<div class="note"><b>Datos borrados.</b> El respaldo quedó en tu Drive: <a href="${esc(backup)}" target="_blank" rel="noopener">abrir copia</a>.</div>`;
+      toast("Datos borrados.");
+    });
+  });
+
   // Pestañas sin Bootstrap y filtro de tablas
   document.addEventListener("click", e => {
     const t = e.target.closest('#dash [data-bs-toggle="tab"]'); if (!t || hasBS()) return;
