@@ -673,7 +673,6 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
       <button class="btn sm" data-act="formulas">🧮 Formulario</button>
       <a class="btn sm" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a>
       <button class="btn sm" data-act="tablaz">📊 Tabla z</button>
-      <button class="btn sm" data-act="revision">🔎 Notas de revisión</button>
       <button class="btn sm" data-act="reset">♻️ Borrar mi avance</button>
       <a class="btn sm" href="../index.html">← Aula Digital</a>
     </div>
@@ -1937,7 +1936,7 @@ add('bin', 2, 'Tiempo de traslado al plantel', 'La cuarta parte de los alumnos t
 add('bin', 3, 'Emparedados sin mayonesa', 'El 15 % de los emparedados de un estadio se piden sin mayonesa. Siete personas ordenan emparedados.', [
   B('i-a)', 'Todas los piden con mayonesa.', 7, .15, EV.eq(0), { succ: 'pedirlo sin mayonesa', say: 'ninguna lo pide sin mayonesa' }),
   B('i-b)', 'Dos los piden sin mayonesa.', 7, .15, EV.eq(2), { succ: 'pedirlo sin mayonesa' }),
-  B('ii)', 'De 250 personas, ¿cuántas se espera que lo pidan con mayonesa?', 250, .85, EV.mean(250), { succ: 'pedirlo con mayonesa', unit: 'personas (≈ 213)', pre: '<div class="note warn">$\\mu=250(0.85)=212.5$. El cuaderno escribe 213: es el entero más cercano, pero el valor esperado exacto es 212.5 (puede no ser entero).</div>' })]);
+  B('ii)', 'De 250 personas, ¿cuántas se espera que lo pidan con mayonesa?', 250, .85, EV.mean(250), { succ: 'pedirlo con mayonesa', unit: 'personas', pre: '<p class="sub">El valor esperado no tiene que ser entero: se esperan 212.5 personas (alrededor de 212 o 213).</p>' })]);
 add('bin', 4, 'Alumnos que fuman', 'El 75 % de los alumnos del plantel fuma. Se eligen 6 alumnos.', [
   B('a)', 'Ninguno fuma.', 6, .75, EV.eq(0), { succ: 'fumar' }),
   B('b)', 'Dos de ellos fuman.', 6, .75, EV.eq(2), { succ: 'fumar' }),
@@ -2012,7 +2011,7 @@ add('bin', 22, 'Mesas de billar defectuosas', 'Una novena parte de la producció
   B('d)', 'Calcula la media y la desviación estándar.', 5, 1 / 9, EV.msv, { frac: true })]);
 add('bin', 23, 'Reservaciones de una avioneta', 'El 10 % de quienes reservan no llega a tiempo. La capacidad es de 15 pasajeros y hay 15 reservaciones.', [
   B('a)', 'Los 15 que reservaron abordan.', 15, .9, EV.eq(15), { succ: 'llegar a tiempo ($p=0.9$)' }),
-  B('b)', 'Se queda (no llega) más de 1 pasajero.', 15, .1, EV.ge(2), { succ: 'no llegar a tiempo ($p=0.1$)', pre: '<div class="note warn">Con 15 reservaciones y 15 asientos nadie se queda sin lugar. El inciso se interpreta como «más de 1 pasajero <b>no llega</b>» ($X\\ge2$).</div>' })]);
+  B('b)', 'Más de 1 pasajero no llega a tiempo.', 15, .1, EV.ge(2), { succ: 'no llegar a tiempo ($p=0.1$)' })]);
 add('bin', 24, 'Pozos de gas natural', 'El 95 % de los pozos que se prueban encuentra gas natural. Se perforan 6.', [
   B('a)', 'Al menos en 1 hay gas.', 6, .95, EV.ge(1), { succ: 'encontrar gas' }),
   B('b)', 'En todos hay gas.', 6, .95, EV.eq(6), { succ: 'encontrar gas' }),
@@ -2071,7 +2070,7 @@ add('esp', 15, 'Juan con suerte (3 dados)', 'Se tiran 3 dados y el apostador eli
   espPart('', 'Determina el valor esperado del juego.', () => [['0 cincos', -1000, 125 / 216], ['1 cinco', 1000, 75 / 216], ['2 cincos', 2000, 15 / 216], ['3 cincos', 3000, 1 / 216]], {
     frac: true, lab: 'Número de 5',
     pre: '<p>$N$ = número de «5» en 3 dados es binomial con $n=3$, $p=\\tfrac16$: $P(0)=\\tfrac{125}{216}$, $P(1)=3\\cdot\\tfrac16\\cdot\\tfrac{25}{36}=\\tfrac{75}{216}$, $P(2)=\\tfrac{15}{216}$, $P(3)=\\tfrac1{216}$.</p>',
-    after: E => [['Interpretación', `<p>$E=-\\dfrac{17000}{216}\\approx${TN(E, 2)}$: en promedio se pierden unos §${fc(-E, 2)} por partida → <b>no conviene</b>.</p><div class="note warn">Aclaración: lo que «debe dar 1» es la suma de las probabilidades $\\sum P(x)=\\frac{216}{216}$, no el valor esperado.</div>`]],
+    after: E => [['Interpretación', `<p>$E=-\\dfrac{17000}{216}\\approx${TN(E, 2)}$: en promedio se pierden unos §${fc(-E, 2)} por partida → <b>no conviene</b>.</p><p class="sub">Comprobación: la suma de las probabilidades es $\\sum P(x)=\\frac{216}{216}$; el valor esperado no tiene que dar 1.</p>`]],
     ans: E => `$E=-\\dfrac{17000}{216}\\approx${TN(E, 2)}$ → perder ≈ §${fc(-E, 2)} por juego (no conviene)`
   })
 ]);
@@ -2126,26 +2125,26 @@ add('esp', 21, 'Vendedor de suéteres', 'Ganancia diaria: §7,500 en día frío,
 ]);
 add('esp', 22, 'Auto en el velódromo', 'Probabilidades de 1.º, 2.º, 3.º y 4.º lugar: 0.4, 0.3, 0.2, 0.1. El ingeniero gana §24,000, §18,000, §13,500 y §9,000 respectivamente y debe pagar §14,000.', [
   espPart('', '¿Cuál es la esperanza matemática si debe pagar §14,000?', () => [['1.º lugar', 24000, .4], ['2.º lugar', 18000, .3], ['3.º lugar', 13500, .2], ['4.º lugar', 9000, .1]], {
-    lab: 'Lugar', pre: '<p>El enunciado del cuadernillo se corta tras «debe de pagar §14,000 cada…»; se usa la solución del cuaderno: el costo es un pago de §14,000.</p>',
+    lab: 'Lugar', pre: '<p>El costo de participar es un solo pago de §14,000; se resta al final.</p>',
     after: E => [['Resta el costo', `<div class="eqbox">$E=${TN(E, 0)}-14\\,000=${TN(E - 14000, 0)}$</div>`]], ans: E => `$E=${TN(E - 14000, 0)}$ → §${fc(E - 14000, 0)}`
   })
 ]);
-add('esp', 23, '¿Conviene anunciar el auto?', 'Un propietario piensa vender su auto en §25,000. Si no lo vende, lo cederá a un amigo en §22,000. Un anuncio cuesta §1,000 y con él la probabilidad de venderlo es 0.9.', [{
+add('esp', 23, '¿Conviene anunciar el auto?', 'Un propietario piensa vender su auto en §25,000. Si no lo vende, lo cederá a un amigo en §22,000. Un anuncio cuesta §1,000; con él la probabilidad de venderlo es 0.9 y sin anuncio es 0.5.', [{
   l: '', q: '¿Debe poner el anuncio?', sol() {
     const sin = [[22000, .5], [25000, .5]], con = [[22000, .1], [25000, .9]], es = sum(sin.map(r => r[0] * r[1])), ec = sum(con.map(r => r[0] * r[1])) - 1000;
     return {
-      steps: [['Dato que falta en el enunciado', '<div class="note warn">El problema no dice con qué probabilidad se vende <b>sin</b> anuncio. La solución del cuaderno supone 0.5; aquí se usa el mismo valor y se señala como supuesto.</div>'],
+      steps: [['Datos', '<p>Sin anuncio: $P(\\text{vender})=0.5$. Con anuncio: $P(\\text{vender})=0.9$ y se paga §1,000.</p>'],
         ['Sin anuncio', tbl(['$g$', '$P$', '$g\\cdot P$'], sin.map(r => tr([fc(r[0], 0), r[1], fc(r[0] * r[1], 0)]))) + `<div class="eqbox">$E_{\\text{sin}}=${TN(es, 0)}$</div>`],
         ['Con anuncio', tbl(['$g$', '$P$', '$g\\cdot P$'], con.map(r => tr([fc(r[0], 0), r[1], fc(r[0] * r[1], 0)]))) + `<div class="eqbox">$E_{\\text{con}}=${TN(ec + 1000, 0)}-1\\,000=${TN(ec, 0)}$</div>`],
-        ['Compara', `<p>${ec > es ? `$${TN(ec, 0)}>${TN(es, 0)}$` : `$${TN(ec, 0)}\\le${TN(es, 0)}$`}. Con el supuesto de 0.5, ${ec > es ? 'conviene anunciar' : 'no conviene anunciar'}. En general, anunciar conviene si $0.9(25\\,000)+0.1(22\\,000)-1\\,000>p(25\\,000)+(1-p)(22\\,000)$, es decir, si $p<0.9-\\tfrac{1\\,000}{3\\,000}=0.5667$.</p>`]],
-      ans: `con anuncio $E=${TN(ec, 0)}$ vs sin anuncio $E=${TN(es, 0)}$ → ${ec > es ? 'conviene anunciar' : 'no conviene'} (suponiendo 0.5 sin anuncio)`
+        ['Compara', `<p>${ec > es ? `$${TN(ec, 0)}>${TN(es, 0)}$` : `$${TN(ec, 0)}\\le${TN(es, 0)}$`}. ${ec > es ? 'conviene anunciar' : 'no conviene anunciar'}. En general, anunciar conviene si $0.9(25\\,000)+0.1(22\\,000)-1\\,000>p(25\\,000)+(1-p)(22\\,000)$, es decir, si $p<0.9-\\tfrac{1\\,000}{3\\,000}=0.5667$.</p>`]],
+      ans: `con anuncio $E=${TN(ec, 0)}$ vs sin anuncio $E=${TN(es, 0)}$ → ${ec > es ? 'conviene anunciar' : 'no conviene'}`
     };
   }
 }]);
 add('esp', 24, 'Seguro contra la lluvia', 'Un promotor espera ganar §10,000 si no llueve y solo §2,000 si llueve. Una póliza de §7,000 le cuesta §3,000 (paga §7,000 si llueve).', [{
   l: '', q: 'Determina la probabilidad $p$ de lluvia para que su esperanza con póliza y sin póliza sea la misma.', sol() {
     return {
-      steps: [['Interpretación', '<div class="note warn">La redacción «independiente de que llueva o no» es ambigua. Se interpreta como el valor de $p$ para el cual <b>comprar o no la póliza da la misma esperanza</b> (punto de indiferencia).</div>'],
+      steps: [['Plantea', '<p>Se busca el valor de $p$ para el cual <b>comprar o no la póliza da la misma esperanza</b> (punto de indiferencia).</p>'],
         ['Sin póliza', '<div class="eqbox">$E_{\\text{sin}}=2000\\,p+10000(1-p)=10000-8000\\,p$</div>'],
         ['Con póliza', '<p>No llueve: $10000-3000=7000$. Llueve: $2000-3000+7000=6000$.</p><div class="eqbox">$E_{\\text{con}}=6000\\,p+7000(1-p)=7000-1000\\,p$</div>'],
         ['Iguala', '<div class="eqbox">$10000-8000p=7000-1000p\\ \\Rightarrow\\ 3000=7000p\\ \\Rightarrow\\ p=\\tfrac37\\approx0.4286$</div><p class="sub">Si $p>\\tfrac37$ conviene la póliza; si $p<\\tfrac37$, no.</p>']],
@@ -2228,7 +2227,7 @@ add('fdp', 4, 'Caja con productos buenos y malos', 'Una caja contiene 8 producto
 const FAM = [['F', .52], ['M', .48]];
 add('fdp', 5, 'Familia de 3 hijos (varones)', 'Se ha observado que $P(\\text{mujer})=0.52$ y $P(\\text{varón})=0.48$. En una familia de 3 hijos, $X$ = número de varones.', [
   fdpPart('', 'Calcula $\\sigma$ y construye la FDP.', () => enumSeq([FAM, FAM, FAM]).map(([l, p]) => [cnt('M')(l), p]), 'sd', {
-    space: () => spaceHtml([FAM, FAM, FAM], cnt('M'), { intro: 'Cada hijo: $P(F)=0.52$, $P(M)=0.48$. Es binomial con $n=3$, $p=0.48$.' }) + '<div class="note warn">Corrección: en el cuadernillo la fila $P(X=1)$ aparece como $\\frac{13}{25}\\cdot\\frac{13}{25}\\cdot\\frac{13}{25}$; debe ser $\\frac{12}{25}\\cdot\\frac{13}{25}\\cdot\\frac{13}{25}=\\frac{2028}{15625}$ (las tres veces). El resultado final $\\frac{6084}{15625}$ sí es correcto.</div>'
+    space: () => spaceHtml([FAM, FAM, FAM], cnt('M'), { intro: 'Cada hijo: $P(F)=0.52$, $P(M)=0.48$. Es binomial con $n=3$, $p=0.48$.' })
   })
 ]);
 add('fdp', 6, 'Tres máquinas independientes', 'Tres máquinas A, B y C trabajan independientemente con $P(A)=0.9$, $P(B)=0.8$, $P(C)=0.7$. Construye la FDP con $X$ = número de máquinas que trabajan.', [
@@ -2290,8 +2289,7 @@ add('rev', 2, 'Completar y calcular μ, σ²', 'Tabla: $f(0)=0.25$, $f(1)=0.50$,
 add('rev', 3, 'Valor y probabilidad desconocidos', 'Tabla: $X=-2,0,X_3,12$ con $f(x)=\\tfrac12,\\tfrac14,P_3,\\tfrac1{16}$. Se sabe que $E(X)=\\tfrac54$.', [{
   l: '', q: 'Encuentra $P_3$ y $X_3$.', sol() {
     return {
-      steps: [['Dato que usa la solución', '<p>El enunciado del cuadernillo no escribe el valor de $E(X)$, pero la solución usa $E(X)=\\tfrac54$; se usa aquí también.</p>'],
-        ['Obtén $P_3$ (la suma debe ser 1)', '<div class="eqbox">$\\tfrac12+\\tfrac14+P_3+\\tfrac1{16}=1\\ \\Rightarrow\\ \\tfrac{13}{16}+P_3=1\\ \\Rightarrow\\ P_3=\\tfrac3{16}$</div>'],
+      steps: [['Obtén $P_3$ (la suma debe ser 1)', '<div class="eqbox">$\\tfrac12+\\tfrac14+P_3+\\tfrac1{16}=1\\ \\Rightarrow\\ \\tfrac{13}{16}+P_3=1\\ \\Rightarrow\\ P_3=\\tfrac3{16}$</div>'],
         ['Obtén $X_3$ con la esperanza', '<div class="eqbox">$-2\\left(\\tfrac12\\right)+0\\left(\\tfrac14\\right)+X_3\\left(\\tfrac3{16}\\right)+12\\left(\\tfrac1{16}\\right)=\\tfrac54$</div><div class="eqbox">$-1+\\tfrac{3X_3}{16}+\\tfrac{12}{16}=\\tfrac{20}{16}\\ \\Rightarrow\\ \\tfrac{3X_3}{16}=\\tfrac{20+4}{16}\\ \\Rightarrow\\ X_3=\\tfrac{24}{3}=8$</div>'],
         ['Comprueba', '<div class="eqbox">$E(X)=-1+0+8\\cdot\\tfrac3{16}+\\tfrac{12}{16}=-1+1.5+0.75=1.25=\\tfrac54$ ✔</div>']],
       ans: MM('P_3=\\tfrac3{16},\\ X_3=8')
@@ -2303,7 +2301,7 @@ const revF = (l, q, fn) => ({ l, q, sol() { return fn(); } });
 add('rev', 4, 'Función acumulada $F(x)$', '$F(x)=0$ si $x<-3$; $0.2$ si $-3\\le x<0$; $0.4$ si $0\\le x<3$; $0.8$ si $3\\le x<6$; $1$ si $x\\ge6$.', [
   revF('i)', 'Calcula $P(X\\le3)$.', () => ({ steps: [['Definición', '<p>$P(X\\le x)=F(x)$.</p>'], ['Lee la acumulada', '<div class="eqbox">$P(X\\le3)=F(3)=0.8$ (pues $3\\le3<6$)</div>']], ans: MM('P(X\\le3)=0.8'), viz: svgStep([-3, 0, 3, 6], [.2, .4, .8, 1], { w: 520, h: 220 }) })),
   revF('ii)', 'Calcula $P(X>3)$.', () => ({ steps: [['Complemento', '<div class="eqbox">$P(X>3)=1-P(X\\le3)=1-F(3)=1-0.8=0.2$</div>']], ans: MM('P(X>3)=0.2') })),
-  revF('iii)', 'Calcula $P(X=3)$.', () => ({ steps: [['Salto de la acumulada', '<p>$P(X=3)$ es el tamaño del salto de $F$ en $x=3$: $F(3)-F(3^-)$, donde $F(3^-)$ es el valor justo antes de 3 (es $0.4$).</p>'], ['Calcula', '<div class="eqbox">$P(X=3)=0.8-0.4=0.4$</div>'], ['Comprueba con todos los saltos', tbl(['x', '−3', '0', '3', '6'], [tr(['$P(X=x)$', '0.2', '0.2', '0.4', '0.2'])]) + '<p class="sub">Suman 1 ✔</p>'], ['Corrección', '<div class="note warn">En el cuadernillo aparece $P(X=3)=0.2$. Ese valor es $1-F(3)$, es decir, $P(X>3)$. El correcto es <b>0.4</b>.</div>']], ans: MM('P(X=3)=0.4') }))
+  revF('iii)', 'Calcula $P(X=3)$.', () => ({ steps: [['Salto de la acumulada', '<p>$P(X=3)$ es el tamaño del salto de $F$ en $x=3$: $F(3)-F(3^-)$, donde $F(3^-)$ es el valor justo antes de 3 (es $0.4$).</p>'], ['Calcula', '<div class="eqbox">$P(X=3)=0.8-0.4=0.4$</div>'], ['Comprueba con todos los saltos', tbl(['x', '−3', '0', '3', '6'], [tr(['$P(X=x)$', '0.2', '0.2', '0.4', '0.2'])]) + '<p class="sub">Suman 1 ✔</p>']], ans: MM('P(X=3)=0.4') }))
 ], [{ t: 'Repaso', c: 'b' }]);
 add('rev', 5, 'Completar la tabla de $f$ y $F$', 'Tabla: $f(1)=0.1$, $f(3)=0.5$; $F(2)=0.3$.', [revF('', 'Completa la tabla.', () => {
   const f = [.1, .2, .5, .2], F = [.1, .3, .8, 1];
@@ -2323,7 +2321,7 @@ add('poi', 1, 'Llamadas de emergencia', 'En el conmutador de una estación de po
 add('poi', 2, 'Accidentes en una fábrica', 'Los accidentes de una enorme fábrica se aproximan con Poisson con media 3 por mes.', [
   PO('a)', 'Cero accidentes en un mes.', 3, EV.eq(0)), PO('b)', 'Un accidente.', 3, EV.eq(1)), PO('c)', 'Tres o cuatro accidentes.', 3, EV.ab(3, 4))], tgp);
 add('poi', 3, 'Empleados del gobierno (3 %)', 'El 3 % de los habitantes de una gran ciudad son empleados del gobierno. Se toma una muestra de 50.', [
-  PO('a)', 'Probabilidad de que ninguno sea empleado del gobierno.', 1.5, EV.eq(0), { lamTex: '\\lambda=np=50(0.03)=1.5', bin: { n: 50, p: .03 }, pre: '<div class="note warn">El enunciado («encontrar personas que no trabajen para el gobierno») es ambiguo; se interpreta como $P(X=0)$, con $X$ = número de empleados del gobierno en la muestra.</div>' }),
+  PO('a)', 'Probabilidad de que ninguno sea empleado del gobierno.', 1.5, EV.eq(0), { lamTex: '\\lambda=np=50(0.03)=1.5', bin: { n: 50, p: .03 }, pre: '<p class="sub">$X$ = número de empleados del gobierno en la muestra; «ninguno» es $X=0$.</p>' }),
   PO('b)', 'Probabilidad de encontrar 3 o menos.', 1.5, EV.le(3), { lamTex: '\\lambda=np=50(0.03)=1.5', bin: { n: 50, p: .03 } })], tgp);
 add('poi', 4, 'Cartas con dirección incorrecta', 'El 2 % de las cartas lleva dirección incorrecta. Se van a entregar 40.', [
   PO('a)', '¿Cuántas direcciones incorrectas se esperan?', .8, EV.mu, { lamTex: '\\lambda=np=40(0.02)=0.8', unit: 'cartas' }),
@@ -2385,13 +2383,12 @@ PAGES.push({
           <div class="grid2" style="gap:12px">
             <div class="pn flat sage"><b>📖 Teoría en ventanas</b><p class="sub">Toca cualquier botón con 📖 para abrir el concepto sin salir de la página.</p></div>
             <div class="pn flat sky"><b>🧪 Laboratorios</b><p class="sub">Mueve $n$, $p$, $\\mu$, $\\sigma$ o los datos y mira cómo cambian tablas, gráficas y probabilidades.</p></div>
-            <div class="pn flat amber"><b>🙈 Problemas ocultos</b><p class="sub">Primero ves sólo el enunciado. Cada inciso tiene su botón <i>Ver paso a paso</i>.</p></div>
-            <div class="pn flat coral"><b>🔎 Notas de revisión</b><p class="sub">Revisé tus tablas y problemas; las correcciones están anotadas en el menú lateral.</p></div></div>
+            <div class="pn flat amber"><b>🙈 Problemas ocultos</b><p class="sub">Primero ves sólo el enunciado. Cada inciso tiene su botón <i>Ver paso a paso</i>.</p></div></div>
           <div class="row" style="margin-top:14px"><button class="btn go" data-act="nav" data-id="u1-va">▶ Empezar por el principio</button></div></section>
         <section class="pn dark s5 rv" style="text-align:center"><div id="cover-chart"></div><div class="grid3" style="gap:8px;margin-top:6px"><div><div class="big" data-cnt="${PAGES.length - 1}">0</div><small>páginas</small></div><div><div class="big" data-cnt="${nEx}">0</div><small>problemas</small></div><div><div class="big" data-cnt="${nParts}">0</div><small>incisos con solución</small></div></div></section>
         ${units.map(u => `<article class="pn unitcard s4 rv ${u.c}" data-u="${u.u}" data-act="nav" data-id="${u.go}"><span class="big">${u.n}</span><h3><span class="ico">${u.ic}</span>Unidad ${u.n}</h3><p><b>${u.t}</b></p><p class="sub">${u.d}</p><div class="mini-prog"><i></i></div><small class="cnt sub"></small></article>`).join('')}
         <section class="pn s8 rv"><h3><span class="ico">🗺️</span>Mapa de páginas</h3><div class="grid3" style="gap:10px">${PAGES.filter(x => x.id !== 'inicio').map(x => `<button class="btn" style="justify-content:flex-start" data-act="nav" data-id="${x.id}"><span>${x.ic}</span>${x.t}</button>`).join('')}</div></section>
-        <section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="revision">🔎 Notas de revisión</button></div></section></div>`;
+        <section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button></div></section></div>`;
       // portada: campana normal sobre barras binomiales (n = 20, p = 0.5)
       const n = 20, ps = binDist(n, .5), xs = ps.map((_, i) => i);
       $('#cover-chart', p).innerHTML = svgPmf(xs, ps, { w: 420, h: 200, norm: { mu: 10, sd: Math.sqrt(5) }, xt: 'binomial n = 20, p = 0.5 y su campana normal', yt: '' }).replace(/fill="#1c7ed6"/g, 'fill="#E7B8C6"');
@@ -2434,6 +2431,9 @@ PAGES.push({
         <div class="pn amber rv"><h3><span class="ico">🥚</span>Ejemplo 3 · Huevos</h3>
           <p>Una canasta tiene dos huevos que pueden ser rojos (r) o blancos (b). Se revisan uno tras otro. $X$ = número de huevos rojos.</p>
           ${vx(['(r,r)', '(r,b)', '(b,r)', '(b,b)'], [2, 1, 1, 0])}<p>$R_X=\\{0,1,2\\}$.</p></div>
+        <div class="pn rv"><h3><span class="ico">🏭</span>Ejercicio · Artículos defectuosos</h3>
+          <p>Se escogen 3 artículos de un proceso de manufactura; cada uno puede estar funcionando (f) o defectuoso (d). $X$ = número de artículos defectuosos.</p>
+          ${vx(['(f,f,f)', '(f,f,d)', '(f,d,f)', '(d,f,f)', '(f,d,d)', '(d,f,d)', '(d,d,f)', '(d,d,d)'], [0, 1, 1, 1, 2, 2, 2, 3])}<p>$R_X=\\{0,1,2,3\\}$: el resultado $(f,f,f)$ también cuenta y tiene 0 defectuosos.</p></div>
         <div class="pn gd rv"><h3><span class="ico">🪢</span>Discreta o continua</h3>
           <p><b>VAD:</b> valores <i>contables</i> (0, 1, 2…): número de águilas, de defectuosos, de llamadas.</p>
           <p><b>VAC:</b> cualquier valor de un intervalo. Entre 1 y 2 hay infinitos valores (1.9, 1.95, 1.999…): estatura, tiempo, peso.</p>
@@ -3198,7 +3198,7 @@ const bankTab = (id, t, ids, intro) => ({
 });
 PAGES.push({
   id: 'u4-banco', u: 'u4', ic: '📚', t: 'Banco de problemas', kick: 'Problemas · tus ejercicios resueltos', title: 'Banco de problemas',
-  lead: 'Los ejercicios del cuadernillo y de tus problemarios, ahora con solución paso a paso revisada. Donde una respuesta del cuaderno estaba equivocada, la corrección aparece marcada.',
+  lead: 'Los ejercicios del cuadernillo y de tus problemarios, ahora con solución paso a paso revisada.',
   chips: ['fdp', 'esperanza', 'binomial', 'poisson'],
   tabs: [
     bankTab('fdp', 'FDP y variable aleatoria', () => [...bankIds('fdp'), ...bankIds('rev')], 'Ejemplos, tarea de FDP (5–14) y el repaso de la Unidad 1. La media, la varianza y la desviación estándar se obtienen de la tabla de la FDP.'),
@@ -3284,42 +3284,6 @@ const FORMULARIO = `
 <p>$z=\\dfrac{\\bar x-\\mu_0}{\\sigma/\\sqrt n}$ · $z=\\dfrac{\\hat p-p_0}{\\sqrt{p_0q_0/n}}$</p><p>Valor $p$: cola derecha $P(Z\\ge z)$, izquierda $P(Z\\le z)$, bilateral $2P(Z\\ge|z|)$. Se rechaza $H_0$ si $p\\le\\alpha$.</p><p>Error tipo I: rechazar $H_0$ verdadera (prob. $\\alpha$). Error tipo II: no rechazar $H_0$ falsa (prob. $\\beta$).</p></div>
 </div>`;
 
-const REVISION = (() => {
-  const rows = [
-    ['Tema V · Clase de álgebra', '$(3-b)^2=9-6b-b^2$ y $(-x+7)^2=-x^2-14x-49$; «el orden de los sumandos no altera el producto»', '$(3-b)^2=9-6b+b^2$ y $(-x+7)^2=x^2-14x+49$; «… no altera la suma»', 'Todo número al cuadrado es positivo: $(-b)^2=b^2$, $(-x)^2=x^2$; y $2\\cdot(-x)\\cdot7=-14x$.'],
-    ['Tema I · defectuosos', 'VA(x) = {1, 2, 3}', 'VA(x) = {0, 1, 2, 3}', 'El resultado (f,f,f) tiene 0 defectuosos.'],
-    ['Tema I · definición de VAD', '«un número finito de valores»', 'finito <b>o infinito numerable</b>', 'Una VA discreta puede tomar infinitos valores contables (0, 1, 2, …). La continua toma valores en un intervalo (no numerable).'],
-    ['Ejemplo 4 · acumulada', 'La columna acumulada se titula $p(x)$', 'Titular $F(x)$', '$F(x)=P(X\\le x)$ no es $p(x)=P(X=x)$.'],
-    ['Ejemplo extra · componentes', 'Tabla redondeada 0.03, 0.19, 0.44, 0.34', 'Usar 0.027, 0.189, 0.441, 0.343', 'Con la tabla redondeada $E=17.26$; con las exactas $E=17.4$, $\\sigma^2=123.48$, $\\sigma=11.11$.'],
-    ['Ejemplo 5a · dados', 'En la fila del 2: …, 8, <b>15</b>, <b>18</b>', '…, 8, <b>10</b>, <b>12</b>', 'Son $2\\cdot5$ y $2\\cdot6$. La tabla final de la FDP sí es correcta ($E=441/36=12.25$).'],
-    ['Ejemplo 5b · máximo', '$\\sigma^2=1.9711$', '$\\sigma^2=\\dfrac{2555}{1296}=1.9715$', 'Error de redondeo.'],
-    ['Ejemplo 6 · ratones', '«Suma = (1 − p) = 10»', '$\\sum P(x)=[(1-p)+p]^4=1$', 'Por el binomio de Newton.'],
-    ['Ejemplo 4.0 · caja', '$\\sigma=\\tfrac49$', '$\\sigma=\\sqrt{\\tfrac{36}{81}}=\\tfrac69=\\tfrac23$', 'Faltó extraer la raíz de la varianza.'],
-    ['Repaso 4 iii', '$P(X=3)=0.2$', '$P(X=3)=0.4$', '$F(3)-F(3^-)=0.8-0.4$. El 0.2 corresponde a $P(X>3)$.'],
-    ['Tarea 5 · varones', 'Fila $P(X=1)$: $\\frac{13}{25}\\cdot\\frac{13}{25}\\cdot\\frac{13}{25}$', '$\\frac{12}{25}\\cdot\\frac{13}{25}\\cdot\\frac{13}{25}$', 'Un varón ($0.48$) y dos mujeres ($0.52$). El resultado $\\frac{6084}{15625}$ estaba bien.'],
-    ['Tarea 10 · moneda', '$\\sigma=\\sqrt{\\tfrac{284}{16}}$', '$\\sigma=\\sqrt{\\tfrac{284}{256}}=1.053$', 'Faltó dividir entre $16^2$: $\\sigma^2=\\frac{74}{16}-\\frac{900}{256}=\\frac{284}{256}$.'],
-    ['Tarea 13 · monedero', 'Árbol con rama «2» y $\\mu=\\frac{1278}{90}=14.2$', '$\\mu=\\frac{1296}{90}=14.4$', 'Con 2 extracciones las sumas son 7, 10, 12, 15 y 20 (no hay suma de «2»). Control: $E=2\\cdot7.2=14.4$.'],
-    ['Esperanza 15', '«el valor esperado debe dar 1»', 'La suma de <b>probabilidades</b> debe dar 1', '$E=-17000/216\\approx-78.70$.'],
-    ['Esperanza 16(1)', '$P(1000)=\\frac{1}{1000}$', '$P(1000)=\\frac1{100}$', 'Hay 1 premio entre 100 boletos. El resultado $-5$ es correcto.'],
-    ['Esperanza 17', '«si paga menos de 34 es justo»', 'Solo es justo si paga exactamente §34', 'Con menos de §34 el juego favorece al jugador; con más, lo perjudica.'],
-    ['Esperanza 20 · paraguas', '$E=-80+6\\,300=6\\,220$', '$E=10\\,500(0.4)-200(0.6)=4\\,080$', 'Se intercambiaron las probabilidades (0.4 es de lluvia, que da §10,500).'],
-    ['Esperanza 23 · anuncio', 'Usa 0.5 sin anuncio (no está en el enunciado)', 'Agregar al enunciado «sin anuncio, $P(\\text{vender})=0.5$»', 'Con ese dato: con anuncio 23,700 vs 23,500.'],
-    ['Esperanza 24 · seguro', 'Enunciado ambiguo', 'Se interpreta como indiferencia: $p=\\tfrac37$', 'Con póliza: 7,000 (no llueve) y 6,000 (llueve).'],
-    ['Esperanza 31 · tiros', '$\\frac{2550}{60}=42.50$', '$\\frac{2550}{64}=39.84$', 'El denominador común es 64, no 60.'],
-    ['Binomial 3 ii', '$\\mu=250(0.85)=213$', '$\\mu=212.5$', 'El valor esperado puede no ser entero; 213 es solo una aproximación.'],
-    ['Binomial · listas', 'Ejercicio 4 («75 % fuman») vs Problemario 2 («75 % no fuman»)', 'Son datos distintos', 'Se resolvieron ambos tal como están escritos; conviene unificar el enunciado.'],
-    ['Binomial 23b', '«Se quede más de 1 pasajero» con 15 reservaciones y 15 lugares', 'Se interpreta como «no llegan más de 1»', 'Con 15 asientos y 15 reservaciones nadie se queda sin lugar.'],
-    ['Problemario Poisson', 'La numeración se repite (3, 3, 3, 4…)', 'Se renumeró del 1 al 10', 'Efecto de la lista automática del documento.']
-  ];
-  return `<p>Revisé las fórmulas, tablas y respuestas de tu cuaderno, de la lista de binomial y del problemario. Todas las respuestas del banco están recalculadas por código. Estas son las correcciones y aclaraciones:</p>
-  ${rows.map(r => `<div style="border:1px solid var(--line,#d9deea);border-left:4px solid #8B2F4F;border-radius:12px;padding:10px 14px;margin:8px 0;text-align:left"><b>${r[0]}</b><div style="margin-top:4px">✖ <span style="opacity:.85">${r[1]}</span></div><div>✔ <b>${r[2]}</b></div><div class="sub" style="margin-top:2px">${r[3]}</div></div>`).join('')}
-  <h4>Lo que se complementó</h4>
-  <ul><li><b>Distribución normal, estandarización y tabla z</b>, <b>distribución muestral y Teorema del Límite Central</b>, <b>intervalos de confianza</b> y <b>contraste de hipótesis</b> (media y proporción): temas de la carta 2024 que no estaban desarrollados en tu cuaderno. Las fórmulas son las estándar de un curso introductorio.</li>
-  <li><b>Poisson</b>: no está en la carta 2024 (se marca como complemento); viene de tu problemario.</li>
-  <li><b>Datos ilustrativos</b>: las poblaciones de las simulaciones (dinero de 60 estudiantes, valores de μ y σ de los laboratorios) son simulados o inventados para practicar y están marcados así en cada página.</li></ul>
-  <h4>Supuestos que se hicieron explícitos</h4>
-  <ul><li>Repaso 3: se usa $E(X)=\\tfrac54$, dato que la solución emplea pero el enunciado no escribe.</li><li>Esperanza 19: «redituar 20,000» se toma como ganancia de 20,000.</li><li>Esperanza 22: el enunciado se corta; se usa la solución (pago de §14,000).</li><li>Esperanza 29: se cuenta también la 4.ª llave probada.</li><li>Esperanza 28: las tres materias se aprueban de forma independiente.</li></ul>`;
-})();
 
 'use strict';
 /* =====================================================================
@@ -3336,7 +3300,6 @@ function zTableHTML() {
 }
 ACT.tablaz = () => openModal('Tabla de la normal estándar (z)', zTableHTML(), true);
 ACT.formulas = () => openModal('Formulario por secciones', formHTML(), true);
-ACT.revision = () => openModal('Notas de revisión del cuadernillo', REVISION, true);
 /* ---------- Plan de estudios (carta descriptiva) en modal ---------- */
 const PLAN_MAP = { 1: [['u1-va', 'u1-fdp', 'u1-esp'], ['u1-bin', 'u1-poi'], ['u1-cont'], ['u1-nor']], 2: [['u2-mue'], ['u2-tlc']], 3: [['u3-ic'], ['u3-ic'], ['u3-ht']] };
 function planHTML(act) {
@@ -3354,7 +3317,7 @@ function planHTML(act) {
   return `<p class="sub">Estadística y Probabilidad II · CCH-UNAM (2024). Textos transcritos de las tablas del programa; la columna de estrategias sugeridas son las actividades.</p>
     <div class="plan-sum">${PLAN.map(u => `<div><b>${u.n}</b><span>${u.t}</span><em>${u.h} h</em></div>`).join('')}<div class="tot"><b>Σ</b><span>Total</span><em>${sum(PLAN.map(u => u.h))} h</em></div></div>
     <div class="plan-pills" role="tablist">${pills}</div>${panes}
-    <div class="row plan-foot"><button class="btn" data-act="print">🖨️ Imprimir</button><button class="btn" data-act="revision">🔎 Qué corregí en tus materiales</button><span class="sp"></span><button class="btn pri" data-act="close">Cerrar</button></div>`;
+    <div class="row plan-foot"><button class="btn" data-act="print">🖨️ Imprimir</button><span class="sp"></span><button class="btn pri" data-act="close">Cerrar</button></div>`;
 }
 ACT.plan = el => openModal('Estadística y Probabilidad II · Carta descriptiva', planHTML(+(el && el.dataset && el.dataset.u) || 1), true);
 ACT.ptab = el => { const u = el.dataset.u, b = $('#dlg-b'); $$('.plan-pill', b).forEach(x => x.classList.toggle('on', x.dataset.u === u)); $$('.plan-pane', b).forEach(x => x.classList.toggle('on', x.dataset.u === u)); b.scrollTop = 0; };

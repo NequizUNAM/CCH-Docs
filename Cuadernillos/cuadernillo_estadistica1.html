@@ -660,6 +660,7 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
 .fcard .sub{margin:0;font-size:.76rem}
 .dl-row{display:flex;flex-wrap:wrap;gap:6px}
 @media (prefers-reduced-motion:reduce){.fcard{animation:none}}
+.tb.txt td{font-family:inherit;white-space:normal;text-align:left;font-size:.88rem}
 
 </style>
 </head>
@@ -673,7 +674,6 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
       <button class="btn sm" data-act="formulas">🧮 Formulario</button>
       <a class="btn sm" href="PDF/est1_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a>
       <a class="btn sm" href="PDF/est1_datos_ordenados.pdf" download target="_blank" rel="noopener">⬇ Datos ordenados (PDF)</a>
-      <button class="btn sm" data-act="revision">🔎 Notas de revisión</button>
       <button class="btn sm" data-act="reset">♻️ Borrar mi avance</button>
       <a class="btn sm" href="../index.html">← Aula Digital</a>
     </div>
@@ -1432,21 +1432,39 @@ T('poblacion', 'Población, muestra y muestreo', String.raw`
 <ul><li><b>Población (universo):</b> conjunto de elementos (personas, animales, plantas, objetos…) a los que se estudian características comunes. Algunos autores los llaman <i>individuos</i>.</li>
 <li><b>Muestra:</b> subconjunto de la población que realmente se analiza.
  <ul><li><b>Aleatoria (representativa):</b> refleja las características de la población.</li><li><b>No aleatoria (sesgada):</b> deja fuera grupos importantes.</li></ul></li>
-<li><b>Muestreo:</b> proceso para obtener una muestra: encuestas (electrónicas, telefónicas, físicas), experimentos, observación simple, bases de datos (INEGI, OMS).</li></ul>
+<li><b>Muestreo:</b> proceso para obtener una muestra: encuestas (electrónicas, telefónicas, físicas), experimentos, observación simple, bases de datos (INEGI, OMS).</li>
+<li><b>Censo:</b> estudio de <i>toda</i> la población (por ejemplo, el Censo de Población y Vivienda del INEGI). Si no es posible o es muy costoso, se estudia una muestra.</li>
+<li><b>Parámetro:</b> medida que describe a la <i>población</i> ($\mu$, $\sigma$, $p$). <b>Estadístico:</b> medida que se calcula con la <i>muestra</i> ($\bar x$, $s$, $\hat p$) y sirve para estimar al parámetro.</li></ul>
 <div class="tip">La representatividad depende también del <b>tamaño</b>: si la población es muy variable se necesita una muestra grande; si varía poco, una pequeña basta.</div>`);
 T('variable', 'Variables y su clasificación', String.raw`
-<p><b>Variable:</b> característica o propiedad de una población que se puede medir con distintos valores o describir con diferentes modalidades.</p>
-<ul><li><b>Cualitativa:</b> categorías o atributos.
- <ul><li><i>Nominal:</i> sin orden natural (signo, colonia, sangre, color).</li><li><i>Ordinal:</i> con orden natural (día, mes, estación del año).</li></ul></li>
-<li><b>Cuantitativa:</b> valores numéricos de conteo o medición.
- <ul><li><i>Discreta:</i> valores enteros, finitos o infinitos (edad, aciertos, materias reprobadas).</li><li><i>Continua:</i> cualquier real dentro de un intervalo (peso, estatura, tiempo de traslado).</li></ul></li></ul>
-<div class="note">En las continuas se trabaja con intervalos (abierto, semiabierto, cerrado).</div>`);
+<p><b>Variable:</b> cualquier característica o propiedad general de una población que sea posible <b>medir con distintos valores</b> o <b>describir con diferentes modalidades</b>. Un <b>dato</b> es el valor que toma la variable en un elemento (individuo) concreto.</p>
+<h4>Clasificación (cuadernillo)</h4>
+<div class="grid2">
+<div class="pn flat sage"><b>Cualitativa</b><p>Toma valores como <b>categorías o nombres</b> que identifican distintas cualidades o atributos.</p>
+ <ul><li><b>Nominal:</b> valores que <b>no tienen un orden natural</b>. Ej.: signo zodiacal, colonia, tipo de sangre, color.</li>
+ <li><b>Ordinal:</b> valores que <b>sí tienen un orden natural</b>. Ej.: día de la semana, mes, estación del año, nivel de satisfacción (bajo, medio, alto).</li></ul></div>
+<div class="pn flat sky"><b>Cuantitativa</b><p>Toma <b>valores numéricos</b> como resultado de un proceso de <b>conteo</b> o de <b>medición</b>.</p>
+ <ul><li><b>Discreta:</b> valores enteros, ya sea en número finito o infinito (se pueden contar). Ej.: edad en años cumplidos, día del cumpleaños, aciertos en un examen, materias reprobadas.</li>
+ <li><b>Continua:</b> valores reales dentro de un intervalo (se miden). Ej.: peso, estatura, tiempo para llegar al CCH.</li></ul></div></div>
+<div class="note">En las continuas se manejan intervalos: abierto $(a,b)$, semiabierto $(a,b]$ o $[a,b)$ y cerrado $[a,b]$. Regla rápida: <b>contar → discreta</b> · <b>medir → continua</b>.</div>
+<h4>Escalas de medición</h4>
+<div class="tw"><table class="tb txt"><thead><tr><th>Escala</th><th>Qué permite</th><th>Ejemplo</th></tr></thead><tbody>
+<tr><td class="l"><b>Nominal</b></td><td class="l">Solo clasificar (igual / distinto).</td><td class="l">Color favorito, tipo de sangre</td></tr>
+<tr><td class="l"><b>Ordinal</b></td><td class="l">Clasificar y ordenar (mayor / menor), pero las distancias entre categorías no se miden.</td><td class="l">Nivel socioeconómico, lugar en una carrera</td></tr>
+<tr><td class="l"><b>De intervalo</b></td><td class="l">Ordenar y medir diferencias; el cero es arbitrario (no significa «ausencia»).</td><td class="l">Temperatura en °C, año calendario</td></tr>
+<tr><td class="l"><b>De razón</b></td><td class="l">Todo lo anterior y comparar cocientes («el doble»); el cero significa ausencia.</td><td class="l">Peso, estatura, tiempo, dinero</td></tr></tbody></table></div>
+<p class="sub">Las cualitativas usan escala nominal u ordinal; las cuantitativas, de intervalo o de razón.</p>
+<ul><li>Una misma característica puede registrarse de varias formas: la <b>edad</b> en años cumplidos es discreta; medida con precisión (años, meses, días…) se comporta como continua.</li>
+<li>Una variable discreta puede tener infinitos valores posibles si se pueden enumerar: número de lanzamientos de una moneda hasta que sale águila (1, 2, 3, …).</li>
+<li>Los números de una variable cualitativa son solo <b>códigos</b> (número de cuenta, código postal): no tiene sentido sumarlos ni promediarlos.</li></ul>
+<h4>¿Qué tabla y qué medida le corresponden?</h4>
+<ul><li><b>Nominal:</b> frecuencias, porcentajes, moda; gráfica de barras o circular.</li><li><b>Ordinal:</b> además, frecuencias acumuladas y mediana.</li><li><b>Cuantitativa:</b> todas las medidas (media, mediana, moda, dispersión, posición); histograma, polígono y ojiva si se agrupa.</li></ul>`, true);
 T('investigacion', 'Investigación estadística (el ciclo)', String.raw`
 <p>Analiza un problema con procedimientos estadísticos que convierten datos en información útil para decidir.</p>
 <ol><li><b>Problema:</b> se refina y se plantea en términos estadísticos.</li><li><b>Plan de recolección:</b> qué variable, qué datos y cómo obtenerlos.</li><li><b>Recolección:</b> encuestas, experimentos…; luego se organizan y depuran.</li><li><b>Análisis:</b> exploratorio (descriptiva, para generar hipótesis) o inferencial.</li><li><b>Conclusión:</b> se interpretan los resultados en el contexto.</li></ol>
 <p>Si es necesario, el ciclo se repite considerando los resultados obtenidos.</p>`);
 T('graficas', 'Qué gráfica usar', String.raw`
-<table class="tb"><thead><tr><th>Tipo de variable</th><th>Gráfica recomendada</th></tr></thead><tbody>
+<table class="tb txt"><thead><tr><th>Tipo de variable</th><th>Gráfica recomendada</th></tr></thead><tbody>
 <tr><td class="l">Cualitativa</td><td class="l">Circular (pastel), barras</td></tr>
 <tr><td class="l">Cuantitativa discreta con pocos valores</td><td class="l">Líneas, barras, puntos</td></tr>
 <tr><td class="l">Series de tiempo</td><td class="l">Líneas</td></tr>
@@ -1604,7 +1622,7 @@ const PLAN = [
    [
     "1. Discute que la estadística estudia la variabilidad de las características de la población, considerando la homogeneidad y la heterogeneidad en los valores observados. <br>2. Explica las nociones de variable estadística, población y muestra. <br>3. Reconoce que los datos se obtienen por levantamiento o por experimentación. <br>4. Examina la importancia de la recopilación y representación de datos en la investigación estadística. <br>5. Reconoce la importancia del muestreo. <br>6. Aplica algún procedimiento de selección aleatoria que le permita comparar una característica de una población conocida con la misma característica en muestras aleatorias. <br>7. Concluye que el azar es una de las causas de la variabilidad en los datos estadísticos.",
     "<b>Nociones básicas</b> <br>• Variable, población y muestra. <br>• Variabilidad. <br>• Investigación estadística. <br>• Recolección de datos. <br>• Muestreo, azar y probabilidad.",
-    "Se busca que el alumnado realice actividades que le permitan convivir con la variabilidad de los datos y con conceptos como población y muestras aleatorias, por ejemplo: <br><br>El profesorado selecciona un artículo de la Gaceta UNAM que muestre los resultados de una investigación relevante para la sociedad, como el artículo “La muerte materna en México”, de la edición 541, del 18 de septiembre de 2023. Plantear preguntas del siguiente tipo: ¿cuál es la problemática?, ¿cuál es la población de estudio?, ¿de dónde se obtuvieron los datos?, ¿qué variables se han estudiado y cómo se han medido?, ¿en todos los países pasará igual?, ¿estos datos han cambiado a lo largo del tiempo?, ¿será necesario estudiar dicho cambio?, ¿en qué casos sí y en qué casos no? o ¿para qué puede ser necesario? Tratar de fomentar el interés por la investigación estadística y que el alumnado reconozca los conceptos clave que se emplean en el artículo y comprenda el significado de los resultados. Se construye una lista numerada en el aula donde el alumnado indique su género y la materia que le representa mayor dificultad en el semestre que está cursando. Se trabaja en equipos pequeños con esa información contestando preguntas como: <br><br>¿cuántas materias diferentes se eligieron en el grupo?, ¿cuáles son las dos materias que aparecen con más frecuencia?, ¿existen diferencias significativas por género?, ¿Serán diferentes las materias de mayor dificultad en otro grupo u otro plantel?, ¿qué factores pueden influir en que sean iguales o en que sean diferentes? Posteriormente, se usa cualquier generador de números aleatorios en el celular para que cada equipo seleccione una muestra aleatoria de 8 elementos y conteste preguntas como: ¿cuál es la materia que más se repite en la muestra?, ¿coincide con alguna de las dos materias que más se repiten en todo el grupo?, ¿en la muestra aparece alguna de esas dos materias? Se solicita a cada equipo que seleccione otra muestra aleatoria de 8 elementos y compare los resultados con la muestra anterior y con los de la población. Discutir las respuestas en plenaria y reunir la información de cuántas de las muestras seleccionadas en todo el grupo sí incluyeron las materias que más se repiten en la población y cuántas no."
+    "Se busca que el alumnado realice actividades que le permitan convivir con la variabilidad de los datos y con conceptos como población y muestras aleatorias, por ejemplo: <br><br>El profesorado selecciona un artículo de la Gaceta UNAM que muestre los resultados de una investigación relevante para la sociedad, como el artículo “La muerte materna en México es todavía un grave problema”, de la edición 541, del 18 de septiembre de 2023. Plantear preguntas del siguiente tipo: ¿cuál es la problemática?, ¿cuál es la población de estudio?, ¿de dónde se obtuvieron los datos?, ¿qué variables se han estudiado y cómo se han medido?, ¿en todos los países pasará igual?, ¿estos datos han cambiado a lo largo del tiempo?, ¿será necesario estudiar dicho cambio?, ¿en qué casos sí y en qué casos no? o ¿para qué puede ser necesario? Tratar de fomentar el interés por la investigación estadística y que el alumnado reconozca los conceptos clave que se emplean en el artículo y comprenda el significado de los resultados. Se construye una lista numerada en el aula donde el alumnado indique su género y la materia que le representa mayor dificultad en el semestre que está cursando. Se trabaja en equipos pequeños con esa información contestando preguntas como: <br><br>¿cuántas materias diferentes se eligieron en el grupo?, ¿cuáles son las dos materias que aparecen con más frecuencia?, ¿existen diferencias significativas por género?, ¿Serán diferentes las materias de mayor dificultad en otro grupo u otro plantel?, ¿qué factores pueden influir en que sean iguales o en que sean diferentes? Posteriormente, se usa cualquier generador de números aleatorios en el celular para que cada equipo seleccione una muestra aleatoria de 8 elementos y conteste preguntas como: ¿cuál es la materia que más se repite en la muestra?, ¿coincide con alguna de las dos materias que más se repiten en todo el grupo?, ¿en la muestra aparece alguna de esas dos materias? Se solicita a cada equipo que seleccione otra muestra aleatoria de 8 elementos y compare los resultados con la muestra anterior y con los de la población. Discutir las respuestas en plenaria y reunir la información de cuántas de las muestras seleccionadas en todo el grupo sí incluyeron las materias que más se repiten en la población y cuántas no."
    ],
    [
     "8. Distingue los diferentes tipos de variables estadísticas. <br>9. Construye tablas de distribución de frecuencias, incorporando el uso de la computadora, para describir el comportamiento de una variable. <br>10. Formula conclusiones e inferencias informales con base en datos reales o realistas organizados en tablas de frecuencias, argumentando su validez y señalando posibles sesgos o limitaciones.",
@@ -2427,13 +2445,12 @@ PAGES.push({
           <div class="grid2" style="gap:12px">
             <div class="pn flat sage"><b>📖 Teoría en ventanas</b><p class="sub">Toca cualquier botón violeta con 📖 para abrir el concepto sin salir de la página.</p></div>
             <div class="pn flat sky"><b>🧪 Laboratorios</b><p class="sub">Cambia datos, intervalos o puntos y mira cómo se recalculan las tablas y gráficas.</p></div>
-            <div class="pn flat amber"><b>🙈 Ejercicios ocultos</b><p class="sub">Primero ves sólo el enunciado. Cada inciso tiene su botón <i>Ver paso a paso</i>.</p></div>
-            <div class="pn flat coral"><b>🔎 Notas de revisión</b><p class="sub">Revisé las cuentas del cuadernillo y corregí errores; están anotados en el menú lateral.</p></div></div>
+            <div class="pn flat amber"><b>🙈 Ejercicios ocultos</b><p class="sub">Primero ves sólo el enunciado. Cada inciso tiene su botón <i>Ver paso a paso</i>.</p></div></div>
           <div class="row" style="margin-top:14px"><button class="btn go" data-act="nav" data-id="u1-intro">▶ Empezar por el principio</button></div></section>
         <section class="pn dark s5 rv" style="text-align:center"><div id="cover-chart"></div><div class="grid3" style="gap:8px;margin-top:6px"><div><div class="big" data-cnt="${PAGES.length - 1}">0</div><small>páginas</small></div><div><div class="big" data-cnt="${nEx}">0</div><small>ejercicios</small></div><div><div class="big" data-cnt="${nParts}">0</div><small>incisos con solución</small></div></div></section>
         ${units.map(u => `<article class="pn unitcard s4 rv ${u.c}" data-u="${u.u}" data-act="nav" data-id="${u.go}"><span class="big">${u.n}</span><h3><span class="ico">${u.ic}</span>Unidad ${u.n}</h3><p><b>${u.t}</b></p><p class="sub">${u.d}</p><div class="mini-prog"><i></i></div><small class="cnt sub"></small></article>`).join('')}
         <section class="pn s8 rv"><h3><span class="ico">🗺️</span>Mapa de páginas</h3><div class="grid3" style="gap:10px">${PAGES.filter(x => x.id !== 'inicio').map(x => `<button class="btn" style="justify-content:flex-start" data-act="nav" data-id="${x.id}"><span>${x.ic}</span>${x.t}</button>`).join('')}</div></section>
-        <section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est1_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><a class="btn" href="PDF/est1_datos_ordenados.pdf" download target="_blank" rel="noopener">⬇ Datos ordenados (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="revision">🔎 Notas de revisión</button></div></section></div>`;
+        <section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est1_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><a class="btn" href="PDF/est1_datos_ordenados.pdf" download target="_blank" rel="noopener">⬇ Datos ordenados (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button></div></section></div>`;
       // gráfico animado de portada
       const f = [2, 4, 7, 11, 15, 17, 14, 10, 6, 3], labs = ['50', '55', '60', '65', '70', '75', '80', '85', '90', '95'];
       const W = 420, H = 200, mL = 48, mR = 14, mT = 18, mB = 44, ax = niceAxis(0, Math.max(...f)), yy = lin(ax.lo, ax.hi, H - mB, mT), bw = (W - mL - mR) / f.length;
@@ -2493,7 +2510,12 @@ PAGES.push({
         ${[['M350 52 L175 100', 0], ['M350 52 L525 100', .1], ['M175 134 L100 180', .2], ['M175 134 L250 180', .3], ['M525 134 L450 180', .4], ['M525 134 L600 180', .5]].map(([d, t]) => `<path class="drw" style="--len:300;--d:${t + .2}s" d="${d}" stroke="${COL.ink}" stroke-width="2.5" fill="none" marker-end="url(#ar)"/>`).join('')}
         ${[[350, 26, 'Variable', COL.ink, '#fff'], [175, 118, 'Cualitativa', COL.sage, COL.ink], [525, 118, 'Cuantitativa', COL.sky, '#fff'], [100, 196, 'Nominal', COL.amber, COL.ink], [250, 196, 'Ordinal', COL.amber, COL.ink], [450, 196, 'Discreta', COL.coral, '#fff'], [600, 196, 'Continua', COL.coral, '#fff']].map(([x, y, t, f, c], i) => `<g class="pt" style="--i:${i * 2}"><rect x="${x - 62}" y="${y - 20}" width="124" height="${i ? 34 : 36}" rx="9" fill="${f}" stroke="${COL.ink}" stroke-width="2"/><text x="${x}" y="${y + 3}" text-anchor="middle" font-weight="700" fill="${c}" style="fill:${c}" font-size="14">${t}</text></g>`).join('')}
         <text class="tk" x="100" y="238" text-anchor="middle">signo, sangre</text><text class="tk" x="250" y="238" text-anchor="middle">día, mes</text><text class="tk" x="450" y="238" text-anchor="middle">edad, aciertos</text><text class="tk" x="600" y="238" text-anchor="middle">peso, estatura</text></svg>`;
-      p.innerHTML = `<div class="pn rv"><h3><span class="ico">🌳</span>Clasificación de las variables ${thBtn('variable', 'Ver teoría')}</h3>${tree}</div>
+      p.innerHTML = `<div class="pn rv"><h3><span class="ico">🌳</span>Clasificación de las variables ${thBtn('variable', 'Ver teoría')}</h3>${tree}
+          <p style="margin-top:10px"><b>Variable:</b> cualquier característica o propiedad general de una población que sea posible medir con distintos valores o describir con diferentes modalidades.</p>
+          <div class="grid2" style="gap:12px">
+            <div class="pn flat sage"><b>Cualitativa</b> <span class="sub">· categorías o nombres que identifican cualidades o atributos</span><ul><li><b>Nominal:</b> sin orden natural. <i>Signo, colonia, sangre, color.</i></li><li><b>Ordinal:</b> con orden natural. <i>Día, mes, estación del año.</i></li></ul></div>
+            <div class="pn flat sky"><b>Cuantitativa</b> <span class="sub">· valores numéricos que resultan de contar o medir</span><ul><li><b>Discreta:</b> valores enteros, finitos o infinitos (se cuentan). <i>Edad, cumpleaños, aciertos, materias reprobadas.</i></li><li><b>Continua:</b> valores reales dentro de un intervalo (se miden). <i>Peso, estatura, tiempo para llegar al CCH.</i></li></ul></div>
+          </div><div class="note">En las continuas se manejan intervalos: abierto, semiabierto y cerrado. Contar → discreta · medir → continua.</div></div>
         <div class="pn rv" style="margin-top:18px"><h3><span class="ico">🎮</span>Clasifica la variable</h3><div id="qz"></div></div>`;
       let order, i, score, locked;
       const start = () => { order = shuf(QZ).slice(0, 8); i = 0; score = 0; show(); };
@@ -2571,25 +2593,28 @@ function freqTable(D, o = {}) {
   rows.push(tr(['Total', ...(fr ? [''] : []), '', D.total, fmt(sum(D.fr), 2) + '%', '', ''], 'tot'));
   return tbl(['Clase', ...(fr ? ['Fronteras'] : []), 'Marca $x_m$', 'f', 'fr', 'F', 'Fr'], rows);
 }
-/* ejemplo del cuadernillo: fronteras (límites reales) de clase */
+/* fronteras (límites reales) de clase con los 60 datos reales de calificaciones */
 function fronterasPanel() {
-  const L = [50, 55, 60, 65, 70, 75, 80, 85, 90, 95], f = [3, 3, 7, 7, 8, 9, 10, 5, 6, 2]; let F = 0;
-  const rows = L.map((a, i) => { F += f[i]; return tr([i + 1, `${a} – ${a + 4}`, `<b style="color:var(--c2)">${fc(a - 0.5, 1)} – ${fc(a + 4.5, 1)}</b>`, f[i], F, a + 2, (a + 2) * f[i]]); });
-  rows.push(tr(['Total', '', '', 60, '', '', 4500], 'tot'));
-  const W = 520, x0 = 30, sc = (W - 60) / 15, X = v => x0 + (v - 49) * sc;
-  const line = `<svg viewBox="0 0 ${W} 92" style="width:100%;max-width:${W}px" role="img" aria-label="fronteras en la recta"><g font-family="system-ui,sans-serif" font-size="11" font-weight="700">
-    <line x1="${X(49)}" y1="30" x2="${X(64)}" y2="30" stroke="#94a3b8" stroke-width="2"/>
-    ${[[50, 54, '#1c7ed6'], [55, 59, '#2f9e44'], [60, 64, '#f08c00']].map(([a, b, c]) => `<rect x="${X(a)}" y="22" width="${X(b) - X(a)}" height="16" rx="4" fill="${c}" opacity=".85"/><text x="${(X(a) + X(b)) / 2}" y="16" text-anchor="middle" fill="${c}">${a}–${b}</text>`).join('')}
-    ${[[54, 55], [59, 60]].map(([a, b]) => `<rect x="${X(a)}" y="22" width="${X(b) - X(a)}" height="16" fill="url(#hz)"/><text x="${(X(a) + X(b)) / 2}" y="54" text-anchor="middle" fill="#e03131">hueco</text>`).join('')}
-    ${[49.5, 54.5, 59.5, 64.5].map(v => `<line x1="${X(v)}" y1="62" x2="${X(v)}" y2="76" stroke="#e03131" stroke-width="2.5"/><text x="${X(v)}" y="88" text-anchor="middle" fill="#e03131">${v}</text>`).join('')}
-    <line x1="${X(49.5)}" y1="69" x2="${X(64.5)}" y2="69" stroke="#e03131" stroke-width="2.5"/></g>
-    <defs><pattern id="hz" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="#fca5a5"/></pattern></defs></svg>`;
+  const D = buildDist(DATA.calif, { k: 9, conv: 'incl' }), G = groupedStats(D), c = D.w, n = D.n;
+  const rows = D.lims.map((l, i) => tr([i + 1, `${l.lo} – ${l.hi}`, `<b style="color:var(--c2)">${fc(l.rlo, 1)} – ${fc(l.rhi, 1)}</b>`, D.f[i], D.Fa[i], fc(D.xm[i], 1), fc(D.xm[i] * D.f[i], 1)]));
+  const sxf = D.xm.reduce((a, x, i) => a + x * D.f[i], 0);
+  rows.push(tr(['Total', '', '', n, '', '', fc(sxf, 1)], 'tot'));
+  const l3 = D.lims.slice(0, 3), a0 = l3[0].lo - 1, a1 = l3[2].hi + 1, W = 520, X = v => 30 + (v - a0) / (a1 - a0) * (W - 60), CL = ['#1c7ed6', '#2f9e44', '#f08c00'];
+  const line = `<svg viewBox="0 0 ${W} 92" style="width:100%;max-width:${W}px" role="img" aria-label="fronteras en la recta"><defs><pattern id="hz" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="#fca5a5"/></pattern></defs><g font-family="system-ui,sans-serif" font-size="11" font-weight="700">
+    <line x1="${X(a0)}" y1="30" x2="${X(a1)}" y2="30" stroke="#94a3b8" stroke-width="2"/>
+    ${l3.map((l, i) => `<rect x="${X(l.lo)}" y="22" width="${X(l.hi) - X(l.lo)}" height="16" rx="4" fill="${CL[i]}" opacity=".85"/><text x="${(X(l.lo) + X(l.hi)) / 2}" y="16" text-anchor="middle" fill="${CL[i]}">${l.lo}–${l.hi}</text>`).join('')}
+    ${l3.slice(0, 2).map((l, i) => `<rect x="${X(l.hi)}" y="22" width="${X(l3[i + 1].lo) - X(l.hi)}" height="16" fill="url(#hz)"/><text x="${(X(l.hi) + X(l3[i + 1].lo)) / 2}" y="54" text-anchor="middle" fill="#e03131">hueco</text>`).join('')}
+    ${[l3[0].rlo, l3[0].rhi, l3[1].rhi, l3[2].rhi].map(v => `<line x1="${X(v)}" y1="62" x2="${X(v)}" y2="76" stroke="#e03131" stroke-width="2.5"/><text x="${X(v)}" y="88" text-anchor="middle" fill="#e03131">${fc(v, 1)}</text>`).join('')}
+    <line x1="${X(l3[0].rlo)}" y1="69" x2="${X(l3[2].rhi)}" y2="69" stroke="#e03131" stroke-width="2.5"/></g></svg>`;
+  const mo = G.modes[0], k0 = mo.i, d1 = D.f[k0] - (D.f[k0 - 1] || 0), d2 = D.f[k0] - (D.f[k0 + 1] || 0), moV = mo.L + d1 / (d1 + d2) * c;
   return `<div class="pn rv" style="margin-top:18px"><h3><span class="ico">📏</span>Fronteras (límites reales) de clase ${thBtn('intervalos', 'Teoría')}</h3>
-    <p>Con datos <b>enteros</b> y límites incluidos (50 – 54, 55 – 59…) queda un «hueco» entre 54 y 55. La unidad mínima es 1, así que se resta $\\tfrac12=0.5$ al límite inferior y se suma $0.5$ al superior.</p>${line}
+    <p>Con datos <b>enteros</b> y límites incluidos (${l3[0].lo} – ${l3[0].hi}, ${l3[1].lo} – ${l3[1].hi}…) queda un «hueco» entre ${l3[0].hi} y ${l3[1].lo}. La unidad mínima es 1, así que se resta $\\tfrac12=0.5$ al límite inferior y se suma $0.5$ al superior.</p>${line}
     <p class="sub">Arriba: límites aparentes (con huecos) · abajo, en rojo: fronteras continuas sin huecos.</p>
+    <p class="sub">Calificaciones del grupo X ($n=${n}$) en ${D.k} clases de amplitud $c=${c}$:</p>
     ${tbl(['Clase', 'Intervalo', 'Fronteras de clase', '$f_i$', '$F_i$', '$x_i$', '$x_i f_i$'], rows)}
-    <div class="grid3" style="margin-top:10px">${kpi('Media', '75', 's')}${kpi('Mediana', '75.61', 'g')}${kpi('Moda', '80.33', 'a')}</div><div class="fm">$\\bar x=\\dfrac{4500}{60}=75\\qquad Me=74.5+\\dfrac{30-28}{9}\\cdot5=75.61\\qquad Mo=79.5+\\dfrac{10-9}{(10-9)+(10-5)}\\cdot5=80.33$</div>
-    <p class="sub">En la mediana y la moda, $L_i$ es la <b>frontera</b> inferior (74.5 y 79.5), no el límite aparente (75 y 80). Las fronteras también hacen que el histograma no tenga espacios entre barras.</p></div>`;
+    <div class="grid3" style="margin-top:10px">${kpi('Media', fc(G.mean, 2), 's')}${kpi('Mediana', fc(G.median, 2), 'g')}${kpi('Moda', fc(moV, 2), 'a')}</div>
+    <div class="fm">$\\bar x=\\dfrac{${+sxf.toFixed(1)}}{${n}}=${fc(G.mean, 2)}\\qquad Me=${fc(G.medL, 1)}+\\dfrac{${n / 2}-${G.medFprev}}{${G.medF}}\\cdot${c}=${fc(G.median, 2)}\\qquad Mo=${fc(mo.L, 1)}+\\dfrac{${D.f[k0]}-${D.f[k0 - 1]}}{(${D.f[k0]}-${D.f[k0 - 1]})+(${D.f[k0]}-${D.f[k0 + 1]})}\\cdot${c}=${fc(moV, 2)}$</div>
+    <p class="sub">En la mediana y la moda, $L_i$ es la <b>frontera</b> inferior de la clase (${fc(G.medL, 1)} y ${fc(mo.L, 1)}), no el límite aparente. Las fronteras también hacen que el histograma no tenga espacios entre barras.</p></div>`;
 }
 PAGES.push({
   id: 'u1-frec', u: 'u1', ic: '🗂️', t: 'Tablas de frecuencia', kick: 'Unidad 1 · Organizar', title: 'Del montón de datos a una tabla que se entiende',
@@ -3034,6 +3059,29 @@ PAGES.push({
       const E = EJ.planteles, C = contingency(E.m), N = C.T;
       p.innerHTML = `<div class="pn rv"><h3><span class="ico">✍️</span>Completa los totales</h3>${fillTable('ft-ct', ['Carrera', ...E.cols, 'Total'], [...E.rows.map((r, i) => [r, ...E.m[i], { a: C.R[i], d: 0 }]), { cls: 'tot', cells: ['Total', ...C.C.map(v => ({ a: v, d: 0 })), { a: N, d: 0 }] }])}</div>
         <div class="pn amber rv" style="margin-top:18px"><h3><span class="ico">🎯</span>Probabilidades</h3><p>Se elige un alumno al azar. Calcula en porcentaje (2 decimales):</p>${fillTable('ft-cp', ['$P(\\text{Derecho})$', '$P(\\text{Oriente})$', '$P(\\text{Derecho}\\cap\\text{Oriente})$', '$P(\\text{Derecho}\\mid\\text{Oriente})$'], [[{ a: C.R[0] / N * 100, d: 2, t: .02 }, { a: C.C[3] / N * 100, d: 2, t: .02 }, { a: E.m[0][3] / N * 100, d: 2, t: .02 }, { a: E.m[0][3] / C.C[3] * 100, d: 2, t: .02 }]], { hint: 'Condicional: se divide entre el total de la <i>columna</i> (Oriente), no entre el total general.' })}</div>`;
+    } },
+    { id: 'cua', t: '4 · Ejercicios del cuaderno', render(p) {
+      const T = (h, rows) => `<div class="tw"><table class="tb"><thead><tr>${h.map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr class="${r.cls || ''}">${(r.c || r).map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+      const L = x => `<b style="color:var(--c5)">${x}</b>`, pc = (a, b) => fc(a / b * 100, 2) + ' %';
+      const z1 = T(['', 'Diestro', 'Zurdo', 'Total'], [['Chicos', L('?'), '4', L('?')], ['Chicas', L('?'), '0', '20'], { c: ['Total', L('?'), '4', '35'], cls: 'tot' }]);
+      const z2 = T(['', 'Diestro', 'Zurdo', 'Total'], [['Chicos', '<b>11</b>', '4', '<b>15</b>'], ['Chicas', '<b>20</b>', '0', '20'], { c: ['Total', '<b>31</b>', '4', '35'], cls: 'tot' }]);
+      const z3 = T(['', 'Diestro', 'Zurdo', 'Total'], [['Chicos', pc(11, 35), pc(4, 35), pc(15, 35)], ['Chicas', pc(20, 35), pc(0, 35), pc(20, 35)], { c: ['Total', pc(31, 35), pc(4, 35), '100 %'], cls: 'tot' }]);
+      const s1 = T(['Tipo \\ Turno', 'Mañana', 'Tarde', 'Noche', 'Total'], [['Hardware', '45', L('A'), '15', '80'], ['Software', L('B'), '35', L('C'), L('D')], { c: ['Total', '85', L('E'), '40', '180'], cls: 'tot' }]);
+      const s2 = T(['Tipo \\ Turno', 'Mañana', 'Tarde', 'Noche', 'Total'], [['Hardware', '45', '<b>20</b>', '15', '80'], ['Software', '<b>40</b>', '35', '<b>25</b>', '<b>100</b>'], { c: ['Total', '85', '<b>55</b>', '40', '180'], cls: 'tot' }]);
+      p.innerHTML = `<div class="stack"><div class="pn rv"><h3><span class="ico">✋</span>Ejercicio 1 · Zurdos y diestros ${thBtn('contingencia', 'Teoría')}</h3>
+        <p>En una clase de <b>35</b> alumnos hay <b>4 zurdos</b> (todos son chicos) y <b>20 chicas</b>. Completa la tabla de frecuencias absolutas y la de frecuencias relativas.</p>${z1}
+        <p>¿Cuántas chicas diestras hay? ¿Cuántos chicos diestros? ¿Cuántos diestros en total?</p>
+        ${revealBlock('cz', 'Ver solución', `<div class="stp on" data-k="d"><span class="sn">1</span><b>Totales que se conocen</b><div class="stp-b">Chicos $=35-20=15$. Diestros $=35-4=31$.</div></div>
+          <div class="stp on" data-k="c"><span class="sn">2</span><b>Completa por filas</b><div class="stp-b">Chicos diestros $=15-4=11$. Chicas diestras $=20-0=20$. Comprobación por columna: $11+20=31$ ✔</div></div>${z2}
+          <div class="stp on" data-k="c"><span class="sn">3</span><b>Frecuencias relativas</b><div class="stp-b">Cada celda entre el total: $\\dfrac{4}{35}=11.43\\,\\%$, $\\dfrac{20}{35}=57.14\\,\\%$, $\\dfrac{31}{35}=88.57\\,\\%$.</div></div>${z3}
+          <div class="ans on" style="display:block">Respuesta: 20 chicas diestras, 11 chicos diestros y 31 diestros en total.</div>`)}</div>
+        <div class="pn rv"><h3><span class="ico">🧩</span>Ejercicio 2 · El «Sudoku» de frecuencias</h3>
+        <p>Un centro de soporte técnico clasificó las solicitudes del último mes por tipo de caso (Hardware o Software) y turno de atención. Los totales de cada fila y columna deben cuadrar: completa las casillas A, B, C, D y E.</p>${s1}
+        <ol type="a"><li><b>Conjunta:</b> ¿qué porcentaje del total son solicitudes de Software atendidas en la Tarde?</li><li><b>Marginal:</b> ¿probabilidad de que un caso al azar se haya atendido en la Mañana?</li><li><b>Condicional:</b> si la solicitud fue de Hardware, ¿probabilidad de que haya sido en la Noche?</li></ol>
+        ${revealBlock('cs', 'Ver solución', `<div class="stp on" data-k="c"><span class="sn">1</span><b>Completa la tabla</b><div class="stp-b">Fila Hardware: $A=80-45-15=20$. Columna Mañana: $B=85-45=40$. Columna Noche: $C=40-15=25$. Columna Tarde: $E=20+35=55$. Fila Software: $D=40+35+25=100$. Comprobación: $80+100=180$ y $85+55+40=180$ ✔</div></div>${s2}
+          <div class="stp on" data-k="c"><span class="sn">2</span><b>Probabilidades</b><div class="stp-b">a) $P(S\\cap T)=\\dfrac{35}{180}$ · b) $P(M)=\\dfrac{85}{180}$ · c) $P(N\\mid H)=\\dfrac{15}{80}$ (universo = solo Hardware)</div></div>
+          <div class="ans on" style="display:block">Respuesta: A = 20, B = 40, C = 25, D = 100, E = 55 · a) $19.44\\,\\%$ · b) $0.4722$ · c) $0.1875$</div>`)}</div></div>`;
+      math(p);
     } }
   ]
 });
@@ -3524,52 +3572,12 @@ const FORMULARIO = String.raw`
 <p>$n!$ · $P(n,r)=\dfrac{n!}{(n-r)!}$ · $C(n,r)=\dfrac{n!}{r!(n-r)!}$ · principio multiplicativo $n_1n_2\cdots n_k$</p></div>
 </div>`;
 
-const _hi = regress(EJ.hierro.x, EJ.hierro.y), _ti = regress(EJ.tienda.x, EJ.tienda.y), _dd = buildDist(DATA.calif, { k: 10, conv: 'semiD' }), _gg = groupedStats(_dd);
-const _rv = (pg, titulo, dice, es, nota = '') => `<tr><td><b>${pg}</b></td><td><b>${titulo}</b><br><span class="sub">${nota}</span></td><td class="bad">${dice}</td><td class="good">${es}</td></tr>`;
-const REVISION = `
-<p>Revisé las cuentas del cuadernillo con un programa y las comparé con los datos reales del grupo X. Estas son las diferencias que encontré; en todas las páginas de esta guía uso los valores corregidos. <b>El número de página es el impreso en el PDF.</b></p>
-<div class="note">Convención usada: intervalos $(a,b]$ con el primero cerrado $[a,b]$, como en las tablas del cuadernillo. Punto decimal en todo el texto.</div>
-<div class="tw"><table class="tb rev"><thead><tr><th>Pág.</th><th>Tema</th><th>Dice</th><th>Debe decir</th></tr></thead><tbody>
-${_rv('12 y 16', 'Tabla de 10 clases de calificaciones', '$f$: 75–80 = 9, 80–85 = 10, 85–90 = 5, 90–95 = 6; 11.66 %', '$f$: 10, 9, 6, 5 (con los 60 datos); $7/60=11.67\\,\\%$', 'Los dos pares de frecuencias están intercambiados.')}
-${_rv('17', 'Frecuencia acumulada', '$F$(≤80) = 37 y $F$(≤90) = 52; «mayor pendiente 70–75»', '38 y 53 (coincide con la tabla de la pág. 18); mayor pendiente en 75–80', 'Mayor pendiente = clase con más datos ($f=10$).')}
-${_rv('21', 'Resumen de medidas', 'Calificaciones: mediana $(75+78)/2$. Estatura: 7 653/47 = 162.83, $Me=x_{24}=163$, modas 154, 160, 164', 'Mediana $(76+77)/2=76.5$. Estatura: $7\\,643/47=162.62$, $Me=162$, modas 154, 156, 160 y 164', 'La primera fila de la pág. 21 sí estaba bien; la tabla siguiente la contradice.')}
-${_rv('25', 'Media de datos ordenados', '$4\\,515/60=75.25$ (y fórmula agrupada con $n-1$)', 'Con los 60 datos $\\bar x=4\\,526/60=75.43$. Agrupada: $\\dfrac{\\sum f x_m}{n}$ (se divide entre $n$): ' + fc(sum(_dd.f.map((v, i) => v * _dd.xm[i])), 0) + '/60 = ' + fc(_gg.mean, 2), 'Con las frecuencias correctas $\\sum f x_m=4\\,520$, no 4 515.')}
-${_rv('26', 'Mediana agrupada', '$75+\\frac{30-28}{9}\\,5=76.11$ (y otra versión 75.61 con $L=74.5$)', '$75+\\dfrac{30-28}{10}\\,5=\\mathbf{76}$', 'La clase mediana tiene $f=10$. Con $L=74.5$ se mezclaban fronteras con intervalos $(a,b]$.')}
-${_rv('27–28', 'Moda agrupada', '$80+\\frac{1}{1+5}\\,5=80.83$ y $79.5+\\frac16\\,5=80.33$ (con $L_i=75$ anotado)', 'Clase modal $(75,80]$: $d_1=10-8=2$, $d_2=10-9=1$ → $75+\\dfrac{2}{3}\\,5=\\mathbf{78.33}$', 'El valor 78.3 aparece anotado en la pág. 27, pero el cálculo impreso usaba otra clase.')}
-${_rv('30', 'Moda, clases de igual amplitud', '$66+\\frac{27}{18+27}\\,3=67.8$', '$66+\\dfrac{42-18}{(42-18)+(42-27)}\\,3=66+\\dfrac{24}{39}\\,3=\\mathbf{67.85}$', 'El denominador debe ser $24+15=39$.')}
-${_rv('31', 'Moda, clases de distinta amplitud', 'Ejemplo: 6.33. Ejercicio: clase $[67,71)$ y moda 67.8', 'Ejemplo: $5+\\frac{7}{7+4}\\,2=\\mathbf{6.27}$. Ejercicio: la clase modal es $[71,73)$ (altura 13.5, no 10.5): $Mo=71+\\dfrac{3}{3+9.5}\\,2=\\mathbf{71.48}$', 'Con amplitudes distintas la moda se busca por <b>altura</b> $h=f/c$, no por frecuencia. Además $5/3=1.67$, no 1.6.')}
-${_rv('33–36', 'Desviación y varianza', 'Tabla con $f=3,4,6,7,8,10,9,6,5,2$; $DM=9.7$, $S^2=136.2$, $S=11.7$; fórmula impresa con $n-1$ pero calculada con $n$', 'Con $f=3,3,7,7,8,10,9,6,5,2$: $DM=' + fc(_gg.dm, 2) + '$, $\\sigma^2=' + fc(_gg.varP, 2) + '$, $\\sigma=' + fc(_gg.sdP, 2) + '$ (muestral $s^2=' + fc(_gg.varS, 2) + '$)', 'La pág. 36 daba 128.66 porque redondeaba la media a 75.3. Con la media exacta ambos modelos coinciden: $' + fc(_gg.varAlt, 2) + '$.')}
-${_rv('37', 'Distribución simétrica', '$\\bar x=\\dfrac{2\\,800}{60}$', '$\\bar x=\\dfrac{2\\,800}{56}=50$ ($n=56$)', 'Los resultados $\\sigma^2=446.4$ y $DM=16.8$ sí son correctos.')}
-${_rv('42', 'Tabla de contingencia (zurdos y diestros)', '35 alumnos, 4 zurdos y 26 diestros; diestros 74.2 %', 'Con 4 zurdos y 26 diestros el total es 30 (o con 35 alumnos son 31 diestros). Además $26/35=74.3\\,\\%$', 'Los datos no cuadran: corrige uno de los números.')}
-${_rv('43', '«Sudoku» de frecuencias', 'Total general 200', 'Total general <b>180</b>: A = 20, B = 40, C = 25, D = 100, E = 55', 'Con 200 no existe solución: la fila da $E=55$ y la columna $E=75$.')}
-${_rv('49', 'Recta de Pearson (niños)', '$b=-13.1233$', '$b=-13.1213$ (con $m$ sin redondear)', 'Al redondear $m$ a 4 decimales antes de calcular $b$ se acumula error.')}
-${_rv('50', 'Tienda de descuento', '$r=-3745/3202=1.169$; $b=53.81$; $\\hat y(20)=25.61$', '$r=\\dfrac{-3745}{\\sqrt{2660\\cdot5862}}=\\mathbf{' + fc(_ti.r, 4) + '}$; $b=' + fc(_ti.b, 2) + '$; $\\hat y(20)=' + fc(_ti.m * 20 + _ti.b, 2) + '$', 'Un $r$ nunca puede ser mayor que 1 en valor absoluto: era una señal de error.')}
-${_rv('52', 'Densidad y hierro', '$\\sum x^2$ con 7.8; $n\\sum x^2-(\\sum x)^2=0.64$; $r=1.184$; $m=14.23$ y luego 14.28; $b=-13.1$; densidad $x=\\frac{14.28}{31}-13.1=15.27$', '$2.8^2=7.84$; $5(48.88)-(15.6)^2=1.04$; $r=\\dfrac{14.8}{\\sqrt{1.04\\cdot256}}=\\mathbf{' + fc(_hi.r, 4) + '}$; $m=' + fc(_hi.m, 4) + '$; $b=' + fc(_hi.b, 2) + '$; $x=\\dfrac{31-b}{m}=' + fc((31 - _hi.b) / _hi.m, 2) + '$ (regresión de $x$ sobre $y$: ' + fc(_hi.m2 * 31 + _hi.b2, 2) + ')', 'Para estimar la densidad conviene la recta de $x$ sobre $y$; da un valor muy parecido porque $r$ es alto.')}
-${_rv('57', 'Percentiles del soporte técnico', 'Lista ordenada con 11 datos (sin el 25) pero $N=12$', 'Lista: 12, 15, 16, 18, 20, 22, 24, <b>25</b>, 28, 30, 32, 55', 'Los resultados $Q_1=16.5$, $Q_2=23$, $Q_3=29.5$ sí son correctos; el 55 es atípico (barda 45.5 para 16.5, 29.5).')}
-${_rv('61', 'Tres monedas: dos soles', '$\\{(a,s,s),(a,s,s),(s,a,s),(s,s,a)\\}$', '$\\{(a,s,s),(s,a,s),(s,s,a)\\}$ (3 elementos)', 'Un resultado estaba repetido.')}
-${_rv('69', 'Tres caballos', 'Se plantea «$A=2B$» y «$2A=B$»', 'Sólo $A=2B$ y $B=3C$', 'Con $2A=B$ las ecuaciones se contradicen; el resultado $6/10,\\,3/10,\\,1/10$ sí es correcto.')}
-</tbody></table></div>
-<h4>Otros ajustes de formato</h4>
-<ul><li>Se unificó el punto decimal (México) y la notación $\\bar x$, $Me$, $Mo$, $\\sigma^2$, $s^2$.</li><li>Se aclara cuándo dividir entre $n$ (población) y entre $n-1$ (muestra).</li><li>Los problemas por carrera usan <b>datos ilustrativos</b> creados para practicar.</li></ul>
-<h4>Carta descriptiva (plan de estudios)</h4>
-<p class="sub">Revisé el archivo <i>estadistica1_carta.md</i> contra el programa 2024. Las horas suman $28+10+26=64$ y los aprendizajes están completos (U1: 1–18, U2: 1–12, U3: 1–15). Lo que corregí:</p>
-<div class="tw"><table class="tb rev"><thead><tr><th>Unidad</th><th>Dice</th><th>Debe decir</th></tr></thead><tbody>
-<tr><td>3 · eventos</td><td>«Fc, MN y HD»</td><td>$F^c$, $M\\cap N$ y $H\\cap D$ (se perdieron los símbolos de complemento e intersección)</td></tr>
-<tr><td>3 · eventos</td><td>«Ac: no ocurre A, AB: …, AB: …»</td><td>$A^c$: no ocurre $A$; $A\\cup B$: ocurre alguno o ambos; $A\\cap B$: ocurren ambos</td></tr>
-<tr><td>3 · exposición</td><td>«P(A D) y P(Ac)», «concepto ∪ de mutua exclusividad»</td><td>$P(A\\cup D)$ y $P(A^c)$; el «∪» sobraba en la segunda frase</td></tr>
-<tr><td>3 · independencia</td><td>«P(A B)»</td><td>$P(A\\cap B)$</td></tr>
-<tr><td>2 y 3 · propósito</td><td>Punto doble («..»)</td><td>Un solo punto</td></tr>
-<tr><td>1 · Gaceta UNAM</td><td>Artículo «La muerte materna en México», edición 541</td><td>El título completo es «La muerte materna en México es todavía un grave problema» (Gaceta UNAM, 18 de septiembre de 2023). El número de edición no pude verificarlo en línea; conviene confirmarlo antes de citarlo.</td></tr>
-<tr><td>1 y 3 · figuras</td><td>«(Figura en el programa)»</td><td>Faltan 2 figuras: los diagramos de caja de los lugares A, B y C (U1) y la tabla de tabaquismo de los 300 estudiantes (U3). Hay que tomarlas del programa impreso.</td></tr>
-</tbody></table></div>
-<p class="sub">Verifiqué con cálculo los datos numéricos del plan: en la actividad de las tres urnas, las probabilidades de sacar blanca son $4/7=0.571$, $2/3=0.667$ y $5/9=0.556$ (la mejor es la segunda); con 3 mujeres y 3 hombres hay $\\binom{6}{3}=20$ formas de elegir a quienes exponen; y en el problema de los dos descendientes $P(A\\mid B)=2/3$.</p>`;
 
 'use strict';
 /* =====================================================================
    ARRANQUE
    ===================================================================== */
 ACT.formulas = () => openModal('Formulario por secciones', formHTML(), true);
-ACT.revision = () => openModal('Notas de revisión del cuadernillo', REVISION, true);
 /* ---------- Plan de estudios (carta descriptiva) en modal ---------- */
 const PLAN_MAP = { 1: [['u1-intro'], ['u1-frec'], ['u1-graf'], ['u1-central', 'u1-disp', 'u1-pos']], 2: [['u2-cont', 'u2-corr'], ['u2-cont'], ['u2-corr', 'u2-reg']], 3: [['u3-esp', 'u3-enf'], ['u3-enf'], ['u3-esp', 'u3-enf'], ['u3-cond']] };
 function planHTML(act) {
@@ -3586,7 +3594,7 @@ function planHTML(act) {
   return `<p class="sub">Estadística y Probabilidad I · CCH-UNAM (2024). Textos transcritos de las tablas del programa; la columna de estrategias sugeridas son las actividades.</p>
     <div class="plan-sum">${PLAN.map(u => `<div><b>${u.n}</b><span>${u.t}</span><em>${u.h} h</em></div>`).join('')}<div class="tot"><b>Σ</b><span>Total</span><em>${sum(PLAN.map(u => u.h))} h</em></div></div>
     <div class="plan-pills" role="tablist">${pills}</div>${panes}
-    <div class="row plan-foot"><button class="btn" data-act="print">🖨️ Imprimir</button><button class="btn" data-act="revision">🔎 Qué corregí en la carta</button><span class="sp"></span><button class="btn pri" data-act="close">Cerrar</button></div>`;
+    <div class="row plan-foot"><button class="btn" data-act="print">🖨️ Imprimir</button><span class="sp"></span><button class="btn pri" data-act="close">Cerrar</button></div>`;
 }
 ACT.plan = el => openModal('Estadística y Probabilidad I · Carta descriptiva', planHTML(+(el && el.dataset && el.dataset.u) || 1), true);
 ACT.ptab = el => { const u = el.dataset.u, b = $('#dlg-b'); $$('.plan-pill', b).forEach(x => x.classList.toggle('on', x.dataset.u === u)); $$('.plan-pane', b).forEach(x => x.classList.toggle('on', x.dataset.u === u)); b.scrollTop = 0; };
