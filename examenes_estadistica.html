@@ -117,12 +117,26 @@
     .fr > span:first-child { border-bottom:2px solid currentColor; padding:0 .3rem .05rem; } .fr > span:last-child { padding:.05rem .3rem 0; }
     .opt .fr { font-size:1.15rem; }
 
-  </style>
+  .send-alert{display:flex;gap:.7rem;align-items:flex-start;text-align:left;background:#fee2e2;border:2px solid #dc2626;color:#991b1b;border-radius:14px;padding:.8rem 1rem;margin-bottom:.7rem;font-size:.95rem;animation:sendPulse 1.6s ease-in-out infinite}.send-alert i{font-size:1.6rem;color:#dc2626}
+@keyframes sendPulse{50%{box-shadow:0 0 0 6px rgba(220,38,38,.18)}}@media (prefers-reduced-motion:reduce){.send-alert{animation:none}}
+.mbar{height:10px;border-radius:999px;background:#e2e8f0;overflow:hidden}.mbar i{display:block;height:100%;border-radius:999px;transition:width .6s}.mdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+</style>
 </head>
 <body>
 <noscript><div class="p-4 text-center fw-bold">Este examen necesita JavaScript.</div></noscript>
 
 <!-- ============ 1. CONTRASEÑA ============ -->
+<div id="scr-movil" class="screen gate d-none">
+  <div class="gate-card">
+    <div class="gate-top" style="background:linear-gradient(135deg,#991b1b,#dc2626)"><div class="gate-ico"><i class="bi bi-phone-flip"></i></div><h1 class="h4 fw-bold mb-1">Usa una computadora</h1><div class="opacity-75">Este examen no se puede presentar desde un celular o tableta</div></div>
+    <div class="gate-body text-center">
+      <p class="mb-2">Para presentar el examen entra desde el <b>navegador de una computadora o laptop</b> (Chrome, Edge, Firefox o Safari) con teclado y mouse o trackpad.</p>
+      <p class="small text-muted mb-3">Si ya habías empezado, tus respuestas están guardadas: entra con tu mismo número de cuenta y nombre desde la computadora y continúas donde ibas.</p>
+      <button class="btn btn-link btn-sm text-muted" type="button" id="btn-prof-movil"><i class="bi bi-person-badge me-1"></i>Acceso del profesor(a)</button>
+    </div>
+  </div>
+</div>
+
 <div id="scr-clave" class="screen gate">
   <div class="gate-card" id="clave-card">
     <div class="gate-top">
@@ -166,8 +180,8 @@
         </div>
         <div class="col-sm-5">
           <label for="d-grupo" class="form-label fw-bold">Grupo</label>
-          <input type="text" class="form-control form-control-lg" id="d-grupo" maxlength="8" placeholder="Ej. 401" autocomplete="off">
-          <div class="invalid-feedback">Escribe tu grupo.</div>
+          <input type="text" class="form-control form-control-lg" id="d-grupo" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="Ej. 401" autocomplete="off">
+          <div class="invalid-feedback">Escribe tu grupo solo con números (3 o 4 dígitos).</div>
         </div>
       </div>
       <hr class="my-4">
@@ -176,6 +190,7 @@
       <div class="rule" id="r-tiempo"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b> desde que pulsas «Comenzar». Pasado ese tiempo el examen se <b>cierra y se entrega en automático</b> con las respuestas que tengas.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo el número, sin espacios</b>, con <b>punto decimal</b> y el signo − si hace falta. Redondea a los decimales que indique cada pregunta. Puedes usar calculadora.</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
+      <div class="rule rule-warn" style="background:#fdeaea;border:1px solid #f5b8b8;border-left:5px solid #e03131;border-radius:12px;padding:.55rem .7rem"><i class="bi bi-window-x" style="color:#e03131"></i><div style="color:#c92a2a"><b>Antes de comenzar, cierra toda pestaña o ventana abierta</b> (otras páginas, programas o aplicaciones). Si no lo haces, <b>se contabilizará como apertura de ventanas adicionales</b>.</div></div>
       <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen continúa y el tiempo sigue corriendo. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
       <div class="form-check my-3"><input class="form-check-input" type="checkbox" id="d-ok"><label class="form-check-label" for="d-ok">Leí las reglas y confirmo que mis datos son correctos.</label></div>
       <div class="text-danger fw-bold small mb-2" id="d-err" hidden></div>
@@ -297,6 +312,8 @@ const TOTAL = () => (typeof EXAM !== 'undefined' && EXAM) ? EXAM.filter(q => !q.
 const CFG = {
   ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
   MATERIA: 'est',                  // 'est' = hojas «Resultados Estadística» y «Config Estadística»
+  SYNC_MIN: [2, 4],                // rango (minutos) del envío del avance: cada equipo elige al azar su propio intervalo dentro del rango
+  POLL_S: 30,                      // con más de SALIDAS_CIERRE salidas: cada cuántos segundos se pregunta si el profesor cerró el examen
   PENA_MIN: 5,                     // minutos que se descuentan por CADA salida de la ventana
   SALIDAS_CIERRE: 3,               // con más salidas que estas, el administrador puede cerrar el examen del alumno
   DURACION_MIN: 120,               // duración del examen en minutos (cuenta regresiva)
@@ -810,7 +827,7 @@ function gradeQ(q, v) {
 }
 
 /* ===== Comunicación con la hoja de Google (Apps Script) ===== */
-async function api(action, data = {}) {
+var api = async function (action, data = {}) {
   if (!CFG.ENDPOINT) return { ok: false, code: 'config' };
   const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 30000);
   try {
@@ -818,6 +835,20 @@ async function api(action, data = {}) {
     const j = await r.json(); if (j && j.t) SKEW = j.t - Date.now(); return j;
   } catch (e) { return { ok: false, code: 'red' }; } finally { clearTimeout(to); }
 }
+/* Servidor ocupado (muchos alumnos a la vez): se reintenta solo, con esperas crecientes y un desfase al azar */
+const API1 = api;
+const isBusy = r => r && !r.ok && (r.code === 'ocupado' || /candado|lock|too many|demasiad/i.test(String(r.msg || '')));
+api = async function (action, data = {}) {
+  const tries = action === 'progress' ? 1 : 5, waits = [1500, 3000, 5000, 8000];
+  let r = await API1(action, data);
+  for (let i = 1; i < tries && isBusy(r); i++) {
+    if (action !== 'progress') toast(`Muchos alumnos conectados a la vez. Reintentando (${i}/${tries - 1})…`, 'bi-hourglass-split', 2200);
+    await new Promise(ok => setTimeout(ok, waits[i - 1] + Math.random() * 1000));
+    r = await API1(action, data);
+  }
+  if (isBusy(r)) r.code = 'ocupado';
+  return r;
+};
 const MSG = {
   incorrecta: 'Contraseña incorrecta.',
   cambio: 'La contraseña ha cambiado. Solicita la nueva a tu profesor(a).',
@@ -827,6 +858,7 @@ const MSG = {
   auth: 'Tu sesión de administrador expiró. Vuelve a entrar.',
   enCurso: 'Ya hay un examen en curso con ese número de cuenta. Para continuarlo escribe tu nombre completo exactamente como lo registraste al inicio.',
   cierre: 'El plazo para presentar este examen ya terminó. Consulta a tu profesor(a).',
+  ocupado: 'El servidor está atendiendo a muchos alumnos a la vez. Espera unos segundos y vuelve a pulsar el botón.',
   sesion: 'Este examen se continuó en otro dispositivo, por eso esta sesión se cerró.'
 };
 const DEV = (() => { let d = LS.get('eq_dev'); if (!d) { d = [...randBytes()].map(x => x.toString(36)).join(''); LS.set('eq_dev', d); } return d; })();   // identifica este equipo para el límite de intentos
@@ -853,12 +885,27 @@ const clearState = () => { if (S) LS.del(skey(S.parcial, S.cuenta)); S = null; L
 /* Deja de usar esta sesión en pantalla pero conserva su avance guardado (se retoma al escribir de nuevo ese número de cuenta) */
 function detachState() { examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId); clearInterval(pollId); S = null; LS.del(LAST); LS.del(KEY); }
 
-function show(id) { ['clave', 'datos', 'resume', 'examen', 'fin', 'admin'].forEach(n => $('#scr-' + n).classList.toggle('d-none', n !== id)); window.scrollTo(0, 0); }
+function show(id) { ['movil', 'clave', 'datos', 'resume', 'examen', 'fin', 'admin'].forEach(n => $('#scr-' + n).classList.toggle('d-none', n !== id)); window.scrollTo(0, 0); }
 function toast(msg, ic = 'bi-exclamation-triangle-fill', ms = 2600) {
   const t = document.createElement('div'); t.className = 'toast-i'; t.innerHTML = `<i class="bi ${ic}" style="color:#fbbf24"></i><span>${msg}</span>`;
   $('#toasts').appendChild(t); setTimeout(() => t.remove(), ms);
 }
 let alertModal = null;
+/* ===== Solo computadora: celulares y tabletas no pueden presentar el examen =====
+   No se decide solo por el ancho (una ventana de PC puede ser angosta y un celular puede pedir «sitio de escritorio»):
+   se combina el tipo de dispositivo que informa el navegador, si es solo táctil (sin mouse ni trackpad) y el tamaño de su pantalla. */
+function esMovil() {
+  try {
+    const ua = navigator.userAgent || '', uad = navigator.userAgentData, mm = q => !!(window.matchMedia && matchMedia(q).matches);
+    if (uad && uad.mobile) return true;
+    if (/Android|iPhone|iPod|iPad|Mobile|Silk|Kindle|BlackBerry|Opera Mini|IEMobile|webOS/i.test(ua)) return true;
+    if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;                       // iPad que se presenta como Mac
+    if (mm('(pointer: coarse)') && !mm('(any-pointer: fine)') && Math.min(screen.width, screen.height) < 1100) return true;   // solo táctil
+  } catch (e) { }
+  return false;
+}
+const MOVIL = esMovil();
+const bloqueaMovil = () => { if (!MOVIL) return false; show('movil'); return true; };
 function showAlert(title, html, ic = 'bi-exclamation-octagon-fill', col = '#dc2626') {
   $('#alert-title').innerHTML = `<i class="bi ${ic} me-2" style="color:${col}"></i>${title}`; $('#alert-body').innerHTML = html;
   alertModal = alertModal || new bootstrap.Modal($('#alertModal')); alertModal.show();
@@ -885,6 +932,7 @@ $('#form-clave').addEventListener('submit', async e => {
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Entrar';
   if (r.code === 'bloqueado') { lockLogin(r.espera || 300); return; }
   if (r.ok && r.role === 'admin') { ADMIN = r.token; SS.set('eq_est_sess', JSON.stringify({ role: 'admin', token: r.token })); openAdmin(); return; }
+  if (r.ok && r.role === 'alumno' && bloqueaMovil()) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill me-1"></i>Entrar'; return; }
   if (r.ok && r.role === 'alumno') { CLK = !!r.reloj; PREGN = r.preguntas; PREGC = r.cierre || ''; SS.set('eq_est_sess', JSON.stringify({ role: 'alumno', parcial: r.parcial, n: r.preguntas, cierre: r.cierre || '' })); afterLogin(r.parcial, true); return; }
   err.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i>${MSG[r.code] || r.msg || 'No se pudo entrar.'}${r.code === 'incorrecta' && r.restan !== undefined ? ` <b>Te ${r.restan === 1 ? 'queda 1 intento' : 'quedan ' + r.restan + ' intentos'}.</b>` : ''}`; err.hidden = false;
   const c = $('#clave-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); $('#clave').select();
@@ -929,11 +977,11 @@ function openDatos(parcial) {
   show('datos'); setTimeout(() => $('#d-nombre').focus(), 100);
 }
 $('#d-cuenta').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 9); });
-$('#d-grupo').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/\s/g, ''); });
+$('#d-grupo').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); });   // solo números
 $('#form-datos').addEventListener('submit', async e => {
   e.preventDefault();
   const nombre = $('#d-nombre').value.trim().replace(/\s+/g, ' '), cuenta = $('#d-cuenta').value.trim(), grupo = $('#d-grupo').value.trim(), err = $('#d-err');
-  const okN = nombre.split(' ').length >= 2 && nombre.length >= 5, okC = /^\d{9}$/.test(cuenta), okG = grupo.length >= 1;
+  const okN = nombre.split(' ').length >= 2 && nombre.length >= 5, okC = /^\d{9}$/.test(cuenta), okG = /^\d{3,4}$/.test(grupo);
   $('#d-nombre').classList.toggle('is-invalid', !okN); $('#d-cuenta').classList.toggle('is-invalid', !okC); $('#d-grupo').classList.toggle('is-invalid', !okG);
   err.hidden = true;
   if (!(okN && okC && okG)) return;
@@ -990,16 +1038,29 @@ function startExam(resume) {
   refreshMarks(); updateProgress(); applyClock(); show('examen'); examActive = true;
   clearInterval(timerId); tick(); timerId = setInterval(tick, 500);
   if (resume) toast('Examen reanudado: tu reloj siguió corriendo.', 'bi-arrow-repeat', 3200);
-  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); syncId = setInterval(() => syncProgress(false), 45000); clearInterval(pollId); pollId = setInterval(pollCierre, 15000); if (resume) syncProgress(true);
+  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); startSync(); clearInterval(pollId); pollId = setInterval(pollCierre, CFG.POLL_S * 1000 + Math.round(Math.random() * 5000)); if (resume) syncProgress(true);
 }
 /* Avance guardado en la hoja (ligado al número de cuenta): permite continuar aunque cierren o cambien de equipo */
-let syncId = null, pollId = null, lastSig = '', syncBusy = false;
+let syncId = null, pollId = null, lastSig = '', syncBusy = false, lastSync = 0;
+/* Envío del avance cada CFG.SYNC_MIN minutos. El primer envío cae en un momento al azar para que no lleguen todos los alumnos juntos.
+   En el equipo (localStorage) se guarda al instante cada respuesta; esto solo es la copia en la hoja. */
+function syncPer() {                              // intervalo propio de este equipo (se guarda para que no cambie al recargar)
+  const [a, b] = CFG.SYNC_MIN; let m = parseFloat(LS.get('eq_syncmin'));
+  if (!(m >= a && m <= b)) { m = +(a + Math.random() * (b - a)).toFixed(2); LS.set('eq_syncmin', String(m)); }
+  return Math.round(m * 60000);
+}
+function startSync() {
+  clearTimeout(syncId); clearInterval(syncId);
+  const per = syncPer(), loop = () => { syncProgress(false); syncId = setTimeout(loop, per + Math.round((Math.random() - 0.5) * 20000)); };
+  syncId = setTimeout(loop, Math.round(per * (0.25 + 0.75 * Math.random())));
+}
+const syncSoon = () => { if (Date.now() - lastSync > 60000) syncProgress(false); };   // al salir de la ventana: como máximo un envío por minuto
 function progOk(r) {
   if (r.reloj !== undefined) { CLK = !!r.reloj; applyClock(); }
   if (r.cierre !== undefined && S && !S.fin) { const c = r.cierre ? Date.parse(r.cierre) : 0; if (c !== (S.cierre || 0)) { S.cierre = c; save(); } }
   if (r.cerrar && S && !S.fin) { toast('Tu profesor(a) cerró tu examen: tus respuestas se enviaron.', 'bi-lock-fill', 5000); finish('admin'); }
 }
-/* Con más de SALIDAS_CIERRE salidas se pregunta cada 15 s si el administrador cerró el examen (el resto solo sincroniza cuando hay cambios) */
+/* Con más de SALIDAS_CIERRE salidas se pregunta cada 30 s si el administrador cerró el examen (el resto solo sincroniza cuando hay cambios) */
 async function pollCierre() {
   if (!S || S.fin || !CFG.ENDPOINT || syncBusy || S.salidas <= CFG.SALIDAS_CIERRE) return;
   syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, salidas: S.salidas, ping: true }); syncBusy = false;
@@ -1010,7 +1071,7 @@ async function syncProgress(force) {
   const prog = JSON.stringify({ a: S.answers, f: S.flags }), sig = prog + '|' + S.salidas;
   if (!force && sig === lastSig) return;
   syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, progreso: prog, salidas: S.salidas }); syncBusy = false;
-  if (r.ok) { lastSig = sig; progOk(r); return; }
+  if (r.ok) { lastSig = sig; lastSync = Date.now(); progOk(r); return; }
   if (r.code === 'sesion' || r.code === 'duplicado') kickOut(r.code);
 }
 function kickOut(code) {                          // otra sesión tomó este examen (o ya se entregó): esta pantalla se cierra
@@ -1114,47 +1175,118 @@ function setStatus() {
     ok: ['#dcfce7', '#166534', 'bi-cloud-check-fill', 'Resultado guardado en la hoja de tu profesor(a).'],
     pend: ['#fef3c7', '#92400e', 'bi-cloud-arrow-up-fill', 'Guardando resultado…'],
     err: ['#fee2e2', '#991b1b', 'bi-cloud-slash-fill', 'No se pudo guardar. Revisa tu conexión y pulsa «Reintentar envío».'],
+    retry: ['#fee2e2', '#991b1b', 'bi-arrow-repeat', 'Enviando tu examen… se reintenta solo.'],
     dup: ['#fee2e2', '#991b1b', 'bi-slash-circle-fill', 'No se guardó: este examen ya fue respondido anteriormente.']
   }[st];
-  $('#fin-status').innerHTML = `<span class="status-pill" style="background:${map[0]};color:${map[1]}"><i class="bi ${map[2]}"></i>${map[3]}</span>`;
-  $('#btn-reenviar').classList.toggle('d-none', st !== 'err'); $('#btn-terminar').classList.toggle('d-none', st === 'pend' || st === 'err');
+  $('#fin-status').innerHTML = (st === 'retry' ? `<div class="send-alert" role="alert"><i class="bi bi-exclamation-octagon-fill"></i><div><b>No cierres esta página ni apagues el equipo. Espera…</b><br>Tu examen aún no llega a la hoja de tu profesor(a). Lo estamos enviando de nuevo automáticamente (intento ${SEND.n + 1}). Tus respuestas y tu calificación ya están guardadas en este equipo.</div></div>` : '')
+    + `<span class="status-pill" style="background:${map[0]};color:${map[1]}"><i class="bi ${map[2]}"></i>${map[3]}</span>`
+    + (st === 'ok' && SEND.hadRetry ? '<div class="small fw-bold mt-2" style="color:#166534"><i class="bi bi-check2-all me-1"></i>¡Listo! Ya puedes continuar o cerrar esta página.</div>' : '');
+  $('#btn-reenviar').classList.toggle('d-none', st !== 'err' && st !== 'retry'); $('#btn-terminar').classList.toggle('d-none', st === 'pend' || st === 'err' || st === 'retry');
 }
+/* Entrega final: UNA petición con todo el examen. Si no llega, se reintenta sola (3, 5, 8, 12 y luego cada 15 s) hasta lograrlo,
+   mostrando en rojo «No cierres esta página…». Solo al guardarse se permite continuar. */
+const SEND = { t: null, n: 0, hadRetry: false, busy: false };
 async function sendResult(st) {
-  if (!st || !st.result || st.sent || st.status === 'dup') return;
-  st.status = 'pend'; if (st === S) setStatus();
-  const r = await api('submit', st.result);
-  if (r.ok) { st.sent = true; st.status = 'ok'; }
+  if (!st || !st.result || st.sent || st.status === 'dup' || SEND.busy) return;
+  clearTimeout(SEND.t); SEND.busy = true;
+  if (st.status !== 'retry') st.status = 'pend'; if (st === S) setStatus();
+  const r = await api('submit', st.result); SEND.busy = false;
+  if (r.ok) { st.sent = true; st.status = 'ok'; SEND.n = 0; }
   else if (r.code === 'duplicado') { st.status = 'dup'; if (st === S) { showAlert('Examen ya respondido', 'Este examen <b>ya fue respondido anteriormente</b> con ese número de cuenta, por eso <b>no se guardó</b> este intento.'); } }
   else if (r.code === 'sesion') { st.status = 'dup'; if (st === S) showAlert('Sesión cerrada', 'Este examen se continuó en otro dispositivo con tu número de cuenta, por eso este envío no se guardó.'); }
-  else st.status = 'err';
+  else { st.status = 'retry'; SEND.hadRetry = true; const w = [3000, 5000, 8000, 12000][SEND.n] || 15000; SEND.n++; SEND.t = setTimeout(() => sendResult(st), w + Math.random() * 1500); }
   if (st === S) { save(); renderFin(); }
 }
-$('#btn-reenviar').onclick = () => sendResult(S);
+$('#btn-reenviar').onclick = () => { clearTimeout(SEND.t); sendResult(S); };
 $('#btn-terminar').onclick = () => { clearState(); SS.del('eq_est_sess'); location.reload(); };
 
 /* ==========================================================================
    PANEL DEL ADMINISTRADOR
    ========================================================================== */
 const AD = { tab: 'resumen', par: '0', rows: [], cfg: null, q: '', pvP: 1, pvT: 'A', pvSeed: 20250101 };
-const ADTABS = [['resumen', 'bi-bar-chart-line-fill', 'Resumen'], ['res', 'bi-table', 'Resultados'], ['clv', 'bi-key-fill', 'Contraseñas'], ['prev', 'bi-eye-fill', 'Vista previa']];
+const ADTABS = [['resumen', 'bi-bar-chart-line-fill', 'Resumen'], ['met', 'bi-clipboard-data-fill', 'Métricas'], ['res', 'bi-table', 'Resultados'], ['clv', 'bi-key-fill', 'Contraseñas'], ['prev', 'bi-eye-fill', 'Vista previa']];
 async function openAdmin() { show('admin'); await loadAdmin(); }
+/* El panel se actualiza como máximo cada 3 min (también con F5): mientras, se muestran los últimos datos guardados en este equipo. */
+const AD_WAIT = 180000, ADK = 'eq_adm_' + (CFG.MATERIA || 'cib');
+const adCache = { get() { try { return JSON.parse(LS.get(ADK) || 'null'); } catch (e) { return null; } }, set(o) { LS.set(ADK, JSON.stringify(o)); } };
+const mmss = ms => { const x = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(x / 60) + ':' + String(x % 60).padStart(2, '0'); };
+let adTimer = null;
+function adStamp() {
+  const b = $('#ad-refresh'); if (!b) return; clearInterval(adTimer);
+  const tick = () => { const c = adCache.get(), left = c ? AD_WAIT - (Date.now() - c.t) : 0;
+    if (left > 0) { b.innerHTML = `<i class="bi bi-hourglass-split me-1"></i>Actualizar en ${mmss(left)}`; b.title = 'Para no saturar el servidor, el panel se actualiza como máximo cada 3 minutos'; }
+    else { b.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Actualizar'; b.title = ''; clearInterval(adTimer); } };
+  tick(); adTimer = setInterval(tick, 1000);
+}
 async function adApi(action, data = {}) { const r = await api(action, { token: ADMIN, ...data }); if (!r.ok && r.code === 'auth') { showAlert('Sesión expirada', MSG.auth, 'bi-clock-history', '#d97706'); adminLogout(); } return r; }
-async function loadAdmin() {
+async function loadAdmin(force) {
+  const c = adCache.get(), age = c ? Date.now() - c.t : Infinity;
+  if (force !== true && c && c.d && c.c && age < AD_WAIT) {
+    AD.rows = c.d.rows || []; AD.cfg = c.c.cfg; renderAdmin(); adStamp();
+    toast(`Espera: los datos se cargaron recientemente (hace ${mmss(age)}). Podrás actualizar en ${mmss(AD_WAIT - age)}.`, 'bi-hourglass-split', 4200);
+    return;
+  }
   $('#ad-body').innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary"></div><div class="mt-2 text-muted">Cargando datos de la hoja…</div></div>';
-  const [d, c] = await Promise.all([adApi('admin_data'), adApi('admin_cfg')]);
-  if (!d.ok || !c.ok) { $('#ad-body').innerHTML = `<div class="alert alert-danger">${MSG[d.code || c.code] || d.msg || c.msg || 'No se pudieron cargar los datos.'}</div>`; renderTabs(); return; }
-  AD.rows = d.rows || []; AD.cfg = c.cfg; renderAdmin();
+  const [d, cf] = await Promise.all([adApi('admin_data'), adApi('admin_cfg')]);
+  if (!d.ok || !cf.ok) {
+    if (c && c.d && c.c) { AD.rows = c.d.rows || []; AD.cfg = c.c.cfg; renderAdmin(); toast('No se pudieron traer datos nuevos; se muestran los últimos guardados.', 'bi-cloud-slash-fill', 4200); return; }
+    $('#ad-body').innerHTML = `<div class="alert alert-danger">${MSG[d.code || cf.code] || d.msg || cf.msg || 'No se pudieron cargar los datos.'}</div>`; renderTabs(); return;
+  }
+  adCache.set({ t: Date.now(), d, c: cf }); AD.rows = d.rows || []; AD.cfg = cf.cfg; renderAdmin(); adStamp();
 }
 function adminLogout() { ADMIN = null; SS.del('eq_est_sess'); location.reload(); }
-$('#ad-salir').onclick = adminLogout; $('#ad-refresh').onclick = loadAdmin;
+$('#ad-salir').onclick = adminLogout; $('#ad-refresh').onclick = () => loadAdmin(false);
 function renderTabs() { $('#ad-tabs').innerHTML = ADTABS.map(([k, ic, n]) => `<li class="nav-item"><button class="nav-link ${AD.tab === k ? 'active' : ''}" data-adtab="${k}"><i class="bi ${ic} me-1"></i>${n}</button></li>`).join(''); }
-function renderAdmin() { renderTabs(); ({ resumen: adResumen, res: adResultados, clv: adClaves, prev: adPrev })[AD.tab](); }
+function renderAdmin() { renderTabs(); ({ resumen: adResumen, met: adMetricas, res: adResultados, clv: adClaves, prev: adPrev })[AD.tab](); }
 document.addEventListener('click', e => { const t = e.target.closest('[data-adtab]'); if (t) { AD.tab = t.dataset.adtab; renderAdmin(); } });
 const parBtns = () => `<div class="d-flex flex-wrap gap-2 mb-3">${[['0', 'Todos'], ['1', 'Parcial 1'], ['2', 'Parcial 2']].map(([k, n]) => `<button class="btn-chip ${AD.par === k ? 'on' : ''}" data-adpar="${k}">${n}</button>`).join('')}</div>`;
 document.addEventListener('click', e => { const t = e.target.closest('[data-adpar]'); if (t) { AD.par = t.dataset.adpar; renderAdmin(); } });
 const rowsSel = () => AD.rows.filter(r => AD.par === '0' || String(r.parcial) === AD.par);
 const avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
 
+/* ===== Métricas: qué falló (por bloque o unidad, teoría vs. aplicación, nivel de Bloom, tipo de pregunta y preguntas más falladas) =====
+   Se reconstruye el examen de cada alumno con su tipo y su semilla, y se cruza con su detalle de aciertos (1 = bien, 0 = mal o sin responder). */
+const plainQ = h => String(h).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const TEORIA = ['Recordar', 'Comprender'];
+document.addEventListener('click', e => { const t = e.target.closest('[data-adgrp]'); if (t) { AD.grp = t.dataset.adgrp; renderAdmin(); } });
+function adMetricas() {
+  const base = rowsSel().filter(r => r.estado === 'Entregado'), grupos = [...new Set(base.map(r => String(r.grupo || '')))].sort();
+  if (AD.grp && !grupos.includes(AD.grp)) AD.grp = '';
+  const grpBtns = grupos.length > 1 ? `<div class="d-flex flex-wrap gap-2 mb-3"><span class="small fw-bold text-muted align-self-center me-1">Grupo:</span>${[['', 'Todos'], ...grupos.map(g => [g, g || '(sin grupo)'])].map(([k, n]) => `<button class="btn-chip ${(AD.grp || '') === k ? 'on' : ''}" data-adgrp="${esc(k)}">${esc(n)}</button>`).join('')}</div>` : '';
+  const sel = base.filter(r => !AD.grp || String(r.grupo || '') === AD.grp);
+  const conDet = sel.filter(r => r.det);
+  if (!sel.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + '<div class="alert alert-info">Aún no hay exámenes entregados para calcular métricas.</div>'; return; }
+  if (!conDet.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + '<div class="alert alert-warning">Para ver las métricas actualiza el script de Apps Script (nueva versión de la implementación): el panel necesita el detalle de aciertos de cada alumno.</div>'; return; }
+  const acc = (o, k, extra) => (o[k] = o[k] || Object.assign({ n: 0, ok: 0 }, extra));
+  const SEC = {}, NIV = {}, TIP = {}, TA = {}, PQ = {}; let nAl = 0, nQ = 0, nOk = 0;
+  conDet.forEach(r => {
+    let ex; try { ex = buildExam(+r.parcial, r.tipo, +r.seed, +r.total); } catch (e) { return; }
+    const det = String(r.det), secs = EXAMS[r.parcial].secs; nAl++;
+    ex.forEach((q, i) => {
+      if (q.bonus || det[i] === undefined) return; const ok = det[i] === '1' ? 1 : 0, s = secs.find(x => x.id === q.sec) || { t: q.sec, c: '#64748b' };
+      const lv = q.bl || 'Sin nivel', ta = TEORIA.includes(lv) ? 'teo' : 'apl', kd = q.kind === 'mc' ? 'Opción múltiple' : 'Respuesta abierta';
+      [acc(SEC, r.parcial + '|' + q.sec, { t: s.t, c: s.c, p: +r.parcial }), acc(NIV, lv, { t: lv }), acc(TIP, kd, { t: kd }), acc(TA, ta, { t: ta }),
+       acc(PQ, q.sec + '|' + plainQ(q.html).replace(/-?\d+(?:[.,]\d+)?/g, '#').slice(0, 140), { t: plainQ(q.html), s: s.t, c: s.c, p: +r.parcial })].forEach(o => { o.n++; o.ok += ok; });
+      nQ++; nOk += ok;
+    });
+  });
+  const pct = o => o.n ? o.ok / o.n * 100 : 0, colOf = p => p >= 80 ? '#16a34a' : p >= 60 ? '#d97706' : '#dc2626';
+  const bar = p => `<div class="mbar"><i style="width:${p.toFixed(1)}%;background:${colOf(p)}"></i></div>`;
+  const secArr = Object.values(SEC).sort((a, b) => pct(a) - pct(b)), weak = secArr.filter(x => x.n >= 3).slice(0, 2).map(x => x.t);
+  const secRows = Object.values(SEC).sort((a, b) => a.p - b.p || 0).map(x => `<tr><td><span class="mdot" style="background:${x.c}"></span>${AD.par === '0' ? `<span class="badge text-bg-light me-1">P${x.p}</span>` : ''}${esc(x.t)}${weak.includes(x.t) ? ' <span class="badge text-bg-danger ms-1">Reforzar</span>' : ''}</td><td class="text-center">${x.n}</td><td style="min-width:160px">${bar(pct(x))}</td><td class="text-end fw-bold" style="color:${colOf(pct(x))}">${pct(x).toFixed(1)} %</td></tr>`).join('');
+  const BL = ['Recordar', 'Comprender', 'Aplicar', 'Analizar', 'Evaluar', 'Crear'], nivRows = Object.values(NIV).sort((a, b) => (BL.indexOf(a.t) + 9) % 15 - (BL.indexOf(b.t) + 9) % 15).map(x => `<tr><td>${esc(x.t)} <span class="small text-muted">${TEORIA.includes(x.t) ? '· teoría' : '· aplicación'}</span></td><td class="text-center">${x.n}</td><td style="min-width:120px">${bar(pct(x))}</td><td class="text-end fw-bold" style="color:${colOf(pct(x))}">${pct(x).toFixed(1)} %</td></tr>`).join('');
+  const tipRows = Object.values(TIP).map(x => `<tr><td>${esc(x.t)}</td><td class="text-center">${x.n}</td><td style="min-width:120px">${bar(pct(x))}</td><td class="text-end fw-bold" style="color:${colOf(pct(x))}">${pct(x).toFixed(1)} %</td></tr>`).join('');
+  const taCard = (k, ic, n, d) => { const x = TA[k] || { n: 0, ok: 0 }, p = pct(x); return `<div class="col-md-6"><div class="nav-card h-100"><div class="d-flex align-items-center gap-2 mb-1"><i class="bi ${ic} fs-4" style="color:${colOf(p)}"></i><b>${n}</b><span class="ms-auto fs-4 fw-bold" style="color:${colOf(p)}">${x.n ? p.toFixed(1) + ' %' : '—'}</span></div>${bar(p)}<div class="small text-muted mt-1">${d} · ${x.n} respuestas</div></div></div>`; };
+  const worst = Object.values(PQ).filter(x => x.n >= 3).sort((a, b) => pct(a) - pct(b)).slice(0, 8).map(x => `<div class="mal-item" style="--c:${x.c}"><span class="mal-n" style="background:${colOf(pct(x))};width:auto;min-width:46px;padding:0 6px;border-radius:999px;font-size:.78rem">${(100 - pct(x)).toFixed(0)}%</span><div><div class="small fw-bold" style="color:${x.c}">${AD.par === '0' ? 'P' + x.p + ' · ' : ''}${esc(x.s)}</div><div class="small">${esc(x.t.length > 150 ? x.t.slice(0, 147) + '…' : x.t)}</div><div class="small text-muted">${x.n - x.ok} de ${x.n} la fallaron</div></div></div>`).join('') || '<div class="small text-muted">Aún no hay suficientes respuestas (mínimo 3 por pregunta).</div>';
+  const card = (ic, c, v, k) => `<div class="col-6 col-lg-3"><div class="stat" style="--c:${c}"><i class="bi ${ic}"></i><div><b>${v}</b><span>${k}</span></div></div></div>`;
+  $('#ad-body').innerHTML = parBtns() + grpBtns + `<div class="row g-3 mb-3">${card('bi-people-fill', '#2563eb', nAl, 'Alumnos analizados')}${card('bi-ui-checks', '#7c3aed', nQ, 'Respuestas calificadas')}${card('bi-bullseye', colOf(nQ ? nOk / nQ * 100 : 0), (nQ ? (nOk / nQ * 100).toFixed(1) : '0') + ' %', 'Acierto general')}${card('bi-exclamation-triangle-fill', '#dc2626', weak.length ? esc(weak[0].length > 22 ? weak[0].slice(0, 21) + '…' : weak[0]) : '—', 'Bloque más bajo')}</div>
+  <div class="row g-3 mb-3">${taCard('teo', 'bi-book-half', 'Teoría', 'Preguntas de recordar y comprender (conceptos, definiciones)')}${taCard('apl', 'bi-calculator-fill', 'Aplicación', 'Preguntas de aplicar, analizar, evaluar y crear (cálculo y problemas)')}</div>
+  <div class="nav-card mb-3"><b class="d-block mb-2"><i class="bi bi-diagram-3-fill me-1 text-primary"></i>Por bloque o unidad <span class="small text-muted fw-normal">(ordenado como en el examen · «Reforzar» = los 2 más bajos)</span></b><div class="table-responsive"><table class="table table-sm align-middle mb-0"><thead><tr><th>Bloque</th><th class="text-center">Respuestas</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${secRows}</tbody></table></div></div>
+  <div class="row g-3 mb-3"><div class="col-lg-7"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-bar-chart-steps me-1 text-primary"></i>Por nivel cognitivo (Bloom)</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Nivel</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${nivRows}</tbody></table></div></div>
+  <div class="col-lg-5"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-input-cursor-text me-1 text-primary"></i>Por tipo de pregunta</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Tipo</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${tipRows}</tbody></table></div></div></div>
+  <div class="nav-card"><b class="d-block mb-2"><i class="bi bi-x-octagon-fill me-1 text-danger"></i>Preguntas más falladas <span class="small text-muted fw-normal">(% de error · las que solo cambian de números se agrupan)</span></b>${worst}</div>
+  <div class="small text-muted mt-2">Las preguntas sin responder cuentan como error. No incluye la pregunta bonus.</div>`;
+}
 function adResumen() {
   const all = rowsSel(), ent = all.filter(r => r.estado === 'Entregado'), cur = all.filter(r => r.estado !== 'Entregado');
   const notas = ent.map(r => +r.nota), prom = avg(notas), apr = notas.filter(n => n >= 6).length;
@@ -1172,7 +1304,7 @@ const tiempoOf = r => { const x = segOf(r); return Number.isFinite(x) ? fmtT(x *
 function adResultados() {
   const q = AD.q.toLowerCase(), rows = rowsSel().filter(r => !q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)).sort((a, b) => String(b.inicio).localeCompare(String(a.inicio)));
   $('#ad-body').innerHTML = parBtns() + `<div class="nav-card"><div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><div class="input-group" style="max-width:340px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-q" class="form-control" placeholder="Buscar nombre, cuenta o grupo" value="${esc(AD.q)}" autocomplete="off"></div><span class="text-muted small">${rows.length} registro(s)</span><button class="btn btn-outline-success btn-sm ms-auto fw-bold rounded-pill" id="ad-csv"><i class="bi bi-filetype-csv me-1"></i>Descargar CSV</button></div>
-  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th title="Tiempo que tardó en contestar (horas:minutos:segundos)">Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono text-nowrap">${r.estado === 'Entregado' ? (tiempoOf(r) || '—') : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 15 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th title="Tiempo que tardó en contestar (horas:minutos:segundos)">Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono text-nowrap">${r.estado === 'Entregado' ? (tiempoOf(r) || '—') : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 30 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
   $('#ad-q').addEventListener('input', e => { AD.q = e.target.value; const p = e.target.selectionStart; adResultados(); const n = $('#ad-q'); n.focus(); n.setSelectionRange(p, p); });
   $('#ad-csv').onclick = () => {
     const H = ['Parcial', 'Nombre', 'Cuenta', 'Grupo', 'Tipo', 'Estado', 'Aciertos', 'Total', 'Calificación', 'Tiempo (hh:mm:ss)', 'Segundos', 'Salidas', 'Inicio', 'Entrega'], q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
@@ -1185,7 +1317,7 @@ document.addEventListener('click', async e => {
   const [parcial, cuenta] = b.dataset.liberar.split('|');
   if (!confirm(`¿Borrar el registro de la cuenta ${cuenta} (Parcial ${parcial})? El alumno podrá presentar el examen de nuevo.`)) return;
   const r = await adApi('admin_liberar', { parcial: +parcial, cuenta });
-  if (r.ok) { toast('Registro liberado.', 'bi-check-circle-fill'); loadAdmin(); } else showAlert('No se pudo liberar', r.msg || 'Inténtalo otra vez.');
+  if (r.ok) { toast('Registro liberado.', 'bi-check-circle-fill'); loadAdmin(true); } else showAlert('No se pudo liberar', r.msg || 'Inténtalo otra vez.');
 });
 const toLocalInput = iso => { if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return ''; const z = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`; };
 function cfgExamenCard(p) {
@@ -1228,11 +1360,11 @@ document.addEventListener('click', async e => {
     const [parcial, cuenta] = ce.dataset.cerrar.split('|'), row = AD.rows.find(x => String(x.parcial) === parcial && String(x.cuenta) === cuenta);
     if (!confirm(`¿Cerrar el examen de ${row ? row.nombre : cuenta} (cuenta ${cuenta})? Se entregará y calificará con lo que lleva respondido.`)) return;
     const r = await adApi('admin_cerrar', { parcial: +parcial, cuenta });
-    if (r.ok) { toast('Cierre enviado. El examen se entregará en cuanto el alumno sincronice.', 'bi-lock-fill', 4500); loadAdmin(); }
+    if (r.ok) { toast('Cierre enviado. El examen se entregará en cuanto el alumno sincronice.', 'bi-lock-fill', 4500); loadAdmin(true); }
     else toast(r.code === 'accion' ? 'Actualiza el script de Apps Script (nueva versión de la implementación) para usar esta opción.' : (r.msg || MSG[r.code] || 'No se pudo cerrar.'), 'bi-exclamation-triangle-fill', 4500);
   }
-  const rl = e.target.closest('[data-reloj]'); if (rl) { const r = await adApi('admin_reloj', { valor: rl.dataset.reloj }); if (r.ok) { toast(rl.dataset.reloj === 'SI' ? 'Cronómetro visible para los alumnos.' : 'Cronómetro oculto.', 'bi-check-circle-fill'); loadAdmin(); } else toast(r.code === 'accion' ? 'Actualiza el script de Apps Script (nueva versión de la implementación) para usar esta opción.' : (MSG[r.code] || r.msg || 'No se pudo cambiar.'), 'bi-exclamation-triangle-fill', 4500); }
-  const ab = e.target.closest('[data-abierto]'); if (ab) { const [p, v] = ab.dataset.abierto.split('|'); const r = await adApi('admin_abierto', { parcial: +p, abierto: v }); if (r.ok) { toast(v === 'SI' ? 'Acceso abierto.' : 'Acceso cerrado.', 'bi-check-circle-fill'); loadAdmin(); } }
+  const rl = e.target.closest('[data-reloj]'); if (rl) { const r = await adApi('admin_reloj', { valor: rl.dataset.reloj }); if (r.ok) { toast(rl.dataset.reloj === 'SI' ? 'Cronómetro visible para los alumnos.' : 'Cronómetro oculto.', 'bi-check-circle-fill'); loadAdmin(true); } else toast(r.code === 'accion' ? 'Actualiza el script de Apps Script (nueva versión de la implementación) para usar esta opción.' : (MSG[r.code] || r.msg || 'No se pudo cambiar.'), 'bi-exclamation-triangle-fill', 4500); }
+  const ab = e.target.closest('[data-abierto]'); if (ab) { const [p, v] = ab.dataset.abierto.split('|'); const r = await adApi('admin_abierto', { parcial: +p, abierto: v }); if (r.ok) { toast(v === 'SI' ? 'Acceso abierto.' : 'Acceso cerrado.', 'bi-check-circle-fill'); loadAdmin(true); } }
 });
 async function saveClave(p) {
   const inp = $('#new-' + p), st = $('#st-' + p), btn = $('#sv-' + p), v = inp.value.trim();
@@ -1268,17 +1400,19 @@ document.addEventListener('keyup', e => { if (lockUI() && e.key === 'PrintScreen
 window.addEventListener('beforeprint', () => { document.body.style.display = 'none'; }); window.addEventListener('afterprint', () => { document.body.style.display = ''; });
 
 /* ===== Registro de salidas de la pestaña ===== */
-function leave() { if (!examActive || away) return; away = true; S.salidas++; save(); syncProgress(false); }
+function leave() { if (!examActive || away) return; away = true; S.salidas++; save(); syncSoon(); }
 function back() { if (!away) return; away = false; if (examActive) toast(`Saliste de la ventana del examen (${S.salidas} ${S.salidas === 1 ? 'vez' : 'veces'}). Queda registrado.`, 'bi-eye-fill', 4000); }
 document.addEventListener('visibilitychange', () => document.hidden ? leave() : back());
 window.addEventListener('blur', leave); window.addEventListener('focus', back);
-window.addEventListener('beforeunload', e => { if (examActive) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('beforeunload', e => { if (examActive || (S && S.result && !S.sent && S.status !== 'dup')) { e.preventDefault(); e.returnValue = ''; } });   // también mientras el envío final no se guarde
 
 /* ===== Arranque ===== */
+$('#btn-prof-movil').onclick = () => show('clave');
 (function init() {
   $('#d-dur').textContent = CFG.DURACION_MIN;
   let sess = null; try { sess = JSON.parse(SS.get('eq_est_sess') || 'null'); } catch (e) { }
   if (sess && sess.role === 'admin' && sess.token) { ADMIN = sess.token; openAdmin(); }
+  else if (MOVIL && !(S && S.fin)) { show('movil'); }                                        // celular o tableta: solo el profesor puede entrar
   else if (sess && sess.role === 'alumno') { PREGN = sess.n; PREGC = sess.cierre || ''; afterLogin(sess.parcial, false); }
   else if (S && !S.fin) { SS.set('eq_est_sess', JSON.stringify({ role: 'alumno', parcial: S.parcial })); startExam(true); }          // se cerró la ventana y se volvió a abrir: sigue la sesión de ese número de cuenta
   else if (S && S.fin && S.result && !S.sent && S.status !== 'dup') { SS.set('eq_est_sess', JSON.stringify({ role: 'alumno', parcial: S.parcial })); renderFin(); show('fin'); sendResult(S); }
