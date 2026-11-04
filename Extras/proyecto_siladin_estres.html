@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estrés académico y desempeño · Proyecto SILADIN</title>
+<meta name="description" content="Proyecto SILADIN CCH Oriente 2026-2027: estrés académico, funciones cognitivas y desempeño académico. Laboratorio estadístico y seguimiento del proyecto.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
+<style>
+:root{
+  --c1:#e03131; --c2:#1c7ed6; --c3:#2f9e44; --c4:#f08c00; --c5:#7048e8;
+  --p1:#fdeaea; --p2:#e7f1fb; --p3:#e6f6ea; --p4:#fff4e0; --p5:#efeafc;
+  --b1:#f5b8b8; --b2:#b9d5f1; --b3:#b4e1bf; --b4:#fbd49c; --b5:#d3c8f6;
+  --ink:#0f172a; --ink2:#1e293b; --text:#334155; --muted:#64748b; --line:#e2e8f0;
+  --shadow-sm:0 4px 10px rgba(15,23,42,.06);
+  --shadow-md:0 10px 25px rgba(15,23,42,.12);
+  --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+body{font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#1e293b;background:#f8fafc}
+.mono{font-family:'Courier New',monospace;font-weight:700}
+:focus-visible{outline:3px solid #e8590c!important;outline-offset:2px}
+/* navbar (fallback si no está aula-header.js) */
+.nav-fallback{background:linear-gradient(90deg,#0f172a,#1e293b);color:#fff;padding:.6rem 1rem;display:flex;align-items:center;gap:.6rem;position:sticky;top:0;z-index:1030;height:56px}
+.nav-fallback a{color:#fff;text-decoration:none;font-weight:700}
+.nav-fallback .tag{margin-left:auto;font-size:.8rem;color:#cbd5e1}
+/* hero */
+.hero-header{position:relative;overflow:hidden;background:linear-gradient(135deg,#0f172a,#1e293b 55%,#334155);color:#fff;border-bottom:5px solid #e8590c;box-shadow:var(--shadow-md);padding:2.6rem 0 2.2rem}
+.hero-header h1{font-weight:800;font-size:clamp(1.45rem,3.4vw,2.35rem);line-height:1.2}
+.hero-header p.lead{color:#cbd5e1;font-size:1.05rem;max-width:860px}
+.hero-chip{display:inline-flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:.3rem .8rem;font-size:.85rem;margin:.2rem .3rem .2rem 0}
+.floaty{position:absolute;font-size:5rem;opacity:.1;font-weight:800;animation:floaty 7s ease-in-out infinite;pointer-events:none;user-select:none}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+/* sec-nav */
+.sec-nav{position:sticky;top:56px;z-index:1020;background:#fff;border-bottom:1px solid var(--line);box-shadow:var(--shadow-sm)}
+.sec-nav .wrap{display:flex;gap:.35rem;overflow-x:auto;padding:.55rem 1rem;scrollbar-width:thin}
+.sec-nav a{white-space:nowrap;text-decoration:none;color:var(--ink2);font-weight:600;font-size:.9rem;padding:.35rem .8rem;border-radius:999px;border:1px solid var(--line);background:#fff}
+.sec-nav a:hover,.sec-nav a.active{background:#1e293b;color:#fff;border-color:#1e293b}
+/* sections */
+section.sec{padding:2.2rem 0 1rem}
+.sec-h{display:flex;align-items:center;gap:.8rem;margin-bottom:1.1rem}
+.sec-h .num{flex:0 0 44px;width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#e8590c,#f08c00);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.2rem;box-shadow:var(--shadow-sm)}
+.sec-h h2{margin:0;font-weight:800;font-size:clamp(1.2rem,2.6vw,1.6rem);color:var(--ink)}
+.panel{background:#fff;border-radius:16px;box-shadow:var(--shadow-sm);padding:1.25rem;border:1px solid var(--line);min-width:0}
+.intro-box{background:var(--p5);border:1px solid var(--b5);border-left:5px solid var(--c5);border-radius:14px;padding:1rem 1.1rem}
+.demo{background:var(--p4);border:1px solid var(--b4);border-left:6px solid var(--c4);border-radius:14px;padding:1rem 1.1rem}
+.tip{background:var(--p2);border:1px solid var(--b2);border-left:5px solid var(--c2);border-radius:14px;padding:.8rem 1rem}
+.okb{background:var(--p3);border:1px solid var(--b3);border-left:5px solid var(--c3);border-radius:14px;padding:.8rem 1rem}
+.warn{background:var(--p1);border:1px solid var(--b1);border-left:5px solid var(--c1);border-radius:14px;padding:.8rem 1rem}
+.note{background:var(--p4);border:1px solid var(--b4);border-left:5px solid var(--c4);border-radius:14px;padding:.8rem 1rem}
+.ex-card{background:#fff;border-radius:16px;border:1px solid var(--line);border-top:5px solid var(--gc,var(--c2));box-shadow:var(--shadow-sm);padding:1rem;height:100%;transition:transform .2s,box-shadow .2s}
+.ex-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.res-box{background:#1e293b;color:#fff;border-radius:14px;padding:1rem}
+.ans{background:var(--p1);border:1px solid var(--b1);border-left:5px solid var(--c1);color:var(--c1);font-weight:700;border-radius:10px;padding:.15rem .5rem;display:inline-block}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:.7rem .8rem;box-shadow:var(--shadow-sm);min-width:0}
+.kpi .k{font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.02em}
+.kpi .v{font-size:1.25rem;font-weight:800;color:var(--c1);font-family:'Courier New',monospace;word-break:break-all}
+.kpi .s{font-size:.75rem;color:var(--muted)}
+.nav-pills .nav-link{background:#fff;color:var(--ink2);box-shadow:var(--shadow-sm);margin:.2rem;border-radius:999px;font-weight:600}
+.nav-pills .nav-link.active{background:#1e293b;color:#fff}
+.tab-pane.active{animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+/* tables */
+.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem}
+.tbl th{background:#1e293b;color:#fff;font-weight:700;padding:.45rem .5rem;text-align:center;white-space:nowrap}
+.tbl td{padding:.35rem .5rem;border-bottom:1px solid var(--line);text-align:center}
+.tbl tbody tr:nth-child(even) td{background:#f8fafc}
+.tbl tr.sigma td{background:var(--p1)!important;color:var(--c1);font-weight:800}
+.tbl input,.tbl select{width:100%;min-width:64px;border:1px solid var(--line);border-radius:8px;padding:.2rem .35rem;font-size:.88rem;background:#fff}
+.tscroll{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+td.cx{color:var(--c2);font-weight:700} td.cy{color:var(--c4);font-weight:700}
+td.pos{color:var(--c3);font-weight:700} td.neg{color:var(--c1);font-weight:700}
+.wave td.w{animation:wave .6s both;animation-delay:calc(var(--ci)*300ms + var(--ri)*50ms)}
+@keyframes wave{0%{background:var(--mc,#fff4e0)}100%{}}
+/* steps */
+.step{border-radius:14px;border:1px solid var(--line);padding:.8rem 1rem;margin:.6rem 0;animation:stpIn .35s ease both}
+.step[data-k=f]{background:var(--p5);border-color:var(--b5)}
+.step[data-k=d]{background:var(--p2);border-color:var(--b2)}
+.step[data-k=c]{background:var(--p4);border-color:var(--b4)}
+.step[data-k=v]{background:var(--p3);border-color:var(--b3)}
+.step[data-k=r]{background:var(--p1);border-color:var(--b1)}
+.step .sn{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#1e293b;color:#fff;font-weight:800;margin-right:.45rem;font-size:.85rem}
+.step .st{font-weight:800}
+@keyframes stpIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* fx: notación vertical */
+.fx{display:inline-flex;align-items:center;gap:.25rem;flex-wrap:nowrap;font-family:'Cambria Math','Times New Roman',serif;font-size:1.12rem;white-space:nowrap}
+.fx-block{display:block;overflow-x:auto;padding:.4rem 0;text-align:center}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15rem}
+.fr>.nu{padding:0 .25rem;border-bottom:1.5px solid currentColor;line-height:1.35}
+.fr>.de{padding:0 .25rem;line-height:1.35}
+.sq{display:inline-flex;align-items:stretch}
+.sq>.rad{font-size:1.3em;line-height:1;margin-right:-1px}
+.sq>.ov{border-top:1.5px solid currentColor;padding:0 .2rem;display:inline-flex;align-items:center}
+.ob{text-decoration:overline}
+.sg{font-size:1.35em}
+.fx .r{color:var(--c1);font-weight:700}
+/* chips, progress */
+.chip{display:inline-flex;align-items:center;gap:.3rem;border-radius:999px;padding:.2rem .65rem;font-size:.8rem;font-weight:700;border:1px solid var(--line);background:#fff;cursor:pointer}
+.chip.on{background:#1e293b;color:#fff;border-color:#1e293b}
+.st-pend{background:var(--p1);color:#b02525;border-color:var(--b1)}
+.st-proc{background:var(--p4);color:#9a5b00;border-color:var(--b4)}
+.st-ok{background:var(--p3);color:#1f6f31;border-color:var(--b3)}
+.progress{height:14px;border-radius:999px}
+.svgbox{background:#fff;border:1px solid var(--line);border-radius:14px;padding:.5rem;min-width:0}
+.svgbox svg{width:100%;height:auto;display:block}
+.bar{animation:grow .7s ease both;transform-origin:bottom;transform-box:fill-box}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.dot{animation:figIn .4s ease both}
+@keyframes figIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+.rv{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+.rv.in{opacity:1;transform:none}
+.form-control,.form-select{border-radius:10px}
+.btn{border-radius:10px;font-weight:600}
+.btn-slate{background:#1e293b;color:#fff}.btn-slate:hover{background:#0f172a;color:#fff}
+.log-card{border-left:5px solid var(--c5);background:#fff;border-radius:12px;padding:.7rem .9rem;box-shadow:var(--shadow-sm);margin-bottom:.6rem}
+.modal-content{border-radius:16px}
+.fcard{border-top:5px solid var(--gc,var(--c5));border-radius:14px;background:#fff;box-shadow:var(--shadow-sm);padding:.9rem;height:100%;transition:box-shadow .2s}
+.fcard:hover{box-shadow:var(--shadow-md)}
+footer{color:var(--muted);font-size:.85rem}
+#refs p{overflow-wrap:anywhere}
+.min0{min-width:0}
+@media (max-width:576px){.panel{padding:1rem}.hero-header{padding:1.8rem 0 1.5rem}.floaty{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.rv{opacity:1;transform:none}}
+@media print{.sec-nav,.nav-fallback,#app-header,.no-print{display:none!important}.rv{opacity:1;transform:none}*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app-header"></div>
+
+<header class="hero-header">
+  <span class="floaty" style="left:4%;top:8%">σ</span>
+  <span class="floaty" style="right:8%;top:14%;animation-delay:1.5s">r</span>
+  <span class="floaty" style="left:45%;bottom:2%;animation-delay:3s">Σ</span>
+  <span class="floaty" style="right:30%;top:48%;animation-delay:2.2s">x̄</span>
+  <div class="container position-relative">
+    <div class="mb-2"><span class="hero-chip"><i class="bi bi-building"></i> SILADIN · CCH Oriente</span><span class="hero-chip"><i class="bi bi-diagram-3"></i> Proyecto colaborativo e interdisciplinario</span><span class="hero-chip"><i class="bi bi-calendar3"></i> Ciclo 2026-2027</span></div>
+    <h1><i class="bi bi-activity me-2" aria-hidden="true"></i>Análisis estadístico para el entendimiento de la relación entre el estrés académico, las funciones cognitivas y el desempeño académico de estudiantes del CCH Oriente</h1>
+    <p class="lead mt-2 mb-3">Estadística y Probabilidad + Psicología. Página de trabajo del proyecto: fundamentos, laboratorio de datos con cálculo automático y espacios para llenar el avance del grupo.</p>
+    <div class="d-flex flex-wrap gap-2 no-print">
+      <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#mdlForm"><i class="bi bi-journal-text"></i> Formulario</button>
+      <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#mdlNotas"><i class="bi bi-pencil-square"></i> Notas de revisión</button>
+      <button class="btn btn-outline-light btn-sm" id="btnExport"><i class="bi bi-download"></i> Exportar avance (JSON)</button>
+      <label class="btn btn-outline-light btn-sm mb-0"><i class="bi bi-upload"></i> Importar avance<input type="file" id="fileImport" accept="application/json" hidden></label>
+      <button class="btn btn-outline-light btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
+    </div>
+    <div class="small mt-2" id="saveState" aria-live="polite" style="color:#cbd5e1"></div>
+  </div>
+</header>
+
+<nav class="sec-nav no-print" aria-label="Secciones">
+  <div class="wrap">
+    <a href="#s1">1 · Proyecto</a><a href="#s2">2 · Equipo</a><a href="#s3">3 · Fundamentos</a><a href="#s4">4 · Laboratorio de datos</a><a href="#s5">5 · Cronograma</a><a href="#s6">6 · Bitácora</a><a href="#s7">7 · Ética y consentimientos</a><a href="#s8">8 · Pendientes</a><a href="#s9">9 · Fuentes</a>
+  </div>
+</nav>
+
+<main class="container">
+
+<!-- 1 PROYECTO -->
+<section class="sec" id="s1">
+  <div class="sec-h"><span class="num">1</span><h2>El proyecto</h2></div>
+  <div class="row g-3">
+    <div class="col-lg-7 min0 rv">
+      <div class="intro-box h-100">
+        <h3 class="h5 fw-bold"><i class="bi bi-question-circle"></i> Pregunta de investigación</h3>
+        <p class="mb-2">¿Existe relación entre el nivel de estrés académico, las funciones cognitivas (atención y memoria) y el rendimiento escolar de estudiantes del CCH Oriente?</p>
+        <p class="mb-2"><b>Tipo de estudio:</b> de campo, cuantitativo, no experimental, transversal y correlacional.</p>
+        <p class="mb-0"><b>Muestra:</b> al menos 30 estudiantes (SISCO SV-21) y una submuestra de 10 a 25 (NEUROPSI). <span class="text-muted">Estudio exploratorio: con n = 30 solo se detectan correlaciones de r ≥ 0.49.</span></p>
+      </div>
+    </div>
+    <div class="col-lg-5 min0 rv">
+      <div class="panel h-100">
+        <h3 class="h6 fw-bold text-uppercase text-muted">Modalidad</h3>
+        <ul class="list-unstyled mb-0 small">
+          <li class="mb-2"><i class="bi bi-person-badge text-danger"></i> <b>Coordinadora:</b> Alejandra Díaz Jiménez · Profesora de Tiempo Completo C · Psicología</li>
+          <li class="mb-2"><i class="bi bi-person"></i> <b>Profesor participante:</b> Pedro Ernesto Nequiz Medina · Profesor de Asignatura A interino · Estadística y Probabilidad</li>
+          <li class="mb-2"><i class="bi bi-people"></i> <b>Alumnos:</b> 14 a 16, dos equipos de 7 u 8</li>
+          <li><i class="bi bi-award"></i> <b>Producto docente:</b> Dirección de grupos de trabajo con alumnos en SILADIN (Campo I)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <h3 class="h5 fw-bold mt-4">Hipótesis</h3>
+  <div class="row g-3">
+    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c2)"><b>H1</b><p class="small mb-1">El estrés académico se relaciona de forma <b>negativa</b> con el promedio escolar.</p><span class="badge text-bg-light">Barraza Macías, 2006</span></div></div>
+    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c3)"><b>H2</b><p class="small mb-1">El estrés se relaciona de forma <b>negativa</b> con los índices de atención y memoria.</p><span class="badge text-bg-light">Lupien et al., 2009</span></div></div>
+    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c4)"><b>H3</b><p class="small mb-1">Atención y memoria se relacionan de forma <b>positiva</b> con el promedio.</p><span class="badge text-bg-light">Edel Navarro, 2003</span></div></div>
+    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c5)"><b>H4 (condicionada)</b><p class="small mb-1">El cortisol se relaciona de forma <b>positiva</b> con el estrés percibido.</p><span class="badge text-bg-light">McEwen, 1998</span></div></div>
+  </div>
+</section>
+
+<!-- 2 EQUIPO -->
+<section class="sec" id="s2">
+  <div class="sec-h"><span class="num">2</span><h2>Equipo de trabajo</h2></div>
+  <div class="panel rv">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+      <span class="small text-muted">Registra a los alumnos inscritos. Meta: 14 a 16.</span>
+      <span class="ms-auto ans" id="teamCount">0 alumnos</span>
+      <button class="btn btn-slate btn-sm" id="addStudent"><i class="bi bi-person-plus"></i> Agregar alumno</button>
+    </div>
+    <div class="tscroll"><table class="tbl" id="teamTbl"><thead><tr><th>#</th><th>Nombre</th><th>Grupo</th><th>Semestre</th><th>Equipo</th><th>Rol</th><th>Carta compromiso</th><th></th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- 3 FUNDAMENTOS -->
+<section class="sec" id="s3">
+  <div class="sec-h"><span class="num">3</span><h2>Fundamento teórico</h2></div>
+  <ul class="nav nav-pills mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t1" type="button">Estrés</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t2" type="button">Estrés académico</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t3" type="button">Bases biológicas</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t4" type="button">Funciones cognitivas</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t5" type="button">Rendimiento</button></li>
+  </ul>
+  <div class="tab-content panel">
+    <div class="tab-pane fade show active" id="t1"><p><b>Enfoque transaccional.</b> Lazarus y Folkman (1984) definen el estrés psicológico como una relación entre la persona y su entorno que ella evalúa como amenazante o desbordante de sus recursos. Lo decisivo es la <b>evaluación cognitiva</b> del estímulo y las <b>estrategias de afrontamiento</b>.</p><div class="tip small">Por eso un mismo examen puede ser estresante para un alumno y no para otro.</div></div>
+    <div class="tab-pane fade" id="t2">
+      <p>Barraza Macías (2006) define el estrés académico como «un proceso sistémico, de carácter adaptativo y esencialmente psicológico» (p. 126), en tres momentos:</p>
+      <svg viewBox="0 0 720 120" role="img" aria-label="Modelo sistémico-cognoscitivista: estresores, desequilibrio y afrontamiento">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker></defs>
+        <rect x="10" y="25" width="190" height="70" rx="14" fill="#e7f1fb" stroke="#b9d5f1"/><text x="105" y="55" text-anchor="middle" font-weight="700" fill="#1c7ed6">1. Estresores</text><text x="105" y="77" text-anchor="middle" font-size="13" fill="#334155">demandas valoradas</text>
+        <rect x="265" y="25" width="190" height="70" rx="14" fill="#fff4e0" stroke="#fbd49c"/><text x="360" y="55" text-anchor="middle" font-weight="700" fill="#b86b00">2. Desequilibrio</text><text x="360" y="77" text-anchor="middle" font-size="13" fill="#334155">síntomas</text>
+        <rect x="520" y="25" width="190" height="70" rx="14" fill="#e6f6ea" stroke="#b4e1bf"/><text x="615" y="55" text-anchor="middle" font-weight="700" fill="#2f9e44">3. Afrontamiento</text><text x="615" y="77" text-anchor="middle" font-size="13" fill="#334155">estrategias</text>
+        <line x1="202" y1="60" x2="262" y2="60" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/><line x1="457" y1="60" x2="517" y2="60" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+      </svg>
+      <p class="mt-2 mb-0">Inventario <b>SISCO SV-21</b> (Barraza Macías, 2018): 21 reactivos, 7 por dimensión, escala de 0 («nunca») a 5 («siempre»); alfa de Cronbach reportada &gt; .85 (Olivas-Ugarte et al., 2021).</p>
+    </div>
+    <div class="tab-pane fade" id="t3"><p>El estrés activa el eje hipotálamo-hipófisis-suprarrenal (HHA), cuyo producto final es el <b>cortisol</b>. McEwen (1998) llama <b>carga alostática</b> al desgaste por activación frecuente o prolongada. Los glucocorticoides actúan sobre el hipocampo, la amígdala y la corteza prefrontal (Lupien et al., 2009).</p><div class="note small">Fase biológica condicionada: solo con dictamen de un comité de ética. En menores se recomienda saliva o cabello (riesgo mínimo, RLGSMIS art. 17).</div></div>
+    <div class="tab-pane fade" id="t4"><p>La <b>atención</b> selecciona y mantiene el procesamiento de la información relevante; la <b>memoria</b> la codifica, almacena y recupera; el <b>aprendizaje</b> depende de ambas. Se miden con el <b>NEUROPSI Atención y Memoria</b> (normas de 6 a 85 años; índices de atención, memoria y global).</p><div class="warn small">El NEUROPSI solo lo aplica e interpreta personal capacitado; los alumnos no lo aplican.</div></div>
+    <div class="tab-pane fade" id="t5"><p>Las calificaciones son el indicador más usado del rendimiento académico, aunque no hay consenso sobre todo lo que miden (Edel Navarro, 2003). Aquí se usan el promedio por semestre y general, las asignaturas no acreditadas y la tendencia de la trayectoria (lista dálmata).</p></div>
+  </div>
+</section>
+
+<!-- 4 LABORATORIO -->
+<section class="sec" id="s4">
+  <div class="sec-h"><span class="num">4</span><h2>Laboratorio de datos</h2></div>
+  <div class="demo mb-3 rv small">
+    <b>Cómo usarlo:</b> captura una fila por participante (solo el folio, nunca el nombre). La página calcula las medidas descriptivas, la tabla de datos agrupados, la correlación de Pearson y la recta de regresión. Puedes pegar datos desde una hoja de cálculo.
+  </div>
+  <div class="panel mb-3 rv">
+    <div class="d-flex flex-wrap gap-2 mb-2 no-print">
+      <button class="btn btn-slate btn-sm" id="addRow"><i class="bi bi-plus-lg"></i> Agregar participante</button>
+      <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#pasteBox"><i class="bi bi-clipboard"></i> Pegar desde hoja de cálculo</button>
+      <button class="btn btn-outline-warning btn-sm" id="loadDemo"><i class="bi bi-flask"></i> Cargar datos de práctica (ficticios)</button>
+      <button class="btn btn-outline-secondary btn-sm" id="exportCsv"><i class="bi bi-filetype-csv"></i> Exportar CSV</button>
+      <button class="btn btn-outline-danger btn-sm ms-auto" id="clearData"><i class="bi bi-trash"></i> Vaciar datos</button>
+    </div>
+    <div class="collapse" id="pasteBox"><div class="tip mb-2 small">Pega columnas en este orden: <span class="mono">folio, SISCO, atención, memoria, promedio</span> (separadas por tabulador, coma o punto y coma; una fila por participante).<textarea class="form-control mt-2 mono" id="pasteArea" rows="4" aria-label="Datos a pegar"></textarea><button class="btn btn-slate btn-sm mt-2" id="pasteBtn">Agregar filas pegadas</button></div></div>
+    <div id="demoFlag" class="warn small mb-2" hidden><i class="bi bi-exclamation-triangle"></i> Estás viendo <b>datos ficticios de práctica</b>. No son resultados del estudio.</div>
+    <div class="tscroll" style="max-height:360px"><table class="tbl" id="dataTbl"><thead><tr><th>#</th><th>Folio</th><th>SISCO SV-21<br><small>(media 0–5)</small></th><th>Atención<br><small>(índice)</small></th><th>Memoria<br><small>(índice)</small></th><th>Promedio<br><small>(5–10)</small></th><th></th></tr></thead><tbody></tbody></table></div>
+    <div class="small text-muted mt-1" id="nInfo"></div>
+  </div>
+
+  <ul class="nav nav-pills mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#l1" type="button">Medidas descriptivas</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#l2" type="button">Datos agrupados</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#l3" type="button">Correlación y regresión</button></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="l1">
+      <div class="panel">
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-3"><span class="fw-bold">Variable:</span><div id="varChips" class="d-flex flex-wrap gap-1"></div></div>
+        <div class="row g-2" id="kpis"></div>
+        <p class="small text-muted mt-2 mb-0">Varianza y desviación estándar muestrales (divisor n − 1). Cuartiles por interpolación lineal (equivale a CUARTIL.INC de Excel).</p>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="l2">
+      <div class="panel">
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-3"><span class="fw-bold">Variable:</span><div id="varChips2" class="d-flex flex-wrap gap-1"></div></div>
+        <div id="grpInfo" class="mb-2"></div>
+        <div class="row g-3"><div class="col-lg-7 min0"><div class="tscroll"><table class="tbl" id="grpTbl"></table></div></div><div class="col-lg-5 min0"><div class="svgbox" id="histo"></div></div></div>
+        <div id="grpRes" class="mt-3"></div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="l3">
+      <div class="panel">
+        <div class="row g-2 align-items-end mb-3">
+          <div class="col-sm-4"><label class="form-label small fw-bold" for="selX">Variable X</label><select class="form-select" id="selX"></select></div>
+          <div class="col-sm-4"><label class="form-label small fw-bold" for="selY">Variable Y</label><select class="form-select" id="selY"></select></div>
+          <div class="col-sm-4"><div class="d-flex flex-wrap gap-1"><span class="chip" data-xy="sisco,prom">H1</span><span class="chip" data-xy="sisco,aten">H2 aten.</span><span class="chip" data-xy="sisco,mem">H2 mem.</span><span class="chip" data-xy="aten,prom">H3</span></div></div>
+        </div>
+        <div class="row g-3">
+          <div class="col-lg-6 min0"><div class="svgbox" id="scatter"></div></div>
+          <div class="col-lg-6 min0"><div class="row g-2" id="corrKpis"></div><div id="corrMsg" class="mt-2"></div></div>
+        </div>
+        <div class="mt-3 no-print">
+          <button class="btn btn-slate btn-sm" id="btnSteps"><i class="bi bi-list-ol"></i> Ver paso a paso</button>
+          <button class="btn btn-outline-secondary btn-sm" id="btnNext" hidden>Siguiente paso</button>
+          <button class="btn btn-outline-secondary btn-sm" id="btnAll" hidden>Mostrar todo</button>
+          <button class="btn btn-outline-secondary btn-sm" id="btnAnim" hidden>▶ Animar tabla</button>
+        </div>
+        <div id="steps"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 CRONOGRAMA -->
+<section class="sec" id="s5">
+  <div class="sec-h"><span class="num">5</span><h2>Cronograma y avance</h2></div>
+  <div class="panel rv">
+    <div class="d-flex align-items-center gap-2 mb-2"><span class="fw-bold">Avance:</span><div class="progress flex-grow-1" role="progressbar" aria-label="Avance del cronograma"><div class="progress-bar bg-danger" id="progBar" style="width:0%"></div></div><span class="ans" id="progTxt">0 %</span></div>
+    <div class="tscroll"><table class="tbl" id="cronoTbl"><thead><tr><th>Actividad</th><th>Responsable</th><th>Mes</th><th>Producto o evidencia</th><th>Estado</th><th>Fecha real / enlace</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- 6 BITÁCORA -->
+<section class="sec" id="s6">
+  <div class="sec-h"><span class="num">6</span><h2>Bitácora de sesiones</h2></div>
+  <div class="row g-3">
+    <div class="col-lg-5 min0 rv"><form class="panel" id="logForm">
+      <div class="row g-2">
+        <div class="col-6"><label class="form-label small fw-bold" for="lgDate">Fecha</label><input type="date" class="form-control" id="lgDate" required></div>
+        <div class="col-6"><label class="form-label small fw-bold" for="lgTeam">Equipo</label><select class="form-select" id="lgTeam"><option>Ambos</option><option>Equipo 1</option><option>Equipo 2</option><option>Profesores (reunión mensual)</option></select></div>
+        <div class="col-12"><label class="form-label small fw-bold" for="lgAtt">Asistentes (número)</label><input type="number" min="0" class="form-control" id="lgAtt"></div>
+        <div class="col-12"><label class="form-label small fw-bold" for="lgAct">Actividad realizada</label><textarea class="form-control" id="lgAct" rows="2" required></textarea></div>
+        <div class="col-12"><label class="form-label small fw-bold" for="lgAgr">Acuerdos / tareas</label><textarea class="form-control" id="lgAgr" rows="2"></textarea></div>
+        <div class="col-12"><button class="btn btn-slate w-100" type="submit"><i class="bi bi-journal-plus"></i> Registrar sesión</button></div>
+      </div>
+    </form></div>
+    <div class="col-lg-7 min0 rv"><div class="panel"><div class="d-flex mb-2"><span class="fw-bold">Sesiones registradas</span><span class="ms-auto ans" id="logCount">0</span></div><div id="logList"><p class="text-muted small mb-0">Aún no hay sesiones. Meta: al menos 24 sesiones semanales.</p></div></div></div>
+  </div>
+</section>
+
+<!-- 7 ÉTICA -->
+<section class="sec" id="s7">
+  <div class="sec-h"><span class="num">7</span><h2>Ética y consentimientos</h2></div>
+  <div class="row g-3">
+    <div class="col-lg-6 min0 rv"><div class="panel h-100">
+      <h3 class="h6 fw-bold">Control de consentimientos (meta: 30)</h3>
+      <div class="row g-2">
+        <div class="col-4"><label class="form-label small" for="cEnt">Entregados</label><input type="number" min="0" class="form-control" id="cEnt" data-store="cEnt"></div>
+        <div class="col-4"><label class="form-label small" for="cPad">Firmados (tutor)</label><input type="number" min="0" class="form-control" id="cPad" data-store="cPad"></div>
+        <div class="col-4"><label class="form-label small" for="cAsen">Asentimientos</label><input type="number" min="0" class="form-control" id="cAsen" data-store="cAsen"></div>
+      </div>
+      <div class="mt-3"><div class="progress" role="progressbar" aria-label="Consentimientos completos"><div class="progress-bar bg-success" id="cBar" style="width:0%"></div></div><div class="small mt-1">Participantes listos (tutor + asentimiento): <span class="ans" id="cTxt">0 / 30</span></div></div>
+    </div></div>
+    <div class="col-lg-6 min0 rv"><div class="panel h-100">
+      <h3 class="h6 fw-bold">Lista de verificación</h3>
+      <div id="ethicsList"></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 8 PENDIENTES -->
+<section class="sec" id="s8">
+  <div class="sec-h"><span class="num">8</span><h2>Datos pendientes por llenar</h2></div>
+  <div class="panel rv">
+    <div class="d-flex mb-2"><span class="small text-muted">Se guardan automáticamente en este navegador.</span><span class="ms-auto ans" id="pendTxt">0 / 0</span></div>
+    <div class="row g-2" id="pendGrid"></div>
+  </div>
+</section>
+
+<!-- 9 FUENTES -->
+<section class="sec" id="s9">
+  <div class="sec-h"><span class="num">9</span><h2>Fuentes (APA 7)</h2></div>
+  <div class="panel small rv" id="refs"></div>
+</section>
+</main>
+
+<footer class="container py-4 text-center">Proyecto SILADIN CCH Oriente 2026-2027 · Alejandra Díaz Jiménez y Pedro Ernesto Nequiz Medina</footer>
+
+<!-- MODAL FORMULARIO -->
+<div class="modal fade" id="mdlForm" tabindex="-1" aria-labelledby="mdlFormT" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
+  <div class="modal-header"><h2 class="modal-title h5" id="mdlFormT"><i class="bi bi-journal-text"></i> Formulario</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+  <div class="modal-body"><div class="d-flex flex-wrap gap-1 mb-3" id="fChips"></div><div class="row g-3" id="fGrid"></div></div>
+</div></div></div>
+
+<!-- MODAL NOTAS -->
+<div class="modal fade" id="mdlNotas" tabindex="-1" aria-labelledby="mdlNotasT" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+  <div class="modal-header"><h2 class="modal-title h5" id="mdlNotasT"><i class="bi bi-pencil-square"></i> Notas de revisión del proyecto</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+  <div class="modal-body"><div class="tscroll"><table class="tbl" style="text-align:left"><thead><tr><th>Dice</th><th>Debe decir</th><th>Por qué</th></tr></thead><tbody id="notasBody"></tbody></table></div></div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ===================== almacenamiento seguro ===================== */
+const KEY='siladin_estres_v1';
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v));return true}catch(e){return false}}};
+let S=Object.assign({team:[],data:[],demo:false,crono:{},logs:[],eth:{},pend:{},cEnt:'',cPad:'',cAsen:''},store.get());
+let saveT=null;
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{const ok=store.set(S);const el=document.getElementById('saveState');el.textContent=ok?'Guardado en este navegador · '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}):'Este navegador no permite guardar; exporta tu avance en JSON.'},300)}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ===================== notación vertical fx ===================== */
+const F={fr:(n,d)=>`<span class="fr"><span class="nu">${n}</span><span class="de">${d}</span></span>`,
+  sq:x=>`<span class="sq"><span class="rad">√</span><span class="ov">${x}</span></span>`,
+  S:'<span class="sg">Σ</span>', b:x=>`<span class="ob">${x}</span>`, r:x=>`<span class="r">${x}</span>`,
+  box:(h,blk=true)=>`<span class="fx ${blk?'fx-block':''}">${h}</span>`};
+
+/* ===================== estadística ===================== */
+const VARS={sisco:'SISCO SV-21',aten:'Atención',mem:'Memoria',prom:'Promedio'};
+const fmt=(x,d=4)=>{if(x===null||x===undefined||!isFinite(x))return '—';const a=Math.abs(x);if(a!==0&&a<1e-4)return x.toExponential(2);return (+x.toFixed(d)).toLocaleString('es-MX',{maximumFractionDigits:d})};
+const sum=a=>a.reduce((s,v)=>s+v,0);
+const mean=a=>sum(a)/a.length;
+function median(a){const s=[...a].sort((x,y)=>x-y),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2}
+function modes(a){const m=new Map();a.forEach(v=>m.set(v,(m.get(v)||0)+1));const mx=Math.max(...m.values());if(mx===1)return {txt:'Sin moda',f:1};const ms=[...m].filter(e=>e[1]===mx).map(e=>e[0]).sort((x,y)=>x-y);return {txt:ms.map(v=>fmt(v)).join(', '),f:mx}}
+function q(a,p){const s=[...a].sort((x,y)=>x-y),h=(s.length-1)*p,lo=Math.floor(h);return s[lo]+(h-lo)*((s[lo+1]??s[lo])-s[lo])}
+function variance(a){const m=mean(a);return sum(a.map(v=>(v-m)**2))/(a.length-1)}
+function decimals(a){return Math.max(0,...a.map(v=>{const s=String(v);return s.includes('.')?s.split('.')[1].length:0}))}
+/* t de Student: p bilateral con beta incompleta regularizada */
+function lgamma(z){const g=7,c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];if(z<0.5)return Math.log(Math.PI/Math.sin(Math.PI*z))-lgamma(1-z);z-=1;let x=c[0];for(let i=1;i<g+2;i++)x+=c[i]/(z+i);const t=z+g+0.5;return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x)}
+function betacf(a,b,x){const MAXIT=300,EPS=3e-14,FPMIN=1e-300;let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<FPMIN)d=FPMIN;d=1/d;let h=d;for(let m=1;m<=MAXIT;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<EPS)break}return h}
+function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b}
+const pT=(t,df)=>ibeta(df/(df+t*t),df/2,0.5);
+function tCrit(df,alpha=0.05){let lo=0,hi=100;for(let i=0;i<200;i++){const m=(lo+hi)/2;if(pT(m,df)>alpha)lo=m;else hi=m}return (lo+hi)/2}
+
+/* ===================== datos ===================== */
+const DEMO=[{"folio":"P-01","sisco":2.68,"aten":122,"mem":98,"prom":9.06},{"folio":"P-02","sisco":2.54,"aten":111,"mem":107,"prom":8.17},{"folio":"P-03","sisco":2.04,"aten":118,"mem":112,"prom":8.09},{"folio":"P-04","sisco":1.09,"aten":117,"mem":99,"prom":8.51},{"folio":"P-05","sisco":3.45,"aten":126,"mem":112,"prom":7.85},{"folio":"P-06","sisco":2.26,"aten":108,"mem":120,"prom":8.33},{"folio":"P-07","sisco":2.46,"aten":95,"mem":113,"prom":8.4},{"folio":"P-08","sisco":1.98,"aten":112,"mem":101,"prom":8.08},{"folio":"P-09","sisco":2.19,"aten":136,"mem":111,"prom":8.01},{"folio":"P-10","sisco":1.87,"aten":122,"mem":106,"prom":9.43},{"folio":"P-11","sisco":2.55,"aten":125,"mem":115,"prom":8.13},{"folio":"P-12","sisco":2.68,"aten":121,"mem":97,"prom":8.8},{"folio":"P-13","sisco":2.42,"aten":113,"mem":89,"prom":8.96},{"folio":"P-14","sisco":3.02,"aten":86,"mem":89,"prom":8.31},{"folio":"P-15","sisco":1.6,"aten":135,"mem":103,"prom":10.0},{"folio":"P-16","sisco":3.24,"aten":95,"mem":107,"prom":7.9},{"folio":"P-17","sisco":1.9,"aten":102,"mem":98,"prom":8.63},{"folio":"P-18","sisco":2.31,"aten":96,"mem":106,"prom":8.2},{"folio":"P-19","sisco":1.97,"aten":98,"mem":122,"prom":9.46},{"folio":"P-20","sisco":2.23,"aten":108,"mem":104,"prom":8.58},{"folio":"P-21","sisco":2.28,"aten":112,"mem":110,"prom":9.23},{"folio":"P-22","sisco":2.92,"aten":91,"mem":138,"prom":7.65},{"folio":"P-23","sisco":4.3,"aten":81,"mem":100,"prom":7.78},{"folio":"P-24","sisco":1.88,"aten":108,"mem":126,"prom":8.79},{"folio":"P-25","sisco":2.5,"aten":101,"mem":108,"prom":9.48},{"folio":"P-26","sisco":1.15,"aten":112,"mem":113,"prom":9.15},{"folio":"P-27","sisco":2.52,"aten":95,"mem":85,"prom":8.79},{"folio":"P-28","sisco":2.72,"aten":98,"mem":115,"prom":8.21},{"folio":"P-29","sisco":3.47,"aten":74,"mem":97,"prom":6.87},{"folio":"P-30","sisco":3.62,"aten":97,"mem":115,"prom":6.65}];
+function col(k){return S.data.map(r=>r[k]).filter(v=>v!==''&&v!==null&&v!==undefined&&isFinite(+v)).map(Number)}
+function pairs(kx,ky){return S.data.filter(r=>[r[kx],r[ky]].every(v=>v!==''&&v!==null&&v!==undefined&&isFinite(+v))).map(r=>[+r[kx],+r[ky]])}
+const dataBody=document.querySelector('#dataTbl tbody');
+function renderData(){
+  dataBody.innerHTML=S.data.map((r,i)=>`<tr><td>${i+1}</td><td><input aria-label="Folio fila ${i+1}" data-i="${i}" data-k="folio" value="${esc(r.folio)}"></td>`+
+    ['sisco','aten','mem','prom'].map(k=>`<td><input type="number" step="any" inputmode="decimal" aria-label="${VARS[k]} fila ${i+1}" data-i="${i}" data-k="${k}" value="${esc(r[k])}"></td>`).join('')+
+    `<td><button class="btn btn-sm btn-outline-danger" data-del="${i}" aria-label="Eliminar fila ${i+1}"><i class="bi bi-x-lg"></i></button></td></tr>`).join('')||
+    '<tr><td colspan="7" class="text-muted py-3">Sin datos. Agrega participantes, pega desde una hoja de cálculo o carga los datos de práctica.</td></tr>';
+  document.getElementById('demoFlag').hidden=!S.demo;
+  compute();
+}
+dataBody.addEventListener('input',e=>{const t=e.target;if(t.dataset.k===undefined)return;const v=t.dataset.k==='folio'?t.value:(t.value===''?'':+t.value);S.data[+t.dataset.i][t.dataset.k]=v;S.demo=false;document.getElementById('demoFlag').hidden=true;save();compute()});
+dataBody.addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;S.data.splice(+b.dataset.del,1);save();renderData()});
+document.getElementById('addRow').onclick=()=>{S.data.push({folio:'P-'+String(S.data.length+1).padStart(2,'0'),sisco:'',aten:'',mem:'',prom:''});save();renderData()};
+document.getElementById('loadDemo').onclick=()=>{if(S.data.length&&!confirm('Esto reemplaza los datos capturados por datos ficticios de práctica. ¿Continuar?'))return;S.data=JSON.parse(JSON.stringify(DEMO));S.demo=true;save();renderData()};
+document.getElementById('clearData').onclick=()=>{if(!confirm('¿Vaciar todos los datos del laboratorio?'))return;S.data=[];S.demo=false;save();renderData()};
+document.getElementById('pasteBtn').onclick=()=>{const lines=document.getElementById('pasteArea').value.trim().split(/\r?\n/);let added=0;lines.forEach(l=>{const c=l.split(/\t|;|,(?=\s*[\d.-])/).map(s=>s.trim());if(c.length<2)return;const num=x=>x===undefined||x===''||isNaN(+x.replace(',','.'))?'':+x.replace(',','.');if(isNaN(+c[1].replace(',','.'))&&added===0&&/[a-z]/i.test(c[1]))return;S.data.push({folio:c[0],sisco:num(c[1]),aten:num(c[2]),mem:num(c[3]),prom:num(c[4])});added++});S.demo=false;save();renderData();document.getElementById('pasteArea').value=''};
+document.getElementById('exportCsv').onclick=()=>{const rows=[['folio','sisco','atencion','memoria','promedio'],...S.data.map(r=>[r.folio,r.sisco,r.aten,r.mem,r.prom])];download('datos_proyecto.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv')};
+function download(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+
+let cur1='sisco',cur2='prom';
+function chips(id,curKey,cb){const el=document.getElementById(id);el.innerHTML=Object.entries(VARS).map(([k,v])=>`<button class="chip ${k===curKey?'on':''}" data-v="${k}">${v}</button>`).join('');el.onclick=e=>{const b=e.target.closest('[data-v]');if(b)cb(b.dataset.v)}}
+
+function compute(){
+  const n=S.data.length;document.getElementById('nInfo').textContent=n?`n = ${n} participante(s) capturado(s).`+(n<30?' Meta del proyecto: al menos 30.':''):'';
+  renderKpis();renderGrouped();renderCorr();
+}
+function renderKpis(){
+  chips('varChips',cur1,v=>{cur1=v;renderKpis()});
+  const a=col(cur1),el=document.getElementById('kpis');
+  if(a.length<2){el.innerHTML='<div class="col-12"><div class="tip small">Se necesitan al menos 2 datos de '+VARS[cur1]+'.</div></div>';return}
+  const m=mean(a),s=Math.sqrt(variance(a)),mo=modes(a);
+  const items=[['n',a.length,''],['Media x̄',fmt(m),'Σx / n'],['Mediana',fmt(median(a)),'valor central'],['Moda',mo.txt,mo.f>1?'f = '+mo.f:'ningún valor se repite'],['Mínimo',fmt(Math.min(...a)),''],['Máximo',fmt(Math.max(...a)),''],['Rango',fmt(Math.max(...a)-Math.min(...a)),'máx − mín'],['Varianza s²',fmt(variance(a)),'muestral'],['Desv. estándar s',fmt(s),'√s²'],['CV',fmt(s/m*100,2)+' %','s / x̄ · 100'],['Q1',fmt(q(a,.25)),'25 %'],['Q3',fmt(q(a,.75)),'75 %']];
+  el.innerHTML=items.map(([k,v,s2])=>`<div class="col-6 col-md-4 col-xl-3 min0"><div class="kpi"><div class="k">${k}</div><div class="v" data-kpi="${k}">${v}</div><div class="s">${s2}</div></div></div>`).join('');
+}
+function renderGrouped(){
+  chips('varChips2',cur2,v=>{cur2=v;renderGrouped()});
+  const a=col(cur2),tbl=document.getElementById('grpTbl'),info=document.getElementById('grpInfo'),res=document.getElementById('grpRes'),hb=document.getElementById('histo');
+  if(a.length<5){tbl.innerHTML='';hb.innerHTML='';res.innerHTML='';info.innerHTML='<div class="tip small">Se necesitan al menos 5 datos para agrupar.</div>';return}
+  const n=a.length,d=decimals(a),u=10**-d,mn=Math.min(...a),mx=Math.max(...a),R=mx-mn;
+  const kRaw=1+3.322*Math.log10(n),k=Math.max(1,Math.round(kRaw));
+  let c=Math.ceil((R/k)/u-1e-9)*u;if(c<=0)c=u;while(mn+k*c<=mx+1e-9)c+=u;c=+c.toFixed(d);
+  const cls=[];let F_=0;
+  for(let i=0;i<k;i++){const Li=+(mn+i*c).toFixed(d),Ls=+(Li+c-u).toFixed(d),fi=+(Li-u/2).toFixed(d+1),fs=+(Ls+u/2).toFixed(d+1),f=a.filter(v=>v>=Li-1e-9&&v<=Ls+1e-9).length;F_+=f;cls.push({Li,Ls,fi,fs,xm:+((Li+Ls)/2).toFixed(d+1),f,F:F_})}
+  info.innerHTML=`<div class="d-flex flex-wrap gap-2 small"><span class="chip">n = ${n}</span><span class="chip">R = ${fmt(R)}</span><span class="chip">Sturges: k = 1 + 3.322 log(${n}) = ${fmt(kRaw,2)} ≈ <b>&nbsp;${k}</b></span><span class="chip">c = R / k = ${fmt(R/k)} → <b>&nbsp;${fmt(c)}</b></span></div>`;
+  tbl.innerHTML='<thead><tr><th>Clase</th><th>Límites</th><th>Fronteras de clase</th><th>x<sub>m</sub></th><th>f</th><th>fr</th><th>F</th><th>f·x<sub>m</sub></th></tr></thead><tbody>'+
+    cls.map((r,i)=>`<tr><td>${i+1}</td><td>${fmt(r.Li)} – ${fmt(r.Ls)}</td><td>${fmt(r.fi)} – ${fmt(r.fs)}</td><td>${fmt(r.xm)}</td><td>${r.f}</td><td>${fmt(r.f/n)}</td><td>${r.F}</td><td>${fmt(r.f*r.xm)}</td></tr>`).join('')+
+    `<tr class="sigma"><td colspan="4">Σ</td><td>${n}</td><td>1</td><td></td><td>${fmt(sum(cls.map(r=>r.f*r.xm)))}</td></tr></tbody>`;
+  const mg=sum(cls.map(r=>r.f*r.xm))/n;
+  const im=cls.findIndex(r=>r.F>=n/2),cm=cls[im],Fp=im?cls[im-1].F:0,med=cm.fi+((n/2-Fp)/cm.f)*c;
+  const fm=Math.max(...cls.map(r=>r.f)),io=cls.findIndex(r=>r.f===fm),co=cls[io],d1=co.f-(io?cls[io-1].f:0),d2=co.f-(io<k-1?cls[io+1].f:0),moda=d1+d2===0?co.xm:co.fi+(d1/(d1+d2))*c;
+  res.innerHTML=`<div class="row g-2"><div class="col-md-4 min0"><div class="step" data-k="c"><div class="st">Media agrupada</div>${F.box(F.b('x')+' = '+F.fr(F.S+' f·x<sub>m</sub>','n')+' = '+F.fr(fmt(sum(cls.map(r=>r.f*r.xm))),n)+' = '+F.r(fmt(mg))) }</div></div>
+  <div class="col-md-4 min0"><div class="step" data-k="c"><div class="st">Mediana agrupada (clase ${im+1})</div>${F.box('Me = L + '+F.fr('n/2 − F<sub>ant</sub>','f')+'· c = '+fmt(cm.fi)+' + '+F.fr(fmt(n/2)+' − '+Fp,cm.f)+'· '+fmt(c)+' = '+F.r(fmt(med)))}</div></div>
+  <div class="col-md-4 min0"><div class="step" data-k="c"><div class="st">Moda agrupada (clase ${io+1})</div>${F.box('Mo = L + '+F.fr('d<sub>1</sub>','d<sub>1</sub> + d<sub>2</sub>')+'· c = '+fmt(co.fi)+' + '+F.fr(d1,d1+'+'+d2)+'· '+fmt(c)+' = '+F.r(fmt(moda)))}</div></div></div>
+  <p class="small text-muted mb-0">L = frontera inferior de la clase. Los valores agrupados se aproximan a los de la pestaña «Medidas descriptivas».</p>`;
+  // histograma SVG
+  const W=420,H=260,pl=40,pb=48,pt=14,pr=10,mf=Math.max(...cls.map(r=>r.f)),bw=(W-pl-pr)/k;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Histograma de ${VARS[cur2]}"><line x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}" stroke="#334155"/><line x1="${pl}" y1="${pt}" x2="${pl}" y2="${H-pb}" stroke="#334155"/>`;
+  for(let t=0;t<=mf;t+=Math.max(1,Math.ceil(mf/5))){const y=H-pb-(t/mf)*(H-pb-pt);s+=`<line x1="${pl-4}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="#e2e8f0"/><text x="${pl-7}" y="${y+4}" font-size="11" text-anchor="end" fill="#64748b">${t}</text>`}
+  cls.forEach((r,i)=>{const h=(r.f/mf)*(H-pb-pt),x=pl+i*bw;s+=`<rect class="bar" style="animation-delay:${i*80}ms" x="${x+1}" y="${H-pb-h}" width="${bw-2}" height="${h}" fill="hsl(${210+i*25} 85% 80%)" stroke="#1c7ed6"/><text x="${x+bw/2}" y="${H-pb-h-4}" font-size="11" text-anchor="middle" font-weight="700" fill="#e03131">${r.f}</text><text x="${x}" y="${H-pb+14}" font-size="10" text-anchor="middle" fill="#334155">${fmt(r.fi)}</text>`});
+  s+=`<text x="${W-pr}" y="${H-pb+14}" font-size="10" text-anchor="end" fill="#334155">${fmt(cls[k-1].fs)}</text><text x="${(W+pl)/2}" y="${H-8}" font-size="12" text-anchor="middle" fill="#334155">${VARS[cur2]} (fronteras de clase)</text></svg>`;
+  hb.innerHTML=s;
+}
+/* correlación */
+const selX=document.getElementById('selX'),selY=document.getElementById('selY');
+selX.innerHTML=selY.innerHTML=Object.entries(VARS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+selX.value='sisco';selY.value='prom';
+selX.onchange=selY.onchange=()=>{resetSteps();renderCorr()};
+document.querySelectorAll('[data-xy]').forEach(c=>c.onclick=()=>{const [x,y]=c.dataset.xy.split(',');selX.value=x;selY.value=y;resetSteps();renderCorr()});
+let CR=null;
+function corr(P){const n=P.length,xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),mx=mean(xs),my=mean(ys);
+  const Sxy=sum(P.map(([x,y])=>(x-mx)*(y-my))),Sxx=sum(xs.map(x=>(x-mx)**2)),Syy=sum(ys.map(y=>(y-my)**2));
+  const r=Sxy/Math.sqrt(Sxx*Syy),Sx=sum(xs),Sy=sum(ys),Sx2=sum(xs.map(x=>x*x)),Sy2=sum(ys.map(y=>y*y)),SXY=sum(P.map(([x,y])=>x*y));
+  const r2=(n*SXY-Sx*Sy)/Math.sqrt((n*Sx2-Sx*Sx)*(n*Sy2-Sy*Sy)),b=Sxy/Sxx,a=my-b*mx,df=n-2,t=r*Math.sqrt(df)/Math.sqrt(1-r*r),p=df>0?pT(Math.abs(t),df):NaN,tc=df>0?tCrit(df):NaN;
+  return {n,xs,ys,mx,my,Sxy,Sxx,Syy,r,r2,Sx,Sy,Sx2,Sy2,SXY,b,a,df,t,p,tc}}
+function strength(r){const a=Math.abs(r);return a<0.3?'débil':a<=0.7?'moderada':'fuerte'}
+function renderCorr(){
+  const kx=selX.value,ky=selY.value,P=pairs(kx,ky),box=document.getElementById('scatter'),kp=document.getElementById('corrKpis'),msg=document.getElementById('corrMsg');
+  if(kx===ky){kp.innerHTML='';box.innerHTML='';msg.innerHTML='<div class="tip small">Elige dos variables distintas.</div>';CR=null;return}
+  if(P.length<3){kp.innerHTML='';box.innerHTML='';msg.innerHTML='<div class="tip small">Se necesitan al menos 3 pares completos.</div>';CR=null;return}
+  const c=corr(P);CR={...c,P,kx,ky};
+  kp.innerHTML=[['n (pares)',c.n],['r de Pearson',fmt(c.r)],['r²',fmt(c.r*c.r)],['Pendiente b',fmt(c.b)],['Ordenada a',fmt(c.a)],['t (gl = '+c.df+')',fmt(c.t)],['p bilateral',fmt(c.p)],['t crítica (α=.05)',fmt(c.tc)]].map(([k,v])=>`<div class="col-6 min0"><div class="kpi"><div class="k">${k}</div><div class="v" data-ck="${k}">${v}</div></div></div>`).join('');
+  const sig=c.p<0.05,dir=c.r<0?'negativa':'positiva';
+  msg.innerHTML=`<div class="${sig?'okb':'note'} small">Correlación <b>${dir} ${strength(c.r)}</b> entre ${VARS[kx]} y ${VARS[ky]} (r = ${fmt(c.r,3)}). ${sig?'Es estadísticamente significativa (p &lt; .05).':'No es estadísticamente significativa con α = .05 (p ≥ .05).'} El ${fmt(c.r*c.r*100,1)} % de la variación de ${VARS[ky]} se asocia linealmente con ${VARS[kx]}. <b>Recuerda:</b> correlación no implica causalidad.</div>`+(S.demo?'<div class="warn small mt-2">Datos ficticios: esta interpretación es solo un ejemplo.</div>':'');
+  // dispersión SVG
+  const W=420,H=300,pl=46,pb=44,pt=14,pr=14,xs=c.xs,ys=c.ys;
+  const ext=(a)=>{let lo=Math.min(...a),hi=Math.max(...a);const pad=(hi-lo||1)*0.08;return [lo-pad,hi+pad]};
+  const [x0,x1]=ext(xs),[y0,y1]=ext(ys),X=v=>pl+(v-x0)/(x1-x0)*(W-pl-pr),Y=v=>H-pb-(v-y0)/(y1-y0)*(H-pb-pt);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama de dispersión de ${VARS[kx]} contra ${VARS[ky]}"><rect x="${pl}" y="${pt}" width="${W-pl-pr}" height="${H-pt-pb}" fill="#f8fafc"/>`;
+  for(let i=0;i<=4;i++){const vx=x0+(x1-x0)*i/4,vy=y0+(y1-y0)*i/4;s+=`<text x="${X(vx)}" y="${H-pb+15}" font-size="10" text-anchor="middle" fill="#64748b">${fmt(vx,2)}</text><text x="${pl-5}" y="${Y(vy)+4}" font-size="10" text-anchor="end" fill="#64748b">${fmt(vy,2)}</text>`}
+  s+=`<line x1="${X(c.mx)}" x2="${X(c.mx)}" y1="${pt}" y2="${H-pb}" stroke="#1c7ed6" stroke-dasharray="5 4"/><line x1="${pl}" x2="${W-pr}" y1="${Y(c.my)}" y2="${Y(c.my)}" stroke="#f08c00" stroke-dasharray="5 4"/>`;
+  P.forEach(([x,y],i)=>{const pos=(x-c.mx)*(y-c.my)>=0;s+=`<circle class="dot" style="animation-delay:${i*25}ms;transform-origin:${X(x)}px ${Y(y)}px" cx="${X(x)}" cy="${Y(y)}" r="5" fill="${pos?'#2f9e44':'#e03131'}" fill-opacity=".75"/>`});
+  const lx0=x0,lx1=x1;s+=`<line x1="${X(lx0)}" y1="${Y(c.a+c.b*lx0)}" x2="${X(lx1)}" y2="${Y(c.a+c.b*lx1)}" stroke="#e03131" stroke-width="2.5"/>`;
+  s+=`<circle cx="${X(c.mx)}" cy="${Y(c.my)}" r="6.5" fill="#fff" stroke="#7048e8" stroke-width="3"/><text x="${(W+pl)/2}" y="${H-6}" font-size="12" text-anchor="middle" fill="#1c7ed6" font-weight="700">X: ${VARS[kx]}</text><text x="12" y="${(H-pb+pt)/2}" font-size="12" text-anchor="middle" fill="#b86b00" font-weight="700" transform="rotate(-90 12 ${(H-pb+pt)/2})">Y: ${VARS[ky]}</text></svg>
+  <div class="small text-muted px-1">Líneas punteadas: medias (x̄ azul, ȳ naranja). Círculo violeta: centroide. Línea roja: recta de regresión. Puntos verdes: producto (x − x̄)(y − ȳ) positivo; rojos: negativo.</div>`;
+  box.innerHTML=s;
+  if(stepIdx>0)buildSteps(true);
+}
+/* paso a paso */
+let stepIdx=0,STEPS=[];
+function resetSteps(){stepIdx=0;STEPS=[];document.getElementById('steps').innerHTML='';['btnNext','btnAll','btnAnim'].forEach(id=>document.getElementById(id).hidden=true)}
+function buildSteps(keep){
+  if(!CR)return;const c=CR,X=VARS[c.kx],Y=VARS[c.ky];
+  const rows=c.P.map(([x,y],i)=>{const dx=x-c.mx,dy=y-c.my,p=dx*dy;return `<tr><td>${i+1}</td><td class="cx w" style="--ci:0;--ri:${i};--mc:var(--p2)">${fmt(x)}</td><td class="cy w" style="--ci:1;--ri:${i};--mc:var(--p4)">${fmt(y)}</td><td class="w" style="--ci:2;--ri:${i};--mc:var(--p2)">${fmt(dx)}</td><td class="w" style="--ci:3;--ri:${i};--mc:var(--p4)">${fmt(dy)}</td><td class="${p>=0?'pos':'neg'} w" style="--ci:4;--ri:${i};--mc:var(--p3)">${fmt(p)}</td><td class="w" style="--ci:5;--ri:${i};--mc:var(--p5)">${fmt(dx*dx)}</td><td class="w" style="--ci:6;--ri:${i};--mc:var(--p5)">${fmt(dy*dy)}</td></tr>`}).join('');
+  const tbl=`<div class="tscroll mt-2" style="max-height:320px"><table class="tbl" id="pTbl"><thead><tr><th>#</th><th>x</th><th>y</th><th>x − x̄</th><th>y − ȳ</th><th>(x − x̄)(y − ȳ)</th><th>(x − x̄)²</th><th>(y − ȳ)²</th></tr></thead><tbody>${rows}<tr class="sigma"><td>Σ</td><td>${fmt(c.Sx)}</td><td>${fmt(c.Sy)}</td><td>0</td><td>0</td><td>${fmt(c.Sxy)}</td><td>${fmt(c.Sxx)}</td><td>${fmt(c.Syy)}</td></tr></tbody></table></div>`;
+  STEPS=[
+   ['f','Fórmulas',F.box('r = '+F.fr(F.S+'(x − '+F.b('x')+')(y − '+F.b('y')+')',F.sq(F.S+'(x − '+F.b('x')+')² · '+F.S+'(y − '+F.b('y')+')²')))+F.box('r = '+F.fr('n'+F.S+'xy − '+F.S+'x '+F.S+'y',F.sq('[n'+F.S+'x² − ('+F.S+'x)²][n'+F.S+'y² − ('+F.S+'y)²]')))],
+   ['d','Identifica los datos',`<p class="mb-1">x = ${X}, y = ${Y}, n = ${c.n} pares.</p>`+F.box(F.b('x')+' = '+F.fr(F.S+'x','n')+' = '+F.fr(fmt(c.Sx),c.n)+' = '+fmt(c.mx)+'&emsp;&emsp;'+F.b('y')+' = '+F.fr(F.S+'y','n')+' = '+F.fr(fmt(c.Sy),c.n)+' = '+fmt(c.my))],
+   ['c','Tabla de desviaciones',tbl],
+   ['c','Sustituye en la fórmula estándar',F.box('r = '+F.fr(fmt(c.Sxy),F.sq(fmt(c.Sxx)+' · '+fmt(c.Syy)))+' = '+F.fr(fmt(c.Sxy),fmt(Math.sqrt(c.Sxx*c.Syy)))+' = '+F.r(fmt(c.r)))],
+   ['v','Comprueba con la fórmula algebraica',`<p class="small mb-1">Σxy = ${fmt(c.SXY)}, Σx² = ${fmt(c.Sx2)}, Σy² = ${fmt(c.Sy2)}</p>`+F.box('r = '+F.fr(c.n+'('+fmt(c.SXY)+') − ('+fmt(c.Sx)+')('+fmt(c.Sy)+')',F.sq('['+c.n+'('+fmt(c.Sx2)+') − ('+fmt(c.Sx)+')²]['+c.n+'('+fmt(c.Sy2)+') − ('+fmt(c.Sy)+')²]'))+' = '+fmt(c.r2))+`<p class="small mb-0">Ambas fórmulas dan el mismo valor.</p>`],
+   ['c','Recta de regresión y centroide',F.box('b = '+F.fr(F.S+'(x − '+F.b('x')+')(y − '+F.b('y')+')',F.S+'(x − '+F.b('x')+')²')+' = '+F.fr(fmt(c.Sxy),fmt(c.Sxx))+' = '+fmt(c.b))+F.box('a = '+F.b('y')+' − b'+F.b('x')+' = '+fmt(c.my)+' − ('+fmt(c.b)+')('+fmt(c.mx)+') = '+fmt(c.a))+`<p class="small mb-0">ŷ = ${fmt(c.a)} ${c.b<0?'−':'+'} ${fmt(Math.abs(c.b))}x · centroide (${fmt(c.mx)}, ${fmt(c.my)})</p>`],
+   ['c','Prueba de significancia',F.box('t = '+F.fr('r'+F.sq('n − 2'),F.sq('1 − r²'))+' = '+F.fr(fmt(c.r)+F.sq(c.df),F.sq('1 − '+fmt(c.r*c.r)))+' = '+fmt(c.t))+`<p class="small mb-0">gl = n − 2 = ${c.df}; t crítica bilateral (α = .05) = ${fmt(c.tc)}; p = ${fmt(c.p)}.</p>`],
+   ['r','Respuesta',`<p class="mb-1"><span class="ans">r = ${fmt(c.r)}</span> <span class="ans">r² = ${fmt(c.r*c.r)}</span> <span class="ans">ŷ = ${fmt(c.a)} ${c.b<0?'−':'+'} ${fmt(Math.abs(c.b))}x</span></p><p class="mb-0">Correlación ${c.r<0?'negativa':'positiva'} ${strength(c.r)}; |t| ${Math.abs(c.t)>c.tc?'&gt;':'≤'} t crítica, por lo que ${Math.abs(c.t)>c.tc?'se rechaza':'no se rechaza'} H₀: ρ = 0 con α = .05.</p>`]];
+  if(!keep)stepIdx=1;
+  drawSteps();
+}
+function drawSteps(){const el=document.getElementById('steps');el.innerHTML=STEPS.slice(0,stepIdx).map(([k,t,b],i)=>`<div class="step" data-k="${k}"><div class="mb-1"><span class="sn">${i+1}</span><span class="st">${t}</span></div>${b}</div>`).join('');const done=stepIdx>=STEPS.length;document.getElementById('btnNext').hidden=done;document.getElementById('btnAll').hidden=done;document.getElementById('btnAnim').hidden=stepIdx<3}
+document.getElementById('btnSteps').onclick=()=>{if(!CR){document.getElementById('corrMsg').scrollIntoView({block:'center'});return}buildSteps(false)};
+document.getElementById('btnNext').onclick=()=>{stepIdx=Math.min(STEPS.length,stepIdx+1);drawSteps()};
+document.getElementById('btnAll').onclick=()=>{stepIdx=STEPS.length;drawSteps()};
+document.getElementById('btnAnim').onclick=()=>{const t=document.getElementById('pTbl');if(!t)return;t.classList.remove('wave');void t.offsetWidth;t.classList.add('wave')};
+
+/* ===================== equipo ===================== */
+const ROLES=['Captura','Análisis','Redacción','Difusión'];
+const teamBody=document.querySelector('#teamTbl tbody');
+function renderTeam(){
+  teamBody.innerHTML=S.team.map((s,i)=>`<tr><td>${i+1}</td><td><input data-i="${i}" data-k="nombre" value="${esc(s.nombre)}" aria-label="Nombre alumno ${i+1}" style="min-width:170px"></td><td><input data-i="${i}" data-k="grupo" value="${esc(s.grupo)}" aria-label="Grupo"></td><td><select data-i="${i}" data-k="sem" aria-label="Semestre">${['','5.°','6.°','Otro'].map(o=>`<option ${s.sem===o?'selected':''}>${o}</option>`).join('')}</select></td><td><select data-i="${i}" data-k="eq" aria-label="Equipo">${['','1','2'].map(o=>`<option ${s.eq===o?'selected':''}>${o}</option>`).join('')}</select></td><td><select data-i="${i}" data-k="rol" aria-label="Rol">${['',...ROLES].map(o=>`<option ${s.rol===o?'selected':''}>${o}</option>`).join('')}</select></td><td><input type="checkbox" class="form-check-input" data-i="${i}" data-k="carta" ${s.carta?'checked':''} aria-label="Carta compromiso entregada"></td><td><button class="btn btn-sm btn-outline-danger" data-del="${i}" aria-label="Quitar alumno ${i+1}"><i class="bi bi-x-lg"></i></button></td></tr>`).join('')||'<tr><td colspan="8" class="text-muted py-3">Sin alumnos registrados.</td></tr>';
+  const n=S.team.length;document.getElementById('teamCount').textContent=n+(n===1?' alumno':' alumnos')+(n>16?' (más de 16)':'');
+}
+teamBody.addEventListener('input',e=>{const t=e.target;if(!t.dataset.k)return;S.team[+t.dataset.i][t.dataset.k]=t.type==='checkbox'?t.checked:t.value;save()});
+teamBody.addEventListener('change',e=>{const t=e.target;if(!t.dataset.k)return;S.team[+t.dataset.i][t.dataset.k]=t.type==='checkbox'?t.checked:t.value;save()});
+teamBody.addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;S.team.splice(+b.dataset.del,1);save();renderTeam()});
+document.getElementById('addStudent').onclick=()=>{S.team.push({nombre:'',grupo:'',sem:'',eq:'',rol:'',carta:false});save();renderTeam()};
+
+/* ===================== cronograma ===================== */
+const CRONO=[['Aval de SILADIN y autorizaciones','Alejandra Díaz (coordinadora)','Nov 2026','Oficio de aval; autorización de la Dirección'],['Convocatoria e integración de equipos','Ambos docentes','Nov 2026','Lista de inscritos; cartas compromiso'],['Revisión bibliográfica','Alumnos / A. Díaz','Nov–Dic 2026','Fichas bibliográficas; marco teórico'],['Taller de estadística (6 prácticas)','Pedro Nequiz','Dic 2026–Ene 2027','Prácticas resueltas; guía de práctica'],['Capacitación en SISCO SV-21 y ética','Alejandra Díaz','Ene 2027','Lista de asistencia; constancias'],['Prueba piloto y consentimientos','Ambos docentes / alumnos','Feb 2027','Instrumento ajustado; consentimientos firmados'],['Aplicación del SISCO SV-21 y cuestionario','Alumnos (supervisión docente)','Feb–Mar 2027','Base de datos con folio'],['Aplicación del NEUROPSI','Alejandra Díaz','Mar 2027','Protocolos calificados (resguardados)'],['Lista dálmata anonimizada','Pedro Nequiz','Mar 2027','Base de trayectoria escolar'],['Fase biológica (condicionada)','Personal de salud / ambos docentes','Mar–Abr 2027','Resultados de laboratorio con folio'],['Análisis estadístico','Alumnos / Pedro Nequiz','Abr 2027','Tablas, gráficas, correlaciones; plantilla'],['Reporte técnico y cartel','Alumnos / ambos docentes','May 2027','Reporte por equipo; cartel'],['Muestra SILADIN y Encuentro Estudiantil','Alumnos','2027','Constancias; fotografías'],['Devolución de resultados y jornada','Ambos docentes','Jun 2027','Infografía; lista de asistencia'],['Envío del reporte a arbitraje o comité de pares','Alejandra Díaz / Pedro Nequiz','May–Jun 2027','Dictamen de arbitraje'],['Informe final en la plataforma','Alejandra Díaz (coordinadora)','Jun–Jul 2027','Informe con minutas, asistencias y productos'],['Reuniones mensuales de profesores','Ambos docentes','Mensual','Minutas']];
+const ST={pend:'Pendiente',proc:'En proceso',ok:'Hecho'};
+function renderCrono(){
+  const tb=document.querySelector('#cronoTbl tbody');
+  tb.innerHTML=CRONO.map((r,i)=>{const c=S.crono[i]||{};const st=c.st||'pend';return `<tr><td style="text-align:left;min-width:200px">${r[0]}</td><td>${r[1]}</td><td style="white-space:nowrap">${r[2]}</td><td style="text-align:left;min-width:180px">${r[3]}</td><td><select class="st-${st}" data-ci="${i}" data-f="st" aria-label="Estado de ${r[0]}">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${k===st?'selected':''}>${v}</option>`).join('')}</select></td><td><input data-ci="${i}" data-f="nota" value="${esc(c.nota)}" placeholder="fecha o enlace" aria-label="Fecha real o enlace de ${r[0]}" style="min-width:150px"></td></tr>`}).join('');
+  const done=CRONO.reduce((s,_,i)=>s+((S.crono[i]||{}).st==='ok'?1:(S.crono[i]||{}).st==='proc'?.5:0),0),pc=Math.round(done/CRONO.length*100);
+  document.getElementById('progBar').style.width=pc+'%';document.getElementById('progTxt').textContent=pc+' %';
+}
+document.getElementById('cronoTbl').addEventListener('change',e=>{const t=e.target;if(t.dataset.ci===undefined)return;const i=+t.dataset.ci;S.crono[i]=Object.assign({},S.crono[i],{[t.dataset.f]:t.value});save();if(t.dataset.f==='st')renderCrono()});
+document.getElementById('cronoTbl').addEventListener('input',e=>{const t=e.target;if(t.dataset.f!=='nota')return;const i=+t.dataset.ci;S.crono[i]=Object.assign({},S.crono[i],{nota:t.value});save()});
+
+/* ===================== bitácora ===================== */
+function renderLogs(){const el=document.getElementById('logList');document.getElementById('logCount').textContent=S.logs.length+' / 24';
+  el.innerHTML=S.logs.length?[...S.logs].map((l,i)=>({l,i})).sort((a,b)=>(b.l.date||'').localeCompare(a.l.date||'')).map(({l,i})=>`<div class="log-card"><div class="d-flex flex-wrap gap-2 align-items-center"><b>${esc(l.date)}</b><span class="chip">${esc(l.team)}</span>${l.att!==''?`<span class="chip"><i class="bi bi-people"></i> ${esc(l.att)}</span>`:''}<button class="btn btn-sm btn-outline-danger ms-auto" data-dl="${i}" aria-label="Eliminar sesión"><i class="bi bi-trash"></i></button></div><div class="small mt-1"><b>Actividad:</b> ${esc(l.act)}</div>${l.agr?`<div class="small"><b>Acuerdos:</b> ${esc(l.agr)}</div>`:''}</div>`).join(''):'<p class="text-muted small mb-0">Aún no hay sesiones. Meta: al menos 24 sesiones semanales.</p>'}
+document.getElementById('logForm').onsubmit=e=>{e.preventDefault();const g=id=>document.getElementById(id).value;S.logs.push({date:g('lgDate'),team:g('lgTeam'),att:g('lgAtt'),act:g('lgAct'),agr:g('lgAgr')});save();renderLogs();e.target.reset()};
+document.getElementById('logList').onclick=e=>{const b=e.target.closest('[data-dl]');if(!b)return;S.logs.splice(+b.dataset.dl,1);save();renderLogs()};
+
+/* ===================== ética ===================== */
+const ETH=['Aval de la Secretaría Técnica de SILADIN','Autorización de la Dirección para usar la lista dálmata','Aviso de privacidad del proyecto','Formato de consentimiento (tutor) y de asentimiento (alumno)','Folios asignados; tabla folio–alumno resguardada por los profesores','Ruta de canalización con Psicopedagogía y ESPORA','Material original del NEUROPSI adquirido','Dictamen de comité de ética (solo si hay fase biológica)'];
+function renderEth(){document.getElementById('ethicsList').innerHTML=ETH.map((t,i)=>`<div class="form-check"><input class="form-check-input" type="checkbox" id="eth${i}" data-eth="${i}" ${S.eth[i]?'checked':''}><label class="form-check-label small" for="eth${i}">${t}</label></div>`).join('')}
+document.getElementById('ethicsList').onchange=e=>{const i=e.target.dataset.eth;if(i===undefined)return;S.eth[i]=e.target.checked;save()};
+function renderCons(){['cEnt','cPad','cAsen'].forEach(k=>{const el=document.getElementById(k);if(document.activeElement!==el)el.value=S[k]??''});const ok=Math.min(+S.cPad||0,+S.cAsen||0);document.getElementById('cTxt').textContent=ok+' / 30';document.getElementById('cBar').style.width=Math.min(100,ok/30*100)+'%'}
+['cEnt','cPad','cAsen'].forEach(k=>document.getElementById(k).addEventListener('input',e=>{S[k]=e.target.value;save();renderCons()}));
+
+/* ===================== pendientes ===================== */
+const PEND=[['aval','Número y fecha del oficio de aval SILADIN'],['horario','Día, hora y sala de las sesiones'],['grupos','Grupos de procedencia de los alumnos'],['muestra','Fecha de la Muestra SILADIN'],['encuentro','Edición y fecha del Encuentro Estudiantil'],['neuropsi','Cotización del NEUROPSI (o quién lo presta)'],['costos','Costo estimado de materiales y fuente'],['comite','Comité de ética (fase biológica)'],['arbitraje','Evento o comité para el arbitraje (nivel C)'],['transp','Respuesta de la Unidad de Transparencia (aviso de privacidad)']];
+function renderPend(){const g=document.getElementById('pendGrid');g.innerHTML=PEND.map(([k,t])=>`<div class="col-md-6 min0"><label class="form-label small fw-bold mb-1" for="pd_${k}">${t}</label><input class="form-control" id="pd_${k}" data-pd="${k}" value="${esc(S.pend[k])}"></div>`).join('');countPend()}
+function countPend(){const n=PEND.filter(([k])=>(S.pend[k]||'').trim()).length;document.getElementById('pendTxt').textContent=n+' / '+PEND.length+' completos'}
+document.getElementById('pendGrid').addEventListener('input',e=>{const k=e.target.dataset.pd;if(!k)return;S.pend[k]=e.target.value;save();countPend()});
+
+/* ===================== formulario, notas, fuentes ===================== */
+const FORMS=[
+ ['desc','Media',F.box(F.b('x')+' = '+F.fr(F.S+'x','n')),'Promedio aritmético de la muestra.','var(--c2)'],
+ ['desc','Varianza y desviación estándar muestrales',F.box('s² = '+F.fr(F.S+'(x − '+F.b('x')+')²','n − 1'))+F.box('s = '+F.sq('s²')),'Divisor n − 1 (muestra).','var(--c2)'],
+ ['desc','Coeficiente de variación',F.box('CV = '+F.fr('s',F.b('x'))+' · 100 %'),'Dispersión relativa.','var(--c2)'],
+ ['agr','Regla de Sturges',F.box('k = 1 + 3.322 log n')+F.box('c = '+F.fr('R','k')),'Número de clases y amplitud.','var(--c3)'],
+ ['agr','Media agrupada',F.box(F.b('x')+' = '+F.fr(F.S+'f·x<sub>m</sub>','n')),'x<sub>m</sub>: marca de clase.','var(--c3)'],
+ ['agr','Mediana agrupada',F.box('Me = L + '+F.fr('n/2 − F<sub>ant</sub>','f')+' · c'),'L: frontera inferior de la clase mediana.','var(--c3)'],
+ ['agr','Moda agrupada',F.box('Mo = L + '+F.fr('d<sub>1</sub>','d<sub>1</sub> + d<sub>2</sub>')+' · c'),'d₁ y d₂: diferencias con las clases vecinas.','var(--c3)'],
+ ['cor','Pearson (estándar)',F.box('r = '+F.fr(F.S+'(x − '+F.b('x')+')(y − '+F.b('y')+')',F.sq(F.S+'(x − '+F.b('x')+')² '+F.S+'(y − '+F.b('y')+')²'))),'−1 ≤ r ≤ 1.','var(--c4)'],
+ ['cor','Pearson (algebraica)',F.box('r = '+F.fr('n'+F.S+'xy − '+F.S+'x'+F.S+'y',F.sq('[n'+F.S+'x² − ('+F.S+'x)²][n'+F.S+'y² − ('+F.S+'y)²]'))),'Misma r con sumas directas.','var(--c4)'],
+ ['cor','Recta de regresión',F.box('ŷ = a + bx')+F.box('b = '+F.fr(F.S+'(x − '+F.b('x')+')(y − '+F.b('y')+')',F.S+'(x − '+F.b('x')+')²')+'&ensp; a = '+F.b('y')+' − b'+F.b('x')),'Pasa por el centroide ('+'x̄, ȳ).','var(--c4)'],
+ ['cor','Prueba t para r',F.box('t = '+F.fr('r'+F.sq('n − 2'),F.sq('1 − r²'))),'gl = n − 2; H₀: ρ = 0.','var(--c5)'],
+ ['cor','Tamaño de muestra para r',F.box('n = '+'['+F.fr('z<sub>α/2</sub> + z<sub>β</sub>','arctanh r')+']² + 3'),'Con r = 0.3, α = .05 y potencia 80 %: n ≈ 85.','var(--c5)']];
+const FCH={all:'Todas',desc:'Descriptiva',agr:'Datos agrupados',cor:'Correlación'};
+let fsel='all';
+function renderForms(){document.getElementById('fChips').innerHTML=Object.entries(FCH).map(([k,v])=>`<button class="chip ${k===fsel?'on':''}" data-fc="${k}">${v}</button>`).join('');document.getElementById('fGrid').innerHTML=FORMS.filter(f=>fsel==='all'||f[0]===fsel).map(([g,t,fx,nt,cl])=>`<div class="col-md-6 col-lg-4 min0"><div class="fcard" style="--gc:${cl}"><div class="fw-bold mb-1">${t}</div>${fx}<div class="small text-muted">${nt}</div></div></div>`).join('')}
+document.getElementById('fChips').onclick=e=>{const b=e.target.closest('[data-fc]');if(b){fsel=b.dataset.fc;renderForms()}};
+const NOTAS=[['Muestra de 30 «calculada para detectar r ≈ 0.3 (≈ 85)»','Estudio exploratorio: con n = 30 solo se detectan r ≥ 0.49','Con z de Fisher, n = 30 da potencia de 80 % solo para |r| ≥ 0.49; r ≈ 0.3 requiere ≈ 85.'],['Los alumnos aplican el SISCO SV-21 y el NEUROPSI','Los alumnos aplican el SISCO SV-21; el NEUROPSI lo aplica personal capacitado','El editor clasifica el NEUROPSI en su nivel más alto de calificación (C).'],['Periodo: octubre 2026 – abril 2027','Octubre 2026 – julio 2027 (proyecto anual)','El Cuadernillo 2026-2027 pide proyectos anuales; el glosario de asignatura habla de un año de trabajo.'],['Pedro coordina y registra el proyecto','Alejandra (TC C) coordina y registra; Pedro participa con carta compromiso','Para carrera el apoyo a la docencia es obligatorio y «preferentemente de nivel C»; para asignatura es voluntario con carta compromiso.'],['Correo de Alejandra en Gmail en la tabla de modalidad','alejandra.diaz@cch.unam.mx','Debe usarse el correo institucional y ser el mismo en todo el documento.'],['Submuestra NEUROPSI de 20 a 30 (población) y de 10 a 25 (objetivos)','10 a 25 en ambos apartados','Con una muestra de 30 la submuestra no puede ser de 30; se unifica con el objetivo específico 3.'],['«ESTRÉS ACADÉMICO , LAS FUNCIONES…»','«ESTRÉS ACADÉMICO, LAS FUNCIONES…»','Espacio antes de la coma.']];
+document.getElementById('notasBody').innerHTML=NOTAS.map(n=>`<tr><td style="text-align:left">${n[0]}</td><td style="text-align:left;color:var(--c3);font-weight:700">${n[1]}</td><td style="text-align:left" class="small">${n[2]}</td></tr>`).join('');
+const REFS=['Barraza Macías, A. (2006). Un modelo conceptual para el estudio del estrés académico. <i>Revista Electrónica de Psicología Iztacala, 9</i>(3), 110–129.','Barraza Macías, A. (2018). <i>Inventario SISCO SV-21. Inventario sistémico cognoscitivista para el estudio del estrés académico. Segunda versión de 21 ítems</i>. ECORFAN.','Colegio de Ciencias y Humanidades. (2020, 17 de enero). <i>Protocolo de equivalencias para el ingreso y la promoción de los profesores ordinarios de carrera</i> [Suplemento]. <i>Gaceta CCH</i>.','Colegio de Ciencias y Humanidades. (2026). <i>Cuadernillo de orientaciones 2026-2027</i>. UNAM. <a href="https://www.cch.unam.mx/sites/default/files/Cuadernillo_Orientaciones_2026-2027.pdf" target="_blank" rel="noopener">Enlace</a>','Edel Navarro, R. (2003). El rendimiento académico: concepto, investigación y desarrollo. <i>REICE, 1</i>(2), 1–15.','Escuela Nacional Colegio de Ciencias y Humanidades. (2025). <i>Plan de Estudios</i>. UNAM.','Lazarus, R. S. y Folkman, S. (1984). <i>Stress, appraisal, and coping</i>. Springer.','Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados. (2025, 20 de marzo). <i>Diario Oficial de la Federación</i>.','Lupien, S. J., McEwen, B. S., Gunnar, M. R. y Heim, C. (2009). Effects of stress throughout the lifespan on the brain, behaviour and cognition. <i>Nature Reviews Neuroscience, 10</i>(6), 434–445. https://doi.org/10.1038/nrn2639','McEwen, B. S. (1998). Protective and damaging effects of stress mediators. <i>The New England Journal of Medicine, 338</i>(3), 171–179. https://doi.org/10.1056/NEJM199801153380307','Olivas-Ugarte, L. O., Morales-Hernández, S. F. y Solano-Jáuregui, M. K. (2021). Evidencias psicométricas de Inventario SISCO SV-21 para el estudio del estrés académico en universitarios peruanos. <i>Propósitos y Representaciones, 9</i>(2).','Reglamento de la Ley General de Salud en Materia de Investigación para la Salud. (1987, 6 de enero). <i>Diario Oficial de la Federación</i>. Última reforma publicada el 2 de abril de 2014.'];
+document.getElementById('refs').innerHTML=REFS.map(r=>`<p style="padding-left:2em;text-indent:-2em" class="mb-2">${r}</p>`).join('');
+
+/* ===================== exportar / importar ===================== */
+document.getElementById('btnExport').onclick=()=>download('avance_proyecto_siladin.json',JSON.stringify(S,null,2),'application/json');
+document.getElementById('fileImport').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);S=Object.assign({team:[],data:[],demo:false,crono:{},logs:[],eth:{},pend:{}},o);save();renderAll()}catch(err){document.getElementById('saveState').textContent='El archivo no es un JSON válido.'}};rd.readAsText(f)};
+
+/* ===================== header del Aula (fallback) ===================== */
+function ensureHeader(){const h=document.getElementById('app-header');if(h&&!h.children.length){h.innerHTML='<div class="nav-fallback"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i><a href="index.html">Aula Digital</a><span class="tag">Proyecto SILADIN · CCH Oriente</span></div>'}}
+
+/* ===================== reveal y sec-nav activa ===================== */
+function initReveal(){if(!('IntersectionObserver' in window)){document.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));return}const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{threshold:.08});document.querySelectorAll('.rv').forEach(e=>io.observe(e));
+  const links=[...document.querySelectorAll('.sec-nav a')],io2=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});document.querySelectorAll('section.sec').forEach(s=>io2.observe(s))}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal.show').forEach(m=>bootstrap.Modal.getInstance(m)?.hide())}});
+
+function renderAll(){renderTeam();renderData();renderCrono();renderLogs();renderEth();renderCons();renderPend();renderForms()}
+renderAll();initReveal();
+window.addEventListener('load',()=>setTimeout(ensureHeader,400));
+</script>
+<!-- Para integrarla al Aula Digital: descomentar estas dos líneas y agregar la página al MENU de aula-header.js -->
+<!-- <script src="auth-config.js"></script><script src="aula-header.js"></script> -->
+</body>
+</html>
