@@ -791,14 +791,17 @@ main{overflow-x:clip}
 .btn:disabled,.btn[disabled]{opacity:.42;cursor:not-allowed;background:var(--bg);color:var(--azul)}
 @media (hover:none){.btn:hover{background:var(--bg);color:var(--azul)}.btn.solid:hover{background:var(--azul);color:#fff;border-color:var(--azul)}}
 .exam-modal .modal-footer .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px}
-/* Encuesta: el formulario envuelve encabezado, cuerpo y pie; debe ser flexible para que el cuerpo se desplace */
-#surveyForm{display:flex;flex-direction:column;min-height:0;max-height:100%;height:100%}
-#surveyForm .modal-body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-.modal-dialog-scrollable #surveyForm{max-height:calc(100dvh - 2.5rem)}
-@media (max-width:575.98px){
-  #surveyModal .modal-dialog{height:100%;height:100dvh}
-  .modal-dialog-scrollable #surveyForm{max-height:none}
-  #surveyModal .modal-header{padding:12px 14px;background:var(--azul)}
+/* Encuesta: todo el modal se desplaza (sin scroll interno) y el pie queda fijo abajo */
+#surveyModal{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#surveyModal .survey-card{overflow:visible}
+#surveyForm{margin:0}
+#surveyModal .modal-header{position:sticky;top:0;z-index:3;background:var(--bg);border-radius:16px 16px 0 0}
+#surveyModal .modal-footer{position:sticky;bottom:0;z-index:3;background:var(--bg);border-radius:0 0 16px 16px;box-shadow:0 -6px 16px rgba(19,32,59,.08)}
+#sv-err:not([hidden]){display:block!important;margin-top:8px}
+@media (max-width:640px),(pointer:coarse) and (max-width:900px){
+  #surveyModal .sv-dialog{max-width:none;width:100%;margin:0!important;padding:0!important;min-height:100%}
+  #surveyModal .survey-card{min-height:100vh;min-height:100dvh;border:0;border-radius:0}
+  #surveyModal .modal-header{padding:12px 14px;background:var(--azul);border-radius:0}
   #surveyModal .modal-title{color:#fff;font-size:1.12rem}
   #surveyModal .eyebrow{color:var(--oro-2);font-size:.68rem}
   #surveyModal .btn-close{background-color:#fff}
@@ -807,11 +810,12 @@ main{overflow-x:clip}
   .sv-q{padding:10px 12px;margin-top:10px}
   .sv-q legend{font-size:.93rem;line-height:1.35}
   .stars{gap:4px;justify-content:space-between;padding-top:6px}
-  .stars label{flex:1 1 0;max-width:48px;width:auto;height:44px}
-  .stars label svg{width:30px;height:30px}
+  .stars label{flex:1 1 0;max-width:52px;width:auto;height:46px}
+  .stars label svg{width:32px;height:32px}
+  .sv-scale{max-width:none}
   #sv-com{min-height:84px}
-  #surveyModal .modal-footer{display:grid;grid-template-columns:1fr 1.5fr;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 16px rgba(19,32,59,.08)}
-  #surveyModal .modal-footer .btn{min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:6px;margin:0}
+  #surveyModal .modal-footer{display:grid;grid-template-columns:1fr 1.5fr;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-radius:0}
+  #surveyModal .modal-footer .btn{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:6px;margin:0;white-space:nowrap}
 }
 @media (max-width:760px){
   .exam-modal .modal-dialog{height:100%;height:100dvh}
@@ -847,9 +851,8 @@ main{overflow-x:clip}
 }
 /* Celular horizontal: poca altura, todo más compacto */
 @media (max-height:500px) and (orientation:landscape){
-  .exam-modal .modal-dialog,#surveyModal .modal-dialog{width:100vw;max-width:none;height:100%;height:100dvh;margin:0;padding:0}
-  .exam-modal .modal-content,#surveyModal .modal-content{height:100%;border:0;border-radius:0}
-  .modal-dialog-scrollable #surveyForm{max-height:none}
+  .exam-modal .modal-dialog{width:100vw;max-width:none;height:100%;height:100dvh;margin:0;padding:0}
+  .exam-modal .modal-content{height:100%;border:0;border-radius:0}
   .exam-modal .modal-header{padding:6px 12px}
   .exam-modal .eyebrow{display:none}
   .exam-modal .modal-title{font-size:1rem}
@@ -871,6 +874,12 @@ main{overflow-x:clip}
   #surveyModal .modal-body{padding:8px 14px}
   #surveyModal .modal-footer{display:flex;padding:6px 14px}
 }
+.mn-user{flex-wrap:wrap}
+.mn-survey{flex:1 1 100%;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;margin-top:4px;border:1.5px solid var(--azul);background:var(--azul);color:#fff;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
+.mn-survey .ic{color:#ffd23f}
+.mn-survey:disabled{background:var(--verde-soft);border-color:var(--verde);color:var(--verde);cursor:default}
+.mn-survey:disabled .ic{color:var(--verde)}
+#user-survey:disabled{opacity:.6;cursor:default}
 /* Botón flotante: aparece al desplazarse hacia arriba y se oculta al bajar */
 .fab-top{transition:opacity .22s,transform .25s cubic-bezier(.2,.8,.2,1),visibility .25s;visibility:hidden;pointer-events:none}
 .fab-top.show{visibility:visible;pointer-events:auto}
@@ -936,7 +945,6 @@ body.modal-open .fab-top,body.mnav-open .fab-top{opacity:0!important;pointer-eve
       </div>
       <a class="top-link" href="#reactivos"><span class="h">#</span>reactivos</a>
       <a class="top-link" href="#examen"><span class="h">#</span>examen</a>
-      <a class="top-link" href="#encuesta"><span class="h">#</span>encuesta</a>
       <a class="top-link" href="#codigos"><span class="h">#</span>códigos</a>
       <a class="top-link" href="#creditos"><span class="h">#</span>créditos</a>
     </nav>
@@ -945,7 +953,7 @@ body.modal-open .fab-top,body.mnav-open .fab-top{opacity:0!important;pointer-eve
       <ul class="dropdown-menu dropdown-menu-end">
         <li><div class="dropdown-header" id="user-meta"></div></li>
         <li><a class="dropdown-item" href="#ruta"><svg class="ic" aria-hidden="true"><use href="#i-chart-line"/></svg>Ver mi avance</a></li>
-        <li><button class="dropdown-item" type="button" id="user-survey"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg>Responder la encuesta</button></li>
+        <li><button class="dropdown-item" type="button" id="user-survey"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><span class="sv-lbl">Responder la encuesta</span></button></li>
         <li><hr class="dropdown-divider"></li>
         <li><button class="dropdown-item" type="button" id="user-logout"><svg class="ic" aria-hidden="true"><use href="#i-logout"/></svg>Cerrar sesión</button></li>
       </ul>
@@ -2046,21 +2054,6 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
   </div>
 </section>
 
-<!-- ================= ENCUESTA ================= -->
-<section id="encuesta" class="unit">
-  <div class="wrap">
-    <div class="unit-head">
-      <div class="unit-num" style="font-size:clamp(3.5rem,9vw,6rem)">★</div>
-      <div><div class="tag">Cierre de actividades</div><h2>Encuesta de satisfacción<a class="anchor-link" href="#encuesta">#encuesta</a></h2>
-      <p>Tu opinión nos ayuda a mejorar esta guía. Son tres preguntas y un espacio para comentarios; te toma menos de un minuto.</p></div>
-    </div>
-    <div class="survey-cta">
-      <div class="survey-cta-txt"><h3 id="sv-cta-title">¿Cómo te fue con la guía?</h3><p class="muted" id="sv-cta-msg">Responde cuando termines las actividades que quieras repasar.</p></div>
-      <button class="btn solid" id="sv-open" type="button"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><span id="sv-open-t">Responder encuesta</span></button>
-    </div>
-  </div>
-</section>
-
 <!-- ================= CÓDIGOS ================= -->
 <section id="codigos" class="unit">
   <div class="wrap">
@@ -2148,13 +2141,13 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
           </div>
           <div class="fld">
             <label class="form-label" for="lg-nombre">Nombre completo</label>
-            <input class="form-control" id="lg-nombre" name="nombre" type="text" autocomplete="name" placeholder="Ej. Mariana López Hernández" required>
-            <div class="invalid-feedback">Escribe tu nombre y al menos un apellido.</div>
+            <input class="form-control" id="lg-nombre" name="nombre" type="text" autocomplete="name" placeholder="Ej. Mariana López Hernández" maxlength="80" required>
+            <div class="invalid-feedback">Escribe tu nombre y al menos un apellido, solo con letras.</div>
           </div>
           <div class="fld">
             <label class="form-label" for="lg-cuenta" id="lg-cuenta-lbl">Número de cuenta</label>
-            <input class="form-control mono" id="lg-cuenta" name="cuenta" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="Hasta 10 caracteres" required>
-            <div class="invalid-feedback">Escribe tu número sin espacios ni guiones (de 4 a 10 caracteres).</div>
+            <input class="form-control mono" id="lg-cuenta" name="cuenta" type="text" inputmode="numeric" autocomplete="off" minlength="6" maxlength="10" placeholder="De 6 a 10 caracteres" required>
+            <div class="invalid-feedback">Escribe tu número sin espacios ni guiones (de 6 a 10 caracteres).</div>
           </div>
         </div>
         <div class="modal-footer">
@@ -2197,7 +2190,7 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
 
 <!-- ================= MODAL · ENCUESTA ================= -->
 <div class="modal fade" id="surveyModal" tabindex="-1" aria-labelledby="surveyTitle" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+  <div class="modal-dialog modal-lg sv-dialog">
     <div class="modal-content survey-card">
       <form id="surveyForm" novalidate>
         <div class="modal-header">
@@ -3598,7 +3591,9 @@ document.addEventListener("click", e => {
 });
 let toastTimer;
 // Al abrir cualquier ventana (examen, encuesta, panel) se retira el aviso para que no tape nada
-document.addEventListener("show.bs.modal", () => { const t = $("#toast"); if (window.bootstrap && bootstrap.Toast) { const i = bootstrap.Toast.getInstance(t); if (i) i.hide(); } t.classList.remove("show"); });
+function hideToast() { const t = $("#toast"); if (window.bootstrap && bootstrap.Toast) { const i = bootstrap.Toast.getInstance(t); if (i) i.hide(); } t.classList.remove("show"); }
+document.addEventListener("show.bs.modal", hideToast);
+$("#menu-btn").addEventListener("click", hideToast);
 function toast(msg) {
   const t = $("#toast"); $("#toast-body").textContent = msg;
   if (window.bootstrap && bootstrap.Toast) { bootstrap.Toast.getOrCreateInstance(t, { delay: 3800 }).show(); return; }
@@ -3641,7 +3636,7 @@ const initials = n => (n || "?").trim().split(/\s+/).slice(0, 2).map(w => w[0]).
 /* ---------- Aparición progresiva al hacer scroll ---------- */
 (function reveal() {
   if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const sel = [".hero-grid > *", ".stats > div", ".unit-head", "dl.terms > div", ".apr", "#ruta-cards > .card", ".ex-rules > .card", ".survey-cta", ".tbl-wrap", ".cred-grid > div", "#codigos .grid2 > div"];
+  const sel = [".hero-grid > *", ".stats > div", ".unit-head", "dl.terms > div", ".apr", "#ruta-cards > .card", ".ex-rules > .card", ".tbl-wrap", ".cred-grid > div", "#codigos .grid2 > div"];
   const els = []; sel.forEach(s => $$(s).forEach((el, i) => { if (!els.includes(el)) { el.classList.add("rv"); el.style.setProperty("--d", i % 6); els.push(el); } }));
   const vh = innerHeight;
   els.forEach(el => { const r = el.getBoundingClientRect(); if (r.top < vh && r.bottom > 0) el.classList.add("in"); });
@@ -3659,18 +3654,24 @@ function paintUser() {
   dd.hidden = false;
   $("#user-ini").textContent = initials(s.nombre); $("#user-name").textContent = firstName(s.nombre);
   $("#user-meta").textContent = `${s.nombre} · ${s.cuenta}`;
-  mn.innerHTML = `<span class="avatar">${esc(initials(s.nombre))}</span><span><b>${esc(s.nombre)}</b><br><span class="mono small muted">${esc(s.cuenta)}</span></span><button class="btn sm" type="button" data-logout>Salir</button>`;
+  mn.innerHTML = `<span class="avatar">${esc(initials(s.nombre))}</span><span><b>${esc(s.nombre)}</b><br><span class="mono small muted">${esc(s.cuenta)}</span></span><button class="btn sm" type="button" data-logout>Salir</button><button class="mn-survey" type="button" data-survey>${ICO("star")}<span class="sv-lbl">Responder la encuesta</span></button>`;
+  try { Survey.paintCta(); } catch (e) { /* aún no se inicializa */ }
 }
 function logout() { Session.end("Cerrada por el usuario"); Outbox.beacon(); Outbox.flush().finally(() => location.reload()); setTimeout(() => location.reload(), 1500); }
 $("#user-logout").addEventListener("click", logout);
-$("#mn-user").addEventListener("click", e => { if (e.target.closest("[data-logout]")) logout(); });
+$("#mn-user").addEventListener("click", e => {
+  if (e.target.closest("[data-logout]")) logout();
+  if (e.target.closest("[data-survey]")) { $("#mnav").classList.remove("open"); document.body.classList.remove("mnav-open"); $("#menu-btn").setAttribute("aria-expanded", "false"); document.body.style.overflow = ""; Survey.open("menú móvil"); }
+});
 $("#mn-top").addEventListener("click", () => { $("#mnav").classList.remove("open"); $("#menu-btn").setAttribute("aria-expanded", "false"); document.body.style.overflow = ""; scrollTo({ top: 0, behavior: "smooth" }); });
 
 /* ---------- Modal de inicio de sesión ---------- */
 const Login = (function () {
   const f = $("#loginForm"), nom = $("#lg-nombre"), cta = $("#lg-cuenta"), doc = $("#lg-docente");
-  const okNom = () => /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' .-]{2,}\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' .-]{2,}/.test(nom.value.trim());
-  const okCta = () => /^[A-Za-z0-9]{4,10}$/.test(cta.value.replace(/[\s-]/g, ""));
+  // Nombre: solo letras (con acentos y ñ), espacios, apóstrofo y guion; nada de números
+  const okNom = () => /^\p{L}[\p{L}'-]+(\s+\p{L}[\p{L}'-]*)+$/u.test(nom.value.trim()) && nom.value.trim().split(/\s+/).filter(w => w.length >= 2).length >= 2;
+  const okCta = () => /^[A-Za-z0-9]{6,10}$/.test(cta.value);
+  nom.addEventListener("input", () => { const v = nom.value.replace(/[^\p{L}\s'-]/gu, "").replace(/\s{2,}/g, " ").replace(/^\s+/, "").slice(0, 80); if (v !== nom.value) nom.value = v; });
   function check() { nom.classList.toggle("is-invalid", !okNom()); cta.classList.toggle("is-invalid", !okCta()); return okNom() && okCta(); }
   cta.addEventListener("input", () => { const v = cta.value.replace(/[^A-Za-z0-9]/g, "").slice(0, 10); if (v !== cta.value) cta.value = v; });
   [nom, cta].forEach(i => i.addEventListener("input", () => { if (i.classList.contains("is-invalid")) check(); }));
@@ -3691,7 +3692,7 @@ const Login = (function () {
     $("#lg-rol").textContent = d ? "Soy docente" : "Soy alumno(a)";
     $("#lg-switch").classList.toggle("on", d);
     $("#lg-cuenta-lbl").textContent = d ? "Número de trabajador" : "Número de cuenta";
-    cta.placeholder = "Hasta 10 caracteres, sin guiones";
+    cta.placeholder = "De 6 a 10 caracteres";
   }
   doc.addEventListener("change", rol);
   function reset() { f.reset(); doc.checked = false; rol(); nom.classList.remove("is-invalid"); cta.classList.remove("is-invalid"); }
@@ -3883,14 +3884,12 @@ const Survey = (function () {
     d.sent = true; LS.set(K.survey, d); M.sv = true; saveM(); Session.row("Activa");
     Modal("surveyModal").hide(); paintCta(); toast(`¡Gracias, ${firstName(s.nombre)}! Recibimos tu encuesta.`);
   });
+  // Sin sección en la página: el estado se refleja en las opciones del menú (escritorio y celular)
   function paintCta() {
-    const d = draft(), box = $(".survey-cta"), btn = $("#sv-open");
-    box.classList.toggle("done", !!d.sent);
-    if (d.sent) { $("#sv-cta-title").textContent = "¡Gracias por responder!"; $("#sv-cta-msg").textContent = "Tu encuesta quedó registrada. Puedes seguir usando la guía."; $("#sv-open-t").textContent = "Encuesta enviada"; btn.disabled = true; }
-    else if (d.p1 || d.p2 || d.p3 || d.com) { $("#sv-cta-title").textContent = "Tienes una encuesta sin enviar"; $("#sv-cta-msg").textContent = "Guardamos lo que llevabas. Termínala cuando quieras."; $("#sv-open-t").textContent = "Continuar encuesta"; btn.disabled = false; }
-    else { $("#sv-cta-title").textContent = "¿Cómo te fue con la guía?"; $("#sv-cta-msg").textContent = "Responde cuando termines las actividades que quieras repasar."; $("#sv-open-t").textContent = "Responder encuesta"; btn.disabled = false; }
+    const d = draft(), txt = d.sent ? "Encuesta enviada" : (d.p1 || d.p2 || d.p3 || d.com) ? "Continuar la encuesta" : "Responder la encuesta";
+    $$(".sv-lbl").forEach(e => e.textContent = txt);
+    $$("#user-survey,[data-survey]").forEach(b => { b.disabled = !!d.sent; b.classList.toggle("done", !!d.sent); });
   }
-  $("#sv-open").addEventListener("click", () => open("botón"));
   $("#user-survey").addEventListener("click", () => open("menú de usuario"));
   // Mostrarla al terminar: al llegar al cierre de la página con actividad registrada
   function promptOnce(origin) {
@@ -3900,7 +3899,7 @@ const Survey = (function () {
   }
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting && (M.rq.n >= 5 || M.ex.some(x => x.estado !== "Cerrado sin finalizar") || (M.seen.length >= 8 && M.active >= 300))) promptOnce("final de la página"); }), { threshold: 0.4 });
-    ["encuesta", "creditos"].forEach(id => io.observe(document.getElementById(id)));
+    io.observe(document.getElementById("creditos"));
   }
   return { open, promptOnce, paintCta, resume() { const d = draft(); if (d.opened && !d.sent && (d.p1 || d.p2 || d.p3 || d.com)) setTimeout(() => open("regreso"), 900); } };
 })();
