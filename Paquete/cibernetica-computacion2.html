@@ -658,7 +658,9 @@ textarea.form-control{min-height:110px;resize:vertical}
   .user-dd{display:none}
   .brand .t{display:inline}
   .modal-dialog.modal-fullscreen-lg-down,.modal-dialog.modal-fullscreen-sm-down,.modal-dialog.modal-fullscreen{margin:0;padding:0}
-  .exam-modal .modal-title{font-size:1.05rem}
+  .exam-modal .modal-title{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .exam-modal .eyebrow{display:none}
+  .exam-title{min-width:0}
   .exam-modal .modal-header{padding:12px 14px}
   .toast-zone{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 68px)}
   .apr-pills{top:calc(env(safe-area-inset-top,0px) + 58px);padding:8px 0}
@@ -733,13 +735,183 @@ textarea.form-control{min-height:110px;resize:vertical}
   .dash-actions #dash-sheet:not([hidden]){grid-column:1/-1}
 }
 
+/* ---------- Íconos y acentos de color primario (azul institucional predominante) ---------- */
+.ic{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em}
+#i-play path,#i-star path{fill:currentColor;stroke:none}
+.btn .ic{margin-right:.4em}
+.btn .ic.after{margin:0 0 0 .4em}
+.btn.sm .ic{width:1em;height:1em}
+.dropdown-item .ic{margin-right:4px;color:var(--azul)}
+.ib{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;flex:none}
+.ib .ic{width:18px;height:18px}
+.ib.blue{background:var(--azul);color:#fff}
+.ib.yellow{background:#ffd23f;color:#3a2c00}
+.ib.red{background:var(--rojo);color:#fff}
+.ib.green{background:var(--verde);color:#fff}
+.card-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.card-h h4{margin:0}
+.ex-rules .card{border-top:4px solid var(--azul)}
+.ex-rules .card:nth-child(2){border-top-color:#ffd23f}
+.ex-rules .card:nth-child(3){border-top-color:var(--rojo)}
+.verdict .ic{width:1.15em;height:1.15em;margin-right:4px}
+.kpi{position:relative}
+.kpi .ib{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:9px}
+.kpi .ib .ic{width:16px;height:16px}
+.chart-card h4{display:flex;align-items:center;gap:8px}
+.chart-card h4 .ic{color:var(--azul)}
+.chart-card h4 .ic.red{color:var(--rojo)}
+/* Examen: reloj, navegación y aviso de pendientes */
+.exam-modal .timer{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:4px 12px}
+.exam-modal .timer .ic{width:22px;height:22px;color:#ffd23f}
+.exam-modal .timer.low{background:var(--rojo);border-color:var(--rojo);color:#fff}
+.exam-modal .timer.low .ic{color:#fff}
+.exam-modal .qnav button.ans{background:var(--azul);color:#fff;border-color:var(--azul)}
+.exam-modal .qnav button.cur{outline:3px solid #ffd23f;outline-offset:1px}
+.ex-legend .lg.ans{background:var(--azul);border-color:var(--azul)}
+.ex-legend .lg.cur{outline:2px solid #ffd23f}
+.ex-pend{display:inline-flex;align-items:center;gap:6px;background:#fff6cc;border:1.5px solid #ffd23f;color:#5c4500;border-radius:999px;padding:4px 12px;font-weight:700;font-size:.85rem;margin-right:auto}
+.ex-pend.ok{background:var(--verde-soft);border-color:var(--verde);color:var(--verde)}
+.ex-step{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);margin-right:auto}
+.exam-modal .modal-footer #ex-prev{margin-right:0}
+.exam-modal #ex-fin{background:var(--azul);border-color:var(--azul);color:#fff}
+.exam-modal #ex-fin:hover{background:var(--azul-2)}
+.exam-modal .result .grade{color:var(--azul)}
+.result.pass{border-color:var(--verde)}.result.fail{border-color:var(--rojo)}
+.result .ib{margin-bottom:6px}
+.apr.open .apr-head .n,.apr-head .n{box-shadow:inset 0 -3px 0 #ffd23f}
+@media (max-width:760px){
+  .exam-modal .modal-footer{display:flex;flex-wrap:wrap}
+  .exam-modal .modal-footer .ex-pend,.exam-modal .modal-footer .ex-step{flex:1 1 100%;justify-content:center;margin:0}
+  .exam-modal .modal-footer .btn{flex:1 1 40%}
+  .exam-modal .timer .ic{width:18px;height:18px}
+}
 .apr{scroll-margin-top:52px}
+/* ---------- Ajustes para celular: examen, encuesta y botón flotante ---------- */
+main{overflow-x:clip}
+.btn:disabled,.btn[disabled]{opacity:.42;cursor:not-allowed;background:var(--bg);color:var(--azul)}
+@media (hover:none){.btn:hover{background:var(--bg);color:var(--azul)}.btn.solid:hover{background:var(--azul);color:#fff;border-color:var(--azul)}}
+.exam-modal .modal-footer .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px}
+/* Encuesta: el formulario envuelve encabezado, cuerpo y pie; debe ser flexible para que el cuerpo se desplace */
+#surveyForm{display:flex;flex-direction:column;min-height:0;max-height:100%;height:100%}
+#surveyForm .modal-body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.modal-dialog-scrollable #surveyForm{max-height:calc(100dvh - 2.5rem)}
+@media (max-width:575.98px){
+  #surveyModal .modal-dialog{height:100%;height:100dvh}
+  .modal-dialog-scrollable #surveyForm{max-height:none}
+  #surveyModal .modal-header{padding:12px 14px;background:var(--azul)}
+  #surveyModal .modal-title{color:#fff;font-size:1.12rem}
+  #surveyModal .eyebrow{color:var(--oro-2);font-size:.68rem}
+  #surveyModal .btn-close{background-color:#fff}
+  #surveyModal .modal-body{padding:12px 14px 16px}
+  #surveyModal #sv-hello{margin:0 0 4px;font-size:.85rem}
+  .sv-q{padding:10px 12px;margin-top:10px}
+  .sv-q legend{font-size:.93rem;line-height:1.35}
+  .stars{gap:4px;justify-content:space-between;padding-top:6px}
+  .stars label{flex:1 1 0;max-width:48px;width:auto;height:44px}
+  .stars label svg{width:30px;height:30px}
+  #sv-com{min-height:84px}
+  #surveyModal .modal-footer{display:grid;grid-template-columns:1fr 1.5fr;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 16px rgba(19,32,59,.08)}
+  #surveyModal .modal-footer .btn{min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:6px;margin:0}
+}
+@media (max-width:760px){
+  .exam-modal .modal-dialog{height:100%;height:100dvh}
+  .exam-modal .modal-header{padding:10px 12px;gap:8px}
+  .exam-modal .timer{padding:3px 9px;font-size:1.25rem}
+  .exam-modal #ex-x{flex:none}
+  .exam-modal .modal-body{padding:10px 12px 14px;overscroll-behavior:contain}
+  .exam-modal .exam-side{padding:8px 10px;margin-bottom:2px}
+  .exam-modal #ex-count{font-size:.8rem;margin-bottom:4px}
+  .exam-modal .qnav{padding:4px 3px 6px;gap:6px;scrollbar-width:thin;scroll-snap-type:x proximity}
+  .exam-modal .qnav button{scroll-snap-align:center;min-height:38px}
+  .exam-modal .ex-legend{display:none}
+  .exam-modal .modal-footer{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 16px rgba(19,32,59,.08)}
+  .exam-modal .modal-footer .ex-step{display:none}
+  .exam-modal .modal-footer .ex-pend{grid-column:1/-1;justify-content:center;margin:0;padding:3px 10px;font-size:.8rem}
+  .exam-modal .modal-footer .btn{margin:0;width:100%;padding:.4em .6em}
+  .exam-modal .modal-footer #ex-next,.exam-modal .modal-footer #ex-fin{grid-column:2}
+  .exam-modal .modal-footer #ex-prev{grid-column:1}
+  .exam-modal .modal-footer .btn[hidden]{display:none}
+}
+@media (max-width:360px){
+  .exam-modal .modal-title{font-size:.92rem}
+  .exam-modal .timer{font-size:1.1rem;padding:3px 7px;gap:5px}
+}
+@media (max-width:760px){
+  .exam-modal .modal-footer .btn,#surveyModal .modal-footer .btn{white-space:nowrap;font-size:.95rem}
+}
+@media (max-width:360px){
+  .exam-modal .modal-footer{grid-template-columns:auto 1fr}
+  .exam-modal .modal-footer #ex-prev{padding-inline:.8em}
+  .exam-modal .modal-footer .btn,#surveyModal .modal-footer .btn{font-size:.9rem;gap:5px}
+  #surveyModal .modal-footer{grid-template-columns:auto 1fr}
+}
+/* Celular horizontal: poca altura, todo más compacto */
+@media (max-height:500px) and (orientation:landscape){
+  .exam-modal .modal-dialog,#surveyModal .modal-dialog{width:100vw;max-width:none;height:100%;height:100dvh;margin:0;padding:0}
+  .exam-modal .modal-content,#surveyModal .modal-content{height:100%;border:0;border-radius:0}
+  .modal-dialog-scrollable #surveyForm{max-height:none}
+  .exam-modal .modal-header{padding:6px 12px}
+  .exam-modal .eyebrow{display:none}
+  .exam-modal .modal-title{font-size:1rem}
+  .exam-modal .timer{font-size:1.1rem;padding:2px 8px}
+  .exam-modal .btn-close,#surveyModal .btn-close{width:34px;height:34px}
+  .exam-modal .modal-body{padding:8px 12px}
+  .exam-modal .exam-shell{grid-template-columns:1fr;gap:8px}
+  .exam-modal .exam-side{position:static;padding:6px 8px;display:flex;align-items:center;gap:10px}
+  .exam-modal #ex-count{flex:none;margin:0;font-size:.78rem}
+  .exam-modal .qnav{flex:1;min-width:0;display:grid;grid-auto-flow:column;grid-auto-columns:38px;grid-template-columns:none;overflow-x:auto;padding:3px}
+  .exam-modal .ex-legend{display:none}
+  .exam-modal .modal-footer{display:flex;flex-wrap:nowrap;padding:6px 12px;gap:8px}
+  .exam-modal .modal-footer .ex-step{display:inline;margin-right:auto}
+  .exam-modal .modal-footer .ex-pend{margin-right:auto;grid-column:auto}
+  .exam-modal .modal-footer .btn{width:auto;min-height:38px;flex:none}
+  #surveyModal .modal-header{padding:6px 14px}
+  #surveyModal .eyebrow{display:none}
+  #surveyModal .modal-title{font-size:1.05rem}
+  #surveyModal .modal-body{padding:8px 14px}
+  #surveyModal .modal-footer{display:flex;padding:6px 14px}
+}
+/* Botón flotante: aparece al desplazarse hacia arriba y se oculta al bajar */
+.fab-top{transition:opacity .22s,transform .25s cubic-bezier(.2,.8,.2,1),visibility .25s;visibility:hidden;pointer-events:none}
+.fab-top.show{visibility:visible;pointer-events:auto}
+.fab-top:active{transform:scale(.92)}
+body.modal-open .fab-top,body.mnav-open .fab-top{opacity:0!important;pointer-events:none}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .rv-on .rv{opacity:1!important;transform:none!important}
   html{scroll-behavior:auto}
 }
 </style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+<symbol id="i-left" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-6.5 18-4.5-7-7-4.5z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+<symbol id="i-check-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></symbol>
+<symbol id="i-x-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2 20h20z"/><path d="M12 10v4M12 17h.01"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></symbol>
+<symbol id="i-login" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 17l5-5-5-5M20 12H9"/><path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
+<symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v6H4V6h6"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></symbol>
+<symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+<symbol id="i-pie" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></symbol>
+<symbol id="i-bars" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+<symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-7"/></symbol>
+<symbol id="i-device" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7 15h10"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+</defs></svg>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#inicio" aria-label="Inicio"><span class="seal">C2</span><span class="t">Ciber&nbsp;II</span></a>
@@ -772,10 +944,10 @@ textarea.form-control{min-height:110px;resize:vertical}
       <button class="user-chip dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Opciones de sesión"><span class="avatar" id="user-ini">?</span><span class="user-name" id="user-name"></span></button>
       <ul class="dropdown-menu dropdown-menu-end">
         <li><div class="dropdown-header" id="user-meta"></div></li>
-        <li><a class="dropdown-item" href="#ruta">Ver mi avance</a></li>
-        <li><button class="dropdown-item" type="button" id="user-survey">Responder la encuesta</button></li>
+        <li><a class="dropdown-item" href="#ruta"><svg class="ic" aria-hidden="true"><use href="#i-chart-line"/></svg>Ver mi avance</a></li>
+        <li><button class="dropdown-item" type="button" id="user-survey"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg>Responder la encuesta</button></li>
         <li><hr class="dropdown-divider"></li>
-        <li><button class="dropdown-item" type="button" id="user-logout">Cerrar sesión</button></li>
+        <li><button class="dropdown-item" type="button" id="user-logout"><svg class="ic" aria-hidden="true"><use href="#i-logout"/></svg>Cerrar sesión</button></li>
       </ul>
     </div>
     <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="mnav"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>Secciones</button>
@@ -798,9 +970,9 @@ textarea.form-control{min-height:110px;resize:vertical}
         <h1>Cibernética y Computación <span class="ii">II</span></h1>
         <p class="lead">El paquete para la evaluación extraordinaria, ahora interactivo: teoría animada, programas en Java que puedes probar en pantalla y un banco de reactivos que te califica al instante.</p>
         <div class="hero-cta">
-          <a class="btn solid" href="#u1">Empezar por la Unidad 1</a>
-          <a class="btn gold" href="#examen">Ir al simulador de examen</a>
-          <a class="btn" href="#reactivos">Practicar reactivos</a>
+          <a class="btn solid" href="#u1"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>Empezar por la Unidad 1</a>
+          <a class="btn gold" href="#examen"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg>Ir al simulador de examen</a>
+          <a class="btn" href="#reactivos"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>Practicar reactivos</a>
         </div>
         <div class="meta"><span>Programa de Estudios <b>2016</b></span><span>6.º semestre</span><span>Edición <b>2026</b></span><span>Java · POO · Swing</span></div>
       </div>
@@ -1862,12 +2034,12 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
     <div class="toolbar">
       <div class="seg" id="ex-sel"><button data-e="sim" class="on">Simulador · 22</button><button data-e="m2">Modelo 2 · 20</button><button data-e="m3">Modelo 3 · 30</button></div>
       <label for="ex-min">minutos</label><input type="number" id="ex-min" value="60" min="5" style="width:70px">
-      <button class="btn solid" id="ex-start">Comenzar examen</button>
+      <button class="btn solid" id="ex-start"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>Comenzar examen</button>
     </div>
     <div class="grid3 ex-rules">
-      <div class="card"><h4>Modo concentración</h4><p class="small muted">El examen se abre en una ventana a pantalla completa. Solo se cierra con la ✕ o con <b>Finalizar y enviar</b>.</p></div>
-      <div class="card"><h4>Tiempo y avance</h4><p class="small muted">El reloj corre aunque cierres la ventana. Si sales sin finalizar, puedes continuar mientras quede tiempo y tu sesión siga activa.</p></div>
-      <div class="card"><h4>Tu resultado</h4><p class="small muted">Al finalizar verás tu calificación con la escala de cada examen y la revisión de cada pregunta. El resultado queda registrado.</p></div>
+      <div class="card"><div class="card-h"><span class="ib blue"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><h4>Modo concentración</h4></div><p class="small muted">El examen se abre en una ventana a pantalla completa. Puedes cerrarla con la ✕ cuando quieras; <b>Finalizar y enviar</b> aparece en la última pregunta.</p></div>
+      <div class="card"><div class="card-h"><span class="ib yellow"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><h4>Tiempo y avance</h4></div><p class="small muted">El reloj corre aunque cierres la ventana. Si sales sin finalizar, puedes continuar mientras quede tiempo y tu sesión siga activa.</p></div>
+      <div class="card"><div class="card-h"><span class="ib red"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg></span><h4>Tu resultado</h4></div><p class="small muted">Al finalizar verás tu calificación con la escala de cada examen y la revisión de cada pregunta. El resultado queda registrado.</p></div>
     </div>
     <div id="ex-resume" class="note" hidden></div>
     <div id="ex-area"><p class="muted small">El Modelo 1 del paquete es idéntico al simulador de la Parte I.</p></div>
@@ -1884,7 +2056,7 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
     </div>
     <div class="survey-cta">
       <div class="survey-cta-txt"><h3 id="sv-cta-title">¿Cómo te fue con la guía?</h3><p class="muted" id="sv-cta-msg">Responde cuando termines las actividades que quieras repasar.</p></div>
-      <button class="btn solid" id="sv-open" type="button">Responder encuesta</button>
+      <button class="btn solid" id="sv-open" type="button"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><span id="sv-open-t">Responder encuesta</span></button>
     </div>
   </div>
 </section>
@@ -1981,12 +2153,12 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
           </div>
           <div class="fld">
             <label class="form-label" for="lg-cuenta" id="lg-cuenta-lbl">Número de cuenta</label>
-            <input class="form-control mono" id="lg-cuenta" name="cuenta" type="text" inputmode="numeric" autocomplete="off" placeholder="Sin espacios ni guiones" required>
-            <div class="invalid-feedback">Escribe tu número sin espacios ni guiones (de 4 a 12 caracteres).</div>
+            <input class="form-control mono" id="lg-cuenta" name="cuenta" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="Hasta 10 caracteres" required>
+            <div class="invalid-feedback">Escribe tu número sin espacios ni guiones (de 4 a 10 caracteres).</div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn solid w-100">Entrar a la guía</button>
+          <button type="submit" class="btn solid w-100">Entrar a la guía<svg class="ic after" aria-hidden="true"><use href="#i-login"/></svg></button>
         </div>
       </form>
     </div>
@@ -1999,7 +2171,7 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
     <div class="modal-content exam-modal">
       <div class="modal-header">
         <div class="exam-title"><div class="eyebrow" style="margin:0" id="examKicker">Modo concentración</div><h2 class="modal-title" id="examTitle">Examen</h2></div>
-        <div class="timer" id="ex-t" aria-live="off">60:00</div>
+        <div class="timer" aria-live="off"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span id="ex-t">60:00</span></div>
         <button type="button" class="btn-close" id="ex-x" aria-label="Cerrar examen"></button>
       </div>
       <div class="ex-bar" aria-hidden="true"><i id="ex-bar"></i></div>
@@ -2014,9 +2186,10 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn" id="ex-prev" type="button">Anterior</button>
-        <button class="btn" id="ex-next" type="button">Siguiente</button>
-        <button class="btn solid" id="ex-fin" type="button">Finalizar y enviar</button>
+        <span class="ex-step" id="ex-step"></span>
+        <button class="btn" id="ex-prev" type="button"><svg class="ic" aria-hidden="true"><use href="#i-left"/></svg>Anterior</button>
+        <button class="btn solid" id="ex-next" type="button">Siguiente<svg class="ic after" aria-hidden="true"><use href="#i-right"/></svg></button>
+        <button class="btn solid" id="ex-fin" type="button" hidden><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg><span id="ex-fin-t">Finalizar y enviar</span></button>
       </div>
     </div>
   </div>
@@ -2043,7 +2216,7 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn" data-bs-dismiss="modal">Más tarde</button>
-          <button type="submit" class="btn solid">Enviar encuesta</button>
+          <button type="submit" class="btn solid"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Enviar encuesta</button>
         </div>
       </form>
     </div>
@@ -2075,10 +2248,10 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
         <div><div class="eyebrow" style="margin:0">Cibernética y Computación II · uso de la guía</div><h2 class="modal-title" id="adminTitle">Panel de métricas</h2></div>
         <span class="src-badge" id="dash-src"></span>
         <div class="dash-actions">
-          <button class="btn sm" type="button" id="dash-refresh">Actualizar</button>
-          <button class="btn sm" type="button" id="dash-xlsx">Descargar Excel</button>
-          <a class="btn sm" id="dash-sheet" href="#" target="_blank" rel="noopener" hidden>Abrir hoja</a>
-          <button class="btn sm danger" type="button" id="dash-reset">Borrar datos</button>
+          <button class="btn sm" type="button" id="dash-refresh"><svg class="ic" aria-hidden="true"><use href="#i-refresh"/></svg>Actualizar</button>
+          <button class="btn sm" type="button" id="dash-xlsx"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar Excel</span></button>
+          <a class="btn sm" id="dash-sheet" href="#" target="_blank" rel="noopener" hidden><svg class="ic" aria-hidden="true"><use href="#i-external"/></svg>Abrir hoja</a>
+          <button class="btn sm danger" type="button" id="dash-reset"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>Borrar datos</button>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar panel"></button>
       </div>
@@ -2532,6 +2705,7 @@ const CONFIG = {
   ADMIN_HASH: "ad7ebd5dd8ff35977b2861a9fd08dbb78af77c3c8878f48e152939516458fa96",
   APP: "ciber2-guia",
 };
+const ICO = (n, cls) => `<svg class="ic${cls ? " " + cls : ""}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 const K = { session: "c2:session", metrics: "c2:metrics", survey: "c2:survey", exam: "c2:exam", flags: "c2:flags", outbox: "c2:outbox", archive: "c2:archive", answers: "ciber2:ans" };
 const LS = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -2733,7 +2907,7 @@ const Responsive = (function () {
     return `<div class="mnav-group"><div class="mnav-row"><a href="${href}" data-top="1">${a.innerHTML}</a>${subs.length ? `<button type="button" aria-expanded="false" aria-controls="mn-sub-${gi}" aria-label="Ver aprendizajes de ${esc(a.textContent)}">▾</button>` : ""}</div>${sub}</div>`;
   }).join("");
   function openMenu(on) {
-    mnav.classList.toggle("open", on); btn.setAttribute("aria-expanded", String(on));
+    mnav.classList.toggle("open", on); document.body.classList.toggle("mnav-open", on); btn.setAttribute("aria-expanded", String(on));
     document.body.style.overflow = on ? "hidden" : "";
     if (on) { const cur = $("#nav .top-link.on"); $$(".mnav-row a", list).forEach(a => a.classList.toggle("on", cur && a.getAttribute("href") === cur.getAttribute("href"))); const f = $(".mnav-row a.on", list) || $(".mnav-row a", list); f && f.focus({ preventScroll: true }); }
   }
@@ -2750,8 +2924,16 @@ const Responsive = (function () {
 
   // Botón flotante: volver al inicio (solo celular)
   const fab = $("#fab-top");
-  const onScroll = () => fab.classList.toggle("show", scrollY > 500);
-  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  // Aparece solo al desplazarse hacia arriba (lejos del inicio) y se oculta al bajar
+  let lastY = scrollY, upDist = 0, ticking = false;
+  const onScroll = () => {
+    ticking = false;
+    const y = scrollY, dy = y - lastY; lastY = y;
+    if (y < 300) { upDist = 0; fab.classList.remove("show"); return; }
+    if (dy > 0) { upDist = 0; fab.classList.remove("show"); }
+    else if (dy < 0) { upDist -= dy; if (upDist > 40) fab.classList.add("show"); }
+  };
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   fab.addEventListener("click", () => { scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); $(".brand").focus({ preventScroll: true }); });
   return { setOpen, reveal };
 })();
@@ -3340,7 +3522,7 @@ const RQ = (function () {
     if (q.code) h += `<pre style="border-radius:8px;margin-bottom:10px"><code class="language-java">${esc(q.code)}</code></pre>`;
     if (q.mock) h += `<div class="mock">${q.mock}</div>`;
     h += `<div class="opts">${q.o.map((o, i) => `<button type="button" class="opt ${st !== undefined && i === q.a ? "right" : ""} ${st !== undefined && st === i && i !== q.a ? "wrong" : ""}" data-i="${i}" ${st !== undefined ? "disabled" : ""}><span class="l">${L[i]})</span><span class="t">${esc(o)}</span></button>`).join("")}</div>`;
-    h += `<div class="fb"><span class="verdict">${st === q.a ? "Correcto." : "Incorrecto. La respuesta es " + L[q.a] + "."}</span> ${esc(q.e || "")}${q.nota ? `<div class="note" style="margin-top:8px"><b>Nota:</b> ${esc(q.nota)}</div>` : ""}</div></article>`;
+    h += `<div class="fb"><span class="verdict">${st === q.a ? ICO("check-c") + "Correcto." : ICO("x-c") + "Incorrecto. La respuesta es " + L[q.a] + "."}</span> ${esc(q.e || "")}${q.nota ? `<div class="note" style="margin-top:8px"><b>Nota:</b> ${esc(q.nota)}</div>` : ""}</div></article>`;
     return h;
   }
   function render() {
@@ -3363,7 +3545,7 @@ const RQ = (function () {
     $$(".opt", art).forEach((o, j) => { o.disabled = true; if (j === q.a) o.classList.add("right"); });
     if (i !== q.a) b.classList.add("wrong");
     art.classList.add(i === q.a ? "ok" : "bad");
-    art.querySelector(".verdict").textContent = i === q.a ? "Correcto." : "Incorrecto. La respuesta es " + L[q.a] + ".";
+    art.querySelector(".verdict").innerHTML = i === q.a ? ICO("check-c") + "Correcto." : ICO("x-c") + "Incorrecto. La respuesta es " + L[q.a] + ".";
     score();
     Track.reactivo(q, i);
   });
@@ -3415,6 +3597,8 @@ document.addEventListener("click", e => {
   if (t) { e.preventDefault(); const m = t.nextElementSibling; m.classList.toggle("show"); t.setAttribute("aria-expanded", m.classList.contains("show")); }
 });
 let toastTimer;
+// Al abrir cualquier ventana (examen, encuesta, panel) se retira el aviso para que no tape nada
+document.addEventListener("show.bs.modal", () => { const t = $("#toast"); if (window.bootstrap && bootstrap.Toast) { const i = bootstrap.Toast.getInstance(t); if (i) i.hide(); } t.classList.remove("show"); });
 function toast(msg) {
   const t = $("#toast"); $("#toast-body").textContent = msg;
   if (window.bootstrap && bootstrap.Toast) { bootstrap.Toast.getOrCreateInstance(t, { delay: 3800 }).show(); return; }
@@ -3486,8 +3670,9 @@ $("#mn-top").addEventListener("click", () => { $("#mnav").classList.remove("open
 const Login = (function () {
   const f = $("#loginForm"), nom = $("#lg-nombre"), cta = $("#lg-cuenta"), doc = $("#lg-docente");
   const okNom = () => /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' .-]{2,}\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' .-]{2,}/.test(nom.value.trim());
-  const okCta = () => /^[A-Za-z0-9]{4,12}$/.test(cta.value.replace(/[\s-]/g, ""));
+  const okCta = () => /^[A-Za-z0-9]{4,10}$/.test(cta.value.replace(/[\s-]/g, ""));
   function check() { nom.classList.toggle("is-invalid", !okNom()); cta.classList.toggle("is-invalid", !okCta()); return okNom() && okCta(); }
+  cta.addEventListener("input", () => { const v = cta.value.replace(/[^A-Za-z0-9]/g, "").slice(0, 10); if (v !== cta.value) cta.value = v; });
   [nom, cta].forEach(i => i.addEventListener("input", () => { if (i.classList.contains("is-invalid")) check(); }));
   const small = ["de", "del", "la", "las", "los", "y"];
   const pretty = v => v.trim().split(/\s+/).map((w, i) => { const lw = w.toLocaleLowerCase("es-MX"); return i && small.includes(lw) ? lw : lw.charAt(0).toLocaleUpperCase("es-MX") + lw.slice(1); }).join(" ");
@@ -3506,7 +3691,7 @@ const Login = (function () {
     $("#lg-rol").textContent = d ? "Soy docente" : "Soy alumno(a)";
     $("#lg-switch").classList.toggle("on", d);
     $("#lg-cuenta-lbl").textContent = d ? "Número de trabajador" : "Número de cuenta";
-    cta.placeholder = d ? "Sin espacios ni guiones" : "9 dígitos, sin guiones";
+    cta.placeholder = "Hasta 10 caracteres, sin guiones";
   }
   doc.addEventListener("change", rol);
   function reset() { f.reset(); doc.checked = false; rol(); nom.classList.remove("is-invalid"); cta.classList.remove("is-invalid"); }
@@ -3593,7 +3778,7 @@ const Exam = (function () {
   function tick() {
     if (!D || finished) return;
     const left = Math.max(0, Math.round((D.deadline - Date.now()) / 1000)), t = $("#ex-t");
-    t.textContent = `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(left % 60).padStart(2, "0")}`; t.classList.toggle("low", left < 300);
+    t.textContent = `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(left % 60).padStart(2, "0")}`; t.parentElement.classList.toggle("low", left < 300);
     if (left <= 0) finish("Tiempo agotado");
   }
   function counts() { const ans = D.resp.filter(r => r !== null).length, ok = D.resp.filter((r, i) => r === E.q[i].a).length; return { ans, ok }; }
@@ -3608,12 +3793,18 @@ const Exam = (function () {
     if (q.code) h += `<pre style="border-radius:8px;margin-bottom:10px"><code class="language-java">${esc(q.code)}</code></pre>`;
     if (q.mock) h += `<div class="mock">${q.mock}</div>`;
     h += `<div class="opts">${q.o.map((o, i) => { const sel = D.resp[D.cur] === i; const cls = finished ? (i === q.a ? "right" : sel ? "wrong" : "") : ""; return `<button type="button" class="opt ${cls}" data-i="${i}" ${finished ? "disabled" : ""} aria-pressed="${sel}" style="${sel && !finished ? "border-color:var(--azul);background:var(--azul-soft)" : ""}"><span class="l">${L[i]})</span><span class="t">${esc(o)}</span></button>`; }).join("")}</div>`;
-    if (finished) h += `<div class="fb" style="display:block"><span class="verdict">${D.resp[D.cur] === q.a ? "Correcto." : "Respuesta correcta: " + L[q.a] + "."}</span>${q.nota ? `<div class="note" style="margin-top:8px"><b>Nota:</b> ${esc(q.nota)}</div>` : ""}</div>`;
+    if (finished) h += `<div class="fb" style="display:block"><span class="verdict">${D.resp[D.cur] === q.a ? ICO("check-c") + "Correcto." : ICO("x-c") + "Respuesta correcta: " + L[q.a] + "."}</span>${q.nota ? `<div class="note" style="margin-top:8px"><b>Nota:</b> ${esc(q.nota)}</div>` : ""}</div>`;
     h += `</article>`;
     m.innerHTML = h; m.parentElement.parentElement.classList.toggle("ex-done", finished);
     $$("pre", m).forEach(p => { hl(p.querySelector("code")); addCopy(p); });
-    $("#ex-prev").disabled = D.cur === 0; $("#ex-next").disabled = D.cur === E.q.length - 1;
-    $("#ex-fin").textContent = finished ? "Cerrar" : "Finalizar y enviar";
+    // Pie del examen: «Finalizar y enviar» aparece solo en la última pregunta; la ✕ cierra en cualquier momento
+    const last = D.cur === E.q.length - 1, pend = E.q.length - c.ans, step = $("#ex-step");
+    $("#ex-prev").disabled = D.cur === 0;
+    $("#ex-next").hidden = last;
+    $("#ex-fin").hidden = !finished && !last;
+    $("#ex-fin").innerHTML = finished ? `${ICO("x")}<span>Cerrar</span>` : `${ICO("send")}<span>Finalizar y enviar</span>`;
+    if (!finished && last) { step.className = pend ? "ex-pend" : "ex-pend ok"; step.innerHTML = pend ? `${ICO("alert")}Te faltan ${pend} sin contestar` : `${ICO("check-c")}Todas contestadas`; }
+    else { step.className = "ex-step"; step.textContent = finished ? "Modo revisión" : `Pregunta ${D.cur + 1} de ${E.q.length}`; }
   }
   $("#ex-nav").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; D.cur = +b.dataset.i; save(); render(); $("#ex-main").scrollIntoView({ block: "start" }); });
   $("#ex-main").addEventListener("click", e => { const b = e.target.closest(".opt"); if (!b || finished) return; D.resp[D.cur] = +b.dataset.i; save(); render(); });
@@ -3639,7 +3830,7 @@ const Exam = (function () {
     const { c, cal } = record(how); finished = true; LS.del(K.exam);
     $("#ex-t").textContent = how === "Tiempo agotado" ? "00:00" : "✓";
     const blank = E.q.length - c.ans;
-    $("#ex-main").dataset.res = `<div class="result"><div class="grade">${cal}</div><div><b>${c.ok} de ${E.q.length} aciertos</b>${blank ? ` · ${blank} sin contestar` : ""}${how === "Tiempo agotado" ? " · se agotó el tiempo" : ""}<br><span class="small muted">Escala: ${E.scale.map((s, i) => `${i ? E.scale[i - 1][0] + 1 : 0}–${s[0]} → ${s[1]}`).join(" · ")}</span><br><span class="small">Tu resultado quedó registrado. Revisa cada pregunta con los números: verde acierto, rojo error.</span></div></div>`;
+    $("#ex-main").dataset.res = `<div class="result ${cal >= 6 ? "pass" : "fail"}"><div><span class="ib ${cal >= 6 ? "green" : "red"}">${ICO(cal >= 6 ? "check-c" : "alert")}</span><div class="grade">${cal}</div></div><div><b>${c.ok} de ${E.q.length} aciertos</b>${blank ? ` · ${blank} sin contestar` : ""}${how === "Tiempo agotado" ? " · se agotó el tiempo" : ""}<br><span class="small muted">Escala: ${E.scale.map((s, i) => `${i ? E.scale[i - 1][0] + 1 : 0}–${s[0]} → ${s[1]}`).join(" · ")}</span><br><span class="small">Tu resultado quedó registrado. Revisa cada pregunta con los números: verde acierto, rojo error.</span></div></div>`;
     D.cur = 0; render(); paintResume();
     if (!$("#examModal").classList.contains("show")) { D = null; paintHistory(); }
   }
@@ -3695,9 +3886,9 @@ const Survey = (function () {
   function paintCta() {
     const d = draft(), box = $(".survey-cta"), btn = $("#sv-open");
     box.classList.toggle("done", !!d.sent);
-    if (d.sent) { $("#sv-cta-title").textContent = "¡Gracias por responder!"; $("#sv-cta-msg").textContent = "Tu encuesta quedó registrada. Puedes seguir usando la guía."; btn.textContent = "Encuesta enviada"; btn.disabled = true; }
-    else if (d.p1 || d.p2 || d.p3 || d.com) { $("#sv-cta-title").textContent = "Tienes una encuesta sin enviar"; $("#sv-cta-msg").textContent = "Guardamos lo que llevabas. Termínala cuando quieras."; btn.textContent = "Continuar encuesta"; btn.disabled = false; }
-    else { $("#sv-cta-title").textContent = "¿Cómo te fue con la guía?"; $("#sv-cta-msg").textContent = "Responde cuando termines las actividades que quieras repasar."; btn.textContent = "Responder encuesta"; btn.disabled = false; }
+    if (d.sent) { $("#sv-cta-title").textContent = "¡Gracias por responder!"; $("#sv-cta-msg").textContent = "Tu encuesta quedó registrada. Puedes seguir usando la guía."; $("#sv-open-t").textContent = "Encuesta enviada"; btn.disabled = true; }
+    else if (d.p1 || d.p2 || d.p3 || d.com) { $("#sv-cta-title").textContent = "Tienes una encuesta sin enviar"; $("#sv-cta-msg").textContent = "Guardamos lo que llevabas. Termínala cuando quieras."; $("#sv-open-t").textContent = "Continuar encuesta"; btn.disabled = false; }
+    else { $("#sv-cta-title").textContent = "¿Cómo te fue con la guía?"; $("#sv-cta-msg").textContent = "Responde cuando termines las actividades que quieras repasar."; $("#sv-open-t").textContent = "Responder encuesta"; btn.disabled = false; }
   }
   $("#sv-open").addEventListener("click", () => open("botón"));
   $("#user-survey").addEventListener("click", () => open("menú de usuario"));
@@ -3855,25 +4046,25 @@ const Admin = (function () {
     const hardObj = {}; const hardInfo = {}; hardest.forEach(x => { hardObj[x.label] = x.rate; hardInfo[x.label] = `${esc(short(x.text, 140))}<br><br><b>${x.err}</b> errores de ${x.n} intentos · correcta: <b>${x.correct}</b> · más elegida por error: <b>${esc(x.wrongTop)}</b>`; });
     $("#dash").innerHTML = `<div id="reset-zone"></div>
       <div class="kpis">
-        <div class="kpi" ${pop("Usuarios distintos", "Personas diferentes según su número de cuenta o de trabajador.")}><b>${users}</b><span>usuarios distintos</span><small>${S.length} sesiones</small></div>
-        <div class="kpi" ${pop("Tiempo activo", "Minutos con la página visible y en uso, promedio por sesión.")}><b>${f1(avg(S.map(r => r["Duración activa (min)"])))}</b><span>min activos por sesión</span><small>promedio</small></div>
-        <div class="kpi" ${pop("Reactivos", `<b>${okRq}</b> correctos de ${Rq.length} respuestas del banco y las autoevaluaciones.`)}><b>${Rq.length}</b><span>reactivos contestados</span><small>${pct(okRq, Rq.length)}% de aciertos</small></div>
-        <div class="kpi" ${pop("Exámenes", `${exFin.length} finalizados o con tiempo agotado · ${Ex.length - exFin.length} cerrados sin finalizar.`)}><b>${exFin.length}</b><span>exámenes finalizados</span><small>calificación promedio ${f1(avg(exFin.map(r => r["Calificación"])))}</small></div>
-        <div class="kpi" ${pop("Encuestas", "Promedio de las tres preguntas, de 1 a 5.")}><b>${Sv.length}</b><span>encuestas</span><small>satisfacción ${f1(avg(Sv.map(r => r["Promedio"])))} de 5</small></div>
-        <div class="kpi" ${pop("Eventos de uso", `Visitas a secciones, laboratorios, navegación, bloqueos y más. <b>${pend}</b> registros esperan envío en este dispositivo.`)}><b>${Ev.length}</b><span>eventos de uso</span><small>${pend} pendientes en este dispositivo</small></div>
+        <div class="kpi" ${pop("Usuarios distintos", "Personas diferentes según su número de cuenta o de trabajador.")}><span class="ib blue">${ICO("users")}</span><b>${users}</b><span>usuarios distintos</span><small>${S.length} sesiones</small></div>
+        <div class="kpi" ${pop("Tiempo activo", "Minutos con la página visible y en uso, promedio por sesión.")}><span class="ib blue">${ICO("clock")}</span><b>${f1(avg(S.map(r => r["Duración activa (min)"])))}</b><span>min activos por sesión</span><small>promedio</small></div>
+        <div class="kpi" ${pop("Reactivos", `<b>${okRq}</b> correctos de ${Rq.length} respuestas del banco y las autoevaluaciones.`)}><span class="ib blue">${ICO("list")}</span><b>${Rq.length}</b><span>reactivos contestados</span><small>${pct(okRq, Rq.length)}% de aciertos</small></div>
+        <div class="kpi" ${pop("Exámenes", `${exFin.length} finalizados o con tiempo agotado · ${Ex.length - exFin.length} cerrados sin finalizar.`)}><span class="ib yellow">${ICO("target")}</span><b>${exFin.length}</b><span>exámenes finalizados</span><small>calificación promedio ${f1(avg(exFin.map(r => r["Calificación"])))}</small></div>
+        <div class="kpi" ${pop("Encuestas", "Promedio de las tres preguntas, de 1 a 5.")}><span class="ib yellow">${ICO("star")}</span><b>${Sv.length}</b><span>encuestas</span><small>satisfacción ${f1(avg(Sv.map(r => r["Promedio"])))} de 5</small></div>
+        <div class="kpi" ${pop("Eventos de uso", `Visitas a secciones, laboratorios, navegación, bloqueos y más. <b>${pend}</b> registros esperan envío en este dispositivo.`)}><span class="ib red">${ICO("activity")}</span><b>${Ev.length}</b><span>eventos de uso</span><small>${pend} pendientes en este dispositivo</small></div>
       </div>
       <div class="charts">
-        <div class="chart-card"><h4>¿Qué reactivo se les complica más?</h4><p>Reparto de las respuestas incorrectas del banco y las autoevaluaciones. Pasa el cursor o toca una parte para ver la pregunta.</p>${pie(bank, "reactivos")}</div>
-        <div class="chart-card"><h4>¿Qué pregunta del examen se les complica más?</h4><p>Reparto de los errores en el simulador y los modelos (sin contestar cuenta como error).</p>${pie(exq, "preguntas")}</div>
-        <div class="chart-card wide"><h4>Preguntas con mayor porcentaje de error</h4><p>Solo preguntas con al menos 2 intentos.</p>${hbars(hardObj, 100, v => v + "%", { cls: "err", info: k => hardInfo[k] })}</div>
-        <div class="chart-card"><h4>Aciertos por unidad</h4><p>Porcentaje de reactivos correctos.</p>${hbars(unit, 100, v => v + "%", { sort: false, info: k => unitInfo[k] })}</div>
-        <div class="chart-card"><h4>Visitas por sección</h4><p>Primeras visitas registradas en cada sesión.</p>${hbars(secc, 0, null, { info: (k, v) => `<b>${v}</b> sesiones visitaron ${esc(k)}` })}</div>
-        <div class="chart-card"><h4>Sesiones por día</h4><p>Últimos 14 días (hora de la Ciudad de México).</p>${vbars(days.map(x => x.slice(8) + "/" + x.slice(5, 7)), perDay, "sesiones")}</div>
-        <div class="chart-card"><h4>Calificaciones de examen</h4><p>Exámenes finalizados o con tiempo agotado.</p>${vbars(grades, gc, "exámenes")}</div>
-        <div class="chart-card"><h4>Satisfacción por pregunta</h4><p>Promedio de 1 a 5.</p>${hbars(sat, 5, v => v.toFixed(2), { sort: false, info: (k, v) => `Promedio de <b>${v.toFixed(2)}</b> en ${Sv.length} encuestas` })}</div>
-        <div class="chart-card"><h4>Laboratorios más usados</h4><p>Primer uso de cada laboratorio por sesión.</p>${hbars(labs, 0, null, { info: (k, v) => `<b>${v}</b> sesiones lo usaron` })}</div>
-        <div class="chart-card"><h4>Perfil</h4><p>Sesiones por tipo de usuario.</p>${hbars(perfil, 0, null, { info: (k, v) => `<b>${v}</b> sesiones · ${pct(v, S.length)}%` })}</div>
-        <div class="chart-card"><h4>Dispositivo</h4><p>Sesiones por tipo de equipo.</p>${hbars(dev, 0, null, { info: (k, v) => `<b>${v}</b> sesiones · ${pct(v, S.length)}%` })}</div>
+        <div class="chart-card"><h4>${ICO("pie", "red")}¿Qué reactivo se les complica más?</h4><p>Reparto de las respuestas incorrectas del banco y las autoevaluaciones. Pasa el cursor o toca una parte para ver la pregunta.</p>${pie(bank, "reactivos")}</div>
+        <div class="chart-card"><h4>${ICO("pie", "red")}¿Qué pregunta del examen se les complica más?</h4><p>Reparto de los errores en el simulador y los modelos (sin contestar cuenta como error).</p>${pie(exq, "preguntas")}</div>
+        <div class="chart-card wide"><h4>${ICO("alert", "red")}Preguntas con mayor porcentaje de error</h4><p>Solo preguntas con al menos 2 intentos.</p>${hbars(hardObj, 100, v => v + "%", { cls: "err", info: k => hardInfo[k] })}</div>
+        <div class="chart-card"><h4>${ICO("check-c")}Aciertos por unidad</h4><p>Porcentaje de reactivos correctos.</p>${hbars(unit, 100, v => v + "%", { sort: false, info: k => unitInfo[k] })}</div>
+        <div class="chart-card"><h4>${ICO("pin")}Visitas por sección</h4><p>Primeras visitas registradas en cada sesión.</p>${hbars(secc, 0, null, { info: (k, v) => `<b>${v}</b> sesiones visitaron ${esc(k)}` })}</div>
+        <div class="chart-card"><h4>${ICO("chart-line")}Sesiones por día</h4><p>Últimos 14 días (hora de la Ciudad de México).</p>${vbars(days.map(x => x.slice(8) + "/" + x.slice(5, 7)), perDay, "sesiones")}</div>
+        <div class="chart-card"><h4>${ICO("bars")}Calificaciones de examen</h4><p>Exámenes finalizados o con tiempo agotado.</p>${vbars(grades, gc, "exámenes")}</div>
+        <div class="chart-card"><h4>${ICO("star")}Satisfacción por pregunta</h4><p>Promedio de 1 a 5.</p>${hbars(sat, 5, v => v.toFixed(2), { sort: false, info: (k, v) => `Promedio de <b>${v.toFixed(2)}</b> en ${Sv.length} encuestas` })}</div>
+        <div class="chart-card"><h4>${ICO("flask")}Laboratorios más usados</h4><p>Primer uso de cada laboratorio por sesión.</p>${hbars(labs, 0, null, { info: (k, v) => `<b>${v}</b> sesiones lo usaron` })}</div>
+        <div class="chart-card"><h4>${ICO("users")}Perfil</h4><p>Sesiones por tipo de usuario.</p>${hbars(perfil, 0, null, { info: (k, v) => `<b>${v}</b> sesiones · ${pct(v, S.length)}%` })}</div>
+        <div class="chart-card"><h4>${ICO("device")}Dispositivo</h4><p>Sesiones por tipo de equipo.</p>${hbars(dev, 0, null, { info: (k, v) => `<b>${v}</b> sesiones · ${pct(v, S.length)}%` })}</div>
       </div>
       <h3 style="margin-top:24px">Registros</h3>
       <ul class="nav nav-tabs" role="tablist">${SHEETS.map((s, i) => `<li role="presentation"><button class="nav-link ${i ? "" : "active"}" id="tab-${s}" data-bs-toggle="tab" data-bs-target="#pane-${s}" type="button" role="tab" aria-controls="pane-${s}" aria-selected="${!i}">${s} <span class="mono small">${d[s].length}</span></button></li>`).join("")}</ul>
@@ -3899,7 +4090,7 @@ const Admin = (function () {
     return `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/></Style></Styles>${ws}</Workbook>`;
   }
   $("#dash-xlsx").addEventListener("click", async () => {
-    const b = $("#dash-xlsx"); b.disabled = true; b.textContent = "Preparando…";
+    const b = $("#dash-xlsx"); b.disabled = true; $("span", b).textContent = "Preparando…";
     const d = data || {}; const name = "ciber2-datos-" + new Date().toLocaleDateString("sv-SE", { timeZone: "America/Mexico_City" });
     const sheets = { "Dificultad": summaryRows() }; SHEETS.forEach(s => sheets[s] = d[s] || []);
     try {
@@ -3913,7 +4104,7 @@ const Admin = (function () {
       Track.event("descarga_excel", "Panel", "", Object.values(sheets).reduce((s, r) => s + r.length, 0));
       toast("Descarga lista.");
     } catch (e) { toast("No se pudo generar el archivo. Intenta de nuevo."); }
-    b.disabled = false; b.textContent = "Descargar Excel";
+    b.disabled = false; $("span", b).textContent = "Descargar Excel";
   });
 
   /* ---------- Borrar datos (con confirmación dentro del panel) ---------- */
