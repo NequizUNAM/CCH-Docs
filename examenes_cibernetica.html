@@ -133,6 +133,54 @@
   .send-alert{display:flex;gap:.7rem;align-items:flex-start;text-align:left;background:#fee2e2;border:2px solid #dc2626;color:#991b1b;border-radius:14px;padding:.8rem 1rem;margin-bottom:.7rem;font-size:.95rem;animation:sendPulse 1.6s ease-in-out infinite}.send-alert i{font-size:1.6rem;color:#dc2626}
 @keyframes sendPulse{50%{box-shadow:0 0 0 6px rgba(220,38,38,.18)}}@media (prefers-reduced-motion:reduce){.send-alert{animation:none}}
 .mbar{height:10px;border-radius:999px;background:#e2e8f0;overflow:hidden}.mbar i{display:block;height:100%;border-radius:999px;transition:width .6s}.mdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+
+    .qcard .flex-grow-1 { min-width:0; }
+    /* Hoja de procedimiento */
+    .proc { margin-top:.7rem; border:2px dashed #c4b5fd; border-radius:14px; background:#faf8ff; }
+    .proc > summary { cursor:pointer; padding:.5rem .8rem; font-weight:800; color:#5b21b6; font-size:.92rem; list-style:none; }
+    .proc > summary::-webkit-details-marker { display:none; }
+    .proc > summary::after { content:'\25BE'; float:right; transition:transform .2s; } .proc[open] > summary::after { transform:rotate(180deg); }
+    .proc > summary span { font-weight:600; color:#64748b; font-size:.8rem; }
+    .proc-b { padding:.2rem .8rem .8rem; overflow-x:auto; }
+    .pc-step { font-size:.86rem; color:#334155; margin:.5rem 0 .3rem; }
+    .pc-tbl { border-collapse:separate; border-spacing:4px; font-family:'Courier New',monospace; text-align:center; }
+    .pc-tbl th { background:#1e293b; color:#fff; padding:.3rem .6rem; border-radius:8px; font:700 .78rem 'Segoe UI',Arial,sans-serif; white-space:nowrap; }
+    .pc-tbl td { padding:0; vertical-align:middle; } .pc-tbl td.op { font-weight:800; color:#475569; padding:0 .3rem; white-space:nowrap; }
+    .pc-tbl td.dig { font-weight:800; font-size:1.15rem; min-width:2.1rem; }
+    .pc-tbl tr.res td { border-top:3px solid #334155; padding-top:4px; } .pc-tbl tr.carry th { background:#7c3aed; } .pc-tbl tr.res th { background:#e03131; }
+    .pc-tbl tr.sum td { padding-top:6px; } .pc-tbl th.e { background:transparent; } .pc-tbl th.pl { background:transparent; color:#334155; font:800 1.2rem 'Courier New',monospace; text-align:right; }
+    .pc { width:2.4rem; height:2.3rem; text-align:center; font:800 1.05rem 'Courier New',monospace; border:2px solid #cbd5e1; border-radius:9px; background:#fff; color:#0f172a; }
+    .pc:focus { border-color:var(--vio); outline:3px solid rgba(124,58,237,.25); } .pc.filled { border-color:#a78bfa; background:#f5f3ff; }
+    .pc.ph { width:7.2rem; font-size:.9rem; font-weight:700; text-transform:uppercase; } .pc.ph::placeholder { text-transform:none; font-weight:500; color:#94a3b8; }
+    .km th.pth { background:#5b21b6; padding:.2rem; } .km td.pcol { background:#faf8ff; border-color:#ddd6fe; }
+    .pc-bar { display:flex; flex-wrap:wrap; gap:.4rem; align-items:center; margin:.3rem 0 .2rem; }
+    .pc-btn { border:2px solid #7c3aed; color:#6d28d9; background:#fff; border-radius:999px; font-weight:800; font-size:.8rem; padding:.2rem .7rem; }
+    .pc-btn:hover { background:#f5f3ff; } .pc-btn.del { border-color:#94a3b8; color:#475569; }
+    .pc-tip { font-size:.8rem; color:#475569; }
+    /* Revisión (panel): verde = bien, rojo = mal, con lo esperado debajo */
+    .pcv { display:inline-flex; flex-direction:column; align-items:center; justify-content:center; min-width:2.2rem; min-height:2.2rem; padding:.1rem .3rem; border-radius:9px; border:2px solid #cbd5e1; background:#fff; font:800 1rem 'Courier New',monospace; line-height:1.05; }
+    .pcv small { font-size:.68rem; color:#166534; font-weight:800; } .pcv.big { min-width:2.6rem; font-size:1.15rem; }
+    .pcv.ok { background:#dcfce7; border-color:#16a34a; color:#166534; } .pcv.bad { background:#fee2e2; border-color:#e03131; color:#b91c1c; }
+    .pcv.na { background:#f1f5f9; color:#64748b; border-style:dashed; } .pcv.empty { border-style:dashed; border-color:#e2e8f0; }
+    .km th.rv { font-size:.85rem; } .km th.rv small { display:block; font-size:.66rem; font-weight:700; } .km th.rv.bad { background:#e03131; } .km th.rv.ok { background:#15803d; }
+    .km th.rv small.rd .ov { text-decoration:overline; }
+
+    /* Revisión por alumno (panel) */
+    .rvq.ok { border-color:rgba(22,163,74,.55); } .rvq.bad { border-color:rgba(224,49,49,.6); } .rvq.none { border-color:#cbd5e1; border-style:dashed; }
+    .rv-st { display:inline-flex; align-items:center; gap:.25rem; font-size:.74rem; font-weight:800; padding:.12rem .55rem; border-radius:999px; }
+    .rv-st.ok { background:#dcfce7; color:#166534; } .rv-st.bad { background:#fee2e2; color:#b91c1c; } .rv-st.none { background:#f1f5f9; color:#475569; } .rv-st.bon { background:#fef3c7; color:#92400e; }
+    .rvq .opt { padding:.35rem .65rem; margin-bottom:.3rem; } .rvq .opt .mark { width:26px; height:26px; font-size:.85rem; }
+    .opt.rv { cursor:default; } .opt.rv:hover { transform:none; border-color:#e2e8f0; background:#fff; }
+    .opt.rv.me-ok, .opt.rv.me-ok:hover { border-color:#16a34a; background:#dcfce7; } .opt.rv.me-ok .mark { background:#16a34a; color:#fff; }
+    .opt.rv.me-bad, .opt.rv.me-bad:hover { border-color:#e03131; background:#fee2e2; } .opt.rv.me-bad .mark { background:#e03131; color:#fff; }
+    .opt.rv.key, .opt.rv.key:hover { border-color:#16a34a; border-style:dashed; background:#f0fdf4; }
+    .rv-tag { margin-left:auto; font-size:.72rem; font-weight:800; padding:.1rem .5rem; border-radius:999px; white-space:nowrap; align-self:center; } .rv-tag.ok { background:#16a34a; color:#fff; } .rv-tag.bad { background:#e03131; color:#fff; }
+    .rv-ans { display:inline-flex; flex-wrap:wrap; gap:.35rem; align-items:center; border-radius:10px; padding:.35rem .7rem; margin:.3rem 0; font-weight:600; border:2px solid; }
+    .rv-ans.ok { background:#dcfce7; border-color:#16a34a; color:#166534; } .rv-ans.bad { background:#fee2e2; border-color:#e03131; color:#b91c1c; }
+    .rv-exp { font-size:.9rem; color:#166534; background:#f0fdf4; border:2px dashed #16a34a; border-radius:10px; padding:.3rem .7rem; margin:.2rem 0 .3rem; display:inline-block; }
+    .rv-note { font-size:.82rem; color:#b91c1c; background:#fff5f5; border-left:4px solid #e03131; border-radius:8px; padding:.3rem .6rem; margin-top:.3rem; }
+    .proc.rvp { border-style:solid; border-color:#ddd6fe; } .rvp-h { font-weight:800; color:#5b21b6; font-size:.88rem; padding:.45rem .8rem 0; }
+    .rv-circ svg { max-width:100%; height:auto; }
 </style>
 </head>
 <body>
@@ -441,6 +489,7 @@ function buildP1(tipo, seed) {
   shuffle(PAIRS[tipo], rnd).forEach(([from, to]) => {
     let n; do { n = lo + Math.floor(rnd() * (hi - lo + 1)); } while (used.has(n)); used.add(n);
     qs.push(openQ('conv', `Convierte el número <span class="num">${n.toString(from).toUpperCase()}<sub>${from}</sub></span> de <b>${NAMES[from]}</b> a <b>${NAMES[to]}</b>.`, n.toString(to).toUpperCase(), OPEN[to], 'norm', (from === 10 || to === 10) ? 'Aplicar' : 'Analizar'));
+    qs[qs.length - 1].cv = { n, from, to };            // datos para la hoja de procedimiento
   });
   const [bl, bh] = SUMBITS[tipo], seen = new Set();
   for (let i = 0; i < 5; i++) {
@@ -449,6 +498,7 @@ function buildP1(tipo, seed) {
       a = (1 << (la - 1)) + Math.floor(rnd() * (1 << (la - 1))); b = (1 << (lb - 1)) + Math.floor(rnd() * (1 << (lb - 1))); key = a + '+' + b;
     } while (seen.has(key)); seen.add(key);
     qs.push(openQ('sum', `Suma en binario: <span class="num">${a.toString(2)}<sub>2</sub></span> + <span class="num">${b.toString(2)}<sub>2</sub></span> = ?`, (a + b).toString(2), OPEN[2], 'norm', 'Aplicar'));
+    qs[qs.length - 1].sm = [a, b];
   }
   qs.push(...buildNew(tipo, 1, rnd));
   return qs;
@@ -1001,6 +1051,7 @@ function buildNew(tipo, parcial, rnd) {
   for (let i = 0; i < 2; i++) {
     let a, b, c, key; do { a = bin3(rnd, lo, hi); b = bin3(rnd, lo, hi); c = bin3(rnd, lo, hi); key = [a, b, c].sort().join(); } while (seen.has(key)); seen.add(key);
     out.push(openQ('sig', `Realiza la sumatoria en binario: <span class="num">${a.toString(2)}<sub>2</sub> + ${b.toString(2)}<sub>2</sub> + ${c.toString(2)}<sub>2</sub> = ?</span>`, (a + b + c).toString(2), OPEN[2], 'norm', 'Aplicar'));
+    out[out.length - 1].sm = [a, b, c];
   }
   { const sop = pick(BONUS_POOL[parcial][tipo], rnd);
     out.push({ sec: 'bon', kind: 'tt', n: 3, bonus: true, html: `<b>Bonus (vale por 2 preguntas).</b> Completa la tabla de verdad de 3 entradas de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificarla antes de evaluarla.`, expect: sopTT(sop, CB_VARS), sop, bl: 'Bonus' }); }
@@ -1010,6 +1061,7 @@ function buildNew(tipo, parcial, rnd) {
 /* ----- Tabla de verdad (casillas verticales de F) ----- */
 const ttNorm = (v, len) => String(v || '').padEnd(len, '_').slice(0, len);
 function ttHTML(q, p, key) {
+  if (!key) return `<div id="ttw-${q.id}">${ttGrid(q, pget(q.id), null, S && S.answers[q.id])}</div><div class="ans-hint"><i class="bi bi-1-circle-fill"></i><span>Escribe <b>solo 0 y 1</b> en cada casilla de F. ${q.bonus ? 'Vale por 2 preguntas y' : 'Cuenta como 1 acierto y'} se califica completa: las ${1 << q.n} salidas deben ser correctas.</span></div>`;
   const n = q.n, N = 1 << n, hd = ['A', 'B', 'C'].slice(0, n);
   let h = `<div class="km-wrap"><table class="km tv tt-tbl"><tr>${hd.map(x => `<th>${x}</th>`).join('')}<th>F</th></tr>`;
   for (let i = 0; i < N; i++) {
@@ -1137,6 +1189,222 @@ function restoreAns(q, v) {
   if (q.kind === 'mc') { const r = $(`input[name="q${q.id}"][value="${v}"]`); if (r) r.checked = true; }
   else if (q.kind === 'tt') ttNorm(v, q.expect.length).split('').forEach((c, i) => { const n = $(`input.tt-in[data-tt="${q.id}"][data-i="${i}"]`); if (n && c !== '_') { n.value = c; n.classList.add('filled'); } });
   else { const n = $('#a-' + q.id); if (n) n.value = v; }
+}
+
+/* ==========================================================================
+   HOJA DE PROCEDIMIENTO (opcional: no cuenta en la calificación)
+   El alumno anota sus pasos como en una hoja en blanco: columnas intermedias en las tablas de verdad,
+   escalera de divisiones, tabla de pesos, agrupación de bits y cuadrícula de suma con acarreos.
+   Se guarda en S.proc[id] como mapa plano {clave: valor}; el panel del administrador revisa casilla por casilla.
+   Cada casilla vale si coincide con el resultado correcto o con lo que sale de los datos que el propio alumno escribió en el paso anterior, para ubicar
+   exactamente en qué operación se equivocó (un error no «contagia» a los pasos siguientes).
+   ========================================================================== */
+const PROC_RE = { b: /[^01]/g, d: /[^0-9]/g, o: /[^0-7]/g, h: /[^0-9A-F]/g, x: /[^ABC'’!~¬*·.&+|()]/g };
+const PROC_WARN = { b: 'Solo se permite 0 y 1.', d: 'Solo se permiten números.', o: 'Solo se permiten números del 0 al 7.', h: 'Solo se permiten números y letras de la A a la F.', x: 'En la cabecera escribe la operación con A, B, C y \' * + ( ).' };
+const TT_MAXC = n => n === 2 ? 4 : 6;
+const DIV_MAXR = 12;
+const pget = id => (S && S.proc && S.proc[id]) || {};
+const procKind = q => q.kind === 'tt' ? 'tt' : q.cv ? (q.cv.from === 10 ? 'div' : q.cv.to === 10 ? 'pos' : 'grp') : q.sm ? 'sum' : '';
+const digT = b => b === 2 ? 'b' : b === 8 ? 'o' : b === 16 ? 'h' : 'd';
+const log2b = b => b === 8 ? 3 : 4;
+const BN = { 2: 'binario', 8: 'octal', 10: 'decimal', 16: 'hexadecimal' };
+
+/* Casilla: en modo alumno es un input; en modo revisión (R) es un recuadro verde/rojo con la respuesta esperada */
+function pcell(id, P, R, k, t, mx, lab, w) {
+  if (!R) { const v = P[k] || ''; return `<input class="pc pc-${t}${v ? ' filled' : ''}" data-pq="${id}" data-pk="${k}" data-pt="${t}" maxlength="${mx}" value="${esc(v)}" ${w ? `style="width:${w}"` : ''} autocomplete="off" spellcheck="false" autocapitalize="characters" inputmode="${t === 'b' || t === 'd' || t === 'o' ? 'numeric' : 'text'}" aria-label="${esc(lab)}">`; }
+  const v = P[k] || '', r = R[k], cls = r ? (r.ok ? 'ok' : 'bad') : v ? 'na' : 'empty';
+  return `<span class="pcv ${cls}" ${w ? `style="min-width:${w}"` : ''} title="${r && !r.ok && r.exp !== undefined ? 'Esperado: ' + esc(r.exp) : r && r.ok ? 'Correcto' : v ? 'No se pudo revisar' : 'Vacío'}">${v ? esc(v) : (r && !r.ok ? '∅' : '&nbsp;')}${r && !r.ok && r.exp !== undefined ? `<small>${esc(r.exp)}</small>` : ''}</span>`;
+}
+const pbtn = (id, act, ic, txt, cls = '') => `<button type="button" class="pc-btn ${cls}" data-pact="${act}" data-pq="${id}"><i class="bi ${ic} me-1"></i>${txt}</button>`;
+
+/* ----- Tabla de verdad con columnas intermedias ----- */
+function ttGrid(q, P, R, ans, key) {
+  const n = q.n, N = 1 << n, hd = CB_VARS.slice(0, n), id = q.id, nc = Math.min(+P.nc || 0, TT_MAXC(n)), Fv = ttNorm(ans, q.expect.length);
+  let h = `<div class="km-wrap"><table class="km tv tt-tbl"><tr>${hd.map(x => `<th>${x}</th>`).join('')}`;
+  for (let j = 0; j < nc; j++) {
+    if (!R) h += `<th class="pth"><input class="pc pc-x ph${P['h' + j] ? ' filled' : ''}" data-pq="${id}" data-pk="h${j}" data-pt="x" maxlength="24" value="${esc(P['h' + j] || '')}" placeholder="Operación" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Operación de la columna ${j + 1}"></th>`;
+    else { const r = R['h' + j], t = P['h' + j] || ''; h += `<th class="pth rv ${r ? (r.ok ? 'ok' : 'bad') : ''}">${t ? esc(t) : '<i>sin operación</i>'}${r && !r.ok ? `<small>${esc(r.exp)}</small>` : r && r.read ? `<small class="rd">${r.read}</small>` : ''}</th>`; }
+  }
+  h += `<th>F</th></tr>`;
+  for (let i = 0; i < N; i++) {
+    const b = [...i.toString(2).padStart(n, '0')];
+    h += `<tr>${b.map(x => `<td>${x}</td>`).join('')}`;
+    for (let j = 0; j < nc; j++) h += `<td class="pcol">${pcell(id, P, R, `v${j}_${i}`, 'b', 1, `Columna ${j + 1}, renglón ${i + 1}`)}</td>`;
+    if (key) h += `<td><input class="tt-in okk" value="${q.expect[i]}" disabled aria-label="Salida F"></td>`;
+    else if (R) { const c = Fv[i], ok = c === q.expect[i]; h += `<td><span class="pcv big ${c === '_' ? 'bad' : ok ? 'ok' : 'bad'}" title="${ok ? 'Correcto' : 'Esperado: ' + q.expect[i]}">${c === '_' ? '∅' : c}${ok ? '' : `<small>${q.expect[i]}</small>`}</span></td>`; }
+    else { const c = Fv[i] === '_' ? '' : Fv[i]; h += `<td><input class="tt-in${c ? ' filled' : ''}" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" data-tt="${id}" data-i="${i}" value="${c}" aria-label="Salida F cuando ${hd.map((x, j) => x + ' = ' + b[j]).join(', ')}"></td>`; }
+    h += '</tr>';
+  }
+  h += '</table></div>';
+  if (!R && !key) h += `<div class="pc-bar">${pbtn(id, 'ttadd', 'bi-plus-lg', 'Columna para una operación', nc >= TT_MAXC(n) ? 'd-none' : '')}${nc ? pbtn(id, 'ttdel', 'bi-dash-lg', 'Quitar última columna', 'del') : ''}<span class="pc-tip"><i class="bi bi-info-circle me-1"></i>Opcional: escribe en la cabecera la operación (por ejemplo <b class="mono">A'</b>, <b class="mono">A*B</b>, <b class="mono">A'+B</b>) y llénala con 0 y 1. No cuenta en la calificación; solo se califica la columna <b>F</b>.</span></div>`;
+  return h;
+}
+
+/* ----- Decimal → base b: escalera de divisiones sucesivas ----- */
+function divBody(q, P, R) {
+  const { n, to: b } = q.cv, id = q.id, nr = Math.max(1, Math.min(+P.nr || 1, DIV_MAXR)), hx = b === 16;
+  let h = `<table class="pc-tbl"><tr><th>Dividendo</th><th class="e"></th><th>Cociente</th><th>Residuo</th>${hx ? '<th>Dígito hex</th>' : ''}</tr>`;
+  for (let k = 0; k < nr; k++) h += `<tr><td>${pcell(id, P, R, 'd' + k, 'd', 4, 'Dividendo ' + (k + 1), '4.2rem')}</td><td class="op">÷ ${b} =</td><td>${pcell(id, P, R, 'q' + k, 'd', 4, 'Cociente ' + (k + 1), '4.2rem')}</td><td>${pcell(id, P, R, 'r' + k, 'd', 2, 'Residuo ' + (k + 1), '3rem')}</td>${hx ? `<td>${pcell(id, P, R, 'x' + k, 'h', 1, 'Dígito hexadecimal ' + (k + 1), '2.6rem')}</td>` : ''}</tr>`;
+  h += '</table>';
+  if (!R) h += `<div class="pc-bar">${nr < DIV_MAXR ? pbtn(id, 'radd', 'bi-plus-lg', 'Otra división') : ''}${nr > 1 ? pbtn(id, 'rdel', 'bi-dash-lg', 'Quitar última', 'del') : ''}<span class="pc-tip"><i class="bi bi-info-circle me-1"></i>Divide entre ${b} hasta que el cociente sea 0${hx ? '; convierte cada residuo de 10 a 15 en su letra (A–F)' : ''}. El resultado se lee con los residuos <b>de abajo hacia arriba</b>.</span></div>`;
+  return h;
+}
+/* ----- Base b → decimal: tabla de valor posicional ----- */
+function posBody(q, P, R) {
+  const { n, from: b } = q.cv, id = q.id, s = n.toString(b).toUpperCase(), L = s.length;
+  let h = `<table class="pc-tbl"><tr><th>Dígito</th><th>Posición</th><th>Peso (${b}<sup>n</sup>)</th><th class="e"></th><th>Dígito × peso</th></tr>`;
+  [...s].forEach((c, k) => { const e = L - 1 - k, dv = parseInt(c, 16); h += `<tr><td><b class="mono">${c}</b>${dv > 9 ? `<small class="d-block text-muted">= ${dv}</small>` : ''}</td><td class="op">${b}<sup>${e}</sup></td><td>${pcell(id, P, R, 'p' + k, 'd', 5, `Peso de la posición ${e}`, '4.6rem')}</td><td class="op">→</td><td>${pcell(id, P, R, 'x' + k, 'd', 5, `Producto del dígito ${c}`, '4.6rem')}</td></tr>`; });
+  h += `<tr class="sum"><td colspan="4" class="text-end fw-bold">Suma de los productos =</td><td>${pcell(id, P, R, 's', 'd', 6, 'Suma de los productos', '4.6rem')}</td></tr></table>`;
+  if (!R) h += `<div class="pc-bar"><span class="pc-tip"><i class="bi bi-info-circle me-1"></i>Escribe el valor de cada peso (por ejemplo ${b}<sup>2</sup> = ${b * b}), multiplícalo por su dígito y suma los productos.</span></div>`;
+  return h;
+}
+/* ----- Agrupar / desagrupar bits (binario ↔ octal / hexadecimal, y octal ↔ hexadecimal por binario) ----- */
+function grpBody(q, P, R) {
+  const { n, from, to } = q.cv, id = q.id; let h = '';
+  const unpack = (b, title) => { const s = n.toString(b).toUpperCase(), g = log2b(b); return `<div class="pc-step">${title}</div><table class="pc-tbl"><tr><th>Dígito</th>${[...s].map(c => `<td><b class="mono">${c}</b></td>`).join('')}</tr><tr><th>${g} bits</th>${[...s].map((c, k) => `<td>${pcell(id, P, R, 'u' + k, 'b', g, `Bits del dígito ${c}`, g === 4 ? '3.8rem' : '3.2rem')}</td>`).join('')}</tr></table>`; };
+  const pack = (b, title) => { const g = log2b(b), G = Math.ceil(n.toString(2).length / g); let t = `<div class="pc-step">${title}</div><table class="pc-tbl"><tr><th>Grupo de ${g} bits</th>`; for (let k = 0; k < G; k++) t += `<td>${pcell(id, P, R, 'g' + k, 'b', g, `Grupo ${k + 1}`, g === 4 ? '3.8rem' : '3.2rem')}</td>`; t += `</tr><tr><th>Dígito</th>`; for (let k = 0; k < G; k++) t += `<td>${pcell(id, P, R, 't' + k, digT(b), 1, `Dígito del grupo ${k + 1}`, '2.6rem')}</td>`; return t + '</tr></table>'; };
+  if (from === 2) h = pack(to, `Agrupa los bits de ${log2b(to)} en ${log2b(to)} <b>de derecha a izquierda</b> (completa con ceros a la izquierda el primer grupo) y convierte cada grupo.`);
+  else if (to === 2) h = unpack(from, `Escribe cada dígito ${from === 8 ? 'octal' : 'hexadecimal'} con <b>${log2b(from)} bits</b>.`);
+  else h = unpack(from, `<b>Paso 1.</b> Escribe cada dígito ${BN[from]} con <b>${log2b(from)} bits</b>.`) + pack(to, `<b>Paso 2.</b> Une los bits y agrúpalos de ${log2b(to)} en ${log2b(to)} de derecha a izquierda; convierte cada grupo a ${BN[to]}.`);
+  if (!R) h += `<div class="pc-bar"><span class="pc-tip"><i class="bi bi-info-circle me-1"></i>Pesos de cada grupo: ${log2b(to === 2 ? from : to) === 3 ? '4 · 2 · 1' : '8 · 4 · 2 · 1'}.</span></div>`;
+  return h;
+}
+/* ----- Suma binaria en columna: fila de acarreos y fila de resultado (3 sumandos: en dos pasos) ----- */
+function sumGrid(id, P, R, st, ops, W, title, copy) {
+  let h = `<div class="pc-step">${title}</div><table class="pc-tbl sumt"><tr class="carry"><th>Acarreos</th>`;
+  for (let K = W - 1; K >= 0; K--) h += `<td>${K === 0 ? '' : pcell(id, P, R, `c${st}_${K}`, 'b', 1, `Acarreo a la columna ${K + 1}`, '2.1rem')}</td>`;
+  h += '</tr>';
+  ops.forEach((o, i) => {
+    h += i === 0 && copy ? '<tr><th>Resultado del paso 1</th>' : `<tr><th class="${i ? 'pl' : 'e'}">${i ? '+' : ''}</th>`;
+    if (i === 0 && copy) for (let K = W - 1; K >= 0; K--) h += `<td>${pcell(id, P, R, `o${st}_${K}`, 'b', 1, `Resultado del paso 1, columna ${K + 1}`, '2.1rem')}</td>`;
+    else { const s = o.toString(2); for (let K = W - 1; K >= 0; K--) h += `<td class="dig">${K < s.length ? s[s.length - 1 - K] : ''}</td>`; }
+    h += '</tr>';
+  });
+  h += `<tr class="res"><th>Resultado</th>`; for (let K = W - 1; K >= 0; K--) h += `<td>${pcell(id, P, R, `r${st}_${K}`, 'b', 1, `Resultado, columna ${K + 1}`, '2.1rem')}</td>`;
+  return h + '</tr></table>';
+}
+const sumW = (...xs) => Math.max(...xs.map(x => x.toString(2).length)) + 1;
+function sumBody(q, P, R) {
+  const id = q.id, [a, b, c] = q.sm; let h;
+  if (c === undefined) h = sumGrid(id, P, R, 1, [a, b], sumW(a, b), 'Suma columna por columna, de derecha a izquierda: 1 + 1 = 10 (escribe 0 y lleva 1); 1 + 1 + 1 = 11 (escribe 1 y lleva 1).', false);
+  else h = sumGrid(id, P, R, 1, [a, b], sumW(a, b), '<b>Paso 1.</b> Suma los dos primeros números.', false) + sumGrid(id, P, R, 2, [0, c], sumW(a + b, c), '<b>Paso 2.</b> Copia el resultado del paso 1 y súmale el tercer número.', true);
+  if (!R) h += `<div class="pc-bar"><span class="pc-tip"><i class="bi bi-info-circle me-1"></i>Deja vacío el acarreo cuando no se lleva nada (cuenta como 0).</span></div>`;
+  return h;
+}
+function procBody(q, P, R) { return ({ div: divBody, pos: posBody, grp: grpBody, sum: sumBody })[procKind(q)](q, P, R); }
+const procUsed = P => Object.keys(P || {}).some(k => k !== 'nc' && k !== 'nr' && P[k] !== '');
+function procBlock(q) {
+  if (!q.cv && !q.sm) return '';
+  const P = pget(q.id);
+  return `<details class="proc" ${procUsed(P) ? 'open' : ''}><summary><i class="bi bi-pencil-square me-1"></i>Hoja de procedimiento <span>(opcional · no cuenta en la calificación)</span></summary><div class="proc-b" id="pw-${q.id}">${procBody(q, P, null)}</div></details>`;
+}
+
+/* ----- Captura del alumno ----- */
+document.addEventListener('input', e => {
+  const i = e.target.closest && e.target.closest('input.pc[data-pq]'); if (!i || !S || S.fin) return;
+  const t = i.dataset.pt, up = i.value.toUpperCase().replace(/’/g, "'"), v = up.replace(PROC_RE[t], '').slice(0, +i.maxLength || 30);
+  if (v !== up) toast(PROC_WARN[t], 'bi-keyboard-fill', 1500);
+  if (i.value !== v) i.value = v;
+  const id = i.dataset.pq; S.proc = S.proc || {}; const P = S.proc[id] = S.proc[id] || {};
+  if (v) P[i.dataset.pk] = v; else delete P[i.dataset.pk];
+  i.classList.toggle('filled', !!v); save();
+  if (v && v.length >= (+i.maxLength || 99) && t !== 'x') {        // casilla llena: pasa a la siguiente
+    const all = [...document.querySelectorAll(`input.pc[data-pq="${id}"]`)], nx = all[all.indexOf(i) + 1]; if (nx) nx.focus();
+  }
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-pact]'); if (!b || !S || S.fin) return;
+  const id = b.dataset.pq, q = EXAM.find(x => String(x.id) === id); if (!q) return;
+  S.proc = S.proc || {}; const P = S.proc[id] = S.proc[id] || {}, a = b.dataset.pact;
+  if (a === 'ttadd') P.nc = Math.min(TT_MAXC(q.n), (+P.nc || 0) + 1);
+  if (a === 'ttdel') { const j = (+P.nc || 1) - 1; Object.keys(P).forEach(k => { if (k === 'h' + j || k.startsWith('v' + j + '_')) delete P[k]; }); P.nc = j; }
+  if (a === 'radd') P.nr = Math.min(DIV_MAXR, (+P.nr || 1) + 1);
+  if (a === 'rdel') { const k = (+P.nr || 1) - 1; ['d', 'q', 'r', 'x'].forEach(c => delete P[c + k]); P.nr = Math.max(1, k); }
+  if (!P.nc) delete P.nc; if (+P.nr === 1) delete P.nr; if (!Object.keys(P).length) delete S.proc[id];
+  save();
+  if (q.kind === 'tt') { $('#ttw-' + id).innerHTML = ttGrid(q, pget(q.id), null, S.answers[q.id]); const hs = document.querySelectorAll(`#ttw-${id} input.ph`); if (a === 'ttadd' && hs.length) hs[hs.length - 1].focus(); }
+  else { $('#pw-' + id).innerHTML = procBody(q, pget(q.id), null); if (a === 'radd') { const ds = document.querySelectorAll(`#pw-${id} input[data-pk^="d"]`); if (ds.length) ds[ds.length - 1].focus(); } }
+});
+
+/* ----- Revisión: cada casilla contra lo que se esperaba con SUS propios datos ----- */
+const OPN = {
+  ttNOT: 'Tabla · NOT (negar una letra)', ttNOTx: 'Tabla · NOT de una expresión', ttAND: 'Tabla · AND (producto)', ttOR: 'Tabla · OR (suma)', ttF: 'Tabla · columna F (salida)',
+  dvD: 'División · arrastrar el cociente', dvQ: 'División · cociente', dvR: 'División · residuo', dvX: 'División · residuo a letra hex',
+  psP: 'Posicional · peso (potencia)', psX: 'Posicional · dígito × peso', psS: 'Posicional · suma de productos',
+  gpU: 'Bits · dígito a bits', gpG: 'Bits · agrupar de derecha a izquierda', gpT: 'Bits · grupo a dígito',
+  smC: 'Suma binaria · acarreos', smR: 'Suma binaria · resultado por columna'
+};
+function procCheck(q, P, ans) {
+  P = P || {}; const R = {}, ops = {}, notes = [];
+  const op = (k, ok) => { const o = ops[k] = ops[k] || { n: 0, ok: 0 }; o.n++; if (ok) o.ok++; };
+  const mark = (key, ok, exp, cat) => { R[key] = { ok, exp: exp === undefined ? undefined : String(exp) }; if (cat) op(cat, ok); };
+  const kind = procKind(q), num = s => /^\d+$/.test(s || '') ? parseInt(s, 10) : NaN;
+  if (kind === 'tt') {
+    const n = q.n, N = 1 << n, hd = CB_VARS.slice(0, n), nc = Math.min(+P.nc || 0, TT_MAXC(n));
+    for (let j = 0; j < nc; j++) {
+      const hs = P['h' + j] || '', any = !!hs || [...Array(N).keys()].some(i => P[`v${j}_${i}`]); if (!any) continue;
+      const pr = fnParse(hs), okV = pr.ok && varsOf(pr.tree).every(v => hd.includes(v));
+      if (!okV) { R['h' + j] = { ok: false, exp: hs ? (pr.ok ? `solo puede usar ${hd.join(', ')}` : 'operación no reconocida') : 'falta la operación' }; notes.push(`Columna ${j + 1}: ${hs ? 'no se reconoce la operación «' + hs + '»' : 'no escribió la operación'}.`); continue; }
+      const t = pr.tree, col = ttOf(t, hd), cat = t.v !== undefined ? '' : t.g === 'not' ? (t.c[0].v !== undefined ? 'ttNOT' : 'ttNOTx') : t.g === 'and' ? 'ttAND' : t.g === 'or' ? 'ttOR' : '';
+      R['h' + j] = { ok: true, read: exprOf(t) };
+      for (let i = 0; i < N; i++) { const v = P[`v${j}_${i}`] || ''; mark(`v${j}_${i}`, v === col[i], col[i], cat); }
+    }
+    const Fv = ttNorm(ans, q.expect.length); if (ans) for (let i = 0; i < N; i++) op('ttF', Fv[i] === q.expect[i]);
+  } else if (kind === 'div') {
+    const { n, to: b } = q.cv, nr = Math.max(1, Math.min(+P.nr || 1, DIV_MAXR)); let prevQ = n, last = null;
+    for (let k = 0; k < nr; k++) {
+      if (!['d', 'q', 'r', 'x'].some(c => P[c + k])) continue;
+      const dT = Math.floor(n / Math.pow(b, k)), d = num(P['d' + k]), dExp = prevQ;        // dT: dividendo de la cadena correcta
+      mark('d' + k, d === dExp || d === dT, dExp, k ? 'dvD' : '');
+      const du = Number.isFinite(d) ? d : dExp, qe = Math.floor(du / b), re = du % b, qv = num(P['q' + k]), rv = num(P['r' + k]);
+      mark('q' + k, qv === qe || qv === Math.floor(dT / b), qe, 'dvQ'); mark('r' + k, rv === re || rv === dT % b, re, 'dvR');
+      if (b === 16) { const ru = Number.isFinite(rv) && rv < 16 ? rv : re, xe = ru.toString(16).toUpperCase(), xv = P['x' + k] || ''; mark('x' + k, xv === xe || xv === (dT % b).toString(16).toUpperCase(), xe, 'dvX'); }
+      prevQ = Number.isFinite(qv) ? qv : qe; last = prevQ;
+    }
+    if (last !== null && last !== 0) notes.push('No terminó las divisiones: el último cociente debe ser 0.');
+  } else if (kind === 'pos') {
+    const { n, from: b } = q.cv, s = n.toString(b).toUpperCase(), L = s.length; let tot = 0, allX = true, any = false;
+    [...s].forEach((c, k) => {
+      if (!P['p' + k] && !P['x' + k]) { allX = false; return; } any = true;
+      const pe = Math.pow(b, L - 1 - k), pv = num(P['p' + k]); mark('p' + k, pv === pe, pe, 'psP');
+      const xe = parseInt(c, 16) * (Number.isFinite(pv) ? pv : pe), xv = num(P['x' + k]); mark('x' + k, xv === xe || xv === parseInt(c, 16) * pe, xe, 'psX');
+      if (Number.isFinite(xv)) tot += xv; else allX = false;
+    });
+    if (P.s) { const se = allX && any ? tot : n, sv = num(P.s); mark('s', sv === se || sv === n, se, 'psS'); }
+  } else if (kind === 'grp') {
+    const { n, from, to } = q.cv, bin = n.toString(2);
+    if (from !== 2) { const s = n.toString(from).toUpperCase(), g = log2b(from); [...s].forEach((c, k) => { const u = P['u' + k] || ''; if (!u) return; const e = parseInt(c, 16).toString(2).padStart(g, '0'); mark('u' + k, k === 0 ? (u.length <= g && parseInt(u, 2) === parseInt(e, 2)) : u === e, e, 'gpU'); }); }
+    if (to !== 2) {
+      const g = log2b(to), G = Math.ceil(bin.length / g), pad = bin.padStart(G * g, '0');
+      for (let k = 0; k < G; k++) {
+        const gv = P['g' + k] || '', tv = P['t' + k] || '', e = pad.slice(k * g, k * g + g);
+        if (gv) mark('g' + k, k === 0 ? (gv.length <= g && parseInt(gv, 2) === parseInt(e, 2)) : gv === e, e, 'gpG');
+        if (tv) { const src = gv && /^[01]+$/.test(gv) && gv.length <= g ? parseInt(gv, 2) : parseInt(e, 2), te = src.toString(to).toUpperCase(); mark('t' + k, tv === te || tv === parseInt(e, 2).toString(to).toUpperCase(), te, 'gpT'); }
+      }
+    }
+  } else if (kind === 'sum') {
+    const [a, b, c] = q.sm, bit = (x, K) => (x >> K) & 1;
+    /* Cada casilla vale si coincide con la suma correcta o con lo que sale de SUS acarreos y SU renglón anterior (un error no se cuenta dos veces) */
+    const grid = (st, X, Y, W, ownX, TX) => {
+      const keys = Object.keys(P).filter(k => k.startsWith('c' + st + '_') || k.startsWith('r' + st + '_') || k.startsWith('o' + st + '_')); if (!keys.length) return;
+      const cin = K => K === 0 ? 0 : (P[`c${st}_${K}`] === '1' ? 1 : 0), xb = K => ownX ? ownX(K) : bit(X, K);
+      const tc = [0]; for (let K = 0; K < W; K++) tc[K + 1] = (bit(TX, K) + bit(Y, K) + tc[K]) >> 1;          // acarreos de la suma correcta
+      const tot = TX + Y, sig = tot.toString(2).length - 1;
+      for (let K = 1; K < W; K++) { const e = (xb(K - 1) + bit(Y, K - 1) + cin(K - 1)) >> 1, v = P[`c${st}_${K}`] || '', vb = v === '1' ? 1 : 0; if (v || tc[K]) mark(`c${st}_${K}`, vb === e || vb === tc[K], tc[K] === vb ? e : tc[K], 'smC'); }
+      for (let K = 0; K < W; K++) { const e = (xb(K) + bit(Y, K) + cin(K)) % 2, v = P[`r${st}_${K}`] || ''; if (v || K <= sig) mark(`r${st}_${K}`, v !== '' && (+v === e || +v === bit(tot, K)), bit(tot, K), 'smR'); }
+    };
+    grid(1, a, b, sumW(a, b), null, a);
+    if (c !== undefined) {
+      const W2 = sumW(a + b, c), W1 = sumW(a, b);
+      let hi = -1, val = 0, ok1 = true; for (let K = 0; K < W1; K++) if (P[`r1_${K}`]) hi = K;            // su resultado del paso 1 (vale si no tiene huecos)
+      for (let K = 0; K <= hi; K++) { const v = P[`r1_${K}`]; if (!v) ok1 = false; else val += (+v) << K; } if (hi < 0) ok1 = false;
+      const own = Object.keys(P).some(k => k.startsWith('o2_')) ? (K => P[`o2_${K}`] === '1' ? 1 : 0) : null;
+      const top = ok1 ? val : a + b;
+      Object.keys(P).filter(k => k.startsWith('o2_')).forEach(k => { const K = +k.slice(3); const ok = (+P[k]) === bit(top, K) || (+P[k]) === bit(a + b, K); R[k] = { ok, exp: String(bit(top, K)) }; });
+      grid(2, top, c, W2, own, a + b);
+    }
+  }
+  return { R, ops, notes, used: procUsed(P) };
 }
 
 /* ==========================================================================
@@ -1349,10 +1617,10 @@ $('#form-datos').addEventListener('submit', async e => {
   }
   if (res.resumed) {          // el servidor ya tenía este examen en curso: se continúa con el mismo tipo, reloj y respuestas
     const pr = res.progreso || {}, loc = loadLocal(PARCIAL, cuenta), mismo = loc && !loc.fin && (loc.seed >>> 0) === (res.seed >>> 0);
-    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: Object.assign({}, pr.a || {}, mismo ? loc.answers : {}), flags: Object.assign({}, pr.f || {}, mismo ? loc.flags : {}), salidas: Math.max(res.salidas || 0, mismo ? loc.salidas || 0 : 0), n: effN(res.total || (mismo ? loc.n : 0), availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, fin: false, sent: false, result: null, sid: res.sid };
+    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: Object.assign({}, pr.a || {}, mismo ? loc.answers : {}), flags: Object.assign({}, pr.f || {}, mismo ? loc.flags : {}), proc: Object.assign({}, pr.p || {}, mismo ? loc.proc || {} : {}), salidas: Math.max(res.salidas || 0, mismo ? loc.salidas || 0 : 0), n: effN(res.total || (mismo ? loc.n : 0), availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, fin: false, sent: false, result: null, sid: res.sid };
     save(); startExam(true); if (res.cerrar) { toast('Tu profesor(a) cerró tu examen: tus respuestas se enviaron.', 'bi-lock-fill', 5000); finish('admin'); } return;
   }
-  S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.parse(res.inicio) || nowMs(), inicioISO: res.inicio || inicio, n: effN(res.preguntas, availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, answers: {}, flags: {}, salidas: 0, fin: false, sent: false, result: null, sid: res.sid };
+  S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.parse(res.inicio) || nowMs(), inicioISO: res.inicio || inicio, n: effN(res.preguntas, availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, answers: {}, flags: {}, proc: {}, salidas: 0, fin: false, sent: false, result: null, sid: res.sid };
   save(); startExam(false);
 });
 
@@ -1371,7 +1639,7 @@ function questionsHTML(exam, secs, opt = {}) {
     } else if (key) {
       html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><div class="key-box"><i class="bi bi-key-fill me-1"></i>Respuesta correcta: <b class="mono">${q.expect}</b></div>`;
     } else {
-      html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><input type="text" class="form-control ans-input" id="a-${q.id}" data-q="${q.id}" inputmode="${q.rule.im}" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="${q.rule.max || 14}" placeholder="Tu respuesta">`;
+      html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><input type="text" class="form-control ans-input" id="a-${q.id}" data-q="${q.id}" inputmode="${q.rule.im}" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="${q.rule.max || 14}" placeholder="Tu respuesta">` + procBlock(q);
     }
     html += `</div>${key ? '' : `<button class="flag-btn" data-flag="${q.id}" title="Marcar para revisar" aria-label="Marcar para revisar"><i class="bi bi-bookmark"></i></button>`}</div></div>`;
     grid += `<button class="qn" data-go="${q.id}" id="qn-${q.id}">${q.id}</button>`;
@@ -1390,7 +1658,7 @@ function startExam(resume) {
   refreshMarks(); updateProgress(); applyClock(); show('examen'); examActive = true;
   clearInterval(timerId); tick(); timerId = setInterval(tick, 500);
   if (resume) toast('Examen reanudado: tu reloj siguió corriendo.', 'bi-arrow-repeat', 3200);
-  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); startSync(); clearInterval(pollId); pollId = setInterval(pollCierre, CFG.POLL_S * 1000 + Math.round(Math.random() * 5000)); if (resume) syncProgress(true);
+  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {}, p: {} }); startSync(); clearInterval(pollId); pollId = setInterval(pollCierre, CFG.POLL_S * 1000 + Math.round(Math.random() * 5000)); if (resume) syncProgress(true);
 }
 /* Avance guardado en la hoja (ligado al número de cuenta): permite continuar aunque cierren o cambien de equipo */
 let syncId = null, pollId = null, lastSig = '', syncBusy = false, lastSync = 0;
@@ -1420,7 +1688,7 @@ async function pollCierre() {
 }
 async function syncProgress(force) {
   if (!S || S.fin || !CFG.ENDPOINT || syncBusy) return;
-  const prog = JSON.stringify({ a: S.answers, f: S.flags }), sig = prog + '|' + S.salidas;
+  const prog = JSON.stringify({ a: S.answers, f: S.flags, p: S.proc || {} }), sig = prog + '|' + S.salidas;
   if (!force && sig === lastSig) return;
   syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, progreso: prog, salidas: S.salidas }); syncBusy = false;
   if (r.ok) { lastSig = sig; lastSync = Date.now(); progOk(r); return; }
@@ -1498,7 +1766,7 @@ function finish(motivo) {
   if (!S || S.fin) return;
   const g = grade(), fin = Math.min(nowMs(), limiteMs()), usado = fin - S.start;
   S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId);
-  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, base: g.base, bonus: g.bon, total: TOTAL(), calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
+  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, base: g.base, bonus: g.bon, total: TOTAL(), calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, procedimiento: JSON.stringify(S.proc || {}), seed: S.seed, sid: S.sid };
   S.status = 'pend'; save(); renderFin(); show('fin'); sendResult(S);
 }
 
@@ -1519,7 +1787,7 @@ function renderMalas(r) {
   const box = $('#fin-malas'); if (!box) return;
   let ex = []; try { ex = buildExam(r.parcial, r.tipo, r.seed, r.total); } catch (e) { }
   const secs = EXAMS[r.parcial].secs, det = String(r.detalle || ''), ans = (S && S.answers) || {};
-  const plain = h => String(h).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<div class="datos">[\s\S]*?<\/div>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const plain = h => String(h).replace(/<sub>(\d+)<\/sub>/g, (m, d) => [...d].map(c => '₀₁₂₃₄₅₆₇₈₉'[c]).join('')).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<div class="datos">[\s\S]*?<\/div>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
   const bad = ex.filter((q, i) => det[i] === '0' && !(q.bonus && (ans[q.id] === undefined || ans[q.id] === '')));
   if (!ex.length) { box.innerHTML = ''; return; }
   if (!bad.length) { box.innerHTML = '<div class="alert alert-success fw-bold text-center mb-0"><i class="bi bi-stars me-1"></i>¡Todas tus respuestas fueron correctas!</div>'; return; }
@@ -1562,17 +1830,17 @@ $('#btn-terminar').onclick = () => { clearState(); SS.del('eq_sess'); location.r
    PANEL DEL ADMINISTRADOR
    ========================================================================== */
 const AD = { tab: 'resumen', par: '0', rows: [], cfg: null, q: '', pvP: 1, pvT: 'A', pvSeed: 20250101 };
-const ADTABS = [['resumen', 'bi-bar-chart-line-fill', 'Resumen'], ['met', 'bi-clipboard-data-fill', 'Métricas'], ['res', 'bi-table', 'Resultados'], ['clv', 'bi-key-fill', 'Contraseñas'], ['prev', 'bi-eye-fill', 'Vista previa']];
+const ADTABS = [['resumen', 'bi-bar-chart-line-fill', 'Resumen'], ['met', 'bi-clipboard-data-fill', 'Métricas'], ['res', 'bi-table', 'Resultados'], ['alu', 'bi-person-lines-fill', 'Por alumno'], ['clv', 'bi-key-fill', 'Contraseñas'], ['prev', 'bi-eye-fill', 'Vista previa']];
 async function openAdmin() { show('admin'); await loadAdmin(); }
-/* El panel se actualiza como máximo cada 3 min (también con F5): mientras, se muestran los últimos datos guardados en este equipo. */
-const AD_WAIT = 180000, ADK = 'eq_adm_' + (CFG.MATERIA || 'cib');
+/* El panel se actualiza como máximo cada minuto (también con F5): mientras, se muestran los últimos datos guardados en este equipo. */
+const AD_WAIT = 60000, ADK = 'eq_adm_' + (CFG.MATERIA || 'cib');
 const adCache = { get() { try { return JSON.parse(LS.get(ADK) || 'null'); } catch (e) { return null; } }, set(o) { LS.set(ADK, JSON.stringify(o)); } };
 const mmss = ms => { const x = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(x / 60) + ':' + String(x % 60).padStart(2, '0'); };
 let adTimer = null;
 function adStamp() {
   const b = $('#ad-refresh'); if (!b) return; clearInterval(adTimer);
   const tick = () => { const c = adCache.get(), left = c ? AD_WAIT - (Date.now() - c.t) : 0;
-    if (left > 0) { b.innerHTML = `<i class="bi bi-hourglass-split me-1"></i>Actualizar en ${mmss(left)}`; b.title = 'Para no saturar el servidor, el panel se actualiza como máximo cada 3 minutos'; }
+    if (left > 0) { b.innerHTML = `<i class="bi bi-hourglass-split me-1"></i>Actualizar en ${mmss(left)}`; b.title = 'Para no saturar el servidor, el panel se actualiza como máximo cada minuto'; }
     else { b.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Actualizar'; b.title = ''; clearInterval(adTimer); } };
   tick(); adTimer = setInterval(tick, 1000);
 }
@@ -1595,7 +1863,7 @@ async function loadAdmin(force) {
 function adminLogout() { ADMIN = null; SS.del('eq_sess'); location.reload(); }
 $('#ad-salir').onclick = adminLogout; $('#ad-refresh').onclick = () => loadAdmin(false);
 function renderTabs() { $('#ad-tabs').innerHTML = ADTABS.map(([k, ic, n]) => `<li class="nav-item"><button class="nav-link ${AD.tab === k ? 'active' : ''}" data-adtab="${k}"><i class="bi ${ic} me-1"></i>${n}</button></li>`).join(''); }
-function renderAdmin() { renderTabs(); ({ resumen: adResumen, met: adMetricas, res: adResultados, clv: adClaves, prev: adPrev })[AD.tab](); }
+function renderAdmin() { renderTabs(); ({ resumen: adResumen, met: adMetricas, res: adResultados, alu: adAlumno, clv: adClaves, prev: adPrev })[AD.tab](); }
 document.addEventListener('click', e => { const t = e.target.closest('[data-adtab]'); if (t) { AD.tab = t.dataset.adtab; renderAdmin(); } });
 const parBtns = () => `<div class="d-flex flex-wrap gap-2 mb-3">${[['0', 'Todos'], ['1', 'Parcial 1'], ['2', 'Parcial 2']].map(([k, n]) => `<button class="btn-chip ${AD.par === k ? 'on' : ''}" data-adpar="${k}">${n}</button>`).join('')}</div>`;
 document.addEventListener('click', e => { const t = e.target.closest('[data-adpar]'); if (t) { AD.par = t.dataset.adpar; renderAdmin(); } });
@@ -1604,7 +1872,7 @@ const avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
 
 /* ===== Métricas: qué falló (por bloque o unidad, teoría vs. aplicación, nivel de Bloom, tipo de pregunta y preguntas más falladas) =====
    Se reconstruye el examen de cada alumno con su tipo y su semilla, y se cruza con su detalle de aciertos (1 = bien, 0 = mal o sin responder). */
-const plainQ = h => String(h).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const plainQ = h => String(h).replace(/<sub>(\d+)<\/sub>/g, (m, d) => [...d].map(c => '₀₁₂₃₄₅₆₇₈₉'[c]).join('')).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 const TEORIA = ['Recordar', 'Comprender'];
 document.addEventListener('click', e => { const t = e.target.closest('[data-adgrp]'); if (t) { AD.grp = t.dataset.adgrp; renderAdmin(); } });
 function adMetricas() {
@@ -1616,10 +1884,12 @@ function adMetricas() {
   if (!sel.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + '<div class="alert alert-info">Aún no hay exámenes entregados para calcular métricas.</div>'; return; }
   if (!conDet.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + '<div class="alert alert-warning">Para ver las métricas actualiza el script de Apps Script (nueva versión de la implementación): el panel necesita el detalle de aciertos de cada alumno.</div>'; return; }
   const acc = (o, k, extra) => (o[k] = o[k] || Object.assign({ n: 0, ok: 0 }, extra));
-  const SEC = {}, NIV = {}, TIP = {}, TA = {}, PQ = {}; let nAl = 0, nQ = 0, nOk = 0;
+  const SEC = {}, NIV = {}, TIP = {}, TA = {}, PQ = {}, OPSM = {}; let nAl = 0, nQ = 0, nOk = 0, nProc = 0;
   conDet.forEach(r => {
     let ex; try { ex = buildExam(+r.parcial, r.tipo, +r.seed, +r.total); } catch (e) { return; }
     const det = String(r.det), secs = EXAMS[r.parcial].secs; nAl++;
+    if (r.resp) { const A = parseResp(r.resp, ex), PR = parseProc(r.proc); if (Object.keys(PR).length) nProc++;          // operaciones del procedimiento (casilla por casilla)
+      ex.forEach(q => { if (!procKind(q)) return; Object.entries(procCheck(q, PR[q.id] || {}, A[q.id]).ops).forEach(([k, o]) => { const t = OPSM[k] = OPSM[k] || { n: 0, ok: 0, a: new Set() }; t.n += o.n; t.ok += o.ok; t.a.add(r.cuenta); }); }); }
     ex.forEach((q, i) => {
       if (q.bonus || det[i] === undefined) return; const ok = det[i] === '1' ? 1 : 0, s = secs.find(x => x.id === q.sec) || { t: q.sec, c: '#64748b' };
       const lv = q.bl || 'Sin nivel', ta = TEORIA.includes(lv) ? 'teo' : 'apl', kd = q.kind === 'mc' ? 'Opción múltiple' : 'Respuesta abierta';
@@ -1643,6 +1913,8 @@ function adMetricas() {
   <div class="row g-3 mb-3"><div class="col-lg-7"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-bar-chart-steps me-1 text-primary"></i>Por nivel cognitivo (Bloom)</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Nivel</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${nivRows}</tbody></table></div></div>
   <div class="col-lg-5"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-input-cursor-text me-1 text-primary"></i>Por tipo de pregunta</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Tipo</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${tipRows}</tbody></table></div></div></div>
   <div class="nav-card"><b class="d-block mb-2"><i class="bi bi-x-octagon-fill me-1 text-danger"></i>Preguntas más falladas <span class="small text-muted fw-normal">(% de error · las que solo cambian de números se agrupan)</span></b>${worst}</div>
+  <div class="nav-card mt-3"><b class="d-block mb-1"><i class="bi bi-pencil-square me-1 text-primary"></i>¿Qué operación les costó más? <span class="small text-muted fw-normal">(hoja de procedimiento · ${nProc} de ${nAl} alumnos la usaron · ordenado de menor a mayor acierto)</span></b>
+  <div class="small text-muted mb-2">Una casilla es correcta si coincide con el resultado correcto o con lo que sale de los datos que el propio alumno escribió en el paso anterior (un error no se cuenta dos veces). «Tabla · columna F» cuenta las salidas de todas las tablas de verdad, aunque no usen columnas intermedias.</div>${opsTable(OPSM, true)}</div>
   <div class="small text-muted mt-2">Las preguntas sin responder cuentan como error. No incluye la pregunta bonus.</div>`;
 }
 function adResumen() {
@@ -1662,7 +1934,7 @@ const tiempoOf = r => { const x = segOf(r); return Number.isFinite(x) ? fmtT(x *
 function adResultados() {
   const q = AD.q.toLowerCase(), rows = rowsSel().filter(r => !q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)).sort((a, b) => String(b.inicio).localeCompare(String(a.inicio)));
   $('#ad-body').innerHTML = parBtns() + `<div class="nav-card"><div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><div class="input-group" style="max-width:340px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-q" class="form-control" placeholder="Buscar nombre, cuenta o grupo" value="${esc(AD.q)}" autocomplete="off"></div><span class="text-muted small">${rows.length} registro(s)</span><button class="btn btn-outline-success btn-sm ms-auto fw-bold rounded-pill" id="ad-csv"><i class="bi bi-filetype-csv me-1"></i>Descargar CSV</button></div>
-  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th title="Tiempo que tardó en contestar (horas:minutos:segundos)">Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono text-nowrap">${r.estado === 'Entregado' ? (tiempoOf(r) || '—') : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 30 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th title="Tiempo que tardó en contestar (horas:minutos:segundos)">Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono text-nowrap">${r.estado === 'Entregado' ? (tiempoOf(r) || '—') : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 30 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}${r.estado === 'Entregado' ? `<button class="btn btn-sm btn-outline-primary rounded-pill me-1" data-aver="${r.parcial}|${esc(r.cuenta)}" title="Ver su examen con aciertos y errores"><i class="bi bi-eye-fill"></i> Ver</button>` : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
   $('#ad-q').addEventListener('input', e => { AD.q = e.target.value; const p = e.target.selectionStart; adResultados(); const n = $('#ad-q'); n.focus(); n.setSelectionRange(p, p); });
   $('#ad-csv').onclick = () => {
     const H = ['Parcial', 'Nombre', 'Cuenta', 'Grupo', 'Tipo', 'Estado', 'Aciertos', 'Total', 'Calificación', 'Tiempo (hh:mm:ss)', 'Segundos', 'Salidas', 'Inicio', 'Entrega'], q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
@@ -1744,6 +2016,96 @@ document.addEventListener('click', e => {
   const p = e.target.closest('[data-pvp]'); if (p) { AD.pvP = +p.dataset.pvp; adPrev(); }
   const t = e.target.closest('[data-pvt]'); if (t) { AD.pvT = t.dataset.pvt; adPrev(); }
   if (e.target.closest('[data-pvnew]')) { AD.pvSeed = randBytes()[0] >>> 0; adPrev(); }
+});
+
+/* ===== Por alumno: vista previa del examen que entregó cada alumno, con aciertos (verde) y errores (rojo) =====
+   Se reconstruye su examen con su tipo y su semilla y se le ponen sus respuestas (columna «Respuestas») y,
+   si la usó, su hoja de procedimiento (columna «Procedimiento»). Se navega alumno por alumno. */
+const parseResp = (s, ex) => { const a = {}; String(s || '').split(';').forEach(p => { const k = p.indexOf(':'); if (k < 1) return; const id = +p.slice(0, k), v = p.slice(k + 1), q = ex.find(x => x.id === id); if (!q || v === '-' || v === '') return; a[id] = q.kind === 'mc' ? String('ABCD'.indexOf(v)) : v; }); return a; };
+const parseProc = s => { try { const o = JSON.parse(s || '{}'); return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } };
+const HAS_PROC = typeof procCheck === 'function';
+const aluKey = r => r.parcial + '|' + r.cuenta;
+function aluList() {
+  const q = (AD.aq || '').toLowerCase();
+  return rowsSel().filter(r => r.estado === 'Entregado' && (!AD.grp || String(r.grupo || '') === AD.grp) && (!q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)))
+    .sort((a, b) => String(a.grupo).localeCompare(String(b.grupo), 'es', { numeric: true }) || String(a.nombre).localeCompare(String(b.nombre), 'es') || a.parcial - b.parcial);
+}
+/* Respuesta del alumno en una pregunta (con la correcta cuando falló) */
+function revAns(q, v, P, ok) {
+  const empty = v === undefined || v === null || v === '';
+  if (q.kind === 'mc') return `<div class="${q.grid ? 'opt-grid' : ''}">` + q.opts.map((o, i) => { const me = !empty && +v === i, good = i === q.correct; return `<div class="opt rv ${me && good ? 'me-ok' : me ? 'me-bad' : good ? 'key' : ''}"><span class="mark">${'ABCD'[i]}</span><span class="flex-grow-1">${o}</span>${me ? `<span class="rv-tag ${good ? 'ok' : 'bad'}">${good ? '<i class="bi bi-check-lg"></i> Su respuesta' : '<i class="bi bi-x-lg"></i> Su respuesta'}</span>` : good ? '<span class="rv-tag ok">Correcta</span>' : ''}</div>`; }).join('') + '</div>' + (empty ? '<div class="rv-ans bad"><i class="bi bi-dash-circle me-1"></i>Sin responder</div>' : '');
+  if (q.kind === 'tt' && HAS_PROC) { const ck = procCheck(q, P, v); return ttGrid(q, P || {}, ck.R, v || '') + (ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : '') + (+(P || {}).nc ? '' : '<div class="small text-muted">No agregó columnas intermedias.</div>'); }
+  if (q.kind === 'fn') { const pr = fnParse(v || ''); return `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Escribió:</span> <b class="mono">${empty ? 'Sin responder' : 'F = ' + esc(v)}</b>${pr.ok ? ` <span class="small">(se lee como <span class="num">F = ${exprOf(pr.tree)}</span>)</span>` : !empty ? ` <span class="small">(${esc(pr.err || 'no se pudo leer')})</span>` : ''}</div>${ok ? '' : `<div class="rv-exp">Referencia: <b class="num">F = ${q.expect}</b> <span class="small text-muted">(o cualquier función equivalente)</span></div>`}`; }
+  if (q.kind === 'circ') { const t = cbParse(v || ''); return `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Su circuito:</span>${empty ? ' <b>Sin responder</b>' : ''}</div>${t ? `<div class="circ-wrap rv-circ">${cbSVG(t)}</div>` : ''}${ok ? '' : `<div class="rv-exp">${circHTML(q, 'rv', true)}</div>`}`; }
+  let h = `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Respondió:</span> <b class="mono">${empty ? 'Sin responder' : esc(String(v).replace(/_/g, '·'))}</b>${ok ? ' <i class="bi bi-check-circle-fill"></i>' : ''}</div>${ok ? '' : `<div class="rv-exp">Correcta: <b class="mono">${esc(q.expect)}</b></div>`}`;
+  if (HAS_PROC && (q.cv || q.sm)) {
+    const ck = procCheck(q, P, v);
+    h += ck.used ? `<div class="proc rvp"><div class="rvp-h"><i class="bi bi-pencil-square me-1"></i>Su procedimiento</div><div class="proc-b">${procBody(q, P, ck.R)}${ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : ''}</div></div>` : '<div class="small text-muted mt-1"><i class="bi bi-pencil me-1"></i>No usó la hoja de procedimiento.</div>';
+  }
+  return h;
+}
+const opsTable = (OPS, alumnos) => {
+  const arr = Object.entries(OPS).map(([k, o]) => ({ k, t: (typeof OPN !== 'undefined' && OPN[k]) || k, ...o, p: o.n ? o.ok / o.n * 100 : 0 })).filter(x => x.n).sort((a, b) => a.p - b.p);
+  if (!arr.length) return '<div class="small text-muted">Sin procedimiento registrado.</div>';
+  const col = p => p >= 80 ? '#16a34a' : p >= 60 ? '#d97706' : '#dc2626';
+  return `<table class="table table-sm align-middle mb-0"><thead><tr><th>Operación</th><th class="text-center">Casillas</th>${alumnos ? '<th class="text-center">Alumnos</th>' : ''}<th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${arr.map(x => `<tr><td>${esc(x.t)}</td><td class="text-center">${x.ok}/${x.n}</td>${alumnos ? `<td class="text-center">${x.a ? x.a.size : ''}</td>` : ''}<td style="min-width:120px"><div class="mbar"><i style="width:${x.p.toFixed(1)}%;background:${col(x.p)}"></i></div></td><td class="text-end fw-bold text-nowrap" style="color:${col(x.p)}">${x.p.toFixed(0)} %</td></tr>`).join('')}</tbody></table>`;
+};
+function adAlumno() {
+  const base = rowsSel().filter(r => r.estado === 'Entregado'), grupos = [...new Set(base.map(r => String(r.grupo || '')))].sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
+  if (AD.grp && !grupos.includes(AD.grp)) AD.grp = '';
+  const L = aluList();
+  if (AD.aluKey) { const k = L.findIndex(r => aluKey(r) === AD.aluKey); if (k >= 0) AD.ai = k; AD.aluKey = ''; }
+  AD.ai = Math.max(0, Math.min(AD.ai || 0, L.length - 1));
+  const grpBtns = grupos.length > 1 ? `<div class="d-flex flex-wrap gap-2 mb-3"><span class="small fw-bold text-muted align-self-center me-1">Grupo:</span>${[['', 'Todos'], ...grupos.map(g => [g, g || '(sin grupo)'])].map(([k, n]) => `<button class="btn-chip ${(AD.grp || '') === k ? 'on' : ''}" data-adgrp="${esc(k)}">${esc(n)}</button>`).join('')}</div>` : '';
+  const nav = `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-2 align-items-center">
+    <div class="input-group input-group-sm" style="max-width:260px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-aq" class="form-control" placeholder="Buscar alumno" value="${esc(AD.aq || '')}" autocomplete="off"></div>
+    <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" data-anav="-1" ${AD.ai <= 0 ? 'disabled' : ''} title="Alumno anterior (←)"><i class="bi bi-chevron-left"></i> Anterior</button>
+    <select id="ad-asel" class="form-select form-select-sm" style="max-width:340px" aria-label="Elegir alumno">${L.map((r, i) => `<option value="${i}" ${i === AD.ai ? 'selected' : ''}>${esc((r.grupo ? r.grupo + ' · ' : '') + r.nombre)}${AD.par === '0' ? ' · P' + r.parcial : ''} · ${(+r.nota).toFixed(1)}</option>`).join('')}</select>
+    <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" data-anav="1" ${AD.ai >= L.length - 1 ? 'disabled' : ''} title="Alumno siguiente (→)">Siguiente <i class="bi bi-chevron-right"></i></button>
+    <span class="small text-muted fw-bold">${L.length ? AD.ai + 1 : 0} de ${L.length}</span>
+    <div class="form-check form-switch ms-auto mb-0"><input class="form-check-input" type="checkbox" id="ad-aerr" ${AD.aerr ? 'checked' : ''}><label class="form-check-label small fw-bold" for="ad-aerr">Solo errores</label></div>
+  </div></div>`;
+  if (!L.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + nav + '<div class="alert alert-info">No hay exámenes entregados con ese filtro.</div>'; aluBind(); return; }
+  const r = L[AD.ai];
+  if (!r.resp) { $('#ad-body').innerHTML = parBtns() + grpBtns + nav + '<div class="alert alert-warning">Para ver lo que contestó cada alumno actualiza el script de Apps Script (nueva versión de la implementación): el panel necesita la columna «Respuestas».</div>'; aluBind(); return; }
+  let ex; try { ex = buildExam(+r.parcial, r.tipo, +r.seed, +r.total); } catch (e) { ex = null; }
+  if (!ex || !ex.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + nav + '<div class="alert alert-danger">No se pudo reconstruir el examen de este alumno (falta su semilla).</div>'; aluBind(); return; }
+  const ans = parseResp(r.resp, ex), PR = parseProc(r.proc), det = String(r.det || ''), secs = EXAMS[r.parcial].secs;
+  const SEC = {}, OPS = {}; let html = '', last = '', shown = 0;
+  ex.forEach((q, i) => {
+    const v = ans[q.id], empty = v === undefined || v === '', ok = det[i] !== undefined ? det[i] === '1' : gradeQ(q, v), sec = secs.find(s => s.id === q.sec) || { t: q.sec, c: '#64748b', ic: 'bi-question' }, P = PR[q.id] || PR[String(q.id)] || {};
+    if (!q.bonus) { const o = SEC[q.sec] = SEC[q.sec] || { t: sec.t, c: sec.c, n: 0, ok: 0 }; o.n++; if (ok) o.ok++; }
+    if (HAS_PROC && procKind(q)) Object.entries(procCheck(q, P, v).ops).forEach(([k, o]) => { const t = OPS[k] = OPS[k] || { n: 0, ok: 0 }; t.n += o.n; t.ok += o.ok; });
+    if (AD.aerr && ok) return;
+    if (q.sec !== last) { last = q.sec; html += `<div class="sec-head" style="--c:${sec.c}"><div class="sec-ico"><i class="bi ${sec.ic}"></i></div><div><h2 class="h6 fw-bold mb-0">${sec.t}</h2></div></div>`; }
+    const st = ok ? 'ok' : empty ? 'none' : 'bad'; shown++;
+    html += `<div class="qcard rvq ${st}" style="--c:${sec.c}"><div class="d-flex align-items-start gap-2"><span class="qnum">${q.id}</span><div class="flex-grow-1" style="min-width:0"><div class="d-flex flex-wrap gap-1 mb-1"><span class="rv-st ${st}">${ok ? '<i class="bi bi-check-circle-fill"></i> Correcta' : empty ? '<i class="bi bi-dash-circle-fill"></i> Sin responder' : '<i class="bi bi-x-circle-fill"></i> Incorrecta'}</span>${q.bl ? `<span class="bl bl-${q.bl}">${q.bl}</span>` : ''}${q.bonus && q.bl !== 'Bonus' ? '<span class="rv-st bon">Bonus</span>' : ''}</div><div class="qtext">${q.html}</div>${revAns(q, v, P, ok)}</div></div></div>`;
+  });
+  const nb = ex.filter(q => !q.bonus).length, okb = Object.values(SEC).reduce((s, o) => s + o.ok, 0), pc = +r.nota * 10, col = pc >= 60 ? '#16a34a' : '#dc2626';
+  const secRows = Object.values(SEC).map(o => { const p = o.n ? o.ok / o.n * 100 : 0, c = p >= 80 ? '#16a34a' : p >= 60 ? '#d97706' : '#dc2626'; return `<tr><td><span class="mdot" style="background:${o.c}"></span>${esc(o.t)}</td><td class="text-center">${o.ok}/${o.n}</td><td style="min-width:110px"><div class="mbar"><i style="width:${p.toFixed(1)}%;background:${c}"></i></div></td><td class="text-end fw-bold text-nowrap" style="color:${c}">${p.toFixed(0)} %</td></tr>`; }).join('');
+  const usedP = Object.keys(PR).length;
+  $('#ad-body').innerHTML = parBtns() + grpBtns + nav + `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-3 align-items-center">
+      <div class="grade-ring" style="--p:${pc};--gc:${col};width:96px;height:96px"><b style="color:${col}">${(+r.nota).toFixed(1)}</b><small class="text-muted fw-bold">de 10</small></div>
+      <div class="flex-grow-1" style="min-width:220px"><div class="h5 fw-bold mb-1">${esc(r.nombre)}</div><div class="small text-muted">Cuenta <b class="mono">${esc(r.cuenta)}</b> · Grupo <b>${esc(r.grupo)}</b> · P${r.parcial} · Tipo ${esc(r.tipo)}</div>
+        <div class="small mt-1">${r.aciertos} aciertos de ${r.total} · Tiempo <b class="mono">${tiempoOf(r) || '—'}</b> · Salidas <b>${r.salidas === '' ? '—' : r.salidas}</b>${r.motivo === 'admin' ? ' · <span class="badge text-bg-warning">Cerrado por el profesor(a)</span>' : r.motivo === 'tiempo' ? ' · <span class="badge text-bg-secondary">Se acabó el tiempo</span>' : ''} · Entregó ${fmtDT(r.entrega)}</div></div></div></div>
+    <div class="row g-3 mb-3"><div class="col-lg-${HAS_PROC ? 6 : 12}"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-diagram-3-fill me-1 text-primary"></i>Aciertos por bloque</b><table class="table table-sm align-middle mb-0"><tbody>${secRows}</tbody></table></div></div>
+    ${HAS_PROC ? `<div class="col-lg-6"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-pencil-square me-1 text-primary"></i>Operaciones de su procedimiento <span class="small text-muted fw-normal">(${usedP ? usedP + ' pregunta(s) con hoja' : 'no usó la hoja'})</span></b>${opsTable(OPS)}</div></div>` : ''}</div>
+    <div class="small text-muted mb-2"><span class="rv-st ok">Verde</span> = bien · <span class="rv-st bad">Rojo</span> = mal (abajo, en pequeño, lo que se esperaba)${HAS_PROC ? ' · En el procedimiento una casilla es correcta si coincide con el resultado correcto o con lo que sale de los datos que el propio alumno escribió en el paso anterior (un error no se cuenta dos veces).' : ''}</div>
+    ${html || '<div class="alert alert-success fw-bold">Todas sus respuestas fueron correctas.</div>'}`;
+  aluBind();
+}
+function aluBind() {
+  const q = $('#ad-aq'); if (q) q.addEventListener('input', e => { AD.aq = e.target.value; AD.ai = 0; const p = e.target.selectionStart; adAlumno(); const n = $('#ad-aq'); n.focus(); n.setSelectionRange(p, p); });
+  const s = $('#ad-asel'); if (s) s.addEventListener('change', e => { AD.ai = +e.target.value; adAlumno(); window.scrollTo({ top: 0 }); });
+  const t = $('#ad-aerr'); if (t) t.addEventListener('change', e => { AD.aerr = e.target.checked; adAlumno(); });
+}
+document.addEventListener('click', e => {
+  const n = e.target.closest('[data-anav]'); if (n) { AD.ai = (AD.ai || 0) + +n.dataset.anav; adAlumno(); window.scrollTo({ top: 0 }); }
+  const v = e.target.closest('[data-aver]'); if (v) { AD.tab = 'alu'; AD.aluKey = v.dataset.aver; AD.grp = ''; AD.aq = ''; renderAdmin(); window.scrollTo({ top: 0 }); }
+});
+document.addEventListener('keydown', e => {
+  if (AD.tab !== 'alu' || $('#scr-admin').classList.contains('d-none') || /INPUT|SELECT|TEXTAREA/.test((e.target.tagName || ''))) return;
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { const L = aluList().length, d = e.key === 'ArrowLeft' ? -1 : 1, k = (AD.ai || 0) + d; if (k >= 0 && k < L) { AD.ai = k; adAlumno(); window.scrollTo({ top: 0 }); } }
 });
 
 /* ===== Bloqueos: copiar, pegar, cortar, clic derecho, arrastrar, imprimir, atajos ===== */
