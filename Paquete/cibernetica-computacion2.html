@@ -555,6 +555,17 @@ textarea.form-control{min-height:110px;resize:vertical}
 .perfil label{display:grid;place-items:center;text-align:center;min-height:48px;border:1.5px solid var(--line);border-radius:12px;padding:6px 10px;cursor:pointer;font-size:.88rem;transition:all .2s}
 .perfil input:checked+label{border-color:var(--azul);background:var(--azul-soft);color:var(--azul)}
 .perfil input:focus-visible+label{outline:3px solid var(--oro-2);outline-offset:2px}
+.lg-hint{margin:0 0 8px;font-weight:600;color:var(--azul)}
+.rol-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 4px}
+.rol-pick input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.rol-pick label{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink-2,#3b4a63);cursor:pointer;text-align:center;transition:border-color .2s,background .2s,box-shadow .2s,color .2s;min-height:44px;user-select:none}
+.rol-pick label b{font-family:var(--f-head,inherit);letter-spacing:.06em;font-size:.92rem}
+.rol-pick .rp-ic svg{width:30px;height:30px;display:block}
+.rol-pick .rp-dot{position:absolute;top:9px;left:9px;width:18px;height:18px;border-radius:50%;border:2px solid #b7c1d3;background:#fff;transition:border-color .2s,box-shadow .2s}
+.rol-pick label:hover{border-color:#9fb4d6}
+.rol-pick input:checked+label{border-color:var(--azul);background:var(--azul-soft);color:var(--azul);box-shadow:0 0 0 3px rgba(0,59,122,.12)}
+.rol-pick input:checked+label .rp-dot{border-color:var(--azul);box-shadow:inset 0 0 0 4px #fff;background:var(--azul)}
+.rol-pick input:focus-visible+label{outline:3px solid var(--oro-2);outline-offset:2px}
 .form-switch{display:flex;align-items:center;gap:12px;margin-top:4px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;transition:border-color .2s,background .2s}
 .form-switch.on{border-color:var(--azul);background:var(--azul-soft)}
 .form-switch .form-check-input{appearance:none;-webkit-appearance:none;flex:none;width:48px;height:28px;margin:0;border-radius:999px;background:var(--line);border:1.5px solid #c9d1df;position:relative;cursor:pointer;transition:background .2s,border-color .2s}
@@ -2134,10 +2145,12 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
           <button type="button" class="login-admin" id="login-admin" aria-label="Panel de métricas" title="Panel de métricas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
         </div>
         <div class="modal-body">
-          <p class="black">Antes de empezar, Selecciona 👉 Alumnado ó Docente</p>
-          <div class="form-check form-switch" id="lg-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="lg-docente">
-            <label class="form-check-label" for="lg-docente" id="lg-rol">Seleccione Alumnado / Docente</label>
+          <p class="small muted lg-hint">Selecciona la opción antes de comenzar.</p>
+          <div class="rol-pick" id="lg-switch" role="radiogroup" aria-label="Perfil">
+            <input type="radio" name="perfil" id="lg-alumno" value="Alumno(a)" checked>
+            <label for="lg-alumno"><span class="rp-dot" aria-hidden="true"></span><span class="rp-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg></span><b>ALUMNADO</b></label>
+            <input type="radio" name="perfil" id="lg-docente" value="Docente">
+            <label for="lg-docente"><span class="rp-dot" aria-hidden="true"></span><span class="rp-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4M7 9h6M7 12h4"/></svg></span><b>DOCENTE</b></label>
           </div>
           <div class="fld">
             <label class="form-label" for="lg-nombre">Nombre completo</label>
@@ -3689,13 +3702,11 @@ const Login = (function () {
   $("#loginModal").addEventListener("shown.bs.modal", () => nom.focus());
   function rol() {
     const d = doc.checked;
-    $("#lg-rol").textContent = d ? "Soy Docente" : "Alumnado";
-    $("#lg-switch").classList.toggle("on", d);
     $("#lg-cuenta-lbl").textContent = d ? "Número de trabajador" : "Número de cuenta";
     cta.placeholder = "De 6 a 10 caracteres";
   }
-  doc.addEventListener("change", rol);
-  function reset() { f.reset(); doc.checked = false; rol(); nom.classList.remove("is-invalid"); cta.classList.remove("is-invalid"); }
+  $$("#lg-switch input").forEach(r => r.addEventListener("change", rol));
+  function reset() { f.reset(); $("#lg-alumno").checked = true; rol(); nom.classList.remove("is-invalid"); cta.classList.remove("is-invalid"); }
   return {
     open() {
       reset();
