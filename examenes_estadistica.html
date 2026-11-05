@@ -262,9 +262,7 @@
       <hr class="my-4">
       <h2 class="h6 fw-bold mb-2"><i class="bi bi-list-check me-1 text-primary"></i>Reglas del examen</h2>
       <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">30</span> preguntas</b> de opción múltiple y de respuesta abierta (numérica). Cada una vale lo mismo. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
-      <div class="rule" id="r-tiempo"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b> desde que pulsas «Comenzar». Pasado ese tiempo el examen se <b>cierra y se entrega en automático</b> con las respuestas que tengas.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo el número, sin espacios</b>, con <b>punto decimal</b> y el signo − si hace falta. Redondea a los decimales que indique cada pregunta. Puedes usar calculadora.</div></div>
-      <div class="rule"><i class="bi bi-pencil-square"></i><div>Las preguntas con recuadro <b>«Procedimiento obligatorio»</b> deben llevar su procedimiento completo; sin él <b>no podrás entregar</b> el examen. Usa el botón <b>Ayuda</b> de cada pregunta para ver cómo llenarlo.</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
       <div class="rule rule-warn" style="background:#fdeaea;border:1px solid #f5b8b8;border-left:5px solid #e03131;border-radius:12px;padding:.55rem .7rem"><i class="bi bi-window-x" style="color:#e03131"></i><div style="color:#c92a2a"><b>Antes de comenzar, cierra toda pestaña o ventana abierta</b> (otras páginas, programas o aplicaciones). Si no lo haces, <b>se contabilizará como apertura de ventanas adicionales</b>.</div></div>
       <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen continúa y el tiempo sigue corriendo. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
@@ -389,7 +387,7 @@ const CFG = {
   ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
   MATERIA: 'est',                  // 'est' = hojas «Resultados Estadística» y «Config Estadística»
   SYNC_MIN: [2, 4],                // rango (minutos) del envío del avance: cada equipo elige al azar su propio intervalo dentro del rango
-  PROC_OBLIGATORIO: true,          // true: no se puede entregar (con el botón) si una pregunta contestada no tiene su procedimiento completo. No cambia la calificación.
+  PROC_OBLIGATORIO: false,          // true: no se puede entregar (con el botón) si una pregunta contestada no tiene su procedimiento completo. No cambia la calificación.
   POLL_S: 30,                      // con más de SALIDAS_CIERRE salidas: cada cuántos segundos se pregunta si el profesor cerró el examen
   PENA_MIN: 5,                     // minutos que se descuentan por CADA salida de la ventana
   SALIDAS_CIERRE: 3,               // con más salidas que estas, el administrador puede cerrar el examen del alumno
@@ -913,8 +911,8 @@ function pickQs(qs, k, rnd) {
   return qs.filter((q, i) => keep.has(i));
 }
 /* n = preguntas habilitadas (sin contar el bonus). Las mismas n preguntas salen siempre para la misma semilla. */
-const buildExam = (parcial, tipo, seed, n) => {
-  const all = EXAMS[parcial].build(tipo, seed), base = all.filter(q => !q.bonus), bonus = all.filter(q => q.bonus);
+const buildExam = (parcial, tipo, seed, n) => {       // sin hoja de procedimiento: solo se valida el resultado
+  const all = EXAMS[parcial].build(tipo, seed).map(q => { delete q.pf; return q; }), base = all.filter(q => !q.bonus), bonus = all.filter(q => q.bonus);
   const qs = pickQs(base, effN(n, base.length), mulberry32((seed ^ 0x5DEECE66) >>> 0)).concat(bonus);
   qs.forEach((q, i) => q.id = i + 1); return qs;
 };
@@ -1249,14 +1247,14 @@ const OPN = {};
 
 /* ===== Ayuda de cada pregunta (popover): cómo llenar el procedimiento, nunca el resultado ni las fórmulas ===== */
 const HELP = {
-  lst: ['Cómo llenar el procedimiento', ['Escribe los datos de menor a mayor, uno en cada casilla.', 'Cuenta tus datos: deben ser tantos como los de la pregunta, incluidos los repetidos.', 'Después escribe tu respuesta en el recuadro de arriba.']],
-  lstcalc: ['Cómo llenar el procedimiento', ['Primero escribe los datos de menor a mayor, uno en cada casilla (incluidos los repetidos).', 'En el renglón de cálculo escribe la <b>fórmula</b> que usas, la <b>sustitución</b> con tus números y el <b>resultado</b>.', 'En la sustitución puedes usar + − × ÷ ^ √ y paréntesis.', 'Tu respuesta final va en el recuadro de arriba.']],
-  calc: ['Cómo llenar el procedimiento', ['Escribe la <b>fórmula</b> que vas a usar, con tus propias palabras o símbolos.', 'En la <b>sustitución</b> escribe la operación con los números de la pregunta (puedes usar + − × ÷ ^ √ y paréntesis).', 'Escribe el <b>resultado</b> de esa operación; redondea solo al final, como pide la pregunta.', 'Tu respuesta final va en el recuadro de arriba.']],
-  tbl: ['Cómo llenar la tabla', ['Usa una columna por cada cálculo que hagas con cada dato (puedes agregar más con «Otra columna»).', 'En la cabecera escribe qué calculas en esa columna.', 'Llena la columna renglón por renglón con tus resultados.', 'Tu respuesta final va en el recuadro de arriba.']],
-  tblcalc: ['Cómo llenar el procedimiento', ['Usa una columna por cada cálculo que hagas con cada dato y escribe en la cabecera qué calculas.', 'Llena cada renglón y escribe la suma (Σ) de cada columna.', 'En el renglón de cálculo escribe la fórmula, la sustitución con tus sumas y el resultado.', 'Redondea solo al final, como pide la pregunta.']],
-  stur: ['Cómo llenar el procedimiento', ['Usa el valor del logaritmo que te da la pregunta.', 'Escribe la fórmula, la sustitución y el resultado <b>sin redondear</b>.', 'En el recuadro de arriba escribe el resultado ya redondeado, como pide la pregunta.']],
-  amp: ['Cómo llenar el procedimiento', ['Usa los datos mayor y menor y el número de clases que te da la pregunta.', 'Escribe cada cálculo en su renglón: fórmula, sustitución y resultado <b>sin redondear</b>.', 'En el recuadro de arriba escribe el resultado redondeado como pide la pregunta.']],
-  pear: ['Cómo llenar el procedimiento', ['Necesitarás varias sumas: agrega una columna por cada cálculo con los pares de datos y escribe en la cabecera qué calculas.', 'Escribe también las sumas de x y de y (Σ) debajo de sus columnas.', 'En el renglón de cálculo escribe la fórmula, la sustitución con tus sumas y el resultado.', 'Redondea solo al final, a 2 decimales.']],
+  lst: ['Antes de responder', ['Ordena los datos en tu hoja, de menor a mayor.', 'Cuéntalos: deben ser tantos como los de la pregunta, incluidos los repetidos.', 'Escribe solo el número en el recuadro de respuesta.']],
+  lstcalc: ['Antes de responder', ['Ordena los datos en tu hoja, de menor a mayor, incluidos los repetidos.', 'Haz tus cálculos en la hoja y revisa que usaste todos los datos.', 'Escribe solo el número, con punto decimal; redondea solo al final, como pide la pregunta.']],
+  calc: ['Antes de responder', ['Escribe en tu hoja la fórmula que vas a usar y sustituye los valores de la pregunta.', 'Haz las operaciones con calma y revisa cada paso.', 'Escribe solo el número, con punto decimal; redondea solo al final, como pide la pregunta.']],
+  tbl: ['Antes de responder', ['Haz en tu hoja una tabla con una columna por cada cálculo.', 'Llénala renglón por renglón.', 'Escribe solo el número en el recuadro de respuesta.']],
+  tblcalc: ['Antes de responder', ['Haz en tu hoja una tabla con una columna por cada cálculo que necesites y escribe la suma (Σ) de cada columna.', 'Usa esas sumas en la fórmula.', 'Redondea solo al final, como pide la pregunta.']],
+  stur: ['Antes de responder', ['Usa el valor del logaritmo que te da la pregunta.', 'Haz el cálculo sin redondear y redondea solo al final, como pide la pregunta.']],
+  amp: ['Antes de responder', ['Usa los datos mayor y menor y el número de clases que te da la pregunta.', 'Haz el cálculo sin redondear y redondea solo al final, como pide la pregunta.']],
+  pear: ['Antes de responder', ['Necesitarás varias sumas: haz en tu hoja una columna por cada cálculo con los pares de datos.', 'Sustituye tus sumas en la fórmula.', 'Redondea solo al final, a 2 decimales.']],
   hist: ['Cómo leer la gráfica', ['Ubica la clase que se pide en el eje horizontal.', 'Sigue la parte de arriba de esa barra hasta el eje vertical y usa las líneas de la cuadrícula para leer su valor.']]
 };
 const hlpHTML = q => { const [t, L] = HELP[q.hlp]; return `<span class="hlp-w"><button type="button" class="hlp-btn" data-hlp="${q.id}" aria-expanded="false" aria-controls="hlp-${q.id}"><i class="bi bi-question-circle-fill me-1"></i>Ayuda</button><span class="hlp-pop" id="hlp-${q.id}" role="dialog" aria-label="${esc(t)}" hidden><b class="d-block mb-1"><i class="bi bi-lightbulb-fill me-1"></i>${t}</b><ol>${L.map(x => `<li>${x}</li>`).join('')}</ol>${procKind(q) ? '<span class="d-block small mt-1"><b>Recuerda:</b> el procedimiento es obligatorio.</span>' : ''}<button type="button" class="hlp-x" data-hlpx aria-label="Cerrar ayuda">×</button></span></span>`; };
@@ -1552,8 +1550,6 @@ function adMetricas() {
   <div class="row g-3 mb-3"><div class="col-lg-7"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-bar-chart-steps me-1 text-primary"></i>Por nivel cognitivo (Bloom)</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Nivel</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${nivRows}</tbody></table></div></div>
   <div class="col-lg-5"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-input-cursor-text me-1 text-primary"></i>Por tipo de pregunta</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Tipo</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${tipRows}</tbody></table></div></div></div>
   <div class="nav-card"><b class="d-block mb-2"><i class="bi bi-x-octagon-fill me-1 text-danger"></i>Preguntas más falladas <span class="small text-muted fw-normal">(% de error · las que solo cambian de números se agrupan)</span></b>${worst}</div>
-  <div class="nav-card mt-3"><b class="d-block mb-1"><i class="bi bi-pencil-square me-1 text-primary"></i>¿Qué operación les costó más? <span class="small text-muted fw-normal">(procedimiento obligatorio · ${nProc} de ${nAl} alumnos con procedimiento registrado · ordenado de menor a mayor acierto · no cambia la calificación)</span></b>
-  <div class="small text-muted mb-2">Una casilla es correcta si coincide con el resultado correcto o con lo que sale de los datos que el propio alumno escribió en el paso anterior (un error no se cuenta dos veces). La fórmula y las cabeceras que escribe el alumno no se califican: revísalas en «Por alumno».</div>${opsTable(OPSM, true)}</div>
   <div class="small text-muted mt-2">Las preguntas sin responder cuentan como error. No incluye la pregunta bonus.</div>`;
 }
 function adResumen() {
@@ -1661,7 +1657,7 @@ document.addEventListener('click', e => {
    si la usó, su hoja de procedimiento (columna «Procedimiento»). Se navega alumno por alumno. */
 const parseResp = (s, ex) => { const a = {}; String(s || '').split(';').forEach(p => { const k = p.indexOf(':'); if (k < 1) return; const id = +p.slice(0, k), v = p.slice(k + 1), q = ex.find(x => x.id === id); if (!q || v === '-' || v === '') return; a[id] = q.kind === 'mc' ? String('ABCD'.indexOf(v)) : v; }); return a; };
 const parseProc = s => { try { const o = JSON.parse(s || '{}'); return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } };
-const HAS_PROC = typeof procCheck === 'function';
+const HAS_PROC = false;          // este examen ya no lleva hoja de procedimiento
 const aluKey = r => r.parcial + '|' + r.cuenta;
 function aluList() {
   const q = (AD.aq || '').toLowerCase();
@@ -1771,7 +1767,7 @@ window.addEventListener('beforeunload', e => { if (examActive || (S && S.result 
 /* ===== Arranque ===== */
 $('#btn-prof-movil').onclick = () => show('clave');
 (function init() {
-  $('#d-dur').textContent = CFG.DURACION_MIN;
+  { const dd = $('#d-dur'); if (dd) dd.textContent = CFG.DURACION_MIN; }
   let sess = null; try { sess = JSON.parse(SS.get('eq_est_sess') || 'null'); } catch (e) { }
   if (sess && sess.role === 'admin' && sess.token) { ADMIN = sess.token; openAdmin(); }
   else if (MOVIL && !(S && S.fin)) { show('movil'); }                                        // celular o tableta: solo el profesor puede entrar

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
-  <title>Examen Cibernética 1 · Primer parcial</title>
+  <title>Examen Cibernética 1</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <style>
@@ -203,6 +203,11 @@
     .hlp-pop::before { content:''; position:absolute; top:-7px; left:22px; border:7px solid transparent; border-top:0; border-bottom-color:#0f172a; }
     .hlp-pop b { color:#fff; } .hlp-pop ol { margin:0; padding-left:1.15rem; } .hlp-pop li { margin-bottom:.2rem; }
     .hlp-x { position:absolute; top:.3rem; right:.5rem; background:none; border:0; color:#94a3b8; font-size:1.2rem; line-height:1; }
+
+    .km th.pth.std { background:#7c3aed; color:#fff; font-size:.85rem; white-space:nowrap; } .km th.fth { background:#e03131; }
+    .tt-in.sm { width:2.1rem; height:2rem; }
+    .jcode { background:#0f172a; color:#e2e8f0; border-radius:12px; padding:.75rem .9rem; font:600 .92rem/1.45 'Courier New',monospace; margin:.5rem 0; white-space:pre; overflow-x:auto; user-select:none; }
+    .fc-wrap { overflow-x:auto; } .fc { max-width:100%; height:auto; }
 </style>
 </head>
 <body>
@@ -269,11 +274,9 @@
       </div>
       <hr class="my-4">
       <h2 class="h6 fw-bold mb-2"><i class="bi bi-list-check me-1 text-primary"></i>Reglas del examen</h2>
-      <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">35</span> preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Al final hay <b>1 pregunta bonus opcional</b> que vale por 2, sin pasar nunca de 10. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
-      <div class="rule" id="r-tiempo"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b> desde que pulsas «Comenzar». Pasado ese tiempo el examen se <b>cierra y se entrega en automático</b> con las respuestas que tengas.</div></div>
+      <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">35</span> preguntas</b> de opción múltiple y de respuesta abierta. Cada una vale lo mismo. Al final hay <b>1 pregunta bonus opcional</b> que vale por 2, sin pasar nunca de 10. Te tocará el <b>examen tipo A, B o C</b> (al azar).</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo la respuesta, sin espacios</b>, con los símbolos que indique cada pregunta (solo 0 y 1, solo números, o números y letras A–F).</div></div>
-      <div class="rule"><i class="bi bi-pencil-square"></i><div>Las preguntas con recuadro <b>«Procedimiento obligatorio»</b> deben llevar su procedimiento completo; sin él <b>no podrás entregar</b> el examen. Usa el botón <b>Ayuda</b> de cada pregunta para ver cómo llenarlo.</div></div>
-      <div class="rule"><i class="bi bi-braces"></i><div>En la sección de circuitos escribirás una <b>función booleana</b> con las letras A, B y C: usa <b>'</b> para negar, <b>*</b> para AND y <b>+</b> para OR, con paréntesis si los necesitas. Ejemplo: <span class="mono">A'*B*C + (A*B)'</span>. Cualquier función equivalente a la del circuito es correcta.</div></div>
+      <div class="rule"><i class="bi bi-pencil-square"></i><div>Las <b>tablas de verdad</b> y las <b>sumas binarias</b> llevan procedimiento obligatorio (columnas de apoyo y cuadrícula de acarreos); sin él <b>no podrás entregar</b> el examen. Usa el botón <b>Ayuda</b> de cada pregunta para ver cómo llenarlo.</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
       <div class="rule rule-warn" style="background:#fdeaea;border:1px solid #f5b8b8;border-left:5px solid #e03131;border-radius:12px;padding:.55rem .7rem"><i class="bi bi-window-x" style="color:#e03131"></i><div style="color:#c92a2a"><b>Antes de comenzar, cierra toda pestaña o ventana abierta</b> (otras páginas, programas o aplicaciones). Si no lo haces, <b>se contabilizará como apertura de ventanas adicionales</b>.</div></div>
       <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen continúa y el tiempo sigue corriendo. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
@@ -489,26 +492,28 @@ const BANK = {
 const SECS1 = [
   { id: 'prec', t: 'Precursores de la computación y la cibernética', d: 'Elige la respuesta correcta.', ic: 'bi-clock-history', c: '#7c3aed' },
   { id: 'gen',  t: 'Generaciones de computadoras', d: 'Elige la respuesta correcta.', ic: 'bi-pc-display', c: '#db2777' },
-  { id: 'cdca', t: 'Corriente directa y corriente alterna', d: 'Elige el enunciado que describe correctamente cada concepto.', ic: 'bi-activity', c: '#0891b2' },
   { id: 'conv', t: 'Conversiones entre sistemas de numeración', d: 'Respuesta abierta: escribe solo la respuesta, sin espacios y con los símbolos que se indican en cada pregunta.', ic: 'bi-arrow-left-right', c: '#2563eb' },
   { id: 'sum',  t: 'Suma de números binarios', d: 'Respuesta abierta: escribe solo el resultado, sin espacios y usando únicamente 0 y 1.', ic: 'bi-plus-slash-minus', c: '#16a34a' }
 ];
 const NAMES = { 2: 'binario', 8: 'octal', 10: 'decimal', 16: 'hexadecimal' };
 const PAIRS = {
   A: [[10, 2], [2, 10], [10, 8], [8, 10], [10, 16], [16, 10], [2, 8], [8, 2], [2, 16], [16, 2], [16, 8]],
-  B: [[2, 10], [10, 2], [8, 10], [10, 8], [16, 10], [10, 16], [8, 2], [2, 8], [16, 2], [2, 16], [8, 16]]
+  B: [[2, 10], [10, 2], [8, 10], [10, 8], [16, 10], [10, 16], [8, 2], [2, 8], [16, 2], [2, 16], [8, 16]],
+  C: [[10, 2], [2, 10], [10, 16], [16, 10], [8, 10], [10, 8], [2, 16], [16, 2], [2, 8], [8, 2], [16, 8]]
 };
-const RANGE = { A: [19, 230], B: [27, 254] };
-const SUMBITS = { A: [4, 5], B: [5, 6] };
+const RANGE = { A: [19, 230], B: [27, 254], C: [33, 241] };
+const SUMBITS = { A: [4, 5], B: [5, 6], C: [4, 6] };
+/* Tipo C: combina, en un orden fijo, las preguntas de los bancos A y B (mismo tamaño que A) */
+const mixAB = (a, b) => { const o = []; for (let i = 0; i < Math.max(a.length, b.length); i++) { if (i % 2 === 0 ? a[i] : b[i]) o.push(i % 2 === 0 ? a[i] : b[i]); else if (a[i] || b[i]) o.push(a[i] || b[i]); } return o.slice(0, a.length); };
 
-function buildP1(tipo, seed) {
-  const rnd = mulberry32((seed ^ (tipo === 'A' ? 0x9E3779B1 : 0x85EBCA6B)) >>> 0), qs = [];
+function buildU1(tipo, seed) {          // parte 1 del primer parcial: precursores, generaciones, conversiones y sumas binarias
+  const rnd = mulberry32((seed ^ ({ A: 0x9E3779B1, B: 0x85EBCA6B, C: 0x165667B1 }[tipo])) >>> 0), qs = [];
   const bloom = (sec, q) => {                    // nivel de la taxonomía de Bloom (revisada) de cada pregunta de opción múltiple
     if (sec === 'prec') return /¿Quién|¿Qué científico|¿Qué máquina|además del ensamblador|Jean Jennings|recibió el nombre/.test(q) ? 'Recordar' : 'Comprender';
     if (sec === 'gen') return /¿Qué componente|¿Qué invento|¿Qué avance|¿Qué distingue/.test(q) ? 'Recordar' : 'Comprender';
     return /frecuencia/.test(q) ? 'Recordar' : /¿Cuál afirmación/.test(q) ? 'Analizar' : 'Comprender';
   };
-  ['prec', 'gen', 'cdca'].forEach(sec => shuffle(BANK[sec][tipo], rnd).forEach(b => qs.push(mcQ(sec, b.q, b.ok, b.bad, rnd, bloom(sec, b.q)))));
+  ['prec', 'gen'].forEach(sec => shuffle(BANK[sec][tipo] || mixAB(BANK[sec].A, BANK[sec].B), rnd).forEach(b => qs.push(mcQ(sec, b.q, b.ok, b.bad, rnd, bloom(sec, b.q)))));
   const used = new Set(), [lo, hi] = RANGE[tipo];
   shuffle(PAIRS[tipo], rnd).forEach(([from, to]) => {
     let n; do { n = lo + Math.floor(rnd() * (hi - lo + 1)); } while (used.has(n)); used.add(n);
@@ -524,8 +529,11 @@ function buildP1(tipo, seed) {
     qs.push(openQ('sum', `Suma en binario: <span class="num">${a.toString(2)}<sub>2</sub></span> + <span class="num">${b.toString(2)}<sub>2</sub></span> = ?`, (a + b).toString(2), OPEN[2], 'norm', 'Aplicar'));
     Object.assign(qs[qs.length - 1], { sm: [a, b], hlp: 'sum' });
   }
-  qs.push(...buildNew(tipo, 1, rnd));
   return qs;
+}
+/* PRIMER PARCIAL (unificado): temas del antiguo primer parcial (sin electricidad) + compuertas, tablas, Karnaugh y diseño + ejercicios nuevos */
+function buildP1(tipo, seed) {
+  return [...buildU1(tipo, seed), ...buildU2(tipo, seed), ...buildNew(tipo, 1, mulberry32((seed ^ 0x2545F491) >>> 0))];
 }
 
 /* ==========================================================================
@@ -830,6 +838,7 @@ function mutatePats(pats, rnd, seenCols, tries = 300) {
 /* Equivalencias comprobadas: la opción correcta se valida contra la tabla de verdad al construir el examen */
 const EQV = {
   A: { pats: patsOf([3, 5, 6, 7]), ok: ['X·Y + X·Z + Y·Z', (x, y, z) => (x & y) | (x & z) | (y & z)], bad: [['X + Y + Z', (x, y, z) => x | y | z], ['X·Y·Z', (x, y, z) => x & y & z], ['X·Y + Z', (x, y, z) => (x & y) | z]], what: 'el <b>acarreo de salida</b> de un sumador completo de 1 bit (X y Y son los bits y Z es el acarreo de entrada)' },
+  C: { pats: patsOf([0, 1, 2, 3]), ok: [ov('X'), (x, y, z) => 1 - x], bad: [['X', (x, y, z) => x], ['Y·Z', (x, y, z) => y & z], [`${ov('Y')} + Z`, (x, y, z) => (1 - y) | z]], what: 'la salida F de un circuito con tres entradas X, Y y Z' },
   B: { pats: patsOf([1, 3, 5, 7]), ok: ['Z', (x, y, z) => z], bad: [['X·Z', (x, y, z) => x & z], ['Y + Z', (x, y, z) => y | z], ['X + Y', (x, y, z) => x | y]], what: 'la salida F de un circuito con tres entradas X, Y y Z' }
 };
 
@@ -862,68 +871,68 @@ const SCN3 = {
   ]
 };
 
-function buildP2(tipo, seed) {
-  const rnd = mulberry32((seed ^ (tipo === 'A' ? 0x1B873593 : 0xCC9E2D51)) >>> 0), qs = [], used = new Set();
+function buildU2(tipo, seed) {          // parte 2 del primer parcial: compuertas, lógica, diagramas, tablas, Karnaugh y diseño
+  const rnd = mulberry32((seed ^ ({ A: 0x1B873593, B: 0xCC9E2D51, C: 0x3C6EF372 }[tipo])) >>> 0), qs = [], used = new Set();
   const push = q => { qs.push(q); return q; };
   /* I. Compuertas lógicas (5): 3 de concepto + 2 de símbolo (solo AND, OR y NOT) */
-  const gp = { A: [[0, 'Recordar'], [1, 'Comprender'], [4, 'Aplicar']], B: [[0, 'Recordar'], [2, 'Comprender'], [3, 'Aplicar']] }[tipo];
-  shuffle(gp, rnd).forEach(([i, bl]) => { const b = BANK2.gat[tipo][i]; push(mcQ('gat', b.q, b.ok, b.bad, rnd, bl)); });
-  (tipo === 'A' ? ['and', 'not'] : ['or', 'not']).forEach(g => {
+  const gp = { A: [['A', 0, 'Recordar'], ['A', 1, 'Comprender'], ['A', 4, 'Aplicar']], B: [['B', 0, 'Recordar'], ['B', 2, 'Comprender'], ['B', 3, 'Aplicar']], C: [['A', 2, 'Recordar'], ['B', 1, 'Comprender'], ['A', 3, 'Recordar']] }[tipo];
+  shuffle(gp, rnd).forEach(([t, i, bl]) => { const b = BANK2.gat[t][i]; push(mcQ('gat', b.q, b.ok, b.bad, rnd, bl)); });
+  ({ A: ['and', 'not'], B: ['or', 'not'], C: ['and', 'or'] }[tipo]).forEach(g => {
     const tr = g === 'not' ? Gt('not', Lf('A')) : Gt(g, Lf('A'), Lf('B'));
     push(mcQ('gat', `¿Cómo se llama la siguiente compuerta lógica?<div class="my-2">${circuitSVG(tr)}</div>`, GT[g].n, ['and', 'or', 'not'].filter(x => x !== g).map(x => GT[x].n), rnd, 'Recordar'));
   });
   /* II. Lógica con enunciados (6): se responde con tablas de verdad */
   const sc = shuffle(SCN, rnd), mk = s => `Sea <b>p</b> = «${s.p}» y <b>q</b> = «${s.q}».`;
-  const stA = tipo === 'A' ? 'cond' : 'pnq', st3 = tipo === 'A' ? pick(['and', 'pnq'], rnd) : pick(['or', 'npq'], rnd);
+  const stA = { A: 'cond', B: 'pnq', C: 'npq' }[tipo], st3 = { A: () => pick(['and', 'pnq'], rnd), B: () => pick(['or', 'npq'], rnd), C: () => pick(['and', 'or'], rnd) }[tipo]();
   { const s = sc[0], S0 = STM[stA];
     push(mcQ('log', `Enunciado: «<i>${S0.txt(s)}</i>» ${mk(s)} ¿Qué expresión lógica lo representa? (El símbolo → se lee «entonces», · se lee «y», + se lee «o» y la barra indica «no».)`, S0.ex, S0.bad, rnd, 'Comprender')); }
   { const s = sc[1];
-    push(openQ('log', `Se afirma: «<i>${STM.cond.txt(s)}</i>» ${mk(s)} Completa la tabla de verdad de la afirmación. Escribe su columna para (p q) = 00, 01, 10, 11, de arriba hacia abajo (1 = verdadero, 0 = falso).`, col4(STM.cond.f), bitsRule(4), 'exact', 'Aplicar')); Object.assign(qs[qs.length - 1], { tv: { vars: ['p', 'q'] }, hlp: 'tvpq' }); }
+    push(ttQ('log', `Se afirma: «<i>${STM.cond.txt(s)}</i>» ${mk(s)} Completa la tabla de verdad de la afirmación (1 = verdadero, 0 = falso).`, ['p', 'q'], col4(STM.cond.f), [], 'Aplicar', 'tvpq', 'Afirmación')); }
   { const s = sc[2], S3 = STM[st3];
-    push(openQ('log', `Se afirma: «<i>${S3.txt(s)}</i>» ${mk(s)} Completa su tabla de verdad. Escribe la columna de la afirmación para (p q) = 00, 01, 10, 11, de arriba hacia abajo.`, col4(S3.f), bitsRule(4), 'exact', 'Aplicar')); Object.assign(qs[qs.length - 1], { tv: { vars: ['p', 'q'] }, hlp: 'tvpq' }); }
-  { const s = sc[3], ob = tipo === 'A';
+    push(ttQ('log', `Se afirma: «<i>${S3.txt(s)}</i>» ${mk(s)} Completa su tabla de verdad (1 = verdadero, 0 = falso).`, ['p', 'q'], col4(S3.f), [], 'Aplicar', 'tvpq', 'Afirmación')); }
+  { const s = sc[3], ob = tipo !== 'B';
     const bad = ob ? [`${cap(s.p)} y ${s.q}.`, `${cap(s.np)} y ${s.q}.`, `${cap(s.np)} y ${s.nq}.`] : [`${cap(s.p)} y ${s.q}.`, `${cap(s.p)} y ${s.nq}.`, `${cap(s.np)} y ${s.q}.`];
     const ok = ob ? `${cap(s.p)} y ${s.nq}.` : `${cap(s.np)} y ${s.nq}.`;
     push(mcQ('log', `${ob ? 'Un maestro promete' : 'Se afirma'}: «<i>${ob ? STM.cond.txt(s) : STM.or.txt(s)}</i>» Analiza la tabla de verdad: ¿en cuál de estos casos la afirmación resulta <b>falsa</b>?`, ok, bad, rnd, 'Analizar')); }
-  { const sd = pick(SCN3[tipo], rnd), col = colOfFn(sd.f);
-    push(openQ('log', `${sd.t} Completa la tabla de verdad de la salida F (1 = se activa, 0 = no). Escribe la columna F para (X Y Z) = 000, 001, 010, 011, 100, 101, 110, 111, de arriba hacia abajo.`, col, bitsRule(8), 'exact', 'Aplicar')); Object.assign(qs[qs.length - 1], { tv: { vars: ['X', 'Y', 'Z'] }, hlp: 'tvxyz' }); }
-  { const s = sc[4], f = tipo === 'A' ? STM.cond : STM.or, pv = rnd() < .5 ? 1 : 0, qv = rnd() < .5 ? 1 : 0, t = f.f(pv, qv), c = rnd() < .5 ? 1 : 0, ok = `${t === c ? 'Acierta' : 'Se equivoca'}: la afirmación vale ${t}`;
+  { const sd = pick(SCN3[tipo] || mixAB(SCN3.A, SCN3.B), rnd), col = colOfFn(sd.f);
+    push(ttQ('log', `${sd.t} Completa la tabla de verdad de la salida F (1 = se activa, 0 = no).`, ['X', 'Y', 'Z'], col, [], 'Aplicar', 'tvxyz')); }
+  { const s = sc[4], f = tipo === 'B' ? STM.or : STM.cond, pv = rnd() < .5 ? 1 : 0, qv = rnd() < .5 ? 1 : 0, t = f.f(pv, qv), c = rnd() < .5 ? 1 : 0, ok = `${t === c ? 'Acierta' : 'Se equivoca'}: la afirmación vale ${t}`;
     const all = ['Acierta', 'Se equivoca'].flatMap(a => [0, 1].map(v => `${a}: la afirmación vale ${v}`));
     push(mcQ('log', `Ana evalúa la afirmación «<i>${f.txt(s)}</i>» ${mk(s)} Cuando p = ${pv} y q = ${qv}, Ana dice que la afirmación vale <b>${c}</b>. ¿Qué opción juzga correctamente lo que dijo Ana?`, ok, all.filter(x => x !== ok), rnd, 'Evaluar')); }
   /* III. Diagramas (8) */
-  [3, 3].forEach(nv => { const t = randCircuit(rnd, nv), bad = circuitExprOptions(t, rnd); push(mcQ('dia', `¿Cuál es la expresión booleana de la salida F del siguiente circuito?<div class="my-2">${circuitSVG(t, 'F', { num: true })}</div>`, exprOf(t), bad, rnd, 'Analizar')); Object.assign(qs[qs.length - 1], { gt: { tree: t, mode: 'x' }, hlp: 'gx' }); });
+  [3, 3].forEach(nv => { const t = randCircuit(rnd, nv), bad = circuitExprOptions(t, rnd); push(mcQ('dia', `¿Cuál es la expresión booleana de la salida F del siguiente circuito?<div class="my-2">${circuitSVG(t)}</div>`, exprOf(t), bad, rnd, 'Analizar')); qs[qs.length - 1].hlp = 'gx'; });
   { const t = randCircuit(rnd, 3), vars = varsOf(t), vals = {}; vars.forEach(v => vals[v] = rnd() < .5 ? 0 : 1);
-    push(openQ('dia', `Con las entradas <b>${vname(vars, vals)}</b>, ¿cuánto vale la salida F del circuito?<div class="my-2">${circuitSVG(t, 'F', { num: true })}</div>`, String(ev(t, vals)), bitsRule(1), 'exact', 'Aplicar')); Object.assign(qs[qs.length - 1], { gt: { tree: t, mode: 'v', vals }, hlp: 'gv' }); }
+    push(openQ('dia', `Con las entradas <b>${vname(vars, vals)}</b>, ¿cuánto vale la salida F del circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(ev(t, vals)), bitsRule(1), 'exact', 'Aplicar')); qs[qs.length - 1].hlp = 'gv'; }
   { const t = randCircuit(rnd, 3), n = gcount(t), opts = shuffle([...new Set([n + 1, n - 1, n + 2, n + 3, n - 2].filter(x => x > 0))], rnd).slice(0, 3).map(String);
     push(mcQ('dia', `¿Cuántas compuertas lógicas (AND, OR y NOT) tiene en total este circuito?<div class="my-2">${circuitSVG(t)}</div>`, String(n), opts, rnd, 'Comprender')); }
   { const m = randSet(rnd, 3, 4, used), pats = patsOf(m), seen = new Set([colOfPats(pats)]), bad = mutatePats(pats, rnd, seen);
     if (bad.length < 3) throw new Error('mut');
     push(mcQ('dia', `Observa el circuito de la figura (entradas X, Y, Z). ¿Cuál es la expresión booleana de su salida F?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, sopHTMLx(pats), bad, rnd, 'Analizar')); }
   { const m = randSet(rnd, 3, 5, used), pats = patsOf(m);
-    push(openQ('dia', `Observa el circuito de la figura. Escribe la columna de la salida F para (X Y Z) = 000, 001, 010, 011, 100, 101, 110, 111, de arriba hacia abajo.<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, colOfPats(pats), bitsRule(8), 'exact', 'Analizar')); Object.assign(qs[qs.length - 1], { tv: { vars: ['X', 'Y', 'Z'] }, hlp: 'tvsop' }); }
+    push(ttQ('dia', `Observa el circuito de la figura y completa la tabla de verdad de su salida F. Las compuertas AND se numeran de arriba hacia abajo.<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, ['X', 'Y', 'Z'], colOfPats(pats), pats.map((p, k) => ({ h: `AND ${k + 1}`, f: v => patHas(p, v.X * 4 + v.Y * 2 + v.Z) ? 1 : 0, cat: 'ttAND' })), 'Analizar', 'tvsop')); }
   { const m = randSet(rnd, 3, 5, used), pats = patsOf(m);
     push(openQ('dia', `En el circuito de la figura, cada triángulo con un círculo es un inversor (NOT). ¿Cuántos inversores se usan en total?<div class="my-2">${sopSVG(pats, { labels: false })}</div>`, String(nNots(pats)), numRule, 'num', 'Comprender')); qs[qs.length - 1].hlp = 'cnot'; }
   { const m = randSet(rnd, 3, 4, used), pats = patsOf(m), k = Math.floor(rnd() * pats.length);
     push(openQ('dia', `Cada compuerta AND de este circuito se activa con un solo mintérmino. ¿Qué número de mintérmino <b>m</b> activa la compuerta marcada con ★? (X es el bit más significativo.) Escribe solo el número.<div class="my-2">${sopSVG(pats, { star: k, labels: false })}</div>`, String(m[k]), numRule, 'num', 'Aplicar')); qs[qs.length - 1].hlp = 'mstar'; }
   /* IV. Tablas de verdad (6) */
-  (tipo === 'A' ? ['and', 'not'] : ['or', 'and']).forEach(g => { push(mcQ('tv', `¿Qué compuerta tiene esta tabla de verdad?${g === 'not' ? truthNot() : truthMini(g)}`, GT[g].n, ['and', 'or', 'not'].filter(x => x !== g).map(x => GT[x].n), rnd, 'Comprender')); });
-  BANK2.tv[tipo].forEach(b => push(mcQ('tv', b.q, b.ok, b.bad, rnd, 'Recordar')));
-  { const nv = tipo === 'A' ? 3 : 4; push(openQ('tv', `¿Cuántas filas (combinaciones de entrada) tiene la tabla de verdad de un circuito con <b>${nv} variables</b>?`, String(1 << nv), numRule, 'num', 'Aplicar')); }
+  ({ A: ['and', 'not'], B: ['or', 'and'], C: ['not', 'or'] }[tipo]).forEach(g => { push(mcQ('tv', `¿Qué compuerta tiene esta tabla de verdad?${g === 'not' ? truthNot() : truthMini(g)}`, GT[g].n, ['and', 'or', 'not'].filter(x => x !== g).map(x => GT[x].n), rnd, 'Comprender')); });
+  (BANK2.tv[tipo] || mixAB(BANK2.tv.B, BANK2.tv.A)).forEach(b => push(mcQ('tv', b.q, b.ok, b.bad, rnd, 'Recordar')));
+  { const nv = { A: 3, B: 4, C: 2 }[tipo]; push(openQ('tv', `¿Cuántas filas (combinaciones de entrada) tiene la tabla de verdad de un circuito con <b>${nv} variables</b>?`, String(1 << nv), numRule, 'num', 'Aplicar')); }
   { let t, s; do { t = randCircuit(rnd, 2); s = exprOf(t); } while (varsOf(t).length < 2);
-    push(openQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>. Escribe la columna F de arriba hacia abajo para (A B) = 00, 01, 10, 11.`, ttOf(t, ['A', 'B']), bitsRule(4), 'exact', 'Aplicar')); Object.assign(qs[qs.length - 1], { tv: { vars: ['A', 'B'] }, hlp: 'tvab' }); }
+    push(ttQ('tv', `Completa la tabla de verdad de <b>F = ${s}</b>.`, ['A', 'B'], ttOf(t, ['A', 'B']), gateList(t).slice(0, -1).map(g => ({ h: exprOf(g), f: v => ev(g, v), cat: { not: 'ttNOT', and: 'ttAND', or: 'ttOR' }[g.g] })), 'Aplicar', 'tvab')); }
   { const m = randSet(rnd, 3, 4, used), col = colOfPats(patsOf(m)), seen = new Set([m.join(',')]), bad = [];
     for (let t = 0; t < 300 && bad.length < 3; t++) { const s = new Set(m), fl = 1 + (rnd() < .4 ? 1 : 0); for (let f = 0; f < fl; f++) { const x = Math.floor(rnd() * 8); s.has(x) ? s.delete(x) : s.add(x); } const a = [...s].sort((p, q) => p - q); if (a.length < 2 || seen.has(a.join(','))) continue; seen.add(a.join(',')); bad.push(sigmaTxt(a)); }
     push(mcQ('tv', `Observa la tabla de verdad de F(X, Y, Z). ¿Cuál es su forma canónica como suma de mintérminos?${ttTable(col)}`, sigmaTxt(m), bad, rnd, 'Aplicar')); }
   /* V. Karnaugh (6, solo de 3 variables) */
-  (tipo === 'A' ? [[0, 'Comprender'], [1, 'Recordar']] : [[0, 'Recordar'], [2, 'Comprender']]).forEach(([i, bl]) => { const b = BANK2.kar[tipo][i]; push(mcQ('kar', b.q, b.ok, b.bad, rnd, bl)); });
+  ({ A: [['A', 0, 'Comprender'], ['A', 1, 'Recordar']], B: [['B', 0, 'Recordar'], ['B', 2, 'Comprender']], C: [['A', 2, 'Comprender'], ['B', 1, 'Comprender']] }[tipo]).forEach(([t, i, bl]) => { const b = BANK2.kar[t][i]; push(mcQ('kar', b.q, b.ok, b.bad, rnd, bl)); });
   { const a = Math.floor(rnd() * 8), bi = 1 + Math.floor(rnd() * 7);
     push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué número de mintérmino <b>m</b> corresponde a la combinación <b>A = ${(a >> 2) & 1}, B = ${(a >> 1) & 1}, C = ${a & 1}</b>? Escribe solo el número.`, String(a), numRule, 'num', 'Aplicar')); qs[qs.length - 1].hlp = 'mnum';
     push(openQ('kar', `En una función de 3 variables (A, B, C), ¿qué combinación ABC corresponde al mintérmino <b>m${bi}</b>? Escribe los 3 dígitos (0 y 1).`, bi.toString(2).padStart(3, '0'), bitsRule(3), 'exact', 'Aplicar')); qs[qs.length - 1].hlp = 'mabc'; }
-  { const k = kmapQuestion(rnd, 3, 'sop'); push(mcQ('kar', k.html, k.sop, k.bad, rnd, 'Analizar')); Object.assign(qs[qs.length - 1], { km: { mins: k.mins }, hlp: 'kmsop' }); }
-  { const kb = kmapQuestion(rnd, 3, 'big'); push(openQ('kar', kb.html, kb.expect, numRule, 'num', 'Analizar')); Object.assign(qs[qs.length - 1], { km: { mins: kb.mins }, hlp: 'kmbig' }); }
+  { const k = kmapQuestion(rnd, 3, 'sop'); push(mcQ('kar', k.html, k.sop, k.bad, rnd, 'Analizar')); qs[qs.length - 1].hlp = 'kmsop'; }
+  { const kb = kmapQuestion(rnd, 3, 'big'); push(openQ('kar', kb.html, kb.expect, numRule, 'num', 'Analizar')); qs[qs.length - 1].hlp = 'kmbig'; }
   /* VI. Diseño y evaluación (4) */
-  const pool = shuffle(PRED_POOL[tipo], rnd), p1 = PRED[pool[0]];
-  push(openQ('dis', `Diseña la tabla de verdad para ${pick(SCEN, rnd)}. La salida F debe valer 1 cuando <b>${p1.t}</b>. Escribe la columna F para (X Y Z) = 000, 001, 010, 011, 100, 101, 110, 111, de arriba hacia abajo.`, colOfFn(p1.f), bitsRule(8), 'exact', 'Crear')); Object.assign(qs[qs.length - 1], { tv: { vars: ['X', 'Y', 'Z'] }, hlp: 'tvdis' });
+  const pool = shuffle(PRED_POOL[tipo] || PRED_POOL.A, rnd), p1 = PRED[pool[0]];
+  push(ttQ('dis', `Diseña la tabla de verdad para ${pick(SCEN, rnd)}. La salida F debe valer 1 cuando <b>${p1.t}</b>.`, ['X', 'Y', 'Z'], colOfFn(p1.f), [], 'Crear', 'tvdis'));
   { /* detectar el error en un diseño */
     const M = randSet(rnd, 3, 4, used), missing = rnd() < .5, outside = [...Array(8).keys()].filter(i => !M.includes(i));
     let circ, ok, cand;
@@ -946,7 +955,6 @@ function buildP2(tipo, seed) {
   { const e = EQV[tipo], bad = e.bad.map(b => b[0]);
     const f = e.ok[1], col = colOfFn(f); if (col !== colOfPats(e.pats)) throw new Error('eqv ok'); e.bad.forEach(b => { if (colOfFn(b[1]) === col) throw new Error('eqv bad'); });
     push(mcQ('dis', `El circuito de la figura es ${e.what}, dibujado en su forma canónica. ¿Qué expresión equivale a esa función, ya simplificada?<div class="my-2">${sopSVG(e.pats)}</div>`, e.ok[0], bad, rnd, 'Evaluar')); }
-  qs.push(...buildNew(tipo, 2, rnd));
   return qs;
 }
 
@@ -970,10 +978,12 @@ const TT_POOL = {
   1: { A: ['AB+aB+bA', 'ab+AbA', 'aB+ABA+AB'], B: ['Ab+aB+bAb', 'ab+aB+AB', 'AB+ab+BAB'] },
   2: { A: ['Ab+AB+aBa', 'ab+Ab+AB', 'AB+ABA+aB'], B: ['ab+aB+Ab', 'Ab+ab+AbA', 'AB+Ab+ABA'] }
 };
+TT_POOL[1].C = TT_POOL[2].A;            // tipo C del primer parcial unificado
 const BONUS_POOL = {
   1: { A: ['ABC+aBC+bCA', 'abC+AbC+BcA'], B: ['ABc+aBC+bCA', 'aBc+Abc+ABC'] },
   2: { A: ['abc+AbC+aBC', 'ABC+aBc+bcA'], B: ['ABC+abC+AbC+aBc', 'abc+aBC+ABc'] }
 };
+BONUS_POOL[1].C = BONUS_POOL[2].A;
 const CB_POOL = {
   1: { A: [() => gAND(gNAND(gA, gNOT(gB)), gNAND(gB, gC)), () => gAND(gNAND(gA, gC), gNAND(gNOT(gB), gC))],
        B: [() => gAND(gNAND(gNOT(gA), gB), gNAND(gA, gC)), () => gAND(gNAND(gB, gC), gNAND(gNOT(gA), gC))] },
@@ -1066,13 +1076,21 @@ function sopTT(s, vars) {
   return o;
 }
 const bin3 = (rnd, lo, hi) => { const n = lo + Math.floor(rnd() * (hi - lo + 1)); return (1 << (n - 1)) + Math.floor(rnd() * (1 << (n - 1))); };
+/* Columnas de apoyo estandarizadas para una suma de productos: primero las negaciones y luego cada producto */
+const sopCols = sop => {
+  const T = sopParse(sop), neg = [...new Set(T.flat().filter(l => l.n).map(l => l.v))].sort(), seen = new Set(), cols = neg.map(v => ({ h: ov(v), f: x => 1 - x[v], cat: 'ttNOT' }));
+  T.forEach(t => { const h = t.map(l => l.n ? ov(l.v) : l.v).join('·'); if (t.length < 2 || seen.has(h)) return; seen.add(h); cols.push({ h, f: x => t.every(l => (x[l.v] === 1) === !l.n) ? 1 : 0, cat: 'ttAND' }); });
+  return cols;
+};
+/* Pregunta de tabla de verdad: se contesta en la columna F (o «Afirmación») de la propia tabla */
+const ttQ = (sec, html, vars, expect, cols, bl, hlp, fh) => ({ sec, kind: 'tt', n: vars.length, vars, html, expect, cols, bl, hlp, fh });
 function buildNew(tipo, parcial, rnd) {
   const out = [];
   shuffle(TT_POOL[parcial][tipo], rnd).slice(0, 2).forEach(sop => {
-    out.push({ sec: 'ttv', kind: 'tt', n: 2, html: `Completa la tabla de verdad de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificar la expresión antes de evaluarla.`, expect: sopTT(sop, ['A', 'B']), sop, bl: 'Aplicar', hlp: 'tt' });
+    out.push({ sec: 'ttv', kind: 'tt', n: 2, html: `Completa la tabla de verdad de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificar la expresión antes de evaluarla.`, expect: sopTT(sop, ['A', 'B']), sop, bl: 'Aplicar', hlp: 'tt', vars: ['A', 'B'], cols: sopCols(sop) });
   });
   { const k = Math.floor(rnd() * FN_POOL[parcial].length), t = FN_POOL[parcial][k]();
-    out.push({ sec: 'arm', kind: 'fn', html: `<b>Circuito ${FN_NOM[k]}.</b> Escribe la <b>función de salida F</b> del circuito en términos de A, B y C. Solo tiene compuertas AND, OR y NOT; cada letra que se repite es la misma entrada.<div class="circ-wrap my-2">${circuitSVG(t, 'F', { num: true })}</div>`, cname: FN_NOM[k], expect: exprOf(t), tt: ttOf(t, CB_VARS), tree: t, bl: 'Analizar', gt: { tree: t, mode: 'x' }, hlp: 'fn' }); }
+    out.push({ sec: 'arm', kind: 'fn', html: `<b>Circuito ${FN_NOM[k]}.</b> Escribe la <b>función de salida F</b> del circuito en términos de A, B y C. Solo tiene compuertas AND, OR y NOT; cada letra que se repite es la misma entrada.<div class="circ-wrap my-2">${circuitSVG(t, 'F')}</div>`, cname: FN_NOM[k], expect: exprOf(t), tt: ttOf(t, CB_VARS), tree: t, bl: 'Analizar', hlp: 'fn' }); }
   const [lo, hi] = parcial === 1 ? [3, 5] : [4, 6], seen = new Set();
   for (let i = 0; i < 2; i++) {
     let a, b, c, key; do { a = bin3(rnd, lo, hi); b = bin3(rnd, lo, hi); c = bin3(rnd, lo, hi); key = [a, b, c].sort().join(); } while (seen.has(key)); seen.add(key);
@@ -1080,21 +1098,16 @@ function buildNew(tipo, parcial, rnd) {
     Object.assign(out[out.length - 1], { sm: [a, b, c], hlp: 'sum3' });
   }
   { const sop = pick(BONUS_POOL[parcial][tipo], rnd);
-    out.push({ sec: 'bon', kind: 'tt', n: 3, bonus: true, html: `<b>Bonus (vale por 2 preguntas).</b> Completa la tabla de verdad de 3 entradas de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificarla antes de evaluarla.`, expect: sopTT(sop, CB_VARS), sop, bl: 'Bonus', hlp: 'tt' }); }
+    out.push({ sec: 'bon', kind: 'tt', n: 3, bonus: true, html: `<b>Bonus (vale por 2 preguntas).</b> Completa la tabla de verdad de 3 entradas de <span class="num">F = ${sopHTML(sop)}</span> (la barra sobre una letra indica que está negada). Puedes simplificarla antes de evaluarla.`, expect: sopTT(sop, CB_VARS), sop, bl: 'Bonus', hlp: 'tt', vars: CB_VARS, cols: sopCols(sop) }); }
   return out;
 }
 
 /* ----- Tabla de verdad (casillas verticales de F) ----- */
 const ttNorm = (v, len) => String(v || '').padEnd(len, '_').slice(0, len);
 function ttHTML(q, p, key) {
-  if (!key) return `<div id="ttw-${q.id}">${ttGrid(q, pget(q.id), null, S && S.answers[q.id])}</div><div class="ans-hint"><i class="bi bi-1-circle-fill"></i><span>Escribe <b>solo 0 y 1</b> en cada casilla de F. ${q.bonus ? 'Vale por 2 preguntas y' : 'Cuenta como 1 acierto y'} se califica completa: las ${1 << q.n} salidas deben ser correctas.</span></div>`;
-  const n = q.n, N = 1 << n, hd = ['A', 'B', 'C'].slice(0, n);
-  let h = `<div class="km-wrap"><table class="km tv tt-tbl"><tr>${hd.map(x => `<th>${x}</th>`).join('')}<th>F</th></tr>`;
-  for (let i = 0; i < N; i++) {
-    const b = [...i.toString(2).padStart(n, '0')];
-    h += `<tr>${b.map(x => `<td>${x}</td>`).join('')}<td>${key ? `<input class="tt-in okk" value="${q.expect[i]}" disabled aria-label="Salida F">` : `<input class="tt-in" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" data-tt="${q.id}" data-i="${i}" aria-label="Salida F cuando ${hd.map((x, j) => x + ' = ' + b[j]).join(', ')}">`}</td></tr>`;
-  }
-  return h + '</table></div>' + (key ? '' : `<div class="ans-hint"><i class="bi bi-1-circle-fill"></i><span>Escribe <b>solo 0 y 1</b> en cada casilla de F. ${q.bonus ? 'Vale por 2 preguntas y' : 'Cuenta como 1 acierto y'} se califica completa: las ${N} salidas deben ser correctas.</span></div>`);
+  const hint = `<div class="ans-hint"><i class="bi bi-1-circle-fill"></i><span>Escribe <b>solo 0 y 1</b> en cada casilla de la columna ${q.fh || 'F'}. ${q.bonus ? 'Vale por 2 preguntas y' : 'Cuenta como 1 acierto y'} se califica completa: las ${1 << ttVars(q).length} salidas deben ser correctas.</span></div>`;
+  if (key) return ttGrid(q, {}, null, '', true);
+  return `<div id="ttw-${q.id}">${ttGrid(q, pget(q.id), null, S && S.answers[q.id])}</div>${hint}`;
 }
 document.addEventListener('input', e => {
   const i = e.target.closest && e.target.closest('input.tt-in[data-tt]'); if (!i || !S || S.fin) return;
@@ -1230,7 +1243,7 @@ const PROC_WARN = { b: 'Solo se permite 0 y 1.', d: 'Solo se permiten números.'
 const TT_MAXC = n => n === 2 ? 4 : 6;
 const DIV_MAXR = 12;
 const pget = id => (S && S.proc && S.proc[id]) || {};
-const procKind = q => q.kind === 'tt' ? 'tt' : q.cv ? (q.cv.from === 10 ? 'div' : q.cv.to === 10 ? 'pos' : 'grp') : q.sm ? 'sum' : q.tv ? 'tv' : q.gt ? 'gt' : q.km ? 'km' : '';
+const procKind = q => q.kind === 'tt' ? 'tt' : q.sm ? 'sum' : '';          // procedimiento solo en tablas de verdad y sumas binarias
 const digT = b => b === 2 ? 'b' : b === 8 ? 'o' : b === 16 ? 'h' : 'd';
 const log2b = b => b === 8 ? 3 : 4;
 const BN = { 2: 'binario', 8: 'octal', 10: 'decimal', 16: 'hexadecimal' };
@@ -1244,25 +1257,30 @@ function pcell(id, P, R, k, t, mx, lab, w) {
 const pbtn = (id, act, ic, txt, cls = '') => `<button type="button" class="pc-btn ${cls}" data-pact="${act}" data-pq="${id}"><i class="bi ${ic} me-1"></i>${txt}</button>`;
 
 /* ----- Tabla de verdad con columnas intermedias ----- */
+const ttVars = q => q.vars || CB_VARS.slice(0, q.n);
+const rowVals = (vars, i) => { const v = {}, n = vars.length; vars.forEach((x, j) => v[x.toUpperCase()] = (i >> (n - 1 - j)) & 1); return v; };
+/* Tabla de verdad: variables · columnas de apoyo estandarizadas (q.cols) · columnas que agrega el alumno · F (la respuesta) */
 function ttGrid(q, P, R, ans, key) {
-  const n = q.n, N = 1 << n, hd = CB_VARS.slice(0, n), id = q.id, nc = Math.min(+P.nc || 0, TT_MAXC(n)), Fv = ttNorm(ans, q.expect.length);
-  let h = `<div class="km-wrap"><table class="km tv tt-tbl"><tr>${hd.map(x => `<th>${x}</th>`).join('')}`;
+  const vars = ttVars(q), n = vars.length, N = 1 << n, id = q.id, C = q.cols || [], nc = key ? 0 : Math.min(+P.nc || 0, TT_MAXC(n)), Fv = ttNorm(ans, q.expect.length), pv = vars.join('').toUpperCase();
+  let h = `<div class="km-wrap"><table class="km tv tt-tbl"><tr>${vars.map(x => `<th>${x}</th>`).join('')}${C.map(c => `<th class="pth std">${c.h}</th>`).join('')}`;
   for (let j = 0; j < nc; j++) {
-    if (!R) h += `<th class="pth"><input class="pc pc-x ph${P['h' + j] ? ' filled' : ''}" data-pq="${id}" data-pk="h${j}" data-pt="x" maxlength="24" value="${esc(P['h' + j] || '')}" placeholder="Operación" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Operación de la columna ${j + 1}"></th>`;
-    else { const r = R['h' + j], t = P['h' + j] || ''; h += `<th class="pth rv ${r ? (r.ok ? 'ok' : 'bad') : ''}">${t ? esc(t) : '<i>sin operación</i>'}${r && !r.ok ? `<small>${esc(r.exp)}</small>` : r && r.read ? `<small class="rd">${r.read}</small>` : ''}</th>`; }
+    if (!R) h += `<th class="pth"><input class="pc pc-x ph${P['h' + j] ? ' filled' : ''}" data-pq="${id}" data-pk="h${j}" data-pt="x" data-pv="${pv}" maxlength="24" value="${esc(P['h' + j] || '')}" placeholder="Operación" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Operación de la columna extra ${j + 1}"></th>`;
+    else { const r = R['h' + j], t = P['h' + j] || ''; h += `<th class="pth rv ${r ? (r.ok ? 'ok' : 'bad') : ''}">${t ? esc(t) : '<i>sin operación</i>'}${r && !r.ok ? `<small>${esc(r.exp)}</small>` : ''}</th>`; }
   }
-  h += `<th>F</th></tr>`;
+  h += `<th class="fth">${q.fh || 'F'}</th></tr>`;
   for (let i = 0; i < N; i++) {
-    const b = [...i.toString(2).padStart(n, '0')];
+    const b = [...i.toString(2).padStart(n, '0')], v = rowVals(vars, i);
     h += `<tr>${b.map(x => `<td>${x}</td>`).join('')}`;
-    for (let j = 0; j < nc; j++) h += `<td class="pcol">${pcell(id, P, R, `v${j}_${i}`, 'b', 1, `Columna ${j + 1}, renglón ${i + 1}`)}</td>`;
+    C.forEach((c, j) => { h += `<td class="pcol">${key ? `<input class="tt-in okk sm" value="${c.f(v)}" disabled aria-label="Columna ${j + 1}">` : pcell(id, P, R, `p${j}_${i}`, 'b', 1, `Columna ${j + 1}, renglón ${i + 1}`)}</td>`; });
+    for (let j = 0; j < nc; j++) h += `<td class="pcol">${pcell(id, P, R, `v${j}_${i}`, 'b', 1, `Columna extra ${j + 1}, renglón ${i + 1}`)}</td>`;
     if (key) h += `<td><input class="tt-in okk" value="${q.expect[i]}" disabled aria-label="Salida F"></td>`;
     else if (R) { const c = Fv[i], ok = c === q.expect[i]; h += `<td><span class="pcv big ${c === '_' ? 'bad' : ok ? 'ok' : 'bad'}" title="${ok ? 'Correcto' : 'Esperado: ' + q.expect[i]}">${c === '_' ? '∅' : c}${ok ? '' : `<small>${q.expect[i]}</small>`}</span></td>`; }
-    else { const c = Fv[i] === '_' ? '' : Fv[i]; h += `<td><input class="tt-in${c ? ' filled' : ''}" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" data-tt="${id}" data-i="${i}" value="${c}" aria-label="Salida F cuando ${hd.map((x, j) => x + ' = ' + b[j]).join(', ')}"></td>`; }
+    else { const c = Fv[i] === '_' ? '' : Fv[i]; h += `<td><input class="tt-in${c ? ' filled' : ''}" type="text" inputmode="numeric" maxlength="1" autocomplete="off" spellcheck="false" data-tt="${id}" data-i="${i}" value="${c}" aria-label="${esc(q.fh || 'F')} cuando ${vars.map((x, j) => x + ' = ' + b[j]).join(', ')}"></td>`; }
     h += '</tr>';
   }
   h += '</table></div>';
-  if (!R && !key) h += `<div class="pc-bar">${pbtn(id, 'ttadd', 'bi-plus-lg', 'Columna para una operación', nc >= TT_MAXC(n) ? 'd-none' : '')}${nc ? pbtn(id, 'ttdel', 'bi-dash-lg', 'Quitar última columna', 'del') : ''}<span id="pst-${id}" class="pst ${procDone(q, P) ? 'ok' : 'pend'}">${procDone(q, P) ? '<i class="bi bi-check-circle-fill"></i> Completo' : '<i class="bi bi-exclamation-circle-fill"></i> Pendiente'}</span><span class="pc-tip"><b>Procedimiento obligatorio:</b> agrega al menos una columna con una operación intermedia (escribe la operación en la cabecera y llénala con 0 y 1).</span></div>`;
+  if (!R && !key) { const d = procDone(q, P);
+    h += `<div class="pc-bar">${C.length ? `<span id="pst-${id}" class="pst ${d ? 'ok' : 'pend'}">${d ? '<i class="bi bi-check-circle-fill"></i> Completo' : '<i class="bi bi-exclamation-circle-fill"></i> Pendiente'}</span>` : ''}${pbtn(id, 'ttadd', 'bi-plus-lg', 'Agregar columna', nc >= TT_MAXC(n) ? 'd-none' : '')}${nc ? pbtn(id, 'ttdel', 'bi-dash-lg', 'Quitar última columna', 'del') : ''}<span class="pc-tip">${C.length ? '<b>Procedimiento obligatorio:</b> llena las columnas moradas. ' : ''}Tu respuesta es la columna <b>${q.fh || 'F'}</b>.</span></div>`; }
   return h;
 }
 
@@ -1404,7 +1422,7 @@ document.addEventListener('keydown', e => { const c = e.target.closest && e.targ
 /* ----- ¿Está completo el procedimiento? (obligatorio para entregar si la pregunta tiene respuesta) ----- */
 function procDone(q, P) {
   P = P || {}; const k = procKind(q), has = x => P[x] !== undefined && P[x] !== '';
-  if (k === 'tt' || k === 'tv') { const n = k === 'tt' ? q.n : q.tv.vars.length, N = 1 << n, nc = +P.nc || 0; for (let j = 0; j < nc; j++) if (has('h' + j) && [...Array(N).keys()].every(i => has(`v${j}_${i}`))) return true; return false; }
+  if (k === 'tt') { const N = 1 << ttVars(q).length; return (q.cols || []).every((c, j) => [...Array(N).keys()].every(i => has(`p${j}_${i}`))); }
   if (k === 'div') { const nr = Math.max(1, +P.nr || 1), b = q.cv.to; for (let r = 0; r < nr; r++) if (!['d', 'q', 'r'].concat(b === 16 ? ['x'] : []).every(c => has(c + r))) return false; return P['q' + (nr - 1)] === '0'; }
   if (k === 'pos') { const L = q.cv.n.toString(q.cv.from).length; for (let i = 0; i < L; i++) if (!has('p' + i) || !has('x' + i)) return false; return has('s'); }
   if (k === 'grp') { const { n, from, to } = q.cv; if (from !== 2) { const L = n.toString(from).length; for (let i = 0; i < L; i++) if (!has('u' + i)) return false; } if (to !== 2) { const g = log2b(to), G = Math.ceil(n.toString(2).length / g); for (let i = 0; i < G; i++) if (!has('g' + i) || !has('t' + i)) return false; } return true; }
@@ -1437,7 +1455,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest && e.target.closest('[data-pact]'); if (!b || !S || S.fin) return;
   const id = b.dataset.pq, q = EXAM.find(x => String(x.id) === id); if (!q) return;
   S.proc = S.proc || {}; const P = S.proc[id] = S.proc[id] || {}, a = b.dataset.pact;
-  const nvars = q.kind === 'tt' ? q.n : q.tv ? q.tv.vars.length : 3;
+  const nvars = q.kind === 'tt' ? ttVars(q).length : 3;
   if (a === 'ttadd') P.nc = Math.min(TT_MAXC(nvars), (+P.nc || 0) + 1);
   if (a === 'kmadd') { const sel = [...(KMSEL[id] || [])].sort((x, y) => x - y); if (!sel.length) { toast('Primero toca las celdas del grupo.', 'bi-hand-index-thumb-fill', 1800); return; } const G = kmGroups(P); if (G.length >= 6) { toast('Máximo 6 grupos.', 'bi-exclamation-circle-fill', 1800); return; } P['g' + G.length] = sel.join(','); KMSEL[id] = new Set(); }
   if (a === 'kmclr') KMSEL[id] = new Set();
@@ -1468,15 +1486,9 @@ function procCheck(q, P, ans) {
   const mark = (key, ok, exp, cat) => { R[key] = { ok, exp: exp === undefined ? undefined : String(exp) }; if (cat) op(cat, ok); };
   const kind = procKind(q), num = s => /^\d+$/.test(s || '') ? parseInt(s, 10) : NaN;
   if (kind === 'tt') {
-    const n = q.n, N = 1 << n, hd = CB_VARS.slice(0, n), nc = Math.min(+P.nc || 0, TT_MAXC(n));
-    for (let j = 0; j < nc; j++) {
-      const hs = P['h' + j] || '', any = !!hs || [...Array(N).keys()].some(i => P[`v${j}_${i}`]); if (!any) continue;
-      const pr = fnParse(hs), okV = pr.ok && varsOf(pr.tree).every(v => hd.includes(v));
-      if (!okV) { R['h' + j] = { ok: false, exp: hs ? (pr.ok ? `solo puede usar ${hd.join(', ')}` : 'operación no reconocida') : 'falta la operación' }; notes.push(`Columna ${j + 1}: ${hs ? 'no se reconoce la operación «' + hs + '»' : 'no escribió la operación'}.`); continue; }
-      const t = pr.tree, col = ttOf(t, hd), cat = t.v !== undefined ? '' : t.g === 'not' ? (t.c[0].v !== undefined ? 'ttNOT' : 'ttNOTx') : t.g === 'and' ? 'ttAND' : t.g === 'or' ? 'ttOR' : '';
-      R['h' + j] = { ok: true, read: exprOf(t) };
-      for (let i = 0; i < N; i++) { const v = P[`v${j}_${i}`] || ''; mark(`v${j}_${i}`, v === col[i], col[i], cat); }
-    }
+    const vars = ttVars(q), N = 1 << vars.length;
+    (q.cols || []).forEach((c, j) => { for (let i = 0; i < N; i++) { const v = P[`p${j}_${i}`] || '', e = String(c.f(rowVals(vars, i))); if (v) mark(`p${j}_${i}`, v === e, e, c.cat || ''); } });
+    ttCheck(P, R, op, mark, vars, Math.min(+P.nc || 0, TT_MAXC(vars.length)), N, notes);
     const Fv = ttNorm(ans, q.expect.length); if (ans) for (let i = 0; i < N; i++) op('ttF', Fv[i] === q.expect[i]);
   } else if (kind === 'div') {
     const { n, to: b } = q.cv, nr = Math.max(1, Math.min(+P.nr || 1, DIV_MAXR)); let prevQ = n, last = null;
@@ -1549,11 +1561,271 @@ function procCheck(q, P, ans) {
 }
 
 /* ==========================================================================
+   PARCIAL 2 · Unidad 3: Metodología de solución de problemas e introducción a la programación en Java
+   Fuentes de los datos de Java: Oracle, The Java Tutorials (tipos primitivos y jerarquía de operadores);
+   historia: James Gosling en Sun Microsystems (proyecto iniciado en 1991, primer nombre Oak, presentado en 1995;
+   Oracle compró Sun en 2010). Símbolos de diagramas de flujo según la norma ANSI/ISO 5807.
+   Los ejercicios numéricos se generan con la semilla y se calculan con la misma aritmética entera de Java.
+   ========================================================================== */
+const SECS_J = [
+  { id: 'pro', t: 'El problema y la metodología de solución', d: 'Elige la respuesta correcta.', ic: 'bi-lightbulb-fill', c: '#7c3aed' },
+  { id: 'alg', t: 'Algoritmos, diagramas de flujo y pseudocódigo', d: 'Observa cada diagrama o pseudocódigo. En las preguntas abiertas escribe solo el número.', ic: 'bi-diagram-2-fill', c: '#0891b2' },
+  { id: 'exp', t: 'Operadores y expresiones en Java', d: 'Evalúa cada expresión como lo haría Java. Escribe solo el resultado.', ic: 'bi-calculator-fill', c: '#d97706' },
+  { id: 'cic', t: 'Estructuras repetitivas (ciclos)', d: 'Contadores, acumuladores, banderas y ciclos for, while y do-while.', ic: 'bi-arrow-repeat', c: '#16a34a' },
+  { id: 'jav', t: 'Lenguajes de programación y el entorno de Java', d: 'Elige la respuesta correcta.', ic: 'bi-cup-hot-fill', c: '#e11d48' },
+  { id: 'cod', t: 'Codificación en Java: datos, entrada y condicionales', d: 'Lee cada fragmento de código y elige o escribe lo que se pide.', ic: 'bi-code-slash', c: '#2563eb' }
+];
+const intRule = { re: /[^0-9-]/g, ic: 'bi-123', im: 'text', up: true, max: 8, txt: 'Responde <b>solo con el número entero</b>, sin espacios (puede llevar signo −).', warn: 'Solo se permiten números y el signo menos.' };
+const decRule = { re: /[^0-9.\-]/g, ic: 'bi-123', im: 'decimal', up: true, max: 10, txt: 'Responde <b>solo con el número</b>. Si el resultado es de tipo <b>double</b>, escribe el punto decimal (por ejemplo <span class="mono">4.0</span> o <span class="mono">2.5</span>).', warn: 'Solo se permiten números, punto decimal y signo menos.' };
+const boolRule = { re: /[^A-Z]/g, ic: 'bi-toggle-on', im: 'text', up: true, max: 5, txt: 'Responde <b>true</b> o <b>false</b>.', warn: 'Escribe true o false.' };
+const jcode = s => `<pre class="jcode">${esc(s)}</pre>`;
+const BANKJ = {
+  pro: {
+    A: [
+      { q: 'En la solución de problemas con computadora, ¿qué es un <b>problema</b>?', ok: 'Una situación en la que se quiere pasar de un estado inicial a un estado deseado (la solución)', bad: ['Un error del programa que impide compilarlo', 'Una instrucción del lenguaje Java', 'Un diagrama que representa un algoritmo'], bl: 'Recordar' },
+      { q: 'En un diagrama <b>EPS</b>, la letra <b>E</b> representa…', ok: 'las entradas: los datos que se necesitan para resolver el problema', bad: ['las estructuras de control', 'los errores del programa', 'la ejecución del algoritmo'], bl: 'Recordar' },
+      { q: 'Un problema que, con los mismos datos de entrada, <b>siempre</b> produce la misma salida es…', ok: 'determinístico', bad: ['probabilístico', 'aleatorio', 'imposible de programar'], bl: 'Comprender' },
+      { q: 'Calcular el área de un rectángulo a partir de su base y su altura es un problema…', ok: 'secuencial: los pasos se ejecutan uno tras otro, sin decisiones ni repeticiones', bad: ['cíclico', 'condicional', 'probabilístico'], bl: 'Aplicar' },
+      { q: '¿Cuál es la <b>primera</b> etapa de la metodología de solución de problemas?', ok: 'Planteamiento del problema', bad: ['Prueba de escritorio', 'Codificación en Java', 'Elaboración del diagrama de flujo'], bl: 'Recordar' },
+      { q: 'En la etapa de <b>análisis</b> del problema se…', ok: 'identifican los datos de entrada, el proceso y los datos de salida', bad: ['ejecuta el programa en la computadora', 'instala el JDK', 'escribe el código en Java'], bl: 'Comprender' }
+    ],
+    B: [
+      { q: 'Según el diagrama EPS, ¿cuáles son los elementos de un problema?', ok: 'Entrada, proceso y salida', bad: ['Inicio, desarrollo y cierre', 'Variables, constantes y operadores', 'Hardware, software y usuario'], bl: 'Recordar' },
+      { q: 'En un diagrama <b>EPS</b>, la letra <b>S</b> representa…', ok: 'las salidas: los resultados que se obtienen', bad: ['la sintaxis del lenguaje', 'la secuencia de pasos', 'el sistema operativo'], bl: 'Recordar' },
+      { q: 'Predecir qué número saldrá al lanzar un dado es un problema…', ok: 'probabilístico: el resultado depende del azar', bad: ['determinístico', 'secuencial', 'cíclico'], bl: 'Comprender' },
+      { q: 'Decidir si una persona puede votar según su edad es un problema…', ok: 'condicional: hay que evaluar una condición para elegir qué hacer', bad: ['cíclico', 'secuencial', 'probabilístico'], bl: 'Aplicar' },
+      { q: '¿Qué es la <b>prueba de escritorio</b>?', ok: 'Seguir el algoritmo a mano con datos de ejemplo para verificar que da los resultados correctos', bad: ['Instalar el programa en una computadora de escritorio', 'Compilar el código en Java', 'Dibujar el diagrama de flujo en papel'], bl: 'Comprender' },
+      { q: '¿Cuál es el orden correcto de las etapas de la metodología?', ok: 'Planteamiento → análisis → diseño de la solución → prueba de escritorio', bad: ['Análisis → planteamiento → prueba de escritorio → diseño', 'Diseño → planteamiento → análisis → prueba de escritorio', 'Prueba de escritorio → diseño → análisis → planteamiento'], bl: 'Comprender' }
+    ],
+    C: [
+      { q: 'En un diagrama <b>EPS</b>, la letra <b>P</b> representa…', ok: 'el proceso: las operaciones que transforman las entradas en salidas', bad: ['el programa ya compilado', 'la prueba de escritorio', 'el pseudocódigo'], bl: 'Recordar' },
+      { q: 'Sumar, una por una, las calificaciones de los 40 alumnos de un grupo es un problema…', ok: 'cíclico: se repiten las mismas instrucciones varias veces', bad: ['condicional', 'probabilístico', 'secuencial sin repeticiones'], bl: 'Aplicar' },
+      { q: '«La probabilidad de que llueva mañana es de 70 %». Este tipo de problema es…', ok: 'probabilístico', bad: ['determinístico', 'secuencial', 'cíclico'], bl: 'Comprender' },
+      { q: 'En la etapa de <b>diseño de la solución</b> se…', ok: 'elaboran el algoritmo, el pseudocódigo y el diagrama de flujo', bad: ['redacta el planteamiento del problema', 'compra el equipo de cómputo', 'eligen los resultados al azar'], bl: 'Comprender' },
+      { q: 'Para calcular el promedio de 3 calificaciones, ¿cuáles son las <b>entradas</b>?', ok: 'Las 3 calificaciones', bad: ['El promedio', 'La división entre 3', 'El mensaje «Aprobado»'], bl: 'Aplicar' },
+      { q: '¿Para qué sirve la prueba de escritorio?', ok: 'Para detectar errores en el algoritmo antes de programarlo', bad: ['Para convertir el algoritmo en código máquina', 'Para que el programa corra más rápido', 'Para instalar el entorno de desarrollo'], bl: 'Comprender' }
+    ]
+  },
+  alg: {
+    A: [
+      { q: '¿Qué es un <b>algoritmo</b>?', ok: 'Una serie finita y ordenada de pasos para resolver un problema', bad: ['Un lenguaje de programación', 'Un error lógico', 'Un dispositivo de entrada'], bl: 'Recordar' },
+      { q: '¿Qué es el <b>pseudocódigo</b>?', ok: 'Una descripción del algoritmo con palabras del idioma y una estructura parecida a la de un programa', bad: ['El código máquina del procesador', 'Un diagrama con símbolos geométricos', 'Un programa ya compilado en Java'], bl: 'Recordar' }
+    ],
+    B: [
+      { q: '¿Cuál de estas es una característica de todo algoritmo?', ok: 'Es finito: termina después de un número determinado de pasos', bad: ['Puede tener pasos ambiguos', 'Nunca termina', 'Solo puede escribirse en Java'], bl: 'Comprender' },
+      { q: '¿Qué es un <b>diagrama de flujo</b>?', ok: 'La representación gráfica de un algoritmo con símbolos unidos por flechas', bad: ['Un listado de código en Java', 'Una tabla de verdad', 'Un circuito eléctrico'], bl: 'Recordar' }
+    ],
+    C: [
+      { q: 'En pseudocódigo, ¿qué estructura se usa para <b>tomar una decisión</b>?', ok: 'Si … Entonces … SiNo … FinSi', bad: ['Mientras … FinMientras', 'Inicio … Fin', 'Leer …'], bl: 'Comprender' },
+      { q: 'En un diagrama de flujo, ¿qué indican las <b>flechas</b> (líneas de flujo)?', ok: 'El orden en que se ejecutan los pasos', bad: ['Una operación aritmética', 'Una condición', 'El fin del algoritmo'], bl: 'Comprender' }
+    ]
+  },
+  cic: {
+    A: [
+      { q: 'Un <b>contador</b> es una variable que…', ok: 'aumenta (o disminuye) en una cantidad fija cada vez que ocurre algo, por ejemplo <span class="mono">c = c + 1</span>', bad: ['va sumando valores distintos', 'solo puede valer true o false', 'nunca cambia su valor'], bl: 'Recordar' },
+      { q: '¿Cuál es la diferencia entre <span class="mono">while</span> y <span class="mono">do-while</span>?', ok: 'do-while ejecuta el cuerpo al menos una vez porque evalúa la condición al final', bad: ['while siempre se ejecuta al menos una vez', 'do-while no lleva condición', 'No hay ninguna diferencia'], bl: 'Comprender' },
+      { q: '¿Cuáles son los componentes básicos de una estructura repetitiva?', ok: 'Valor inicial, condición que se evalúa, modificación del estado y sentencias que se repiten', bad: ['Entrada, impresión y fin', 'Clase, objeto y método', 'Solo la condición'], bl: 'Recordar' }
+    ],
+    B: [
+      { q: 'Un <b>acumulador</b> es una variable que…', ok: 'va sumando valores que pueden ser distintos, por ejemplo <span class="mono">suma = suma + x</span>', bad: ['aumenta siempre de 1 en 1', 'solo vale true o false', 'guarda el texto que se imprime'], bl: 'Recordar' },
+      { q: 'Si la condición de un <span class="mono">while</span> es falsa desde el principio, el cuerpo del ciclo…', ok: 'no se ejecuta ninguna vez', bad: ['se ejecuta una vez', 'se ejecuta para siempre', 'marca un error de sintaxis'], bl: 'Comprender' },
+      { q: '¿Qué puede pasar si dentro de un ciclo nunca se modifica la variable de la condición?', ok: 'Que el ciclo se vuelva infinito', bad: ['Que el ciclo no se ejecute', 'Java la modifica automáticamente', 'El programa no compila'], bl: 'Comprender' }
+    ],
+    C: [
+      { q: 'Una <b>bandera</b> (flag) es una variable que…', ok: 'indica si ocurrió o no un evento; normalmente toma dos valores (true/false o 1/0)', bad: ['va sumando valores', 'cuenta de 1 en 1', 'guarda el texto que se imprime'], bl: 'Recordar' },
+      { q: '¿Qué ciclo conviene usar cuando se conoce de antemano cuántas veces se va a repetir?', ok: '<span class="mono">for</span>', bad: ['<span class="mono">switch</span>', '<span class="mono">if-else</span>', 'Ninguno: no se puede saber'], bl: 'Comprender' },
+      { q: 'En <span class="mono">for (int i = 0; i &lt; 5; i++)</span>, la parte <span class="mono">i++</span> es…', ok: 'la modificación del estado de la variable de control', bad: ['la condición', 'el valor inicial', 'el cuerpo del ciclo'], bl: 'Comprender' }
+    ]
+  },
+  exp: {
+    A: [{ q: '¿Qué operador de Java obtiene el <b>residuo</b> de una división entera?', ok: '<span class="mono">%</span>', bad: ['<span class="mono">/</span>', '<span class="mono">\\</span>', '<span class="mono">mod</span>'], bl: 'Recordar' }],
+    B: [{ q: 'En Java, ¿qué operador lógico representa «<b>y</b>» (las dos condiciones deben cumplirse)?', ok: '<span class="mono">&amp;&amp;</span>', bad: ['<span class="mono">||</span>', '<span class="mono">!</span>', '<span class="mono">==</span>'], bl: 'Recordar' }],
+    C: [{ q: '¿Cuál es la diferencia entre <span class="mono">=</span> y <span class="mono">==</span> en Java?', ok: '<span class="mono">=</span> asigna un valor; <span class="mono">==</span> compara si dos valores son iguales', bad: ['Son lo mismo', '<span class="mono">==</span> asigna y <span class="mono">=</span> compara', '<span class="mono">=</span> solo se usa con texto'], bl: 'Comprender' }]
+  },
+  jav: {
+    A: [
+      { q: '¿Quién es considerado el creador del lenguaje Java?', ok: 'James Gosling, en Sun Microsystems', bad: ['Dennis Ritchie, en los Laboratorios Bell', 'Bill Gates, en Microsoft', 'Guido van Rossum, en el CWI de Países Bajos'], bl: 'Recordar' },
+      { q: '¿En qué año se presentó públicamente el lenguaje Java?', ok: '1995', bad: ['1975', '1985', '2005'], bl: 'Recordar' },
+      { q: '¿Qué es el <b>bytecode</b> de Java?', ok: 'El código intermedio que genera el compilador de Java y que ejecuta la JVM', bad: ['El código fuente que se escribe en archivos .java', 'Un error de compilación', 'El sistema operativo de la computadora'], bl: 'Comprender' },
+      { q: 'Un <b>compilador</b>…', ok: 'traduce todo el código fuente a otro lenguaje (código máquina o bytecode) antes de ejecutarlo', bad: ['ejecuta el programa sin traducirlo', 'dibuja diagramas de flujo', 'solo detecta errores lógicos'], bl: 'Comprender' },
+      { q: '¿Qué significa <b>JVM</b>?', ok: 'Java Virtual Machine (máquina virtual de Java)', bad: ['Java Visual Method', 'Java Variable Manager', 'Java Version Module'], bl: 'Recordar' },
+      { q: '¿Qué instrucción imprime un texto y <b>después hace un salto de línea</b>?', ok: '<span class="mono">System.out.println()</span>', bad: ['<span class="mono">System.out.print()</span>', '<span class="mono">System.in.read()</span>', '<span class="mono">sc.nextLine()</span>'], bl: 'Recordar' },
+      { q: 'En Java, ¿cuántos bits ocupa un dato de tipo <span class="mono">int</span>?', ok: '32 bits', bad: ['8 bits', '16 bits', '64 bits'], bl: 'Recordar' },
+      { q: 'Olvidar el punto y coma al final de una instrucción produce un…', ok: 'error sintáctico: el compilador lo detecta', bad: ['error lógico', 'resultado correcto', 'ciclo infinito'], bl: 'Comprender' }
+    ],
+    B: [
+      { q: '¿En qué empresa nació el lenguaje Java?', ok: 'Sun Microsystems', bad: ['Microsoft', 'IBM', 'Apple'], bl: 'Recordar' },
+      { q: '¿Cuál fue el <b>primer nombre</b> del lenguaje que hoy conocemos como Java?', ok: 'Oak', bad: ['Pascal', 'Cobol', 'Python'], bl: 'Recordar' },
+      { q: 'Que Java tenga una <b>arquitectura neutral</b> significa que…', ok: 'el mismo bytecode se ejecuta en cualquier sistema que tenga una JVM', bad: ['solo funciona en Windows', 'no usa la memoria de la computadora', 'nunca necesita compilarse'], bl: 'Comprender' },
+      { q: 'Un <b>intérprete</b>…', ok: 'traduce y ejecuta el programa instrucción por instrucción', bad: ['traduce todo el programa y no lo ejecuta', 'solo dibuja el diagrama de flujo', 'es un tipo de dato de Java'], bl: 'Comprender' },
+      { q: '¿Qué contiene el <b>JDK</b> (Java Development Kit)?', ok: 'Las herramientas para desarrollar en Java, como el compilador javac y el entorno para ejecutar los programas', bad: ['Solo un editor de texto', 'Solo el sistema operativo', 'Únicamente juegos de ejemplo'], bl: 'Comprender' },
+      { q: 'Un programa de Java empieza a ejecutarse en el método…', ok: '<span class="mono">main</span>', bad: ['<span class="mono">start</span>', '<span class="mono">print</span>', '<span class="mono">init</span>'], bl: 'Recordar' },
+      { q: '¿Qué tipo primitivo guarda únicamente los valores <span class="mono">true</span> o <span class="mono">false</span>?', ok: '<span class="mono">boolean</span>', bad: ['<span class="mono">char</span>', '<span class="mono">int</span>', '<span class="mono">String</span>'], bl: 'Recordar' },
+      { q: 'Un programa compila y corre, pero calcula mal el promedio de 3 calificaciones porque divide entre 2. Es un…', ok: 'error lógico', bad: ['error sintáctico', 'error del teclado', 'error de la JVM'], bl: 'Comprender' }
+    ],
+    C: [
+      { q: '¿Qué empresa es responsable de Java desde que compró Sun Microsystems en 2010?', ok: 'Oracle', bad: ['Google', 'Microsoft', 'IBM'], bl: 'Recordar' },
+      { q: 'El lema de Java «<i>Write once, run anywhere</i>» significa…', ok: 'escribe el programa una vez y ejecútalo en cualquier plataforma que tenga JVM', bad: ['el programa solo puede ejecutarse una vez', 'hay que reescribir el programa para cada sistema operativo', 'el programa no necesita computadora'], bl: 'Comprender' },
+      { q: 'Java es un lenguaje <b>orientado a objetos</b> porque…', ok: 'organiza los programas en clases y objetos', bad: ['solo se programa con diagramas', 'no usa variables', 'se ejecuta sin compilar'], bl: 'Comprender' },
+      { q: '¿Qué extensión tiene un archivo de <b>código fuente</b> de Java?', ok: '<span class="mono">.java</span>', bad: ['<span class="mono">.class</span>', '<span class="mono">.exe</span>', '<span class="mono">.jvm</span>'], bl: 'Recordar' },
+      { q: '¿Qué es un <b>IDE</b>?', ok: 'Un entorno de desarrollo integrado: editor, compilador y depurador en un solo programa (por ejemplo, NetBeans o Eclipse)', bad: ['Un tipo de dato', 'Un error de sintaxis', 'El código máquina del procesador'], bl: 'Recordar' },
+      { q: '¿Para qué sirve la clase <span class="mono">Scanner</span>?', ok: 'Para leer los datos que el usuario escribe con el teclado', bad: ['Para imprimir en la pantalla', 'Para dibujar diagramas de flujo', 'Para compilar el programa'], bl: 'Recordar' },
+      { q: '¿Cuál es el rango de valores del tipo <span class="mono">byte</span>?', ok: 'De −128 a 127', bad: ['De 0 a 255', 'De −32,768 a 32,767', 'De 0 a 1'], bl: 'Recordar' },
+      { q: 'Un <b>paradigma de programación</b> es…', ok: 'un estilo o enfoque para escribir programas, por ejemplo el imperativo o el orientado a objetos', bad: ['un error que detecta el compilador', 'un tipo de dato numérico', 'el nombre de la máquina virtual'], bl: 'Comprender' }
+    ]
+  },
+  tipo: {        // ¿qué tipo de dato conviene? (cod)
+    A: [
+      { q: 'Se quiere guardar la <b>edad</b> de una persona (de 0 a 120 años) usando la <b>menor memoria</b> posible. ¿Qué tipo primitivo conviene?', ok: '<span class="mono">byte</span>', bad: ['<span class="mono">long</span>', '<span class="mono">double</span>', '<span class="mono">boolean</span>'], bl: 'Aplicar' },
+      { q: '¿Qué tipo de dato conviene para guardar el <b>precio</b> de un producto con centavos, por ejemplo 249.90?', ok: '<span class="mono">double</span>', bad: ['<span class="mono">int</span>', '<span class="mono">char</span>', '<span class="mono">boolean</span>'], bl: 'Aplicar' }
+    ],
+    B: [
+      { q: '¿Qué tipo de dato conviene para guardar la <b>inicial</b> del nombre de una persona (una sola letra)?', ok: '<span class="mono">char</span>', bad: ['<span class="mono">double</span>', '<span class="mono">int</span>', '<span class="mono">boolean</span>'], bl: 'Aplicar' },
+      { q: '¿Qué tipo de dato conviene para guardar si un alumno <b>está inscrito o no</b>?', ok: '<span class="mono">boolean</span>', bad: ['<span class="mono">char</span>', '<span class="mono">float</span>', '<span class="mono">long</span>'], bl: 'Aplicar' }
+    ],
+    C: [
+      { q: 'Se quiere guardar la <b>población mundial</b> (unos 8,000 millones de personas). El tipo <span class="mono">int</span> llega hasta 2,147,483,647. ¿Qué tipo conviene?', ok: '<span class="mono">long</span>', bad: ['<span class="mono">byte</span>', '<span class="mono">short</span>', '<span class="mono">char</span>'], bl: 'Analizar' },
+      { q: '¿Qué tipo de dato conviene para guardar una <b>temperatura</b> como 36.7 °C?', ok: '<span class="mono">double</span>', bad: ['<span class="mono">int</span>', '<span class="mono">boolean</span>', '<span class="mono">char</span>'], bl: 'Aplicar' }
+    ]
+  },
+  scan: {
+    A: [{ q: 'Con un objeto <span class="mono">Scanner</span> llamado <span class="mono">sc</span>, ¿qué método lee un <b>número entero</b>?', ok: '<span class="mono">sc.nextInt()</span>', bad: ['<span class="mono">sc.nextDouble()</span>', '<span class="mono">sc.nextLine()</span>', '<span class="mono">System.out.println()</span>'], bl: 'Recordar' }],
+    B: [{ q: 'Con un objeto <span class="mono">Scanner</span> llamado <span class="mono">sc</span>, ¿qué método lee un <b>número con decimales</b>?', ok: '<span class="mono">sc.nextDouble()</span>', bad: ['<span class="mono">sc.nextInt()</span>', '<span class="mono">sc.next()</span>', '<span class="mono">System.in</span>'], bl: 'Recordar' }],
+    C: [{ q: '¿Qué instrucción crea un objeto <span class="mono">Scanner</span> para leer desde el teclado?', ok: '<span class="mono">Scanner sc = new Scanner(System.in);</span>', bad: ['<span class="mono">Scanner sc = System.out;</span>', '<span class="mono">import Scanner = teclado;</span>', '<span class="mono">int sc = new Scanner();</span>'], bl: 'Recordar' }]
+  }
+};
+/* Símbolos de diagrama de flujo (ANSI/ISO 5807) */
+const FSYM = {
+  term: { svg: '<rect x="20" y="15" width="160" height="50" rx="25" />', ok: 'Inicio o fin del algoritmo (terminal)' },
+  proc: { svg: '<rect x="20" y="15" width="160" height="50" />', ok: 'Proceso: una operación o asignación' },
+  dec: { svg: '<polygon points="100,8 180,40 100,72 20,40" />', ok: 'Decisión: evalúa una condición y elige un camino (sí o no)' },
+  io: { svg: '<polygon points="45,15 180,15 155,65 20,65" />', ok: 'Entrada o salida de datos' },
+  con: { svg: '<circle cx="100" cy="40" r="26" />', ok: 'Conector: une partes del diagrama' }
+};
+const symSVG = k => `<svg viewBox="0 0 200 80" width="200" role="img" aria-label="Símbolo de diagrama de flujo"><g fill="#e7f1fb" stroke="#1e293b" stroke-width="3">${FSYM[k].svg}</g></svg>`;
+/* Diagramas de flujo dibujados (decisión y ciclo) */
+function fcBox(type, x, y, w, h, txt) {
+  const t = `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="14" font-weight="700" font-family="Segoe UI,Arial" fill="#0f172a">${txt}</text>`;
+  if (type === 'term') return `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="#ede9fe" stroke="#5b21b6" stroke-width="2"/>${t}`;
+  if (type === 'proc') return `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" fill="#e7f1fb" stroke="#1c7ed6" stroke-width="2"/>${t}`;
+  if (type === 'io') return `<polygon points="${x - w / 2 + 14},${y - h / 2} ${x + w / 2},${y - h / 2} ${x + w / 2 - 14},${y + h / 2} ${x - w / 2},${y + h / 2}" fill="#e6f6ea" stroke="#2f9e44" stroke-width="2"/>${t}`;
+  if (type === 'dec') return `<polygon points="${x},${y - h / 2} ${x + w / 2},${y} ${x},${y + h / 2} ${x - w / 2},${y}" fill="#fff4e0" stroke="#f08c00" stroke-width="2"/>${t}`;
+}
+const fcArrow = (pts, lab, lx, ly) => `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#fcar)"/>${lab ? `<text x="${lx}" y="${ly}" font-size="13" font-weight="800" font-family="Segoe UI,Arial" fill="#334155">${lab}</text>` : ''}`;
+const fcDefs = '<defs><marker id="fcar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>';
+function fcDecision(p) {           // Inicio → Leer → proceso → ¿cond? → (Sí / No) → Escribir → Fin
+  const X = 230, W = 460; let s = fcDefs, y = 30;
+  s += fcBox('term', X, y, 120, 36, 'Inicio'); s += fcArrow([[X, y + 18], [X, y + 48]]); y += 66;
+  s += fcBox('io', X, y, 170, 38, p.leer); s += fcArrow([[X, y + 19], [X, y + 49]]); y += 68;
+  s += fcBox('proc', X, y, 190, 38, p.proc); s += fcArrow([[X, y + 19], [X, y + 44]]); y += 78;
+  s += fcBox('dec', X, y, 170, 70, p.cond);
+  const yb = y + 80;
+  s += fcArrow([[X + 85, y], [X + 140, y], [X + 140, yb - 19]], 'Sí', X + 95, y - 8); s += fcArrow([[X - 85, y], [X - 140, y], [X - 140, yb - 19]], 'No', X - 120, y - 8);
+  s += fcBox('proc', X + 140, yb, 140, 38, p.si); s += fcBox('proc', X - 140, yb, 140, 38, p.no);
+  const ym = yb + 50; s += fcArrow([[X + 140, yb + 19], [X + 140, ym], [X + 6, ym]]); s += fcArrow([[X - 140, yb + 19], [X - 140, ym], [X - 6, ym]]);
+  s += `<circle cx="${X}" cy="${ym}" r="5" fill="#334155"/>`; s += fcArrow([[X, ym + 5], [X, ym + 32]]); y = ym + 51;
+  s += fcBox('io', X, y, 150, 38, p.esc); s += fcArrow([[X, y + 19], [X, y + 47]]); y += 65;
+  s += fcBox('term', X, y, 120, 36, 'Fin');
+  return `<svg class="fc" viewBox="0 0 ${W} ${y + 24}" width="${W}" role="img" aria-label="Diagrama de flujo con una decisión">${s}</svg>`;
+}
+function fcLoop(p) {               // Inicio → Leer → inicialización → ¿cond? Sí: cuerpo → incremento → regresa · No: Escribir → Fin
+  const X = 210, W = 480; let s = fcDefs, y = 30;
+  s += fcBox('term', X, y, 120, 36, 'Inicio'); s += fcArrow([[X, y + 18], [X, y + 48]]); y += 66;
+  s += fcBox('io', X, y, 150, 38, p.leer); s += fcArrow([[X, y + 19], [X, y + 49]]); y += 68;
+  s += fcBox('proc', X, y, 190, 38, p.ini); s += fcArrow([[X, y + 19], [X, y + 44]]); y += 78;
+  const yc = y; s += fcBox('dec', X, y, 160, 70, p.cond);
+  s += fcArrow([[X, y + 35], [X, y + 62]], 'Sí', X + 8, y + 54); y += 81;
+  s += fcBox('proc', X, y, 190, 38, p.cuerpo); s += fcArrow([[X, y + 19], [X, y + 47]]); y += 66;
+  s += fcBox('proc', X, y, 150, 38, p.inc);
+  s += fcArrow([[X - 75, y], [X - 160, y], [X - 160, yc], [X - 80, yc]]);
+  s += fcArrow([[X + 80, yc], [X + 165, yc], [X + 165, y + 50]], 'No', X + 92, yc - 8); y += 69;
+  s += fcBox('io', X + 165, y, 150, 38, p.esc); s += fcArrow([[X + 165, y + 19], [X + 165, y + 47]]); y += 65;
+  s += fcBox('term', X + 165, y, 110, 36, 'Fin');
+  return `<svg class="fc" viewBox="0 0 ${W} ${y + 24}" width="${W}" role="img" aria-label="Diagrama de flujo con un ciclo">${s}</svg>`;
+}
+const jtrunc = (a, b) => Math.trunc(a / b);
+const jdec = x => Number.isInteger(x) ? x.toFixed(1) : String(+x.toFixed(6));
+function buildP2(tipo, seed) {
+  const rnd = mulberry32((seed ^ ({ A: 0x1B873593, B: 0xCC9E2D51, C: 0x27D4EB2F }[tipo])) >>> 0), qs = [], push = q => { qs.push(q); return q; };
+  const R = (a, b) => a + Math.floor(rnd() * (b - a + 1)), T = k => BANKJ[k][tipo];
+  /* I. El problema y la metodología (6) */
+  shuffle(T('pro'), rnd).forEach(b => push(mcQ('pro', b.q, b.ok, b.bad, rnd, b.bl)));
+  /* II. Algoritmos, diagramas de flujo y pseudocódigo (6) */
+  T('alg').forEach(b => push(mcQ('alg', b.q, b.ok, b.bad, rnd, b.bl)));
+  ({ A: ['dec', 'io'], B: ['term', 'proc'], C: ['dec', 'con'] }[tipo]).forEach(k => push(mcQ('alg', `En un diagrama de flujo, ¿qué representa este símbolo?<div class="my-2">${symSVG(k)}</div>`, FSYM[k].ok, Object.keys(FSYM).filter(x => x !== k).slice(0, 3).map(x => FSYM[x].ok), rnd, 'Recordar')));
+  { const a = R(3, 9), b = R(2, 8), m = R(2, 3), k = R(10, 22), c = a * m + b, si = R(2, 6), r = c > k ? c - si : c + si;
+    push(openQ('alg', `Haz la prueba de escritorio del diagrama con <b>a = ${a}</b> y <b>b = ${b}</b>. ¿Qué valor de <b>r</b> se escribe?<div class="my-2 fc-wrap">${fcDecision({ leer: 'Leer a, b', proc: `c ← a × ${m} + b`, cond: `¿c > ${k}?`, si: `r ← c − ${si}`, no: `r ← c + ${si}`, esc: 'Escribir r' })}</div>`, String(r), intRule, 'num', 'Aplicar')).hlp = 'fc'; }
+  { const x = R(4, 9), y = R(2, 7), op = tipo === 'B' ? '+' : '-';
+    const st = tipo === 'C' ? [`x ← ${x}`, `y ← ${y}`, 'x ← x + y', 'y ← x − y', 'x ← x − y', 'Escribir x'] : [`a ← ${x}`, `b ← ${y}`, `a ← a * 2`, `b ← a ${op === '+' ? '+' : '−'} b`, 'a ← b − a', 'Escribir a'];
+    const val = tipo === 'C' ? y : (() => { let a = x, b = y; a = a * 2; b = op === '+' ? a + b : a - b; a = b - a; return a; })();
+    push(openQ('alg', `Haz la prueba de escritorio de este pseudocódigo. ¿Qué valor se escribe?<pre class="jcode">Inicio\n${st.map(l => '   ' + l).join('\n')}\nFin</pre>`, String(val), intRule, 'num', 'Aplicar')).hlp = 'pseudo'; }
+  /* III. Operadores y expresiones (10) */
+  T('exp').forEach(b => push(mcQ('exp', b.q, b.ok, b.bad, rnd, b.bl)));
+  const ARI = {
+    A: [() => { const a = R(2, 9), b = R(2, 6), c = R(2, 5); return [`int x = ${a} + ${b} * ${c};`, a + b * c, 'int']; },
+        () => { const a = R(17, 47), b = R(3, 7); return [`int x = ${a} / ${b};`, jtrunc(a, b), 'int']; },
+        () => { const a = R(20, 60), b = R(3, 9); return [`int x = ${a} % ${b};`, a % b, 'int']; },
+        () => { const a = R(5, 15) * 2 + 1; return [`double x = ${a} / 2.0;`, a / 2, 'dbl']; }],
+    B: [() => { const a = R(2, 9), b = R(2, 9), c = R(2, 5); return [`int x = (${a} + ${b}) * ${c};`, (a + b) * c, 'int']; },
+        () => { const a = R(10, 30), b = R(3, 6), c = R(2, 4); return [`int x = ${a} - ${b} * ${c} + 1;`, a - b * c + 1, 'int']; },
+        () => { const a = R(25, 70), b = R(4, 9), c = R(2, 5); return [`int x = ${a} % ${b} + ${c};`, a % b + c, 'int']; },
+        () => { const a = R(3, 9) * 2 + 1; return [`double x = ${a} / 2;`, jtrunc(a, 2), 'dbl']; }],
+    C: [() => { const a = R(20, 50), b = R(3, 6); return [`int x = ${a} / ${b} * ${b};`, jtrunc(a, b) * b, 'int']; },
+        () => { const a = R(2, 6), b = R(3, 8), c = R(10, 30), d = R(3, 5); return [`int x = ${a} * ${b} - ${c} / ${d};`, a * b - jtrunc(c, d), 'int']; },
+        () => { const a = R(30, 90), b = R(4, 8); return [`int x = (${a} % ${b}) * 2;`, (a % b) * 2, 'int']; },
+        () => { const a = R(7, 19), b = R(2, 4); return [`double x = (double) ${a} / ${b};`, a / b, 'dbl']; }]
+  }[tipo];
+  ARI.forEach(f => { const [code, v, t] = f(); push(openQ('exp', `¿Qué valor guarda la variable <span class="mono">x</span> después de ejecutar esta instrucción de Java?${jcode(code)}`, t === 'dbl' ? jdec(v) : String(v), t === 'dbl' ? decRule : intRule, t === 'dbl' ? 'dec' : 'num', 'Aplicar')).hlp = t === 'dbl' ? 'dbl' : 'ari'; });
+  { const a = R(2, 9), b = R(2, 9), c = R(2, 9);
+    const L = {
+      A: [[`a > b && b < c`, a > b && b < c], [`!(a == b) || c <= a`, !(a === b) || c <= a], [`a % 2 == 0 && c > b`, a % 2 === 0 && c > b]],
+      B: [[`a <= b || c == a`, a <= b || c === a], [`(a + b) > c && !(c > a)`, (a + b) > c && !(c > a)], [`b % 2 != 0 || a > c`, b % 2 !== 0 || a > c]],
+      C: [[`a != b && b >= c`, a !== b && b >= c], [`!(a < c) || b == 2`, !(a < c) || b === 2], [`(a * 2 > c) && (b - 1 < a)`, (a * 2 > c) && (b - 1 < a)]]
+    }[tipo];
+    L.forEach(([e, v]) => push(openQ('exp', `Con <span class="mono">int a = ${a}, b = ${b}, c = ${c};</span> ¿qué valor tiene esta expresión?${jcode(e)}`, v ? 'TRUE' : 'FALSE', boolRule, 'exact', 'Aplicar')).hlp = 'bool');
+  }
+  { const M = {
+      A: [() => { const a = R(3, 9); return [`Math.pow(${a}, 2)`, a * a]; }, () => { const a = R(3, 12); return [`Math.abs(-${a})`, a, 'int']; }],
+      B: [() => { const a = R(4, 12); return [`Math.sqrt(${a * a})`, a]; }, () => { const a = R(10, 40), b = R(10, 40); return [`Math.max(${a}, ${b})`, Math.max(a, b), 'int']; }],
+      C: [() => { const a = R(2, 5); return [`Math.pow(2, ${a})`, Math.pow(2, a)]; }, () => { const a = R(3, 20), d = pick([1, 2, 3, 4, 6, 7, 8, 9], rnd); return [`Math.round(${a}.${d})`, d >= 5 ? a + 1 : a, 'int']; }]
+    }[tipo];
+    M.forEach(f => { const [e, v, t] = f(); push(openQ('exp', `¿Qué valor devuelve <span class="mono">${e}</span> en Java?${t === 'int' ? '' : ' <span class="text-muted small">(este método devuelve un <span class="mono">double</span>)</span>'}`, t === 'int' ? String(v) : jdec(v), t === 'int' ? intRule : decRule, t === 'int' ? 'num' : 'dec', 'Aplicar')).hlp = 'math'; });
+  }
+  /* IV. Ciclos (6) */
+  T('cic').forEach(b => push(mcQ('cic', b.q, b.ok, b.bad, rnd, b.bl)));
+  { const n = R(4, 7), sq = tipo === 'B', s = (() => { let t = 0; for (let i = 1; i <= n; i++) t += sq ? i * i : (tipo === 'C' ? 2 * i : i); return t; })();
+    push(openQ('cic', `Haz la prueba de escritorio del diagrama con <b>n = ${n}</b>. ¿Qué valor de <b>s</b> se escribe?<div class="my-2 fc-wrap">${fcLoop({ leer: 'Leer n', ini: 's ← 0,  i ← 1', cond: '¿i ≤ n?', cuerpo: sq ? 's ← s + i × i' : tipo === 'C' ? 's ← s + 2 × i' : 's ← s + i', inc: 'i ← i + 1', esc: 'Escribir s' })}</div>`, String(s), intRule, 'num', 'Aplicar')).hlp = 'fc'; }
+  { const J = {
+      A: () => { const a = R(1, 3), b = R(9, 15), st = R(2, 3); let c = 0; for (let i = a; i < b; i += st) c++; return [`int c = 0;\nfor (int i = ${a}; i < ${b}; i += ${st}) {\n    c++;\n}\nSystem.out.println(c);`, c]; },
+      B: () => { const n = R(20, 90); let x = n, c = 0; while (x > 1) { x = jtrunc(x, 2); c++; } return [`int x = ${n};\nint c = 0;\nwhile (x > 1) {\n    x = x / 2;\n    c++;\n}\nSystem.out.println(c);`, c]; },
+      C: () => { const k = R(3, 6); let p = 1, i = 1; do { p = p * 2; i++; } while (i <= k); return [`int p = 1;\nint i = 1;\ndo {\n    p = p * 2;\n    i++;\n} while (i <= ${k});\nSystem.out.println(p);`, p]; }
+    }, K = {
+      A: () => { const n = R(5, 9); let s = 0; for (let i = n; i > 0; i -= 2) s += i; return [`int s = 0;\nfor (int i = ${n}; i > 0; i -= 2) {\n    s = s + i;\n}\nSystem.out.println(s);`, s]; },
+      B: () => { const n = R(3, 6); let s = 0, i = 1; do { s += i; i++; } while (i <= n); return [`int s = 0;\nint i = 1;\ndo {\n    s += i;\n    i++;\n} while (i <= ${n});\nSystem.out.println(s);`, s]; },
+      C: () => { const n = R(10, 40); let c = 0; for (let i = 1; i <= n; i++) if (i % 3 === 0) c++; return [`int c = 0;\nfor (int i = 1; i <= ${n}; i++) {\n    if (i % 3 == 0) {\n        c++;\n    }\n}\nSystem.out.println(c);`, c]; }
+    };
+    [J[tipo](), K[tipo]()].forEach(([code, v]) => push(openQ('cic', `¿Qué número imprime este fragmento de Java?${jcode(code)}`, String(v), intRule, 'num', 'Analizar')).hlp = 'loop');
+  }
+  /* V. Lenguajes de programación y Java (8) */
+  shuffle(T('jav'), rnd).forEach(b => push(mcQ('jav', b.q, b.ok, b.bad, rnd, b.bl)));
+  /* VI. Codificación: tipos de datos, Scanner y condicionales (6) */
+  T('tipo').concat(T('scan')).forEach(b => push(mcQ('cod', b.q, b.ok, b.bad, rnd, b.bl)));
+  { const lim = { A: [9, 6], B: [8, 6], C: [9, 7] }[tipo], cal = R(3, 10), out = cal >= lim[0] ? 'Excelente' : cal >= lim[1] ? 'Aprobado' : 'Reprobado';
+    push(mcQ('cod', `¿Qué imprime este código?${jcode(`int cal = ${cal};\nif (cal >= ${lim[0]}) {\n    System.out.println("Excelente");\n} else if (cal >= ${lim[1]}) {\n    System.out.println("Aprobado");\n} else {\n    System.out.println("Reprobado");\n}`)}`, out, ['Excelente', 'Aprobado', 'Reprobado', 'No imprime nada'].filter(x => x !== out), rnd, 'Aplicar')); }
+  { const d = R(0, 9), DAY = { 5: 'Lunes', 6: 'Lunes', 7: 'Martes', 8: 'Martes', 3: 'Miércoles', 4: 'Miércoles', 1: 'Jueves', 2: 'Jueves', 9: 'Viernes', 0: 'Viernes' }, out = DAY[d];
+    push(mcQ('cod', `El programa «Hoy no circula» de la Ciudad de México usa la terminación de la placa. ¿Qué imprime este código?${jcode(`int t = ${d};   // terminación de la placa\nswitch (t) {\n    case 5: case 6: System.out.println("Lunes"); break;\n    case 7: case 8: System.out.println("Martes"); break;\n    case 3: case 4: System.out.println("Miércoles"); break;\n    case 1: case 2: System.out.println("Jueves"); break;\n    default: System.out.println("Viernes");\n}`)}`, out, ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'].filter(x => x !== out).slice(0, 3), rnd, 'Aplicar')); }
+  { const e = R(14, 22), ine = tipo === 'B' ? rnd() < .5 : true, cond = { A: 'edad >= 18 && tieneINE', B: 'edad >= 18 && tieneINE', C: 'edad >= 18 || tieneINE' }[tipo], v = tipo === 'C' ? (e >= 18 || ine) : (e >= 18 && ine);
+    const out = v ? 'Puede votar' : 'No puede votar';
+    push(mcQ('cod', `¿Qué imprime este código?${jcode(`int edad = ${e};\nboolean tieneINE = ${ine};\nif (${cond}) {\n    System.out.println("Puede votar");\n} else {\n    System.out.println("No puede votar");\n}`)}`, out, [v ? 'No puede votar' : 'Puede votar', 'No imprime nada', 'Marca un error de sintaxis'], rnd, 'Analizar')); }
+  return qs;
+}
+
+/* ==========================================================================
    CONFIGURACIÓN DE PARCIALES
    ========================================================================== */
 const EXAMS = {
-  1: { titulo: 'Primer parcial', secs: [...SECS1, ...SECS_NEW], build: buildP1 },
-  2: { titulo: 'Segundo parcial', secs: [...SECS2, ...SECS_NEW], build: buildP2 }
+  1: { titulo: 'Primer parcial', secs: [...SECS1, ...SECS2, ...SECS_NEW], build: buildP1 },     // unificado: sistemas numéricos, compuertas, tablas, Karnaugh y circuitos
+  2: { titulo: 'Segundo parcial', secs: SECS_J, build: buildP2 }                               // Unidad 3: metodología de solución de problemas y Java
 };
 /* Elige k preguntas repartidas por sección (proporcional, mínimo 1 por sección) y conserva el orden original. Es determinista con la semilla. */
 function pickQs(qs, k, rnd) {
@@ -1581,6 +1853,7 @@ function gradeQ(q, v) {
   const u = String(v).toUpperCase();
   if (q.cmp === 'exact') return u === q.expect;
   if (q.cmp === 'num') return parseInt(u, 10) === parseInt(q.expect, 10);
+  if (q.cmp === 'dec') { const a = parseFloat(u), b = parseFloat(q.expect); return Number.isFinite(a) && Math.abs(a - b) < 1e-9; }
   return stripZ(u) === stripZ(q.expect);
 }
 
@@ -1745,7 +2018,7 @@ $('#form-datos').addEventListener('submit', async e => {
   if (!(okN && okC && okG)) return;
   if (!$('#d-ok').checked) { err.textContent = 'Marca la casilla para confirmar que leíste las reglas.'; err.hidden = false; return; }
   const btn = $('#btn-comenzar'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando…';
-  const r = $('#d-ok') && randBytes(), tipo = (r[1] & 1) ? 'B' : 'A', seed = r[0] >>> 0, inicio = new Date().toISOString();
+  const r = $('#d-ok') && randBytes(), tipo = 'ABC'[r[1] % 3], seed = r[0] >>> 0, inicio = new Date().toISOString();
   const res = await api('start', { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, inicio, disp: availOf(PARCIAL), dev: DEV }); if (res && res.ok) CLK = !!res.reloj;
   btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-circle-fill me-1"></i>Comenzar examen';
   if (!res.ok) {
@@ -1771,24 +2044,31 @@ const HELP = {
   div: ['Divisiones sucesivas', ['Divide el número decimal entre la base a la que vas a convertir.', 'Anota el cociente (solo la parte entera) y el residuo.', 'El cociente se vuelve el nuevo dividendo; repite hasta que el cociente sea 0.', 'El número convertido se forma leyendo los residuos <b>de abajo hacia arriba</b>.', 'En hexadecimal, los residuos del 10 al 15 se escriben con las letras A a F.']],
   pos: ['Valor posicional', ['Numera las posiciones de derecha a izquierda, empezando en 0.', 'Cada posición pesa base<sup>posición</sup> (b<sup>0</sup> = 1, b<sup>1</sup> = b, b<sup>2</sup> = b·b…).', 'Multiplica cada dígito por el peso de su posición (en hexadecimal A = 10 … F = 15).', 'Suma todos los productos.']],
   grp: ['Agrupar y desagrupar bits', ['Cada dígito octal equivale a 3 bits y cada dígito hexadecimal a 4 bits.', 'De binario a octal o hexadecimal: forma los grupos <b>de derecha a izquierda</b> y completa con ceros a la izquierda el último grupo.', 'De octal o hexadecimal a binario: escribe cada dígito con sus 3 o 4 bits, sin omitir ceros.', 'Entre octal y hexadecimal pasa primero por binario.']],
-  sum: ['Suma binaria en columna', ['Alinea los números por la derecha.', 'Suma columna por columna, de derecha a izquierda, como en decimal: cuando el resultado de una columna no cabe en un solo dígito, escribe el dígito de la derecha y lleva el otro a la siguiente columna.', 'Anota cada acarreo arriba de la columna siguiente.', 'El último acarreo se escribe a la izquierda del resultado.']],
-  sum3: ['Sumatoria de tres números', ['Suma primero los dos primeros números en columna, con sus acarreos.', 'Copia ese resultado y súmale el tercer número.', 'Alinea siempre por la derecha.']],
-  tt: ['Tabla de verdad paso a paso', ['Respeta el orden: primero las negaciones, después los productos (AND) y al final las sumas (OR).', 'Haz una columna por cada parte de la expresión: por ejemplo, las letras negadas, luego cada producto.', 'Escribe la operación en la cabecera de la columna y evalúala fila por fila.', 'Las filas van en orden binario: 00, 01, 10, 11 (o 000 … 111).', 'La columna F es la combinación final de tus columnas.']],
-  tvpq: ['Tabla de verdad de una afirmación', ['Identifica qué dice p, qué dice q y cómo se unen en la afirmación.', 'Escribe en la cabecera de cada columna la parte que vas a evaluar (puedes usar → o -> para «entonces»).', 'Haz una columna para cada parte y al final la de la afirmación completa.', 'Las filas van en el orden (p q) = 00, 01, 10, 11.']],
-  tvxyz: ['Del enunciado a la tabla', ['Traduce la condición del enunciado a una expresión con X, Y y Z.', 'Haz una columna por cada parte (negaciones, productos, sumas).', 'Las filas van en orden binario: 000, 001, … 111.']],
-  tvsop: ['Del circuito a la tabla', ['Cada compuerta AND del dibujo forma un producto con sus entradas (directas o negadas).', 'Haz una columna por cada AND y al final la columna de la OR.', 'Las filas van en orden binario: 000, 001, … 111.']],
-  tvab: ['Tabla de verdad de una expresión', ['Respeta los paréntesis y el orden: primero NOT, luego AND y al final OR.', 'Haz una columna para cada operación de la expresión.', 'Las filas van en el orden (A B) = 00, 01, 10, 11.']],
-  tvdis: ['Diseñar la tabla', ['Lee con cuidado la condición que hace que F valga 1.', 'Si te ayuda, agrega columnas intermedias (por ejemplo, combinaciones de dos variables) antes de decidir F.', 'Revisa fila por fila, en orden 000 … 111.']],
-  gx: ['Expresión de un circuito', ['Empieza por las compuertas que reciben las entradas (los números más bajos).', 'Escribe la expresión que sale de cada compuerta; esa salida entra a la siguiente.', 'Usa paréntesis cuando una suma entra a un AND o cuando niegas una expresión completa.', 'La salida de la última compuerta es F: compárala con las opciones.']],
-  gv: ['Evaluar un circuito', ['Sustituye las entradas que te dan.', 'Evalúa compuerta por compuerta, en el orden de sus números, y anota el 0 o 1 que sale de cada una.', 'La salida de la última compuerta es F.']],
-  fn: ['Escribir la función del circuito', ['Escribe la salida de cada compuerta en el orden de sus números.', 'La salida de una compuerta es la entrada de la siguiente: sustituye su expresión.', 'Usa paréntesis cuando una suma entra a un AND o cuando niegas una expresión completa.', 'La salida de la última compuerta es F: escríbela en el recuadro de la respuesta.']],
-  kmsop: ['Simplificar con el mapa de Karnaugh', ['En el mapa de la hoja de procedimiento toca las celdas que formarán un grupo y pulsa <b>Agregar grupo</b>.', 'Repite con cada grupo que formes; puedes quitar un grupo con el bote de basura.', 'Escribe el término de cada grupo con A, B y C (usa \' para negar).', 'La suma de tus términos es la expresión que debes buscar entre las opciones.']],
-  kmbig: ['Grupos en el mapa de Karnaugh', ['En el mapa de la hoja de procedimiento marca los grupos que puedes formar y pulsa <b>Agregar grupo</b> en cada uno.', 'Escribe el término de cada grupo.', 'Compara cuántas celdas tiene cada grupo que formaste.']],
+  sum: ['Suma binaria en columna', ['Llena la cuadrícula del procedimiento: alinea los números por la derecha.', 'Suma columna por columna, de derecha a izquierda: cuando el resultado de una columna no cabe en un solo dígito, escribe el dígito de la derecha y lleva el otro a la siguiente columna.', 'Anota cada acarreo en la fila «Acarreos», arriba de la columna siguiente (si no llevas nada, deja la casilla vacía).', 'Escribe tu resultado final en el recuadro de respuesta.']],
+  sum3: ['Sumatoria de tres números', ['Paso 1: suma en la cuadrícula los dos primeros números, con sus acarreos.', 'Paso 2: copia ese resultado en la segunda cuadrícula y súmale el tercer número.', 'Alinea siempre por la derecha y escribe el resultado final en el recuadro de respuesta.']],
+  tt: ['Tabla de verdad paso a paso', ['Llena primero las columnas moradas de apoyo, en orden: las negaciones y después cada producto.', 'Una letra con barra (o con \') es la negación de esa letra: escribe en cada fila el valor contrario.', 'Si quieres otra operación, pulsa <b>Agregar columna</b> y escribe en la cabecera la operación; se permiten negadas como <b>B\'</b> y productos o sumas como <b>A*B\'</b> o <b>A+B</b>.', 'Las filas van en orden binario: 00, 01, 10, 11 (o 000 … 111).', 'Con tus columnas completa la columna F, que es tu respuesta.']],
+  tvpq: ['Tabla de verdad de una afirmación', ['Identifica qué dice p, qué dice q y cómo se unen en la afirmación.', 'Puedes pulsar <b>Agregar columna</b> para evaluar una parte; en la cabecera se permiten negadas como <b>q\'</b> y → (o ->) para «entonces».', 'Las filas van en el orden (p q) = 00, 01, 10, 11.', 'Tu respuesta es la columna «Afirmación».']],
+  tvxyz: ['Del enunciado a la tabla', ['Traduce la condición del enunciado usando X, Y y Z.', 'Puedes pulsar <b>Agregar columna</b> para evaluar cada parte; en la cabecera se permiten negadas como <b>Z\'</b>.', 'Las filas van en orden binario: 000, 001, … 111.', 'Tu respuesta es la columna F.']],
+  tvsop: ['Del circuito a la tabla', ['Las columnas moradas son las salidas de las compuertas AND, numeradas de arriba hacia abajo en el dibujo.', 'Revisa qué entradas llegan a cada AND y si pasan por un inversor.', 'Si te ayuda, agrega columnas con negadas como <b>Y\'</b>.', 'Las filas van en orden binario: 000, 001, … 111. Tu respuesta es la columna F.']],
+  tvab: ['Tabla de verdad de una expresión', ['Las columnas moradas siguen el orden de la expresión: primero lo que está más adentro (negaciones y paréntesis).', 'Evalúa cada columna fila por fila; si te ayuda, agrega más columnas (se permiten negadas como <b>B\'</b>).', 'Las filas van en el orden (A B) = 00, 01, 10, 11. Tu respuesta es la columna F.']],
+  tvdis: ['Diseñar la tabla', ['Lee con cuidado la condición que hace que F valga 1.', 'Si te ayuda, agrega columnas intermedias; en la cabecera se permiten negadas como <b>X\'</b>.', 'Revisa fila por fila, en orden 000 … 111. Tu respuesta es la columna F.']],
+  gx: ['Expresión de un circuito', ['Empieza por las compuertas que reciben las entradas.', 'Escribe en tu hoja la expresión que sale de cada compuerta; esa salida entra a la siguiente.', 'La salida de la última compuerta es F: compárala con las opciones.']],
+  gv: ['Evaluar un circuito', ['Sustituye las entradas que te dan.', 'Evalúa compuerta por compuerta, de izquierda a derecha, y anota en tu hoja el 0 o 1 que sale de cada una.', 'La salida de la última compuerta es F.']],
+  fn: ['Escribir la función del circuito', ['Escribe con las letras A, B y C: <b>\'</b> para negar, <b>*</b> para AND y <b>+</b> para OR, con paréntesis cuando los necesites. Ejemplo: <span class="mono">A\'*B*C + (A*B)\'</span>.', 'Obtén la salida de cada compuerta, de izquierda a derecha; la salida de una compuerta entra a la siguiente.', 'Usa paréntesis cuando una suma entra a un AND o cuando niegas una expresión completa.', 'Cualquier función equivalente cuenta como correcta.']],
+  kmsop: ['Simplificar con el mapa de Karnaugh', ['Observa en el mapa las celdas que valen 1.', 'Forma tus grupos en tu hoja y escribe el término de cada uno.', 'La suma de tus términos es la expresión que debes buscar entre las opciones.']],
+  kmbig: ['Grupos en el mapa de Karnaugh', ['Observa en el mapa las celdas que valen 1.', 'Dibuja en tu hoja los grupos que puedes formar y compara cuántas celdas tiene cada uno.']],
   cnot: ['Contar inversores', ['Un inversor (NOT) es un triángulo con un círculo en la punta.', 'Recorre el dibujo entrada por entrada y cuenta cada uno una sola vez.']],
   mstar: ['Mintérmino de una compuerta AND', ['Observa qué entradas llegan a la compuerta marcada y si llegan directas o negadas.', 'Una entrada directa vale 1 y una negada vale 0 en ese mintérmino.', 'Forma el número binario X Y Z (X es el bit más significativo) y conviértelo a decimal.']],
   mnum: ['Número de mintérmino', ['Escribe la combinación como número binario A B C.', 'A es el bit más significativo: pesa 4; B pesa 2 y C pesa 1.', 'Suma los pesos de los bits que valen 1.']],
   mabc: ['Combinación de un mintérmino', ['Convierte el número del mintérmino a binario con 3 bits.', 'Los pesos son 4, 2 y 1 (A, B y C).']],
-  cgate: ['Contar compuertas', ['En cada circuito cuenta por separado las compuertas AND, OR y NOT (cada triángulo con círculo es un NOT).', 'Suma cada circuito y compara los totales.']]
+  cgate: ['Contar compuertas', ['En cada circuito cuenta por separado las compuertas AND, OR y NOT (cada triángulo con círculo es un NOT).', 'Suma cada circuito y compara los totales.']],
+  fc: ['Prueba de escritorio de un diagrama', ['Empieza en «Inicio» y sigue las flechas.', 'Anota en tu hoja una tabla con el valor de cada variable cada vez que cambia.', 'En un rombo evalúa la condición con los valores actuales y sigue la salida «Sí» o «No».', 'Escribe el valor que llega a «Escribir».']],
+  pseudo: ['Prueba de escritorio de un pseudocódigo', ['Haz en tu hoja una columna por variable.', 'Ejecuta las instrucciones en orden: en cada asignación (←) calcula con los valores actuales y anota el nuevo valor.', 'Escribe el valor que se manda a «Escribir».']],
+  ari: ['Evaluar una expresión de Java', ['Copia la expresión en tu hoja y evalúala paso a paso, respetando paréntesis.', 'Fíjate en el tipo de cada número (int o double) antes de dividir.', 'Escribe solo el número que queda guardado en x.']],
+  dbl: ['Resultado de tipo double', ['Evalúa la expresión paso a paso en tu hoja.', 'Fíjate en el tipo de cada número (int o double) antes de dividir.', 'Como x es double, escribe el resultado con punto decimal (por ejemplo 4.0 o 2.5).']],
+  bool: ['Evaluar una expresión lógica', ['Sustituye los valores de a, b y c.', 'Evalúa primero cada comparación (cada una da true o false) y después combínalas, respetando paréntesis.', 'Responde true o false.']],
+  math: ['Métodos de la clase Math', ['Identifica qué hace el método y con qué valor se llama.', 'Si el método devuelve un double, escribe el resultado con punto decimal (por ejemplo 9.0).']],
+  loop: ['Seguir un ciclo', ['Haz en tu hoja una tabla con una fila por vuelta del ciclo.', 'En cada vuelta revisa primero la condición; si se cumple, ejecuta el cuerpo y actualiza las variables.', 'Cuando la condición ya no se cumple, el ciclo termina: escribe lo que se imprime.']]
 };
 const hlpHTML = q => { const [t, L] = HELP[q.hlp]; return `<span class="hlp-w"><button type="button" class="hlp-btn" data-hlp="${q.id}" aria-expanded="false" aria-controls="hlp-${q.id}"><i class="bi bi-question-circle-fill me-1"></i>Ayuda</button><span class="hlp-pop" id="hlp-${q.id}" role="dialog" aria-label="${esc(t)}" hidden><b class="d-block mb-1"><i class="bi bi-lightbulb-fill me-1"></i>${t}</b><ol>${L.map(x => `<li>${x}</li>`).join('')}</ol>${procKind(q) ? '<span class="d-block small mt-1"><b>Recuerda:</b> el procedimiento es obligatorio.</span>' : ''}<button type="button" class="hlp-x" data-hlpx aria-label="Cerrar ayuda">×</button></span></span>`; };
 const hlpClose = () => document.querySelectorAll('.hlp-pop:not([hidden])').forEach(p => { p.hidden = true; const b = document.querySelector(`[data-hlp="${p.id.slice(4)}"]`); if (b) b.setAttribute('aria-expanded', 'false'); });
@@ -2135,7 +2415,7 @@ function cfgExamenCard(p) {
   return `<div class="col-lg-6"><div class="nav-card h-100"><div class="d-flex align-items-center gap-2 mb-3"><i class="bi bi-sliders2-vertical fs-5 text-primary"></i><h2 class="h6 fw-bold mb-0">Configuración · ${EXAMS[p].titulo}</h2></div>
     <label class="form-label small fw-bold" for="np-${p}">Preguntas habilitadas <span class="text-muted fw-normal">(de 1 a ${av}; tope ${CFG.MAX_PREG})</span></label>
     <input type="number" class="form-control mb-1" id="np-${p}" min="1" max="${av}" value="${n}" inputmode="numeric" autocomplete="off">
-    <div class="small text-muted mb-3">Aplica igual a los tipos A y B. La calificación siempre sale sobre 10 con regla de tres: aciertos ÷ preguntas habilitadas × 10. Quien ya está contestando conserva sus preguntas.</div>
+    <div class="small text-muted mb-3">Aplica igual a los tipos A, B y C. La calificación siempre sale sobre 10 con regla de tres: aciertos ÷ preguntas habilitadas × 10. Quien ya está contestando conserva sus preguntas.</div>
     <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" id="co-${p}" ${on ? 'checked' : ''} data-cotoggle="${p}"><label class="form-check-label fw-bold small" for="co-${p}">Activar fecha y hora de cierre</label></div>
     <input type="datetime-local" class="form-control mb-1" id="cd-${p}" value="${toLocalInput(c['cierre' + p])}" ${on ? '' : 'disabled'}>
     <div class="small text-muted mb-3">Con la fecha activa, el examen se cierra y se entrega en automático a esa hora (hora de tu equipo) y ya no admite alumnos nuevos. Sin fecha, o desactivada, cada alumno tiene ${CFG.DURACION_MIN / 60} horas desde que inicia.</div>
@@ -2190,7 +2470,7 @@ async function saveClave(p) {
 document.addEventListener('keydown', e => { const i = e.target.closest && e.target.closest('[data-clave-input]'); if (i && e.key === 'Enter') { e.preventDefault(); saveClave(+i.dataset.claveInput); } });
 function adPrev() {
   const secs = EXAMS[AD.pvP].secs, ex = buildExam(AD.pvP, AD.pvT, AD.pvSeed, effN(AD.cfg && AD.cfg['preguntas' + AD.pvP], availOf(AD.pvP))), { html } = questionsHTML(ex, secs, { p: 'pv', key: true });
-  $('#ad-body').innerHTML = `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-2 align-items-center"><b class="me-2"><i class="bi bi-eye-fill me-1 text-primary"></i>Vista previa con respuestas</b>${[1, 2].map(p => `<button class="btn-chip ${AD.pvP === p ? 'on' : ''}" data-pvp="${p}">Parcial ${p}</button>`).join('')}${['A', 'B'].map(t => `<button class="btn-chip ${AD.pvT === t ? 'on' : ''}" style="--c:#0891b2" data-pvt="${t}">Tipo ${t}</button>`).join('')}<button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold ms-auto" data-pvnew><i class="bi bi-shuffle me-1"></i>Otra muestra al azar</button></div><div class="small text-muted mt-2">Así lo ve un alumno (${ex.length} preguntas); la respuesta correcta aparece marcada. No se guarda nada.</div></div><div style="max-width:860px;margin:auto">${html}</div>`;
+  $('#ad-body').innerHTML = `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-2 align-items-center"><b class="me-2"><i class="bi bi-eye-fill me-1 text-primary"></i>Vista previa con respuestas</b>${[1, 2].map(p => `<button class="btn-chip ${AD.pvP === p ? 'on' : ''}" data-pvp="${p}">Parcial ${p}</button>`).join('')}${['A', 'B', 'C'].map(t => `<button class="btn-chip ${AD.pvT === t ? 'on' : ''}" style="--c:#0891b2" data-pvt="${t}">Tipo ${t}</button>`).join('')}<button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold ms-auto" data-pvnew><i class="bi bi-shuffle me-1"></i>Otra muestra al azar</button></div><div class="small text-muted mt-2">Así lo ve un alumno (${ex.length} preguntas); la respuesta correcta aparece marcada. No se guarda nada.</div></div><div style="max-width:860px;margin:auto">${html}</div>`;
 }
 document.addEventListener('click', e => {
   const p = e.target.closest('[data-pvp]'); if (p) { AD.pvP = +p.dataset.pvp; adPrev(); }
@@ -2313,7 +2593,7 @@ window.addEventListener('beforeunload', e => { if (examActive || (S && S.result 
 /* ===== Arranque ===== */
 $('#btn-prof-movil').onclick = () => show('clave');
 (function init() {
-  $('#d-dur').textContent = CFG.DURACION_MIN;
+  { const dd = $('#d-dur'); if (dd) dd.textContent = CFG.DURACION_MIN; }
   let sess = null; try { sess = JSON.parse(SS.get('eq_sess') || 'null'); } catch (e) { }
   if (sess && sess.role === 'admin' && sess.token) { ADMIN = sess.token; openAdmin(); }
   else if (MOVIL && !(S && S.fin)) { show('movil'); }                                        // celular o tableta: solo el profesor puede entrar
