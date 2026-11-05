@@ -137,6 +137,64 @@
     .rv-note { font-size:.82rem; color:#b91c1c; background:#fff5f5; border-left:4px solid #e03131; border-radius:8px; padding:.3rem .6rem; margin-top:.3rem; }
     .proc.rvp { border-style:solid; border-color:#ddd6fe; } .rvp-h { font-weight:800; color:#5b21b6; font-size:.88rem; padding:.45rem .8rem 0; }
     .rv-circ svg { max-width:100%; height:auto; }
+    /* Hoja de procedimiento */
+    .proc { margin-top:.7rem; border:2px dashed #c4b5fd; border-radius:14px; background:#faf8ff; }
+    .proc > summary { cursor:pointer; padding:.5rem .8rem; font-weight:800; color:#5b21b6; font-size:.92rem; list-style:none; }
+    .proc > summary::-webkit-details-marker { display:none; }
+    .proc > summary::after { content:'\25BE'; float:right; transition:transform .2s; } .proc[open] > summary::after { transform:rotate(180deg); }
+    .proc > summary span { font-weight:600; color:#64748b; font-size:.8rem; }
+    .proc-b { padding:.2rem .8rem .8rem; overflow-x:auto; }
+    .pc-step { font-size:.86rem; color:#334155; margin:.5rem 0 .3rem; }
+    .pc-tbl { border-collapse:separate; border-spacing:4px; font-family:'Courier New',monospace; text-align:center; }
+    .pc-tbl th { background:#1e293b; color:#fff; padding:.3rem .6rem; border-radius:8px; font:700 .78rem 'Segoe UI',Arial,sans-serif; white-space:nowrap; }
+    .pc-tbl td { padding:0; vertical-align:middle; } .pc-tbl td.op { font-weight:800; color:#475569; padding:0 .3rem; white-space:nowrap; }
+    .pc-tbl td.dig { font-weight:800; font-size:1.15rem; min-width:2.1rem; }
+    .pc-tbl tr.res td { border-top:3px solid #334155; padding-top:4px; } .pc-tbl tr.carry th { background:#7c3aed; } .pc-tbl tr.res th { background:#e03131; }
+    .pc-tbl tr.sum td { padding-top:6px; } .pc-tbl th.e { background:transparent; } .pc-tbl th.pl { background:transparent; color:#334155; font:800 1.2rem 'Courier New',monospace; text-align:right; }
+    .pc { width:2.4rem; height:2.3rem; text-align:center; font:800 1.05rem 'Courier New',monospace; border:2px solid #cbd5e1; border-radius:9px; background:#fff; color:#0f172a; }
+    .pc:focus { border-color:var(--vio); outline:3px solid rgba(124,58,237,.25); } .pc.filled { border-color:#a78bfa; background:#f5f3ff; }
+    .pc.ph { width:7.2rem; font-size:.9rem; font-weight:700; text-transform:uppercase; } .pc.ph::placeholder { text-transform:none; font-weight:500; color:#94a3b8; }
+    .km th.pth { background:#5b21b6; padding:.2rem; } .km td.pcol { background:#faf8ff; border-color:#ddd6fe; }
+    .pc-bar { display:flex; flex-wrap:wrap; gap:.4rem; align-items:center; margin:.3rem 0 .2rem; }
+    .pc-btn { border:2px solid #7c3aed; color:#6d28d9; background:#fff; border-radius:999px; font-weight:800; font-size:.8rem; padding:.2rem .7rem; }
+    .pc-btn:hover { background:#f5f3ff; } .pc-btn.del { border-color:#94a3b8; color:#475569; }
+    .pc-tip { font-size:.8rem; color:#475569; }
+    /* Revisión (panel): verde = bien, rojo = mal, con lo esperado debajo */
+    .pcv { display:inline-flex; flex-direction:column; align-items:center; justify-content:center; min-width:2.2rem; min-height:2.2rem; padding:.1rem .3rem; border-radius:9px; border:2px solid #cbd5e1; background:#fff; font:800 1rem 'Courier New',monospace; line-height:1.05; }
+    .pcv small { font-size:.68rem; color:#166534; font-weight:800; } .pcv.big { min-width:2.6rem; font-size:1.15rem; }
+    .pcv.ok { background:#dcfce7; border-color:#16a34a; color:#166534; } .pcv.bad { background:#fee2e2; border-color:#e03131; color:#b91c1c; }
+    .pcv.na { background:#f1f5f9; color:#64748b; border-style:dashed; } .pcv.empty { border-style:dashed; border-color:#e2e8f0; }
+
+    .proc { margin-top:.7rem; border:2px solid #c4b5fd; border-radius:14px; background:#faf8ff; }
+    .proc-h { padding:.5rem .8rem 0; font-weight:800; color:#5b21b6; font-size:.92rem; display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; }
+    .proc-h .obl { background:#e03131; color:#fff; font-size:.68rem; font-weight:800; padding:.1rem .5rem; border-radius:999px; text-transform:uppercase; letter-spacing:.03em; }
+    .pst { font-size:.74rem; font-weight:800; padding:.12rem .55rem; border-radius:999px; margin-left:auto; } .pst.ok { background:#dcfce7; color:#166534; } .pst.pend { background:#fff4e0; color:#b45309; }
+    .pc-bar .pst { margin-left:0; }
+    .qn.pp { box-shadow:0 0 0 3px #f08c00 inset; }
+    .gnum { display:inline-flex; width:1.5rem; height:1.5rem; border-radius:50%; background:#7c3aed; color:#fff; font:800 .78rem 'Segoe UI',Arial; align-items:center; justify-content:center; }
+    .pc.px { width:9rem; font-size:.92rem; font-weight:700; text-align:left; padding:0 .45rem; }
+    .gtt td { padding:2px 4px; }
+    .kmp td[data-kmc] { cursor:pointer; } .kmp td.sel { outline:3px solid #7c3aed; outline-offset:-3px; background:#ede9fe; }
+    .kdots { display:flex; gap:2px; justify-content:center; min-height:7px; margin-top:2px; } .kdots i { width:7px; height:7px; border-radius:50%; display:inline-block; }
+    .kmg { display:flex; flex-direction:column; gap:.35rem; margin-top:.4rem; } .kmg-i { display:flex; flex-wrap:wrap; align-items:center; gap:.45rem; border-left:5px solid var(--c); background:#fff; border-radius:10px; padding:.3rem .55rem; }
+    .kmg-n { font-weight:800; color:var(--c); font-size:.85rem; }
+    .pc-btn.off { opacity:.5; }
+    .hlp-w { position:relative; display:inline-block; margin-left:.35rem; vertical-align:middle; }
+    .hlp-btn { border:2px solid #0891b2; color:#0e7490; background:#ecfeff; border-radius:999px; font-weight:800; font-size:.74rem; padding:.08rem .6rem; }
+    .hlp-btn:hover, .hlp-btn[aria-expanded="true"] { background:#0891b2; color:#fff; }
+    .hlp-pop { position:absolute; z-index:30; top:calc(100% + 8px); left:0; width:min(380px, 82vw); background:#0f172a; color:#e2e8f0; border-radius:14px; padding:.75rem .9rem .7rem; box-shadow:0 18px 40px rgba(15,23,42,.35); font-size:.86rem; font-weight:500; line-height:1.4; }
+    .hlp-pop::before { content:''; position:absolute; top:-7px; left:22px; border:7px solid transparent; border-top:0; border-bottom-color:#0f172a; }
+    .hlp-pop b { color:#fff; } .hlp-pop ol { margin:0; padding-left:1.15rem; } .hlp-pop li { margin-bottom:.2rem; }
+    .hlp-x { position:absolute; top:.3rem; right:.5rem; background:none; border:0; color:#94a3b8; font-size:1.2rem; line-height:1; }
+
+    .pc-n { width:4.6rem; } .pc-f, .pc-e { text-align:left; padding:0 .45rem; font:700 .92rem 'Segoe UI',Arial,sans-serif; } .pc-e { font-family:'Courier New',monospace; }
+    .pf-l { display:flex; flex-wrap:wrap; gap:.3rem; } .pf-li { display:inline-flex; flex-direction:column; align-items:center; } .pf-li small { font-size:.62rem; color:#64748b; font-weight:700; }
+    .pf-r { display:flex; flex-wrap:wrap; align-items:flex-end; gap:.45rem; margin:.45rem 0; } .pf-lab { font-weight:800; color:#334155; min-width:7.5rem; max-width:9rem; align-self:center; line-height:1.15; }
+    .pf-c { display:inline-flex; flex-direction:column; } .pf-c small { font-size:.66rem; color:#64748b; font-weight:700; } .pf-eq { font-weight:800; font-size:1.2rem; align-self:center; }
+    .pf-t td.dig { font-family:'Courier New',monospace; font-weight:800; padding:0 .5rem; background:#f1f5f9; border-radius:8px; }
+    .pc.ph { text-transform:none; } .pcv.wide { min-width:8rem; align-items:flex-start; font-family:'Segoe UI',Arial,sans-serif; font-size:.9rem; }
+    .km-wrap { overflow-x:auto; margin:.6rem 0; }
+    .qcard .flex-grow-1 { min-width:0; }
 </style>
 </head>
 <body>
@@ -206,6 +264,7 @@
       <div class="rule"><i class="bi bi-ui-checks-grid"></i><div><b><span id="d-total">30</span> preguntas</b> de opción múltiple y de respuesta abierta (numérica). Cada una vale lo mismo. Te tocará el <b>examen tipo A o tipo B</b> (al azar).</div></div>
       <div class="rule" id="r-tiempo"><i class="bi bi-stopwatch-fill"></i><div>Tienes <b><span id="d-dur"></span> minutos</b> desde que pulsas «Comenzar». Pasado ese tiempo el examen se <b>cierra y se entrega en automático</b> con las respuestas que tengas.</div></div>
       <div class="rule"><i class="bi bi-keyboard-fill"></i><div>En las respuestas abiertas escribe <b>solo el número, sin espacios</b>, con <b>punto decimal</b> y el signo − si hace falta. Redondea a los decimales que indique cada pregunta. Puedes usar calculadora.</div></div>
+      <div class="rule"><i class="bi bi-pencil-square"></i><div>Las preguntas con recuadro <b>«Procedimiento obligatorio»</b> deben llevar su procedimiento completo; sin él <b>no podrás entregar</b> el examen. Usa el botón <b>Ayuda</b> de cada pregunta para ver cómo llenarlo.</div></div>
       <div class="rule"><i class="bi bi-clipboard-x-fill"></i><div>Copiar, pegar, clic derecho e imprimir están <b>bloqueados</b>. Salir de esta pestaña o ventana <b>se registra</b>.</div></div>
       <div class="rule rule-warn" style="background:#fdeaea;border:1px solid #f5b8b8;border-left:5px solid #e03131;border-radius:12px;padding:.55rem .7rem"><i class="bi bi-window-x" style="color:#e03131"></i><div style="color:#c92a2a"><b>Antes de comenzar, cierra toda pestaña o ventana abierta</b> (otras páginas, programas o aplicaciones). Si no lo haces, <b>se contabilizará como apertura de ventanas adicionales</b>.</div></div>
       <div class="rule"><i class="bi bi-arrow-repeat"></i><div>Si se cierra la página por accidente, vuelve a abrirla: tu examen continúa y el tiempo sigue corriendo. Solo hay <b>un intento</b> por número de cuenta: si ya presentaste este examen, el sistema no te dejará hacerlo de nuevo.</div></div>
@@ -330,6 +389,7 @@ const CFG = {
   ENDPOINT: 'https://script.google.com/macros/s/AKfycbxsf17G4Y4BlrDH6yA4MSSf3zZsubKHGKL1fuCnb5yySj6Fj8PTkrXcetJPMNscS1xk/exec',   // URL de tu Apps Script (termina en /exec)
   MATERIA: 'est',                  // 'est' = hojas «Resultados Estadística» y «Config Estadística»
   SYNC_MIN: [2, 4],                // rango (minutos) del envío del avance: cada equipo elige al azar su propio intervalo dentro del rango
+  PROC_OBLIGATORIO: true,          // true: no se puede entregar (con el botón) si una pregunta contestada no tiene su procedimiento completo. No cambia la calificación.
   POLL_S: 30,                      // con más de SALIDAS_CIERRE salidas: cada cuántos segundos se pregunta si el profesor cerró el examen
   PENA_MIN: 5,                     // minutos que se descuentan por CADA salida de la ventana
   SALIDAS_CIERRE: 3,               // con más salidas que estas, el administrador puede cerrar el examen del alumno
@@ -554,14 +614,19 @@ function buildP1(tipo, seed) {
   /* 2 · cálculo (6) */
   const d1 = dataset(rnd, 9, lo, hi), k1 = pick([3, 4, 6, 7], rnd), s1 = sortN(d1);
   qs.push(decQ('tcc', `Ordena de menor a mayor estos 9 datos y escribe el que ocupa la <b>posición ${k1}</b>:${chips(d1)}`, s1[k1 - 1], 0, 'Aplicar'));
+  Object.assign(qs[qs.length - 1], { hlp: 'lst', pf: [{ l: { k: 'o', arr: s1, cat: 'Ordenar los datos', h: 'Escribe los datos ordenados de menor a mayor:' } }] });
   const d2 = dataset(rnd, 10, lo, hi);
   qs.push(decQ('tcc', `Calcula la <b>media aritmética</b> de estos 10 datos:${chips(d2)}`, mean(d2), 1, 'Aplicar', 0.011));
+  Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'm', h: 'Media', cat: 'Media', acc: () => [mean(d2)], tol: 0.051 } }] });
   const d3 = dataset(rnd, 9, lo, hi);
   qs.push(decQ('tcc', `Calcula la <b>mediana</b> de estos 9 datos (primero ordénalos):${chips(d3)}`, medianS(sortN(d3)), 1, 'Aplicar', 0.011));
+  Object.assign(qs[qs.length - 1], { hlp: 'lstcalc', pf: [{ l: { k: 'o', arr: sortN(d3), cat: 'Ordenar los datos', h: 'Escribe los datos ordenados de menor a mayor:' } }, { r: { k: 'p', h: 'Posición del dato central', cat: 'Mediana · posición', acc: () => [5], tol: 0 } }] });
   const d4 = dataset(rnd, 10, lo, hi);
   qs.push(decQ('tcc', `Calcula la <b>mediana</b> de estos 10 datos (primero ordénalos; hay dos datos centrales):${chips(d4)}`, medianS(sortN(d4)), 1, 'Aplicar', 0.011));
+  Object.assign(qs[qs.length - 1], { hlp: 'lstcalc', pf: [{ l: { k: 'o', arr: sortN(d4), cat: 'Ordenar los datos', h: 'Escribe los datos ordenados de menor a mayor:' } }, { r: { k: 'm', h: 'Mediana', cat: 'Mediana · datos centrales', acc: g => [medianS(sortN(d4)), (g('o4') + g('o5')) / 2], tol: 0.051 } }] });
   const dm = dataMode(rnd, 12, lo, Math.min(hi, lo + 30));
   qs.push(decQ('tcc', `Escribe la <b>moda</b> de estos 12 datos:${chips(dm.data)}`, dm.mode, 0, 'Aplicar'));
+  Object.assign(qs[qs.length - 1], { hlp: 'lst', pf: [{ l: { k: 'o', arr: sortN(dm.data), cat: 'Ordenar los datos', h: 'Escribe los datos ordenados de menor a mayor:' } }, { n: { k: 'c', h: '¿Cuántas veces aparece el dato que respondiste?', cat: 'Moda · conteo', acc: () => [dm.data.filter(x => x === dm.mode).length] } }] });
   { // analizar: efecto de un cambio en un dato
     let v; do { v = shuffle(Array.from(new Set(dataset(rnd, 14, lo + 5, hi - 5))), rnd).slice(0, 6); } while (v.length < 6);
     const s = sortN(v), dup = pick(s.slice(1, 5), rnd), arr = shuffle([...v, dup], rnd), cambia = tipo === 'A' ? `se reemplaza el dato mayor (${s[5]}) por ${s[5] * 3}` : `se reemplaza el dato menor (${s[0]}) por 0`;
@@ -573,16 +638,20 @@ function buildP1(tipo, seed) {
   { // Sturges
     let n, kk; do { n = pick(tipo === 'A' ? [40, 60, 80, 120, 200] : [30, 50, 100, 150, 250], rnd); kk = 1 + 3.322 * Math.log10(n); } while (Math.abs(kk - Math.floor(kk) - 0.5) < 0.12);
     qs.push(decQ('fr', `Se tienen <b>n = ${n}</b> datos. Con la regla de Sturges, <span class="num">k = 1 + 3.322·log₁₀(n)</span> (aquí log₁₀(${n}) = ${Math.log10(n).toFixed(4)}). ¿Cuántas clases conviene usar? <span class="text-muted small">Redondea al entero más cercano.</span>`, Math.round(kk), 0, 'Aplicar'));
+    Object.assign(qs[qs.length - 1], { hlp: 'stur', pf: [{ r: { k: 'k', h: 'k sin redondear', cat: 'Sturges', acc: () => [kk], tol: 0.006 } }] });
   }
   { // amplitud
     const kA = ri(rnd, 5, 8), R = ri(rnd, 31, 79), mn = ri(rnd, 10, 40);
     qs.push(decQ('fr', `Los datos van de <b>${mn}</b> (el menor) a <b>${mn + R}</b> (el mayor) y se quieren <b>${kA} clases</b>. Calcula la amplitud de clase <span class="num">A = R / k</span>. <span class="text-muted small">Redondea hacia arriba al entero.</span>`, Math.ceil(R / kA), 0, 'Aplicar'));
+    Object.assign(qs[qs.length - 1], { hlp: 'amp', pf: [{ r: { k: 'R', h: 'Rango R', cat: 'Amplitud · rango', acc: () => [R], tol: 0 } }, { r: { k: 'A', h: 'A sin redondear', cat: 'Amplitud · división', acc: g => [R / kA, g('Rr') / kA], tol: 0.011 } }] });
   }
   const T = freqTable(rnd, tipo), tab = tbl(['Clase', 'Frecuencia (f)'], T.cl.map(c => [c.lab, c.f]));
   { const j = pick([2, 3], rnd), c = T.cl[j];
     qs.push(decQ('fr', `Con esta tabla de frecuencias, ¿cuál es la <b>frecuencia acumulada (F)</b> de la clase <b>${c.lab}</b>?${tab}`, sum(T.f.slice(0, j + 1)), 0, 'Aplicar'));
+    Object.assign(qs[qs.length - 1], { hlp: 'tbl', pf: [{ t: { k: 't', h: 'Completa en la tabla la columna que necesitas:', cat: 'Frecuencias', nosum: true, given: [{ h: 'Clase', v: T.cl.map(c => c.lab) }, { h: 'f', v: T.f }], cand: [{ id: 'F', n: 'F acumulada', v: T.f.map((_, i) => sum(T.f.slice(0, i + 1))) }, { id: 'fr', n: 'f relativa', v: T.f.map(x => x / T.n) }], tol: 0.006 } }] });
     const j2 = pick([0, 1, 4].filter(x => x !== j), rnd), c2 = T.cl[j2];
-    qs.push(decQ('fr', `En la misma tabla (total <b>n = ${T.n}</b>), calcula la <b>frecuencia relativa</b> de la clase <b>${c2.lab}</b>. <span class="text-muted small">Escríbela como número decimal, no como porcentaje.</span>${tab}`, T.f[j2] / T.n, 2, 'Aplicar', 0.0051)); }
+    qs.push(decQ('fr', `En la misma tabla (total <b>n = ${T.n}</b>), calcula la <b>frecuencia relativa</b> de la clase <b>${c2.lab}</b>. <span class="text-muted small">Escríbela como número decimal, no como porcentaje.</span>${tab}`, T.f[j2] / T.n, 2, 'Aplicar', 0.0051));
+    Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'r', h: 'Frecuencia relativa', cat: 'Frecuencia relativa', acc: () => [T.f[j2] / T.n], tol: 0.0051 } }] }); }
 
   /* 4 · gráficas (6) */
   const G = freqTable(rnd, tipo === 'A' ? 'B' : 'A'), Gt = tbl(['Clase', 'Frecuencia (f)'], G.cl.map(c => [c.lab, c.f])), cls = G.cl.map(c => ({ lab: c.lab, f: c.f })), marks = G.cl.map(c => c.mark);
@@ -594,7 +663,7 @@ function buildP1(tipo, seed) {
     qs.push(mcQ('gr', `Con esta tabla se construye un <b>histograma</b>. ¿Cuál de las gráficas lo representa correctamente?${Gt}`, fig(good), alt.map(fig), rnd, 'Analizar', true));
   }
   const H2 = freqTable(rnd, tipo), cls2 = H2.cl.map(c => ({ lab: c.lab, f: c.f })), jj = pick([0, 1, 3, 4], rnd);
-  qs.push(decQ('gr', `Observa el histograma. ¿Cuál es la <b>frecuencia</b> de la clase <b>${H2.cl[jj].lab}</b>?${fig(svgHist(cls2))}`, H2.f[jj], 0, 'Aplicar'));
+  qs.push(decQ('gr', `Observa el histograma. ¿Cuál es la <b>frecuencia</b> de la clase <b>${H2.cl[jj].lab}</b>?${fig(svgHist(cls2))}`, H2.f[jj], 0, 'Aplicar')); qs[qs.length - 1].hlp = 'hist';
   { const mi = H2.f.indexOf(Math.max(...H2.f)), others = shuffle(H2.cl.filter((_, i) => i !== mi), rnd).slice(0, 3);
     qs.push(mcQ('gr', `En el mismo histograma, ¿cuál es la <b>clase modal</b> (la de mayor frecuencia)?${fig(svgHist(cls2))}`, H2.cl[mi].lab, others.map(c => c.lab), rnd, 'Comprender')); }
   { // 4.4 polígono de frecuencias
@@ -617,11 +686,17 @@ function buildP1(tipo, seed) {
   /* 5 · dispersión (7) */
   bankPick(BANK1.di[tipo], 3, rnd).forEach(b => qs.push(bankQ('di', b, rnd)));
   const mu1 = ri(rnd, 12, 40), s5 = dataDev(rnd, 5, mu1, 6), dev5 = s5.map(x => x - mu1);
+  const cand5 = [{ id: 'd', n: 'xᵢ − μ', v: dev5 }, { id: 'a', n: '|xᵢ − μ|', v: dev5.map(Math.abs) }, { id: 'c', n: '(xᵢ − μ)²', v: dev5.map(x => x * x) }];
+  const tb5 = (min) => ({ t: { k: 't', h: 'Haz las columnas que necesites con los 5 datos:', cat: 'Desviaciones', min, given: [{ h: 'xᵢ', v: s5 }], cand: cand5 } });
   qs.push(decQ('di', `Para esta <b>población</b> de 5 datos (media μ = ${mu1}) calcula la <b>desviación media</b>:${chips(s5)}`, sum(dev5.map(Math.abs)) / 5, 2, 'Aplicar', 0.011));
+  Object.assign(qs[qs.length - 1], { hlp: 'tblcalc', pf: [tb5(1), { r: { k: 'm', h: 'Desviación media', cat: 'Desviación media', acc: (g, c) => [sum(dev5.map(Math.abs)) / 5, c.sums.a / 5], tol: 0.011 } }] });
   qs.push(decQ('di', `Con los mismos 5 datos (población, μ = ${mu1}), calcula la <b>varianza poblacional</b> σ².`, sum(dev5.map(x => x * x)) / 5, 2, 'Aplicar', 0.011));
+  Object.assign(qs[qs.length - 1], { hlp: 'tblcalc', pf: [tb5(1), { r: { k: 'v', h: 'Varianza σ²', cat: 'Varianza poblacional', acc: (g, c) => [sum(dev5.map(x => x * x)) / 5, c.sums.c / 5], tol: 0.011 } }] });
   qs.push(decQ('di', `Con los mismos 5 datos (población, μ = ${mu1}), calcula la <b>desviación estándar poblacional</b> σ.`, Math.sqrt(sum(dev5.map(x => x * x)) / 5), 2, 'Aplicar', 0.011));
+  Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 's', h: 'Desviación estándar σ', cat: 'Desviación estándar', acc: () => [Math.sqrt(sum(dev5.map(x => x * x)) / 5)], tol: 0.011 } }] });
   const mu2 = ri(rnd, 14, 45), s6 = dataDev(rnd, 6, mu2, 6), dev6 = s6.map(x => x - mu2);
   qs.push(decQ('di', `Estos 6 datos son una <b>muestra</b> (media x̄ = ${mu2}). Calcula la <b>varianza muestral</b> s² (divide entre n − 1):${chips(s6)}`, sum(dev6.map(x => x * x)) / 5, 2, 'Aplicar', 0.011));
+  Object.assign(qs[qs.length - 1], { hlp: 'tblcalc', pf: [{ t: { k: 't', h: 'Haz las columnas que necesites con los 6 datos:', cat: 'Desviaciones', given: [{ h: 'xᵢ', v: s6 }], cand: [{ id: 'd', n: 'xᵢ − x̄', v: dev6 }, { id: 'a', n: '|xᵢ − x̄|', v: dev6.map(Math.abs) }, { id: 'c', n: '(xᵢ − x̄)²', v: dev6.map(x => x * x) }] } }, { r: { k: 'v', h: 'Varianza s²', cat: 'Varianza muestral', acc: (g, c) => [sum(dev6.map(x => x * x)) / 5, c.sums.c / 5], tol: 0.011 } }] });
   return qs;
 }
 
@@ -728,9 +803,15 @@ function buildP2(tipo, seed) {
     qs.push(mcQ('pe', `Observa el diagrama de dispersión. ¿Qué valor del coeficiente de Pearson es el más probable?${fig(svgScatter(sc.pts))}`, `<i>r</i> ≈ ${val[kind]}`, pool.filter(v => v !== val[kind]).map(v => `<i>r</i> ≈ ${v}`), rnd, 'Comprender'));
   }
   const P = pairData(rnd), n = P.X.length, sx = sum(P.X), sy = sum(P.Y), sxy = sum(P.X.map((x, i) => x * P.Y[i])), sx2 = sum(P.X.map(x => x * x)), tabP = tbl(['x', 'y'], P.X.map((x, i) => [x, P.Y[i]]));
+  const sy2 = sum(P.Y.map(y => y * y)), candP = [{ id: 'xy', n: 'x·y', v: P.X.map((x, i) => x * P.Y[i]) }, { id: 'x2', n: 'x²', v: P.X.map(x => x * x) }, { id: 'y2', n: 'y²', v: P.Y.map(y => y * y) }];
+  const tbP = (min, sums) => ({ t: { k: 't', h: 'Haz las columnas que necesites con los 5 pares:', cat: 'Tabla de Pearson', min, given: [{ h: 'x', v: P.X, sum: sums }, { h: 'y', v: P.Y, sum: sums }], cand: candP } });
+  const own = (g, c) => ({ sx: g('tg0'), sy: g('tg1'), sxy: c.sums.xy, sx2: c.sums.x2, sy2: c.sums.y2 });
   qs.push(decQ('pe', `Con estos 5 pares de datos calcula la suma de los productos <b>Σxy</b>:${tabP}`, sxy, 0, 'Aplicar'));
+  Object.assign(qs[qs.length - 1], { hlp: 'tbl', pf: [tbP(1, false)] });
   qs.push(decQ('pe', `Con los mismos datos calcula la <b>pendiente</b> de la recta de regresión, <span class="num">m = (n·Σxy − Σx·Σy) / (n·Σx² − (Σx)²)</span>.${tabP}`, (n * sxy - sx * sy) / (n * sx2 - sx * sx), 2, 'Aplicar', 0.021, true));
+  Object.assign(qs[qs.length - 1], { hlp: 'tblcalc', pf: [tbP(2, true), { r: { k: 'm', h: 'Pendiente m', cat: 'Pendiente', acc: (g, c) => { const o = own(g, c); return [(n * sxy - sx * sy) / (n * sx2 - sx * sx), (n * o.sxy - o.sx * o.sy) / (n * o.sx2 - o.sx * o.sx)]; }, tol: 0.021 } }] });
   qs.push(decQ('pe', `Con los mismos datos calcula el <b>coeficiente de correlación de Pearson</b> <i>r</i>. <span class="text-muted small">Redondea a 2 decimales.</span>${tabP}`, P.r, 2, 'Aplicar', 0.021, true));
+  Object.assign(qs[qs.length - 1], { hlp: 'pear', pf: [tbP(3, true), { r: { k: 'r', h: 'Coeficiente r', cat: 'Pearson', acc: (g, c) => { const o = own(g, c); return [P.r, (n * o.sxy - o.sx * o.sy) / Math.sqrt((n * o.sx2 - o.sx * o.sx) * (n * o.sy2 - o.sy * o.sy))]; }, tol: 0.021 } }] });
   { const ok = `${sentido(P.r)} y ${strength(P.r)}`, st = ['muy fuerte', 'fuerte', 'moderada', 'débil'], ss = ['positiva', 'negativa'], all = []; ss.forEach(a => st.forEach(b => { if (`${a} y ${b}` !== ok) all.push(`${a} y ${b}`); }));
     const near = all.filter(x => x.startsWith(sentido(P.r))), far = all.filter(x => !x.startsWith(sentido(P.r)));
     const bad = shuffle(near, rnd).slice(0, 2).concat(shuffle(far, rnd).slice(0, 1));
@@ -750,9 +831,13 @@ function buildP2(tipo, seed) {
   const meth = `Usa la posición <b>p·(n + 1)</b> con los datos ordenados: Q₁ en la posición (n + 1)/4, Q₂ en (n + 1)/2 y Q₃ en 3(n + 1)/4.`;
   const dq = `${chips(Q.data)}`;
   qs.push(decQ('cu', `Para estos ${nq} datos calcula el <b>primer cuartil Q₁</b>. ${meth}${dq}`, Q.q1, 0, 'Aplicar'));
+  Object.assign(qs[qs.length - 1], { hlp: 'lstcalc', pf: [{ l: { k: 'o', arr: sortN(Q.data), cat: 'Ordenar los datos', h: 'Escribe los datos ordenados de menor a mayor:' } }, { r: { k: 'p', h: 'Posición de Q₁', cat: 'Cuartiles · posición', acc: () => [(nq + 1) / 4], tol: 0 } }] });
   qs.push(decQ('cu', `Con los mismos ${nq} datos calcula el <b>segundo cuartil Q₂</b> (la mediana).${dq}`, Q.q2, 0, 'Aplicar'));
+  Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'p', h: 'Posición de Q₂', cat: 'Cuartiles · posición', acc: () => [(nq + 1) / 2], tol: 0 } }] });
   qs.push(decQ('cu', `Con los mismos ${nq} datos calcula el <b>tercer cuartil Q₃</b>.${dq}`, Q.q3, 0, 'Aplicar'));
+  Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'p', h: 'Posición de Q₃', cat: 'Cuartiles · posición', acc: () => [3 * (nq + 1) / 4], tol: 0 } }] });
   qs.push(decQ('cu', `Con los mismos ${nq} datos calcula el <b>rango intercuartílico</b> RIC = Q₃ − Q₁.${dq}`, Q.q3 - Q.q1, 0, 'Aplicar'));
+  Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'r', h: 'RIC', cat: 'Rango intercuartílico', acc: () => [Q.q3 - Q.q1], tol: 0 } }] });
   { const lo = Math.floor(Q.mn / 10) * 10, hi = Math.ceil(Q.mx / 10) * 10;
     qs.push(mcQ('cu', `¿Cuál de los diagramas de caja corresponde a los mismos ${nq} datos? Todos tienen la misma escala.${dq}`, fig(svgBox(bx.ok, lo, hi)), bx.alts.map(a => fig(svgBox(a, lo, hi))), rnd, 'Analizar', true)); }
   { // atípicos de Tukey
@@ -781,14 +866,14 @@ function buildP2(tipo, seed) {
     else { const o = fracOpts(N - b, N, [[b, N], [N - b, N - 1], [r, N]]); qs.push(mcQ('pr', `Una urna tiene <b>${r} bolas rojas, ${b} azules y ${v} verdes</b>. Se saca una al azar. ¿Cuál es la probabilidad de que <b>no sea azul</b>?`, o.ok, o.bad, rnd, 'Aplicar')); }
   }
   { const p = ri(rnd, 3, 17) * 5 / 100, what = pick([['llueva mañana', 'NO llueva mañana'], ['un alumno apruebe el examen', 'un alumno NO apruebe el examen'], ['un foco salga defectuoso', 'un foco NO salga defectuoso']], rnd);
-    qs.push(decQ('pr', `La probabilidad de que ${what[0]} es <b>${p.toFixed(2)}</b>. ¿Cuál es la probabilidad de que ${what[1]}?`, 1 - p, 2, 'Aplicar', 0.0051)); }
+    qs.push(decQ('pr', `La probabilidad de que ${what[0]} es <b>${p.toFixed(2)}</b>. ¿Cuál es la probabilidad de que ${what[1]}?`, 1 - p, 2, 'Aplicar', 0.0051)); Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'p', h: 'Probabilidad', cat: 'Probabilidad · complemento', acc: () => [1 - p], tol: 0.0051 } }] }); }
   { const pa = ri(rnd, 30, 60) / 100, pb = ri(rnd, 20, 50) / 100, pab = ri(rnd, 5, 15) / 100;
-    qs.push(decQ('pr', `Se sabe que P(A) = <b>${pa.toFixed(2)}</b>, P(B) = <b>${pb.toFixed(2)}</b> y P(A ∩ B) = <b>${pab.toFixed(2)}</b>. Calcula P(A ∪ B).`, pa + pb - pab, 2, 'Aplicar', 0.0051)); }
+    qs.push(decQ('pr', `Se sabe que P(A) = <b>${pa.toFixed(2)}</b>, P(B) = <b>${pb.toFixed(2)}</b> y P(A ∩ B) = <b>${pab.toFixed(2)}</b>. Calcula P(A ∪ B).`, pa + pb - pab, 2, 'Aplicar', 0.0051)); Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'p', h: 'P(A ∪ B)', cat: 'Probabilidad · unión', acc: () => [pa + pb - pab], tol: 0.0051 } }] }); }
   { // contingencia
     const [r1, r2] = pick([[40, 60], [60, 40], [20, 80], [80, 20]], rnd), p1 = ri(rnd, 6, 17) * 5 / 100, p2 = ri(rnd, 6, 17) * 5 / 100, a1 = Math.round(p1 * r1), a2 = Math.round(p2 * r2);
     const T = tbl(['', 'Aprobó', 'Reprobó', 'Total'], [['Hombres', a1, r1 - a1, r1], ['Mujeres', a2, r2 - a2, r2], ['Total', a1 + a2, 100 - a1 - a2, 100]]);
-    qs.push(decQ('pr', `En un grupo de 100 estudiantes se obtuvo esta tabla. Si se elige un estudiante al azar, ¿cuál es la probabilidad de que sea <b>mujer y haya aprobado</b>?${T}`, a2 / 100, 2, 'Aplicar', 0.0051));
-    qs.push(decQ('pr', `Con la misma tabla, si se elige al azar a una <b>mujer</b>, ¿cuál es la probabilidad de que <b>haya aprobado</b>? Es decir, P(Aprobó | Mujer).${T}`, a2 / r2, 2, 'Aplicar', 0.0051));
+    qs.push(decQ('pr', `En un grupo de 100 estudiantes se obtuvo esta tabla. Si se elige un estudiante al azar, ¿cuál es la probabilidad de que sea <b>mujer y haya aprobado</b>?${T}`, a2 / 100, 2, 'Aplicar', 0.0051)); Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'p', h: 'Probabilidad', cat: 'Probabilidad · tabla de contingencia', acc: () => [a2 / 100], tol: 0.0051 } }] });
+    qs.push(decQ('pr', `Con la misma tabla, si se elige al azar a una <b>mujer</b>, ¿cuál es la probabilidad de que <b>haya aprobado</b>? Es decir, P(Aprobó | Mujer).${T}`, a2 / r2, 2, 'Aplicar', 0.0051)); Object.assign(qs[qs.length - 1], { hlp: 'calc', pf: [{ r: { k: 'p', h: 'Probabilidad', cat: 'Probabilidad · condicional', acc: () => [a2 / r2], tol: 0.0051 } }] });
   }
   { // Venn
     const R = { union: ['A ∪ B', 'unión'], inter: ['A ∩ B', 'intersección'], onlyA: ['solo A (A − B)', ''], onlyB: ['solo B (B − A)', ''], comp: ['(A ∪ B)′', ''] }, ks = tipo === 'A' ? ['inter', 'onlyA', 'comp'] : ['union', 'comp', 'onlyB'], k = pick(ks, rnd);
@@ -1017,26 +1102,184 @@ $('#form-datos').addEventListener('submit', async e => {
   }
   if (res.resumed) {          // el servidor ya tenía este examen en curso: se continúa con el mismo tipo, reloj y respuestas
     const pr = res.progreso || {}, loc = loadLocal(PARCIAL, cuenta), mismo = loc && !loc.fin && (loc.seed >>> 0) === (res.seed >>> 0);
-    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: Object.assign({}, pr.a || {}, mismo ? loc.answers : {}), flags: Object.assign({}, pr.f || {}, mismo ? loc.flags : {}), salidas: Math.max(res.salidas || 0, mismo ? loc.salidas || 0 : 0), n: effN(res.total || (mismo ? loc.n : 0), availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, fin: false, sent: false, result: null, sid: res.sid };
+    S = { parcial: PARCIAL, nombre: res.nombre || nombre, cuenta, grupo: res.grupo || grupo, tipo: res.tipo, seed: res.seed >>> 0, start: Date.parse(res.inicio) || Date.now(), inicioISO: res.inicio, answers: Object.assign({}, pr.a || {}, mismo ? loc.answers : {}), flags: Object.assign({}, pr.f || {}, mismo ? loc.flags : {}), proc: Object.assign({}, pr.p || {}, mismo ? loc.proc || {} : {}), salidas: Math.max(res.salidas || 0, mismo ? loc.salidas || 0 : 0), n: effN(res.total || (mismo ? loc.n : 0), availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, fin: false, sent: false, result: null, sid: res.sid };
     save(); startExam(true); if (res.cerrar) { toast('Tu profesor(a) cerró tu examen: tus respuestas se enviaron.', 'bi-lock-fill', 5000); finish('admin'); } return;
   }
-  S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.parse(res.inicio) || nowMs(), inicioISO: res.inicio || inicio, n: effN(res.preguntas, availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, answers: {}, flags: {}, salidas: 0, fin: false, sent: false, result: null, sid: res.sid };
+  S = { parcial: PARCIAL, nombre, cuenta, grupo, tipo, seed, start: Date.parse(res.inicio) || nowMs(), inicioISO: res.inicio || inicio, n: effN(res.preguntas, availOf(PARCIAL)), cierre: res.cierre ? Date.parse(res.cierre) : 0, answers: {}, flags: {}, proc: {}, salidas: 0, fin: false, sent: false, result: null, sid: res.sid };
   save(); startExam(false);
 });
 
 /* ===== Dibujo de preguntas (examen y vista previa del administrador) ===== */
+/* ==========================================================================
+   PROCEDIMIENTO (obligatorio para el alumno; NO cambia la calificación: solo cuenta el resultado final)
+   Cada pregunta de cálculo trae su hoja: datos ordenados, tabla con columnas que el alumno nombra y llena,
+   y renglones «fórmula → sustitución → resultado». La fórmula la escribe el alumno (la página no la muestra,
+   para no adelantar respuestas de las preguntas de teoría). El panel revisa sustitución y resultado.
+   Una casilla vale si coincide con el valor correcto o con lo que sale de los datos que el propio alumno escribió antes.
+   ========================================================================== */
+const PROC_RE = { n: /[^0-9.\-]/g, e: /[^0-9.,+\-−*×·/÷^√()\[\] ]/g, f: /[<>]/g };
+const PROC_WARN = { n: 'Escribe solo el número (usa punto decimal).', e: 'En la sustitución usa números, + − × ÷ ^ √ y paréntesis.', f: '' };
+const pget = id => (S && S.proc && S.proc[id]) || {};
+const procKind = q => q.pf ? 'pf' : '';
+const nv = s => { const x = parseFloat(String(s ?? '').replace(/−/g, '-').replace(',', '.')); return Number.isFinite(x) ? x : NaN; };
+const fmtN = x => Number.isFinite(x) ? (Number.isInteger(x) ? String(x) : String(+x.toFixed(4))) : '—';
+/* Evalúa la sustitución escrita por el alumno: números, + − × ÷ ^ √ y paréntesis */
+function evx(src) {
+  let s = String(src || '').replace(/\s+/g, '').replace(/−/g, '-').replace(/[×·*]/g, '*').replace(/÷/g, '/').replace(/\[/g, '(').replace(/\]/g, ')').replace(/,/g, '.'), i = 0;
+  if (!s) return NaN;
+  const bad = () => { throw 0; };
+  const sum = () => { let a = prod(); while (s[i] === '+' || s[i] === '-') { const o = s[i++], b = prod(); a = o === '+' ? a + b : a - b; } return a; };
+  const prod = () => { let a = pow(); for (; ;) { if (s[i] === '*' || s[i] === '/') { const o = s[i++], b = pow(); a = o === '*' ? a * b : a / b; } else if (s[i] === '(' || s[i] === '√') a = a * pow(); else break; } return a; };
+  const pow = () => { const a = un(); if (s[i] === '^') { i++; return Math.pow(a, pow()); } return a; };
+  const un = () => { if (s[i] === '-') { i++; return -un(); } if (s[i] === '+') { i++; return un(); } if (s[i] === '√') { i++; return Math.sqrt(un()); } return at(); };
+  const at = () => { if (s[i] === '(') { i++; const v = sum(); if (s[i] !== ')') bad(); i++; return v; } const m = /^\d+(\.\d+)?|^\.\d+/.exec(s.slice(i)); if (!m) bad(); i += m[0].length; return parseFloat(m[0]); };
+  try { const v = sum(); return i === s.length ? v : NaN; } catch (e) { return NaN; }
+}
+/* Casilla: input para el alumno, recuadro verde/rojo en la revisión del panel */
+function pcell(id, P, R, k, t, mx, lab, w) {
+  if (!R) { const v = P[k] || ''; return `<input class="pc pc-${t}${v ? ' filled' : ''}" data-pq="${id}" data-pk="${k}" data-pt="${t}" maxlength="${mx}" value="${esc(v)}" ${w ? `style="width:${w}"` : ''} autocomplete="off" spellcheck="false" inputmode="${t === 'n' ? 'decimal' : 'text'}" aria-label="${esc(lab)}" ${t === 'f' ? 'placeholder="Fórmula"' : t === 'e' ? 'placeholder="Sustitución"' : ''}>`; }
+  const v = P[k] || '', r = R[k], cls = r ? (r.ok ? 'ok' : r.na ? 'na' : 'bad') : v ? 'na' : 'empty';
+  return `<span class="pcv ${cls} ${t === 'f' || t === 'e' ? 'wide' : ''}" ${w ? `style="min-width:${w}"` : ''} title="${r && !r.ok && r.exp !== undefined ? 'Esperado: ' + esc(r.exp) : r && r.ok ? 'Correcto' : v ? 'Revisión del profesor(a)' : 'Vacío'}">${v ? esc(v) : (r && !r.ok ? '∅' : '&nbsp;')}${r && !r.ok && r.exp !== undefined ? `<small>${esc(r.exp)}</small>` : ''}</span>`;
+}
+const PF_MAXC = 4;
+/* Recorre la hoja y devuelve las casillas obligatorias y su revisión */
+function pfWalk(q, P) {
+  const cells = [], ctx = { sums: {} }, g = k => nv(P[k]);
+  q.pf.forEach((st, si) => {
+    if (st.l) { const { k, arr, cat } = st.l; arr.forEach((x, i) => cells.push({ k: k + i, cat, acc: [x], tol: 0 })); }
+    if (st.t) {
+      const T = st.t, N = T.given[0].v.length, nc = Math.max(T.min || 1, Math.min(+P[T.k + 'nc'] || T.min || 1, PF_MAXC));
+      T.given.forEach((G, j) => { if (G.sum) cells.push({ k: `${T.k}g${j}`, cat: T.cat + ' · Σ ' + G.h, acc: [G.v.reduce((a, b) => a + b, 0)], tol: 0.011, sum: G.h }); });
+      for (let c = 0; c < nc; c++) {
+        const vals = [...Array(N).keys()].map(i => g(`${T.k}${c}_${i}`));
+        let best = null, bn = -1;                            // a qué cálculo corresponde esta columna (el que más casillas coincide)
+        T.cand.forEach(cd => { const m = vals.filter((v, i) => Number.isFinite(v) && Math.abs(v - cd.v[i]) <= (T.tol ?? 0.011)).length; if (m > bn) { bn = m; best = cd; } });
+        cells.push({ k: `${T.k}h${c}`, hdr: true });
+        for (let i = 0; i < N; i++) cells.push({ k: `${T.k}${c}_${i}`, cat: T.cat + ' · ' + best.n, acc: [best.v[i]], tol: T.tol ?? 0.011 });
+        if (T.nosum) continue;
+        const own = vals.reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0), tru = best.v.reduce((a, b) => a + b, 0);
+        cells.push({ k: `${T.k}s${c}`, cat: T.cat + ' · Σ de la columna', acc: [own, tru], tol: 0.011 });
+        if (Number.isFinite(g(`${T.k}s${c}`))) ctx.sums[best.id] = g(`${T.k}s${c}`);
+      }
+    }
+    if (st.r) { const { k, acc, tol = 0.011, cat } = st.r; const a = acc(g, ctx).filter(Number.isFinite), sub = evx(P[k + 'e']);
+      cells.push({ k: k + 'f', fx: true }); cells.push({ k: k + 'e', cat: cat + ' · sustitución', acc: a, tol, ev: true }); cells.push({ k: k + 'r', cat: cat + ' · resultado', acc: Number.isFinite(sub) ? a.concat(sub) : a, tol }); }
+    if (st.n) { const { k, acc, tol = 0, cat } = st.n; cells.push({ k, cat, acc: acc(g, ctx), tol }); }
+  });
+  return cells;
+}
+function procCheck(q, P, ans) {
+  P = P || {}; const R = {}, ops = {}, notes = [];
+  if (!q.pf) return { R, ops, notes, used: false, done: true };
+  pfWalk(q, P).forEach(c => {
+    const v = P[c.k]; if (v === undefined || v === '') return;
+    if (c.fx || c.hdr) { R[c.k] = { ok: false, na: true }; return; }
+    const x = c.ev ? evx(v) : nv(v), ok = Number.isFinite(x) && c.acc.some(a => Number.isFinite(a) && Math.abs(x - a) <= c.tol + 1e-9);
+    R[c.k] = { ok, exp: c.acc.length ? fmtN(c.acc[0]) : undefined };
+    if (c.ev && !Number.isFinite(x)) notes.push('Una sustitución no se pudo leer como operación: «' + v + '».');
+    const o = ops[c.cat] = ops[c.cat] || { n: 0, ok: 0 }; o.n++; if (ok) o.ok++;
+  });
+  return { R, ops, notes, used: procUsed(P), done: procDone(q, P) };
+}
+const procUsed = P => Object.keys(P || {}).some(k => !/nc$/.test(k) && P[k] !== '');
+function procDone(q, P) {
+  if (!q.pf) return true; P = P || {};
+  const cells = pfWalk(q, P), has = k => P[k] !== undefined && P[k] !== '';
+  return q.pf.every(st => {
+    if (st.l) return st.l.arr.every((_, i) => has(st.l.k + i));
+    if (st.t) { const T = st.t, N = T.given[0].v.length, nc = Math.max(T.min || 1, Math.min(+P[T.k + 'nc'] || T.min || 1, PF_MAXC)); let full = 0; for (let c = 0; c < nc; c++) if (has(`${T.k}h${c}`) && (T.nosum || has(`${T.k}s${c}`)) && [...Array(N).keys()].every(i => has(`${T.k}${c}_${i}`))) full++; return full >= (T.min || 1) && T.given.every((G, j) => !G.sum || has(`${T.k}g${j}`)); }
+    if (st.r) return has(st.r.k + 'f') && has(st.r.k + 'e') && has(st.r.k + 'r');
+    if (st.n) return has(st.n.k);
+    return true;
+  });
+}
+function pfBody(q, P, R) {
+  const id = q.id; let h = '';
+  q.pf.forEach(st => {
+    if (st.l) { const { k, arr, h: t } = st.l; h += `<div class="pc-step">${t}</div><div class="pf-l">${arr.map((_, i) => `<span class="pf-li"><small>${i + 1}</small>${pcell(id, P, R, k + i, 'n', 6, `Dato ordenado ${i + 1}`, '3.3rem')}</span>`).join('')}</div>`; }
+    if (st.t) {
+      const T = st.t, N = T.given[0].v.length, nc = Math.max(T.min || 1, Math.min(+P[T.k + 'nc'] || T.min || 1, PF_MAXC));
+      h += `<div class="pc-step">${T.h}</div><div class="km-wrap"><table class="pc-tbl pf-t"><tr><th class="e"></th>${T.given.map(G => `<th>${G.h}</th>`).join('')}`;
+      for (let c = 0; c < nc; c++) h += `<th class="pth">${R ? pcell(id, P, R, `${T.k}h${c}`, 'f', 24, '', '6rem') : `<input class="pc pc-f ph${P[`${T.k}h${c}`] ? ' filled' : ''}" data-pq="${id}" data-pk="${T.k}h${c}" data-pt="f" maxlength="24" value="${esc(P[`${T.k}h${c}`] || '')}" placeholder="¿Qué calculas?" autocomplete="off" spellcheck="false" aria-label="Cabecera de la columna ${c + 1}">`}</th>`;
+      h += '</tr>';
+      for (let i = 0; i < N; i++) { h += `<tr><td class="op">${i + 1}</td>${T.given.map(G => `<td class="dig">${G.v[i]}</td>`).join('')}`; for (let c = 0; c < nc; c++) h += `<td>${pcell(id, P, R, `${T.k}${c}_${i}`, 'n', 9, `Columna ${c + 1}, renglón ${i + 1}`, '5.2rem')}</td>`; h += '</tr>'; }
+      if (!T.nosum) { h += `<tr class="res"><th>Σ</th>${T.given.map((G, j) => `<td>${G.sum ? pcell(id, P, R, `${T.k}g${j}`, 'n', 9, 'Suma de ' + G.h, '4.4rem') : ''}</td>`).join('')}`;
+        for (let c = 0; c < nc; c++) h += `<td>${pcell(id, P, R, `${T.k}s${c}`, 'n', 10, `Suma de la columna ${c + 1}`, '5.2rem')}</td>`; h += '</tr>'; }
+      h += '</table></div>';
+      if (!R) h += `<div class="pc-bar">${nc < PF_MAXC ? `<button type="button" class="pc-btn" data-pact="tadd" data-pt2="${T.k}" data-pq="${id}"><i class="bi bi-plus-lg me-1"></i>Otra columna</button>` : ''}${nc > (T.min || 1) ? `<button type="button" class="pc-btn del" data-pact="tdel" data-pt2="${T.k}" data-pq="${id}"><i class="bi bi-dash-lg me-1"></i>Quitar última</button>` : ''}<span class="pc-tip">Escribe en la cabecera qué calculas en cada columna y llénala renglón por renglón${T.nosum ? '' : '; al final escribe su suma (Σ)'}.</span></div>`;
+    }
+    if (st.r) { const { k, h: t } = st.r; h += `<div class="pf-r"><span class="pf-lab">${t}</span><span class="pf-c"><small>Fórmula</small>${pcell(id, P, R, k + 'f', 'f', 60, 'Fórmula de ' + t, '10.5rem')}</span><span class="pf-c"><small>Sustitución</small>${pcell(id, P, R, k + 'e', 'e', 80, 'Sustitución de ' + t, '11.5rem')}</span><span class="pf-eq">=</span><span class="pf-c"><small>Resultado</small>${pcell(id, P, R, k + 'r', 'n', 12, 'Resultado de ' + t, '5.4rem')}</span></div>`; }
+    if (st.n) { const { k, h: t } = st.n; h += `<div class="pf-r"><span class="pf-lab">${t}</span>${pcell(id, P, R, k, 'n', 8, t, '4.6rem')}</div>`; }
+  });
+  if (!R && q.pf.some(st => st.r)) h += `<div class="pc-tip mt-1">En la sustitución escribe la operación con tus números (puedes usar + − × ÷ ^ √ y paréntesis); redondea solo al final.</div>`;
+  return h;
+}
+const procBody = (q, P, R) => pfBody(q, P, R);
+function procBlock(q) {
+  if (!q.pf) return '';
+  const P = pget(q.id), d = procDone(q, P);
+  return `<div class="proc"><div class="proc-h"><i class="bi bi-pencil-square me-1"></i>Procedimiento <span class="obl">obligatorio</span><span id="pst-${q.id}" class="pst ${d ? 'ok' : 'pend'}">${d ? '<i class="bi bi-check-circle-fill"></i> Completo' : '<i class="bi bi-exclamation-circle-fill"></i> Pendiente'}</span></div><div class="proc-b" id="pw-${q.id}">${pfBody(q, P, null)}</div></div>`;
+}
+function procRefresh(q) {
+  if (!S || !q || !q.pf) return; const done = procDone(q, pget(q.id)), b = $('#pst-' + q.id);
+  if (b) { b.className = 'pst ' + (done ? 'ok' : 'pend'); b.innerHTML = done ? '<i class="bi bi-check-circle-fill"></i> Completo' : '<i class="bi bi-exclamation-circle-fill"></i> Pendiente'; }
+  const n = $('#qn-' + q.id); if (n) n.classList.toggle('pp', !done && isAns(q));
+}
+document.addEventListener('input', e => {
+  const i = e.target.closest && e.target.closest('input.pc[data-pq]'); if (!i || !S || S.fin) return;
+  const t = i.dataset.pt, raw = i.value, v = raw.replace(PROC_RE[t], '').slice(0, +i.maxLength || 60);
+  if (v !== raw && PROC_WARN[t]) toast(PROC_WARN[t], 'bi-keyboard-fill', 1600);
+  if (i.value !== v) i.value = v;
+  const id = i.dataset.pq; S.proc = S.proc || {}; const P = S.proc[id] = S.proc[id] || {};
+  if (v) P[i.dataset.pk] = v; else delete P[i.dataset.pk];
+  if (!Object.keys(P).length) delete S.proc[id];
+  i.classList.toggle('filled', !!v); save(); procRefresh(EXAM.find(x => String(x.id) === id));
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-pact]'); if (!b || !S || S.fin) return;
+  const id = b.dataset.pq, q = EXAM.find(x => String(x.id) === id); if (!q || !q.pf) return;
+  const T = (q.pf.find(st => st.t && st.t.k === b.dataset.pt2) || {}).t; if (!T) return;
+  S.proc = S.proc || {}; const P = S.proc[id] = S.proc[id] || {}, mn = T.min || 1, nc = Math.max(mn, Math.min(+P[T.k + 'nc'] || mn, PF_MAXC));
+  if (b.dataset.pact === 'tadd') P[T.k + 'nc'] = Math.min(PF_MAXC, nc + 1);
+  if (b.dataset.pact === 'tdel' && nc > mn) { const c = nc - 1; Object.keys(P).forEach(k => { if (k === `${T.k}h${c}` || k === `${T.k}s${c}` || k.startsWith(`${T.k}${c}_`)) delete P[k]; }); P[T.k + 'nc'] = c; }
+  if (+P[T.k + 'nc'] === mn) delete P[T.k + 'nc']; if (!Object.keys(P).length) delete S.proc[id];
+  save(); $('#pw-' + id).innerHTML = pfBody(q, pget(q.id), null); procRefresh(q);
+});
+const OPN = {};
+
+/* ===== Ayuda de cada pregunta (popover): cómo llenar el procedimiento, nunca el resultado ni las fórmulas ===== */
+const HELP = {
+  lst: ['Cómo llenar el procedimiento', ['Escribe los datos de menor a mayor, uno en cada casilla.', 'Cuenta tus datos: deben ser tantos como los de la pregunta, incluidos los repetidos.', 'Después escribe tu respuesta en el recuadro de arriba.']],
+  lstcalc: ['Cómo llenar el procedimiento', ['Primero escribe los datos de menor a mayor, uno en cada casilla (incluidos los repetidos).', 'En el renglón de cálculo escribe la <b>fórmula</b> que usas, la <b>sustitución</b> con tus números y el <b>resultado</b>.', 'En la sustitución puedes usar + − × ÷ ^ √ y paréntesis.', 'Tu respuesta final va en el recuadro de arriba.']],
+  calc: ['Cómo llenar el procedimiento', ['Escribe la <b>fórmula</b> que vas a usar, con tus propias palabras o símbolos.', 'En la <b>sustitución</b> escribe la operación con los números de la pregunta (puedes usar + − × ÷ ^ √ y paréntesis).', 'Escribe el <b>resultado</b> de esa operación; redondea solo al final, como pide la pregunta.', 'Tu respuesta final va en el recuadro de arriba.']],
+  tbl: ['Cómo llenar la tabla', ['Usa una columna por cada cálculo que hagas con cada dato (puedes agregar más con «Otra columna»).', 'En la cabecera escribe qué calculas en esa columna.', 'Llena la columna renglón por renglón con tus resultados.', 'Tu respuesta final va en el recuadro de arriba.']],
+  tblcalc: ['Cómo llenar el procedimiento', ['Usa una columna por cada cálculo que hagas con cada dato y escribe en la cabecera qué calculas.', 'Llena cada renglón y escribe la suma (Σ) de cada columna.', 'En el renglón de cálculo escribe la fórmula, la sustitución con tus sumas y el resultado.', 'Redondea solo al final, como pide la pregunta.']],
+  stur: ['Cómo llenar el procedimiento', ['Usa el valor del logaritmo que te da la pregunta.', 'Escribe la fórmula, la sustitución y el resultado <b>sin redondear</b>.', 'En el recuadro de arriba escribe el resultado ya redondeado, como pide la pregunta.']],
+  amp: ['Cómo llenar el procedimiento', ['Usa los datos mayor y menor y el número de clases que te da la pregunta.', 'Escribe cada cálculo en su renglón: fórmula, sustitución y resultado <b>sin redondear</b>.', 'En el recuadro de arriba escribe el resultado redondeado como pide la pregunta.']],
+  pear: ['Cómo llenar el procedimiento', ['Necesitarás varias sumas: agrega una columna por cada cálculo con los pares de datos y escribe en la cabecera qué calculas.', 'Escribe también las sumas de x y de y (Σ) debajo de sus columnas.', 'En el renglón de cálculo escribe la fórmula, la sustitución con tus sumas y el resultado.', 'Redondea solo al final, a 2 decimales.']],
+  hist: ['Cómo leer la gráfica', ['Ubica la clase que se pide en el eje horizontal.', 'Sigue la parte de arriba de esa barra hasta el eje vertical y usa las líneas de la cuadrícula para leer su valor.']]
+};
+const hlpHTML = q => { const [t, L] = HELP[q.hlp]; return `<span class="hlp-w"><button type="button" class="hlp-btn" data-hlp="${q.id}" aria-expanded="false" aria-controls="hlp-${q.id}"><i class="bi bi-question-circle-fill me-1"></i>Ayuda</button><span class="hlp-pop" id="hlp-${q.id}" role="dialog" aria-label="${esc(t)}" hidden><b class="d-block mb-1"><i class="bi bi-lightbulb-fill me-1"></i>${t}</b><ol>${L.map(x => `<li>${x}</li>`).join('')}</ol>${procKind(q) ? '<span class="d-block small mt-1"><b>Recuerda:</b> el procedimiento es obligatorio.</span>' : ''}<button type="button" class="hlp-x" data-hlpx aria-label="Cerrar ayuda">×</button></span></span>`; };
+const hlpClose = () => document.querySelectorAll('.hlp-pop:not([hidden])').forEach(p => { p.hidden = true; const b = document.querySelector(`[data-hlp="${p.id.slice(4)}"]`); if (b) b.setAttribute('aria-expanded', 'false'); });
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-hlp]');
+  if (b) { const p = $('#hlp-' + b.dataset.hlp), open = p.hidden; hlpClose(); p.hidden = !open; b.setAttribute('aria-expanded', String(open)); return; }
+  if (e.target.closest && (e.target.closest('[data-hlpx]') || !e.target.closest('.hlp-pop'))) hlpClose();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hlpClose(); });
+
 function questionsHTML(exam, secs, opt = {}) {
   const p = opt.p || 'q', key = !!opt.key; let html = '', grid = '', last = '';
   exam.forEach(q => {
     const sec = secs.find(s => s.id === q.sec);
     if (q.sec !== last) { last = q.sec; html += `<div class="sec-head" style="--c:${sec.c}"><div class="sec-ico"><i class="bi ${sec.ic}"></i></div><div><h2 class="h5 fw-bold mb-0">${sec.t}</h2><div class="small text-muted">${sec.d}</div></div></div>`; }
-    html += `<div class="qcard" id="${p}-${q.id}" style="--c:${sec.c}"><div class="d-flex align-items-start gap-2"><span class="qnum">${q.id}</span><div class="flex-grow-1">${q.bl ? `<span class="bl bl-${q.bl}" title="Nivel de la taxonomía de Bloom">${q.bl}</span>` : ''}<div class="qtext">${q.html}</div>`;
+    html += `<div class="qcard" id="${p}-${q.id}" style="--c:${sec.c}"><div class="d-flex align-items-start gap-2"><span class="qnum">${q.id}</span><div class="flex-grow-1">${q.bl ? `<span class="bl bl-${q.bl}" title="Nivel de la taxonomía de Bloom">${q.bl}</span>` : ''}${!key && q.hlp && HELP[q.hlp] ? hlpHTML(q) : ''}<div class="qtext">${q.html}</div>`;
     if (q.kind === 'mc') {
       html += (q.grid ? '<div class="opt-grid">' : '') + q.opts.map((o, i) => `<label class="opt ${key && i === q.correct ? 'key' : ''}"><input type="radio" name="${p}${q.id}" value="${i}" ${key ? 'disabled' : `data-q="${q.id}"`}><span class="mark">${'ABCD'[i]}</span><span>${o}</span>${key && i === q.correct ? '<i class="bi bi-check-circle-fill ms-auto text-success"></i>' : ''}</label>`).join('') + (q.grid ? '</div>' : '');
     } else if (key) {
       html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><div class="key-box"><i class="bi bi-key-fill me-1"></i>Respuesta correcta: <b class="mono">${q.expect}</b></div>`;
     } else {
-      html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><input type="text" class="form-control ans-input" id="a-${q.id}" data-q="${q.id}" inputmode="${q.rule.im}" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="${q.rule.max || 14}" placeholder="Tu respuesta">`;
+      html += `<div class="ans-hint"><i class="bi ${q.rule.ic}"></i><span>${q.rule.txt}</span></div><input type="text" class="form-control ans-input" id="a-${q.id}" data-q="${q.id}" inputmode="${q.rule.im}" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="${q.rule.max || 14}" placeholder="Tu respuesta">` + procBlock(q);
     }
     html += `</div>${key ? '' : `<button class="flag-btn" data-flag="${q.id}" title="Marcar para revisar" aria-label="Marcar para revisar"><i class="bi bi-bookmark"></i></button>`}</div></div>`;
     grid += `<button class="qn" data-go="${q.id}" id="qn-${q.id}">${q.id}</button>`;
@@ -1055,7 +1298,7 @@ function startExam(resume) {
   refreshMarks(); updateProgress(); applyClock(); show('examen'); examActive = true;
   clearInterval(timerId); tick(); timerId = setInterval(tick, 500);
   if (resume) toast('Examen reanudado: tu reloj siguió corriendo.', 'bi-arrow-repeat', 3200);
-  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {} }); startSync(); clearInterval(pollId); pollId = setInterval(pollCierre, CFG.POLL_S * 1000 + Math.round(Math.random() * 5000)); if (resume) syncProgress(true);
+  clearInterval(syncId); lastSig = resume ? '' : JSON.stringify({ a: {}, f: {}, p: {} }); startSync(); clearInterval(pollId); pollId = setInterval(pollCierre, CFG.POLL_S * 1000 + Math.round(Math.random() * 5000)); if (resume) syncProgress(true);
 }
 /* Avance guardado en la hoja (ligado al número de cuenta): permite continuar aunque cierren o cambien de equipo */
 let syncId = null, pollId = null, lastSig = '', syncBusy = false, lastSync = 0;
@@ -1085,7 +1328,7 @@ async function pollCierre() {
 }
 async function syncProgress(force) {
   if (!S || S.fin || !CFG.ENDPOINT || syncBusy) return;
-  const prog = JSON.stringify({ a: S.answers, f: S.flags }), sig = prog + '|' + S.salidas;
+  const prog = JSON.stringify({ a: S.answers, f: S.flags, p: S.proc || {} }), sig = prog + '|' + S.salidas;
   if (!force && sig === lastSig) return;
   syncBusy = true; const r = await api('progress', { parcial: S.parcial, cuenta: S.cuenta, sid: S.sid, progreso: prog, salidas: S.salidas }); syncBusy = false;
   if (r.ok) { lastSig = sig; lastSync = Date.now(); progOk(r); return; }
@@ -1104,6 +1347,7 @@ function refreshMarks() {
     $('#qn-' + q.id).classList.toggle('done', a); $('#qn-' + q.id).classList.toggle('flag', f);
     const c = $('#q-' + q.id); c.classList.toggle('done', a); c.classList.toggle('flag', f);
     const b = $(`[data-flag="${q.id}"]`); b.classList.toggle('on', f); b.innerHTML = `<i class="bi ${f ? 'bi-bookmark-fill' : 'bi-bookmark'}"></i>`;
+    if (q.pf) procRefresh(q);
   });
 }
 function updateProgress() {
@@ -1139,14 +1383,18 @@ function tick() {
 /* ===== Entrega ===== */
 let confirmModal = null;
 function openConfirm() {
+  const pend = CFG.PROC_OBLIGATORIO ? EXAM.filter(q => q.pf && isAns(q) && !procDone(q, pget(q.id))).map(q => q.id) : [];
   const un = EXAM.filter(q => !isAns(q)).map(q => q.id), fl = Object.keys(S.flags);
   $('#confirm-body').innerHTML = `<p class="mb-2">Contestaste <b>${TOTAL() - un.length}</b> de <b>${TOTAL()}</b> preguntas.</p>` +
     (un.length ? `<div class="alert alert-warning py-2 small mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i><b>Sin responder (${un.length}):</b> ${un.join(', ')}</div>` : `<div class="alert alert-success py-2 small mb-2"><i class="bi bi-check-circle-fill me-1"></i>Todas las preguntas tienen respuesta.</div>`) +
     (fl.length ? `<div class="alert alert-info py-2 small mb-2"><i class="bi bi-bookmark-fill me-1"></i><b>Marcadas para revisar:</b> ${fl.join(', ')}</div>` : '') +
+    (pend.length ? `<div class="alert alert-danger py-2 small mb-2"><i class="bi bi-pencil-square me-1"></i><b>Falta el procedimiento (obligatorio) en ${pend.length === 1 ? 'la pregunta' : 'las preguntas'}:</b> ${pend.map(id => `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 ms-1" data-gopend="${id}">${id}</button>`).join('')}<div class="mt-1">Complétalo para poder entregar.</div></div>` : '') +
     `<p class="small text-muted mb-0">Al entregar ya no podrás cambiar tus respuestas.</p>`;
+  $('#btn-confirmar').disabled = pend.length > 0;
   confirmModal = confirmModal || new bootstrap.Modal($('#confirmModal')); confirmModal.show();
 }
 $('#btn-confirmar').onclick = () => { if (confirmModal) confirmModal.hide(); finish('manual'); };
+document.addEventListener('click', e => { const g = e.target.closest && e.target.closest('[data-gopend]'); if (!g) return; if (confirmModal) confirmModal.hide(); const c = $('#q-' + g.dataset.gopend); if (c) setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300); });
 function grade() {
   let ok = 0, det = '';
   EXAM.forEach(q => { const g = gradeQ(q, S.answers[q.id]); if (g) ok++; det += g ? '1' : '0'; });
@@ -1157,7 +1405,7 @@ function finish(motivo) {
   if (!S || S.fin) return;
   const g = grade(), fin = Math.min(nowMs(), limiteMs()), usado = fin - S.start;
   S.fin = true; examActive = false; clearInterval(timerId); clearInterval(syncId); clearInterval(pollId);
-  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: TOTAL(), calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, seed: S.seed, sid: S.sid };
+  S.result = { parcial: S.parcial, inicio: S.inicioISO, fecha: new Date(fin).toISOString(), nombre: S.nombre, cuenta: S.cuenta, grupo: S.grupo, tipo: S.tipo, aciertos: g.ok, total: TOTAL(), calificacion: g.nota, tiempo: fmtT(usado), tiempoSeg: Math.round(usado / 1000), salidas: S.salidas, motivo, detalle: g.det, respuestas: g.resp, procedimiento: JSON.stringify(S.proc || {}), seed: S.seed, sid: S.sid };
   S.status = 'pend'; save(); renderFin(); show('fin'); sendResult(S);
 }
 
@@ -1275,10 +1523,12 @@ function adMetricas() {
   if (!sel.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + '<div class="alert alert-info">Aún no hay exámenes entregados para calcular métricas.</div>'; return; }
   if (!conDet.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + '<div class="alert alert-warning">Para ver las métricas actualiza el script de Apps Script (nueva versión de la implementación): el panel necesita el detalle de aciertos de cada alumno.</div>'; return; }
   const acc = (o, k, extra) => (o[k] = o[k] || Object.assign({ n: 0, ok: 0 }, extra));
-  const SEC = {}, NIV = {}, TIP = {}, TA = {}, PQ = {}; let nAl = 0, nQ = 0, nOk = 0;
+  const SEC = {}, NIV = {}, TIP = {}, TA = {}, PQ = {}, OPSM = {}; let nAl = 0, nQ = 0, nOk = 0, nProc = 0;
   conDet.forEach(r => {
     let ex; try { ex = buildExam(+r.parcial, r.tipo, +r.seed, +r.total); } catch (e) { return; }
     const det = String(r.det), secs = EXAMS[r.parcial].secs; nAl++;
+    if (r.resp) { const A = parseResp(r.resp, ex), PR = parseProc(r.proc); if (Object.keys(PR).length) nProc++;          // operaciones del procedimiento (casilla por casilla)
+      ex.forEach(q => { if (!procKind(q)) return; Object.entries(procCheck(q, PR[q.id] || {}, A[q.id]).ops).forEach(([k, o]) => { const t = OPSM[k] = OPSM[k] || { n: 0, ok: 0, a: new Set() }; t.n += o.n; t.ok += o.ok; t.a.add(r.cuenta); }); }); }
     ex.forEach((q, i) => {
       if (q.bonus || det[i] === undefined) return; const ok = det[i] === '1' ? 1 : 0, s = secs.find(x => x.id === q.sec) || { t: q.sec, c: '#64748b' };
       const lv = q.bl || 'Sin nivel', ta = TEORIA.includes(lv) ? 'teo' : 'apl', kd = q.kind === 'mc' ? 'Opción múltiple' : 'Respuesta abierta';
@@ -1302,6 +1552,8 @@ function adMetricas() {
   <div class="row g-3 mb-3"><div class="col-lg-7"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-bar-chart-steps me-1 text-primary"></i>Por nivel cognitivo (Bloom)</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Nivel</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${nivRows}</tbody></table></div></div>
   <div class="col-lg-5"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-input-cursor-text me-1 text-primary"></i>Por tipo de pregunta</b><table class="table table-sm align-middle mb-0"><thead><tr><th>Tipo</th><th class="text-center">Resp.</th><th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${tipRows}</tbody></table></div></div></div>
   <div class="nav-card"><b class="d-block mb-2"><i class="bi bi-x-octagon-fill me-1 text-danger"></i>Preguntas más falladas <span class="small text-muted fw-normal">(% de error · las que solo cambian de números se agrupan)</span></b>${worst}</div>
+  <div class="nav-card mt-3"><b class="d-block mb-1"><i class="bi bi-pencil-square me-1 text-primary"></i>¿Qué operación les costó más? <span class="small text-muted fw-normal">(procedimiento obligatorio · ${nProc} de ${nAl} alumnos con procedimiento registrado · ordenado de menor a mayor acierto · no cambia la calificación)</span></b>
+  <div class="small text-muted mb-2">Una casilla es correcta si coincide con el resultado correcto o con lo que sale de los datos que el propio alumno escribió en el paso anterior (un error no se cuenta dos veces). La fórmula y las cabeceras que escribe el alumno no se califican: revísalas en «Por alumno».</div>${opsTable(OPSM, true)}</div>
   <div class="small text-muted mt-2">Las preguntas sin responder cuentan como error. No incluye la pregunta bonus.</div>`;
 }
 function adResumen() {
@@ -1418,16 +1670,19 @@ function aluList() {
 }
 /* Respuesta del alumno en una pregunta (con la correcta cuando falló) */
 function revAns(q, v, P, ok) {
+  let h = revAns0(q, v, P, ok); const k = HAS_PROC ? procKind(q) : '';
+  if (!k) return h;
+  const ck = procCheck(q, P, v), st = ck.done ? '<span class="pst ok"><i class="bi bi-check-circle-fill"></i> Completo</span>' : ck.used ? '<span class="pst pend"><i class="bi bi-exclamation-circle-fill"></i> Incompleto</span>' : '<span class="pst pend"><i class="bi bi-x-circle-fill"></i> No lo hizo</span>';
+  if (k === 'tt') return h.replace('<!--PST-->', `<div class="mb-1"><b class="small text-muted">Procedimiento:</b> ${st}</div>`);
+  return h + `<div class="proc rvp"><div class="rvp-h"><i class="bi bi-pencil-square me-1"></i>Su procedimiento ${st}</div>${ck.used ? `<div class="proc-b">${procBody(q, P, ck.R)}${ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : ''}</div>` : ''}</div>`;
+}
+function revAns0(q, v, P, ok) {
   const empty = v === undefined || v === null || v === '';
   if (q.kind === 'mc') return `<div class="${q.grid ? 'opt-grid' : ''}">` + q.opts.map((o, i) => { const me = !empty && +v === i, good = i === q.correct; return `<div class="opt rv ${me && good ? 'me-ok' : me ? 'me-bad' : good ? 'key' : ''}"><span class="mark">${'ABCD'[i]}</span><span class="flex-grow-1">${o}</span>${me ? `<span class="rv-tag ${good ? 'ok' : 'bad'}">${good ? '<i class="bi bi-check-lg"></i> Su respuesta' : '<i class="bi bi-x-lg"></i> Su respuesta'}</span>` : good ? '<span class="rv-tag ok">Correcta</span>' : ''}</div>`; }).join('') + '</div>' + (empty ? '<div class="rv-ans bad"><i class="bi bi-dash-circle me-1"></i>Sin responder</div>' : '');
-  if (q.kind === 'tt' && HAS_PROC) { const ck = procCheck(q, P, v); return ttGrid(q, P || {}, ck.R, v || '') + (ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : '') + (+(P || {}).nc ? '' : '<div class="small text-muted">No agregó columnas intermedias.</div>'); }
+  if (q.kind === 'tt' && HAS_PROC) { const ck = procCheck(q, P, v); return '<!--PST-->' + ttGrid(q, P || {}, ck.R, v || '') + (ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : '') + ''; }
   if (q.kind === 'fn') { const pr = fnParse(v || ''); return `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Escribió:</span> <b class="mono">${empty ? 'Sin responder' : 'F = ' + esc(v)}</b>${pr.ok ? ` <span class="small">(se lee como <span class="num">F = ${exprOf(pr.tree)}</span>)</span>` : !empty ? ` <span class="small">(${esc(pr.err || 'no se pudo leer')})</span>` : ''}</div>${ok ? '' : `<div class="rv-exp">Referencia: <b class="num">F = ${q.expect}</b> <span class="small text-muted">(o cualquier función equivalente)</span></div>`}`; }
   if (q.kind === 'circ') { const t = cbParse(v || ''); return `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Su circuito:</span>${empty ? ' <b>Sin responder</b>' : ''}</div>${t ? `<div class="circ-wrap rv-circ">${cbSVG(t)}</div>` : ''}${ok ? '' : `<div class="rv-exp">${circHTML(q, 'rv', true)}</div>`}`; }
   let h = `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Respondió:</span> <b class="mono">${empty ? 'Sin responder' : esc(String(v).replace(/_/g, '·'))}</b>${ok ? ' <i class="bi bi-check-circle-fill"></i>' : ''}</div>${ok ? '' : `<div class="rv-exp">Correcta: <b class="mono">${esc(q.expect)}</b></div>`}`;
-  if (HAS_PROC && (q.cv || q.sm)) {
-    const ck = procCheck(q, P, v);
-    h += ck.used ? `<div class="proc rvp"><div class="rvp-h"><i class="bi bi-pencil-square me-1"></i>Su procedimiento</div><div class="proc-b">${procBody(q, P, ck.R)}${ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : ''}</div></div>` : '<div class="small text-muted mt-1"><i class="bi bi-pencil me-1"></i>No usó la hoja de procedimiento.</div>';
-  }
   return h;
 }
 const opsTable = (OPS, alumnos) => {
@@ -1469,13 +1724,13 @@ function adAlumno() {
   });
   const nb = ex.filter(q => !q.bonus).length, okb = Object.values(SEC).reduce((s, o) => s + o.ok, 0), pc = +r.nota * 10, col = pc >= 60 ? '#16a34a' : '#dc2626';
   const secRows = Object.values(SEC).map(o => { const p = o.n ? o.ok / o.n * 100 : 0, c = p >= 80 ? '#16a34a' : p >= 60 ? '#d97706' : '#dc2626'; return `<tr><td><span class="mdot" style="background:${o.c}"></span>${esc(o.t)}</td><td class="text-center">${o.ok}/${o.n}</td><td style="min-width:110px"><div class="mbar"><i style="width:${p.toFixed(1)}%;background:${c}"></i></div></td><td class="text-end fw-bold text-nowrap" style="color:${c}">${p.toFixed(0)} %</td></tr>`; }).join('');
-  const usedP = Object.keys(PR).length;
+  const pq = HAS_PROC ? ex.filter(q => procKind(q) && ans[q.id] !== undefined && ans[q.id] !== '') : [], pdn = pq.filter(q => procDone(q, PR[q.id] || {})).length;
   $('#ad-body').innerHTML = parBtns() + grpBtns + nav + `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-3 align-items-center">
       <div class="grade-ring" style="--p:${pc};--gc:${col};width:96px;height:96px"><b style="color:${col}">${(+r.nota).toFixed(1)}</b><small class="text-muted fw-bold">de 10</small></div>
       <div class="flex-grow-1" style="min-width:220px"><div class="h5 fw-bold mb-1">${esc(r.nombre)}</div><div class="small text-muted">Cuenta <b class="mono">${esc(r.cuenta)}</b> · Grupo <b>${esc(r.grupo)}</b> · P${r.parcial} · Tipo ${esc(r.tipo)}</div>
         <div class="small mt-1">${r.aciertos} aciertos de ${r.total} · Tiempo <b class="mono">${tiempoOf(r) || '—'}</b> · Salidas <b>${r.salidas === '' ? '—' : r.salidas}</b>${r.motivo === 'admin' ? ' · <span class="badge text-bg-warning">Cerrado por el profesor(a)</span>' : r.motivo === 'tiempo' ? ' · <span class="badge text-bg-secondary">Se acabó el tiempo</span>' : ''} · Entregó ${fmtDT(r.entrega)}</div></div></div></div>
     <div class="row g-3 mb-3"><div class="col-lg-${HAS_PROC ? 6 : 12}"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-diagram-3-fill me-1 text-primary"></i>Aciertos por bloque</b><table class="table table-sm align-middle mb-0"><tbody>${secRows}</tbody></table></div></div>
-    ${HAS_PROC ? `<div class="col-lg-6"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-pencil-square me-1 text-primary"></i>Operaciones de su procedimiento <span class="small text-muted fw-normal">(${usedP ? usedP + ' pregunta(s) con hoja' : 'no usó la hoja'})</span></b>${opsTable(OPS)}</div></div>` : ''}</div>
+    ${HAS_PROC ? `<div class="col-lg-6"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-pencil-square me-1 text-primary"></i>Operaciones de su procedimiento <span class="small text-muted fw-normal">(${pdn} de ${pq.length} procedimientos completos)</span></b>${opsTable(OPS)}</div></div>` : ''}</div>
     <div class="small text-muted mb-2"><span class="rv-st ok">Verde</span> = bien · <span class="rv-st bad">Rojo</span> = mal (abajo, en pequeño, lo que se esperaba)${HAS_PROC ? ' · En el procedimiento una casilla es correcta si coincide con el resultado correcto o con lo que sale de los datos que el propio alumno escribió en el paso anterior (un error no se cuenta dos veces).' : ''}</div>
     ${html || '<div class="alert alert-success fw-bold">Todas sus respuestas fueron correctas.</div>'}`;
   aluBind();
