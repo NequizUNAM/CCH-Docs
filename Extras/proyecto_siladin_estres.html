@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Estrés académico y desempeño · Proyecto SILADIN</title>
-<meta name="description" content="Proyecto SILADIN CCH Oriente 2026-2027: estrés académico, funciones cognitivas y desempeño académico. Laboratorio estadístico y seguimiento del proyecto.">
+<title>Proyectos SILADIN · CCH Oriente</title>
+<meta name="description" content="Proyectos SILADIN CCH Oriente 2026-2027: estrés académico y desempeño; emociones de las relaciones de pareja y funciones cognitivas. Laboratorio estadístico y seguimiento.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
 <style>
+
 :root{
   --c1:#e03131; --c2:#1c7ed6; --c3:#2f9e44; --c4:#f08c00; --c5:#7048e8;
   --p1:#fdeaea; --p2:#e7f1fb; --p3:#e6f6ea; --p4:#fff4e0; --p5:#efeafc;
@@ -123,10 +124,84 @@ footer{color:var(--muted);font-size:.85rem}
 @media (max-width:576px){.panel{padding:1rem}.hero-header{padding:1.8rem 0 1.5rem}.floaty{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.rv{opacity:1;transform:none}}
 @media print{.sec-nav,.nav-fallback,#app-header,.no-print{display:none!important}.rv{opacity:1;transform:none}*{animation:none!important}}
+
+#refs p{overflow-wrap:anywhere}
+.proj-switch{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 1rem}
+.proj-switch button{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:.55rem .9rem;text-align:left;font-weight:600;max-width:100%;min-width:0;flex:1 1 280px}
+.proj-switch button small{display:block;font-weight:400;color:#cbd5e1;font-size:.78rem;white-space:normal}
+.proj-switch button.on{background:#fff;color:#0f172a;border-color:#fff;box-shadow:var(--shadow-md)}
+.proj-switch button.on small{color:#475569}
+.proj-switch .pk{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#e8590c,#f08c00);color:#fff;font-weight:800;margin-right:.4rem;font-size:.85rem}
+.box{fill-opacity:.85}
+/* barra de proyectos (header) */
+.proj-bar{position:sticky;top:0;z-index:1040;background:linear-gradient(90deg,#0f172a,#1e293b);color:#fff;box-shadow:var(--shadow-md)}
+.proj-bar .in{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.45rem 1rem;min-height:56px}
+.proj-bar .brand{font-weight:800;white-space:nowrap;display:flex;align-items:center;gap:.4rem;margin-right:.4rem}
+.pager{display:flex;align-items:center;gap:.3rem;min-width:0;flex:1 1 auto}
+.pager .pg-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.pager .pg-btn:disabled{opacity:.35}
+.pager .pg-item{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#e2e8f0;border-radius:999px;padding:.3rem .8rem;font-weight:600;font-size:.88rem;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.pager .pg-item .pk{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,#e8590c,#f08c00);color:#fff;font-weight:800;margin-right:.35rem;font-size:.78rem}
+.pager .pg-item.on{background:#fff;color:#0f172a;border-color:#fff}
+.pager .pg-pos{font-size:.78rem;color:#94a3b8;white-space:nowrap;margin-left:.2rem}
+.viewseg{display:inline-flex;border:1px solid rgba(255,255,255,.3);border-radius:999px;overflow:hidden;flex:0 0 auto}
+.viewseg button{background:transparent;color:#e2e8f0;border:0;padding:.32rem .85rem;font-weight:600;font-size:.86rem}
+.viewseg button.on{background:#e8590c;color:#fff}
+.sec-nav{top:var(--barH,56px)}
+html{scroll-padding-top:calc(var(--barH,56px) + 64px)}
+@media (max-width:767px){.pager .pg-item .lbl,.pager .pg-pos,.proj-bar .brand,.viewseg .lg{display:none}.proj-bar .in{flex-wrap:nowrap;padding:.45rem .6rem;gap:.35rem}.pager{gap:.25rem}.viewseg button{padding:.3rem .6rem}}
+/* vista machote */
+#viewMach{display:none}
+body.view-mach #viewPanel{display:none}
+body.view-mach #viewMach{display:block}
+#viewMach{background:#eef1f6;background-image:radial-gradient(rgba(15,23,42,.055) 1px,transparent 1.6px);background-size:8px 8px;min-height:100vh;padding:1rem 0 3rem}
+.mtools{max-width:960px;margin:0 auto;padding:0 1rem;display:flex;flex-wrap:wrap;gap:.45rem;align-items:center}
+.mtools .cnt{margin-left:auto;font-size:.85rem;color:#7a4b00;font-weight:700}
+.sheet{max-width:960px;margin:1rem auto 0;background:#fff;border-radius:16px;box-shadow:0 1px 0 #e2e8f0,0 10px 25px rgba(15,23,42,.12),6px 6px 0 -1px #f8fafc,6px 6px 0 0 #e2e8f0;padding:2.2rem 2.4rem;min-width:0}
+.mdoc .mhero{background:linear-gradient(135deg,#0f172a,#1e293b 60%,#334155);color:#fff;border-radius:14px;border-bottom:5px solid #e8590c;padding:1.4rem 1.5rem;margin-bottom:1.5rem}
+.mdoc .mhero .kicker{text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;color:#fbd49c;font-weight:700}
+.mdoc .mhero h1{font-size:clamp(1.2rem,3vw,1.75rem);font-weight:800;line-height:1.25;margin:.3rem 0 .5rem}
+.mdoc .mhero p{color:#cbd5e1;margin:0}
+.mdoc h2{display:flex;align-items:center;gap:.7rem;font-size:1.2rem;font-weight:800;color:var(--ink);margin:2rem 0 .8rem;padding-top:.5rem;border-top:1px solid var(--line)}
+.mdoc h2 .num{flex:0 0 36px;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#e8590c,#f08c00);color:#fff;display:grid;place-items:center;font-size:1rem}
+.mdoc h3{font-size:1rem;font-weight:800;color:#334155;margin:1.1rem 0 .4rem}
+.mdoc p,.mdoc li{line-height:1.6}
+.mdoc table{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem;margin:0}
+.mdoc th{background:#1e293b;color:#fff;padding:.45rem .55rem;text-align:left;font-weight:700}
+.mdoc td{padding:.4rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+.mdoc tbody tr:nth-child(even) td{background:#f8fafc}
+.mdoc td.lbl{background:var(--p2)!important;font-weight:700;width:32%}
+.mdoc .tw{overflow-x:auto;border-radius:12px;border:1px solid var(--line);margin:.4rem 0 1rem}
+.mdoc .pend{background:#fff3bf;border:1px dashed #f59f00;border-radius:6px;padding:0 .3rem;color:#7a4b00;font-weight:600}
+.mdoc .box{border-radius:14px;padding:.85rem 1rem;margin:.8rem 0;border:1px solid}
+.mdoc .box.intro{background:var(--p5);border-color:var(--b5);border-left:5px solid var(--c5)}
+.mdoc .box.tip{background:var(--p2);border-color:var(--b2);border-left:5px solid var(--c2)}
+.mdoc .box.ok{background:var(--p3);border-color:var(--b3);border-left:5px solid var(--c3)}
+.mdoc .box.warn{background:var(--p1);border-color:var(--b1);border-left:5px solid var(--c1)}
+.mdoc .box.note{background:var(--p4);border-color:var(--b4);border-left:5px solid var(--c4)}
+.mdoc .sig{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-top:1rem}
+.mdoc .sig div{border-top:1.5px solid #334155;padding-top:.4rem;text-align:center;font-size:.9rem;margin-top:3rem}
+.mdoc .chk li{list-style:none;margin-left:-1.2rem}.mdoc .chk li::before{content:'☐ ';color:#64748b}
+.mdoc p,.mdoc td,.mdoc li{overflow-wrap:anywhere}
+body.editing .mdoc [contenteditable=true]{outline:1px dashed #94a3b8;outline-offset:2px;border-radius:4px}
+body.editing .mdoc [contenteditable=true]:focus{outline:2px solid #e8590c;background:#fffdf5}
+.toast-s{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:.5rem 1rem;border-radius:999px;box-shadow:var(--shadow-lg);font-size:.9rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:2000}
+.toast-s.on{opacity:1}
+@media (max-width:576px){.sheet{padding:1.2rem 1rem;margin:.8rem .5rem 0}}
+@media print{.proj-bar,.mtools,.toast-s{display:none!important}#viewMach{background:#fff;padding:0}.sheet{box-shadow:none;margin:0;max-width:none;padding:0}.mdoc .tw{overflow:visible}.mdoc tr{break-inside:avoid}.mdoc h2{break-after:avoid}}
+
 </style>
 </head>
 <body>
 <div id="app-header"></div>
+<div class="proj-bar no-print" role="navigation" aria-label="Proyectos">
+  <div class="in">
+    <span class="brand"><i class="bi bi-building" aria-hidden="true"></i><span>SILADIN · CCH Oriente</span></span>
+    <div class="pager" id="pager"></div>
+    <div class="viewseg" role="tablist" aria-label="Vista"><button type="button" role="tab" data-view="panel" id="vPanel">Panel<span class="lg"> de trabajo</span></button><button type="button" role="tab" data-view="mach" id="vMach">Machote</button></div>
+  </div>
+</div>
+<div id="viewPanel">
 
 <header class="hero-header">
   <span class="floaty" style="left:4%;top:8%">σ</span>
@@ -134,9 +209,9 @@ footer{color:var(--muted);font-size:.85rem}
   <span class="floaty" style="left:45%;bottom:2%;animation-delay:3s">Σ</span>
   <span class="floaty" style="right:30%;top:48%;animation-delay:2.2s">x̄</span>
   <div class="container position-relative">
-    <div class="mb-2"><span class="hero-chip"><i class="bi bi-building"></i> SILADIN · CCH Oriente</span><span class="hero-chip"><i class="bi bi-diagram-3"></i> Proyecto colaborativo e interdisciplinario</span><span class="hero-chip"><i class="bi bi-calendar3"></i> Ciclo 2026-2027</span></div>
-    <h1><i class="bi bi-activity me-2" aria-hidden="true"></i>Análisis estadístico para el entendimiento de la relación entre el estrés académico, las funciones cognitivas y el desempeño académico de estudiantes del CCH Oriente</h1>
-    <p class="lead mt-2 mb-3">Estadística y Probabilidad + Psicología. Página de trabajo del proyecto: fundamentos, laboratorio de datos con cálculo automático y espacios para llenar el avance del grupo.</p>
+    <div class="mb-2"><span class="hero-chip"><i class="bi bi-building"></i> SILADIN · CCH Oriente</span><span class="hero-chip"><i class="bi bi-diagram-3"></i> Proyectos colaborativos e interdisciplinarios</span><span class="hero-chip"><i class="bi bi-calendar3"></i> Ciclo 2026-2027</span></div>
+    <h1 id="pTitle"></h1>
+    <p class="lead mt-2 mb-3" id="pLead"></p>
     <div class="d-flex flex-wrap gap-2 no-print">
       <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#mdlForm"><i class="bi bi-journal-text"></i> Formulario</button>
       <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#mdlNotas"><i class="bi bi-pencil-square"></i> Notas de revisión</button>
@@ -156,45 +231,21 @@ footer{color:var(--muted);font-size:.85rem}
 
 <main class="container">
 
-<!-- 1 PROYECTO -->
 <section class="sec" id="s1">
   <div class="sec-h"><span class="num">1</span><h2>El proyecto</h2></div>
   <div class="row g-3">
-    <div class="col-lg-7 min0 rv">
-      <div class="intro-box h-100">
-        <h3 class="h5 fw-bold"><i class="bi bi-question-circle"></i> Pregunta de investigación</h3>
-        <p class="mb-2">¿Existe relación entre el nivel de estrés académico, las funciones cognitivas (atención y memoria) y el rendimiento escolar de estudiantes del CCH Oriente?</p>
-        <p class="mb-2"><b>Tipo de estudio:</b> de campo, cuantitativo, no experimental, transversal y correlacional.</p>
-        <p class="mb-0"><b>Muestra:</b> al menos 30 estudiantes (SISCO SV-21) y una submuestra de 10 a 25 (NEUROPSI). <span class="text-muted">Estudio exploratorio: con n = 30 solo se detectan correlaciones de r ≥ 0.49.</span></p>
-      </div>
-    </div>
-    <div class="col-lg-5 min0 rv">
-      <div class="panel h-100">
-        <h3 class="h6 fw-bold text-uppercase text-muted">Modalidad</h3>
-        <ul class="list-unstyled mb-0 small">
-          <li class="mb-2"><i class="bi bi-person-badge text-danger"></i> <b>Coordinadora:</b> Alejandra Díaz Jiménez · Profesora de Tiempo Completo C · Psicología</li>
-          <li class="mb-2"><i class="bi bi-person"></i> <b>Profesor participante:</b> Pedro Ernesto Nequiz Medina · Profesor de Asignatura A interino · Estadística y Probabilidad</li>
-          <li class="mb-2"><i class="bi bi-people"></i> <b>Alumnos:</b> 14 a 16, dos equipos de 7 u 8</li>
-          <li><i class="bi bi-award"></i> <b>Producto docente:</b> Dirección de grupos de trabajo con alumnos en SILADIN (Campo I)</li>
-        </ul>
-      </div>
-    </div>
+    <div class="col-lg-7 min0 rv"><div class="intro-box h-100" id="pIntro"></div></div>
+    <div class="col-lg-5 min0 rv"><div class="panel h-100" id="pModal"></div></div>
   </div>
   <h3 class="h5 fw-bold mt-4">Hipótesis</h3>
-  <div class="row g-3">
-    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c2)"><b>H1</b><p class="small mb-1">El estrés académico se relaciona de forma <b>negativa</b> con el promedio escolar.</p><span class="badge text-bg-light">Barraza Macías, 2006</span></div></div>
-    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c3)"><b>H2</b><p class="small mb-1">El estrés se relaciona de forma <b>negativa</b> con los índices de atención y memoria.</p><span class="badge text-bg-light">Lupien et al., 2009</span></div></div>
-    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c4)"><b>H3</b><p class="small mb-1">Atención y memoria se relacionan de forma <b>positiva</b> con el promedio.</p><span class="badge text-bg-light">Edel Navarro, 2003</span></div></div>
-    <div class="col-md-6 col-xl-3 min0 rv"><div class="ex-card" style="--gc:var(--c5)"><b>H4 (condicionada)</b><p class="small mb-1">El cortisol se relaciona de forma <b>positiva</b> con el estrés percibido.</p><span class="badge text-bg-light">McEwen, 1998</span></div></div>
-  </div>
+  <div class="row g-3" id="pHyp"></div>
 </section>
 
-<!-- 2 EQUIPO -->
 <section class="sec" id="s2">
   <div class="sec-h"><span class="num">2</span><h2>Equipo de trabajo</h2></div>
   <div class="panel rv">
     <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-      <span class="small text-muted">Registra a los alumnos inscritos. Meta: 14 a 16.</span>
+      <span class="small text-muted">Registra a los alumnos inscritos en este proyecto. Meta: 14 a 16.</span>
       <span class="ms-auto ans" id="teamCount">0 alumnos</span>
       <button class="btn btn-slate btn-sm" id="addStudent"><i class="bi bi-person-plus"></i> Agregar alumno</button>
     </div>
@@ -202,40 +253,16 @@ footer{color:var(--muted);font-size:.85rem}
   </div>
 </section>
 
-<!-- 3 FUNDAMENTOS -->
 <section class="sec" id="s3">
   <div class="sec-h"><span class="num">3</span><h2>Fundamento teórico</h2></div>
-  <ul class="nav nav-pills mb-3" role="tablist">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t1" type="button">Estrés</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t2" type="button">Estrés académico</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t3" type="button">Bases biológicas</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t4" type="button">Funciones cognitivas</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t5" type="button">Rendimiento</button></li>
-  </ul>
-  <div class="tab-content panel">
-    <div class="tab-pane fade show active" id="t1"><p><b>Enfoque transaccional.</b> Lazarus y Folkman (1984) definen el estrés psicológico como una relación entre la persona y su entorno que ella evalúa como amenazante o desbordante de sus recursos. Lo decisivo es la <b>evaluación cognitiva</b> del estímulo y las <b>estrategias de afrontamiento</b>.</p><div class="tip small">Por eso un mismo examen puede ser estresante para un alumno y no para otro.</div></div>
-    <div class="tab-pane fade" id="t2">
-      <p>Barraza Macías (2006) define el estrés académico como «un proceso sistémico, de carácter adaptativo y esencialmente psicológico» (p. 126), en tres momentos:</p>
-      <svg viewBox="0 0 720 120" role="img" aria-label="Modelo sistémico-cognoscitivista: estresores, desequilibrio y afrontamiento">
-        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker></defs>
-        <rect x="10" y="25" width="190" height="70" rx="14" fill="#e7f1fb" stroke="#b9d5f1"/><text x="105" y="55" text-anchor="middle" font-weight="700" fill="#1c7ed6">1. Estresores</text><text x="105" y="77" text-anchor="middle" font-size="13" fill="#334155">demandas valoradas</text>
-        <rect x="265" y="25" width="190" height="70" rx="14" fill="#fff4e0" stroke="#fbd49c"/><text x="360" y="55" text-anchor="middle" font-weight="700" fill="#b86b00">2. Desequilibrio</text><text x="360" y="77" text-anchor="middle" font-size="13" fill="#334155">síntomas</text>
-        <rect x="520" y="25" width="190" height="70" rx="14" fill="#e6f6ea" stroke="#b4e1bf"/><text x="615" y="55" text-anchor="middle" font-weight="700" fill="#2f9e44">3. Afrontamiento</text><text x="615" y="77" text-anchor="middle" font-size="13" fill="#334155">estrategias</text>
-        <line x1="202" y1="60" x2="262" y2="60" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/><line x1="457" y1="60" x2="517" y2="60" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
-      </svg>
-      <p class="mt-2 mb-0">Inventario <b>SISCO SV-21</b> (Barraza Macías, 2018): 21 reactivos, 7 por dimensión, escala de 0 («nunca») a 5 («siempre»); alfa de Cronbach reportada &gt; .85 (Olivas-Ugarte et al., 2021).</p>
-    </div>
-    <div class="tab-pane fade" id="t3"><p>El estrés activa el eje hipotálamo-hipófisis-suprarrenal (HHA), cuyo producto final es el <b>cortisol</b>. McEwen (1998) llama <b>carga alostática</b> al desgaste por activación frecuente o prolongada. Los glucocorticoides actúan sobre el hipocampo, la amígdala y la corteza prefrontal (Lupien et al., 2009).</p><div class="note small">Fase biológica condicionada: solo con dictamen de un comité de ética. En menores se recomienda saliva o cabello (riesgo mínimo, RLGSMIS art. 17).</div></div>
-    <div class="tab-pane fade" id="t4"><p>La <b>atención</b> selecciona y mantiene el procesamiento de la información relevante; la <b>memoria</b> la codifica, almacena y recupera; el <b>aprendizaje</b> depende de ambas. Se miden con el <b>NEUROPSI Atención y Memoria</b> (normas de 6 a 85 años; índices de atención, memoria y global).</p><div class="warn small">El NEUROPSI solo lo aplica e interpreta personal capacitado; los alumnos no lo aplican.</div></div>
-    <div class="tab-pane fade" id="t5"><p>Las calificaciones son el indicador más usado del rendimiento académico, aunque no hay consenso sobre todo lo que miden (Edel Navarro, 2003). Aquí se usan el promedio por semestre y general, las asignaturas no acreditadas y la tendencia de la trayectoria (lista dálmata).</p></div>
-  </div>
+  <ul class="nav nav-pills mb-3" role="tablist" id="fundTabs"></ul>
+  <div class="tab-content panel" id="fundPanes"></div>
 </section>
 
-<!-- 4 LABORATORIO -->
 <section class="sec" id="s4">
   <div class="sec-h"><span class="num">4</span><h2>Laboratorio de datos</h2></div>
   <div class="demo mb-3 rv small">
-    <b>Cómo usarlo:</b> captura una fila por participante (solo el folio, nunca el nombre). La página calcula las medidas descriptivas, la tabla de datos agrupados, la correlación de Pearson y la recta de regresión. Puedes pegar datos desde una hoja de cálculo.
+    <b>Cómo usarlo:</b> captura una fila por participante (solo el folio, nunca el nombre). La página calcula las medidas descriptivas, la tabla de datos agrupados, la correlación de Pearson y la recta de regresión<span id="grpHint"></span>. Puedes pegar datos desde una hoja de cálculo.
   </div>
   <div class="panel mb-3 rv">
     <div class="d-flex flex-wrap gap-2 mb-2 no-print">
@@ -245,9 +272,9 @@ footer{color:var(--muted);font-size:.85rem}
       <button class="btn btn-outline-secondary btn-sm" id="exportCsv"><i class="bi bi-filetype-csv"></i> Exportar CSV</button>
       <button class="btn btn-outline-danger btn-sm ms-auto" id="clearData"><i class="bi bi-trash"></i> Vaciar datos</button>
     </div>
-    <div class="collapse" id="pasteBox"><div class="tip mb-2 small">Pega columnas en este orden: <span class="mono">folio, SISCO, atención, memoria, promedio</span> (separadas por tabulador, coma o punto y coma; una fila por participante).<textarea class="form-control mt-2 mono" id="pasteArea" rows="4" aria-label="Datos a pegar"></textarea><button class="btn btn-slate btn-sm mt-2" id="pasteBtn">Agregar filas pegadas</button></div></div>
+    <div class="collapse" id="pasteBox"><div class="tip mb-2 small">Pega columnas en este orden: <span class="mono" id="pasteOrder"></span> (separadas por tabulador, coma o punto y coma; una fila por participante).<textarea class="form-control mt-2 mono" id="pasteArea" rows="4" aria-label="Datos a pegar"></textarea><button class="btn btn-slate btn-sm mt-2" id="pasteBtn">Agregar filas pegadas</button></div></div>
     <div id="demoFlag" class="warn small mb-2" hidden><i class="bi bi-exclamation-triangle"></i> Estás viendo <b>datos ficticios de práctica</b>. No son resultados del estudio.</div>
-    <div class="tscroll" style="max-height:360px"><table class="tbl" id="dataTbl"><thead><tr><th>#</th><th>Folio</th><th>SISCO SV-21<br><small>(media 0–5)</small></th><th>Atención<br><small>(índice)</small></th><th>Memoria<br><small>(índice)</small></th><th>Promedio<br><small>(5–10)</small></th><th></th></tr></thead><tbody></tbody></table></div>
+    <div class="tscroll" style="max-height:360px"><table class="tbl" id="dataTbl"><thead></thead><tbody></tbody></table></div>
     <div class="small text-muted mt-1" id="nInfo"></div>
   </div>
 
@@ -255,6 +282,7 @@ footer{color:var(--muted);font-size:.85rem}
     <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#l1" type="button">Medidas descriptivas</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#l2" type="button">Datos agrupados</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#l3" type="button">Correlación y regresión</button></li>
+    <li class="nav-item" id="tabGrpLi"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#l4" type="button">Comparación de grupos</button></li>
   </ul>
   <div class="tab-content">
     <div class="tab-pane fade show active" id="l1">
@@ -277,7 +305,7 @@ footer{color:var(--muted);font-size:.85rem}
         <div class="row g-2 align-items-end mb-3">
           <div class="col-sm-4"><label class="form-label small fw-bold" for="selX">Variable X</label><select class="form-select" id="selX"></select></div>
           <div class="col-sm-4"><label class="form-label small fw-bold" for="selY">Variable Y</label><select class="form-select" id="selY"></select></div>
-          <div class="col-sm-4"><div class="d-flex flex-wrap gap-1"><span class="chip" data-xy="sisco,prom">H1</span><span class="chip" data-xy="sisco,aten">H2 aten.</span><span class="chip" data-xy="sisco,mem">H2 mem.</span><span class="chip" data-xy="aten,prom">H3</span></div></div>
+          <div class="col-sm-4"><div class="d-flex flex-wrap gap-1" id="xyChips"></div></div>
         </div>
         <div class="row g-3">
           <div class="col-lg-6 min0"><div class="svgbox" id="scatter"></div></div>
@@ -292,10 +320,16 @@ footer{color:var(--muted);font-size:.85rem}
         <div id="steps"></div>
       </div>
     </div>
+    <div class="tab-pane fade" id="l4">
+      <div class="panel">
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-3"><span class="fw-bold">Variable a comparar:</span><div id="varChips4" class="d-flex flex-wrap gap-1"></div></div>
+        <div class="row g-3"><div class="col-lg-6 min0"><div class="svgbox" id="boxplot"></div></div><div class="col-lg-6 min0"><div class="row g-2" id="grpKpis"></div><div id="grpMsg" class="mt-2"></div></div></div>
+        <div id="grpSteps" class="mt-2"></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- 5 CRONOGRAMA -->
 <section class="sec" id="s5">
   <div class="sec-h"><span class="num">5</span><h2>Cronograma y avance</h2></div>
   <div class="panel rv">
@@ -304,7 +338,6 @@ footer{color:var(--muted);font-size:.85rem}
   </div>
 </section>
 
-<!-- 6 BITÁCORA -->
 <section class="sec" id="s6">
   <div class="sec-h"><span class="num">6</span><h2>Bitácora de sesiones</h2></div>
   <div class="row g-3">
@@ -318,69 +351,916 @@ footer{color:var(--muted);font-size:.85rem}
         <div class="col-12"><button class="btn btn-slate w-100" type="submit"><i class="bi bi-journal-plus"></i> Registrar sesión</button></div>
       </div>
     </form></div>
-    <div class="col-lg-7 min0 rv"><div class="panel"><div class="d-flex mb-2"><span class="fw-bold">Sesiones registradas</span><span class="ms-auto ans" id="logCount">0</span></div><div id="logList"><p class="text-muted small mb-0">Aún no hay sesiones. Meta: al menos 24 sesiones semanales.</p></div></div></div>
+    <div class="col-lg-7 min0 rv"><div class="panel"><div class="d-flex mb-2"><span class="fw-bold">Sesiones registradas</span><span class="ms-auto ans" id="logCount">0</span></div><div id="logList"></div></div></div>
   </div>
 </section>
 
-<!-- 7 ÉTICA -->
 <section class="sec" id="s7">
   <div class="sec-h"><span class="num">7</span><h2>Ética y consentimientos</h2></div>
+  <div id="ethNote" class="mb-3"></div>
   <div class="row g-3">
     <div class="col-lg-6 min0 rv"><div class="panel h-100">
       <h3 class="h6 fw-bold">Control de consentimientos (meta: 30)</h3>
       <div class="row g-2">
-        <div class="col-4"><label class="form-label small" for="cEnt">Entregados</label><input type="number" min="0" class="form-control" id="cEnt" data-store="cEnt"></div>
-        <div class="col-4"><label class="form-label small" for="cPad">Firmados (tutor)</label><input type="number" min="0" class="form-control" id="cPad" data-store="cPad"></div>
-        <div class="col-4"><label class="form-label small" for="cAsen">Asentimientos</label><input type="number" min="0" class="form-control" id="cAsen" data-store="cAsen"></div>
+        <div class="col-4"><label class="form-label small" for="cEnt">Entregados</label><input type="number" min="0" class="form-control" id="cEnt"></div>
+        <div class="col-4"><label class="form-label small" for="cPad">Firmados (tutor)</label><input type="number" min="0" class="form-control" id="cPad"></div>
+        <div class="col-4"><label class="form-label small" for="cAsen">Asentimientos</label><input type="number" min="0" class="form-control" id="cAsen"></div>
       </div>
       <div class="mt-3"><div class="progress" role="progressbar" aria-label="Consentimientos completos"><div class="progress-bar bg-success" id="cBar" style="width:0%"></div></div><div class="small mt-1">Participantes listos (tutor + asentimiento): <span class="ans" id="cTxt">0 / 30</span></div></div>
     </div></div>
-    <div class="col-lg-6 min0 rv"><div class="panel h-100">
-      <h3 class="h6 fw-bold">Lista de verificación</h3>
-      <div id="ethicsList"></div>
-    </div></div>
+    <div class="col-lg-6 min0 rv"><div class="panel h-100"><h3 class="h6 fw-bold">Lista de verificación</h3><div id="ethicsList"></div></div></div>
   </div>
 </section>
 
-<!-- 8 PENDIENTES -->
 <section class="sec" id="s8">
   <div class="sec-h"><span class="num">8</span><h2>Datos pendientes por llenar</h2></div>
   <div class="panel rv">
-    <div class="d-flex mb-2"><span class="small text-muted">Se guardan automáticamente en este navegador.</span><span class="ms-auto ans" id="pendTxt">0 / 0</span></div>
+    <div class="d-flex mb-2"><span class="small text-muted">Se guardan automáticamente en este navegador, por proyecto.</span><span class="ms-auto ans" id="pendTxt">0 / 0</span></div>
     <div class="row g-2" id="pendGrid"></div>
   </div>
 </section>
 
-<!-- 9 FUENTES -->
 <section class="sec" id="s9">
   <div class="sec-h"><span class="num">9</span><h2>Fuentes (APA 7)</h2></div>
   <div class="panel small rv" id="refs"></div>
 </section>
 </main>
 
-<footer class="container py-4 text-center">Proyecto SILADIN CCH Oriente 2026-2027 · Alejandra Díaz Jiménez y Pedro Ernesto Nequiz Medina</footer>
+<footer class="container py-4 text-center">Proyectos SILADIN CCH Oriente 2026-2027 · Alejandra Díaz Jiménez y Pedro Ernesto Nequiz Medina</footer>
+</div>
 
-<!-- MODAL FORMULARIO -->
+<div id="viewMach">
+  <div class="mtools no-print">
+    <button class="btn btn-sm btn-warning" id="bEdit" aria-pressed="false"><i class="bi bi-pencil"></i> Editar</button>
+    <button class="btn btn-sm btn-slate" id="bSave"><i class="bi bi-save"></i> Guardar</button>
+    <button class="btn btn-sm btn-outline-secondary" id="bWord"><i class="bi bi-file-earmark-word"></i> Descargar Word</button>
+    <button class="btn btn-sm btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir / PDF</button>
+    <button class="btn btn-sm btn-outline-danger" id="bReset"><i class="bi bi-arrow-counterclockwise"></i> Restaurar</button>
+    <span class="cnt" id="pendCount"></span>
+  </div>
+  <div class="mtools no-print mt-2"><div class="note small w-100">Pulsa <b>Editar</b> para escribir sobre cualquier párrafo o celda. Lo marcado en <span style="background:#fff3bf;border:1px dashed #f59f00;border-radius:6px;padding:0 .3rem">amarillo</span> son datos por completar. <b>Guardar</b> lo conserva en este navegador; <b>Descargar Word</b> genera un archivo para Word.</div></div>
+  <main class="sheet"><div class="mdoc" id="mdoc-p1" hidden><div class="mhero"><div class="kicker">SILADIN · CCH Oriente · Proyecto 2026-2027</div><h1>Análisis estadístico para el entendimiento de la relación entre el estrés académico, las funciones cognitivas y el desempeño académico en estudiantes del CCH Oriente</h1><p>Proyecto colaborativo e interdisciplinario · Estadística y Probabilidad + Psicología · Contenido tomado de su documento Word (versión 2)</p></div>
+<h2><span class="num">M</span>Modalidad del proyecto</h2>
+<div class="tw"><table><tbody><tr>
+<td class="lbl"><strong>Tipo</strong></td>
+<td>Proyecto <strong>colaborativo e interdisciplinario</strong></td>
+</tr><tr>
+<td class="lbl"><strong>Áreas participantes</strong></td>
+<td><strong>Matemáticas</strong> (Estadística y Probabilidad I y II) / <strong>Ciencias Experimentales</strong> (Psicología I y II; apoyo de Biología I) / <strong>Informática</strong> (uso de hoja de cálculo y software de análisis de datos)</td>
+</tr><tr>
+<td class="lbl"><strong>Responsable principal (coordinadora)</strong></td>
+<td>Alejandra Díaz Jiménez — Profesora de Tiempo Completo C — Psicología — coordina el proyecto, lo registra y sube el proyecto y el informe a la plataforma — alejandra.diaz@cch.unam.mx</td>
+</tr><tr>
+<td class="lbl"><strong>Profesor participante</strong></td>
+<td>Pedro Ernesto Nequiz Medina — Profesor Ordinario de Asignatura A interino — Estadística y Probabilidad — participa de forma voluntaria con carta compromiso (Anexo B) — pedro.nequizmedina@cch.unam.mx</td>
+</tr><tr>
+<td class="lbl"><strong>Alumnos participantes</strong></td>
+<td><strong>14 a 16 alumnos</strong> de 5.° y 6.° semestre, en <strong>dos equipos de 7 u 8</strong>, de los grupos de Estadística y Probabilidad y de Psicología. Perfil: interés por la investigación, disponibilidad fuera de su horario de clases y compromiso con la confidencialidad de los datos.</td>
+</tr><tr>
+<td class="lbl"><strong>Instancias participantes</strong></td>
+<td>SILADIN CCH Oriente (Secretaría Técnica); sala de cómputo y espacios de SILADIN.</td>
+</tr></tbody></table></div>
+<h3>Distribución de responsabilidades</h3>
+<div class="tw"><table><tbody><tr>
+<td class="lbl"><strong>Alejandra Díaz Jiménez (coordinadora)</strong></td>
+<td><strong>Coordinación, diseño metodológico, asesoría científica en psicología y evaluación.</strong> Registra el proyecto y sube el proyecto y el informe a la plataforma; gestiona el aval de SILADIN; fundamenta el marco psicológico; capacita en el Inventario SISCO SV-21; aplica el NEUROPSI; elabora el protocolo ético, los consentimientos y la ruta de canalización; asesora al equipo 2; diseña la evaluación de aprendizajes; gestiona el arbitraje del reporte.</td>
+</tr><tr>
+<td class="lbl"><strong>Pedro Ernesto Nequiz Medina (profesor participante)</strong></td>
+<td><strong>Diseño del plan de análisis estadístico, desarrollo tecnológico, capacitación y soporte técnico.</strong> Diseña la base de datos anonimizada y la plantilla de análisis en hoja de cálculo; imparte el taller de estadística; supervisa la captura y el análisis; asesora al equipo 1; elabora las minutas de las reuniones. Firma carta compromiso.</td>
+</tr><tr>
+<td class="lbl"><strong>Alumnos (dos equipos)</strong></td>
+<td>Revisión bibliográfica; aplicación del SISCO SV-21 y del cuestionario bajo supervisión (el NEUROPSI solo lo aplica personal capacitado); captura con folio; cálculos, tablas y gráficas; redacción del reporte técnico; cartel y presentación para la Muestra SILADIN. Roles rotativos (captura, análisis, redacción, difusión) registrados en bitácora.</td>
+</tr><tr>
+<td class="lbl"><strong>SILADIN</strong></td>
+<td>Aval del proyecto; préstamo de sala de cómputo y espacio para sesiones; apoyo con materiales; seguimiento; difusión en la Muestra SILADIN.</td>
+</tr></tbody></table></div>
+<h3>Producto colaborativo</h3>
+<ul>
+<li><p><strong>Sistema de análisis de datos:</strong> plantilla en hoja de cálculo que calcula automáticamente el puntaje del SISCO SV-21, los promedios de la lista dálmata, las medidas de tendencia central y de dispersión, la correlación y la recta de regresión.</p></li>
+<li><p><strong>Guía de práctica reutilizable:</strong> «Del dato a la correlación: estadística con datos reales», para los grupos de Estadística y Probabilidad del plantel.</p></li>
+<li><p><strong>Base de datos anonimizada</strong> del estudio.</p></li>
+<li><p><strong>Reporte técnico final</strong> con los incisos del rubro: planteamiento, objetivos, marco teórico, hipótesis, metodología, resultados, conclusiones y fuentes en APA.</p></li>
+<li><p><strong>Presentación y cartel para la Muestra SILADIN.</strong></p></li>
+</ul>
+<h2><span class="num">1</span>Datos generales</h2>
+<div class="tw"><table><tbody><tr>
+<td class="lbl"><strong>Título del proyecto</strong></td>
+<td>Análisis estadístico para el entendimiento de la relación entre el estrés académico, las funciones cognitivas y el desempeño académico en estudiantes del CCH Oriente.</td>
+</tr><tr>
+<td class="lbl"><strong>Plantel</strong></td>
+<td>CCH Oriente</td>
+</tr><tr>
+<td class="lbl"><strong>Área / disciplina</strong></td>
+<td>Matemáticas (Estadística y Probabilidad) y Ciencias Experimentales (Psicología)</td>
+</tr><tr>
+<td class="lbl"><strong>Responsables</strong></td>
+<td><p><strong>Coordinadora:</strong> Alejandra Díaz Jiménez</p>
+<p>Cargo: Profesora de Tiempo Completo C</p>
+<p>Correo: alejandra.diaz@cch.unam.mx</p>
+<p><strong>Profesor participante:</strong> Pedro Ernesto Nequiz Medina</p>
+<p>Cargo: Profesor Ordinario de Asignatura A interino</p>
+<p>Correo: pedro.nequizmedina@cch.unam.mx</p>
+<p>Laboratorios / espacios: SILADIN CCH Oriente</p></td>
+</tr><tr>
+<td class="lbl"><strong>Periodo de ejecución</strong></td>
+<td>Inicio: octubre 2026 · Término: julio 2027 (proyecto anual del ciclo escolar 2026-2027; sesiones fuera del horario de clases)</td>
+</tr><tr>
+<td class="lbl"><strong>Espacios y recursos requeridos</strong></td>
+<td><strong>Espacios:</strong> sala o laboratorio de SILADIN para sesiones semanales; sala de cómputo; espacio privado para la aplicación individual del NEUROPSI y SISCO SV-21..<br/>
+<strong>Equipo:</strong> computadoras y proyector.<br/>
+<strong>Materiales:</strong> NEUROPSI Atención y Memoria (manual y protocolos originales), copias del SISCO SV-21 y del cuestionario, formatos de consentimiento, impresión de carteles.<br/>
+<strong>Software:</strong> hoja de cálculo (Excel o Google Sheets); opcional GeoGebra, R o Python.</td>
+</tr></tbody></table></div>
+<h2><span class="num">2</span>Justificación</h2>
+<h3>2.1 Problema o necesidad académica que atiende</h3>
+<p>El Plan de Estudios de la Escuela Nacional Colegio de Ciencias y Humanidades [ENCCH] (2025) retoma el Examen Médico Automatizado aplicado a 15,113 estudiantes del Colegio: el 25.7 % presenta ansiedad (34 % de las mujeres y 18 % de los hombres) y el 29.7 % presenta depresión (40.2 % de las mujeres y 20 % de los hombres) (DGAS, 2024, citado en ENCCH, 2025). En bachillerato, el estrés académico es frecuente: en un estudio con estudiantes de tercero de bachillerato en Ecuador, cerca del 90 % reportó estrés académico, con niveles predominantemente moderados a profundos (Quito Calle et al., 2017).</p>
+<p>La investigación en neurociencias indica que las hormonas del estrés actúan sobre el hipocampo y la corteza prefrontal, estructuras implicadas en la memoria y la atención, y que la adolescencia es una etapa especialmente sensible (Lupien et al., 2009). Sin embargo, en el CCH Oriente no hay datos que relacionen, en los mismos alumnos, el estrés académico, sus funciones cognitivas y su trayectoria escolar.</p>
+<p><strong>Necesidad académica:</strong> al mismo tiempo, los alumnos de Estadística y Probabilidad suelen aprender las medidas estadísticas con datos ficticios, lo que dificulta su interpretación. El proyecto atiende ambas necesidades: produce un diagnóstico del plantel y enseña estadística con datos reales.</p>
+<p><strong>Pregunta de investigación:</strong> ¿Existe relación entre el nivel de estrés académico, las funciones cognitivas (atención y memoria) y el rendimiento escolar de estudiantes del CCH Oriente?</p>
+<h3>2.2 Relación con el plan de estudios del CCH</h3>
+<div class="tw"><table><thead><tr>
+<th>Asignatura</th>
+<th>Unidad o contenido</th>
+<th>Aplicación en el proyecto</th>
+</tr></thead><tbody><tr>
+<td>Estadística y Probabilidad I y II</td>
+<td>Estadística descriptiva univariada y bivariada</td>
+<td>Organización y agrupación de datos; media, mediana y moda; desviación estándar; correlación y regresión lineal</td>
+</tr><tr>
+<td>Psicología I</td>
+<td>«El estudio de los procesos mentales y el comportamiento»</td>
+<td>Procesos psicológicos (atención, memoria, aprendizaje); metodología y ética de la investigación psicológica</td>
+</tr><tr>
+<td>Psicología II</td>
+<td>«El desarrollo humano»</td>
+<td>Factores biológicos, psicológicos y sociales del desarrollo adolescente</td>
+</tr><tr>
+<td>Biología I</td>
+<td>Segunda Unidad: regulación, conservación y reproducción de los sistemas vivos</td>
+<td>Homeostasis y regulación (respuesta fisiológica al estrés)</td>
+</tr><tr>
+<td>Matemáticas I a IV</td>
+<td>Funciones lineales</td>
+<td>Recta de regresión y su interpretación</td>
+</tr><tr>
+<td>TLRIID</td>
+<td>Investigación documental</td>
+<td>Revisión bibliográfica y referencias en APA</td>
+</tr></tbody></table></div>
+<p>Además, el perfil de egreso del Plan 2025 señala que el alumno «se reconoce como un sujeto psicosocial; cuida su salud mental y corporal» (ENCCH, 2025).</p>
+<h3>2.3 Importancia para la formación científica de los alumnos</h3>
+<ul>
+<li><p>Recorren el ciclo completo de una investigación cuantitativa: pregunta, hipótesis, instrumentos, recolección, análisis, interpretación y comunicación.</p></li>
+<li><p>Aprenden a distinguir un estudio correlacional de uno experimental y a reconocer que <strong>una correlación no demuestra causalidad</strong>.</p></li>
+<li><p>Trabajan con instrumentos validados y con normas éticas de la investigación con personas (consentimiento, confidencialidad).</p></li>
+<li><p>Comprenden que la salud psicológica es multifactorial: biológica, cognitiva y ambiental.</p></li>
+</ul>
+<h3>2.4 Vinculación con SILADIN</h3>
+<p>El proyecto se vincula con SILADIN en sus tres ejes:</p>
+<div class="tw"><table><tbody><tr>
+<td class="lbl"><strong>Experimentación</strong></td>
+<td>Medición de variables psicológicas con instrumentos estandarizados (SISCO SV-21, NEUROPSI) y, en una fase condicionada, de un indicador biológico (cortisol); análisis de datos en la sala de cómputo.</td>
+</tr><tr>
+<td class="lbl"><strong>Innovación</strong></td>
+<td>Desarrollo de una plantilla de análisis y de una guía de práctica reutilizables para enseñar estadística con datos reales del plantel.</td>
+</tr><tr>
+<td class="lbl"><strong>Divulgación</strong></td>
+<td>Presentación en la Muestra SILADIN, cartel, jornada «Estrés, salud mental y rendimiento escolar» y devolución de resultados generales a la comunidad.</td>
+</tr></tbody></table></div>
+<p>Atiende además las prioridades del Cuadernillo de Orientaciones 2026-2027: impulsar la investigación y divulgación realizadas en SILADIN (prioridad 20), fomentar la participación del alumnado en programas como Jóvenes hacia la Investigación (prioridad 21) y fomentar la salud emocional del alumnado en coordinación con ESPORA (prioridades 26 y 27) (Colegio de Ciencias y Humanidades [CCH], 2026).</p>
+<h2><span class="num">3</span>Objetivo general</h2>
+<p>Determinar, <strong>al término del ciclo 2026-2027</strong>, si existe relación estadísticamente significativa (α = .05) entre el nivel de estrés académico, los índices de atención y memoria y el promedio escolar de <strong>al menos 30 estudiantes</strong> del CCH Oriente, mediante un estudio de campo correlacional realizado por un grupo de 14 a 16 alumnos que aplicará estadística descriptiva y correlacional a datos reales.</p>
+<h2><span class="num">4</span>Objetivos específicos</h2>
+<div>
+<p>1. <strong>Aplicar</strong> el Inventario SISCO SV-21 y un cuestionario de hábitos a al menos 30 estudiantes, y describir su nivel de estrés académico por dimensión (estresores, síntomas y afrontamiento).</p>
+<p>2. <strong>Construir</strong> una base de datos anonimizada con la trayectoria escolar (lista dálmata, 1.° a 6.° semestre) y calcular promedios, medidas de dispersión y la tendencia de cada trayectoria.</p>
+<p>3. <strong>Evaluar</strong> la atención y la memoria de una submuestra de 10 a 25 participantes con el NEUROPSI Atención y Memoria.</p>
+<p>4. <strong>Desarrollar</strong> una plantilla de análisis en hoja de cálculo y una guía de práctica reutilizable para los grupos de Estadística y Probabilidad.</p>
+<p>5. <strong>Presentar</strong> los resultados en la Muestra SILADIN y en el Encuentro Estudiantil de Iniciación a la Investigación.</p>
+</div>
+<h2><span class="num">5</span>Fundamento teórico</h2>
+<h3>5.1 Conceptos científicos centrales</h3>
+<p><strong>Estrés (enfoque transaccional).</strong> Lazarus y Folkman (1984) definen el estrés psicológico como una relación entre la persona y su entorno que ella evalúa como amenazante o desbordante de sus recursos. Lo decisivo es la <strong>evaluación cognitiva</strong> del estímulo y las <strong>estrategias de afrontamiento</strong>.</p>
+<p><strong>Estrés académico.</strong> Barraza Macías (2006) lo define como «un proceso sistémico, de carácter adaptativo y esencialmente psicológico» (p. 126) que ocurre en tres momentos: el alumno valora las demandas escolares como <strong>estresores</strong>; estos producen un <strong>desequilibrio</strong> con síntomas físicos, psicológicos y conductuales, y el alumno pone en marcha <strong>estrategias de afrontamiento</strong>. De este modelo deriva el <strong>Inventario SISCO SV-21</strong> (Barraza Macías, 2018): 21 reactivos en tres dimensiones de 7, escala de 0 («nunca») a 5 («siempre»), con alfa de Cronbach reportada superior a .85 (Olivas-Ugarte et al., 2021).</p>
+<p><strong>Bases biológicas.</strong> El estrés activa el eje hipotálamo-hipófisis-suprarrenal, cuyo producto final es el <strong>cortisol</strong>. McEwen (1998) llama <strong>carga alostática</strong> al desgaste que produce una activación frecuente o prolongada. Los glucocorticoides actúan sobre el hipocampo, la amígdala y la corteza prefrontal (Lupien et al., 2009). El cortisol en cabello refleja la secreción de los meses previos (aprox. 1 cm por mes; Ullmann et al., 2016).</p>
+<p><strong>Funciones cognitivas.</strong> La atención selecciona y mantiene el procesamiento de la información relevante; la memoria la codifica, almacena y recupera; el aprendizaje depende de ambas. Se medirán con el <strong>NEUROPSI Atención y Memoria</strong>, batería en español con normas de 6 a 85 años que produce índices de atención, de memoria y global (Pearson, s. f.).</p>
+<p><strong>Rendimiento académico.</strong> Las calificaciones son su indicador más utilizado, aunque no existe consenso sobre todo lo que miden (Edel Navarro, 2003). Se operacionaliza con el promedio por semestre y general, las asignaturas no acreditadas y la tendencia de la trayectoria.</p>
+<p><strong>Conceptos estadísticos.</strong> Población y muestra; tipos de variables y escalas; distribuciones de frecuencia para datos agrupados (regla de Sturges, marca de clase); media, mediana y moda; rango, varianza, desviación estándar, coeficiente de variación y cuartiles; coeficientes de correlación de Pearson y Spearman; recta de regresión por mínimos cuadrados y coeficiente de determinación r².</p>
+<h3>5.2 Hipótesis</h3>
+<div class="tw"><table><thead><tr>
+<th>Hipótesis</th>
+<th>Sustento</th>
+</tr></thead><tbody><tr>
+<td><strong>H1.</strong> El estrés académico se relaciona de forma negativa con el promedio escolar.</td>
+<td>Modelo sistémico-cognoscitivista (Barraza Macías, 2006).</td>
+</tr><tr>
+<td><strong>H2.</strong> El estrés académico se relaciona de forma negativa con los índices de atención y memoria.</td>
+<td>Efectos de las hormonas del estrés en el hipocampo y la corteza prefrontal (Lupien et al., 2009).</td>
+</tr><tr>
+<td><strong>H3.</strong> Los índices de atención y memoria se relacionan de forma positiva con el promedio escolar.</td>
+<td>Procesos básicos del aprendizaje escolar (Edel Navarro, 2003).</td>
+</tr><tr>
+<td><strong>H4</strong> (fase condicionada). El cortisol se relaciona de forma positiva con el estrés percibido.</td>
+<td>El cortisol es el producto final del eje HHA (McEwen, 1998).</td>
+</tr></tbody></table></div>
+<h3>5.3 Antecedentes y prácticas similares</h3>
+<ul>
+<li><p><strong>ENCCH (2025)</strong>, con datos de la DGAS (2024): diagnóstico de ansiedad y depresión en 15,113 estudiantes del Colegio.</p></li>
+<li><p><strong>Quito Calle et al. (2017)</strong>: estrés académico en cerca del 90 % de estudiantes de tercero de bachillerato en Ecuador, medido con el Inventario SISCO; no midieron calificaciones.</p></li>
+<li><p><strong>Hernández-Arteaga y Sánchez Limón (2024)</strong>: en un estudio cualitativo, universitarios mexicanos asociaron el estrés académico con problemas de concentración que afectan su rendimiento; los autores piden estudios cuantitativos.</p></li>
+<li><p><strong>Práctica similar en el CCH:</strong> proyectos del Programa Jóvenes hacia la Investigación presentados en el Encuentro Estudiantil de Iniciación a la Investigación.</p></li>
+</ul>
+<h3>5.4 Referencias bibliográficas básicas</h3>
+<p>Barraza Macías (2006, 2018); Lazarus y Folkman (1984); McEwen (1998); Lupien et al. (2009); Edel Navarro (2003). Lista completa en formato APA 7 en el apartado «Fuentes consultadas».</p>
+<h2><span class="num">6</span>Metodología</h2>
+<p><strong>Tipo de estudio:</strong> de campo, cuantitativo, no experimental, transversal y correlacional.</p>
+<h3>6.1 Población participante</h3>
+<div class="tw"><table><tbody><tr>
+<td class="lbl"><strong>Grupo de trabajo (alumnos investigadores)</strong></td>
+<td>14 a 16 alumnos de 5.° y 6.° semestre, en dos equipos de 7 u 8, que han cursado o cursan Estadística y Probabilidad o Psicología.</td>
+</tr><tr>
+<td class="lbl"><strong>Participantes del estudio (muestra)</strong></td>
+<td>Al menos <strong>30 estudiantes</strong> del CCH Oriente de 1.° a 6.° semestre, ambos turnos, por muestreo no probabilístico por conveniencia. <strong>Estudio exploratorio:</strong> con n = 30 (α = .05; potencia de 80 %) solo se detectan correlaciones de r ≥ 0.49, calculado con la transformación z de Fisher. Para detectar una correlación moderada (r ≈ 0.3) se necesitarían alrededor de 85 participantes; si la convocatoria lo permite, se recomienda ampliar la muestra.</td>
+</tr><tr>
+<td class="lbl"><strong>Submuestra NEUROPSI</strong></td>
+<td>10 a 25 participantes de distintos niveles de estrés (aplicación individual de 50 a 60 minutos por personal capacitado). Resultados exploratorios.</td>
+</tr><tr>
+<td class="lbl"><strong>Criterios</strong></td>
+<td><strong>Inclusión:</strong> inscrito en el plantel; consentimiento firmado por madre, padre o tutor (si es menor de edad) y asentimiento del alumno. <strong>Exclusión:</strong> no completar el inventario o retirarse. <strong>Eliminación:</strong> más de 10 % de reactivos sin respuesta.</td>
+</tr></tbody></table></div>
+<h3>6.2 Actividades por etapa y sesión</h3>
+<p>Sesiones semanales de <strong>2 horas fuera del horario de clases</strong>, en SILADIN, además de una reunión mensual de los profesores con minuta.</p>
+<div class="tw"><table><thead><tr>
+<th>Etapa</th>
+<th>Sesiones</th>
+<th>Actividades</th>
+</tr></thead><tbody><tr>
+<td>1. Integración y fundamentación</td>
+<td>1–4</td>
+<td>Presentación del proyecto, carta compromiso, formación de equipos y roles; revisión bibliográfica; planteamiento de preguntas e hipótesis.</td>
+</tr><tr>
+<td>2. Capacitación</td>
+<td>5–10</td>
+<td>Seis prácticas de estadística con la guía «Del dato a la correlación»: variables, frecuencias y datos agrupados, tendencia central, dispersión, correlación y regresión. Ética y protección de datos. Aplicación del SISCO SV-21.</td>
+</tr><tr>
+<td>3. Preparación de campo</td>
+<td>11–13</td>
+<td>Prueba piloto del cuestionario y del SISCO; ajustes; entrega y recepción de consentimientos; diseño de la plantilla de análisis.</td>
+</tr><tr>
+<td>4. Recolección de datos</td>
+<td>14–18</td>
+<td>Aplicación grupal del SISCO SV-21 y del cuestionario; captura con folio; NEUROPSI a la submuestra (profesora); lista dálmata anonimizada.</td>
+</tr><tr>
+<td>5. Análisis</td>
+<td>19–24</td>
+<td>Tablas y gráficas; medidas descriptivas; correlaciones y regresión; comparación por grupos de estrés; interpretación.</td>
+</tr><tr>
+<td>6. Comunicación</td>
+<td>25–28</td>
+<td>Reporte técnico, cartel y presentación; ensayos; Muestra SILADIN y Encuentro Estudiantil; devolución de resultados.</td>
+</tr></tbody></table></div>
+<h3>6.3 Materiales, instrumentos, equipos y software</h3>
+<div class="tw"><table><tbody><tr>
+<td class="lbl"><strong>Instrumentos</strong></td>
+<td>Inventario SISCO SV-21 (Barraza Macías, 2018); NEUROPSI Atención y Memoria (Ostrosky-Solís et al.; material original, sin reproducir reactivos); cuestionario sociodemográfico y de hábitos; lista dálmata (con autorización de la Dirección).</td>
+</tr><tr>
+<td class="lbl"><strong>Materiales</strong></td>
+<td>Copias de instrumentos y consentimientos; folders y sobres para resguardo; material de papelería; impresión de carteles.</td>
+</tr><tr>
+<td class="lbl"><strong>Equipos</strong></td>
+<td>Computadoras de la sala de cómputo; proyector; archivero o gabinete con llave para resguardar documentos.</td>
+</tr><tr>
+<td class="lbl"><strong>Software</strong></td>
+<td>Hoja de cálculo (Excel o Google Sheets); opcional GeoGebra, R o Python.</td>
+</tr><tr>
+<td class="lbl"><strong>Fase condicionada</strong></td>
+<td>Kits de recolección de saliva o servicio de laboratorio clínico para cortisol (solo con dictamen de un comité de ética).</td>
+</tr></tbody></table></div>
+<h3>6.4 Procedimiento de desarrollo</h3>
+<div>
+<p>1. Obtener el aval de la Secretaría Técnica de SILADIN y la autorización de la Dirección para usar la lista dálmata.</p>
+<p>2. Capacitar al grupo de trabajo en estadística, ética y aplicación del SISCO SV-21.</p>
+<p>3. Hacer una prueba piloto y ajustar los instrumentos.</p>
+<p>4. Recabar consentimientos (padre, madre o tutor) y asentimientos (alumno).</p>
+<p>5. Aplicar el SISCO SV-21 y el cuestionario en grupo; capturar con folio.</p>
+<p>6. Aplicar el NEUROPSI a la submuestra, de forma individual.</p>
+<p>7. Extraer y anonimizar la lista dálmata; unir las bases por folio.</p>
+<p>8. Analizar: descriptivos, datos agrupados, diagramas de dispersión, r de Pearson o Spearman, prueba t = r√(n−2)/√(1−r²), recta ŷ = a + bx y r²; comparar grupos de estrés bajo, medio y alto.</p>
+<p>9. Interpretar con prudencia (correlación no es causalidad), redactar el reporte técnico y preparar la presentación.</p>
+<p>10. Devolver resultados generales a la comunidad y, de forma confidencial, resultados individuales a las familias, con canalización a Psicopedagogía o ESPORA cuando proceda.</p>
+</div>
+<h3>6.5 Medidas de seguridad, higiene y ética</h3>
+<ul>
+<li><p><strong>Ética:</strong> consentimiento informado por escrito de quien ejerza la patria potestad y asentimiento del alumno (Reglamento de la Ley General de Salud en Materia de Investigación para la Salud [RLGSMIS], 1987, art. 36). Participación voluntaria y sin efecto en calificaciones. Las pruebas psicológicas sin manipulación de la conducta son de <strong>riesgo mínimo</strong> (RLGSMIS, 1987, art. 17).</p></li>
+<li><p><strong>Protección de datos:</strong> la salud es un dato personal sensible que requiere consentimiento expreso y por escrito (Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados [LGPDPPSO], 2025). Anonimización con folio; la tabla folio–alumno la resguardan solo los profesores; archivos con contraseña; aviso de privacidad del proyecto.</p></li>
+<li><p><strong>Fase biológica (condicionada):</strong> solo con dictamen de un comité de ética. Se recomienda saliva o cabello, que el RLGSMIS (art. 17) clasifica como riesgo mínimo; la punción venosa figura como riesgo mínimo solo en adultos sanos. La toma la hace exclusivamente personal de salud, con guantes y manejo de residuos a cargo del laboratorio conforme a la normativa aplicable. Los alumnos no toman ni manipulan muestras.</p></li>
+<li><p><strong>Bienestar emocional:</strong> si se detectan niveles altos de estrés o puntuaciones bajas en el NEUROPSI, se aplica la ruta de canalización a Psicopedagogía y ESPORA.</p></li>
+</ul>
+<h2><span class="num">7</span>Productos esperados</h2>
+<div class="tw"><table><tbody><tr>
+<td class="lbl"><strong>Reporte técnico / informe final</strong></td>
+<td>Reporte de investigación por equipo con planteamiento, objetivos, marco teórico, hipótesis, metodología, resultados, conclusiones y fuentes en APA; informe docente del proyecto.</td>
+</tr><tr>
+<td class="lbl"><strong>Guía, base de datos y sistema</strong></td>
+<td>Guía de práctica «Del dato a la correlación»; plantilla de análisis en hoja de cálculo; base de datos anonimizada.</td>
+</tr><tr>
+<td class="lbl"><strong>Presentación para la Muestra SILADIN</strong></td>
+<td>Cartel y presentación de cada equipo.</td>
+</tr><tr>
+<td class="lbl"><strong>Evidencias</strong></td>
+<td>Bitácoras de equipo, listas de asistencia, minutas de profesores, fotografías de sesiones (sin datos personales), tablas y gráficas de los alumnos, constancias.</td>
+</tr><tr>
+<td class="lbl"><strong>Arbitraje (nivel C)</strong></td>
+<td>Dictamen de arbitraje positivo o evaluación satisfactoria de un comité de pares del reporte técnico, requisito del Protocolo de Equivalencias para que el producto se considere de nivel C.</td>
+</tr></tbody></table></div>
+<h2><span class="num">8</span>Cronograma</h2>
+<div class="tw"><table><thead><tr>
+<th>Actividad</th>
+<th>Responsable</th>
+<th>Semana / Mes</th>
+<th>Producto o evidencia</th>
+</tr></thead><tbody><tr>
+<td>Aval de SILADIN y autorizaciones</td>
+<td>Alejandra Díaz (coordinadora)</td>
+<td>Nov 2026</td>
+<td>Oficio de aval; autorización de la Dirección</td>
+</tr><tr>
+<td>Convocatoria e integración de equipos</td>
+<td>Ambos docentes</td>
+<td>Nov 2026 (sem. 1–2)</td>
+<td>Lista de inscritos; cartas compromiso</td>
+</tr><tr>
+<td>Revisión bibliográfica</td>
+<td>Alumnos / A. Díaz</td>
+<td>Nov–Dic 2026</td>
+<td>Fichas bibliográficas; marco teórico</td>
+</tr><tr>
+<td>Taller de estadística (6 prácticas)</td>
+<td>Pedro Nequiz</td>
+<td>Dic 2026–Ene 2027</td>
+<td>Prácticas resueltas; guía de práctica</td>
+</tr><tr>
+<td>Capacitación en SISCO SV-21 y ética</td>
+<td>Alejandra Díaz</td>
+<td>Ene 2027</td>
+<td>Lista de asistencia; constancias</td>
+</tr><tr>
+<td>Prueba piloto y consentimientos</td>
+<td>Ambos docentes / alumnos</td>
+<td>Feb 2027</td>
+<td>Instrumento ajustado; consentimientos firmados</td>
+</tr><tr>
+<td>Aplicación del SISCO SV-21 y cuestionario</td>
+<td>Alumnos (supervisión docente)</td>
+<td>Feb–Mar 2027</td>
+<td>Base de datos con folio</td>
+</tr><tr>
+<td>Aplicación del NEUROPSI</td>
+<td>Alejandra Díaz</td>
+<td>Mar 2027</td>
+<td>Protocolos calificados (resguardados)</td>
+</tr><tr>
+<td>Lista dálmata anonimizada</td>
+<td>Pedro Nequiz</td>
+<td>Mar 2027</td>
+<td>Base de trayectoria escolar</td>
+</tr><tr>
+<td>Fase biológica (condicionada)</td>
+<td>Personal de salud / ambos docentes</td>
+<td>Mar–Abr 2027</td>
+<td>Resultados de laboratorio con folio</td>
+</tr><tr>
+<td>Análisis estadístico</td>
+<td>Alumnos / Pedro Nequiz</td>
+<td>Abr 2027</td>
+<td>Tablas, gráficas, correlaciones; plantilla de análisis</td>
+</tr><tr>
+<td>Reporte técnico y cartel</td>
+<td>Alumnos / ambos docentes</td>
+<td>May 2027</td>
+<td>Reporte por equipo; cartel</td>
+</tr><tr>
+<td>Muestra SILADIN y Encuentro Estudiantil</td>
+<td>Alumnos</td>
+<td>2027</td>
+<td>Constancias; fotografías</td>
+</tr><tr>
+<td>Devolución de resultados y jornada</td>
+<td>Ambos docentes</td>
+<td>Jun 2027</td>
+<td>Infografía; lista de asistencia</td>
+</tr><tr>
+<td>Envío del reporte a arbitraje o comité de pares</td>
+<td>Alejandra Díaz / Pedro Nequiz</td>
+<td>May–Jun 2027</td>
+<td>Dictamen de arbitraje</td>
+</tr><tr>
+<td>Informe final en la plataforma</td>
+<td>Alejandra Díaz (coordinadora)</td>
+<td>Jun–Jul 2027</td>
+<td>Informe con minutas, asistencias y productos</td>
+</tr><tr>
+<td>Reuniones mensuales de profesores</td>
+<td>Ambos docentes</td>
+<td>Mensual</td>
+<td>Minutas</td>
+</tr></tbody></table></div>
+<p>Fechas tentativas, sujetas al calendario escolar 2026-2027 y a las fechas de la Muestra SILADIN y del Encuentro.</p>
+<h2><span class="num">9</span>Presupuesto y recursos</h2>
+<h3>9.1 Materiales y costo estimado</h3>
+<div class="tw"><table><thead><tr>
+<th>Concepto</th>
+<th>Cantidad</th>
+</tr></thead><tbody><tr>
+<td>NEUROPSI Atención y Memoria (manual y protocolos)</td>
+<td>1 juego + 30 protocolos</td>
+</tr><tr>
+<td>Copias de SISCO SV-21, cuestionario y consentimientos</td>
+<td>≈ 150 hojas (30 participantes × 5 hojas)</td>
+</tr><tr>
+<td>Impresión de carteles</td>
+<td>2</td>
+</tr><tr>
+<td>Papelería, folders y sobres</td>
+<td>Lote</td>
+</tr></tbody></table></div>
+<h3>9.2 Equipos existentes vs. solicitados</h3>
+<div class="tw"><table><thead><tr>
+<th>Equipo</th>
+<th>Existente</th>
+<th>Solicitado</th>
+</tr></thead><tbody><tr>
+<td>Computadoras con hoja de cálculo</td>
+<td>Sí (sala de cómputo SILADIN)</td>
+<td>—</td>
+</tr><tr>
+<td>Proyector</td>
+<td>Sí</td>
+<td>—</td>
+</tr><tr>
+<td>NEUROPSI Atención y Memoria</td>
+<td>—</td>
+<td>Sí, si no existe</td>
+</tr></tbody></table></div>
+<h3>9.3 Uso de laboratorios o instalaciones</h3>
+<p>Sala o laboratorio de SILADIN una vez por semana (2 h) para las sesiones del grupo; sala de cómputo durante las etapas de capacitación y análisis; un espacio privado y silencioso para la aplicación individual del NEUROPSI; un espacio para la Muestra SILADIN.</p>
+<h2><span class="num">10</span>Evaluación e indicadores</h2>
+<div class="tw"><table><thead><tr>
+<th>Indicador</th>
+<th>Meta</th>
+<th>Instrumento / evidencia</th>
+</tr></thead><tbody><tr>
+<td>Número de alumnos atendidos (grupo de trabajo)</td>
+<td>14 a 16; permanencia ≥ 80 %</td>
+<td>Lista de inscritos y de asistencia</td>
+</tr><tr>
+<td>Participantes del estudio</td>
+<td>≥ 30 (SISCO SV-21); 10 a 25 (NEUROPSI)</td>
+<td>Base de datos con folio</td>
+</tr><tr>
+<td>Prácticas realizadas</td>
+<td>6 prácticas de estadística</td>
+<td>Prácticas resueltas por los alumnos</td>
+</tr><tr>
+<td>Sesiones de trabajo</td>
+<td>≥ 24 sesiones semanales</td>
+<td>Bitácoras y listas de asistencia</td>
+</tr><tr>
+<td>Productos entregados</td>
+<td>2 reportes técnicos, 2 carteles, 1 guía, 1 plantilla, 1 base de datos</td>
+<td>Productos en PDF y archivos</td>
+</tr><tr>
+<td>Resultados de aprendizaje</td>
+<td>Mejora en la evaluación final respecto a la diagnóstica de estadística</td>
+<td>Evaluación diagnóstica y final; rúbrica del reporte</td>
+</tr><tr>
+<td>Satisfacción</td>
+<td>≥ 80 % de respuestas favorables</td>
+<td>Encuesta de satisfacción al cierre</td>
+</tr><tr>
+<td>Difusión</td>
+<td>Presentación en la Muestra SILADIN y en el Encuentro</td>
+<td>Constancias y fotografías</td>
+</tr></tbody></table></div>
+<h2><span class="num">11</span>Difusión</h2>
+<ul>
+<li><p><strong>Muestra SILADIN:</strong> cartel y presentación de cada equipo.</p></li>
+<li><p><strong>Encuentro Estudiantil de Iniciación a la Investigación</strong> (Programa Jóvenes hacia la Investigación): ponencia.</p></li>
+<li><p><strong>Jornada académica</strong> «Estrés, salud mental y rendimiento escolar», con participación de ESPORA y Psicopedagogía.</p></li>
+<li><p><strong>Infografía y cápsula de video</strong> sobre manejo del estrés para las redes del plantel.</p></li>
+<li><p><strong>Repositorio:</strong> la guía de práctica y la plantilla de análisis se comparten con la Academia de Matemáticas para su uso en el plantel; las evidencias se alojan en OneDrive, como indica el Cuadernillo (CCH, 2026).</p></li>
+<li><p><strong>Arbitraje:</strong> envío del reporte técnico a un evento con dictamen arbitrado o a un comité de pares, para que el producto pueda considerarse de nivel C.</p></li>
+</ul>
+<h2><span class="num">12</span>Firmas y aval</h2>
+<p>Los abajo firmantes se comprometen a desarrollar el presente proyecto colaborativo e interdisciplinario conforme a lo descrito.</p>
+<div class="tw"><table><thead><tr>
+<th>Profesor participante</th>
+<th>Responsable del proyecto (coordinadora)</th>
+</tr></thead><tbody><tr>
+<td>_______________________________<br/>
+Pedro Ernesto Nequiz Medina<br/>
+Profesor participante · Estadística y Probabilidad</td>
+<td>_______________________________<br/>
+Alejandra Díaz Jiménez<br/>
+Coordinadora del proyecto · Psicología</td>
+</tr></tbody></table></div>
+<div class="tw"><table><thead><tr>
+<th>Aval</th>
+</tr></thead><tbody><tr>
+<td>_______________________________<br/>
+Angélica Nohelia Guillén Méndez<br/>
+Secretaría Técnica SILADIN / Secretaría de Apoyo al Aprendizaje<br/>
+CCH Oriente</td>
+</tr></tbody></table></div>
+<h2><span class="num">F</span>Fuentes consultadas (APA 7)</h2>
+<p>Barraza Macías, A. (2006). Un modelo conceptual para el estudio del estrés académico. <em>Revista Electrónica de Psicología Iztacala, 9</em>(3), 110–129.</p>
+<p>Barraza Macías, A. (2018). <em>Inventario SISCO SV-21. Inventario sistémico cognoscitivista para el estudio del estrés académico. Segunda versión de 21 ítems</em>. ECORFAN.</p>
+<p>Colegio de Ciencias y Humanidades. (2020, 17 de enero). <em>Protocolo de equivalencias para el ingreso y la promoción de los profesores ordinarios de carrera</em> [Suplemento]. <em>Gaceta CCH</em>. https://gaceta.cch.unam.mx/sites/default/files/2025-12/protocolo_equivalencias_ingreso_promocion_.pdf</p>
+<p>Colegio de Ciencias y Humanidades. (2026). <em>Cuadernillo de orientaciones 2026-2027</em>. UNAM. https://www.cch.unam.mx/sites/default/files/Cuadernillo_Orientaciones_2026-2027.pdf</p>
+<p>Colegio de Ciencias y Humanidades. (s. f.). <em>Mapa curricular de Psicología I y II</em>. UNAM. https://www.cch.unam.mx/sites/default/files/plan_estudio/mapa_psicologia.pdf</p>
+<p>Edel Navarro, R. (2003). El rendimiento académico: concepto, investigación y desarrollo. <em>REICE. Revista Iberoamericana sobre Calidad, Eficacia y Cambio en Educación, 1</em>(2), 1–15.</p>
+<p>Escuela Nacional Colegio de Ciencias y Humanidades. (2025). <em>Plan de Estudios</em>. UNAM.</p>
+<p>Hernández-Arteaga, L. G. y Sánchez Limón, M. L. (2024). Estrés y rendimiento académico en estudiantes universitarios. <em>RIDE. Revista Iberoamericana para la Investigación y el Desarrollo Educativo, 15</em>(29), e787. https://doi.org/10.23913/ride.v15i29.2200</p>
+<p>Lazarus, R. S. y Folkman, S. (1984). <em>Stress, appraisal, and coping</em>. Springer.</p>
+<p>Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados. (2025, 20 de marzo). <em>Diario Oficial de la Federación</em>.</p>
+<p>Lupien, S. J., McEwen, B. S., Gunnar, M. R. y Heim, C. (2009). Effects of stress throughout the lifespan on the brain, behaviour and cognition. <em>Nature Reviews Neuroscience, 10</em>(6), 434–445. https://doi.org/10.1038/nrn2639</p>
+<p>McEwen, B. S. (1998). Protective and damaging effects of stress mediators. <em>The New England Journal of Medicine, 338</em>(3), 171–179. https://doi.org/10.1056/NEJM199801153380307</p>
+<p>Olivas-Ugarte, L. O., Morales-Hernández, S. F. y Solano-Jáuregui, M. K. (2021). Evidencias psicométricas de Inventario SISCO SV-21 para el estudio del estrés académico en universitarios peruanos. <em>Propósitos y Representaciones, 9</em>(2).</p>
+<p>Pearson. (s. f.). <em>NEUROPSI Attention and Memory, Third Edition</em> [Ficha del instrumento]. https://www.pearsonassessments.com/store/en/usd/p/100000209</p>
+<p>Quito Calle, J. V., Tamayo Piedra, M. del C., Buñay Barahona, D. P. y Neira Cardenas, O. S. (2017). Estrés académico en estudiantes de tercero de bachillerato de unidades educativas particulares del Ecuador. <em>Revista Electrónica de Psicología Iztacala, 20</em>(3).</p>
+<p>Reglamento de la Ley General de Salud en Materia de Investigación para la Salud. (1987, 6 de enero). <em>Diario Oficial de la Federación</em>. Última reforma publicada el 2 de abril de 2014.</p>
+<p>Ullmann, E., Barthel, A., Petrowski, K., Stalder, T., Kirschbaum, C. y Bornstein, S. R. (2016). Pilot study of adrenal steroid hormones in hair as an indicator of chronic mental and physical stress. <em>Scientific Reports, 6</em>, 25842. https://doi.org/10.1038/srep25842</p>
+<h2><span class="num">A</span>Anexo A. Estructura de la base de datos (lista dálmata anonimizada)</h2>
+<div class="tw"><table><thead><tr>
+<th>Campo</th>
+<th>Descripción</th>
+<th>Tipo de variable</th>
+</tr></thead><tbody><tr>
+<td>Folio</td>
+<td>Clave anónima (p. ej., OR-001); sustituye nombre y número de cuenta</td>
+<td>Identificador</td>
+</tr><tr>
+<td>Sexo / Edad</td>
+<td>Datos sociodemográficos básicos</td>
+<td>Nominal / Razón</td>
+</tr><tr>
+<td>Generación, turno y grupo</td>
+<td>Año de ingreso, matutino o vespertino, grupo</td>
+<td>Nominal</td>
+</tr><tr>
+<td>Semestre</td>
+<td>1 a 6</td>
+<td>Ordinal</td>
+</tr><tr>
+<td>Asignatura y área</td>
+<td>Nombre y área (Matemáticas, Ciencias Experimentales, Histórico-Social, Talleres, Idiomas)</td>
+<td>Nominal</td>
+</tr><tr>
+<td>Calificación</td>
+<td>5 a 10; NP se codifica como dato faltante</td>
+<td>Cuantitativa discreta</td>
+</tr><tr>
+<td>Vía de acreditación</td>
+<td>Ordinario, extraordinario, recursamiento, NP</td>
+<td>Nominal</td>
+</tr><tr>
+<td>Puntaje SISCO SV-21</td>
+<td>Total y por dimensión</td>
+<td>Cuantitativa</td>
+</tr><tr>
+<td>Índices NEUROPSI</td>
+<td>Atención, memoria y global</td>
+<td>Cuantitativa</td>
+</tr></tbody></table></div>
+<h2><span class="num">B</span>Anexo B. Carta compromiso del profesor participante</h2>
+<p>Ciudad de México, a ____ de ______________ de 2026.</p>
+<p>Secretaría Técnica de SILADIN, CCH Oriente</p>
+<p>Presente</p>
+<p>Por medio de la presente, yo, <strong>Pedro Ernesto Nequiz Medina</strong>, Profesor Ordinario de Asignatura A interino de la asignatura Estadística y Probabilidad, adscrito al plantel Oriente, manifiesto mi compromiso de participar de manera voluntaria en el proyecto colaborativo e interdisciplinario «Análisis estadístico para el entendimiento de la relación entre el estrés académico, las funciones cognitivas y el desempeño académico en estudiantes del CCH Oriente», coordinado por la profesora Alejandra Díaz Jiménez, durante el ciclo escolar 2026-2027.</p>
+<p>Me comprometo a desarrollar las actividades que se me asignan en el proyecto (diseño del plan de análisis estadístico, plantilla de análisis, taller de estadística, supervisión de la captura y el análisis, asesoría del equipo 1 y elaboración de minutas), a asistir a las reuniones mensuales de trabajo fuera de mi horario de clases y a entregar las evidencias correspondientes.</p>
+<p>Atentamente</p>
+<p>_______________________________</p>
+<p>Pedro Ernesto Nequiz Medina</p>
+<p>Profesor Ordinario de Asignatura A interino · pedro.nequizmedina@cch.unam.mx</p>
+</div><div class="mdoc" id="mdoc-p2" hidden>
+
+<div class="mhero">
+  <div class="kicker">SILADIN · CCH Oriente · Proyecto 2026-2027</div>
+  <h1>El impacto de las emociones, resultantes de las relaciones de pareja, en las funciones cognitivas de estudiantes del CCH Oriente</h1>
+  <p>Proyecto colaborativo e interdisciplinario · Psicología + Estadística y Probabilidad</p>
+</div>
+
+
+
+<h2><span class="num">M</span>Modalidad del proyecto</h2>
+<div class="tw"><table><tbody>
+<tr><td class="lbl">Tipo</td><td>Proyecto <b>colaborativo e interdisciplinario</b></td></tr>
+<tr><td class="lbl">Áreas participantes</td><td><b>Ciencias Experimentales</b> (Psicología I y II) / <b>Matemáticas</b> (Estadística y Probabilidad I y II) / <b>Informática</b> (análisis de datos en hoja de cálculo)</td></tr>
+<tr><td class="lbl">Responsable principal</td><td>Alejandra Díaz Jiménez — Profesora de Tiempo Completo C — Psicología — alejandra.diaz@cch.unam.mx <span class="pend">confirmar si coordina también este proyecto</span></td></tr>
+<tr><td class="lbl">Docentes colaboradores</td><td>Pedro Ernesto Nequiz Medina — Profesor Ordinario de Asignatura A interino — Estadística y Probabilidad — diseño del plan de análisis, plantilla de datos y capacitación estadística — pedro.nequizmedina@cch.unam.mx <span class="pend">confirmar</span></td></tr>
+<tr><td class="lbl">Alumnos participantes</td><td>14 a 16 alumnos de 5.° y 6.° semestre en dos equipos de 7 u 8 <span class="pend">grupos de procedencia</span>. Perfil: interés por la psicología y la investigación, disponibilidad fuera de su horario de clases y compromiso con la confidencialidad.</td></tr>
+<tr><td class="lbl">Instancias participantes</td><td>SILADIN CCH Oriente (Secretaría Técnica); Academias de Ciencias Experimentales y de Matemáticas; Departamento de Psicopedagogía y programa ESPORA (canalización)</td></tr>
+</tbody></table></div>
+
+<h3>Distribución de responsabilidades</h3>
+<div class="tw"><table><thead><tr><th>Integrante</th><th>Funciones</th></tr></thead><tbody>
+<tr><td><b>Docente A</b> · Alejandra Díaz Jiménez</td><td>Diseño metodológico y asesoría científica en psicología; selección y capacitación en instrumentos (ECR-12, DERS-E); aplicación del NEUROPSI; protocolo ético, consentimientos y ruta de canalización; evaluación; registro del proyecto e informe.</td></tr>
+<tr><td><b>Docente B</b> · Pedro Ernesto Nequiz Medina</td><td>Desarrollo tecnológico (base de datos anonimizada y plantilla de análisis), capacitación estadística (correlación, comparación de grupos, confiabilidad) y soporte técnico; minutas de reuniones.</td></tr>
+<tr><td><b>Alumnos</b></td><td>Revisión bibliográfica; prueba piloto; aplicación del ECR-12, DERS-E y cuestionario de pareja bajo supervisión; captura con folio; cálculos y gráficas; reporte técnico; cartel y presentación.</td></tr>
+<tr><td><b>SILADIN</b></td><td>Aval, espacios, materiales, seguimiento y difusión en la Muestra SILADIN.</td></tr>
+</tbody></table></div>
+
+<h3>Producto colaborativo</h3>
+<ul>
+<li><b>Sistema de análisis:</b> plantilla en hoja de cálculo que califica el ECR-12 (ansiedad y evitación, con el reactivo inverso) y el DERS-E, y calcula correlaciones, la t de Welch y el alfa de Cronbach.</li>
+<li><b>Guía experimental reutilizable:</b> «Emociones, apego y atención: cómo leer una correlación sin confundirla con una causa».</li>
+<li><b>Reporte técnico final</b> con planteamiento, objetivos, marco teórico, hipótesis, metodología, resultados, conclusiones y fuentes en APA.</li>
+<li><b>Presentación para la Muestra SILADIN</b> y <b>material didáctico</b> para el plantel: infografía sobre relaciones de pareja saludables y regulación emocional, elaborada con ESPORA.</li>
+</ul>
+
+<h2><span class="num">1</span>Datos generales</h2>
+<div class="tw"><table><tbody>
+<tr><td class="lbl">Título del proyecto</td><td>El impacto de las emociones, resultantes de las relaciones de pareja, en las funciones cognitivas de estudiantes del CCH Oriente</td></tr>
+<tr><td class="lbl">Plantel</td><td>CCH Oriente</td></tr>
+<tr><td class="lbl">Área / disciplina</td><td>Ciencias Experimentales (Psicología) y Matemáticas (Estadística y Probabilidad)</td></tr>
+<tr><td class="lbl">Responsable(s)</td><td>Alejandra Díaz Jiménez · Profesora de Tiempo Completo C · alejandra.diaz@cch.unam.mx <span class="pend">confirmar</span></td></tr>
+<tr><td class="lbl">Colaboradores</td><td>Docente: Pedro Ernesto Nequiz Medina · Alumnos: 14 a 16 · Laboratorio: SILADIN CCH Oriente</td></tr>
+<tr><td class="lbl">Periodo de ejecución</td><td>Inicio: <span class="pend">noviembre 2026</span> · Término: julio 2027 (proyecto anual, fuera del horario de clases)</td></tr>
+<tr><td class="lbl">Espacios y recursos</td><td><b>Espacios:</b> sala de SILADIN para sesiones semanales; sala de cómputo; espacio privado y silencioso para el NEUROPSI. <b>Materiales:</b> NEUROPSI Atención y Memoria (original), copias del ECR-12, DERS-E, cuestionario y consentimientos. <b>Software:</b> hoja de cálculo.</td></tr>
+</tbody></table></div>
+
+<h2><span class="num">2</span>Justificación</h2>
+<h3>2.1 Problema o necesidad académica</h3>
+<p>Las relaciones de pareja son una experiencia frecuente e intensa en la adolescencia. Davila (2008) revisa la evidencia de que las experiencias románticas en esta etapa se relacionan con síntomas depresivos. En jóvenes de 18 a 26 años, quienes habían terminado una relación en los seis meses previos presentaron más síntomas depresivos que quienes seguían en pareja (26.8 % en rango leve a grave frente a cerca de 2 %) y más dificultades de concentración autoinformadas (Verhallen et al., 2019). En el CCH, el Plan de Estudios retoma que el 25.7 % del alumnado presenta ansiedad y el 29.7 % depresión (DGAS, 2024, citado en ENCCH, 2025).</p>
+<p>La teoría del control atencional sostiene que la ansiedad reduce el control de la atención dirigida a metas (Eysenck et al., 2007). Sin embargo, no hay datos en el plantel que relacionen las emociones asociadas a la vida de pareja con la atención y la memoria medidas con pruebas, no solo con autoinforme.</p>
+<p><b>Pregunta de investigación:</b> ¿se relacionan la ansiedad y la evitación del apego romántico, las dificultades de regulación emocional y la experiencia de una ruptura reciente con la atención y la memoria de estudiantes del CCH Oriente?</p>
+<h3>2.2 Relación con el plan de estudios del CCH</h3>
+<div class="tw"><table><thead><tr><th>Asignatura</th><th>Contenido</th><th>Aplicación en el proyecto</th></tr></thead><tbody>
+<tr><td>Psicología I</td><td>«El estudio de los procesos mentales y el comportamiento»: cognición y afectividad; metodología y ética</td><td>Atención, memoria, emoción y regulación emocional; diseño correlacional; consentimiento</td></tr>
+<tr><td>Psicología II</td><td>«El desarrollo humano»</td><td>Relaciones de pareja y desarrollo socioafectivo en la adolescencia</td></tr>
+<tr><td>Estadística y Probabilidad I y II</td><td>Estadística descriptiva univariada y bivariada</td><td>Medidas descriptivas, correlación, regresión, comparación de dos grupos</td></tr>
+<tr><td>TLRIID</td><td>Investigación documental</td><td>Revisión bibliográfica y referencias APA</td></tr>
+</tbody></table></div>
+<h3>2.3 Importancia para la formación científica</h3>
+<ul><li>Los alumnos aprenden a convertir un concepto amplio («emociones de pareja») en variables medibles con instrumentos validados.</li><li>Calculan la confiabilidad de un instrumento (alfa de Cronbach) y la comparan con la reportada en la literatura.</li><li>Distinguen correlación de causalidad y reconocen los límites del autoinforme.</li><li>Reflexionan sobre relaciones saludables y regulación emocional con un enfoque científico.</li></ul>
+<h3>2.4 Vinculación con SILADIN</h3>
+<div class="tw"><table><tbody>
+<tr><td class="lbl">Experimentación</td><td>Medición de funciones cognitivas con el NEUROPSI y de variables emocionales con escalas validadas; comparación entre grupos con y sin ruptura reciente.</td></tr>
+<tr><td class="lbl">Innovación</td><td>Plantilla de calificación y análisis reutilizable y guía de práctica para el plantel.</td></tr>
+<tr><td class="lbl">Divulgación</td><td>Muestra SILADIN, cartel, jornada con ESPORA e infografía para la comunidad.</td></tr>
+</tbody></table></div>
+
+<h2><span class="num">3</span>Objetivo general</h2>
+<p>Determinar, al término del ciclo 2026-2027, si la ansiedad y la evitación del apego romántico, las dificultades de regulación emocional y la experiencia de una ruptura en los últimos seis meses se relacionan de forma estadísticamente significativa (α = .05) con los índices de atención y memoria de <b>al menos 30 estudiantes</b> del CCH Oriente, mediante un estudio de campo correlacional y comparativo realizado por un grupo de 14 a 16 alumnos.</p>
+
+<h2><span class="num">4</span>Objetivos específicos</h2>
+<ol>
+<li><b>Aplicar</b> el ECR-12, la DERS-E y un cuestionario de situación de pareja a al menos 30 estudiantes, previa prueba piloto.</li>
+<li><b>Calcular</b> la confiabilidad (alfa de Cronbach) del ECR-12 en la muestra piloto y compararla con la reportada por Guzmán-González et al. (2020).</li>
+<li><b>Evaluar</b> la atención y la memoria de una submuestra de 10 a 25 participantes con el NEUROPSI Atención y Memoria.</li>
+<li><b>Desarrollar</b> la plantilla de análisis y la guía de práctica reutilizable.</li>
+<li><b>Presentar</b> los resultados en la Muestra SILADIN y elaborar con ESPORA una infografía para la comunidad.</li>
+</ol>
+
+<h2><span class="num">5</span>Fundamento teórico</h2>
+<h3>5.1 Conceptos científicos centrales</h3>
+<p><b>Apego romántico.</b> La teoría del apego plantea la necesidad humana de formar vínculos emocionales que brinden consuelo y protección ante el estrés (Bowlby, 1982). La inseguridad del apego en la pareja se describe con dos dimensiones: la <b>ansiedad</b> (temor al abandono y al rechazo) y la <b>evitación</b> (incomodidad con la cercanía y la dependencia) (Brennan et al., 1998; Mikulincer y Shaver, 2016).</p>
+<p><b>Regulación emocional.</b> Procesos con los que las personas influyen en qué emociones tienen, cuándo y cómo las experimentan y expresan (Gross, 1998). Se mide con la DERS (Gratz y Roemer, 2004), cuya versión en español para adolescentes mexicanos (DERS-E) conserva 24 reactivos en 4 factores (Marín Tejeda et al., 2012).</p>
+<p><b>Emoción y cognición.</b> Según la teoría del control atencional, la ansiedad reduce el control de la atención dirigida a metas y aumenta la captura por estímulos, lo que disminuye la eficiencia del procesamiento (Eysenck et al., 2007). En jóvenes mexicanos de 18 a 29 años se hallaron correlaciones entre factores específicos de la DERS-E y subpruebas de funciones ejecutivas, aunque no entre las puntuaciones globales (Fonseca Moreno et al., 2025).</p>
+<p><b>Funciones cognitivas.</b> Atención y memoria, medidas con el NEUROPSI Atención y Memoria (índices de atención, memoria y global).</p>
+<h3>5.2 Hipótesis</h3>
+<div class="tw"><table><thead><tr><th>Hipótesis</th><th>Prueba estadística</th><th>Sustento</th></tr></thead><tbody>
+<tr><td><b>H1.</b> La ansiedad de apego se relaciona de forma positiva con las dificultades de regulación emocional.</td><td>r de Pearson</td><td>Guzmán-González et al. (2020)</td></tr>
+<tr><td><b>H2.</b> Las dificultades de regulación emocional se relacionan de forma negativa con la atención y la memoria.</td><td>r de Pearson</td><td>Eysenck et al. (2007)</td></tr>
+<tr><td><b>H3.</b> Quienes tuvieron una ruptura en los últimos 6 meses presentan menor índice de atención.</td><td>t de Welch y d de Cohen</td><td>Verhallen et al. (2019)</td></tr>
+<tr><td><b>H4.</b> La ansiedad de apego se relaciona de forma negativa con el índice de atención.</td><td>r de Pearson</td><td>Mikulincer y Shaver (2016)</td></tr>
+</tbody></table></div>
+<h3>5.3 Antecedente principal: lo más rescatable de Guzmán-González et al. (2020)</h3>
+<div class="box intro">
+<p class="mb-2"><b>Qué hicieron:</b> desarrollaron una versión breve en español del <i>Experiences in Close Relationships</i> (ECR-12) y la validaron con 3,703 adultos chilenos de seis muestras (estudiantes universitarios, comunidad, personas gays y lesbianas, y parejas heterosexuales).</p>
+<p class="mb-1"><b>Qué podemos implementar en el CCH Oriente:</b></p>
+<ul class="mb-2">
+<li><b>Un instrumento breve.</b> 12 reactivos (6 de ansiedad y 6 de evitación) en lugar de 36. Deja tiempo para la DERS-E y el NEUROPSI, que es largo.</li>
+<li><b>Dos variables continuas.</b> Ansiedad y evitación son puntajes promedio, ideales para el laboratorio de correlación.</li>
+<li><b>Un punto de comparación para el piloto.</b> Alfas de .72 a .83 en ansiedad y de .78 a .89 en evitación. Los alumnos calculan el alfa de su piloto y lo comparan.</li>
+<li><b>Evidencia para H1.</b> En dos muestras, la ansiedad y la evitación predijeron mayores dificultades de regulación emocional (DERS; coeficientes estandarizados de .27 a .34).</li>
+<li><b>Comparación por sexo.</b> El estudio encontró invarianza de la estructura entre hombres y mujeres, lo que permite comparar ambos grupos.</li>
+<li><b>Un diseño ético.</b> Aprobación de un comité de ética y consentimiento informado en todas las muestras.</li>
+</ul>
+<p class="mb-0"><b>Límites que debemos reconocer:</b> la muestra fue de <b>adultos chilenos</b>, no de adolescentes mexicanos; todas las medidas fueron de autoinforme. Nuestro aporte es medir la atención y la memoria con una prueba de desempeño (NEUROPSI) en estudiantes de bachillerato.</p>
+</div>
+<div class="box warn"><b>Antes de aplicar el ECR-12:</b> prueba piloto con un grupo pequeño, revisión de redacción para adolescentes mexicanos y cálculo del alfa de Cronbach. Si la confiabilidad es baja, considerar el ECR-RS validado en adolescentes chilenos de 12 a 17 años (Tay-Karapas et al., 2015), cuya validación midió el apego a madre y padre. <span class="pend">confirmar la escala de respuesta con la versión chilena de 36 reactivos</span></div>
+<h3>5.4 Otros antecedentes</h3>
+<ul>
+<li>Davila (2008): revisión sobre experiencias románticas adolescentes y síntomas depresivos.</li>
+<li>Verhallen et al. (2019): ruptura reciente asociada con más síntomas depresivos y dificultades de concentración autoinformadas en jóvenes de 18 a 26 años; no midieron atención con pruebas.</li>
+<li>Fonseca Moreno et al. (2025): relación parcial entre regulación emocional y funciones ejecutivas en jóvenes mexicanos.</li>
+</ul>
+
+<h2><span class="num">6</span>Metodología</h2>
+<p><b>Tipo de estudio:</b> de campo, cuantitativo, no experimental, transversal, correlacional y comparativo.</p>
+<h3>6.1 Población participante</h3>
+<div class="tw"><table><tbody>
+<tr><td class="lbl">Grupo de trabajo</td><td>14 a 16 alumnos de 5.° y 6.° semestre en dos equipos.</td></tr>
+<tr><td class="lbl">Participantes</td><td>Al menos 30 estudiantes de 1.° a 6.° semestre, ambos turnos, muestreo por conveniencia. Estudio exploratorio: con n = 30 solo se detectan correlaciones de r ≥ 0.49 (α = .05; potencia de 80 %).</td></tr>
+<tr><td class="lbl">Submuestra NEUROPSI</td><td>10 a 25 participantes, con y sin ruptura reciente.</td></tr>
+<tr><td class="lbl">Criterios</td><td><b>Inclusión:</b> consentimiento de madre, padre o tutor y asentimiento del alumno. Pueden participar alumnos con o sin pareja (el ECR-12 se responde pensando en sus relaciones de pareja en general). <b>Exclusión:</b> retirarse o no completar los instrumentos.</td></tr>
+</tbody></table></div>
+<h3>6.2 Variables</h3>
+<div class="tw"><table><thead><tr><th>Variable</th><th>Instrumento</th><th>Cómo se calcula</th></tr></thead><tbody>
+<tr><td>Ansiedad de apego</td><td>ECR-12</td><td>Promedio de los reactivos 6, 8, 18, 20, 24 y 30</td></tr>
+<tr><td>Evitación de apego</td><td>ECR-12</td><td>Promedio de los reactivos 5, 9, 13, 17, 23 y 27 (el 27 invertido)</td></tr>
+<tr><td>Dificultades de regulación emocional</td><td>DERS-E</td><td>Puntaje total y por factor</td></tr>
+<tr><td>Ruptura reciente</td><td>Cuestionario</td><td>0 = no, 1 = sí (en los últimos 6 meses)</td></tr>
+<tr><td>Atención y memoria</td><td>NEUROPSI Atención y Memoria</td><td>Índices normalizados</td></tr>
+<tr><td>Control</td><td>Cuestionario</td><td>Sexo, edad, semestre, turno, relación actual (sí/no), horas de sueño</td></tr>
+</tbody></table></div>
+<h3>6.3 Actividades por etapa</h3>
+<div class="tw"><table><thead><tr><th>Etapa</th><th>Sesiones</th><th>Actividades</th></tr></thead><tbody>
+<tr><td>1. Integración y fundamentación</td><td>1–4</td><td>Formación de equipos; lectura guiada de Guzmán-González et al. (2020); preguntas e hipótesis.</td></tr>
+<tr><td>2. Capacitación</td><td>5–10</td><td>Estadística (correlación, t de Welch, alfa de Cronbach); ética; aplicación y calificación del ECR-12 y la DERS-E.</td></tr>
+<tr><td>3. Piloto</td><td>11–13</td><td>Prueba piloto; alfa de Cronbach; ajustes de redacción; consentimientos.</td></tr>
+<tr><td>4. Recolección</td><td>14–18</td><td>Aplicación grupal de escalas; NEUROPSI individual (personal capacitado); captura con folio.</td></tr>
+<tr><td>5. Análisis</td><td>19–24</td><td>Descriptivos; correlaciones; comparación con y sin ruptura; interpretación.</td></tr>
+<tr><td>6. Comunicación</td><td>25–28</td><td>Reporte técnico; cartel; Muestra SILADIN; infografía con ESPORA.</td></tr>
+</tbody></table></div>
+<h3>6.4 Materiales, equipos y software</h3>
+<p>ECR-12 (artículo de acceso abierto, licencia CC BY 4.0; Anexo A), DERS-E, cuestionario de situación de pareja, NEUROPSI Atención y Memoria (material original, sin reproducir reactivos), computadoras con hoja de cálculo, gabinete con llave para resguardar documentos.</p>
+<h3>6.5 Procedimiento</h3>
+<ol><li>Aval de SILADIN y, por tratarse de un tema sensible con menores de edad, revisión del protocolo por un comité de ética <span class="pend">comité</span>.</li><li>Capacitación del grupo de trabajo.</li><li>Prueba piloto del ECR-12 y cálculo del alfa.</li><li>Consentimientos y asentimientos.</li><li>Aplicación grupal anónima con folio.</li><li>NEUROPSI individual a la submuestra.</li><li>Análisis: r de Pearson, regresión, t de Welch y d de Cohen.</li><li>Reporte, difusión y devolución de resultados generales.</li></ol>
+<h3>6.6 Medidas de seguridad, higiene y ética</h3>
+<ul>
+<li>Consentimiento por escrito de quien ejerce la patria potestad y asentimiento del alumno (RLGSMIS, 1987, art. 36). Las pruebas psicológicas sin manipulación de la conducta son de riesgo mínimo (art. 17).</li>
+<li><b>Sin preguntas sobre conducta sexual.</b> Todas las preguntas sensibles incluyen «prefiero no responder».</li>
+<li>Si un participante revela violencia en el noviazgo, se canaliza conforme al <i>Protocolo para la atención integral de casos de violencia por razones de género en la UNAM</i>, además de Psicopedagogía y ESPORA.</li>
+<li>Datos sensibles protegidos conforme a la LGPDPPSO (2025): folio, resguardo y aviso de privacidad.</li>
+<li>Las sesiones se cierran con una actividad breve de regulación emocional coordinada por la profesora de Psicología.</li>
+</ul>
+
+<h2><span class="num">7</span>Productos esperados</h2>
+<ul><li>Reporte técnico por equipo e informe final.</li><li>Plantilla de análisis, guía de práctica y base de datos anonimizada.</li><li>Cartel y presentación para la Muestra SILADIN.</li><li>Bitácoras, listas de asistencia, minutas y fotografías sin datos personales.</li><li>Dictamen de arbitraje o comité de pares (nivel C).</li></ul>
+
+<h2><span class="num">8</span>Cronograma</h2>
+<div class="tw"><table><thead><tr><th>Actividad</th><th>Responsable</th><th>Semana / Mes</th><th>Producto o evidencia</th></tr></thead><tbody>
+<tr><td>Aval de SILADIN y revisión ética</td><td>Docente A</td><td>Nov–Dic 2026</td><td>Oficio de aval; dictamen</td></tr>
+<tr><td>Convocatoria e integración</td><td>Ambos docentes</td><td>Nov 2026</td><td>Lista de inscritos; cartas compromiso</td></tr>
+<tr><td>Revisión bibliográfica</td><td>Alumnos / Docente A</td><td>Nov–Dic 2026</td><td>Fichas; marco teórico</td></tr>
+<tr><td>Capacitación estadística y en instrumentos</td><td>Docente B / Docente A</td><td>Dic 2026–Ene 2027</td><td>Prácticas resueltas</td></tr>
+<tr><td>Prueba piloto y alfa de Cronbach</td><td>Alumnos / Docente B</td><td>Feb 2027</td><td>Reporte del piloto</td></tr>
+<tr><td>Consentimientos y aplicación de escalas</td><td>Alumnos (supervisión)</td><td>Feb–Mar 2027</td><td>Base de datos con folio</td></tr>
+<tr><td>Aplicación del NEUROPSI</td><td>Docente A</td><td>Mar 2027</td><td>Protocolos resguardados</td></tr>
+<tr><td>Análisis estadístico</td><td>Alumnos / Docente B</td><td>Abr 2027</td><td>Tablas, gráficas, pruebas</td></tr>
+<tr><td>Reporte técnico, cartel e infografía</td><td>Alumnos / ambos docentes</td><td>May 2027</td><td>Reporte; cartel; infografía</td></tr>
+<tr><td>Muestra SILADIN</td><td>Alumnos</td><td><span class="pend">fecha</span></td><td>Constancias</td></tr>
+<tr><td>Arbitraje e informe final</td><td>Docente A</td><td>Jun–Jul 2027</td><td>Dictamen; informe</td></tr>
+<tr><td>Reuniones mensuales</td><td>Ambos docentes</td><td>Mensual</td><td>Minutas</td></tr>
+</tbody></table></div>
+
+<h2><span class="num">9</span>Presupuesto y recursos</h2>
+<div class="tw"><table><thead><tr><th>Concepto</th><th>Cantidad</th><th>Costo estimado</th><th>Existente / solicitado</th></tr></thead><tbody>
+<tr><td>NEUROPSI Atención y Memoria</td><td>1 juego + protocolos</td><td><span class="pend">cotización</span></td><td><span class="pend">verificar si lo comparte el Proyecto 1</span></td></tr>
+<tr><td>Copias de instrumentos y consentimientos</td><td>≈ 150 hojas</td><td><span class="pend">costo</span></td><td>Solicitado a SILADIN</td></tr>
+<tr><td>Impresión de cartel e infografía</td><td>2</td><td><span class="pend">costo</span></td><td>Solicitado a SILADIN</td></tr>
+<tr><td>Computadoras y proyector</td><td>Sala de cómputo</td><td>—</td><td>Existente</td></tr>
+</tbody></table></div>
+
+<h2><span class="num">10</span>Evaluación e indicadores</h2>
+<div class="tw"><table><thead><tr><th>Indicador</th><th>Meta</th><th>Evidencia</th></tr></thead><tbody>
+<tr><td>Alumnos atendidos</td><td>14 a 16; permanencia ≥ 80 %</td><td>Listas de asistencia</td></tr>
+<tr><td>Participantes</td><td>≥ 30 (escalas); 10 a 25 (NEUROPSI)</td><td>Base de datos</td></tr>
+<tr><td>Prácticas realizadas</td><td>6 (incluye alfa de Cronbach y t de Welch)</td><td>Prácticas resueltas</td></tr>
+<tr><td>Productos entregados</td><td>2 reportes, 2 carteles, 1 guía, 1 plantilla, 1 infografía</td><td>Archivos</td></tr>
+<tr><td>Aprendizaje</td><td>Mejora entre evaluación diagnóstica y final</td><td>Evaluaciones; rúbrica</td></tr>
+<tr><td>Satisfacción</td><td>≥ 80 % de respuestas favorables</td><td>Encuesta de cierre</td></tr>
+</tbody></table></div>
+
+<h2><span class="num">11</span>Difusión</h2>
+<ul><li>Muestra SILADIN (cartel y presentación) <span class="pend">fecha</span>.</li><li>Jornada «Emociones, relaciones y aprendizaje» con ESPORA y Psicopedagogía.</li><li>Infografía en redes del plantel; guía y plantilla compartidas con las Academias.</li><li>Envío del reporte a un evento arbitrado o comité de pares.</li></ul>
+
+<h2><span class="num">12</span>Firmas y aval</h2>
+<div class="sig"><div>Alejandra Díaz Jiménez<br>Responsable del proyecto</div><div>Pedro Ernesto Nequiz Medina<br>Docente colaborador</div><div>Angélica Nohelia Guillén Méndez<br>Secretaría Técnica SILADIN / Secretaría de Apoyo al Aprendizaje</div></div>
+
+<h2><span class="num">A</span>Anexo A. Reactivos del ECR-12 en español</h2>
+<p class="small">Fuente: Guzmán-González et al. (2020), tabla 4, licencia CC BY 4.0. Numeración de la versión de 36 reactivos.</p>
+<div class="tw"><table><thead><tr><th>Núm.</th><th>Dimensión</th><th>Reactivo</th></tr></thead><tbody id="ecrBody"><tr><td>5</td><td>Evitación</td><td>Cuando mi pareja comienza a establecer mayor intimidad, me doy cuenta que tiendo a cerrarme.</td></tr><tr><td>6</td><td>Ansiedad</td><td>Me preocupa que mi pareja no se interese por mí tanto como yo me intereso por ella.</td></tr><tr><td>8</td><td>Ansiedad</td><td>Me preocupa bastante la posibilidad de perder a mi pareja.</td></tr><tr><td>9</td><td>Evitación</td><td>Me siento incómodo/a abriéndome a mi pareja.</td></tr><tr><td>13</td><td>Evitación</td><td>Me pongo nervioso/a cuando mi pareja logra demasiada intimidad emocional conmigo.</td></tr><tr><td>17</td><td>Evitación</td><td>Intento evitar establecer demasiada intimidad con mi pareja.</td></tr><tr><td>18</td><td>Ansiedad</td><td>Necesito que mi pareja me reafirme constantemente que me ama.</td></tr><tr><td>20</td><td>Ansiedad</td><td>A veces siento que presiono a mi pareja para que muestre más sentimientos, más compromiso hacia nuestra relación.</td></tr><tr><td>23</td><td>Evitación</td><td>Prefiero no tener demasiada intimidad emocional con mi pareja.</td></tr><tr><td>24</td><td>Ansiedad</td><td>Si no logro que mi pareja muestre interés por mí, me molesto o me enojo.</td></tr><tr><td>27</td><td>Evitación (inverso)</td><td>Frecuentemente converso sobre mis problemas y preocupaciones con mi pareja.</td></tr><tr><td>30</td><td>Ansiedad</td><td>Me siento frustrado/a cuando mi pareja no me hace tanto caso como a mí me gustaría.</td></tr></tbody></table></div>
+<div class="box tip"><b>Calificación:</b><span class="fx fx-block">Ansiedad = <span class="fr"><span class="nu"><span class="sg">Σ</span> reactivos 6, 8, 18, 20, 24, 30</span><span class="de">6</span></span>  Evitación = <span class="fr"><span class="nu"><span class="sg">Σ</span> reactivos 5, 9, 13, 17, 23, 27<sup>inv</sup></span><span class="de">6</span></span></span>Reactivo 27 invertido: puntaje invertido = (máximo + mínimo) − respuesta. <span class="pend">confirmar escala</span></div>
+<div class="box ok"><b>Alfa de Cronbach (para el piloto):</b><span class="fx fx-block">α = <span class="fr"><span class="nu">k</span><span class="de">k − 1</span></span>(1 − <span class="fr"><span class="nu"><span class="sg">Σ</span> s<sub>i</sub>²</span><span class="de">s<sub>T</sub>²</span></span>)</span>k = número de reactivos; s<sub>i</sub>² = varianza de cada reactivo; s<sub>T</sub>² = varianza del puntaje total.</div>
+
+<h2><span class="num">B</span>Anexo B. Contenido mínimo del consentimiento</h2>
+<ul class="chk"><li>Propósito, procedimientos y duración (escalas ≈ 20 min; NEUROPSI 50 a 60 min solo para la submuestra).</li><li>Participación voluntaria; derecho a retirarse sin efecto en calificaciones.</li><li>Las preguntas sobre pareja no incluyen conducta sexual; opción «prefiero no responder».</li><li>Confidencialidad: folio, resguardo, aviso de privacidad.</li><li>Ruta de apoyo: Psicopedagogía, ESPORA y Protocolo de violencia de género de la UNAM.</li><li>Firmas del tutor y asentimiento del alumno; contacto de los responsables.</li></ul>
+
+<h2><span class="num">F</span>Fuentes (APA 7)</h2>
+<div id="refsBox" class="small"><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Bowlby, J. (1982). <i>Attachment and loss: Vol. 1. Attachment</i> (2.ª ed.). Basic Books.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Brennan, K. A., Clark, C. L. y Shaver, P. R. (1998). Self-report measurement of adult attachment: An integrative overview. En J. A. Simpson y W. S. Rholes (Eds.), <i>Attachment theory and close relationships</i> (pp. 46–76). Guilford Press.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Colegio de Ciencias y Humanidades. (2026). <i>Cuadernillo de orientaciones 2026-2027</i>. UNAM.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Davila, J. (2008). Depressive symptoms and adolescent romance: Theory, research, and implications. <i>Child Development Perspectives, 2</i>(1), 26–31. https://doi.org/10.1111/j.1750-8606.2008.00037.x</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Escuela Nacional Colegio de Ciencias y Humanidades. (2025). <i>Plan de Estudios</i>. UNAM.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Eysenck, M. W., Derakshan, N., Santos, R. y Calvo, M. G. (2007). Anxiety and cognitive performance: Attentional control theory. <i>Emotion, 7</i>(2), 336–353. https://doi.org/10.1037/1528-3542.7.2.336</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Fonseca Moreno, A. S., De la Roca Chiapas, J. M., Oropeza Tena, R., Aguilar Zavala, H., Sánchez Gama, M. de J. y Chacón Gutiérrez, L. (2025). Relación entre dificultades en la regulación emocional y funciones ejecutivas en jóvenes mexicanos. <i>Boletín Científico de la Escuela Superior Atotonilco de Tula, 12</i>(24), 15–23. https://doi.org/10.29057/esat.v12i24.14874</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Gratz, K. L. y Roemer, L. (2004). Multidimensional assessment of emotion regulation and dysregulation: Development, factor structure, and initial validation of the Difficulties in Emotion Regulation Scale. <i>Journal of Psychopathology and Behavioral Assessment, 26</i>(1), 41–54.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Gross, J. J. (1998). The emerging field of emotion regulation: An integrative review. <i>Review of General Psychology, 2</i>(3), 271–299.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Guzmán-González, M., Rivera-Ottenberger, D., Brassard, A., Spencer, R. y Lafontaine, M.-F. (2020). Measuring adult romantic attachment: Psychometric properties of the brief Spanish version of the Experiences in Close Relationships. <i>Psicologia: Reflexão e Crítica, 33</i>, 9. https://doi.org/10.1186/s41155-020-00145-w</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados. (2025, 20 de marzo). <i>Diario Oficial de la Federación</i>.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Marín Tejeda, M., Robles García, R., González-Forteza, C. y Andrade Palos, P. (2012). Propiedades psicométricas de la escala «Dificultades en la Regulación Emocional» en español (DERS-E) para adolescentes mexicanos. <i>Salud Mental, 35</i>(6), 521–526. <span class="pend">verificar orden de autores</span></p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Mikulincer, M. y Shaver, P. R. (2016). <i>Attachment in adulthood: Structure, dynamics, and change</i> (2.ª ed.). Guilford Press.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Reglamento de la Ley General de Salud en Materia de Investigación para la Salud. (1987, 6 de enero). <i>Diario Oficial de la Federación</i>. Última reforma publicada el 2 de abril de 2014.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Tay-Karapas, K., Guzmán González, M., Barrera Silva, J., Lovys Tirado, D. y Olmos Córdova, A. (2015). Propiedades psicométricas de la escala de experiencias en relaciones cercanas – estructuras de relaciones (ECR-RS) para medir apego en adolescentes chilenos. <i>Salud &amp; Sociedad, 6</i>(1), 78–93.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Universidad Nacional Autónoma de México. (2022). <i>Protocolo para la atención integral de casos de violencia por razones de género en la UNAM</i>. UNAM.</p><p style="padding-left:2em;text-indent:-2em;overflow-wrap:anywhere" class="mb-2">Verhallen, A. M., Renken, R. J., Marsman, J.-B. C. y ter Horst, G. J. (2019). Romantic relationship breakup: An experimental model to study effects of stress on depression (-like) symptoms. <i>PLoS ONE, 14</i>(5), e0217320. https://doi.org/10.1371/journal.pone.0217320</p></div>
+</div></main>
+</div>
+<div class="toast-s" id="toast" role="status" aria-live="polite"></div>
+
 <div class="modal fade" id="mdlForm" tabindex="-1" aria-labelledby="mdlFormT" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
   <div class="modal-header"><h2 class="modal-title h5" id="mdlFormT"><i class="bi bi-journal-text"></i> Formulario</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
   <div class="modal-body"><div class="d-flex flex-wrap gap-1 mb-3" id="fChips"></div><div class="row g-3" id="fGrid"></div></div>
 </div></div></div>
 
-<!-- MODAL NOTAS -->
 <div class="modal fade" id="mdlNotas" tabindex="-1" aria-labelledby="mdlNotasT" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
-  <div class="modal-header"><h2 class="modal-title h5" id="mdlNotasT"><i class="bi bi-pencil-square"></i> Notas de revisión del proyecto</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+  <div class="modal-header"><h2 class="modal-title h5" id="mdlNotasT"><i class="bi bi-pencil-square"></i> Notas de revisión</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
   <div class="modal-body"><div class="tscroll"><table class="tbl" style="text-align:left"><thead><tr><th>Dice</th><th>Debe decir</th><th>Por qué</th></tr></thead><tbody id="notasBody"></tbody></table></div></div>
 </div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+/* ======================================================================
+   CONFIGURACIÓN DE LOS DOS PROYECTOS
+   ====================================================================== */
+const DOCENTES='<li class="mb-2"><i class="bi bi-person-badge text-danger"></i> <b>Coordinadora:</b> Alejandra Díaz Jiménez · Profesora de Tiempo Completo C · Psicología</li><li class="mb-2"><i class="bi bi-person"></i> <b>Profesor participante:</b> Pedro Ernesto Nequiz Medina · Profesor de Asignatura A interino · Estadística y Probabilidad</li>';
+const CRONO_BASE=(extra)=>[['Aval de SILADIN y autorizaciones','Alejandra Díaz (coordinadora)','Nov 2026','Oficio de aval; autorización de la Dirección'],['Convocatoria e integración de equipos','Ambos docentes','Nov 2026','Lista de inscritos; cartas compromiso'],['Revisión bibliográfica','Alumnos / A. Díaz','Nov–Dic 2026','Fichas bibliográficas; marco teórico'],['Taller de estadística (6 prácticas)','Pedro Nequiz','Dic 2026–Ene 2027','Prácticas resueltas; guía de práctica'],...extra,['Aplicación del NEUROPSI','Alejandra Díaz','Mar 2027','Protocolos calificados (resguardados)'],['Análisis estadístico','Alumnos / Pedro Nequiz','Abr 2027','Tablas, gráficas, correlaciones'],['Reporte técnico y cartel','Alumnos / ambos docentes','May 2027','Reporte por equipo; cartel'],['Muestra SILADIN y Encuentro Estudiantil','Alumnos','2027','Constancias; fotografías'],['Envío del reporte a arbitraje o comité de pares','Alejandra Díaz / Pedro Nequiz','May–Jun 2027','Dictamen de arbitraje'],['Devolución de resultados y jornada','Ambos docentes','Jun 2027','Infografía; lista de asistencia'],['Informe final en la plataforma','Alejandra Díaz (coordinadora)','Jun–Jul 2027','Informe con minutas, asistencias y productos'],['Reuniones mensuales de profesores','Ambos docentes','Mensual','Minutas']];
+const ETH_BASE=['Aval de la Secretaría Técnica de SILADIN','Aviso de privacidad del proyecto','Formato de consentimiento (tutor) y de asentimiento (alumno)','Folios asignados; tabla folio–alumno resguardada por los profesores','Ruta de canalización con Psicopedagogía y ESPORA','Material original del NEUROPSI adquirido'];
+const PEND_BASE=[['aval','Número y fecha del oficio de aval SILADIN'],['horario','Día, hora y sala de las sesiones'],['grupos','Grupos de procedencia de los alumnos'],['muestra','Fecha de la Muestra SILADIN'],['encuentro','Edición y fecha del Encuentro Estudiantil'],['neuropsi','Cotización del NEUROPSI (o quién lo presta)'],['costos','Costo estimado de materiales y fuente'],['arbitraje','Evento o comité para el arbitraje (nivel C)'],['transp','Respuesta de la Unidad de Transparencia (aviso de privacidad)']];
+const R={
+ barraza06:'Barraza Macías, A. (2006). Un modelo conceptual para el estudio del estrés académico. <i>Revista Electrónica de Psicología Iztacala, 9</i>(3), 110–129.',
+ barraza18:'Barraza Macías, A. (2018). <i>Inventario SISCO SV-21. Inventario sistémico cognoscitivista para el estudio del estrés académico. Segunda versión de 21 ítems</i>. ECORFAN.',
+ bowlby:'Bowlby, J. (1982). <i>Attachment and loss: Vol. 1. Attachment</i> (2.ª ed.). Basic Books.',
+ brennan:'Brennan, K. A., Clark, C. L. y Shaver, P. R. (1998). Self-report measurement of adult attachment: An integrative overview. En J. A. Simpson y W. S. Rholes (Eds.), <i>Attachment theory and close relationships</i> (pp. 46–76). Guilford Press.',
+ protocolo:'Colegio de Ciencias y Humanidades. (2020, 17 de enero). <i>Protocolo de equivalencias para el ingreso y la promoción de los profesores ordinarios de carrera</i> [Suplemento]. <i>Gaceta CCH</i>.',
+ cuad:'Colegio de Ciencias y Humanidades. (2026). <i>Cuadernillo de orientaciones 2026-2027</i>. UNAM. <a href="https://www.cch.unam.mx/sites/default/files/Cuadernillo_Orientaciones_2026-2027.pdf" target="_blank" rel="noopener">Enlace</a>',
+ davila:'Davila, J. (2008). Depressive symptoms and adolescent romance: Theory, research, and implications. <i>Child Development Perspectives, 2</i>(1), 26–31. https://doi.org/10.1111/j.1750-8606.2008.00037.x',
+ edel:'Edel Navarro, R. (2003). El rendimiento académico: concepto, investigación y desarrollo. <i>REICE, 1</i>(2), 1–15.',
+ encch:'Escuela Nacional Colegio de Ciencias y Humanidades. (2025). <i>Plan de Estudios</i>. UNAM.',
+ eysenck:'Eysenck, M. W., Derakshan, N., Santos, R. y Calvo, M. G. (2007). Anxiety and cognitive performance: Attentional control theory. <i>Emotion, 7</i>(2), 336–353. https://doi.org/10.1037/1528-3542.7.2.336',
+ fonseca:'Fonseca Moreno, A. S., De la Roca Chiapas, J. M., Oropeza Tena, R., Aguilar Zavala, H., Sánchez Gama, M. de J. y Chacón Gutiérrez, L. (2025). Relación entre dificultades en la regulación emocional y funciones ejecutivas en jóvenes mexicanos. <i>Boletín Científico de la Escuela Superior Atotonilco de Tula, 12</i>(24), 15–23. https://doi.org/10.29057/esat.v12i24.14874',
+ gratz:'Gratz, K. L. y Roemer, L. (2004). Multidimensional assessment of emotion regulation and dysregulation: Development, factor structure, and initial validation of the Difficulties in Emotion Regulation Scale. <i>Journal of Psychopathology and Behavioral Assessment, 26</i>(1), 41–54.',
+ gross:'Gross, J. J. (1998). The emerging field of emotion regulation: An integrative review. <i>Review of General Psychology, 2</i>(3), 271–299.',
+ guzman:'Guzmán-González, M., Rivera-Ottenberger, D., Brassard, A., Spencer, R. y Lafontaine, M.-F. (2020). Measuring adult romantic attachment: Psychometric properties of the brief Spanish version of the Experiences in Close Relationships. <i>Psicologia: Reflexão e Crítica, 33</i>, 9. https://doi.org/10.1186/s41155-020-00145-w',
+ lazarus:'Lazarus, R. S. y Folkman, S. (1984). <i>Stress, appraisal, and coping</i>. Springer.',
+ lgpd:'Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados. (2025, 20 de marzo). <i>Diario Oficial de la Federación</i>.',
+ lupien:'Lupien, S. J., McEwen, B. S., Gunnar, M. R. y Heim, C. (2009). Effects of stress throughout the lifespan on the brain, behaviour and cognition. <i>Nature Reviews Neuroscience, 10</i>(6), 434–445. https://doi.org/10.1038/nrn2639',
+ marin:'Marín Tejeda, M., Robles García, R., González-Forteza, C. y Andrade Palos, P. (2012). Propiedades psicométricas de la escala «Dificultades en la Regulación Emocional» en español (DERS-E) para adolescentes mexicanos. <i>Salud Mental, 35</i>(6), 521–526. <span class="text-muted">[verificar orden de autores]</span>',
+ mcewen:'McEwen, B. S. (1998). Protective and damaging effects of stress mediators. <i>The New England Journal of Medicine, 338</i>(3), 171–179. https://doi.org/10.1056/NEJM199801153380307',
+ mikulincer:'Mikulincer, M. y Shaver, P. R. (2016). <i>Attachment in adulthood: Structure, dynamics, and change</i> (2.ª ed.). Guilford Press.',
+ olivas:'Olivas-Ugarte, L. O., Morales-Hernández, S. F. y Solano-Jáuregui, M. K. (2021). Evidencias psicométricas de Inventario SISCO SV-21 para el estudio del estrés académico en universitarios peruanos. <i>Propósitos y Representaciones, 9</i>(2).',
+ rlgs:'Reglamento de la Ley General de Salud en Materia de Investigación para la Salud. (1987, 6 de enero). <i>Diario Oficial de la Federación</i>. Última reforma publicada el 2 de abril de 2014.',
+ taykarapas:'Tay-Karapas, K., Guzmán González, M., Barrera Silva, J., Lovys Tirado, D. y Olmos Córdova, A. (2015). Propiedades psicométricas de la escala de experiencias en relaciones cercanas – estructuras de relaciones (ECR-RS) para medir apego en adolescentes chilenos. <i>Salud &amp; Sociedad, 6</i>(1), 78–93.',
+ unamviol:'Universidad Nacional Autónoma de México. (2022). <i>Protocolo para la atención integral de casos de violencia por razones de género en la UNAM</i>. UNAM.',
+ verhallen:'Verhallen, A. M., Renken, R. J., Marsman, J.-B. C. y ter Horst, G. J. (2019). Romantic relationship breakup: An experimental model to study effects of stress on depression (-like) symptoms. <i>PLoS ONE, 14</i>(5), e0217320. https://doi.org/10.1371/journal.pone.0217320'
+};
+const PROJECTS={
+ p1:{n:1,short:'Estrés académico y desempeño',
+  title:'Análisis estadístico para el entendimiento de la relación entre el estrés académico, las funciones cognitivas y el desempeño académico en estudiantes del CCH Oriente',
+  lead:'Estadística y Probabilidad + Psicología. Fundamentos, laboratorio de datos con cálculo automático y espacios para llenar el avance del grupo.',
+  intro:'<h3 class="h5 fw-bold"><i class="bi bi-question-circle"></i> Pregunta de investigación</h3><p class="mb-2">¿Existe relación entre el nivel de estrés académico, las funciones cognitivas (atención y memoria) y el rendimiento escolar de estudiantes del CCH Oriente?</p><p class="mb-2"><b>Tipo de estudio:</b> de campo, cuantitativo, no experimental, transversal y correlacional.</p><p class="mb-0"><b>Muestra:</b> al menos 30 estudiantes (SISCO SV-21) y una submuestra de 10 a 25 (NEUROPSI). <span class="text-muted">Estudio exploratorio: con n = 30 solo se detectan correlaciones de r ≥ 0.49.</span></p>',
+  extra:'<li class="mb-2"><i class="bi bi-award"></i> <b>Producto docente:</b> Dirección de grupos de trabajo con alumnos en SILADIN (Campo I)</li><li><button type="button" class="btn btn-sm btn-slate" data-goview="mach"><i class="bi bi-file-earmark-text"></i> Abrir machote del proyecto</button></li>',
+  hyp:[['H1','El estrés académico se relaciona de forma <b>negativa</b> con el promedio escolar.','Barraza Macías, 2006','--c2'],['H2','El estrés se relaciona de forma <b>negativa</b> con los índices de atención y memoria.','Lupien et al., 2009','--c3'],['H3','Atención y memoria se relacionan de forma <b>positiva</b> con el promedio.','Edel Navarro, 2003','--c4'],['H4 (condicionada)','El cortisol se relaciona de forma <b>positiva</b> con el estrés percibido.','McEwen, 1998','--c5']],
+  fund:[['Estrés','<p><b>Enfoque transaccional.</b> Lazarus y Folkman (1984) definen el estrés psicológico como una relación entre la persona y su entorno que ella evalúa como amenazante o desbordante de sus recursos. Lo decisivo es la <b>evaluación cognitiva</b> del estímulo y las <b>estrategias de afrontamiento</b>.</p><div class="tip small">Por eso un mismo examen puede ser estresante para un alumno y no para otro.</div>'],
+   ['Estrés académico','<p>Barraza Macías (2006) define el estrés académico como «un proceso sistémico, de carácter adaptativo y esencialmente psicológico» (p. 126), en tres momentos:</p>'+flow([['1. Estresores','demandas valoradas','#e7f1fb','#b9d5f1','#1c7ed6'],['2. Desequilibrio','síntomas','#fff4e0','#fbd49c','#b86b00'],['3. Afrontamiento','estrategias','#e6f6ea','#b4e1bf','#2f9e44']],'Modelo sistémico-cognoscitivista')+'<p class="mt-2 mb-0">Inventario <b>SISCO SV-21</b> (Barraza Macías, 2018): 21 reactivos, 7 por dimensión, escala de 0 («nunca») a 5 («siempre»); alfa de Cronbach reportada &gt; .85 (Olivas-Ugarte et al., 2021).</p>'],
+   ['Bases biológicas','<p>El estrés activa el eje hipotálamo-hipófisis-suprarrenal (HHA), cuyo producto final es el <b>cortisol</b>. McEwen (1998) llama <b>carga alostática</b> al desgaste por activación frecuente o prolongada. Los glucocorticoides actúan sobre el hipocampo, la amígdala y la corteza prefrontal (Lupien et al., 2009).</p><div class="note small">Fase biológica condicionada: solo con dictamen de un comité de ética. En menores se recomienda saliva o cabello (riesgo mínimo, RLGSMIS art. 17).</div>'],
+   ['Funciones cognitivas','<p>La <b>atención</b> selecciona y mantiene el procesamiento de la información relevante; la <b>memoria</b> la codifica, almacena y recupera; el <b>aprendizaje</b> depende de ambas. Se miden con el <b>NEUROPSI Atención y Memoria</b> (normas de 6 a 85 años; índices de atención, memoria y global).</p><div class="warn small">El NEUROPSI solo lo aplica e interpreta personal capacitado; los alumnos no lo aplican.</div>'],
+   ['Rendimiento','<p>Las calificaciones son el indicador más usado del rendimiento académico, aunque no hay consenso sobre todo lo que miden (Edel Navarro, 2003). Aquí se usan el promedio por semestre y general, las asignaturas no acreditadas y la tendencia de la trayectoria (lista dálmata).</p>']],
+  vars:{sisco:['SISCO SV-21','media 0–5'],aten:['Atención','índice'],mem:['Memoria','índice'],prom:['Promedio','5–10']},
+  xy:[['H1','sisco','prom'],['H2 aten.','sisco','aten'],['H2 mem.','sisco','mem'],['H3','aten','prom']],
+  defX:'sisco',defY:'prom',group:null,demo:[{"folio":"P-01","sisco":2.68,"aten":122,"mem":98,"prom":9.06},{"folio":"P-02","sisco":2.54,"aten":111,"mem":107,"prom":8.17},{"folio":"P-03","sisco":2.04,"aten":118,"mem":112,"prom":8.09},{"folio":"P-04","sisco":1.09,"aten":117,"mem":99,"prom":8.51},{"folio":"P-05","sisco":3.45,"aten":126,"mem":112,"prom":7.85},{"folio":"P-06","sisco":2.26,"aten":108,"mem":120,"prom":8.33},{"folio":"P-07","sisco":2.46,"aten":95,"mem":113,"prom":8.4},{"folio":"P-08","sisco":1.98,"aten":112,"mem":101,"prom":8.08},{"folio":"P-09","sisco":2.19,"aten":136,"mem":111,"prom":8.01},{"folio":"P-10","sisco":1.87,"aten":122,"mem":106,"prom":9.43},{"folio":"P-11","sisco":2.55,"aten":125,"mem":115,"prom":8.13},{"folio":"P-12","sisco":2.68,"aten":121,"mem":97,"prom":8.8},{"folio":"P-13","sisco":2.42,"aten":113,"mem":89,"prom":8.96},{"folio":"P-14","sisco":3.02,"aten":86,"mem":89,"prom":8.31},{"folio":"P-15","sisco":1.6,"aten":135,"mem":103,"prom":10.0},{"folio":"P-16","sisco":3.24,"aten":95,"mem":107,"prom":7.9},{"folio":"P-17","sisco":1.9,"aten":102,"mem":98,"prom":8.63},{"folio":"P-18","sisco":2.31,"aten":96,"mem":106,"prom":8.2},{"folio":"P-19","sisco":1.97,"aten":98,"mem":122,"prom":9.46},{"folio":"P-20","sisco":2.23,"aten":108,"mem":104,"prom":8.58},{"folio":"P-21","sisco":2.28,"aten":112,"mem":110,"prom":9.23},{"folio":"P-22","sisco":2.92,"aten":91,"mem":138,"prom":7.65},{"folio":"P-23","sisco":4.3,"aten":81,"mem":100,"prom":7.78},{"folio":"P-24","sisco":1.88,"aten":108,"mem":126,"prom":8.79},{"folio":"P-25","sisco":2.5,"aten":101,"mem":108,"prom":9.48},{"folio":"P-26","sisco":1.15,"aten":112,"mem":113,"prom":9.15},{"folio":"P-27","sisco":2.52,"aten":95,"mem":85,"prom":8.79},{"folio":"P-28","sisco":2.72,"aten":98,"mem":115,"prom":8.21},{"folio":"P-29","sisco":3.47,"aten":74,"mem":97,"prom":6.87},{"folio":"P-30","sisco":3.62,"aten":97,"mem":115,"prom":6.65}],
+  crono:CRONO_BASE([['Capacitación en SISCO SV-21 y ética','Alejandra Díaz','Ene 2027','Lista de asistencia; constancias'],['Prueba piloto y consentimientos','Ambos docentes / alumnos','Feb 2027','Instrumento ajustado; consentimientos firmados'],['Aplicación del SISCO SV-21 y cuestionario','Alumnos (supervisión docente)','Feb–Mar 2027','Base de datos con folio'],['Lista dálmata anonimizada','Pedro Nequiz','Mar 2027','Base de trayectoria escolar'],['Fase biológica (condicionada)','Personal de salud / ambos docentes','Mar–Abr 2027','Resultados de laboratorio con folio']]),
+  eth:[...ETH_BASE,'Autorización de la Dirección para usar la lista dálmata','Dictamen de comité de ética (solo si hay fase biológica)'],
+  ethNote:'',
+  pend:[...PEND_BASE,['comite','Comité de ética (fase biológica)']],
+  refs:['barraza06','barraza18','protocolo','cuad','edel','encch','lazarus','lgpd','lupien','mcewen','olivas','rlgs'],
+  notas:[['Muestra de 30 «calculada para detectar r ≈ 0.3 (≈ 85)»','Estudio exploratorio: con n = 30 solo se detectan r ≥ 0.49','Con z de Fisher, n = 30 da potencia de 80 % solo para |r| ≥ 0.49; r ≈ 0.3 requiere ≈ 85.'],['Los alumnos aplican el SISCO SV-21 y el NEUROPSI','Los alumnos aplican el SISCO SV-21; el NEUROPSI lo aplica personal capacitado','El editor clasifica el NEUROPSI en su nivel más alto de calificación (C).'],['Periodo: octubre 2026 – abril 2027','Octubre 2026 – julio 2027 (proyecto anual)','El Cuadernillo 2026-2027 pide proyectos anuales.'],['Pedro coordina y registra el proyecto','Alejandra (TC C) coordina y registra; Pedro participa con carta compromiso','Para carrera el apoyo a la docencia es obligatorio y «preferentemente de nivel C»; para asignatura es voluntario.'],['Título: «Análisis estadístico … desempeño académico de estudiantes»','«Análisis estadístico … desempeño académico en estudiantes»','Se unifica con el título que ustedes indicaron.']]},
+ p2:{n:2,short:'Emociones de pareja y cognición',
+  title:'El impacto de las emociones, resultantes de las relaciones de pareja, en las funciones cognitivas de estudiantes del CCH Oriente',
+  lead:'Psicología + Estadística y Probabilidad. Apego romántico, regulación emocional y su relación con la atención y la memoria.',
+  intro:'<h3 class="h5 fw-bold"><i class="bi bi-question-circle"></i> Pregunta de investigación</h3><p class="mb-2">¿Se relacionan las emociones asociadas a las relaciones de pareja (ansiedad y evitación del apego romántico, dificultades de regulación emocional y la experiencia de una ruptura reciente) con la atención y la memoria de estudiantes del CCH Oriente?</p><p class="mb-2"><b>Tipo de estudio:</b> de campo, cuantitativo, no experimental, transversal, correlacional y comparativo (con y sin ruptura en los últimos 6 meses).</p><p class="mb-0"><b>Muestra:</b> al menos 30 estudiantes; submuestra NEUROPSI de 10 a 25. <span class="text-muted">Estudio exploratorio.</span></p>',
+  extra:'<li class="mb-2"><i class="bi bi-award"></i> <b>Producto docente:</b> Dirección de grupos de trabajo con alumnos en SILADIN (Campo I) {{confirmar responsables}}</li><li><button type="button" class="btn btn-sm btn-slate" data-goview="mach"><i class="bi bi-file-earmark-text"></i> Abrir machote del proyecto</button></li>',
+  hyp:[['H1','La ansiedad de apego romántico se relaciona de forma <b>positiva</b> con las dificultades de regulación emocional.','Guzmán-González et al., 2020','--c2'],['H2','Las dificultades de regulación emocional se relacionan de forma <b>negativa</b> con los índices de atención y memoria.','Eysenck et al., 2007','--c3'],['H3','Quienes tuvieron una ruptura en los últimos 6 meses presentan <b>menor</b> índice de atención que quienes no.','Verhallen et al., 2019','--c4'],['H4','La ansiedad de apego se relaciona de forma <b>negativa</b> con el índice de atención.','Mikulincer y Shaver, 2016','--c5']],
+  fund:[['Apego romántico','<p>La teoría del apego plantea la necesidad humana de formar vínculos emocionales que brinden consuelo y protección ante el estrés (Bowlby, 1982). En la vida adulta, la inseguridad del apego se describe con dos dimensiones (Brennan et al., 1998):</p>'+flow([['Ansiedad','temor al abandono y al rechazo','#fdeaea','#f5b8b8','#c92a2a'],['Seguridad','baja ansiedad y baja evitación','#e6f6ea','#b4e1bf','#2f9e44'],['Evitación','incomodidad con la cercanía','#e7f1fb','#b9d5f1','#1c7ed6']],'Dimensiones del apego romántico',true)+'<p class="mt-2 mb-0">La inseguridad del apego se ha asociado con ansiedad, depresión y dificultades de regulación emocional (Mikulincer y Shaver, 2016; Guzmán-González et al., 2020).</p>'],
+   ['Regulación emocional','<p>Gross (1998) define la regulación emocional como los procesos con los que las personas influyen en qué emociones tienen, cuándo las tienen y cómo las experimentan y expresan. Gratz y Roemer (2004) la miden con la <b>DERS</b>; su versión en español para adolescentes mexicanos (<b>DERS-E</b>) conserva 24 reactivos en 4 factores, con alfas de .68 a .85 (Marín Tejeda et al., 2012).</p><div class="tip small">En adultos chilenos, la ansiedad y la evitación del ECR-12 predijeron mayores dificultades de regulación emocional (coeficientes estandarizados de .27 a .34; Guzmán-González et al., 2020).</div>'],
+   ['Emoción y cognición','<p>La <b>teoría del control atencional</b> sostiene que la ansiedad reduce el control de la atención dirigida a metas y aumenta la atención capturada por estímulos, lo que disminuye la eficiencia del procesamiento (Eysenck et al., 2007).</p><p class="mb-0">En jóvenes mexicanos de 18 a 29 años no se halló correlación global entre dificultades de regulación emocional y funciones ejecutivas, pero sí entre algunas subpruebas y factores específicos (Fonseca Moreno et al., 2025).</p>'],
+   ['Pareja en la adolescencia','<p>Davila (2008) revisa la evidencia de que las experiencias románticas en la adolescencia se relacionan con síntomas depresivos. En jóvenes de 18 a 26 años, quienes tuvieron una ruptura en los 6 meses previos presentaron más síntomas depresivos que quienes seguían en una relación (26.8 % en rango leve a grave frente a cerca de 2 %) y más dificultades de concentración (Verhallen et al., 2019).</p><div class="note small">Ese estudio no midió la atención con pruebas; este proyecto sí lo hace con el NEUROPSI, lo que constituye su aporte.</div>'],
+   ['Instrumentos','<ul class="mb-2"><li><b>ECR-12 en español</b> (Guzmán-González et al., 2020): 12 reactivos, 6 de ansiedad y 6 de evitación; alfas de .72 a .83 (ansiedad) y .78 a .89 (evitación) en seis muestras chilenas de adultos.</li><li><b>DERS-E</b> (Marín Tejeda et al., 2012): validada en adolescentes mexicanos.</li><li><b>NEUROPSI Atención y Memoria</b>: índices de atención, memoria y global.</li><li><b>Cuestionario de situación de pareja</b>: relación actual (sí/no), duración y ruptura en los últimos 6 meses.</li></ul><div class="warn small">El ECR-12 está validado en <b>adultos chilenos</b>, no en adolescentes mexicanos: hay que hacer prueba piloto, revisar la redacción y reportar el alfa de Cronbach obtenido. Una alternativa validada en adolescentes (12 a 17 años) es el ECR-RS (Tay-Karapas et al., 2015), aunque esa validación midió el apego a madre y padre.</div>']],
+  vars:{ans:['Ansiedad apego','ECR-12, 1–7'],evi:['Evitación apego','ECR-12, 1–7'],ders:['DERS-E','total'],aten:['Atención','índice'],mem:['Memoria','índice'],rup:['Ruptura ≤ 6 meses','0 = no, 1 = sí']},
+  xy:[['H1','ans','ders'],['H2 aten.','ders','aten'],['H2 mem.','ders','mem'],['H4','ans','aten']],
+  defX:'ders',defY:'aten',group:{key:'rup',labels:['Sin ruptura','Con ruptura']},demo:[{"folio":"E-01","ans":5.15,"evi":1.6,"ders":46,"aten":117,"mem":109,"rup":0},{"folio":"E-02","ans":1.0,"evi":4.8,"ders":43,"aten":102,"mem":126,"rup":0},{"folio":"E-03","ans":4.25,"evi":1.22,"ders":75,"aten":101,"mem":99,"rup":0},{"folio":"E-04","ans":5.7,"evi":1.13,"ders":59,"aten":80,"mem":120,"rup":1},{"folio":"E-05","ans":4.38,"evi":4.43,"ders":66,"aten":110,"mem":99,"rup":1},{"folio":"E-06","ans":6.06,"evi":2.81,"ders":66,"aten":101,"mem":106,"rup":0},{"folio":"E-07","ans":6.02,"evi":3.56,"ders":63,"aten":110,"mem":82,"rup":0},{"folio":"E-08","ans":2.06,"evi":2.14,"ders":47,"aten":93,"mem":101,"rup":1},{"folio":"E-09","ans":3.76,"evi":2.99,"ders":65,"aten":108,"mem":115,"rup":1},{"folio":"E-10","ans":4.18,"evi":1.77,"ders":52,"aten":121,"mem":83,"rup":1},{"folio":"E-11","ans":6.36,"evi":1.0,"ders":70,"aten":71,"mem":79,"rup":1},{"folio":"E-12","ans":1.93,"evi":2.4,"ders":48,"aten":101,"mem":104,"rup":0},{"folio":"E-13","ans":2.38,"evi":2.84,"ders":56,"aten":111,"mem":112,"rup":1},{"folio":"E-14","ans":3.81,"evi":4.26,"ders":74,"aten":93,"mem":105,"rup":0},{"folio":"E-15","ans":3.4,"evi":3.08,"ders":57,"aten":112,"mem":113,"rup":1},{"folio":"E-16","ans":3.5,"evi":1.0,"ders":36,"aten":92,"mem":105,"rup":0},{"folio":"E-17","ans":3.13,"evi":2.58,"ders":55,"aten":99,"mem":109,"rup":0},{"folio":"E-18","ans":4.82,"evi":2.74,"ders":60,"aten":90,"mem":100,"rup":1},{"folio":"E-19","ans":1.19,"evi":2.06,"ders":30,"aten":109,"mem":122,"rup":0},{"folio":"E-20","ans":2.01,"evi":3.67,"ders":47,"aten":117,"mem":116,"rup":0},{"folio":"E-21","ans":2.73,"evi":1.48,"ders":52,"aten":94,"mem":109,"rup":0},{"folio":"E-22","ans":2.44,"evi":3.21,"ders":45,"aten":105,"mem":121,"rup":0},{"folio":"E-23","ans":5.28,"evi":1.0,"ders":56,"aten":98,"mem":88,"rup":1},{"folio":"E-24","ans":5.76,"evi":2.43,"ders":64,"aten":107,"mem":104,"rup":1},{"folio":"E-25","ans":3.13,"evi":2.08,"ders":47,"aten":104,"mem":122,"rup":1},{"folio":"E-26","ans":4.14,"evi":2.29,"ders":61,"aten":102,"mem":111,"rup":0},{"folio":"E-27","ans":3.88,"evi":1.47,"ders":59,"aten":99,"mem":96,"rup":0},{"folio":"E-28","ans":6.9,"evi":1.11,"ders":70,"aten":95,"mem":102,"rup":1},{"folio":"E-29","ans":3.36,"evi":3.35,"ders":52,"aten":89,"mem":104,"rup":1},{"folio":"E-30","ans":4.15,"evi":2.03,"ders":54,"aten":95,"mem":116,"rup":0}],
+  crono:CRONO_BASE([['Capacitación en ECR-12, DERS-E y ética','Alejandra Díaz','Ene 2027','Lista de asistencia; constancias'],['Prueba piloto del ECR-12 (redacción y confiabilidad)','Ambos docentes / alumnos','Feb 2027','Alfa de Cronbach del piloto; instrumento ajustado'],['Consentimientos y asentimientos','Ambos docentes','Feb 2027','Consentimientos firmados'],['Aplicación del ECR-12, DERS-E y cuestionario de pareja','Alumnos (supervisión docente)','Feb–Mar 2027','Base de datos con folio']]),
+  eth:[...ETH_BASE,'Protocolo de actuación ante revelación de violencia en el noviazgo','Cuestionario revisado: sin preguntas sobre conducta sexual','Opción «prefiero no responder» en preguntas sensibles'],
+  ethNote:'<div class="warn small"><b>Tema sensible con menores de edad.</b> El cuestionario no incluye preguntas sobre conducta sexual; los alumnos sin pareja pueden responder el ECR-12 pensando en sus relaciones de pareja en general; todas las preguntas sensibles tienen la opción «prefiero no responder». Si un participante revela violencia en el noviazgo, se canaliza conforme al <i>Protocolo para la atención integral de casos de violencia por razones de género en la UNAM</i>, además de Psicopedagogía y ESPORA.</div>',
+  pend:[...PEND_BASE,['resp2','Responsables y categoría de este proyecto'],['piloto','Resultados del piloto del ECR-12 (alfa)'],['ecrscale','Escala de respuesta del ECR-12 (confirmar con la versión chilena)']],
+  refs:['bowlby','brennan','cuad','davila','encch','eysenck','fonseca','gratz','gross','guzman','lgpd','marin','mikulincer','protocolo','rlgs','taykarapas','unamviol','verhallen'],
+  notas:[['ECR-12 «validado» para la población del proyecto','Validado en adultos chilenos; requiere piloto en adolescentes mexicanos','Las seis muestras de Guzmán-González et al. (2020) fueron de adultos (estudiantes universitarios y comunidad).'],['Reactivo 18: «Necesito que me pareja…»','«Necesito que mi pareja…»','Error tipográfico en la tabla del artículo original.'],['Medir «emociones» de la relación de pareja','Operacionalizar como apego (ECR-12), regulación emocional (DERS-E) y ruptura reciente','«Emociones» es amplio; se necesitan variables medibles con instrumentos validados.']]}
+};
+const ECR12=[['5','Evitación','Cuando mi pareja comienza a establecer mayor intimidad, me doy cuenta que tiendo a cerrarme.'],['6','Ansiedad','Me preocupa que mi pareja no se interese por mí tanto como yo me intereso por ella.'],['8','Ansiedad','Me preocupa bastante la posibilidad de perder a mi pareja.'],['9','Evitación','Me siento incómodo/a abriéndome a mi pareja.'],['13','Evitación','Me pongo nervioso/a cuando mi pareja logra demasiada intimidad emocional conmigo.'],['17','Evitación','Intento evitar establecer demasiada intimidad con mi pareja.'],['18','Ansiedad','Necesito que mi pareja me reafirme constantemente que me ama.'],['20','Ansiedad','A veces siento que presiono a mi pareja para que muestre más sentimientos, más compromiso hacia nuestra relación.'],['23','Evitación','Prefiero no tener demasiada intimidad emocional con mi pareja.'],['24','Ansiedad','Si no logro que mi pareja muestre interés por mí, me molesto o me enojo.'],['27','Evitación (inverso)','Frecuentemente converso sobre mis problemas y preocupaciones con mi pareja.'],['30','Ansiedad','Me siento frustrado/a cuando mi pareja no me hace tanto caso como a mí me gustaría.']];
+PROJECTS.p2.fund[4][1]+='<details class="mt-2"><summary class="fw-bold small">Ver los 12 reactivos del ECR-12 (Guzmán-González et al., 2020; CC BY 4.0)</summary><div class="tscroll mt-2"><table class="tbl"><thead><tr><th>Núm. ECR</th><th>Dimensión</th><th>Reactivo</th></tr></thead><tbody>'+ECR12.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td style="text-align:left">${r[2]}</td></tr>`).join('')+'</tbody></table></div><p class="small text-muted mt-1 mb-0">Numeración de la versión de 36 reactivos. El reactivo 27 se califica en sentido inverso. Ansiedad = promedio de 6, 8, 18, 20, 24 y 30; evitación = promedio de 5, 9, 13, 17, 23 y 27 (invertido).</p></details>';
+function flow(items,label,center){const W=720;let s=`<svg viewBox="0 0 ${W} 120" role="img" aria-label="${label}"><defs><marker id="ar${label.length}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker></defs>`;items.forEach((it,i)=>{const x=10+i*255;s+=`<rect x="${x}" y="25" width="190" height="70" rx="14" fill="${it[2]}" stroke="${it[3]}"/><text x="${x+95}" y="55" text-anchor="middle" font-weight="700" fill="${it[4]}">${it[0]}</text><text x="${x+95}" y="77" text-anchor="middle" font-size="12" fill="#334155">${it[1]}</text>`;if(i<items.length-1)s+=`<line x1="${x+192}" y1="60" x2="${x+252}" y2="60" stroke="#334155" stroke-width="2" ${center?'stroke-dasharray="4 4"':''} marker-end="url(#ar${label.length})"/>`});return s+'</svg>'}
+
 /* ===================== almacenamiento seguro ===================== */
-const KEY='siladin_estres_v1';
+const KEY='siladin_proyectos_v2';
 const store={get(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v));return true}catch(e){return false}}};
-let S=Object.assign({team:[],data:[],demo:false,crono:{},logs:[],eth:{},pend:{},cEnt:'',cPad:'',cAsen:''},store.get());
+const blank=()=>({team:[],data:[],demo:false,crono:{},logs:[],eth:{},pend:{},cEnt:'',cPad:'',cAsen:''});
+let ALL=store.get();
+// migración desde la versión anterior (un solo proyecto)
+try{const old=JSON.parse(localStorage.getItem('siladin_estres_v1'));if(old&&!ALL.p1){ALL.p1=old}}catch(e){}
+ALL.p1=Object.assign(blank(),ALL.p1||{});ALL.p2=Object.assign(blank(),ALL.p2||{});
+let PID=(location.hash.match(/^#(p[12])/)||[])[1]||ALL.cur||'p1';
+let S=ALL[PID],P=PROJECTS[PID];
 let saveT=null;
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{const ok=store.set(S);const el=document.getElementById('saveState');el.textContent=ok?'Guardado en este navegador · '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}):'Este navegador no permite guardar; exporta tu avance en JSON.'},300)}
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{ALL.cur=PID;const ok=store.set(ALL);document.getElementById('saveState').textContent=ok?'Guardado en este navegador · '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}):'Este navegador no permite guardar; exporta tu avance en JSON.'},300)}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pendify=h=>h.replace(/\{\{([^}]+)\}\}/g,'<span class="badge text-bg-warning">$1</span>');
 
 /* ===================== notación vertical fx ===================== */
 const F={fr:(n,d)=>`<span class="fr"><span class="nu">${n}</span><span class="de">${d}</span></span>`,
@@ -389,7 +1269,6 @@ const F={fr:(n,d)=>`<span class="fr"><span class="nu">${n}</span><span class="de
   box:(h,blk=true)=>`<span class="fx ${blk?'fx-block':''}">${h}</span>`};
 
 /* ===================== estadística ===================== */
-const VARS={sisco:'SISCO SV-21',aten:'Atención',mem:'Memoria',prom:'Promedio'};
 const fmt=(x,d=4)=>{if(x===null||x===undefined||!isFinite(x))return '—';const a=Math.abs(x);if(a!==0&&a<1e-4)return x.toExponential(2);return (+x.toFixed(d)).toLocaleString('es-MX',{maximumFractionDigits:d})};
 const sum=a=>a.reduce((s,v)=>s+v,0);
 const mean=a=>sum(a)/a.length;
@@ -398,46 +1277,46 @@ function modes(a){const m=new Map();a.forEach(v=>m.set(v,(m.get(v)||0)+1));const
 function q(a,p){const s=[...a].sort((x,y)=>x-y),h=(s.length-1)*p,lo=Math.floor(h);return s[lo]+(h-lo)*((s[lo+1]??s[lo])-s[lo])}
 function variance(a){const m=mean(a);return sum(a.map(v=>(v-m)**2))/(a.length-1)}
 function decimals(a){return Math.max(0,...a.map(v=>{const s=String(v);return s.includes('.')?s.split('.')[1].length:0}))}
-/* t de Student: p bilateral con beta incompleta regularizada */
 function lgamma(z){const g=7,c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];if(z<0.5)return Math.log(Math.PI/Math.sin(Math.PI*z))-lgamma(1-z);z-=1;let x=c[0];for(let i=1;i<g+2;i++)x+=c[i]/(z+i);const t=z+g+0.5;return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x)}
 function betacf(a,b,x){const MAXIT=300,EPS=3e-14,FPMIN=1e-300;let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;if(Math.abs(d)<FPMIN)d=FPMIN;d=1/d;let h=d;for(let m=1;m<=MAXIT;m++){const m2=2*m;let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;d=1/d;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<EPS)break}return h}
 function ibeta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b}
 const pT=(t,df)=>ibeta(df/(df+t*t),df/2,0.5);
-function tCrit(df,alpha=0.05){let lo=0,hi=100;for(let i=0;i<200;i++){const m=(lo+hi)/2;if(pT(m,df)>alpha)lo=m;else hi=m}return (lo+hi)/2}
+function tCrit(df,alpha=0.05){let lo=0,hi=200;for(let i=0;i<200;i++){const m=(lo+hi)/2;if(pT(m,df)>alpha)lo=m;else hi=m}return (lo+hi)/2}
 
 /* ===================== datos ===================== */
-const DEMO=[{"folio":"P-01","sisco":2.68,"aten":122,"mem":98,"prom":9.06},{"folio":"P-02","sisco":2.54,"aten":111,"mem":107,"prom":8.17},{"folio":"P-03","sisco":2.04,"aten":118,"mem":112,"prom":8.09},{"folio":"P-04","sisco":1.09,"aten":117,"mem":99,"prom":8.51},{"folio":"P-05","sisco":3.45,"aten":126,"mem":112,"prom":7.85},{"folio":"P-06","sisco":2.26,"aten":108,"mem":120,"prom":8.33},{"folio":"P-07","sisco":2.46,"aten":95,"mem":113,"prom":8.4},{"folio":"P-08","sisco":1.98,"aten":112,"mem":101,"prom":8.08},{"folio":"P-09","sisco":2.19,"aten":136,"mem":111,"prom":8.01},{"folio":"P-10","sisco":1.87,"aten":122,"mem":106,"prom":9.43},{"folio":"P-11","sisco":2.55,"aten":125,"mem":115,"prom":8.13},{"folio":"P-12","sisco":2.68,"aten":121,"mem":97,"prom":8.8},{"folio":"P-13","sisco":2.42,"aten":113,"mem":89,"prom":8.96},{"folio":"P-14","sisco":3.02,"aten":86,"mem":89,"prom":8.31},{"folio":"P-15","sisco":1.6,"aten":135,"mem":103,"prom":10.0},{"folio":"P-16","sisco":3.24,"aten":95,"mem":107,"prom":7.9},{"folio":"P-17","sisco":1.9,"aten":102,"mem":98,"prom":8.63},{"folio":"P-18","sisco":2.31,"aten":96,"mem":106,"prom":8.2},{"folio":"P-19","sisco":1.97,"aten":98,"mem":122,"prom":9.46},{"folio":"P-20","sisco":2.23,"aten":108,"mem":104,"prom":8.58},{"folio":"P-21","sisco":2.28,"aten":112,"mem":110,"prom":9.23},{"folio":"P-22","sisco":2.92,"aten":91,"mem":138,"prom":7.65},{"folio":"P-23","sisco":4.3,"aten":81,"mem":100,"prom":7.78},{"folio":"P-24","sisco":1.88,"aten":108,"mem":126,"prom":8.79},{"folio":"P-25","sisco":2.5,"aten":101,"mem":108,"prom":9.48},{"folio":"P-26","sisco":1.15,"aten":112,"mem":113,"prom":9.15},{"folio":"P-27","sisco":2.52,"aten":95,"mem":85,"prom":8.79},{"folio":"P-28","sisco":2.72,"aten":98,"mem":115,"prom":8.21},{"folio":"P-29","sisco":3.47,"aten":74,"mem":97,"prom":6.87},{"folio":"P-30","sisco":3.62,"aten":97,"mem":115,"prom":6.65}];
+const NV=()=>Object.keys(P.vars).filter(k=>!P.group||k!==P.group.key);   // variables numéricas
+const VL=k=>P.vars[k][0];
 function col(k){return S.data.map(r=>r[k]).filter(v=>v!==''&&v!==null&&v!==undefined&&isFinite(+v)).map(Number)}
 function pairs(kx,ky){return S.data.filter(r=>[r[kx],r[ky]].every(v=>v!==''&&v!==null&&v!==undefined&&isFinite(+v))).map(r=>[+r[kx],+r[ky]])}
-const dataBody=document.querySelector('#dataTbl tbody');
+const dataHead=document.querySelector('#dataTbl thead'),dataBody=document.querySelector('#dataTbl tbody');
 function renderData(){
+  const ks=Object.keys(P.vars);
+  dataHead.innerHTML='<tr><th>#</th><th>Folio</th>'+ks.map(k=>`<th>${P.vars[k][0]}<br><small>(${P.vars[k][1]})</small></th>`).join('')+'<th></th></tr>';
   dataBody.innerHTML=S.data.map((r,i)=>`<tr><td>${i+1}</td><td><input aria-label="Folio fila ${i+1}" data-i="${i}" data-k="folio" value="${esc(r.folio)}"></td>`+
-    ['sisco','aten','mem','prom'].map(k=>`<td><input type="number" step="any" inputmode="decimal" aria-label="${VARS[k]} fila ${i+1}" data-i="${i}" data-k="${k}" value="${esc(r[k])}"></td>`).join('')+
+    ks.map(k=>P.group&&k===P.group.key?`<td><select data-i="${i}" data-k="${k}" aria-label="${VL(k)} fila ${i+1}"><option value="" ${r[k]===''?'selected':''}>—</option><option value="0" ${r[k]===0?'selected':''}>0 · no</option><option value="1" ${r[k]===1?'selected':''}>1 · sí</option></select></td>`:`<td><input type="number" step="any" inputmode="decimal" aria-label="${VL(k)} fila ${i+1}" data-i="${i}" data-k="${k}" value="${esc(r[k])}"></td>`).join('')+
     `<td><button class="btn btn-sm btn-outline-danger" data-del="${i}" aria-label="Eliminar fila ${i+1}"><i class="bi bi-x-lg"></i></button></td></tr>`).join('')||
-    '<tr><td colspan="7" class="text-muted py-3">Sin datos. Agrega participantes, pega desde una hoja de cálculo o carga los datos de práctica.</td></tr>';
+    `<tr><td colspan="${ks.length+3}" class="text-muted py-3">Sin datos. Agrega participantes, pega desde una hoja de cálculo o carga los datos de práctica.</td></tr>`;
   document.getElementById('demoFlag').hidden=!S.demo;
+  document.getElementById('pasteOrder').textContent='folio, '+ks.map(k=>VL(k)).join(', ');
   compute();
 }
-dataBody.addEventListener('input',e=>{const t=e.target;if(t.dataset.k===undefined)return;const v=t.dataset.k==='folio'?t.value:(t.value===''?'':+t.value);S.data[+t.dataset.i][t.dataset.k]=v;S.demo=false;document.getElementById('demoFlag').hidden=true;save();compute()});
+function onCell(e){const t=e.target;if(t.dataset.k===undefined)return;const v=t.dataset.k==='folio'?t.value:(t.value===''?'':+t.value);S.data[+t.dataset.i][t.dataset.k]=v;S.demo=false;document.getElementById('demoFlag').hidden=true;save();compute()}
+dataBody.addEventListener('input',onCell);dataBody.addEventListener('change',e=>{if(e.target.tagName==='SELECT')onCell(e)});
 dataBody.addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;S.data.splice(+b.dataset.del,1);save();renderData()});
-document.getElementById('addRow').onclick=()=>{S.data.push({folio:'P-'+String(S.data.length+1).padStart(2,'0'),sisco:'',aten:'',mem:'',prom:''});save();renderData()};
-document.getElementById('loadDemo').onclick=()=>{if(S.data.length&&!confirm('Esto reemplaza los datos capturados por datos ficticios de práctica. ¿Continuar?'))return;S.data=JSON.parse(JSON.stringify(DEMO));S.demo=true;save();renderData()};
-document.getElementById('clearData').onclick=()=>{if(!confirm('¿Vaciar todos los datos del laboratorio?'))return;S.data=[];S.demo=false;save();renderData()};
-document.getElementById('pasteBtn').onclick=()=>{const lines=document.getElementById('pasteArea').value.trim().split(/\r?\n/);let added=0;lines.forEach(l=>{const c=l.split(/\t|;|,(?=\s*[\d.-])/).map(s=>s.trim());if(c.length<2)return;const num=x=>x===undefined||x===''||isNaN(+x.replace(',','.'))?'':+x.replace(',','.');if(isNaN(+c[1].replace(',','.'))&&added===0&&/[a-z]/i.test(c[1]))return;S.data.push({folio:c[0],sisco:num(c[1]),aten:num(c[2]),mem:num(c[3]),prom:num(c[4])});added++});S.demo=false;save();renderData();document.getElementById('pasteArea').value=''};
-document.getElementById('exportCsv').onclick=()=>{const rows=[['folio','sisco','atencion','memoria','promedio'],...S.data.map(r=>[r.folio,r.sisco,r.aten,r.mem,r.prom])];download('datos_proyecto.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv')};
+document.getElementById('addRow').onclick=()=>{const r={folio:(PID==='p1'?'P-':'E-')+String(S.data.length+1).padStart(2,'0')};Object.keys(P.vars).forEach(k=>r[k]='');S.data.push(r);save();renderData()};
+document.getElementById('loadDemo').onclick=()=>{if(S.data.length&&!confirm('Esto reemplaza los datos capturados por datos ficticios de práctica. ¿Continuar?'))return;S.data=JSON.parse(JSON.stringify(P.demo));S.demo=true;save();renderData()};
+document.getElementById('clearData').onclick=()=>{if(!confirm('¿Vaciar todos los datos del laboratorio de este proyecto?'))return;S.data=[];S.demo=false;save();renderData()};
+document.getElementById('pasteBtn').onclick=()=>{const ks=Object.keys(P.vars),lines=document.getElementById('pasteArea').value.trim().split(/\r?\n/);lines.forEach((l,li)=>{const c=l.split(/\t|;|,(?=\s*[\d.-])/).map(s=>s.trim());if(c.length<2)return;if(li===0&&isNaN(+String(c[1]).replace(',','.')))return;const num=x=>x===undefined||x===''||isNaN(+x.replace(',','.'))?'':+x.replace(',','.');const r={folio:c[0]};ks.forEach((k,j)=>r[k]=num(c[j+1]));S.data.push(r)});S.demo=false;save();renderData();document.getElementById('pasteArea').value=''};
+document.getElementById('exportCsv').onclick=()=>{const ks=Object.keys(P.vars);const rows=[['folio',...ks],...S.data.map(r=>[r.folio,...ks.map(k=>r[k])])];download(`datos_proyecto${P.n}.csv`,rows.map(r=>r.join(',')).join('\n'),'text/csv')};
 function download(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 
-let cur1='sisco',cur2='prom';
-function chips(id,curKey,cb){const el=document.getElementById(id);el.innerHTML=Object.entries(VARS).map(([k,v])=>`<button class="chip ${k===curKey?'on':''}" data-v="${k}">${v}</button>`).join('');el.onclick=e=>{const b=e.target.closest('[data-v]');if(b)cb(b.dataset.v)}}
-
-function compute(){
-  const n=S.data.length;document.getElementById('nInfo').textContent=n?`n = ${n} participante(s) capturado(s).`+(n<30?' Meta del proyecto: al menos 30.':''):'';
-  renderKpis();renderGrouped();renderCorr();
-}
+let cur1,cur2,cur4;
+function chips(id,curKey,cb){const el=document.getElementById(id);el.innerHTML=NV().map(k=>`<button class="chip ${k===curKey?'on':''}" data-v="${k}">${VL(k)}</button>`).join('');el.onclick=e=>{const b=e.target.closest('[data-v]');if(b)cb(b.dataset.v)}}
+function compute(){const n=S.data.length;document.getElementById('nInfo').textContent=n?`n = ${n} participante(s) capturado(s).`+(n<30?' Meta del proyecto: al menos 30.':''):'';renderKpis();renderGrouped();renderCorr();renderGroups()}
 function renderKpis(){
   chips('varChips',cur1,v=>{cur1=v;renderKpis()});
   const a=col(cur1),el=document.getElementById('kpis');
-  if(a.length<2){el.innerHTML='<div class="col-12"><div class="tip small">Se necesitan al menos 2 datos de '+VARS[cur1]+'.</div></div>';return}
+  if(a.length<2){el.innerHTML='<div class="col-12"><div class="tip small">Se necesitan al menos 2 datos de '+VL(cur1)+'.</div></div>';return}
   const m=mean(a),s=Math.sqrt(variance(a)),mo=modes(a);
   const items=[['n',a.length,''],['Media x̄',fmt(m),'Σx / n'],['Mediana',fmt(median(a)),'valor central'],['Moda',mo.txt,mo.f>1?'f = '+mo.f:'ningún valor se repite'],['Mínimo',fmt(Math.min(...a)),''],['Máximo',fmt(Math.max(...a)),''],['Rango',fmt(Math.max(...a)-Math.min(...a)),'máx − mín'],['Varianza s²',fmt(variance(a)),'muestral'],['Desv. estándar s',fmt(s),'√s²'],['CV',fmt(s/m*100,2)+' %','s / x̄ · 100'],['Q1',fmt(q(a,.25)),'25 %'],['Q3',fmt(q(a,.75)),'75 %']];
   el.innerHTML=items.map(([k,v,s2])=>`<div class="col-6 col-md-4 col-xl-3 min0"><div class="kpi"><div class="k">${k}</div><div class="v" data-kpi="${k}">${v}</div><div class="s">${s2}</div></div></div>`).join('');
@@ -458,58 +1337,52 @@ function renderGrouped(){
   const mg=sum(cls.map(r=>r.f*r.xm))/n;
   const im=cls.findIndex(r=>r.F>=n/2),cm=cls[im],Fp=im?cls[im-1].F:0,med=cm.fi+((n/2-Fp)/cm.f)*c;
   const fm=Math.max(...cls.map(r=>r.f)),io=cls.findIndex(r=>r.f===fm),co=cls[io],d1=co.f-(io?cls[io-1].f:0),d2=co.f-(io<k-1?cls[io+1].f:0),moda=d1+d2===0?co.xm:co.fi+(d1/(d1+d2))*c;
-  res.innerHTML=`<div class="row g-2"><div class="col-md-4 min0"><div class="step" data-k="c"><div class="st">Media agrupada</div>${F.box(F.b('x')+' = '+F.fr(F.S+' f·x<sub>m</sub>','n')+' = '+F.fr(fmt(sum(cls.map(r=>r.f*r.xm))),n)+' = '+F.r(fmt(mg))) }</div></div>
+  res.innerHTML=`<div class="row g-2"><div class="col-md-4 min0"><div class="step" data-k="c"><div class="st">Media agrupada</div>${F.box(F.b('x')+' = '+F.fr(F.S+' f·x<sub>m</sub>','n')+' = '+F.fr(fmt(sum(cls.map(r=>r.f*r.xm))),n)+' = '+F.r(fmt(mg)))}</div></div>
   <div class="col-md-4 min0"><div class="step" data-k="c"><div class="st">Mediana agrupada (clase ${im+1})</div>${F.box('Me = L + '+F.fr('n/2 − F<sub>ant</sub>','f')+'· c = '+fmt(cm.fi)+' + '+F.fr(fmt(n/2)+' − '+Fp,cm.f)+'· '+fmt(c)+' = '+F.r(fmt(med)))}</div></div>
   <div class="col-md-4 min0"><div class="step" data-k="c"><div class="st">Moda agrupada (clase ${io+1})</div>${F.box('Mo = L + '+F.fr('d<sub>1</sub>','d<sub>1</sub> + d<sub>2</sub>')+'· c = '+fmt(co.fi)+' + '+F.fr(d1,d1+'+'+d2)+'· '+fmt(c)+' = '+F.r(fmt(moda)))}</div></div></div>
   <p class="small text-muted mb-0">L = frontera inferior de la clase. Los valores agrupados se aproximan a los de la pestaña «Medidas descriptivas».</p>`;
-  // histograma SVG
   const W=420,H=260,pl=40,pb=48,pt=14,pr=10,mf=Math.max(...cls.map(r=>r.f)),bw=(W-pl-pr)/k;
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Histograma de ${VARS[cur2]}"><line x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}" stroke="#334155"/><line x1="${pl}" y1="${pt}" x2="${pl}" y2="${H-pb}" stroke="#334155"/>`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Histograma de ${VL(cur2)}"><line x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}" stroke="#334155"/><line x1="${pl}" y1="${pt}" x2="${pl}" y2="${H-pb}" stroke="#334155"/>`;
   for(let t=0;t<=mf;t+=Math.max(1,Math.ceil(mf/5))){const y=H-pb-(t/mf)*(H-pb-pt);s+=`<line x1="${pl-4}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="#e2e8f0"/><text x="${pl-7}" y="${y+4}" font-size="11" text-anchor="end" fill="#64748b">${t}</text>`}
   cls.forEach((r,i)=>{const h=(r.f/mf)*(H-pb-pt),x=pl+i*bw;s+=`<rect class="bar" style="animation-delay:${i*80}ms" x="${x+1}" y="${H-pb-h}" width="${bw-2}" height="${h}" fill="hsl(${210+i*25} 85% 80%)" stroke="#1c7ed6"/><text x="${x+bw/2}" y="${H-pb-h-4}" font-size="11" text-anchor="middle" font-weight="700" fill="#e03131">${r.f}</text><text x="${x}" y="${H-pb+14}" font-size="10" text-anchor="middle" fill="#334155">${fmt(r.fi)}</text>`});
-  s+=`<text x="${W-pr}" y="${H-pb+14}" font-size="10" text-anchor="end" fill="#334155">${fmt(cls[k-1].fs)}</text><text x="${(W+pl)/2}" y="${H-8}" font-size="12" text-anchor="middle" fill="#334155">${VARS[cur2]} (fronteras de clase)</text></svg>`;
+  s+=`<text x="${W-pr}" y="${H-pb+14}" font-size="10" text-anchor="end" fill="#334155">${fmt(cls[k-1].fs)}</text><text x="${(W+pl)/2}" y="${H-8}" font-size="12" text-anchor="middle" fill="#334155">${VL(cur2)} (fronteras de clase)</text></svg>`;
   hb.innerHTML=s;
 }
-/* correlación */
 const selX=document.getElementById('selX'),selY=document.getElementById('selY');
-selX.innerHTML=selY.innerHTML=Object.entries(VARS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
-selX.value='sisco';selY.value='prom';
 selX.onchange=selY.onchange=()=>{resetSteps();renderCorr()};
-document.querySelectorAll('[data-xy]').forEach(c=>c.onclick=()=>{const [x,y]=c.dataset.xy.split(',');selX.value=x;selY.value=y;resetSteps();renderCorr()});
+document.getElementById('xyChips').onclick=e=>{const c=e.target.closest('[data-xy]');if(!c)return;const [x,y]=c.dataset.xy.split(',');selX.value=x;selY.value=y;resetSteps();renderCorr()};
 let CR=null;
-function corr(P){const n=P.length,xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),mx=mean(xs),my=mean(ys);
-  const Sxy=sum(P.map(([x,y])=>(x-mx)*(y-my))),Sxx=sum(xs.map(x=>(x-mx)**2)),Syy=sum(ys.map(y=>(y-my)**2));
-  const r=Sxy/Math.sqrt(Sxx*Syy),Sx=sum(xs),Sy=sum(ys),Sx2=sum(xs.map(x=>x*x)),Sy2=sum(ys.map(y=>y*y)),SXY=sum(P.map(([x,y])=>x*y));
+function corr(Pp){const n=Pp.length,xs=Pp.map(p=>p[0]),ys=Pp.map(p=>p[1]),mx=mean(xs),my=mean(ys);
+  const Sxy=sum(Pp.map(([x,y])=>(x-mx)*(y-my))),Sxx=sum(xs.map(x=>(x-mx)**2)),Syy=sum(ys.map(y=>(y-my)**2));
+  const r=Sxy/Math.sqrt(Sxx*Syy),Sx=sum(xs),Sy=sum(ys),Sx2=sum(xs.map(x=>x*x)),Sy2=sum(ys.map(y=>y*y)),SXY=sum(Pp.map(([x,y])=>x*y));
   const r2=(n*SXY-Sx*Sy)/Math.sqrt((n*Sx2-Sx*Sx)*(n*Sy2-Sy*Sy)),b=Sxy/Sxx,a=my-b*mx,df=n-2,t=r*Math.sqrt(df)/Math.sqrt(1-r*r),p=df>0?pT(Math.abs(t),df):NaN,tc=df>0?tCrit(df):NaN;
   return {n,xs,ys,mx,my,Sxy,Sxx,Syy,r,r2,Sx,Sy,Sx2,Sy2,SXY,b,a,df,t,p,tc}}
 function strength(r){const a=Math.abs(r);return a<0.3?'débil':a<=0.7?'moderada':'fuerte'}
 function renderCorr(){
-  const kx=selX.value,ky=selY.value,P=pairs(kx,ky),box=document.getElementById('scatter'),kp=document.getElementById('corrKpis'),msg=document.getElementById('corrMsg');
+  const kx=selX.value,ky=selY.value,Pp=pairs(kx,ky),box=document.getElementById('scatter'),kp=document.getElementById('corrKpis'),msg=document.getElementById('corrMsg');
   if(kx===ky){kp.innerHTML='';box.innerHTML='';msg.innerHTML='<div class="tip small">Elige dos variables distintas.</div>';CR=null;return}
-  if(P.length<3){kp.innerHTML='';box.innerHTML='';msg.innerHTML='<div class="tip small">Se necesitan al menos 3 pares completos.</div>';CR=null;return}
-  const c=corr(P);CR={...c,P,kx,ky};
+  if(Pp.length<3){kp.innerHTML='';box.innerHTML='';msg.innerHTML='<div class="tip small">Se necesitan al menos 3 pares completos.</div>';CR=null;return}
+  const c=corr(Pp);CR={...c,P:Pp,kx,ky};
   kp.innerHTML=[['n (pares)',c.n],['r de Pearson',fmt(c.r)],['r²',fmt(c.r*c.r)],['Pendiente b',fmt(c.b)],['Ordenada a',fmt(c.a)],['t (gl = '+c.df+')',fmt(c.t)],['p bilateral',fmt(c.p)],['t crítica (α=.05)',fmt(c.tc)]].map(([k,v])=>`<div class="col-6 min0"><div class="kpi"><div class="k">${k}</div><div class="v" data-ck="${k}">${v}</div></div></div>`).join('');
   const sig=c.p<0.05,dir=c.r<0?'negativa':'positiva';
-  msg.innerHTML=`<div class="${sig?'okb':'note'} small">Correlación <b>${dir} ${strength(c.r)}</b> entre ${VARS[kx]} y ${VARS[ky]} (r = ${fmt(c.r,3)}). ${sig?'Es estadísticamente significativa (p &lt; .05).':'No es estadísticamente significativa con α = .05 (p ≥ .05).'} El ${fmt(c.r*c.r*100,1)} % de la variación de ${VARS[ky]} se asocia linealmente con ${VARS[kx]}. <b>Recuerda:</b> correlación no implica causalidad.</div>`+(S.demo?'<div class="warn small mt-2">Datos ficticios: esta interpretación es solo un ejemplo.</div>':'');
-  // dispersión SVG
+  msg.innerHTML=`<div class="${sig?'okb':'note'} small">Correlación <b>${dir} ${strength(c.r)}</b> entre ${VL(kx)} y ${VL(ky)} (r = ${fmt(c.r,3)}). ${sig?'Es estadísticamente significativa (p &lt; .05).':'No es estadísticamente significativa con α = .05 (p ≥ .05).'} El ${fmt(c.r*c.r*100,1)} % de la variación de ${VL(ky)} se asocia linealmente con ${VL(kx)}. <b>Recuerda:</b> correlación no implica causalidad.</div>`+(S.demo?'<div class="warn small mt-2">Datos ficticios: esta interpretación es solo un ejemplo.</div>':'');
   const W=420,H=300,pl=46,pb=44,pt=14,pr=14,xs=c.xs,ys=c.ys;
   const ext=(a)=>{let lo=Math.min(...a),hi=Math.max(...a);const pad=(hi-lo||1)*0.08;return [lo-pad,hi+pad]};
   const [x0,x1]=ext(xs),[y0,y1]=ext(ys),X=v=>pl+(v-x0)/(x1-x0)*(W-pl-pr),Y=v=>H-pb-(v-y0)/(y1-y0)*(H-pb-pt);
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama de dispersión de ${VARS[kx]} contra ${VARS[ky]}"><rect x="${pl}" y="${pt}" width="${W-pl-pr}" height="${H-pt-pb}" fill="#f8fafc"/>`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama de dispersión de ${VL(kx)} contra ${VL(ky)}"><rect x="${pl}" y="${pt}" width="${W-pl-pr}" height="${H-pt-pb}" fill="#f8fafc"/>`;
   for(let i=0;i<=4;i++){const vx=x0+(x1-x0)*i/4,vy=y0+(y1-y0)*i/4;s+=`<text x="${X(vx)}" y="${H-pb+15}" font-size="10" text-anchor="middle" fill="#64748b">${fmt(vx,2)}</text><text x="${pl-5}" y="${Y(vy)+4}" font-size="10" text-anchor="end" fill="#64748b">${fmt(vy,2)}</text>`}
   s+=`<line x1="${X(c.mx)}" x2="${X(c.mx)}" y1="${pt}" y2="${H-pb}" stroke="#1c7ed6" stroke-dasharray="5 4"/><line x1="${pl}" x2="${W-pr}" y1="${Y(c.my)}" y2="${Y(c.my)}" stroke="#f08c00" stroke-dasharray="5 4"/>`;
-  P.forEach(([x,y],i)=>{const pos=(x-c.mx)*(y-c.my)>=0;s+=`<circle class="dot" style="animation-delay:${i*25}ms;transform-origin:${X(x)}px ${Y(y)}px" cx="${X(x)}" cy="${Y(y)}" r="5" fill="${pos?'#2f9e44':'#e03131'}" fill-opacity=".75"/>`});
-  const lx0=x0,lx1=x1;s+=`<line x1="${X(lx0)}" y1="${Y(c.a+c.b*lx0)}" x2="${X(lx1)}" y2="${Y(c.a+c.b*lx1)}" stroke="#e03131" stroke-width="2.5"/>`;
-  s+=`<circle cx="${X(c.mx)}" cy="${Y(c.my)}" r="6.5" fill="#fff" stroke="#7048e8" stroke-width="3"/><text x="${(W+pl)/2}" y="${H-6}" font-size="12" text-anchor="middle" fill="#1c7ed6" font-weight="700">X: ${VARS[kx]}</text><text x="12" y="${(H-pb+pt)/2}" font-size="12" text-anchor="middle" fill="#b86b00" font-weight="700" transform="rotate(-90 12 ${(H-pb+pt)/2})">Y: ${VARS[ky]}</text></svg>
+  Pp.forEach(([x,y],i)=>{const pos=(x-c.mx)*(y-c.my)>=0;s+=`<circle class="dot" style="animation-delay:${i*25}ms;transform-origin:${X(x)}px ${Y(y)}px" cx="${X(x)}" cy="${Y(y)}" r="5" fill="${pos?'#2f9e44':'#e03131'}" fill-opacity=".75"/>`});
+  s+=`<line x1="${X(x0)}" y1="${Y(c.a+c.b*x0)}" x2="${X(x1)}" y2="${Y(c.a+c.b*x1)}" stroke="#e03131" stroke-width="2.5"/>`;
+  s+=`<circle cx="${X(c.mx)}" cy="${Y(c.my)}" r="6.5" fill="#fff" stroke="#7048e8" stroke-width="3"/><text x="${(W+pl)/2}" y="${H-6}" font-size="12" text-anchor="middle" fill="#1c7ed6" font-weight="700">X: ${VL(kx)}</text><text x="12" y="${(H-pb+pt)/2}" font-size="12" text-anchor="middle" fill="#b86b00" font-weight="700" transform="rotate(-90 12 ${(H-pb+pt)/2})">Y: ${VL(ky)}</text></svg>
   <div class="small text-muted px-1">Líneas punteadas: medias (x̄ azul, ȳ naranja). Círculo violeta: centroide. Línea roja: recta de regresión. Puntos verdes: producto (x − x̄)(y − ȳ) positivo; rojos: negativo.</div>`;
   box.innerHTML=s;
   if(stepIdx>0)buildSteps(true);
 }
-/* paso a paso */
 let stepIdx=0,STEPS=[];
 function resetSteps(){stepIdx=0;STEPS=[];document.getElementById('steps').innerHTML='';['btnNext','btnAll','btnAnim'].forEach(id=>document.getElementById(id).hidden=true)}
 function buildSteps(keep){
-  if(!CR)return;const c=CR,X=VARS[c.kx],Y=VARS[c.ky];
+  if(!CR)return;const c=CR,X=VL(c.kx),Y=VL(c.ky);
   const rows=c.P.map(([x,y],i)=>{const dx=x-c.mx,dy=y-c.my,p=dx*dy;return `<tr><td>${i+1}</td><td class="cx w" style="--ci:0;--ri:${i};--mc:var(--p2)">${fmt(x)}</td><td class="cy w" style="--ci:1;--ri:${i};--mc:var(--p4)">${fmt(y)}</td><td class="w" style="--ci:2;--ri:${i};--mc:var(--p2)">${fmt(dx)}</td><td class="w" style="--ci:3;--ri:${i};--mc:var(--p4)">${fmt(dy)}</td><td class="${p>=0?'pos':'neg'} w" style="--ci:4;--ri:${i};--mc:var(--p3)">${fmt(p)}</td><td class="w" style="--ci:5;--ri:${i};--mc:var(--p5)">${fmt(dx*dx)}</td><td class="w" style="--ci:6;--ri:${i};--mc:var(--p5)">${fmt(dy*dy)}</td></tr>`}).join('');
   const tbl=`<div class="tscroll mt-2" style="max-height:320px"><table class="tbl" id="pTbl"><thead><tr><th>#</th><th>x</th><th>y</th><th>x − x̄</th><th>y − ȳ</th><th>(x − x̄)(y − ȳ)</th><th>(x − x̄)²</th><th>(y − ȳ)²</th></tr></thead><tbody>${rows}<tr class="sigma"><td>Σ</td><td>${fmt(c.Sx)}</td><td>${fmt(c.Sy)}</td><td>0</td><td>0</td><td>${fmt(c.Sxy)}</td><td>${fmt(c.Sxx)}</td><td>${fmt(c.Syy)}</td></tr></tbody></table></div>`;
   STEPS=[
@@ -530,6 +1403,29 @@ document.getElementById('btnNext').onclick=()=>{stepIdx=Math.min(STEPS.length,st
 document.getElementById('btnAll').onclick=()=>{stepIdx=STEPS.length;drawSteps()};
 document.getElementById('btnAnim').onclick=()=>{const t=document.getElementById('pTbl');if(!t)return;t.classList.remove('wave');void t.offsetWidth;t.classList.add('wave')};
 
+/* ===================== comparación de dos grupos (t de Welch) ===================== */
+function renderGroups(){
+  const li=document.getElementById('tabGrpLi');li.hidden=!P.group;if(!P.group)return;
+  chips('varChips4',cur4,v=>{cur4=v;renderGroups()});
+  const gk=P.group.key,g=[0,1].map(G=>S.data.filter(r=>r[gk]===G&&r[cur4]!==''&&r[cur4]!==undefined&&isFinite(+r[cur4])).map(r=>+r[cur4]));
+  const kp=document.getElementById('grpKpis'),msg=document.getElementById('grpMsg'),bx=document.getElementById('boxplot'),st=document.getElementById('grpSteps');
+  if(g[0].length<2||g[1].length<2){kp.innerHTML='';bx.innerHTML='';st.innerHTML='';msg.innerHTML='<div class="tip small">Se necesitan al menos 2 datos en cada grupo (columna «'+VL(gk)+'» = 0 y = 1).</div>';return}
+  const m=g.map(mean),v=g.map(variance),n=g.map(a=>a.length),se=Math.sqrt(v[0]/n[0]+v[1]/n[1]),t=(m[1]-m[0])/se;
+  const df=(v[0]/n[0]+v[1]/n[1])**2/((v[0]/n[0])**2/(n[0]-1)+(v[1]/n[1])**2/(n[1]-1)),p=pT(Math.abs(t),df);
+  const sp=Math.sqrt(((n[0]-1)*v[0]+(n[1]-1)*v[1])/(n[0]+n[1]-2)),dC=(m[1]-m[0])/sp;
+  const L=P.group.labels;
+  kp.innerHTML=[[`n ${L[0]}`,n[0]],[`n ${L[1]}`,n[1]],[`x̄ ${L[0]}`,fmt(m[0])],[`x̄ ${L[1]}`,fmt(m[1])],[`s ${L[0]}`,fmt(Math.sqrt(v[0]))],[`s ${L[1]}`,fmt(Math.sqrt(v[1]))],['t de Welch',fmt(t)],['gl (Welch)',fmt(df,2)],['p bilateral',fmt(p)],['d de Cohen',fmt(dC,3)]].map(([k,val])=>`<div class="col-6 min0"><div class="kpi"><div class="k">${k}</div><div class="v" data-gk="${k}">${val}</div></div></div>`).join('');
+  msg.innerHTML=`<div class="${p<.05?'okb':'note'} small">La media de ${VL(cur4)} en «${L[1]}» es ${m[1]<m[0]?'menor':'mayor'} que en «${L[0]}» por ${fmt(Math.abs(m[1]-m[0]),3)} puntos. ${p<.05?'La diferencia es estadísticamente significativa (p &lt; .05).':'La diferencia no es estadísticamente significativa con α = .05.'} Tamaño del efecto: d = ${fmt(dC,2)} (≈ 0.2 pequeño, 0.5 mediano, 0.8 grande).</div>`+(S.demo?'<div class="warn small mt-2">Datos ficticios: esta interpretación es solo un ejemplo.</div>':'');
+  st.innerHTML=`<div class="row g-2"><div class="col-md-6 min0"><div class="step" data-k="f"><div class="st">Fórmula (t de Welch)</div>${F.box('t = '+F.fr(F.b('x')+'<sub>2</sub> − '+F.b('x')+'<sub>1</sub>',F.sq(F.fr('s<sub>1</sub>²','n<sub>1</sub>')+' + '+F.fr('s<sub>2</sub>²','n<sub>2</sub>'))))}</div></div><div class="col-md-6 min0"><div class="step" data-k="c"><div class="st">Sustitución</div>${F.box('t = '+F.fr(fmt(m[1])+' − '+fmt(m[0]),F.sq(F.fr(fmt(v[0]),n[0])+' + '+F.fr(fmt(v[1]),n[1])))+' = '+F.r(fmt(t)))}</div></div></div>`;
+  // diagrama de caja
+  const all=[...g[0],...g[1]],lo=Math.min(...all),hi=Math.max(...all),pad=(hi-lo||1)*.08,W=420,H=250,pl=60,pr=16,X=v2=>pl+(v2-(lo-pad))/((hi+pad)-(lo-pad))*(W-pl-pr);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagramas de caja de ${VL(cur4)} por grupo">`;
+  g.forEach((a,i)=>{const y=60+i*95,q1=q(a,.25),q2=median(a),q3=q(a,.75),col2=i?'#e03131':'#1c7ed6',fill=i?'#fdeaea':'#e7f1fb';
+    s+=`<text x="6" y="${y+5}" font-size="11" font-weight="700" fill="${col2}">${L[i]}</text><line x1="${X(Math.min(...a))}" x2="${X(Math.max(...a))}" y1="${y}" y2="${y}" stroke="${col2}"/><line x1="${X(Math.min(...a))}" x2="${X(Math.min(...a))}" y1="${y-10}" y2="${y+10}" stroke="${col2}"/><line x1="${X(Math.max(...a))}" x2="${X(Math.max(...a))}" y1="${y-10}" y2="${y+10}" stroke="${col2}"/><rect class="box" x="${X(q1)}" y="${y-22}" width="${Math.max(1,X(q3)-X(q1))}" height="44" fill="${fill}" stroke="${col2}" stroke-width="2" rx="4"/><line x1="${X(q2)}" x2="${X(q2)}" y1="${y-22}" y2="${y+22}" stroke="${col2}" stroke-width="3"/><circle cx="${X(mean(a))}" cy="${y}" r="5" fill="#7048e8"/>`});
+  for(let i=0;i<=4;i++){const v2=(lo-pad)+((hi+pad)-(lo-pad))*i/4;s+=`<text x="${X(v2)}" y="${H-10}" font-size="10" text-anchor="middle" fill="#64748b">${fmt(v2,1)}</text>`}
+  bx.innerHTML=s+'</svg><div class="small text-muted px-1">Caja: Q1 a Q3; línea gruesa: mediana; punto violeta: media; bigotes: mínimo y máximo.</div>';
+}
+
 /* ===================== equipo ===================== */
 const ROLES=['Captura','Análisis','Redacción','Difusión'];
 const teamBody=document.querySelector('#teamTbl tbody');
@@ -537,18 +1433,17 @@ function renderTeam(){
   teamBody.innerHTML=S.team.map((s,i)=>`<tr><td>${i+1}</td><td><input data-i="${i}" data-k="nombre" value="${esc(s.nombre)}" aria-label="Nombre alumno ${i+1}" style="min-width:170px"></td><td><input data-i="${i}" data-k="grupo" value="${esc(s.grupo)}" aria-label="Grupo"></td><td><select data-i="${i}" data-k="sem" aria-label="Semestre">${['','5.°','6.°','Otro'].map(o=>`<option ${s.sem===o?'selected':''}>${o}</option>`).join('')}</select></td><td><select data-i="${i}" data-k="eq" aria-label="Equipo">${['','1','2'].map(o=>`<option ${s.eq===o?'selected':''}>${o}</option>`).join('')}</select></td><td><select data-i="${i}" data-k="rol" aria-label="Rol">${['',...ROLES].map(o=>`<option ${s.rol===o?'selected':''}>${o}</option>`).join('')}</select></td><td><input type="checkbox" class="form-check-input" data-i="${i}" data-k="carta" ${s.carta?'checked':''} aria-label="Carta compromiso entregada"></td><td><button class="btn btn-sm btn-outline-danger" data-del="${i}" aria-label="Quitar alumno ${i+1}"><i class="bi bi-x-lg"></i></button></td></tr>`).join('')||'<tr><td colspan="8" class="text-muted py-3">Sin alumnos registrados.</td></tr>';
   const n=S.team.length;document.getElementById('teamCount').textContent=n+(n===1?' alumno':' alumnos')+(n>16?' (más de 16)':'');
 }
-teamBody.addEventListener('input',e=>{const t=e.target;if(!t.dataset.k)return;S.team[+t.dataset.i][t.dataset.k]=t.type==='checkbox'?t.checked:t.value;save()});
-teamBody.addEventListener('change',e=>{const t=e.target;if(!t.dataset.k)return;S.team[+t.dataset.i][t.dataset.k]=t.type==='checkbox'?t.checked:t.value;save()});
+const onTeam=e=>{const t=e.target;if(!t.dataset.k)return;S.team[+t.dataset.i][t.dataset.k]=t.type==='checkbox'?t.checked:t.value;save()};
+teamBody.addEventListener('input',onTeam);teamBody.addEventListener('change',onTeam);
 teamBody.addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;S.team.splice(+b.dataset.del,1);save();renderTeam()});
 document.getElementById('addStudent').onclick=()=>{S.team.push({nombre:'',grupo:'',sem:'',eq:'',rol:'',carta:false});save();renderTeam()};
 
 /* ===================== cronograma ===================== */
-const CRONO=[['Aval de SILADIN y autorizaciones','Alejandra Díaz (coordinadora)','Nov 2026','Oficio de aval; autorización de la Dirección'],['Convocatoria e integración de equipos','Ambos docentes','Nov 2026','Lista de inscritos; cartas compromiso'],['Revisión bibliográfica','Alumnos / A. Díaz','Nov–Dic 2026','Fichas bibliográficas; marco teórico'],['Taller de estadística (6 prácticas)','Pedro Nequiz','Dic 2026–Ene 2027','Prácticas resueltas; guía de práctica'],['Capacitación en SISCO SV-21 y ética','Alejandra Díaz','Ene 2027','Lista de asistencia; constancias'],['Prueba piloto y consentimientos','Ambos docentes / alumnos','Feb 2027','Instrumento ajustado; consentimientos firmados'],['Aplicación del SISCO SV-21 y cuestionario','Alumnos (supervisión docente)','Feb–Mar 2027','Base de datos con folio'],['Aplicación del NEUROPSI','Alejandra Díaz','Mar 2027','Protocolos calificados (resguardados)'],['Lista dálmata anonimizada','Pedro Nequiz','Mar 2027','Base de trayectoria escolar'],['Fase biológica (condicionada)','Personal de salud / ambos docentes','Mar–Abr 2027','Resultados de laboratorio con folio'],['Análisis estadístico','Alumnos / Pedro Nequiz','Abr 2027','Tablas, gráficas, correlaciones; plantilla'],['Reporte técnico y cartel','Alumnos / ambos docentes','May 2027','Reporte por equipo; cartel'],['Muestra SILADIN y Encuentro Estudiantil','Alumnos','2027','Constancias; fotografías'],['Devolución de resultados y jornada','Ambos docentes','Jun 2027','Infografía; lista de asistencia'],['Envío del reporte a arbitraje o comité de pares','Alejandra Díaz / Pedro Nequiz','May–Jun 2027','Dictamen de arbitraje'],['Informe final en la plataforma','Alejandra Díaz (coordinadora)','Jun–Jul 2027','Informe con minutas, asistencias y productos'],['Reuniones mensuales de profesores','Ambos docentes','Mensual','Minutas']];
 const ST={pend:'Pendiente',proc:'En proceso',ok:'Hecho'};
 function renderCrono(){
-  const tb=document.querySelector('#cronoTbl tbody');
-  tb.innerHTML=CRONO.map((r,i)=>{const c=S.crono[i]||{};const st=c.st||'pend';return `<tr><td style="text-align:left;min-width:200px">${r[0]}</td><td>${r[1]}</td><td style="white-space:nowrap">${r[2]}</td><td style="text-align:left;min-width:180px">${r[3]}</td><td><select class="st-${st}" data-ci="${i}" data-f="st" aria-label="Estado de ${r[0]}">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${k===st?'selected':''}>${v}</option>`).join('')}</select></td><td><input data-ci="${i}" data-f="nota" value="${esc(c.nota)}" placeholder="fecha o enlace" aria-label="Fecha real o enlace de ${r[0]}" style="min-width:150px"></td></tr>`}).join('');
-  const done=CRONO.reduce((s,_,i)=>s+((S.crono[i]||{}).st==='ok'?1:(S.crono[i]||{}).st==='proc'?.5:0),0),pc=Math.round(done/CRONO.length*100);
+  const tb=document.querySelector('#cronoTbl tbody'),C=P.crono;
+  tb.innerHTML=C.map((r,i)=>{const c=S.crono[i]||{};const st=c.st||'pend';return `<tr><td style="text-align:left;min-width:200px">${r[0]}</td><td>${r[1]}</td><td style="white-space:nowrap">${r[2]}</td><td style="text-align:left;min-width:180px">${r[3]}</td><td><select class="st-${st}" data-ci="${i}" data-f="st" aria-label="Estado de ${r[0]}">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${k===st?'selected':''}>${v}</option>`).join('')}</select></td><td><input data-ci="${i}" data-f="nota" value="${esc(c.nota)}" placeholder="fecha o enlace" aria-label="Fecha real o enlace de ${r[0]}" style="min-width:150px"></td></tr>`}).join('');
+  const done=C.reduce((s,_,i)=>s+((S.crono[i]||{}).st==='ok'?1:(S.crono[i]||{}).st==='proc'?.5:0),0),pc=Math.round(done/C.length*100);
   document.getElementById('progBar').style.width=pc+'%';document.getElementById('progTxt').textContent=pc+' %';
 }
 document.getElementById('cronoTbl').addEventListener('change',e=>{const t=e.target;if(t.dataset.ci===undefined)return;const i=+t.dataset.ci;S.crono[i]=Object.assign({},S.crono[i],{[t.dataset.f]:t.value});save();if(t.dataset.f==='st')renderCrono()});
@@ -561,19 +1456,17 @@ document.getElementById('logForm').onsubmit=e=>{e.preventDefault();const g=id=>d
 document.getElementById('logList').onclick=e=>{const b=e.target.closest('[data-dl]');if(!b)return;S.logs.splice(+b.dataset.dl,1);save();renderLogs()};
 
 /* ===================== ética ===================== */
-const ETH=['Aval de la Secretaría Técnica de SILADIN','Autorización de la Dirección para usar la lista dálmata','Aviso de privacidad del proyecto','Formato de consentimiento (tutor) y de asentimiento (alumno)','Folios asignados; tabla folio–alumno resguardada por los profesores','Ruta de canalización con Psicopedagogía y ESPORA','Material original del NEUROPSI adquirido','Dictamen de comité de ética (solo si hay fase biológica)'];
-function renderEth(){document.getElementById('ethicsList').innerHTML=ETH.map((t,i)=>`<div class="form-check"><input class="form-check-input" type="checkbox" id="eth${i}" data-eth="${i}" ${S.eth[i]?'checked':''}><label class="form-check-label small" for="eth${i}">${t}</label></div>`).join('')}
+function renderEth(){document.getElementById('ethNote').innerHTML=P.ethNote;document.getElementById('ethicsList').innerHTML=P.eth.map((t,i)=>`<div class="form-check"><input class="form-check-input" type="checkbox" id="eth${i}" data-eth="${i}" ${S.eth[i]?'checked':''}><label class="form-check-label small" for="eth${i}">${t}</label></div>`).join('')}
 document.getElementById('ethicsList').onchange=e=>{const i=e.target.dataset.eth;if(i===undefined)return;S.eth[i]=e.target.checked;save()};
 function renderCons(){['cEnt','cPad','cAsen'].forEach(k=>{const el=document.getElementById(k);if(document.activeElement!==el)el.value=S[k]??''});const ok=Math.min(+S.cPad||0,+S.cAsen||0);document.getElementById('cTxt').textContent=ok+' / 30';document.getElementById('cBar').style.width=Math.min(100,ok/30*100)+'%'}
 ['cEnt','cPad','cAsen'].forEach(k=>document.getElementById(k).addEventListener('input',e=>{S[k]=e.target.value;save();renderCons()}));
 
 /* ===================== pendientes ===================== */
-const PEND=[['aval','Número y fecha del oficio de aval SILADIN'],['horario','Día, hora y sala de las sesiones'],['grupos','Grupos de procedencia de los alumnos'],['muestra','Fecha de la Muestra SILADIN'],['encuentro','Edición y fecha del Encuentro Estudiantil'],['neuropsi','Cotización del NEUROPSI (o quién lo presta)'],['costos','Costo estimado de materiales y fuente'],['comite','Comité de ética (fase biológica)'],['arbitraje','Evento o comité para el arbitraje (nivel C)'],['transp','Respuesta de la Unidad de Transparencia (aviso de privacidad)']];
-function renderPend(){const g=document.getElementById('pendGrid');g.innerHTML=PEND.map(([k,t])=>`<div class="col-md-6 min0"><label class="form-label small fw-bold mb-1" for="pd_${k}">${t}</label><input class="form-control" id="pd_${k}" data-pd="${k}" value="${esc(S.pend[k])}"></div>`).join('');countPend()}
-function countPend(){const n=PEND.filter(([k])=>(S.pend[k]||'').trim()).length;document.getElementById('pendTxt').textContent=n+' / '+PEND.length+' completos'}
+function renderPend(){const g=document.getElementById('pendGrid');g.innerHTML=P.pend.map(([k,t])=>`<div class="col-md-6 min0"><label class="form-label small fw-bold mb-1" for="pd_${k}">${t}</label><input class="form-control" id="pd_${k}" data-pd="${k}" value="${esc(S.pend[k])}"></div>`).join('');countPend()}
+function countPend(){const n=P.pend.filter(([k])=>(S.pend[k]||'').trim()).length;document.getElementById('pendTxt').textContent=n+' / '+P.pend.length+' completos'}
 document.getElementById('pendGrid').addEventListener('input',e=>{const k=e.target.dataset.pd;if(!k)return;S.pend[k]=e.target.value;save();countPend()});
 
-/* ===================== formulario, notas, fuentes ===================== */
+/* ===================== formulario ===================== */
 const FORMS=[
  ['desc','Media',F.box(F.b('x')+' = '+F.fr(F.S+'x','n')),'Promedio aritmético de la muestra.','var(--c2)'],
  ['desc','Varianza y desviación estándar muestrales',F.box('s² = '+F.fr(F.S+'(x − '+F.b('x')+')²','n − 1'))+F.box('s = '+F.sq('s²')),'Divisor n − 1 (muestra).','var(--c2)'],
@@ -584,33 +1477,95 @@ const FORMS=[
  ['agr','Moda agrupada',F.box('Mo = L + '+F.fr('d<sub>1</sub>','d<sub>1</sub> + d<sub>2</sub>')+' · c'),'d₁ y d₂: diferencias con las clases vecinas.','var(--c3)'],
  ['cor','Pearson (estándar)',F.box('r = '+F.fr(F.S+'(x − '+F.b('x')+')(y − '+F.b('y')+')',F.sq(F.S+'(x − '+F.b('x')+')² '+F.S+'(y − '+F.b('y')+')²'))),'−1 ≤ r ≤ 1.','var(--c4)'],
  ['cor','Pearson (algebraica)',F.box('r = '+F.fr('n'+F.S+'xy − '+F.S+'x'+F.S+'y',F.sq('[n'+F.S+'x² − ('+F.S+'x)²][n'+F.S+'y² − ('+F.S+'y)²]'))),'Misma r con sumas directas.','var(--c4)'],
- ['cor','Recta de regresión',F.box('ŷ = a + bx')+F.box('b = '+F.fr(F.S+'(x − '+F.b('x')+')(y − '+F.b('y')+')',F.S+'(x − '+F.b('x')+')²')+'&ensp; a = '+F.b('y')+' − b'+F.b('x')),'Pasa por el centroide ('+'x̄, ȳ).','var(--c4)'],
+ ['cor','Recta de regresión',F.box('ŷ = a + bx')+F.box('b = '+F.fr(F.S+'(x − '+F.b('x')+')(y − '+F.b('y')+')',F.S+'(x − '+F.b('x')+')²')+'&ensp; a = '+F.b('y')+' − b'+F.b('x')),'Pasa por el centroide (x̄, ȳ).','var(--c4)'],
  ['cor','Prueba t para r',F.box('t = '+F.fr('r'+F.sq('n − 2'),F.sq('1 − r²'))),'gl = n − 2; H₀: ρ = 0.','var(--c5)'],
- ['cor','Tamaño de muestra para r',F.box('n = '+'['+F.fr('z<sub>α/2</sub> + z<sub>β</sub>','arctanh r')+']² + 3'),'Con r = 0.3, α = .05 y potencia 80 %: n ≈ 85.','var(--c5)']];
-const FCH={all:'Todas',desc:'Descriptiva',agr:'Datos agrupados',cor:'Correlación'};
+ ['grp','t de Welch (dos grupos)',F.box('t = '+F.fr(F.b('x')+'<sub>2</sub> − '+F.b('x')+'<sub>1</sub>',F.sq(F.fr('s<sub>1</sub>²','n<sub>1</sub>')+' + '+F.fr('s<sub>2</sub>²','n<sub>2</sub>')))),'No supone varianzas iguales.','var(--c1)'],
+ ['grp','d de Cohen',F.box('d = '+F.fr(F.b('x')+'<sub>2</sub> − '+F.b('x')+'<sub>1</sub>','s<sub>p</sub>')+'&ensp; s<sub>p</sub> = '+F.sq(F.fr('(n<sub>1</sub>−1)s<sub>1</sub>² + (n<sub>2</sub>−1)s<sub>2</sub>²','n<sub>1</sub> + n<sub>2</sub> − 2'))),'Tamaño del efecto.','var(--c1)']];
+const FCH={all:'Todas',desc:'Descriptiva',agr:'Datos agrupados',cor:'Correlación',grp:'Dos grupos'};
 let fsel='all';
 function renderForms(){document.getElementById('fChips').innerHTML=Object.entries(FCH).map(([k,v])=>`<button class="chip ${k===fsel?'on':''}" data-fc="${k}">${v}</button>`).join('');document.getElementById('fGrid').innerHTML=FORMS.filter(f=>fsel==='all'||f[0]===fsel).map(([g,t,fx,nt,cl])=>`<div class="col-md-6 col-lg-4 min0"><div class="fcard" style="--gc:${cl}"><div class="fw-bold mb-1">${t}</div>${fx}<div class="small text-muted">${nt}</div></div></div>`).join('')}
 document.getElementById('fChips').onclick=e=>{const b=e.target.closest('[data-fc]');if(b){fsel=b.dataset.fc;renderForms()}};
-const NOTAS=[['Muestra de 30 «calculada para detectar r ≈ 0.3 (≈ 85)»','Estudio exploratorio: con n = 30 solo se detectan r ≥ 0.49','Con z de Fisher, n = 30 da potencia de 80 % solo para |r| ≥ 0.49; r ≈ 0.3 requiere ≈ 85.'],['Los alumnos aplican el SISCO SV-21 y el NEUROPSI','Los alumnos aplican el SISCO SV-21; el NEUROPSI lo aplica personal capacitado','El editor clasifica el NEUROPSI en su nivel más alto de calificación (C).'],['Periodo: octubre 2026 – abril 2027','Octubre 2026 – julio 2027 (proyecto anual)','El Cuadernillo 2026-2027 pide proyectos anuales; el glosario de asignatura habla de un año de trabajo.'],['Pedro coordina y registra el proyecto','Alejandra (TC C) coordina y registra; Pedro participa con carta compromiso','Para carrera el apoyo a la docencia es obligatorio y «preferentemente de nivel C»; para asignatura es voluntario con carta compromiso.'],['Correo de Alejandra en Gmail en la tabla de modalidad','alejandra.diaz@cch.unam.mx','Debe usarse el correo institucional y ser el mismo en todo el documento.'],['Submuestra NEUROPSI de 20 a 30 (población) y de 10 a 25 (objetivos)','10 a 25 en ambos apartados','Con una muestra de 30 la submuestra no puede ser de 30; se unifica con el objetivo específico 3.'],['«ESTRÉS ACADÉMICO , LAS FUNCIONES…»','«ESTRÉS ACADÉMICO, LAS FUNCIONES…»','Espacio antes de la coma.']];
-document.getElementById('notasBody').innerHTML=NOTAS.map(n=>`<tr><td style="text-align:left">${n[0]}</td><td style="text-align:left;color:var(--c3);font-weight:700">${n[1]}</td><td style="text-align:left" class="small">${n[2]}</td></tr>`).join('');
-const REFS=['Barraza Macías, A. (2006). Un modelo conceptual para el estudio del estrés académico. <i>Revista Electrónica de Psicología Iztacala, 9</i>(3), 110–129.','Barraza Macías, A. (2018). <i>Inventario SISCO SV-21. Inventario sistémico cognoscitivista para el estudio del estrés académico. Segunda versión de 21 ítems</i>. ECORFAN.','Colegio de Ciencias y Humanidades. (2020, 17 de enero). <i>Protocolo de equivalencias para el ingreso y la promoción de los profesores ordinarios de carrera</i> [Suplemento]. <i>Gaceta CCH</i>.','Colegio de Ciencias y Humanidades. (2026). <i>Cuadernillo de orientaciones 2026-2027</i>. UNAM. <a href="https://www.cch.unam.mx/sites/default/files/Cuadernillo_Orientaciones_2026-2027.pdf" target="_blank" rel="noopener">Enlace</a>','Edel Navarro, R. (2003). El rendimiento académico: concepto, investigación y desarrollo. <i>REICE, 1</i>(2), 1–15.','Escuela Nacional Colegio de Ciencias y Humanidades. (2025). <i>Plan de Estudios</i>. UNAM.','Lazarus, R. S. y Folkman, S. (1984). <i>Stress, appraisal, and coping</i>. Springer.','Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados. (2025, 20 de marzo). <i>Diario Oficial de la Federación</i>.','Lupien, S. J., McEwen, B. S., Gunnar, M. R. y Heim, C. (2009). Effects of stress throughout the lifespan on the brain, behaviour and cognition. <i>Nature Reviews Neuroscience, 10</i>(6), 434–445. https://doi.org/10.1038/nrn2639','McEwen, B. S. (1998). Protective and damaging effects of stress mediators. <i>The New England Journal of Medicine, 338</i>(3), 171–179. https://doi.org/10.1056/NEJM199801153380307','Olivas-Ugarte, L. O., Morales-Hernández, S. F. y Solano-Jáuregui, M. K. (2021). Evidencias psicométricas de Inventario SISCO SV-21 para el estudio del estrés académico en universitarios peruanos. <i>Propósitos y Representaciones, 9</i>(2).','Reglamento de la Ley General de Salud en Materia de Investigación para la Salud. (1987, 6 de enero). <i>Diario Oficial de la Federación</i>. Última reforma publicada el 2 de abril de 2014.'];
-document.getElementById('refs').innerHTML=REFS.map(r=>`<p style="padding-left:2em;text-indent:-2em" class="mb-2">${r}</p>`).join('');
+
+/* ===================== proyecto activo ===================== */
+function renderProject(){
+  renderPager();
+  document.getElementById('pTitle').innerHTML='<i class="bi bi-activity me-2" aria-hidden="true"></i>'+P.title;
+  document.getElementById('pLead').textContent=P.lead;
+  document.title=`Proyecto ${P.n} · ${P.short} · SILADIN`;
+  document.getElementById('pIntro').innerHTML=P.intro;
+  document.getElementById('pModal').innerHTML='<h3 class="h6 fw-bold text-uppercase text-muted">Modalidad</h3><ul class="list-unstyled mb-0 small">'+DOCENTES+'<li class="mb-2"><i class="bi bi-people"></i> <b>Alumnos:</b> 14 a 16, dos equipos de 7 u 8</li>'+pendify(P.extra)+'</ul>';
+  document.getElementById('pHyp').innerHTML=P.hyp.map(h=>`<div class="col-md-6 col-xl-3 min0"><div class="ex-card" style="--gc:var(${h[3]})"><b>${h[0]}</b><p class="small mb-1">${h[1]}</p><span class="badge text-bg-light">${h[2]}</span></div></div>`).join('');
+  document.getElementById('fundTabs').innerHTML=P.fund.map((f,i)=>`<li class="nav-item"><button class="nav-link ${i?'':'active'}" data-bs-toggle="pill" data-bs-target="#fd${i}" type="button">${f[0]}</button></li>`).join('');
+  document.getElementById('fundPanes').innerHTML=P.fund.map((f,i)=>`<div class="tab-pane fade ${i?'':'show active'}" id="fd${i}">${f[1]}</div>`).join('');
+  document.getElementById('refs').innerHTML=P.refs.map(k=>`<p style="padding-left:2em;text-indent:-2em" class="mb-2">${R[k]}</p>`).join('');
+  document.getElementById('notasBody').innerHTML=P.notas.map(n=>`<tr><td style="text-align:left">${n[0]}</td><td style="text-align:left;color:var(--c3);font-weight:700">${n[1]}</td><td style="text-align:left" class="small">${n[2]}</td></tr>`).join('');
+  document.getElementById('grpHint').textContent=P.group?' y la comparación entre dos grupos (t de Welch)':'';
+  const nv=NV();cur1=nv[0];cur2=nv[0];cur4=P.group?'aten':nv[0];
+  selX.innerHTML=selY.innerHTML=nv.map(k=>`<option value="${k}">${VL(k)}</option>`).join('');selX.value=P.defX;selY.value=P.defY;
+  document.getElementById('xyChips').innerHTML=P.xy.map(c=>`<span class="chip" data-xy="${c[1]},${c[2]}">${c[0]}</span>`).join('');
+  if(!P.group){const a=document.querySelector('[data-bs-target="#l4"]');if(a&&a.classList.contains('active'))document.querySelector('[data-bs-target="#l1"]').click()}
+  resetSteps();
+  renderTeam();renderData();renderCrono();renderLogs();renderEth();renderCons();renderPend();renderForms();
+}
+/* ===================== paginador de proyectos y vistas ===================== */
+const IDS=Object.keys(PROJECTS);
+let VIEW='panel';
+function renderPager(){const i=IDS.indexOf(PID);
+  document.getElementById('pager').innerHTML=`<button type="button" class="pg-btn" data-step="-1" aria-label="Proyecto anterior" ${i===0?'disabled':''}><i class="bi bi-chevron-left" aria-hidden="true"></i></button>`+
+  IDS.map(id=>`<button type="button" class="pg-item ${id===PID?'on':''}" data-p="${id}" aria-current="${id===PID?'page':'false'}" title="${PROJECTS[id].title}"><span class="pk">${PROJECTS[id].n}</span><span class="lbl">${PROJECTS[id].short}</span></button>`).join('')+
+  `<button type="button" class="pg-btn" data-step="1" aria-label="Proyecto siguiente" ${i===IDS.length-1?'disabled':''}><i class="bi bi-chevron-right" aria-hidden="true"></i></button><span class="pg-pos">Proyecto ${i+1} de ${IDS.length}</span>`;
+  ['panel','mach'].forEach(v=>{const b=document.getElementById(v==='panel'?'vPanel':'vMach');b.classList.toggle('on',VIEW===v);b.setAttribute('aria-selected',VIEW===v)})}
+document.getElementById('pager').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.p){if(b.dataset.p!==PID)go(b.dataset.p,VIEW)}else{const i=IDS.indexOf(PID)+(+b.dataset.step);if(IDS[i])go(IDS[i],VIEW)}};
+document.querySelector('.viewseg').onclick=e=>{const b=e.target.closest('[data-view]');if(b&&b.dataset.view!==VIEW)go(PID,b.dataset.view)};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-goview]');if(b)go(PID,b.dataset.goview)});
+const hashFor=(id,v)=>'#'+id+(v==='mach'?'-machote':'');
+function go(id,v){const changed=id!==PID;if(editing)toggleEdit(false);
+  PID=id;S=ALL[PID];P=PROJECTS[PID];VIEW=v;ALL.cur=PID;
+  try{history.replaceState(null,'',hashFor(id,v))}catch(e){}
+  document.body.classList.toggle('view-mach',v==='mach');
+  if(changed)renderProject();else renderPager();
+  showMach();save();window.scrollTo({top:0})}
+window.addEventListener('hashchange',()=>{const m=location.hash.match(/^#(p[12])(-machote)?$/);if(m)go(m[1],m[2]?'mach':'panel')});
+
+/* ===================== machote editable (uno por proyecto) ===================== */
+const MKEY=id=>`siladin_machote_${id}_v1`;
+const ORIG={};
+IDS.forEach(id=>{const el=document.getElementById('mdoc-'+id);ORIG[id]=el.innerHTML;try{const s=localStorage.getItem(MKEY(id));if(s)el.innerHTML=s}catch(e){}});
+const mdoc=()=>document.getElementById('mdoc-'+PID);
+const toast=m=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)};
+const EDITABLE='p,li,td,th,h3,.sig div';
+let editing=false;
+function setEditable(el,on){el.querySelectorAll(EDITABLE).forEach(x=>x.contentEditable=on?'true':'false')}
+function toggleEdit(on){editing=on;document.body.classList.toggle('editing',on);IDS.forEach(id=>setEditable(document.getElementById('mdoc-'+id),on&&id===PID));const b=document.getElementById('bEdit');b.setAttribute('aria-pressed',on);b.innerHTML=on?'<i class="bi bi-check2"></i> Terminar edición':'<i class="bi bi-pencil"></i> Editar';if(!on)saveMach()}
+function cleanDoc(el){const c=el.cloneNode(true);c.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));return c}
+function saveMach(){try{localStorage.setItem(MKEY(PID),cleanDoc(mdoc()).innerHTML);toast('Machote guardado en este navegador')}catch(e){toast('No se pudo guardar; descarga el archivo Word')}countMach()}
+function countMach(){const n=mdoc().querySelectorAll('.pend').length;document.getElementById('pendCount').textContent=n?`${n} dato(s) por completar`:'Sin datos pendientes marcados'}
+function showMach(){IDS.forEach(id=>document.getElementById('mdoc-'+id).hidden=id!==PID);countMach();document.title=VIEW==='mach'?`Machote · Proyecto ${P.n} · SILADIN`:`Proyecto ${P.n} · ${P.short} · SILADIN`}
+document.getElementById('bEdit').onclick=()=>toggleEdit(!editing);
+document.getElementById('bSave').onclick=saveMach;
+document.getElementById('bReset').onclick=()=>{if(!confirm('¿Restaurar el machote original de este proyecto? Se perderán sus cambios guardados.'))return;try{localStorage.removeItem(MKEY(PID))}catch(e){}mdoc().innerHTML=ORIG[PID];setEditable(mdoc(),editing);countMach();toast('Machote restaurado')};
+document.getElementById('bWord').onclick=()=>{const c=cleanDoc(mdoc());
+  const css='body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.5}h1{font-size:16pt}h2{font-size:14pt;color:#1B2A4A;border-top:1px solid #ccc;padding-top:6pt}h3{font-size:12pt}table{border-collapse:collapse;width:100%;margin:6pt 0}th{background:#1B2A4A;color:#fff;text-align:left;padding:4pt;border:1px solid #999}td{border:1px solid #999;padding:4pt;vertical-align:top}.pend{background:#FFF3BF}.num{display:none}.mhero{border-bottom:3pt solid #e8590c;padding-bottom:6pt}.sig div{margin-top:36pt;border-top:1px solid #333;text-align:center}';
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Proyecto SILADIN ${P.n}</title><style>${css}</style></head><body>${c.innerHTML}</body></html>`;
+  download(`Proyecto_SILADIN_${P.n}_machote.doc`,'﻿'+html,'application/msword')};
+document.addEventListener('keydown',e=>{if(VIEW==='mach'&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveMach()}});
+
+function setBarH(){const h=document.querySelector('.proj-bar').offsetHeight;document.documentElement.style.setProperty('--barH',h+'px')}
+window.addEventListener('resize',setBarH);setBarH();
+
 
 /* ===================== exportar / importar ===================== */
-document.getElementById('btnExport').onclick=()=>download('avance_proyecto_siladin.json',JSON.stringify(S,null,2),'application/json');
-document.getElementById('fileImport').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);S=Object.assign({team:[],data:[],demo:false,crono:{},logs:[],eth:{},pend:{}},o);save();renderAll()}catch(err){document.getElementById('saveState').textContent='El archivo no es un JSON válido.'}};rd.readAsText(f)};
+document.getElementById('btnExport').onclick=()=>download('avance_proyectos_siladin.json',JSON.stringify(ALL,null,2),'application/json');
+document.getElementById('fileImport').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);if(o.p1||o.p2){ALL.p1=Object.assign(blank(),o.p1||{});ALL.p2=Object.assign(blank(),o.p2||{})}else{ALL[PID]=Object.assign(blank(),o)}S=ALL[PID];save();renderProject()}catch(err){document.getElementById('saveState').textContent='El archivo no es un JSON válido.'}};rd.readAsText(f)};
 
 /* ===================== header del Aula (fallback) ===================== */
-function ensureHeader(){const h=document.getElementById('app-header');if(h&&!h.children.length){h.innerHTML='<div class="nav-fallback"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i><a href="index.html">Aula Digital</a><span class="tag">Proyecto SILADIN · CCH Oriente</span></div>'}}
-
-/* ===================== reveal y sec-nav activa ===================== */
+function ensureHeader(){const h=document.getElementById('app-header');if(h&&!h.children.length){h.innerHTML='<div class="nav-fallback"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i><a href="index.html">Aula Digital</a><span class="tag">Proyectos SILADIN · CCH Oriente</span></div>'}}
 function initReveal(){if(!('IntersectionObserver' in window)){document.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));return}const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{threshold:.08});document.querySelectorAll('.rv').forEach(e=>io.observe(e));
   const links=[...document.querySelectorAll('.sec-nav a')],io2=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});document.querySelectorAll('section.sec').forEach(s=>io2.observe(s))}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal.show').forEach(m=>bootstrap.Modal.getInstance(m)?.hide())}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&window.bootstrap){document.querySelectorAll('.modal.show').forEach(m=>bootstrap.Modal.getInstance(m)?.hide())}});
 
-function renderAll(){renderTeam();renderData();renderCrono();renderLogs();renderEth();renderCons();renderPend();renderForms()}
-renderAll();initReveal();
-window.addEventListener('load',()=>setTimeout(ensureHeader,400));
+VIEW=/-machote$/.test(location.hash)?'mach':'panel';document.body.classList.toggle('view-mach',VIEW==='mach');
+renderProject();showMach();initReveal();
 </script>
 <!-- Para integrarla al Aula Digital: descomentar estas dos líneas y agregar la página al MENU de aula-header.js -->
 <!-- <script src="auth-config.js"></script><script src="aula-header.js"></script> -->
