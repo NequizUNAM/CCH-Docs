@@ -120,6 +120,23 @@
   .send-alert{display:flex;gap:.7rem;align-items:flex-start;text-align:left;background:#fee2e2;border:2px solid #dc2626;color:#991b1b;border-radius:14px;padding:.8rem 1rem;margin-bottom:.7rem;font-size:.95rem;animation:sendPulse 1.6s ease-in-out infinite}.send-alert i{font-size:1.6rem;color:#dc2626}
 @keyframes sendPulse{50%{box-shadow:0 0 0 6px rgba(220,38,38,.18)}}@media (prefers-reduced-motion:reduce){.send-alert{animation:none}}
 .mbar{height:10px;border-radius:999px;background:#e2e8f0;overflow:hidden}.mbar i{display:block;height:100%;border-radius:999px;transition:width .6s}.mdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+
+    /* Revisión por alumno (panel) */
+    .rvq.ok { border-color:rgba(22,163,74,.55); } .rvq.bad { border-color:rgba(224,49,49,.6); } .rvq.none { border-color:#cbd5e1; border-style:dashed; }
+    .rv-st { display:inline-flex; align-items:center; gap:.25rem; font-size:.74rem; font-weight:800; padding:.12rem .55rem; border-radius:999px; }
+    .rv-st.ok { background:#dcfce7; color:#166534; } .rv-st.bad { background:#fee2e2; color:#b91c1c; } .rv-st.none { background:#f1f5f9; color:#475569; } .rv-st.bon { background:#fef3c7; color:#92400e; }
+    .rvq .opt { padding:.35rem .65rem; margin-bottom:.3rem; } .rvq .opt .mark { width:26px; height:26px; font-size:.85rem; }
+    .opt.rv { cursor:default; } .opt.rv:hover { transform:none; border-color:#e2e8f0; background:#fff; }
+    .opt.rv.me-ok, .opt.rv.me-ok:hover { border-color:#16a34a; background:#dcfce7; } .opt.rv.me-ok .mark { background:#16a34a; color:#fff; }
+    .opt.rv.me-bad, .opt.rv.me-bad:hover { border-color:#e03131; background:#fee2e2; } .opt.rv.me-bad .mark { background:#e03131; color:#fff; }
+    .opt.rv.key, .opt.rv.key:hover { border-color:#16a34a; border-style:dashed; background:#f0fdf4; }
+    .rv-tag { margin-left:auto; font-size:.72rem; font-weight:800; padding:.1rem .5rem; border-radius:999px; white-space:nowrap; align-self:center; } .rv-tag.ok { background:#16a34a; color:#fff; } .rv-tag.bad { background:#e03131; color:#fff; }
+    .rv-ans { display:inline-flex; flex-wrap:wrap; gap:.35rem; align-items:center; border-radius:10px; padding:.35rem .7rem; margin:.3rem 0; font-weight:600; border:2px solid; }
+    .rv-ans.ok { background:#dcfce7; border-color:#16a34a; color:#166534; } .rv-ans.bad { background:#fee2e2; border-color:#e03131; color:#b91c1c; }
+    .rv-exp { font-size:.9rem; color:#166534; background:#f0fdf4; border:2px dashed #16a34a; border-radius:10px; padding:.3rem .7rem; margin:.2rem 0 .3rem; display:inline-block; }
+    .rv-note { font-size:.82rem; color:#b91c1c; background:#fff5f5; border-left:4px solid #e03131; border-radius:8px; padding:.3rem .6rem; margin-top:.3rem; }
+    .proc.rvp { border-style:solid; border-color:#ddd6fe; } .rvp-h { font-weight:800; color:#5b21b6; font-size:.88rem; padding:.45rem .8rem 0; }
+    .rv-circ svg { max-width:100%; height:auto; }
 </style>
 </head>
 <body>
@@ -1161,7 +1178,7 @@ function renderMalas(r) {
   const box = $('#fin-malas'); if (!box) return;
   let ex = []; try { ex = buildExam(r.parcial, r.tipo, r.seed, r.total); } catch (e) { }
   const secs = EXAMS[r.parcial].secs, det = String(r.detalle || ''), ans = (S && S.answers) || {};
-  const plain = h => String(h).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<div class="datos">[\s\S]*?<\/div>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const plain = h => String(h).replace(/<sub>(\d+)<\/sub>/g, (m, d) => [...d].map(c => '₀₁₂₃₄₅₆₇₈₉'[c]).join('')).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<div class="datos">[\s\S]*?<\/div>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
   const bad = ex.filter((q, i) => det[i] === '0');
   if (!ex.length) { box.innerHTML = ''; return; }
   if (!bad.length) { box.innerHTML = '<div class="alert alert-success fw-bold text-center mb-0"><i class="bi bi-stars me-1"></i>¡Todas tus respuestas fueron correctas!</div>'; return; }
@@ -1204,17 +1221,17 @@ $('#btn-terminar').onclick = () => { clearState(); SS.del('eq_est_sess'); locati
    PANEL DEL ADMINISTRADOR
    ========================================================================== */
 const AD = { tab: 'resumen', par: '0', rows: [], cfg: null, q: '', pvP: 1, pvT: 'A', pvSeed: 20250101 };
-const ADTABS = [['resumen', 'bi-bar-chart-line-fill', 'Resumen'], ['met', 'bi-clipboard-data-fill', 'Métricas'], ['res', 'bi-table', 'Resultados'], ['clv', 'bi-key-fill', 'Contraseñas'], ['prev', 'bi-eye-fill', 'Vista previa']];
+const ADTABS = [['resumen', 'bi-bar-chart-line-fill', 'Resumen'], ['met', 'bi-clipboard-data-fill', 'Métricas'], ['res', 'bi-table', 'Resultados'], ['alu', 'bi-person-lines-fill', 'Por alumno'], ['clv', 'bi-key-fill', 'Contraseñas'], ['prev', 'bi-eye-fill', 'Vista previa']];
 async function openAdmin() { show('admin'); await loadAdmin(); }
-/* El panel se actualiza como máximo cada 3 min (también con F5): mientras, se muestran los últimos datos guardados en este equipo. */
-const AD_WAIT = 180000, ADK = 'eq_adm_' + (CFG.MATERIA || 'cib');
+/* El panel se actualiza como máximo cada minuto (también con F5): mientras, se muestran los últimos datos guardados en este equipo. */
+const AD_WAIT = 60000, ADK = 'eq_adm_' + (CFG.MATERIA || 'cib');
 const adCache = { get() { try { return JSON.parse(LS.get(ADK) || 'null'); } catch (e) { return null; } }, set(o) { LS.set(ADK, JSON.stringify(o)); } };
 const mmss = ms => { const x = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(x / 60) + ':' + String(x % 60).padStart(2, '0'); };
 let adTimer = null;
 function adStamp() {
   const b = $('#ad-refresh'); if (!b) return; clearInterval(adTimer);
   const tick = () => { const c = adCache.get(), left = c ? AD_WAIT - (Date.now() - c.t) : 0;
-    if (left > 0) { b.innerHTML = `<i class="bi bi-hourglass-split me-1"></i>Actualizar en ${mmss(left)}`; b.title = 'Para no saturar el servidor, el panel se actualiza como máximo cada 3 minutos'; }
+    if (left > 0) { b.innerHTML = `<i class="bi bi-hourglass-split me-1"></i>Actualizar en ${mmss(left)}`; b.title = 'Para no saturar el servidor, el panel se actualiza como máximo cada minuto'; }
     else { b.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Actualizar'; b.title = ''; clearInterval(adTimer); } };
   tick(); adTimer = setInterval(tick, 1000);
 }
@@ -1237,7 +1254,7 @@ async function loadAdmin(force) {
 function adminLogout() { ADMIN = null; SS.del('eq_est_sess'); location.reload(); }
 $('#ad-salir').onclick = adminLogout; $('#ad-refresh').onclick = () => loadAdmin(false);
 function renderTabs() { $('#ad-tabs').innerHTML = ADTABS.map(([k, ic, n]) => `<li class="nav-item"><button class="nav-link ${AD.tab === k ? 'active' : ''}" data-adtab="${k}"><i class="bi ${ic} me-1"></i>${n}</button></li>`).join(''); }
-function renderAdmin() { renderTabs(); ({ resumen: adResumen, met: adMetricas, res: adResultados, clv: adClaves, prev: adPrev })[AD.tab](); }
+function renderAdmin() { renderTabs(); ({ resumen: adResumen, met: adMetricas, res: adResultados, alu: adAlumno, clv: adClaves, prev: adPrev })[AD.tab](); }
 document.addEventListener('click', e => { const t = e.target.closest('[data-adtab]'); if (t) { AD.tab = t.dataset.adtab; renderAdmin(); } });
 const parBtns = () => `<div class="d-flex flex-wrap gap-2 mb-3">${[['0', 'Todos'], ['1', 'Parcial 1'], ['2', 'Parcial 2']].map(([k, n]) => `<button class="btn-chip ${AD.par === k ? 'on' : ''}" data-adpar="${k}">${n}</button>`).join('')}</div>`;
 document.addEventListener('click', e => { const t = e.target.closest('[data-adpar]'); if (t) { AD.par = t.dataset.adpar; renderAdmin(); } });
@@ -1246,7 +1263,7 @@ const avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
 
 /* ===== Métricas: qué falló (por bloque o unidad, teoría vs. aplicación, nivel de Bloom, tipo de pregunta y preguntas más falladas) =====
    Se reconstruye el examen de cada alumno con su tipo y su semilla, y se cruza con su detalle de aciertos (1 = bien, 0 = mal o sin responder). */
-const plainQ = h => String(h).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const plainQ = h => String(h).replace(/<sub>(\d+)<\/sub>/g, (m, d) => [...d].map(c => '₀₁₂₃₄₅₆₇₈₉'[c]).join('')).replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<table[\s\S]*?<\/table>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 const TEORIA = ['Recordar', 'Comprender'];
 document.addEventListener('click', e => { const t = e.target.closest('[data-adgrp]'); if (t) { AD.grp = t.dataset.adgrp; renderAdmin(); } });
 function adMetricas() {
@@ -1304,7 +1321,7 @@ const tiempoOf = r => { const x = segOf(r); return Number.isFinite(x) ? fmtT(x *
 function adResultados() {
   const q = AD.q.toLowerCase(), rows = rowsSel().filter(r => !q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)).sort((a, b) => String(b.inicio).localeCompare(String(a.inicio)));
   $('#ad-body').innerHTML = parBtns() + `<div class="nav-card"><div class="d-flex flex-wrap gap-2 mb-3 align-items-center"><div class="input-group" style="max-width:340px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-q" class="form-control" placeholder="Buscar nombre, cuenta o grupo" value="${esc(AD.q)}" autocomplete="off"></div><span class="text-muted small">${rows.length} registro(s)</span><button class="btn btn-outline-success btn-sm ms-auto fw-bold rounded-pill" id="ad-csv"><i class="bi bi-filetype-csv me-1"></i>Descargar CSV</button></div>
-  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th title="Tiempo que tardó en contestar (horas:minutos:segundos)">Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono text-nowrap">${r.estado === 'Entregado' ? (tiempoOf(r) || '—') : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 30 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
+  <div class="table-responsive"><table class="table table-hover table-sm align-middle mb-0 ad-tbl"><thead><tr><th>Parcial</th><th>Nombre</th><th>Cuenta</th><th>Grupo</th><th>Tipo</th><th>Estado</th><th>Calif.</th><th title="Tiempo que tardó en contestar (horas:minutos:segundos)">Tiempo</th><th>Salidas</th><th>Inicio</th><th>Entrega</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>P${r.parcial}</td><td>${esc(r.nombre)}</td><td class="mono">${esc(r.cuenta)}</td><td>${esc(r.grupo)}</td><td>${r.tipo}</td><td><span class="badge ${r.estado === 'Entregado' ? 'text-bg-success' : 'text-bg-warning'}">${r.estado}</span></td><td><b>${r.estado === 'Entregado' ? (+r.nota).toFixed(1) : '—'}</b></td><td class="mono text-nowrap">${r.estado === 'Entregado' ? (tiempoOf(r) || '—') : '—'}</td><td>${r.salidas === '' || r.salidas === undefined ? '—' : (+r.salidas > CFG.SALIDAS_CIERRE ? `<span class="badge text-bg-danger">${r.salidas}</span>` : r.salidas)}</td><td class="small">${fmtDT(r.inicio)}</td><td class="small">${fmtDT(r.entrega)}</td><td class="text-nowrap">${r.estado !== 'Entregado' && +r.salidas > CFG.SALIDAS_CIERRE ? (r.motivo === 'CERRAR' ? '<span class="badge text-bg-secondary me-1" title="El examen se cerrará en cuanto el alumno tenga conexión (máx. 30 s con la pestaña abierta)">Cierre enviado</span>' : `<button class="btn btn-sm btn-danger rounded-pill me-1" data-cerrar="${r.parcial}|${esc(r.cuenta)}" title="Cerrar y entregar este examen: se calificará con lo que lleva respondido"><i class="bi bi-lock-fill"></i> Cerrar examen</button>`) : ''}${r.estado === 'Entregado' ? `<button class="btn btn-sm btn-outline-primary rounded-pill me-1" data-aver="${r.parcial}|${esc(r.cuenta)}" title="Ver su examen con aciertos y errores"><i class="bi bi-eye-fill"></i> Ver</button>` : ''}<button class="btn btn-sm btn-outline-danger rounded-pill" data-liberar="${r.parcial}|${esc(r.cuenta)}" title="Borrar el registro para que el alumno pueda presentar de nuevo"><i class="bi bi-unlock-fill"></i> Liberar</button></td></tr>`).join('') || '<tr><td colspan="12" class="text-center text-muted py-4">Sin registros</td></tr>'}</tbody></table></div></div>`;
   $('#ad-q').addEventListener('input', e => { AD.q = e.target.value; const p = e.target.selectionStart; adResultados(); const n = $('#ad-q'); n.focus(); n.setSelectionRange(p, p); });
   $('#ad-csv').onclick = () => {
     const H = ['Parcial', 'Nombre', 'Cuenta', 'Grupo', 'Tipo', 'Estado', 'Aciertos', 'Total', 'Calificación', 'Tiempo (hh:mm:ss)', 'Segundos', 'Salidas', 'Inicio', 'Entrega'], q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
@@ -1385,6 +1402,96 @@ document.addEventListener('click', e => {
   const p = e.target.closest('[data-pvp]'); if (p) { AD.pvP = +p.dataset.pvp; adPrev(); }
   const t = e.target.closest('[data-pvt]'); if (t) { AD.pvT = t.dataset.pvt; adPrev(); }
   if (e.target.closest('[data-pvnew]')) { AD.pvSeed = randBytes()[0] >>> 0; adPrev(); }
+});
+
+/* ===== Por alumno: vista previa del examen que entregó cada alumno, con aciertos (verde) y errores (rojo) =====
+   Se reconstruye su examen con su tipo y su semilla y se le ponen sus respuestas (columna «Respuestas») y,
+   si la usó, su hoja de procedimiento (columna «Procedimiento»). Se navega alumno por alumno. */
+const parseResp = (s, ex) => { const a = {}; String(s || '').split(';').forEach(p => { const k = p.indexOf(':'); if (k < 1) return; const id = +p.slice(0, k), v = p.slice(k + 1), q = ex.find(x => x.id === id); if (!q || v === '-' || v === '') return; a[id] = q.kind === 'mc' ? String('ABCD'.indexOf(v)) : v; }); return a; };
+const parseProc = s => { try { const o = JSON.parse(s || '{}'); return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } };
+const HAS_PROC = typeof procCheck === 'function';
+const aluKey = r => r.parcial + '|' + r.cuenta;
+function aluList() {
+  const q = (AD.aq || '').toLowerCase();
+  return rowsSel().filter(r => r.estado === 'Entregado' && (!AD.grp || String(r.grupo || '') === AD.grp) && (!q || (r.nombre + ' ' + r.cuenta + ' ' + r.grupo).toLowerCase().includes(q)))
+    .sort((a, b) => String(a.grupo).localeCompare(String(b.grupo), 'es', { numeric: true }) || String(a.nombre).localeCompare(String(b.nombre), 'es') || a.parcial - b.parcial);
+}
+/* Respuesta del alumno en una pregunta (con la correcta cuando falló) */
+function revAns(q, v, P, ok) {
+  const empty = v === undefined || v === null || v === '';
+  if (q.kind === 'mc') return `<div class="${q.grid ? 'opt-grid' : ''}">` + q.opts.map((o, i) => { const me = !empty && +v === i, good = i === q.correct; return `<div class="opt rv ${me && good ? 'me-ok' : me ? 'me-bad' : good ? 'key' : ''}"><span class="mark">${'ABCD'[i]}</span><span class="flex-grow-1">${o}</span>${me ? `<span class="rv-tag ${good ? 'ok' : 'bad'}">${good ? '<i class="bi bi-check-lg"></i> Su respuesta' : '<i class="bi bi-x-lg"></i> Su respuesta'}</span>` : good ? '<span class="rv-tag ok">Correcta</span>' : ''}</div>`; }).join('') + '</div>' + (empty ? '<div class="rv-ans bad"><i class="bi bi-dash-circle me-1"></i>Sin responder</div>' : '');
+  if (q.kind === 'tt' && HAS_PROC) { const ck = procCheck(q, P, v); return ttGrid(q, P || {}, ck.R, v || '') + (ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : '') + (+(P || {}).nc ? '' : '<div class="small text-muted">No agregó columnas intermedias.</div>'); }
+  if (q.kind === 'fn') { const pr = fnParse(v || ''); return `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Escribió:</span> <b class="mono">${empty ? 'Sin responder' : 'F = ' + esc(v)}</b>${pr.ok ? ` <span class="small">(se lee como <span class="num">F = ${exprOf(pr.tree)}</span>)</span>` : !empty ? ` <span class="small">(${esc(pr.err || 'no se pudo leer')})</span>` : ''}</div>${ok ? '' : `<div class="rv-exp">Referencia: <b class="num">F = ${q.expect}</b> <span class="small text-muted">(o cualquier función equivalente)</span></div>`}`; }
+  if (q.kind === 'circ') { const t = cbParse(v || ''); return `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Su circuito:</span>${empty ? ' <b>Sin responder</b>' : ''}</div>${t ? `<div class="circ-wrap rv-circ">${cbSVG(t)}</div>` : ''}${ok ? '' : `<div class="rv-exp">${circHTML(q, 'rv', true)}</div>`}`; }
+  let h = `<div class="rv-ans ${ok ? 'ok' : 'bad'}"><span>Respondió:</span> <b class="mono">${empty ? 'Sin responder' : esc(String(v).replace(/_/g, '·'))}</b>${ok ? ' <i class="bi bi-check-circle-fill"></i>' : ''}</div>${ok ? '' : `<div class="rv-exp">Correcta: <b class="mono">${esc(q.expect)}</b></div>`}`;
+  if (HAS_PROC && (q.cv || q.sm)) {
+    const ck = procCheck(q, P, v);
+    h += ck.used ? `<div class="proc rvp"><div class="rvp-h"><i class="bi bi-pencil-square me-1"></i>Su procedimiento</div><div class="proc-b">${procBody(q, P, ck.R)}${ck.notes.length ? `<div class="rv-note">${ck.notes.map(esc).join('<br>')}</div>` : ''}</div></div>` : '<div class="small text-muted mt-1"><i class="bi bi-pencil me-1"></i>No usó la hoja de procedimiento.</div>';
+  }
+  return h;
+}
+const opsTable = (OPS, alumnos) => {
+  const arr = Object.entries(OPS).map(([k, o]) => ({ k, t: (typeof OPN !== 'undefined' && OPN[k]) || k, ...o, p: o.n ? o.ok / o.n * 100 : 0 })).filter(x => x.n).sort((a, b) => a.p - b.p);
+  if (!arr.length) return '<div class="small text-muted">Sin procedimiento registrado.</div>';
+  const col = p => p >= 80 ? '#16a34a' : p >= 60 ? '#d97706' : '#dc2626';
+  return `<table class="table table-sm align-middle mb-0"><thead><tr><th>Operación</th><th class="text-center">Casillas</th>${alumnos ? '<th class="text-center">Alumnos</th>' : ''}<th>Acierto</th><th class="text-end">%</th></tr></thead><tbody>${arr.map(x => `<tr><td>${esc(x.t)}</td><td class="text-center">${x.ok}/${x.n}</td>${alumnos ? `<td class="text-center">${x.a ? x.a.size : ''}</td>` : ''}<td style="min-width:120px"><div class="mbar"><i style="width:${x.p.toFixed(1)}%;background:${col(x.p)}"></i></div></td><td class="text-end fw-bold text-nowrap" style="color:${col(x.p)}">${x.p.toFixed(0)} %</td></tr>`).join('')}</tbody></table>`;
+};
+function adAlumno() {
+  const base = rowsSel().filter(r => r.estado === 'Entregado'), grupos = [...new Set(base.map(r => String(r.grupo || '')))].sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
+  if (AD.grp && !grupos.includes(AD.grp)) AD.grp = '';
+  const L = aluList();
+  if (AD.aluKey) { const k = L.findIndex(r => aluKey(r) === AD.aluKey); if (k >= 0) AD.ai = k; AD.aluKey = ''; }
+  AD.ai = Math.max(0, Math.min(AD.ai || 0, L.length - 1));
+  const grpBtns = grupos.length > 1 ? `<div class="d-flex flex-wrap gap-2 mb-3"><span class="small fw-bold text-muted align-self-center me-1">Grupo:</span>${[['', 'Todos'], ...grupos.map(g => [g, g || '(sin grupo)'])].map(([k, n]) => `<button class="btn-chip ${(AD.grp || '') === k ? 'on' : ''}" data-adgrp="${esc(k)}">${esc(n)}</button>`).join('')}</div>` : '';
+  const nav = `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-2 align-items-center">
+    <div class="input-group input-group-sm" style="max-width:260px"><span class="input-group-text"><i class="bi bi-search"></i></span><input id="ad-aq" class="form-control" placeholder="Buscar alumno" value="${esc(AD.aq || '')}" autocomplete="off"></div>
+    <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" data-anav="-1" ${AD.ai <= 0 ? 'disabled' : ''} title="Alumno anterior (←)"><i class="bi bi-chevron-left"></i> Anterior</button>
+    <select id="ad-asel" class="form-select form-select-sm" style="max-width:340px" aria-label="Elegir alumno">${L.map((r, i) => `<option value="${i}" ${i === AD.ai ? 'selected' : ''}>${esc((r.grupo ? r.grupo + ' · ' : '') + r.nombre)}${AD.par === '0' ? ' · P' + r.parcial : ''} · ${(+r.nota).toFixed(1)}</option>`).join('')}</select>
+    <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" data-anav="1" ${AD.ai >= L.length - 1 ? 'disabled' : ''} title="Alumno siguiente (→)">Siguiente <i class="bi bi-chevron-right"></i></button>
+    <span class="small text-muted fw-bold">${L.length ? AD.ai + 1 : 0} de ${L.length}</span>
+    <div class="form-check form-switch ms-auto mb-0"><input class="form-check-input" type="checkbox" id="ad-aerr" ${AD.aerr ? 'checked' : ''}><label class="form-check-label small fw-bold" for="ad-aerr">Solo errores</label></div>
+  </div></div>`;
+  if (!L.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + nav + '<div class="alert alert-info">No hay exámenes entregados con ese filtro.</div>'; aluBind(); return; }
+  const r = L[AD.ai];
+  if (!r.resp) { $('#ad-body').innerHTML = parBtns() + grpBtns + nav + '<div class="alert alert-warning">Para ver lo que contestó cada alumno actualiza el script de Apps Script (nueva versión de la implementación): el panel necesita la columna «Respuestas».</div>'; aluBind(); return; }
+  let ex; try { ex = buildExam(+r.parcial, r.tipo, +r.seed, +r.total); } catch (e) { ex = null; }
+  if (!ex || !ex.length) { $('#ad-body').innerHTML = parBtns() + grpBtns + nav + '<div class="alert alert-danger">No se pudo reconstruir el examen de este alumno (falta su semilla).</div>'; aluBind(); return; }
+  const ans = parseResp(r.resp, ex), PR = parseProc(r.proc), det = String(r.det || ''), secs = EXAMS[r.parcial].secs;
+  const SEC = {}, OPS = {}; let html = '', last = '', shown = 0;
+  ex.forEach((q, i) => {
+    const v = ans[q.id], empty = v === undefined || v === '', ok = det[i] !== undefined ? det[i] === '1' : gradeQ(q, v), sec = secs.find(s => s.id === q.sec) || { t: q.sec, c: '#64748b', ic: 'bi-question' }, P = PR[q.id] || PR[String(q.id)] || {};
+    if (!q.bonus) { const o = SEC[q.sec] = SEC[q.sec] || { t: sec.t, c: sec.c, n: 0, ok: 0 }; o.n++; if (ok) o.ok++; }
+    if (HAS_PROC && procKind(q)) Object.entries(procCheck(q, P, v).ops).forEach(([k, o]) => { const t = OPS[k] = OPS[k] || { n: 0, ok: 0 }; t.n += o.n; t.ok += o.ok; });
+    if (AD.aerr && ok) return;
+    if (q.sec !== last) { last = q.sec; html += `<div class="sec-head" style="--c:${sec.c}"><div class="sec-ico"><i class="bi ${sec.ic}"></i></div><div><h2 class="h6 fw-bold mb-0">${sec.t}</h2></div></div>`; }
+    const st = ok ? 'ok' : empty ? 'none' : 'bad'; shown++;
+    html += `<div class="qcard rvq ${st}" style="--c:${sec.c}"><div class="d-flex align-items-start gap-2"><span class="qnum">${q.id}</span><div class="flex-grow-1" style="min-width:0"><div class="d-flex flex-wrap gap-1 mb-1"><span class="rv-st ${st}">${ok ? '<i class="bi bi-check-circle-fill"></i> Correcta' : empty ? '<i class="bi bi-dash-circle-fill"></i> Sin responder' : '<i class="bi bi-x-circle-fill"></i> Incorrecta'}</span>${q.bl ? `<span class="bl bl-${q.bl}">${q.bl}</span>` : ''}${q.bonus && q.bl !== 'Bonus' ? '<span class="rv-st bon">Bonus</span>' : ''}</div><div class="qtext">${q.html}</div>${revAns(q, v, P, ok)}</div></div></div>`;
+  });
+  const nb = ex.filter(q => !q.bonus).length, okb = Object.values(SEC).reduce((s, o) => s + o.ok, 0), pc = +r.nota * 10, col = pc >= 60 ? '#16a34a' : '#dc2626';
+  const secRows = Object.values(SEC).map(o => { const p = o.n ? o.ok / o.n * 100 : 0, c = p >= 80 ? '#16a34a' : p >= 60 ? '#d97706' : '#dc2626'; return `<tr><td><span class="mdot" style="background:${o.c}"></span>${esc(o.t)}</td><td class="text-center">${o.ok}/${o.n}</td><td style="min-width:110px"><div class="mbar"><i style="width:${p.toFixed(1)}%;background:${c}"></i></div></td><td class="text-end fw-bold text-nowrap" style="color:${c}">${p.toFixed(0)} %</td></tr>`; }).join('');
+  const usedP = Object.keys(PR).length;
+  $('#ad-body').innerHTML = parBtns() + grpBtns + nav + `<div class="nav-card mb-3"><div class="d-flex flex-wrap gap-3 align-items-center">
+      <div class="grade-ring" style="--p:${pc};--gc:${col};width:96px;height:96px"><b style="color:${col}">${(+r.nota).toFixed(1)}</b><small class="text-muted fw-bold">de 10</small></div>
+      <div class="flex-grow-1" style="min-width:220px"><div class="h5 fw-bold mb-1">${esc(r.nombre)}</div><div class="small text-muted">Cuenta <b class="mono">${esc(r.cuenta)}</b> · Grupo <b>${esc(r.grupo)}</b> · P${r.parcial} · Tipo ${esc(r.tipo)}</div>
+        <div class="small mt-1">${r.aciertos} aciertos de ${r.total} · Tiempo <b class="mono">${tiempoOf(r) || '—'}</b> · Salidas <b>${r.salidas === '' ? '—' : r.salidas}</b>${r.motivo === 'admin' ? ' · <span class="badge text-bg-warning">Cerrado por el profesor(a)</span>' : r.motivo === 'tiempo' ? ' · <span class="badge text-bg-secondary">Se acabó el tiempo</span>' : ''} · Entregó ${fmtDT(r.entrega)}</div></div></div></div>
+    <div class="row g-3 mb-3"><div class="col-lg-${HAS_PROC ? 6 : 12}"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-diagram-3-fill me-1 text-primary"></i>Aciertos por bloque</b><table class="table table-sm align-middle mb-0"><tbody>${secRows}</tbody></table></div></div>
+    ${HAS_PROC ? `<div class="col-lg-6"><div class="nav-card h-100"><b class="d-block mb-2"><i class="bi bi-pencil-square me-1 text-primary"></i>Operaciones de su procedimiento <span class="small text-muted fw-normal">(${usedP ? usedP + ' pregunta(s) con hoja' : 'no usó la hoja'})</span></b>${opsTable(OPS)}</div></div>` : ''}</div>
+    <div class="small text-muted mb-2"><span class="rv-st ok">Verde</span> = bien · <span class="rv-st bad">Rojo</span> = mal (abajo, en pequeño, lo que se esperaba)${HAS_PROC ? ' · En el procedimiento una casilla es correcta si coincide con el resultado correcto o con lo que sale de los datos que el propio alumno escribió en el paso anterior (un error no se cuenta dos veces).' : ''}</div>
+    ${html || '<div class="alert alert-success fw-bold">Todas sus respuestas fueron correctas.</div>'}`;
+  aluBind();
+}
+function aluBind() {
+  const q = $('#ad-aq'); if (q) q.addEventListener('input', e => { AD.aq = e.target.value; AD.ai = 0; const p = e.target.selectionStart; adAlumno(); const n = $('#ad-aq'); n.focus(); n.setSelectionRange(p, p); });
+  const s = $('#ad-asel'); if (s) s.addEventListener('change', e => { AD.ai = +e.target.value; adAlumno(); window.scrollTo({ top: 0 }); });
+  const t = $('#ad-aerr'); if (t) t.addEventListener('change', e => { AD.aerr = e.target.checked; adAlumno(); });
+}
+document.addEventListener('click', e => {
+  const n = e.target.closest('[data-anav]'); if (n) { AD.ai = (AD.ai || 0) + +n.dataset.anav; adAlumno(); window.scrollTo({ top: 0 }); }
+  const v = e.target.closest('[data-aver]'); if (v) { AD.tab = 'alu'; AD.aluKey = v.dataset.aver; AD.grp = ''; AD.aq = ''; renderAdmin(); window.scrollTo({ top: 0 }); }
+});
+document.addEventListener('keydown', e => {
+  if (AD.tab !== 'alu' || $('#scr-admin').classList.contains('d-none') || /INPUT|SELECT|TEXTAREA/.test((e.target.tagName || ''))) return;
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { const L = aluList().length, d = e.key === 'ArrowLeft' ? -1 : 1, k = (AD.ai || 0) + d; if (k >= 0 && k < L) { AD.ai = k; adAlumno(); window.scrollTo({ top: 0 }); } }
 });
 
 /* ===== Bloqueos: copiar, pegar, cortar, clic derecho, arrastrar, imprimir, atajos ===== */
