@@ -2134,7 +2134,7 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
           <button type="button" class="login-admin" id="login-admin" aria-label="Panel de métricas" title="Panel de métricas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
         </div>
         <div class="modal-body">
-          <p class="small muted">Antes de empezar, dinos quién eres. Usamos estos datos solo para registrar tu avance, tus resultados y tu encuesta.</p>
+          <p class="black">Antes de empezar, Selecciona 👉 Alumnado ó Docente</p>
           <div class="form-check form-switch" id="lg-switch">
             <input class="form-check-input" type="checkbox" role="switch" id="lg-docente">
             <label class="form-check-label" for="lg-docente" id="lg-rol">Seleccione Alumnado / Docente</label>
@@ -3689,7 +3689,7 @@ const Login = (function () {
   $("#loginModal").addEventListener("shown.bs.modal", () => nom.focus());
   function rol() {
     const d = doc.checked;
-    $("#lg-rol").textContent = d ? "Soy docente" : "Soy alumno(a)";
+    $("#lg-rol").textContent = d ? "Soy Docente" : "Alumnado";
     $("#lg-switch").classList.toggle("on", d);
     $("#lg-cuenta-lbl").textContent = d ? "Número de trabajador" : "Número de cuenta";
     cta.placeholder = "De 6 a 10 caracteres";
