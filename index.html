@@ -7,21 +7,91 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body { background:#f4f6fb; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
-    main { flex:1; }
-    .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 14px rgba(0,0,0,.25); }
-    .app-navbar .dropdown-menu { border:0; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); padding:.5rem; }
-    .app-navbar .dropdown-item { border-radius:8px; padding:.5rem .8rem; }
-    .app-navbar .dropdown-item:hover { background:#e7efff; }
-    .app-navbar .dropdown-item.active { background:#0d6efd; }
-    .app-navbar .nav-link.active-group { color:#fff; border-bottom:2px solid #0d6efd; }
-    .hero { background:linear-gradient(135deg,#1e293b,#0f172a); color:#fff; padding:4rem 1rem; border-bottom:5px solid #0d6efd; }
-    .section-card { border:0; border-radius:16px; box-shadow:0 6px 18px rgba(15,23,42,.08); transition:transform .2s, box-shadow .2s; }
-    .section-card:hover { transform:translateY(-5px); box-shadow:0 14px 30px rgba(15,23,42,.16); }
-    .icon-circle { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,.2); }
-    .lock-btn { font-weight:700; border-radius:999px; }
-    .lock-card { border:2px dashed #cbd5e1; border-radius:16px; background:#fff; }
-    .c-mat { background:#6f42c1; } .c-cib { background:#0d6efd; } .c-est { background:#198754; }
+    :root{
+      --c1:#e03131; --c2:#1c7ed6; --c3:#2f9e44; --c4:#f08c00; --c5:#7048e8;
+      --p4:#fff4e0; --ink:#0f172a; --ink2:#1e293b; --text:#334155; --muted:#64748b; --line:#e2e8f0;
+      --shadow-sm:0 4px 10px rgba(15,23,42,.06); --shadow-md:0 10px 25px rgba(15,23,42,.12); --shadow-lg:0 18px 40px rgba(15,23,42,.18);
+    }
+    body{background:#f4f6fb;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:var(--ink2);min-height:100vh;display:flex;flex-direction:column}
+    main{flex:1}
+    /* ===== Header (lo dibuja aula-header.js) ===== */
+    .app-navbar{background:linear-gradient(90deg,#0f172a,#1e293b);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+    .app-navbar .dropdown-menu{border:0;border-radius:14px;box-shadow:var(--shadow-lg);padding:.5rem;min-width:270px}
+    .app-navbar .dropdown-item{border-radius:8px;padding:.5rem .8rem}
+    .app-navbar .dropdown-item:hover{background:#e7efff}
+    .app-navbar .dropdown-item.active{background:var(--c2)}
+    .app-navbar .nav-link.active-group{color:#fff;border-bottom:2px solid #e8590c}
+    /* ===== Colores por grupo ===== */
+    .c-com{--gc:#f08c00;--gp:#fff4e0} .c-cua{--gc:#d6336c;--gp:#fdeef4} .c-mat{--gc:#7048e8;--gp:#efeafc}
+    .c-cib{--gc:#1c7ed6;--gp:#e7f1fb} .c-est{--gc:#2f9e44;--gp:#e6f6ea} .c-ext{--gc:#0c8599;--gp:#e3f6f8} .c-gs{--gc:#4263eb;--gp:#edf2ff}
+    /* ===== Hero ===== */
+    .hero{background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;padding:3.2rem 1rem 2.6rem;border-bottom:5px solid #e8590c;box-shadow:var(--shadow-md);position:relative;overflow:hidden}
+    .hero .fl{position:absolute;font-size:3rem;opacity:.1;font-weight:700;animation:floaty 7s ease-in-out infinite;pointer-events:none;user-select:none}
+    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    .hero-logo{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#e8590c,#f08c00);display:inline-flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 8px 20px rgba(232,89,12,.35)}
+    .hero h1{font-weight:800;letter-spacing:-.02em;color:#fff}
+    .hero .tag{display:inline-flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:.25rem .8rem;font-size:.85rem;font-weight:600}
+    .search-wrap{max-width:620px;margin:1.6rem auto 0;position:relative}
+    .search-wrap .bi-search{position:absolute;left:1.1rem;top:50%;transform:translateY(-50%);color:var(--muted)}
+    .search-wrap input{border:0;border-radius:999px;padding:.85rem 3rem .85rem 2.8rem;font-size:1rem;box-shadow:var(--shadow-lg)}
+    .search-wrap input:focus{outline:3px solid #f08c00;box-shadow:var(--shadow-lg)}
+    .search-wrap .clr{position:absolute;right:.6rem;top:50%;transform:translateY(-50%);border:0;background:#f1f5f9;border-radius:999px;width:32px;height:32px;color:var(--muted)}
+    .stats{display:flex;justify-content:center;gap:.6rem;flex-wrap:wrap;margin-top:1.2rem}
+    .stats .st{background:rgba(255,255,255,.08);border-radius:14px;padding:.45rem .9rem;font-size:.85rem}
+    .stats .st b{font-size:1.1rem;color:#ffc078;margin-right:.25rem}
+    /* ===== Chips de grupos ===== */
+    .chips{position:sticky;top:0;z-index:1010;background:rgba(244,246,251,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+    .chips .scroller{display:flex;gap:.5rem;overflow-x:auto;padding:.7rem 0;scrollbar-width:thin}
+    .chip{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:.38rem .85rem;font-size:.85rem;font-weight:600;color:var(--text);display:inline-flex;align-items:center;gap:.4rem;box-shadow:var(--shadow-sm);transition:all .15s}
+    .chip i{color:var(--gc,var(--ink2))}
+    .chip .n{background:var(--gp,#f1f5f9);color:var(--gc,var(--ink2));border-radius:999px;padding:0 .45rem;font-size:.75rem}
+    .chip:hover{transform:translateY(-2px)}
+    .chip.on{background:var(--gc,#1e293b);border-color:var(--gc,#1e293b);color:#fff}
+    .chip.on i{color:#fff} .chip.on .n{background:rgba(255,255,255,.25);color:#fff}
+    .chip:focus-visible,.row-link:focus-visible,.aula-key:focus-visible{outline:3px solid #f08c00;outline-offset:2px}
+    /* ===== Títulos de sección ===== */
+    .sec-h{display:flex;align-items:center;gap:.75rem;margin:2.2rem 0 1rem}
+    .sec-h .badge-n{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#e8590c,#f08c00);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:1.25rem;flex:0 0 auto;box-shadow:var(--shadow-sm)}
+    .sec-h h2{font-size:1.35rem;font-weight:800;margin:0;color:var(--ink)}
+    .sec-h p{margin:0;color:var(--muted);font-size:.9rem}
+    /* ===== Tarjetas de grupo ===== */
+    .g-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-sm);border-top:5px solid var(--gc);height:100%;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;min-width:0}
+    .g-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+    .g-head{display:flex;align-items:center;gap:.75rem;padding:1rem 1.1rem .6rem}
+    .g-ico{width:46px;height:46px;border-radius:14px;background:var(--gp);color:var(--gc);display:inline-flex;align-items:center;justify-content:center;font-size:1.35rem;flex:0 0 auto}
+    .g-head h3{font-size:1.08rem;font-weight:800;margin:0;line-height:1.2;color:var(--ink)}
+    .g-head small{color:var(--muted);font-weight:600}
+    .g-list{list-style:none;margin:0;padding:.2rem .6rem .8rem}
+    .g-list li{display:flex;align-items:center;gap:.35rem}
+    .row-link{flex:1;min-width:0;display:flex;align-items:center;gap:.65rem;padding:.5rem .55rem;border-radius:10px;color:var(--ink2);text-decoration:none;transition:background .15s}
+    .row-link:hover{background:var(--gp)}
+    .row-link .ri{width:30px;height:30px;border-radius:9px;background:#f8fafc;color:var(--gc);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+    .row-link:hover .ri{background:#fff}
+    .row-link .tx{min-width:0;flex:1}
+    .row-link .tx b{display:block;font-weight:600;font-size:.94rem;line-height:1.25}
+    .row-link .tx small{display:block;color:var(--muted);font-size:.78rem;line-height:1.25}
+    .row-link .go{color:#cbd5e1;font-size:.85rem;flex:0 0 auto}
+    .row-link:hover .go{color:var(--gc)}
+    .pill-ext{font-size:.68rem;font-weight:700;background:var(--gp);color:var(--gc);border-radius:999px;padding:.1rem .45rem;white-space:nowrap}
+    mark{background:#ffe8cc;padding:0 .1rem;border-radius:3px}
+    .aula-key{border:0;background:#fff4e0;color:#b45309;border-radius:9px;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+    .aula-key:hover,.aula-key[aria-describedby]{background:#f08c00;color:#fff}
+    /* ===== Sección Apps GS ===== */
+    .gs-band{background:linear-gradient(135deg,#edf2ff,#f8f9ff);border:1px solid #dbe4ff;border-radius:20px;padding:1.2rem}
+    .gs-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-sm);border-left:5px solid var(--gc);display:flex;align-items:center;gap:.6rem;padding:.8rem .8rem .8rem 1rem;height:100%;transition:transform .2s,box-shadow .2s;min-width:0}
+    .gs-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+    .gs-card .row-link{padding:0}
+    .gs-card .row-link:hover{background:none}
+    .gs-card .ri{width:42px;height:42px;border-radius:12px;background:var(--gp);font-size:1.2rem}
+    .gs-note{font-size:.82rem;color:var(--muted)}
+    /* ===== Bloqueado / vacío ===== */
+    .lock-card{border:2px dashed #cbd5e1;border-radius:16px;background:#fff}
+    .empty{background:#fff;border-radius:16px;box-shadow:var(--shadow-sm)}
+    .rv{animation:rvIn .45s ease both}
+    @keyframes rvIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    footer a{color:inherit}
+    @media (max-width:576px){.hero{padding:2.4rem 1rem 2rem}.hero h1{font-size:1.9rem}.hero .fl{display:none}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
@@ -31,52 +101,101 @@
 
   <main>
     <section class="hero text-center">
-      <div class="container">
-        <i class="bi bi-mortarboard-fill display-3"></i>
-        <h1 class="display-5 fw-bold mt-2">Aula Digital By Nequiz</h1>
-        <p class="lead mb-0">Matemáticas • Cibernética • Estadística</p>
+      <span class="fl" style="left:6%;top:18%">Σ</span><span class="fl" style="right:8%;top:22%;animation-delay:1.5s">01</span>
+      <span class="fl" style="left:14%;bottom:12%;animation-delay:3s">π</span><span class="fl" style="right:16%;bottom:10%;animation-delay:2s">x̄</span>
+      <div class="container position-relative">
+        <div class="hero-logo"><i class="bi bi-mortarboard-fill"></i></div>
+        <h1 class="display-5 mt-3 mb-2">Aula Digital <span class="fw-light">By Nequiz</span></h1>
+        <div class="d-flex justify-content-center flex-wrap gap-2">
+          <span class="tag"><i class="bi bi-calculator"></i>Matemáticas</span>
+          <span class="tag"><i class="bi bi-cpu"></i>Cibernética</span>
+          <span class="tag"><i class="bi bi-bar-chart-line"></i>Estadística</span>
+        </div>
+        <div id="hero-tools"></div>
       </div>
     </section>
 
-    <div class="container my-5">
-      <h2 class="fw-bold mb-4"><i class="bi bi-grid-fill text-primary me-2"></i>Contenido disponible</h2>
-      <div class="row g-4" id="home-cards"></div>
-    </div>
+    <div id="chips-bar"></div>
+
+    <div class="container pb-5" id="home"></div>
   </main>
 
-  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • pedro.nequizmedina@cch.unam.mx</small></footer>
-
+  <footer class="text-center py-3 text-muted bg-white border-top"><small><i class="bi bi-mortarboard-fill me-1"></i>Aula Digital • CCH-UNAM • <a href="mailto:pedro.nequizmedina@cch.unam.mx">pedro.nequizmedina@cch.unam.mx</a></small></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
   <script>
-    /* El header, el modal y el bloqueo viven en aula-header.js. Aquí solo se dibujan las tarjetas de inicio. */
+    /* El header, el modal, el bloqueo y el MENU viven en aula-header.js. Aquí solo se dibuja el inicio. */
     const MENU = AulaHeader.getMenu();
-    function renderCards(menu, unlocked) {
-      const box = document.getElementById('home-cards');
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const state = { q: '', g: 'all' };
+
+    /* Resalta la búsqueda sin depender de acentos */
+    function hl(text) {
+      const q = norm(state.q.trim()); if (!q) return esc(text);
+      const i = norm(text).indexOf(q); if (i < 0) return esc(text);
+      return esc(text.slice(0, i)) + '<mark>' + esc(text.slice(i, i + q.length)) + '</mark>' + esc(text.slice(i + q.length));
+    }
+    const match = (i, g) => { const q = norm(state.q.trim()); return !q || norm(i.label + ' ' + (i.desc || '') + ' ' + g.label).includes(q); };
+    const keyBtn = i => i.pw ? `<button type="button" class="aula-key" data-aula-pw="${esc(i.pw)}" aria-label="Ver la contraseña de ${esc(i.label)}" title="Ver contraseña"><i class="bi bi-key-fill"></i></button>` : '';
+    const linkAttrs = i => `href="${esc(i.href)}"${i.ext ? ' target="_blank" rel="noopener noreferrer"' : ''}`;
+    const row = i => `<li><a class="row-link" ${linkAttrs(i)}><span class="ri"><i class="bi ${i.icon || 'bi-dot'}"></i></span><span class="tx"><b>${hl(i.label)}</b>${i.desc ? `<small>${hl(i.desc)}</small>` : ''}</span>${i.ext ? '<span class="pill-ext">Externa</span>' : ''}<i class="bi ${i.ext ? 'bi-box-arrow-up-right' : 'bi-chevron-right'} go" aria-hidden="true"></i></a>${keyBtn(i)}</li>`;
+
+    function renderTools(unlocked) {
+      const tools = document.getElementById('hero-tools'), chips = document.getElementById('chips-bar');
+      if (!unlocked) { tools.innerHTML = ''; chips.innerHTML = ''; return; }
+      const total = MENU.groups.reduce((a, g) => a + g.items.length, 0);
+      const apps = MENU.groups.filter(g => g.apps).reduce((a, g) => a + g.items.length, 0);
+      tools.innerHTML = `<div class="search-wrap"><i class="bi bi-search" aria-hidden="true"></i>
+          <input type="search" id="q" class="form-control" placeholder="Buscar una página… (ej. binomial, compuertas, programa)" aria-label="Buscar una página" autocomplete="off">
+          <button type="button" class="clr" id="q-clr" aria-label="Borrar búsqueda" hidden><i class="bi bi-x-lg"></i></button></div>
+        <div class="stats"><span class="st"><b>${total}</b>páginas</span><span class="st"><b>${MENU.groups.length}</b>secciones</span><span class="st"><b>${apps}</b>apps de Google</span></div>`;
+      chips.innerHTML = `<div class="chips"><div class="container"><div class="scroller" role="tablist" aria-label="Filtrar por sección">
+          <button type="button" class="chip on" data-g="all"><i class="bi bi-grid-fill"></i>Todo</button>
+          ${MENU.groups.map(g => `<button type="button" class="chip ${g.color}" data-g="${g.id}"><i class="bi ${g.icon}"></i>${esc(g.short || g.label)}<span class="n">${g.items.length}</span></button>`).join('')}
+        </div></div></div>`;
+      const q = document.getElementById('q'), clr = document.getElementById('q-clr');
+      q.addEventListener('input', () => { state.q = q.value; clr.hidden = !q.value; renderHome(true); });
+      clr.addEventListener('click', () => { q.value = ''; state.q = ''; clr.hidden = true; renderHome(true); q.focus(); });
+      chips.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+        state.g = c.dataset.g;
+        chips.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+        renderHome(true);
+        document.getElementById('home').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      }));
+    }
+
+    function renderHome(unlocked) {
+      const box = document.getElementById('home');
+      if (window.bootstrap && bootstrap.Popover) box.querySelectorAll('[data-aula-pw]').forEach(b => { const p = bootstrap.Popover.getInstance(b); if (p) p.dispose(); });
       if (!unlocked) {
-        box.innerHTML = `<div class="col-12"><div class="lock-card text-center p-5"><i class="bi bi-lock-fill display-4 text-secondary"></i><h4 class="fw-bold mt-2">Contenido bloqueado</h4><p class="text-muted mb-3">Pulsa «Desbloquear» e ingresa la contraseña para ver los temas.</p><button class="btn btn-primary rounded-pill px-4 lock-btn" type="button" data-unlock><i class="bi bi-lock-fill me-1"></i>Desbloquear</button></div></div>`;
+        box.innerHTML = `<div class="lock-card text-center p-5 mt-5 rv"><i class="bi bi-lock-fill display-4 text-secondary"></i><h2 class="h4 fw-bold mt-2">Contenido bloqueado</h2><p class="text-muted mb-3">Pulsa «Desbloquear» e ingresa la contraseña para ver los temas.</p><button class="btn btn-primary rounded-pill px-4 fw-bold" type="button" data-unlock><i class="bi bi-lock-fill me-1"></i>Desbloquear</button></div>`;
         return;
       }
-      box.innerHTML = menu.groups.map(g => {
-        const links = g.items.map(i => i.disabled
-          ? `<li class="list-group-item text-muted"><i class="bi ${i.icon} me-2"></i>${i.label}</li>`
-          : `<a class="list-group-item list-group-item-action" href="${i.href}"><i class="bi ${i.icon} me-2 text-primary"></i><strong>${i.label}</strong>${i.desc ? `<br><small class="text-muted">${i.desc}</small>` : ''}</a>`
-        ).join('');
-        return `
-          <div class="col-md-4">
-            <div class="card section-card h-100">
-              <div class="card-body">
-                <div class="icon-circle ${g.color} mb-3"><i class="bi ${g.icon}"></i></div>
-                <h4 class="fw-bold">${g.label}</h4>
-                <div class="list-group list-group-flush mt-3">${links}</div>
-              </div>
-            </div>
-          </div>`;
-      }).join('');
+      const shown = MENU.groups.filter(g => state.g === 'all' || state.g === g.id)
+        .map(g => ({ g, items: g.items.filter(i => match(i, g)) })).filter(x => x.items.length);
+      const topics = shown.filter(x => !x.g.apps), apps = shown.filter(x => x.g.apps);
+      let html = '';
+      if (topics.length) {
+        html += `<div class="sec-h"><span class="badge-n"><i class="bi bi-collection-fill"></i></span><div><h2>Contenido del Aula</h2><p>Programas, cuadernillos, temas por materia y extras.</p></div></div>
+          <div class="row g-4">${topics.map((x, k) => `<div class="col-md-6 col-xl-4 d-flex"><section class="g-card ${x.g.color} w-100 rv" style="animation-delay:${k * 60}ms" aria-labelledby="h-${x.g.id}">
+            <div class="g-head"><span class="g-ico"><i class="bi ${x.g.icon}"></i></span><div><h3 id="h-${x.g.id}">${esc(x.g.label)}</h3><small>${x.items.length} ${x.items.length === 1 ? 'página' : 'páginas'}</small></div></div>
+            <ul class="g-list">${x.items.map(row).join('')}</ul></section></div>`).join('')}</div>`;
+      }
+      apps.forEach(x => {
+        html += `<div class="sec-h"><span class="badge-n"><i class="bi ${x.g.icon}"></i></span><div><h2>${esc(x.g.label)}</h2><p>Aplicaciones web hechas con Google Apps Script (código .gs). Se abren en otra pestaña.</p></div></div>
+          <div class="gs-band ${x.g.color} rv"><div class="row g-3">${x.items.map(i => `<div class="col-sm-6 col-lg-4 d-flex"><ul class="list-unstyled m-0 w-100"><li class="gs-card">
+            <a class="row-link" ${linkAttrs(i)}><span class="ri"><i class="bi ${i.icon}"></i></span><span class="tx"><b>${hl(i.label)}</b><small>script.google.com</small></span><i class="bi bi-box-arrow-up-right go" aria-hidden="true"></i></a>${keyBtn(i)}</li></ul></div>`).join('')}</div>
+            <p class="gs-note mt-3 mb-0"><i class="bi bi-key-fill text-warning me-1"></i>Las páginas con llave piden contraseña: pulsa la llave para verla y copiarla.</p></div>`;
+      });
+      if (!shown.length) html = `<div class="empty text-center p-5 mt-4"><i class="bi bi-search display-5 text-secondary"></i><h2 class="h5 fw-bold mt-2">Sin resultados</h2><p class="text-muted mb-0">No hay páginas que coincidan con «${esc(state.q)}».</p></div>`;
+      box.innerHTML = html;
+      AulaHeader.initKeys(box);
     }
-    document.addEventListener('aula-auth', e => renderCards(MENU, e.detail.unlocked));
+
+    document.addEventListener('aula-auth', e => { renderTools(e.detail.unlocked); renderHome(e.detail.unlocked); });
   </script>
 </body>
 </html>
