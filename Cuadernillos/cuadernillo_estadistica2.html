@@ -661,18 +661,23 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
 .dl-row{display:flex;flex-wrap:wrap;gap:6px}
 @media (prefers-reduced-motion:reduce){.fcard{animation:none}}
 
+.dotc{display:inline-block;width:13px;height:13px;border-radius:50%;vertical-align:-2px;margin-right:6px;border:1px solid rgba(0,0,0,.3)}
+.katex-warn{background:#fff3cd;border:1px solid #f2c14e;border-radius:10px;padding:10px 12px;margin:12px 0}
+.apx-note{font-size:.9rem;color:var(--muted)}
 </style>
 </head>
 <body>
+<noscript><div class="katex-warn" style="margin:12px"><b>⚠️ JavaScript desactivado:</b> este cuaderno necesita JavaScript para los laboratorios, las gráficas y las soluciones paso a paso. Actívalo para usarlo completo.</div></noscript>
 <div class="app">
   <aside class="rail" id="rail">
-    <a class="brand" href="#inicio"><span class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="2" y="12" width="5" height="12" rx="1.5" fill="#0e1b17"/><rect x="10" y="5" width="5" height="19" rx="1.5" fill="#0e1b17"/><rect x="18" y="9" width="5" height="15" rx="1.5" fill="#0e1b17"/></svg></span><span><b>Cuaderno de Estadística 2</b><small>Pedro Nequiz · 2026</small></span></a>
+    <a class="brand" href="#inicio"><span class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="2" y="12" width="5" height="12" rx="1.5" fill="#0e1b17"/><rect x="10" y="5" width="5" height="19" rx="1.5" fill="#0e1b17"/><rect x="18" y="9" width="5" height="15" rx="1.5" fill="#0e1b17"/></svg></span><span><b>Cuaderno de Estadística 2</b><small>Pedro Nequiz · 2026 · v2 refactorizado</small></span></a>
     <nav id="rail-nav"></nav>
     <div class="rail-foot">
       <button class="btn sm" data-act="plan">📄 Plan de estudios</button>
       <button class="btn sm" data-act="formulas">🧮 Formulario</button>
       <a class="btn sm" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a>
       <button class="btn sm" data-act="tablaz">📊 Tabla z</button>
+      <button class="btn sm" data-act="apendice">📊 Apéndice</button>
       <button class="btn sm" data-act="reset">♻️ Borrar mi avance</button>
       <a class="btn sm" href="../index.html">← Aula Digital</a>
     </div>
@@ -682,7 +687,7 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
       <button class="btn sm burger" data-act="menu" aria-label="Menú">☰</button>
       <div class="crumb" id="crumb"></div>
       <div class="prog" title="Páginas visitadas"><i id="prog-i"></i></div>
-      <button class="btn sm nfbtn" data-act="nf" hidden aria-pressed="false" title="Cambiar entre fracciones y decimales"><span class="nf-a">a/b</span><span class="nf-b">0.00</span></button>
+      <button class="btn sm nfbtn" data-act="nf" hidden aria-pressed="false" title="Cambiar entre fracciones y decimales. Solo cambian las fracciones numéricas (como 3/8); las que tienen variables (como x²+5) quedan como fracción."><span class="nf-a">a/b</span><span class="nf-b">0.00</span></button>
       <button class="btn sm" data-act="plan">📄 <span>Plan</span></button>
       <button class="btn sm" data-act="formulas">🧮 <span>Formulario</span></button>
     </header>
@@ -1035,7 +1040,7 @@ function waveTables(el) {
     [...rs].forEach((r, i) => [...r.cells].forEach((c, j) => { c.style.setProperty('--ci', j); c.style.setProperty('--ri', i); c.style.setProperty('--mc', WV_COL[j % WV_COL.length]); })); });
 }
 /* ---------- fracción ⇄ decimal (2 decimales) en probabilidad/FDP ---------- */
-const NF_PAGES = ['u1-va','u1-fdp','u1-esp','u1-bin','u1-poi','u4-banco'];
+const NF_PAGES = ['u1-va','u1-fdp','u1-esp','u1-bin','u1-poi','u1-cont','u1-nor','u4-banco']; // v2: + continuas y normal
 const nfDec = (a, b) => { const v = a / b; if (!isFinite(v)) return a + '/' + b; if (Number.isInteger(v)) return String(v); const r = v.toFixed(2); return (+r === 0) ? String(+v.toPrecision(2)) : r; };
 const NF_RE = /\\([dt]?)frac\s*(?:\{\s*(-?\d+)\s*\}|(\d))\s*(?:\{\s*(\d+)\s*\}|(\d))/g;
 function nfPrep(el) {
@@ -1044,7 +1049,7 @@ function nfPrep(el) {
   ns.forEach(n => { n.nodeValue = n.nodeValue.replace(NF_RE, (m, t, a1, a2, b1, b2) => { const a = +(a1 != null ? a1 : a2), b = +(b1 != null ? b1 : b2); return b ? `\\htmlClass{nf-f}{${m}}\\htmlClass{nf-d}{${nfDec(a, b)}}` : m; }); });
 }
 const nfSet = on => { document.body.classList.toggle('dec', on); try { localStorage.setItem('cuadEst2:nf', on ? '1' : '0'); } catch (e) { } $$('[data-act=nf]').forEach(x => x.setAttribute('aria-pressed', on ? 'true' : 'false')); };
-ACT.nf = () => { nfSet(!document.body.classList.contains('dec')); toast(document.body.classList.contains('dec') ? 'Resultados en decimales (2 cifras)' : 'Resultados en fracciones'); };
+ACT.nf = () => { nfSet(!document.body.classList.contains('dec')); toast(document.body.classList.contains('dec') ? 'Resultados en decimales (2 cifras). Solo cambian las fracciones numéricas.' : 'Resultados en fracciones'); };
 const nfPage = id => { const st = $('#stage'); if (!st) return; const on = NF_PAGES.includes(id); st.toggleAttribute('data-nf', on); $$('[data-act=nf]').forEach(x => x.hidden = !on); };
 document.addEventListener('DOMContentLoaded', () => { let v = '0'; try { v = localStorage.getItem('cuadEst2:nf') || '0'; } catch (e) { } nfSet(v === '1'); });
 
@@ -1248,7 +1253,7 @@ function svgVenn3(o) {
   g += ['A', 'B', 'C'].map(k => circ(k, `fill="none" stroke="${COL.ink}" stroke-width="2.5"`)).join('');
   g += `<text class="lbl" x="48" y="38" font-size="15">${L[0]}</text><text class="lbl" x="292" y="38" font-size="15">${L[1]}</text><text class="lbl" x="170" y="286" font-size="15" text-anchor="middle">${L[2]}</text>`;
   Object.keys(pos).forEach(k => { if (c[k] != null) g += `<text x="${pos[k][0]}" y="${pos[k][1]}" text-anchor="middle" font-family="${'JetBrains Mono,monospace'}" font-weight="700" font-size="${k === 'n' ? 13 : 15}" fill="${COL.ink}">${c[k]}</text>`; });
-  return `<svg class="ch" viewBox="0 0 340 300" style="max-width:380px" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 340 300" style="max-width:380px" role="img" aria-label="Diagrama de Venn de tres conjuntos: las regiones resaltadas en naranja son las pedidas y los números son los conteos de cada región">${g}</svg>`;
 }
 function svgVenn2(o) {
   const id = nid('w'), L = o.labels || ['A', 'B'], c = o.counts || {}, hi = new Set(o.hi || []), col = '#E4572E';
@@ -1260,7 +1265,7 @@ function svgVenn2(o) {
     [...hi].map(k => `<g class="fadein" opacity=".75">${reg[k]}</g>`).join('') + ci(A, `fill="none" stroke="${COL.ink}" stroke-width="2.5"`) + ci(B, `fill="none" stroke="${COL.ink}" stroke-width="2.5"`) +
     `<text class="lbl" x="50" y="34" font-size="15">${L[0]}</text><text class="lbl" x="290" y="34" font-size="15">${L[1]}</text>`;
   Object.keys(pos).forEach(k => { if (c[k] != null) g += `<text x="${pos[k][0]}" y="${pos[k][1]}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="${k === 'n' ? 13 : 15}">${c[k]}</text>`; });
-  return `<svg class="ch" viewBox="0 0 340 200" style="max-width:380px" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 340 200" style="max-width:380px" role="img" aria-label="Diagrama de Venn de dos conjuntos: las regiones resaltadas en naranja son las pedidas y los números son los conteos de cada región">${g}</svg>`;
 }
 /* cara de dado */
 const DIEPOS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
@@ -1301,7 +1306,7 @@ function buildRail() {
     const ps = PAGES.filter(p => p.u === u.id); if (!ps.length) return '';
     return `<div class="ublock"><div class="utitle"><span class="n">${u.n}</span>${u.t}</div>${ps.map(p => `<button class="plink ${S.visited[p.id] ? 'done' : ''}" data-act="nav" data-id="${p.id}"><span class="ic">${p.ic}</span>${p.t}<span class="ck">✔</span></button>`).join('')}</div>`;
   }).join('');
-  $('#pager-dots').innerHTML = PAGES.map(p => `<button class="dot" title="${esc(p.t)}" data-act="nav" data-id="${p.id}"></button>`).join('');
+  $('#pager-dots').innerHTML = PAGES.map(p => `<button class="dot" title="${esc(p.t)}" aria-label="Ir a ${esc(p.t)}" data-act="nav" data-id="${p.id}"></button>`).join(''); // v2: aria-label en pager
 }
 function refreshProgress() {
   const n = Object.keys(S.visited).length, N = PAGES.length;
@@ -1428,7 +1433,7 @@ ACT['ft-chk'] = el => {
     tot++; const v = parseFloat(String(i.value).replace(',', '.').replace('%', '')), a = +i.dataset.a, t = +i.dataset.t;
     i.classList.remove('ok', 'bad');
     if (i.value.trim() === '' || Number.isNaN(v)) { empty++; return; }
-    const good = Math.abs(v - a) <= Math.max(t, Math.abs(a) * 0.005 * 0) + 1e-9;
+    const good = Math.abs(v - a) <= t + 1e-9; // v2: el factor *0 anulaba la tolerancia relativa
     i.classList.add(good ? 'ok' : 'bad'); if (good) ok++;
   });
   $('#' + el.dataset.id + '-m').innerHTML = `<b>${ok}/${tot}</b> correctas${empty ? ` · ${empty} sin llenar` : ''}${ok === tot ? ' 🎉' : ''}`;
@@ -1523,8 +1528,8 @@ function svgCI(items, target, o = {}) {
   return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
 }
 /* campo numérico etiquetado */
-const numIn = (id, label, val, st = {}) => `<label class="f">${label}<input id="${id}" type="number" step="${st.step || 'any'}" ${st.min != null ? `min="${st.min}"` : ''} ${st.max != null ? `max="${st.max}"` : ''} value="${val}"></label>`;
-const rng1 = (id, label, min, max, val, st = 1) => `<label class="f"><span>${label}: <b id="${id}-v">${val}</b></span><input id="${id}" type="range" min="${min}" max="${max}" step="${st}" value="${val}"></label>`;
+const numIn = (id, label, val, st = {}) => `<label class="f">${label}<input id="${id}" type="number" aria-label="${label.split('$').join('').split('\\').join('')}" step="${st.step || 'any'}" ${st.min != null ? `min="${st.min}"` : ''} ${st.max != null ? `max="${st.max}"` : ''} value="${val}"></label>`; // v2: aria-label en numéricos
+const rng1 = (id, label, min, max, val, st = 1) => `<label class="f"><span>${label}: <b id="${id}-v">${val}</b></span><input id="${id}" type="range" aria-label="${label.split('$').join('').split('\\').join('')}" min="${min}" max="${max}" step="${st}" value="${val}"></label>`; // v2: aria-label en sliders
 const nv = (p, id) => parseFloat(String($('#' + id, p).value).replace(',', '.'));
 /* tabla FDP simple a partir de {xs,ps} con columnas opcionales */
 function fdpTable(f, o = {}) {
@@ -2003,7 +2008,7 @@ add('bin', 21, 'Efectos colaterales de un fármaco', 'El 65 % sufre efectos cola
   B('a)', 'Ninguno sufre efectos.', 9, .65, EV.eq(0), { succ: 'sufrir efectos' }),
   B('b)', 'Todos los sufren.', 9, .65, EV.eq(9), { succ: 'sufrir efectos' }),
   B('c)', 'A lo más 1 sufre efectos.', 9, .65, EV.le(1), { succ: 'sufrir efectos' }),
-  B('d)', '¿Cuántos se espera que sufran efectos de 800 personas?', 9, .65, EV.mean(800), { succ: 'sufrir efectos', unit: 'personas' })]);
+  /* v2: en este inciso n=800 (antes n=9 y luego N=800); μ=520 se mantiene */ B('d)', '¿Cuántos se espera que sufran efectos de 800 personas?', 800, .65, EV.mean(800), { succ: 'sufrir efectos', unit: 'personas', pre: '<p class="sub">⚠️ En este inciso la muestra ya no es de 9 pacientes: ahora son <b>N = 800</b> personas. La probabilidad de sufrir efectos sigue siendo $p=0.65$.</p>' })]);
 add('bin', 22, 'Mesas de billar defectuosas', 'Una novena parte de la producción está defectuosa. Se toma una muestra de 5 mesas.', [
   B('a)', 'Por lo menos 1 defectuosa.', 5, 1 / 9, EV.ge(1), { succ: 'estar defectuosa', frac: true }),
   B('b)', 'Ninguna defectuosa.', 5, 1 / 9, EV.eq(0), { succ: 'estar defectuosa', frac: true }),
@@ -2383,12 +2388,56 @@ PAGES.push({
           <div class="grid2" style="gap:12px">
             <div class="pn flat sage"><b>📖 Teoría en ventanas</b><p class="sub">Toca cualquier botón con 📖 para abrir el concepto sin salir de la página.</p></div>
             <div class="pn flat sky"><b>🧪 Laboratorios</b><p class="sub">Mueve $n$, $p$, $\\mu$, $\\sigma$ o los datos y mira cómo cambian tablas, gráficas y probabilidades.</p></div>
-            <div class="pn flat amber"><b>🙈 Problemas ocultos</b><p class="sub">Primero ves sólo el enunciado. Cada inciso tiene su botón <i>Ver paso a paso</i>.</p></div></div>
+            <div class="pn flat amber"><b>🙈 Problemas ocultos</b><p class="sub">Primero ves sólo el enunciado. Cada inciso tiene su botón <i>Ver paso a paso</i>.</p></div><div class="pn flat"><b>🔢 Botón a/b</b><p class="sub">Cambia fracciones por decimales (2 cifras) y viceversa. Solo cambian las fracciones numéricas; las que tienen variables quedan como fracción.</p></div></div>
           <div class="row" style="margin-top:14px"><button class="btn go" data-act="nav" data-id="u1-va">▶ Empezar por el principio</button></div></section>
         <section class="pn dark s5 rv" style="text-align:center"><div id="cover-chart"></div><div class="grid3" style="gap:8px;margin-top:6px"><div><div class="big" data-cnt="${PAGES.length - 1}">0</div><small>páginas</small></div><div><div class="big" data-cnt="${nEx}">0</div><small>problemas</small></div><div><div class="big" data-cnt="${nParts}">0</div><small>incisos con solución</small></div></div></section>
         ${units.map(u => `<article class="pn unitcard s4 rv ${u.c}" data-u="${u.u}" data-act="nav" data-id="${u.go}"><span class="big">${u.n}</span><h3><span class="ico">${u.ic}</span>Unidad ${u.n}</h3><p><b>${u.t}</b></p><p class="sub">${u.d}</p><div class="mini-prog"><i></i></div><small class="cnt sub"></small></article>`).join('')}
         <section class="pn s8 rv"><h3><span class="ico">🗺️</span>Mapa de páginas</h3><div class="grid3" style="gap:10px">${PAGES.filter(x => x.id !== 'inicio').map(x => `<button class="btn" style="justify-content:flex-start" data-act="nav" data-id="${x.id}"><span>${x.ic}</span>${x.t}</button>`).join('')}</div></section>
-        <section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button></div></section></div>`;
+        <section class="pn s12 rv"><h3><span class="ico">🆕</span>Qué cambió en esta versión (v2)</h3>
+<p class="sub">Refactorización sobre el cuaderno original, con el Paquete Didáctico Ampliado (CCH 2024) como referencia.</p>
+<ul>
+<li><b>Regla empírica:</b> el valor “exacto” daba 0.00 % con μ = 100 y σ = 15; ahora da 68.27 %.</li>
+<li><b>Campana de Características:</b> al apagar la comparación con N(50, 10) el rango ya no se aplasta; la campana se ve completa aunque μ o σ sean pequeñas.</li>
+<li><b>Binomial 21d:</b> el inciso ahora dice n = 800 desde el primer paso (antes decía n = 9 y luego usaba N = 800). El resultado se mantiene: μ = 520 personas.</li>
+<li><b>Tablas de llenado:</b> la tolerancia ya no se anulaba por un factor ×0.</li>
+<li><b>Carga:</b> la página ya no se dibuja dos veces al abrir.</li>
+<li><b>Botón a/b (fracción ⇄ decimal):</b> ahora también aparece en Variables continuas y Normal. Solo cambian las fracciones numéricas; las que tienen variables quedan como fracción.</li>
+<li><b>8 pestañas nuevas “🔎 Profundización”</b> (una por tema, del Paquete Ampliado) y <b>📊 Apéndice</b> con tablas A1–A8 generadas automáticamente.</li>
+<li><b>Mapa visual y errores comunes</b> en esta página, y <b>código de colores</b> con su nota de reconciliación.</li>
+<li><b>Accesibilidad:</b> etiquetas para sliders, puntos de navegación y diagramas de Venn; aviso si KaTeX no carga y mensaje si JavaScript está desactivado.</li>
+</ul></section>
+<section class="pn s12 rv"><h3><span class="ico">🎨</span>Código de colores e iconos</h3>
+<p class="sub">El mismo código del Paquete Didáctico. <b>⚠️ Reconciliación con este cuaderno:</b> aquí los <b>resultados finales ya se muestran en rojo</b> (estándar Aula Digital), así que el rojo tiene dos usos y no hay que confundirlos: el <b>rojo de la leyenda</b> es la <b>varianza</b> (siempre va con el símbolo $\sigma^2$ o $Var(X)$); el <b>rojo de un resultado</b> es “este es el número final” (siempre va en recuadro, con ✓ o con la palabra Resultado). La varianza nunca aparece sola en rojo sin su símbolo. Además, <b>nunca es solo color</b>: cada color lleva su nombre o su símbolo escrito.</p>
+<div class="grid2" style="gap:8px">
+<div><span class="dotc" style="background:#1c7ed6"></span><b>Azul — media / esperanza</b> $\mu$, $\bar x$, $E[X]$: el centro, eje de simetría.</div>
+<div><span class="dotc" style="background:#e03131"></span><b>Rojo — varianza</b> $\sigma^2$, $Var(X)$: dispersión al cuadrado.</div>
+<div><span class="dotc" style="background:#7048e8"></span><b>Morado — desviación estándar</b> $\sigma$: vector flecha ↔ desde la media.</div>
+<div><span class="dotc" style="background:#2f9e44"></span><b>Verde — probabilidad y resultado</b> $P(A)$, $p$: área o proporción favorable.</div>
+<div><span class="dotc" style="background:#0c8599"></span><b>Turquesa — mediana / cuartiles</b> $Me$, $Q_1$, $Q_3$: posición.</div>
+<div><span class="dotc" style="background:#f783ac"></span><b>Rosa — moda</b> $Mo$: el valor más frecuente.</div>
+<div><span class="dotc" style="background:#f08c00"></span><b>Naranja — correlación / regresión</b> $r$, $\hat y$ (Estadística 1).</div>
+<div><span class="dotc" style="background:#f2c14e"></span><b>Amarillo — fórmula</b>: primero sola en recuadro, luego sustituida, luego resuelta paso a paso.</div>
+</div>
+<p class="sub">📘 definición · 🧠 concepto · ✏️ ejemplo · ⚠️ error común · 📐 fórmula → sustitución → solución.</p></section>
+<section class="pn s12 rv"><h3><span class="ico">🗺️</span>Mapa visual: si ves esto… piensa esto</h3>
+<div class="tw"><table class="tb"><thead><tr><th>Si ves esto…</th><th>…piensa esto</th></tr></thead><tbody>
+<tr><td>Tabla de valores sueltos $x$ con $P(X=x)$</td><td><b>FDP discreta</b>: verifica $\sum P(x)=1$ y usa $F(x)=P(X\le x)$.</td></tr>
+<tr><td>$n$ fijo, $p$ constante, “¿cuántos éxitos?”</td><td><b>Binomial</b> $P(X=k)=\binom nk p^k q^{n-k}$; no olvides $q=1-p$.</td></tr>
+<tr><td>Curva y un intervalo $[a,b]$</td><td><b>Continua = área</b> bajo la densidad; $P(X=x)=0$ en un punto.</td></tr>
+<tr><td>Campana con $\mu$ y $\sigma$</td><td><b>Normal</b>: estandariza $Z=\frac{X-\mu}{\sigma}$ y lee $\Phi(z)$.</td></tr>
+<tr><td>$P(\bar x\dots)$ o $P(\hat p\dots)$</td><td><b>Distribución muestral</b>: usa el error estándar $\sigma/\sqrt n$, no $\sigma$.</td></tr>
+<tr><td>“Estima $\mu$ o $p$” / “¿hay evidencia contra $H_0$?”</td><td><b>Inferencia</b>: IC = estimador $\pm$ margen; contraste = $z$ y valor $p$ contra $\alpha$.</td></tr>
+</tbody></table></div></section>
+<section class="pn s12 rv"><h3><span class="ico">⚠️</span>Errores comunes</h3>
+<ul>
+<li><b>Confundir $P(X=x)$ con $F(x)$:</b> $F(x)=P(X\le x)$ acumula; $P(X=x)$ es solo el salto $F(x)-F(x^-)$.</li>
+<li><b>Usar $\sigma$ en vez de $\sigma/\sqrt n$</b> para probabilidades de $\bar x$ o $\hat p$: es el error más frecuente de la Unidad 2.</li>
+<li><b>Decir “95 % de probabilidad” del intervalo ya calculado:</b> el 95 % es del procedimiento, no de ese intervalo concreto.</li>
+<li><b>Olvidar $q=1-p$</b> en la binomial, o aplicar la binomial cuando $p$ cambia entre ensayos.</li>
+<li><b>Leer la altura de la densidad como probabilidad:</b> en continuas $P(X=2)=0$; la probabilidad es el área.</li>
+<li><b>Decir “se acepta $H_0$”:</b> en inferencia se <b>rechaza</b> o <b>no se rechaza</b>; no rechazar no demuestra que $H_0$ sea verdadera.</li>
+</ul></section>
+<section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="apendice">📊 Apéndice · Tablas</button><p class="sub">📎 Los PDF de Ejercicios y Formulario deben acompañar a este archivo en la carpeta <b>PDF/</b>.</p></div></section></div>`;
       // portada: campana normal sobre barras binomiales (n = 20, p = 0.5)
       const n = 20, ps = binDist(n, .5), xs = ps.map((_, i) => i);
       $('#cover-chart', p).innerHTML = svgPmf(xs, ps, { w: 420, h: 200, norm: { mu: 10, sd: Math.sqrt(5) }, xt: 'binomial n = 20, p = 0.5 y su campana normal', yt: '' }).replace(/fill="#1c7ed6"/g, 'fill="#E7B8C6"');
@@ -2555,6 +2604,31 @@ PAGES.push({
         $('#ac-r', p).innerHTML = Number.isNaN(a) ? '' : `<div class="ans on" style="display:block">$${R[0]}=${fc(R[1], 4)}$</div><p class="sub">Los puntos rellenos son los valores de $F$; los huecos, el valor justo antes del salto.</p>`; math(p);
       };
       SEGH.acs = v => { dk = v; dr(); }; ['ac-op', 'ac-a', 'ac-b'].forEach(id => $('#' + id, p).oninput = dr); dr();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 1.1 — Construir una distribución y su tabla de cálculo</h3>
+          <p><b>Variable aleatoria discreta:</b> toma valores aislados que se pueden contar (0, 1, 2, …). Su <b>distribución de probabilidad</b> es la tabla, gráfica o fórmula que da $P(X=x)$ para cada valor. La <b>esperanza</b> $E[X]=\\mu$ es el promedio a largo plazo si el experimento se repitiera muchísimas veces; $\\sigma$ es la distancia típica de los valores a $\\mu$.</p>
+          <div class="eqbox">$E[X]=\\sum x\\cdot P(x)$ · $Var(X)=\\sum x^2\\cdot P(x)-(E[X])^2$ · $\\sigma=\\sqrt{Var(X)}$</div>
+          <p class="sub">La tabla de cálculo siempre lleva las columnas $x$, $P(x)$, $x\\cdot P(x)$ y $x^2\\cdot P(x)$: sus sumas dan $1$, $E[X]$ y $E[X^2]$.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — $X$ = águilas al lanzar 3 monedas</h3>
+          <p>Espacio muestral: 8 resultados equiprobables. $X=0$ sale 1 vez; $X=1$, 3 veces; $X=2$, 3 veces; $X=3$, 1 vez.</p>
+          <div class="tw"><table class="tb"><thead><tr><th>x</th><th>P(X = x)</th><th>x · P(x)</th><th>x² · P(x)</th></tr></thead><tbody>
+          <tr><td>0</td><td>1/8</td><td>0</td><td>0</td></tr>
+          <tr><td>1</td><td>3/8</td><td>3/8</td><td>3/8</td></tr>
+          <tr><td>2</td><td>3/8</td><td>6/8</td><td>12/8</td></tr>
+          <tr><td>3</td><td>1/8</td><td>3/8</td><td>9/8</td></tr>
+          <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>3/2</b></td><td><b>3</b></td></tr>
+          </tbody></table></div>
+          <p>📐 <b>Fórmula → sustitución:</b> $E[X]=0+3/8+6/8+3/8=12/8=3/2$ · $Var(X)=3-(3/2)^2=3-9/4=3/4$.</p>
+          <div class="ans on" style="display:block">✅ $E[X]=3/2=1.50$ águilas · $Var(X)=3/4=0.75$ · $\\sigma=\\sqrt 3/2\\approx 0.87$</div>
+          <p>💬 Interpretación: a la larga salen en promedio 1.5 águilas por intento, aunque en un solo intento nunca salga exactamente 1.5. ✓ Comprobación: $\\sum P(x)=1$ y es la Binomial con $n=3$, $p=1/2$: $np=3/2$ y $npq=3/4$ ✓.</p></div>
+        <div class="pn rv"><h3><span class="ico">🎲</span>Ejemplo del programa — el máximo de dos dados</h3>
+          <p>$X$ = el mayor de los dos dados. En la cuadrícula de 36 resultados, $X=x$ ocurre en $2x-1$ casillas, así que $P(X=x)=(2x-1)/36$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $E[X]=(1+6+15+28+45+66)/36=161/36$ · $Var(X)=791/36-(161/36)^2=2555/1296$.</p>
+          <div class="ans on" style="display:block">✅ $E[X]=161/36\\approx 4.47$ · $Var(X)\\approx 1.97$ · $\\sigma\\approx 1.40$</div>
+          <p>💬 Aproximación frecuencial: en el programa, 600 lanzamientos dieron un promedio de 4.455 ≈ 4.46, muy cerca del 4.47 teórico: al repetir mucho, el promedio observado se acerca a $E[X]$.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -2635,6 +2709,21 @@ PAGES.push({
       $('#pl-p', p).oninput = pl; pl();
       const f = fdpFrom([[0, 84 / 100], [50, 10 / 100], [200, 5 / 100], [1000, 1 / 100]]);
       $('#rf-t', p).innerHTML = tbl(['Premio g(x)', 'P(x)', 'g(x)·P(x)'], [...f.xs.map((x, i) => tr([`§${x}`, `$\\frac{${[84, 10, 5, 1][i]}}{100}$`, fc(x * f.ps[i], 2)])), tr(['<b>E (bruta)</b>', '<b>1</b>', `<b>${fc(f.mu, 2)}</b>`], 'sum')]) + `<p>Ganancia neta esperada $=${fc(f.mu, 2)}-30=\\mathbf{${fc(f.mu - 30, 2)}}$ por boleto (con 5 boletos: −§25; con los 100: −§500).</p>`; math($('#rf-t', p));
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 1.1 — Esperanza de una ganancia y aproximación frecuencial</h3>
+          <p>Con una ganancia $g(x)$ (lo que ganas o pierdes en cada resultado), la esperanza es $E=\\sum g(x)\\cdot P(x)$. <b>Juego justo:</b> $E=0$ (a la larga no ganas ni pierdes). La esperanza es el <b>promedio a largo plazo</b>: si repites el juego muchísimas veces, el promedio de tus ganancias se acerca a $E$; en una sola jugada puede pasar cualquier cosa.</p>
+          <div class="eqbox">$E[G]=\\sum g\\cdot P(g)$ · juego justo si $E[G]=0$</div>
+          <p class="sub">⚠️ Error común: creer que $E[X]$ debe ser un valor que $X$ puede tomar. Con 3 monedas, $E[X]=1.5$ águilas… y 1.5 águilas no salen nunca en un intento.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — ¿Es justo el juego?</h3>
+          <p>Pagas $10 por lanzar dos dados. Si la suma es 7 recibes $50 (tu ganancia neta es $40); si no, pierdes los $10.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $P(\\text{suma }7)=6/36=1/6$ · $E[G]=40\\cdot(1/6)+(-10)\\cdot(5/6)=40/6-50/6=-10/6=-5/3$.</p>
+          <div class="ans on" style="display:block">✅ $E[G]=-5/3\\approx -1.67$ pesos por juego: el juego <b>NO</b> es justo; a la larga pierdes $1.67 por partida.</div>
+          <p>✓ Comprobación: para que fuera justo haría falta un premio neto de $50: $50\\cdot(1/6)-10\\cdot(5/6)=0$ ✓.</p></div>
+        <div class="pn rv"><h3><span class="ico">🧮</span>La tabla de cálculo, siempre igual</h3>
+          <p>Para cualquier FDP discreta arma las columnas $x$, $P(x)$, $x\\cdot P(x)$ y $x^2\\cdot P(x)$. Sus sumas son, en orden: $1$, $E[X]$ y $E[X^2]$. Luego $Var(X)=E[X^2]-(E[X])^2$ y $\\sigma=\\sqrt{Var(X)}$. Es el mismo procedimiento del ejemplo de las 3 monedas (pestaña de FDP) y del máximo de dos dados.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -2719,6 +2808,30 @@ PAGES.push({
           <p class="sub">Con $p=0.05$ la distribución es sesgada a la derecha; con $p=0.95$, a la izquierda; con $p=0.5$ es simétrica aun con $n$ pequeña.</p>`; math(p);
       };
       SEGH.fp = v => { pp = +v; dr(); }; SEGH.fn = v => { n = +v; dr(); }; $('#fb-c', p).onchange = dr; dr();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 1.2 — Ensayos de Bernoulli, «a lo más» y «al menos»</h3>
+          <p><b>Ensayo de Bernoulli:</b> experimento con solo dos resultados, éxito (probabilidad $p$) o fracaso ($q=1-p$). <b>Proceso binomial:</b> $n$ ensayos de Bernoulli independientes con la misma $p$; $X$ cuenta los éxitos. Condiciones: $n$ fijo, ensayos independientes, dos resultados, $p$ constante.</p>
+          <div class="tw"><table class="tb"><thead><tr><th>Se dice…</th><th>Se escribe…</th><th>Se calcula…</th></tr></thead><tbody>
+          <tr><td>exactamente 3</td><td>$P(X=3)$</td><td>un término</td></tr>
+          <tr><td>a lo más 3 / no más de 3</td><td>$P(X\\le 3)$</td><td>$P(0)+P(1)+P(2)+P(3)$</td></tr>
+          <tr><td>menos de 3</td><td>$P(X&lt;3)=P(X\\le 2)$</td><td>$P(0)+P(1)+P(2)$</td></tr>
+          <tr><td>al menos 3 / 3 o más</td><td>$P(X\\ge 3)$</td><td>$1-P(X\\le 2)$</td></tr>
+          <tr><td>más de 3</td><td>$P(X&gt;3)$</td><td>$1-P(X\\le 3)$</td></tr>
+          <tr><td>entre 2 y 4 (inclusive)</td><td>$P(2\\le X\\le 4)$</td><td>$P(X\\le 4)-P(X\\le 1)$</td></tr>
+          </tbody></table></div></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — $n=6$, $p=1/3$, exactamente 2</h3>
+          <p>La probabilidad de ganar cada ronda es $1/3$, independiente de las demás. Se juegan 6 rondas. ¿Cuál es la probabilidad de ganar exactamente 2?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $P(X=2)=\\binom 62\\cdot(1/3)^2\\cdot(2/3)^4=15\\cdot(1/9)\\cdot(16/81)$.</p>
+          <div class="ans on" style="display:block">✅ $P(X=2)=240/729=80/243\\approx 0.33$</div>
+          <p>✓ Comprobación: $E[X]=np=6\\cdot(1/3)=2$: el valor más probable está junto a la media, como debe ser.</p></div>
+        <div class="pn rv"><h3><span class="ico">📊</span>Ejemplo — «al menos» con la tabla acumulada ($n=10$, $p=0.30$)</h3>
+          <p>El 30 % del alumnado usa bicicleta. Se eligen 10 al azar. $P(0)=(0.7)^{10}=0.0282$ · $P(1)=10(0.3)(0.7)^9=0.1211$ · $P(2)=45(0.3)^2(0.7)^8=0.2335$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $P(X\\le 2)=0.0282+0.1211+0.2335=0.3828$ (en el Apéndice A2: renglón $n=10$, $k=2$, columna $p=0.30$ → 0.3828, el mismo valor sin hacer cuentas).</p>
+          <div class="ans on" style="display:block">✅ $P(X\\le 2)\\approx 0.38$ · $P(X\\ge 3)=1-0.3828=0.6172\\approx 0.62$</div>
+          <p>💡 Observa: si $p&gt;0.5$ y la tabla no trae esa columna, usa la simetría: contar éxitos con $p$ equivale a contar fracasos con $q$. Por ejemplo, con $n=10$ y $p=0.8$, $P(X=8)=P(\\text{fracasos}=2)$ con $q=0.2$.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -2812,6 +2925,24 @@ PAGES.push({
         $('#un-r', p).innerHTML = `<div class="eqbox">Área total $=(b-a)\\cdot\\dfrac{1}{b-a}=1$ ✓</div><div class="ans on" style="display:block">$P(${c}\\le X\\le ${d})=\\dfrac{${fc(L, 3)}}{${b - a}}=${fc(L / (b - a), 4)}$</div><p>Probabilidad = <b>área</b> = base × altura = $${fc(L, 3)}\\cdot${fc(h, 4)}$.</p><p class="sub">$P(X=${c})=0$ aunque $${c}$ sea un valor posible: un punto no tiene área. Por eso $P(c<X<d)=P(c\\le X\\le d)$.</p>`; math(p);
       };
       ['un-a', 'un-b', 'un-c', 'un-d'].forEach(id => $('#' + id, p).oninput = dr); dr();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 1.3 — Probabilidad como área con figuras geométricas</h3>
+          <p>Una <b>función de densidad</b> $f(x)$ cumple $f(x)\\ge 0$ y <b>área total = 1</b>. La probabilidad de un intervalo es el <b>ÁREA</b> bajo $f$ sobre ese intervalo. Con figuras sencillas (rectángulos, triángulos, trapecios) se calcula con geometría, sin integrales. La altura $f(x)$ <b>NO</b> es una probabilidad.</p>
+          <div class="eqbox">$P(a\\le X\\le b)=$ área bajo $f$ entre $a$ y $b$ · Uniforme: $f(x)=\\frac{1}{b-a}$</div></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo del programa — la llamada interceptada</h3>
+          <p>Una conversación dura 15 minutos y la información comprometedora se dice en el intervalo $[3,5]$. La policía intercepta la llamada en un instante aleatorio $X$, uniforme en $[0,15]$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> altura $=1/15$ · $P(3\\le X\\le 5)=(5-3)/15=2/15$.</p>
+          <div class="ans on" style="display:block">✅ $P=2/15\\approx 0.13$</div>
+          <p>Paso a paso: el área total debe ser $15\\cdot(1/15)=1$ ✓; el área del rectángulo verde es base $2$ × altura $1/15$.</p></div>
+        <div class="pn rv"><h3><span class="ico">📐</span>Ejemplo — densidad triangular</h3>
+          <p>El tiempo $X$ (horas) de una reparación tiene densidad triangular en $[0,4]$ con pico en $x=2$: $f(x)=x/4$ si $0\\le x\\le 2$ y $f(x)=(4-x)/4$ si $2\\le x\\le 4$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> altura en el pico $f(2)=2/4=1/2$ · área total $=(4\\cdot 1/2)/2=1$ ✓ · $P(X\\le 1)=(1\\cdot f(1))/2=(1\\cdot 1/4)/2=1/8$.</p>
+          <div class="ans on" style="display:block">✅ $P(X\\le 1)=1/8\\approx 0.13$ · $P(1\\le X\\le 3)=1-1/8-1/8=3/4=0.75$</div>
+          <p>💬 Interpretación: las reparaciones de alrededor de 2 horas son las más probables; 3 de cada 4 tardan entre 1 y 3 horas.</p>
+          <p class="sub">⚠️ Error común: decir que $P(X=2)=1/2$ porque esa es la altura de la curva: la altura NO es probabilidad; $P(X=2)=0$.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -2835,7 +2966,7 @@ PAGES.push({
       const dr = () => {
         const mu = +$('#nc-m', p).value, sd = +$('#nc-s', p).value; $('#nc-m-v', p).textContent = mu; $('#nc-s-v', p).textContent = sd; $('#nc-a', p).textContent = mu; $('#nc-b', p).textContent = sd;
         const cmp = $('#nc-c', p).checked;
-        $('#nc-g', p).innerHTML = svgBell({ mu, sd, range: [Math.min(mu - 4 * sd, 50 - 4 * 10, 0), Math.max(mu + 4 * sd, 50 + 4 * 10)].map(v => v), shade: [[mu - sd, mu + sd, COL.coral, .45]], curve2: cmp ? { mu: 50, sd: 10 } : null, k: 3, zlab: false });
+        $('#nc-g', p).innerHTML = svgBell({ mu, sd, range: cmp ? [Math.min(mu - 4 * sd, 10, 0), Math.max(mu + 4 * sd, 90)] : [mu - 4 * sd, mu + 4 * sd] /* v2: sin comparación el rango es solo mu±4σ */, shade: [[mu - sd, mu + sd, COL.coral, .45]], curve2: cmp ? { mu: 50, sd: 10 } : null, k: 3, zlab: false });
         $('#nc-r', p).innerHTML = `<p class="sub">Zona guinda: $\\mu\\pm\\sigma$ ≈ 68 % del área. Una $\\sigma$ pequeña da una campana alta y angosta (datos muy concentrados); una $\\sigma$ grande, baja y ancha.</p>`; math(p);
       };
       ['nc-m', 'nc-s', 'nc-c'].forEach(id => $('#' + id, p).oninput = dr); dr();
@@ -2848,7 +2979,7 @@ PAGES.push({
       let k = 1;
       const dr = () => {
         const mu = nv(p, 're-m'), sd = nv(p, 're-s'); if (!(sd > 0)) return;
-        const ex = normP(mu - k * sd, mu + k * sd), ap = [68, 95, 99.7][k - 1];
+        const ex = normP(mu - k * sd, mu + k * sd, mu, sd), ap = [68, 95, 99.7][k - 1]; // v2: antes faltaban mu,sd y daba 0.00 %
         $('#re-g', p).innerHTML = svgBell({ mu, sd, shade: [[mu - k * sd, mu + k * sd, COL.coral, .5]], k: 3 });
         $('#re-r', p).innerHTML = `<div class="eqbox">$\\mu\\pm${k}\\sigma=${fc(mu, 2)}\\pm${fc(k * sd, 2)}\\ \\Rightarrow\\ [${fc(mu - k * sd, 2)},\\,${fc(mu + k * sd, 2)}]$</div>
           <div class="ans on" style="display:block">Regla empírica: ≈ <b>${ap} %</b> · exacto: ${fc(ex * 100, 2)} %</div>
@@ -2886,6 +3017,27 @@ PAGES.push({
         $('#iv-r', p).innerHTML = `<div class="ans on" style="display:block">$z=\\Phi^{-1}(${fc(pr, 4)})=${fc(z, 4)}$ · $x=\\mu+z\\sigma=${fc(x, 4)}$</div><p class="sub">Se lee en la tabla z «al revés»: se busca el área y se obtiene $z$.</p>`; math(p);
       };
       ['iv-m', 'iv-s', 'iv-p'].forEach(id => $('#' + id, p).oninput = dr); dr();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 1.4 — Lectura de la tabla Z en los tres casos</h3>
+          <p>La tabla da $\\Phi(z)=P(Z\\le z)$, el área a la <b>izquierda</b>. Con un solo valor de la tabla se resuelven los tres casos (ejemplo con $z=1.25$, $\\Phi(1.25)=0.8944$):</p>
+          <div class="tw"><table class="tb"><thead><tr><th>Se pide…</th><th>Se calcula…</th><th>Ejemplo</th></tr></thead><tbody>
+          <tr><td>$P(Z\\le z)$ (cola izquierda)</td><td>$\\Phi(z)$ directo</td><td>$\\Phi(1.25)=0.8944$</td></tr>
+          <tr><td>$P(Z\\ge z)$ (cola derecha)</td><td>$1-\\Phi(z)$</td><td>$1-0.8944=0.1056$</td></tr>
+          <tr><td>$P(a\\le Z\\le b)$ (entre dos)</td><td>$\\Phi(b)-\\Phi(a)$</td><td>$\\Phi(1.25)-\\Phi(-0.50)=0.8944-0.3085=0.5859$</td></tr>
+          </tbody></table></div>
+          <p class="sub">Para $z$ negativo usa la simetría: $\\Phi(-z)=1-\\Phi(z)$.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — regla empírica en contexto</h3>
+          <p>Las estaturas de un grupo grande son aproximadamente normales con $\\mu=160$ cm y $\\sigma=8$ cm. ¿Qué porcentaje mide entre 152 y 176 cm?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $152=160-1(8)=\\mu-\\sigma$ · $176=160+2(8)=\\mu+2\\sigma$.</p>
+          <p>Paso 1: de $\\mu-\\sigma$ a $\\mu$: la mitad de 68.27 % = 34.135 %. Paso 2: de $\\mu$ a $\\mu+2\\sigma$: la mitad de 95.45 % = 47.725 %.</p>
+          <div class="ans on" style="display:block">✅ $\\approx 81.86\\%$ (≈ 0.82) mide entre 152 y 176 cm</div>
+          <p>✓ Comprobación con la tabla: $\\Phi(2.00)-\\Phi(-1.00)=0.9772-0.1587=0.8185$ ✓ (casi idéntico).</p></div>
+        <div class="pn rv"><h3><span class="ico">🔁</span>Problema inverso (percentil) y aproximación a la binomial</h3>
+          <p><b>Inverso:</b> se conoce el área y se busca el valor: se localiza el área DENTRO de la tabla, se lee $z$ y se “desestandariza” $x=\\mu+z\\cdot\\sigma$. Ejemplo: ¿qué puntaje se necesita para estar en el 10 % superior con $X\\sim N(500,100)$? Se busca $\\Phi(z)=0.90$ → $z=1.28$ → $x=500+1.28(100)=628$ puntos (percentil 90).</p>
+          <p><b>Aproximación Binomial → Normal:</b> el 40 % prefiere estudiar de noche; en $n=50$, ¿$P(X\\ge 25)$? $\\mu=50(2/5)=20$, $\\sigma=\\sqrt{12}\\approx 3.46$. Con corrección por continuidad, “25 o más” empieza en 24.5: $z=(24.5-20)/\\sqrt{12}\\approx 1.30$ → $P(Z\\ge 1.30)=1-\\Phi(1.30)=1-0.9032=0.0968\\approx 0.10$ (el valor exacto binomial es 0.0978 ✓). Condiciones: $np\\ge 5$ y $nq\\ge 5$.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -2950,6 +3102,30 @@ PAGES.push({
           <div class="note">¿Entre qué se divide para obtener $\\sigma^2_{\\bar X}$? <b>Entre $n$</b>: $\\sigma^2_{\\bar X}=\\sigma^2_X/n$ y $\\sigma_{\\bar X}=\\sigma_X/\\sqrt n$ (error estándar). La media de las medias es $\\mu$.</div>`; math(p);
       };
       SEGH.dsn = v => { n = +v; dr(); }; dr();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 2.1 — Construir una distribución muestral exacta (ejemplo del programa)</h3>
+          <p>La <b>distribución muestral</b> de un estimador es la distribución de probabilidad de todos los valores que puede tomar (por ejemplo $\\bar x$) en todas las muestras posibles del mismo tamaño. Muestra que los estimadores son variables aleatorias. Un <b>parámetro</b> ($\\mu$, $\\sigma$, $p$) es fijo y de la población; un <b>estadístico</b> ($\\bar x$, $s$, $\\hat p$) cambia de muestra en muestra.</p>
+          <p>En una población de estudiantes, $X$ = edad toma los valores 15, 16, 17 y 18 con probabilidades 0.2, 0.3, 0.2 y 0.3. Se toman muestras aleatorias de $n=2$ (con reemplazo) y se calcula la media de cada muestra.</p>
+          <p>📐 <b>Fórmula → sustitución (población):</b> $\\mu=15(1/5)+16(3/10)+17(1/5)+18(3/10)=3+4.8+3.4+5.4=16.6$ · $\\sigma^2=276.8-(16.6)^2=276.8-275.56=1.24$.</p>
+          <div class="ans on" style="display:block">✅ $\\mu=83/5=16.60$ años · $\\sigma^2=31/25=1.24$ · $\\sigma\\approx 1.11$</div></div>
+        <div class="pn rv"><h3><span class="ico">🧮</span>Distribución de $\\bar x$ con $n=2$</h3>
+          <p>Hay $4\\times 4=16$ parejas ordenadas $(x_1,x_2)$. Como la selección es independiente: $P(x_1,x_2)=P(x_1)\\cdot P(x_2)$; por ejemplo $P(15,16)=(0.2)(0.3)=0.06$. Se agrupan las parejas con la misma media: $\\bar x=15.5$ sale con $(15,16)$ y $(16,15)$: $0.06+0.06=0.12$.</p>
+          <div class="tw"><table class="tb"><thead><tr><th>x̄</th><th>P(x̄)</th><th>x̄ · P(x̄)</th></tr></thead><tbody>
+          <tr><td>15.00</td><td>1/25 = 0.04</td><td>0.6000</td></tr>
+          <tr><td>15.50</td><td>3/25 = 0.12</td><td>1.8600</td></tr>
+          <tr><td>16.00</td><td>17/100 = 0.17</td><td>2.7200</td></tr>
+          <tr><td>16.50</td><td>6/25 = 0.24</td><td>3.9600</td></tr>
+          <tr><td>17.00</td><td>11/50 = 0.22</td><td>3.7400</td></tr>
+          <tr><td>17.50</td><td>3/25 = 0.12</td><td>2.1000</td></tr>
+          <tr><td>18.00</td><td>9/100 = 0.09</td><td>1.6200</td></tr>
+          <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>16.6000</b></td></tr>
+          </tbody></table></div>
+          <p>📐 <b>Fórmula → sustitución:</b> $E[\\bar x]=16.6000$ · $Var(\\bar x)=31/50=0.62$ · teoría: $Var(\\bar x)=\\sigma^2/n=1.24/2=0.62$ ✓.</p>
+          <div class="ans on" style="display:block">✅ $E[\\bar x]=16.60=\\mu$ (insesgado) · $Var(\\bar x)=0.62=\\sigma^2/n$ · $\\sigma_{\\bar x}\\approx 0.79$, menor que $\\sigma\\approx 1.11$</div>
+          <p>💬 Interpretación: las medias de muestras de dos estudiantes se concentran más cerca de 16.6 que las edades individuales: <b>promediar reduce la variabilidad</b>. La distribución de $\\bar x$ ya tiene forma de montaña aunque la población no la tenga. ✓ Comprobación: las 7 probabilidades de $\\bar x$ suman 1.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -3022,6 +3198,30 @@ PAGES.push({
           <div class="ans on" style="display:block">Probabilidad ≈ <b>${fc(P, 4)}</b></div>${ok ? '' : note('Con $np<10$ ó $nq<10$ conviene usar la binomial exacta.', 'warn')}`; math(p);
       };
       ['tp-p', 'tp-n', 'tp-a', 'tp-op'].forEach(id => $('#' + id, p).oninput = dr); dr();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 2.2 — El TLC en acción y probabilidades de una cola</h3>
+          <p><b>Teorema del Límite Central (TLC):</b> para muestras aleatorias de tamaño $n$ grande, la distribución de $\\bar x$ (y de $\\hat p$) es aproximadamente Normal, sin importar la forma de la población, con centro en el parámetro y error estándar que se reduce al crecer $n$ (se divide entre $\\sqrt n$).</p>
+          <div class="tw"><table class="tb"><thead><tr><th></th><th>Media muestral x̄</th><th>Proporción muestral p̂</th></tr></thead><tbody>
+          <tr><td><b>Centro</b></td><td>$E[\\bar x]=\\mu$</td><td>$E[\\hat p]=p$</td></tr>
+          <tr><td><b>Error estándar</b></td><td>$\\sigma_{\\bar x}=\\sigma/\\sqrt n$</td><td>$\\sigma_{\\hat p}=\\sqrt{p(1-p)/n}$</td></tr>
+          <tr><td><b>Condición Normal</b></td><td>población normal, o $n\\ge 30$</td><td>$np\\ge 5$ y $n(1-p)\\ge 5$</td></tr>
+          <tr><td><b>Estandarizar</b></td><td>$z=(\\bar x-\\mu)/(\\sigma/\\sqrt n)$</td><td>$z=(\\hat p-p)/\\sqrt{p(1-p)/n}$</td></tr>
+          </tbody></table></div>
+          <p class="sub">Duplicar la precisión (partir el error estándar a la mitad) exige cuadruplicar $n$, porque va con $\\sqrt n$.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — una cola para $\\bar x$</h3>
+          <p>Las estaturas de un plantel tienen $\\mu=165$ cm y $\\sigma=8$ cm. Se elige una muestra aleatoria de $n=16$. ¿Cuál es la probabilidad de que su media supere 168 cm?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma_{\\bar x}=8/\\sqrt{16}=8/4=2$ · $z=(168-165)/2=3/2=1.50$ · $P(\\bar x&gt;168)=1-\\Phi(1.50)=1-0.9332=0.0668$.</p>
+          <div class="ans on" style="display:block">✅ $P(\\bar x&gt;168)=0.0668\\approx 0.07$</div>
+          <p>💬 Interpretación: solo en 7 de cada 100 muestras de 16 estudiantes la media superaría 168 cm. Para UN estudiante, en cambio, $P(X&gt;168)=1-\\Phi(0.375)\\approx 0.35$: los individuos varían mucho más que las medias.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — una cola para $\\hat p$ (con fracciones)</h3>
+          <p>El 30 % del alumnado usa transporte escolar ($p=3/10$). En una muestra de $n=84$, ¿cuál es la probabilidad de que la proporción muestral sea menor que 0.20?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma_{\\hat p}=\\sqrt{(3/10)(7/10)/84}=\\sqrt{(21/100)/84}=\\sqrt{1/400}=1/20=0.05$ · $z=(0.20-0.30)/0.05=-2.00$ · $P(\\hat p&lt;0.20)=\\Phi(-2.00)=0.0228$.</p>
+          <div class="ans on" style="display:block">✅ $P(\\hat p&lt;0.20)=0.0228\\approx 0.02$</div>
+          <p>✓ Comprobación: por la regla empírica, quedar más de 2 errores estándar por debajo tiene probabilidad $(1-0.9545)/2\\approx 0.0228$ ✓.</p>
+          <p class="sub">⚠️ Errores comunes: usar $\\sigma$ en vez de $\\sigma/\\sqrt n$ para probabilidades de $\\bar x$ (el más frecuente de la unidad) y olvidar la raíz: $\\sigma_{\\hat p}=p(1-p)/n$ (sin raíz) daría 0.0025 y un $z$ absurdo de −40.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -3110,6 +3310,25 @@ PAGES.push({
         $('#tz-r', p).innerHTML = `<div class="eqbox">$${f}=${fc(n0, 3)}$</div><div class="ans on" style="display:block">Se necesitan al menos <b>n = ${Math.ceil(n0 - 1e-9)}</b> (siempre se redondea <b>hacia arriba</b>).</div><p class="sub">Para reducir el margen a la mitad se necesita cuadruplicar $n$. Si no hay dato previo de $p$ se usa $p=0.5$, que da el mayor $n$ posible.</p>`; math(p);
       };
       $('#tz-c', p).oninput = dr; SEGH.tmo = v => { mode = v; inputs(); }; inputs();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 3.1 — Qué significa la confianza</h3>
+          <p>Estimar es asignar un valor (estimación puntual: $\\bar x$, $\\hat p$) o un intervalo plausible para el parámetro. Un <b>intervalo de confianza (IC) del 95 %</b> significa que <b>el procedimiento acierta en el 95 % de las muestras repetidas</b>: NO es “95 % de probabilidad de que el parámetro esté en este intervalo concreto”.</p>
+          <div class="eqbox">IC media: $\\bar x\\pm z\\cdot(\\sigma/\\sqrt n)$ · IC proporción: $\\hat p\\pm z\\cdot\\sqrt{\\hat p(1-\\hat p)/n}$</div>
+          <p class="sub">Componentes: estimador ± margen de error. El margen <b>crece</b> con el nivel de confianza ($z$ mayor) y <b>decrece</b> con $n$ ($\\sqrt n$ en el denominador). Longitud del IC $=2\\times$ margen. Valores críticos usuales: 90 % → 1.645 · 95 % → 1.96 · 99 % → 2.576.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — IC para la proporción (con fracciones)</h3>
+          <p>En una encuesta aleatoria a 400 estudiantes, 160 dicen dormir menos de 6 horas. Construye el IC al 95 % para la proporción poblacional.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\hat p=160/400=2/5=0.40$ · $\\sqrt{(2/5)(3/5)/400}=\\sqrt{6/10000}=\\sqrt 6/100\\approx 0.0245$ · $E=1.96\\times 0.0245=0.0480$.</p>
+          <div class="ans on" style="display:block">✅ IC 95 % para $p\\approx (0.35,\\ 0.45)$: entre 35.20 % y 44.80 %</div>
+          <p>Condiciones: $n\\hat p=160\\ge 5$ y $n(1-\\hat p)=240\\ge 5$ ✓.</p></div>
+        <div class="pn rv"><h3><span class="ico">📏</span>Tamaño de muestra y caso con $\\sigma$ desconocida</h3>
+          <p>📐 <b>Fórmulas:</b> media $n=(z\\cdot\\sigma/E)^2$ · proporción $n=z^2\\cdot p(1-p)/E^2$ (siempre se redondea hacia <b>ARRIBA</b>).</p>
+          <p>📐 <b>Sustitución:</b> media: $n=(1.96\\cdot 10/2)^2=(9.8)^2=96.04\\to 97$ · proporción: $n=(1.96)^2(0.5)(0.5)/(0.05)^2=0.9604/0.0025=384.16\\to 385$ (sin información previa se usa $p=0.5$, el caso más desfavorable).</p>
+          <div class="ans on" style="display:block">✅ $n=97$ (media, $E=2$, $\\sigma=10$, 95 %) · $n=385$ (proporción, $E=0.05$, 95 %)</div>
+          <p>💡 Observa: para reducir el margen de error a la mitad hay que <b>CUADRUPLICAR</b> $n$, porque $E$ depende de $1/\\sqrt n$.</p>
+          <p><b>Complemento ($\\sigma$ desconocida, muestra pequeña):</b> se usa $t$ de Student: $IC=\\bar x\\pm t(\\alpha/2, n-1)\\cdot s/\\sqrt n$. Ejemplo: $n=25$, $\\bar x=90$ min, $s=20$ min, 95 % → $gl=24$, $t=2.064$ (tabla $t$ del Apéndice), $s/\\sqrt n=20/5=4$, $E=2.064\\cdot 4=8.256$ → IC $\\approx (81.74,\\ 98.26)$ minutos. Con $z=1.96$ el margen sería 7.84: el de $t$ (8.26) es un poco mayor, porque además de la muestra se estima $\\sigma$.</p></div>
+      </div>`;
     } }
   ]
 });
@@ -3181,6 +3400,38 @@ PAGES.push({
         $('#ev-r', p).innerHTML = `<div class="ans on" style="display:block">Valor $p$ = <b>${fc(pv, 4)}</b> (área guinda) · $z_c=${tail === 'two' ? '\\pm' + fc(Math.abs(zc), 3) : fc(zc, 3)}$ → ${pv <= al ? '<b>se rechaza $H_0$</b>' : '<b>no se rechaza $H_0$</b>'}</div><p class="sub">Ambos criterios (valor crítico y valor $p$) siempre dan la misma decisión.</p>`; math(p);
       };
       $('#ev-z', p).oninput = dr; $('#ev-a', p).oninput = dr; SEGH.evt = v => { tail = v; dr(); }; dr();
+    } },
+    { id: 'prof', t: '🔎 Profundización', render(p) {
+      p.innerHTML = `<div class="stack">
+        <div class="pn rv"><h3><span class="ico">📘</span>Profundización 3.2 — Hipótesis en 5 pasos, unilaterales y bilaterales</h3>
+          <p>Un contraste enfrenta $H_0$ (hipótesis nula: el valor de referencia, “sin efecto”) contra $H_1$ (alternativa). Se calcula el estadístico de prueba estandarizando el estimador bajo $H_0$ y se rechaza $H_0$ si cae en la región de rechazo (probabilidad $\\alpha$ bajo $H_0$, típicamente 0.05) o, equivalente, si el valor $p&lt;\\alpha$. <b>No rechazar $H_0$ NO demuestra que $H_0$ sea verdadera.</b></p>
+          <div class="tw"><table class="tb"><thead><tr><th>Afirmación en el problema</th><th>H₀</th><th>H₁</th><th>Tipo de prueba</th></tr></thead><tbody>
+          <tr><td>“es diferente de”, “ha cambiado”</td><td>$\\mu=\\mu_0$</td><td>$\\mu\\ne\\mu_0$</td><td>bilateral (2 colas)</td></tr>
+          <tr><td>“es mayor que”, “aumentó”, “supera”</td><td>$\\mu=\\mu_0$ (o $\\mu\\le\\mu_0$)</td><td>$\\mu&gt;\\mu_0$</td><td>unilateral derecha</td></tr>
+          <tr><td>“es menor que”, “disminuyó”</td><td>$\\mu=\\mu_0$ (o $\\mu\\ge\\mu_0$)</td><td>$\\mu&lt;\\mu_0$</td><td>unilateral izquierda</td></tr>
+          </tbody></table></div>
+          <div class="tw"><table class="tb"><thead><tr><th>Valor crítico z</th><th>α = 0.10</th><th>α = 0.05</th><th>α = 0.01</th></tr></thead><tbody>
+          <tr><td><b>Bilateral (±)</b></td><td>1.645</td><td>1.960</td><td>2.576</td></tr>
+          <tr><td><b>Unilateral derecha</b></td><td>1.282</td><td>1.645</td><td>2.326</td></tr>
+          <tr><td><b>Unilateral izquierda</b></td><td>−1.282</td><td>−1.645</td><td>−2.326</td></tr>
+          </tbody></table></div>
+          <p><b>Procedimiento en 5 pasos (úsalo siempre):</b> 1. Hipótesis: $H_0$ y $H_1$ (con el parámetro, nunca con $\\bar x$ o $\\hat p$). 2. Nivel $\\alpha$ y tipo de prueba → valor crítico. 3. Estadístico de prueba: $z=$ (estimador − valor de $H_0$)/error estándar. 4. Decisión: ¿cae en la región de rechazo? o ¿valor $p&lt;\\alpha$? 5. Conclusión en el contexto, con lenguaje cuidadoso.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — unilateral derecha para la media</h3>
+          <p>Un taller de técnicas de estudio dice que aumenta el promedio, que antes era $\\mu=7.0$ con $\\sigma=1.2$. Una muestra de $n=36$ egresados del taller tuvo $\\bar x=7.42$. ¿Hay evidencia al 5 %?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma/\\sqrt n=1.2/\\sqrt{36}=1.2/6=0.2$ · $z=(7.42-7.0)/0.2=0.42/0.2=2.10$.</p>
+          <p>Paso 1: $H_0:\\mu=7.0$ contra $H_1:\\mu&gt;7.0$ (“aumenta” → unilateral derecha). Paso 2: $\\alpha=0.05$ → crítico $z=1.645$. Paso 4: $2.10&gt;1.645$ → se rechaza $H_0$; valor $p=P(Z&gt;2.10)=1-0.9821=0.0179&lt;0.05$ ✓.</p>
+          <div class="ans on" style="display:block">✅ Se rechaza $H_0$ ($z=2.10$, valor $p\\approx 0.02$): hay evidencia de que el promedio de quienes toman el taller es mayor que 7.0.</div></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — unilateral izquierda para la proporción</h3>
+          <p>Una cafetería afirma que al menos 60 % del alumnado está satisfecho. En una muestra aleatoria de 150, 81 dijeron estar satisfechos. ¿Hay evidencia al 5 % de que la proporción es menor?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\hat p=81/150=27/50=0.54$ · $\\sqrt{0.6\\cdot 0.4/150}=\\sqrt{0.0016}=0.04$ · $z=(0.54-0.60)/0.04=-1.50$.</p>
+          <p>Paso 1: $H_0:p=0.60$ contra $H_1:p&lt;0.60$ (unilateral izquierda); $\\alpha=0.05$ → crítico −1.645. Condiciones con $p_0$: $150(0.6)=90\\ge 5$ y $150(0.4)=60\\ge 5$ ✓. Paso 4: −1.50 no es menor que −1.645 (valor $p=\\Phi(-1.50)=0.0668&gt;0.05$) → <b>NO</b> se rechaza $H_0$.</p>
+          <div class="ans on" style="display:block">✅ No se rechaza $H_0$ ($z=-1.50$, valor $p\\approx 0.07$)</div>
+          <div class="tw"><table class="tb"><thead><tr><th>Decisión \\ Realidad</th><th>H₀ verdadera</th><th>H₀ falsa</th></tr></thead><tbody>
+          <tr><td><b>Rechazar H₀</b></td><td>Error Tipo I (prob. α)</td><td>Decisión correcta (potencia)</td></tr>
+          <tr><td><b>No rechazar H₀</b></td><td>Decisión correcta</td><td>Error Tipo II (prob. β)</td></tr>
+          </tbody></table></div>
+          <p class="sub">⚠️ Errores comunes: decir “se acepta $H_0$ y quedó demostrado”; elegir la dirección de $H_1$ DESPUÉS de ver los datos; escribir las hipótesis con el estimador ($H_0:\\bar x=\\dots$).</p></div>
+      </div>`;
     } }
   ]
 });
@@ -3256,7 +3507,7 @@ function formHTML() {
   const chips = `<div class="fm-bar"><div class="fm-chips"><button class="chip on" data-act="fmf" data-s="*">Todas</button>${FM.map((s, i) => `<button class="chip" data-act="fmf" data-s="${i}" style="--fc:${s.c}">${s.ic} ${s.t}</button>`).join('')}</div>
     <div class="fm-dl">${DL.map(d => `<a class="btn sm${d.pri ? ' pri' : ''}" href="${d.href}" download target="_blank" rel="noopener">⬇ ${d.t}</a>`).join('')}</div></div>`;
   const secs = FM.map((s, i) => `<section class="fsec" data-s="${i}" style="--fc:${s.c};--fp:${s.p}"><h4 class="fsec-h"><span>${s.ic}</span>${s.t}</h4><div class="fgrid">${s.f.map((f, k) => `<article class="fcard" style="--i:${k}"><b>${f[0]}</b><div class="fx">$$${f[1]}$$</div>${f[2] ? `<p class="sub">${f[2]}</p>` : ''}</article>`).join('')}</div></section>`).join('');
-  return chips + `<div class="fm-wrap">${secs}</div>`;
+  return chips + `<p class="sub">📎 Los archivos PDF (Formulario y Ejercicios) deben acompañar a este HTML en la carpeta <b>PDF/</b>; si abres solo el HTML, los botones de descarga no funcionarán.</p><div class="fm-wrap">${secs}</div>`;
 }
 ACT.fmf = el => { const s = el.dataset.s; $$('.fm-chips .chip').forEach(c => c.classList.toggle('on', c === el)); $$('.fsec').forEach(x => x.hidden = !(s === '*' || x.dataset.s === s)); };
 
@@ -3300,6 +3551,63 @@ function zTableHTML() {
 }
 ACT.tablaz = () => openModal('Tabla de la normal estándar (z)', zTableHTML(), true);
 ACT.formulas = () => openModal('Formulario por secciones', formHTML(), true);
+
+/* ---------- Apéndice · Tablas de referencia (v2, generadas por JS) ---------- */
+const T_CRIT = [[1, 6.314, 12.706, 63.657], [2, 2.920, 4.303, 9.925], [5, 2.015, 2.571, 4.032], [10, 1.812, 2.228, 3.169], [15, 1.753, 2.131, 2.947], [20, 1.725, 2.086, 2.845], [24, 1.711, 2.064, 2.797], [30, 1.697, 2.042, 2.750], ['∞', 1.645, 1.960, 2.576]];
+function apxSegVal(segId, def) { const b = $('#dlg-b'); const on = b ? $('.seg[data-seg="' + segId + '"] button.on', b) : null; return on ? +on.dataset.v : def; }
+function apxPVal(id, def) { const b = $('#dlg-b'); const el = b ? $('#' + id, b) : null; const v = el ? parseFloat(el.value) : def; return (isFinite(v) && v > 0 && v < 1) ? v : def; }
+function apxBinRows(n, p, cum, markK) {
+  const rows = [];
+  for (let k = 0; k <= n; k++) { const v = cum ? binCdf(n, k, p) : binPmf(n, k, p); const mark = (markK != null && k === markK); rows.push(tr([mark ? `<b>★ ${k}</b>` : `<b>${k}</b>`, fc(v, 4), fc(v * 100, 2) + ' %'], mark ? 'hl' : '')); }
+  return rows;
+}
+function apxDrawBin(suf) {
+  const b = $('#dlg-b'); if (!b) return;
+  const n = apxSegVal('apx' + suf + '-n', 10), p = apxPVal('apx' + suf + '-p', suf === '2' ? 0.3 : 0.5);
+  const cum = suf === '2';
+  const el = $('#apx' + suf + '-t', b); if (!el) return;
+  el.innerHTML = `<p class="sub">$X\\sim B(${n}, ${fc(p, 2)})$ · $q=1-p=${fc(1 - p, 2)}$ · $\\mu=np=${fc(n * p, 2)}$ · $\\sigma=\\sqrt{npq}=${fc(Math.sqrt(n * p * (1 - p)), 2)}$</p>` + tbl([cum ? 'k · P(X ≤ k)' : 'k · P(X = k)', 'Probabilidad', '%'], apxBinRows(n, p, cum, (cum && n === 10 && Math.abs(p - 0.3) < 1e-9) ? 2 : null));
+  math(el);
+}
+function apxDrawInv() {
+  const b = $('#dlg-b'); if (!b) return;
+  const el = $('#apx-inv', b); if (!el) return;
+  const a = apxPVal('apx-area', 0.95);
+  const z = zInv(a);
+  el.innerHTML = `<div class="ans on" style="display:block">$\\Phi(z)=${fc(a, 4)}\\ \\Rightarrow\\ z=${fc(z, 4)}$</div><p class="sub">Para un intervalo central del 95 % busca el área 0.975 → $z=1.96$. Para el percentil 90 busca 0.90 → $z\\approx 1.28$.</p>`;
+  math(el);
+}
+function apxRandTable() {
+  const r = rng(2026); const rows = [];
+  for (let i = 0; i < 10; i++) { const cells = []; for (let j = 0; j < 10; j++) cells.push(String(Math.floor(r() * 100)).padStart(2, '0')); rows.push(tr([`<b>${i + 1}</b>`, ...cells])); }
+  return tbl(['Renglón', ...Array.from({ length: 10 }, (_, j) => 'C' + (j + 1))], rows);
+}
+function apxCombTable() {
+  const head = ['n \\ k', ...Array.from({ length: 11 }, (_, j) => String(j))];
+  const rows = [];
+  for (let n = 0; n <= 10; n++) { const cells = [`<b>${n}</b>`]; for (let k = 0; k <= 10; k++) cells.push(k <= n ? String(nCr(n, k)) : '—'); rows.push(tr(cells)); }
+  return tbl(head, rows);
+}
+function apendiceHTML() {
+  const tabs = [['a1', 'A1 · Binomial puntual'], ['a2', 'A2 · Binomial acumulada'], ['a3', 'A3 · Normal estándar'], ['a4', 'A4 · Valores críticos'], ['a6', 'A6 · Combinaciones'], ['a7', 'A7 · Números aleatorios'], ['a8', 'A8 · Resumen']];
+  const pills = tabs.map(([u, l], i) => `<button class="plan-pill ${i ? '' : 'on'}" data-act="aptab" data-u="${u}" role="tab">${l}</button>`).join('');
+  const segN = suf => seg('apx' + suf + '-n', [[5, 'n = 5'], [8, 'n = 8'], [10, 'n = 10'], [12, 'n = 12'], [15, 'n = 15'], [20, 'n = 20']], 10);
+  const pane = (u, on, html) => `<div class="plan-pane ${on ? 'on' : ''}" data-u="${u}">${html}</div>`;
+  return `<p class="sub">Tablas generadas con las funciones del propio cuaderno ($binPmf$, $binCdf$, $\\Phi$, $zInv$, $C(n,k)$): si cambias $n$ o $p$, los valores se recalculan. La tabla z llega hasta $z=3.49$; para valores mayores usa el buscador inverso de A3.</p>
+  <div class="plan-pills" role="tablist">${pills}</div>
+  ${pane('a1', 1, `<h4>A1 · Binomial puntual $P(X=k)$</h4><div class="row">${segN('')}${numIn('apx-p', 'p', 0.5, { min: 0.01, max: 0.99, step: 0.01 })}</div><div id="apx-t"></div>`)}
+  ${pane('a2', 0, `<h4>A2 · Binomial acumulada $P(X\\le k)$</h4><p class="sub">Ejemplo del paquete: $n=10$, $p=0.30$ → $P(X\\le 2)=0.3828$ (fila ★). Con esa tabla, $P(X\\ge 3)=1-0.3828=0.6172$.</p><div class="row">${segN('2')}${numIn('apx2-p', 'p', 0.3, { min: 0.01, max: 0.99, step: 0.01 })}</div><div id="apx2-t"></div>`)}
+  ${pane('a3', 0, `<h4>A3 · Normal estándar $\\Phi(z)=P(Z\\le z)$</h4><p class="sub">La tabla llega hasta $z=3.49$. Para $z$ negativo usa $\\Phi(-z)=1-\\Phi(z)$.</p><div class="row">${numIn('apx-area', 'Área a la izquierda Φ(z)', 0.95, { min: 0.001, max: 0.999, step: 0.001 })}</div><div id="apx-inv"></div>${zTableHTML()}`)}
+  ${pane('a4', 0, `<h4>A4 · Valores críticos $z$ y $t$</h4><p class="sub">En el paquete, la tabla $t$ es el Apéndice A5; aquí va junto con los valores $z$ en A4. $gl=n-1$.</p>${tbl(['Nivel', '90 %', '95 %', '99 %'], [tr(['<b>z</b>', '1.645', '1.960', '2.576'])])}${tbl(['gl', '90 %', '95 %', '99 %'], T_CRIT.map(r => tr([`<b>${r[0]}</b>`, ...r.slice(1).map(v => fc(v, 3))])))}<p class="sub">Ejemplo: IC al 95 % con $n=25$ y $\\sigma$ desconocida → $gl=24$, $t=2.064$ (renglón incluido en la tabla).</p>`)}
+  ${pane('a6', 0, `<h4>A6 · Combinaciones $C(n,k)=\\frac{n!}{k!(n-k)!}$</h4><p class="sub">Simetría: $C(n,k)=C(n,n-k)$. Útil para la binomial: $C(10,5)=252$.</p>${apxCombTable()}`)}
+  ${pane('a7', 0, `<h4>A7 · Números aleatorios (semilla fija 2026)</h4><p class="sub">Tabla reproducible: siempre salen los mismos números. Para un muestreo aleatorio simple: numera la población de 00 en adelante, lee de dos en dos dígitos, salta los repetidos y los que no correspondan a nadie, hasta completar la muestra.</p>${apxRandTable()}`)}
+  ${pane('a8', 0, `<h4>A8 · Resumen</h4><p class="sub">Todo lo demás está en el Formulario y en la Tabla z del cuaderno.</p><div class="row"><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="plan">📄 Plan de estudios</button></div><p class="sub">📎 Los PDF (Formulario y Ejercicios) deben acompañar a este HTML en la carpeta <b>PDF/</b>.</p>`)}`;
+}
+ACT.apendice = () => { openModal('📊 Apéndice · Tablas de referencia', apendiceHTML(), true); apxDrawBin(''); apxDrawBin('2'); apxDrawInv(); const b = $('#dlg-b'); [['apx-p', ''], ['apx2-p', '2'], ['apx-area', 'x']].forEach(([id, suf]) => { const el = $('#' + id, b); if (el) el.addEventListener('input', () => { if (suf === 'x') apxDrawInv(); else apxDrawBin(suf); }); }); };
+ACT.aptab = el => { const u = el.dataset.u, b = $('#dlg-b'); $$('.plan-pill', b).forEach(x => x.classList.toggle('on', x.dataset.u === u)); $$('.plan-pane', b).forEach(x => x.classList.toggle('on', x.dataset.u === u)); b.scrollTop = 0; if (u === 'a1') apxDrawBin(''); if (u === 'a2') apxDrawBin('2'); if (u === 'a3') apxDrawInv(); };
+SEGH['apx-n'] = () => apxDrawBin('');
+SEGH['apx2-n'] = () => apxDrawBin('2');
+
 /* ---------- Plan de estudios (carta descriptiva) en modal ---------- */
 const PLAN_MAP = { 1: [['u1-va', 'u1-fdp', 'u1-esp'], ['u1-bin', 'u1-poi'], ['u1-cont'], ['u1-nor']], 2: [['u2-mue'], ['u2-tlc']], 3: [['u3-ic'], ['u3-ic'], ['u3-ht']] };
 function planHTML(act) {
@@ -3330,10 +3638,11 @@ ACT.reset = () => {
 };
 window.addEventListener('DOMContentLoaded', () => {
   buildRail();
+  // v2: antes se llamaba a route() dos veces (directo + por el cambio de hash). El cambio de hash ya dispara route() vía 'hashchange'; solo se llama directo si ya había hash.
   if (!location.hash) location.hash = '#inicio';
-  route();
+  else route();
 });
-window.addEventListener('load', () => { math(document.body); });
+window.addEventListener('load', () => { math(document.body); if (!window.renderMathInElement) { const m = document.querySelector('.main'), st = document.getElementById('stage'); if (m && st && !document.getElementById('katex-warn')) { const d = document.createElement('div'); d.id = 'katex-warn'; d.className = 'katex-warn'; d.setAttribute('role', 'alert'); d.innerHTML = '<b>⚠️ KaTeX no cargó</b> (revisa tu conexión a internet): las fórmulas se ven como texto $...$ en vez de fórmulas. Los laboratorios, las tablas y las soluciones siguen funcionando.'; m.insertBefore(d, st); } } }); // v2: aviso visible si KaTeX no carga; la página no se rompe
 
 
 </script>
