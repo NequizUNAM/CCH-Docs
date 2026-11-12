@@ -62,6 +62,7 @@
         { label: 'Pagina Asistencias', href: 'https://nequizunam.github.io/CCH-Page/', icon: 'bi-chat-square-text-fill' },
         { label: 'Guía CONAMAT', href: 'Extras/guia_conamat.html', icon: 'bi-trophy-fill' },
         { label: 'LibreOffice', href: 'Extras/libre_office.html', icon: 'bi-file-earmark-richtext-fill' },
+        { label: 'Estilos Paginas Web', href: 'Extras/estilos_pagina_web.htm', icon: 'bi-file-earmark-richtext-fill' },         
         { label: 'Prompts', href: 'Extras/prompts.html', icon: 'bi-chat-square-text-fill' },
         { label: 'Proyecto SILADIN: estrés', href: 'Extras/proyecto_siladin_estres.html', icon: 'bi-heart-pulse-fill' } ] },
       { id: 'apps', label: 'Páginas (Google Apps Script)', short: 'Apps GS', icon: 'bi-google', color: 'c-gs', apps: true, items: [
