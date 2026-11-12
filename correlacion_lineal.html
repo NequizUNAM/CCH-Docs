@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Estadística - Correlación lineal</title>
 
-  <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, gráficas SVG propias -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -17,10 +16,9 @@
     html { scroll-behavior:smooth; }
     body { background:#f1f5f9; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; min-height:100vh; display:flex; flex-direction:column; color:#1e293b; }
     main { flex:1; }
-    section.lesson { scroll-margin-top:120px; }
+    section.lesson { scroll-margin-top: calc(var(--sec-nav-h, 60px) + 20px); }
     .mono { font-family:'Courier New',Courier,monospace; font-weight:700; }
 
-    /* Header */
     .app-navbar { background:linear-gradient(90deg,#0f172a,#1e293b); box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1040; }
     .app-navbar .dropdown-menu { border:0; border-radius:14px; box-shadow:var(--shadow-lg); padding:.6rem; }
     .app-navbar .dropdown-item { border-radius:10px; padding:.6rem .9rem; font-weight:500; }
@@ -28,19 +26,27 @@
     .app-navbar .dropdown-item.active { background:#0d6efd; color:#fff; }
     .app-navbar .nav-link.active-group { color:#fff; border-bottom:3px solid #0d6efd; }
 
-    /* Hero con barras de histograma */
     .hero-header { position:relative; overflow:hidden; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); color:#fff; padding:3.5rem 1rem 3rem; border-bottom:5px solid #1c7ed6; box-shadow:var(--shadow-md); }
     .hero-bars { position:absolute; inset:auto 0 0 0; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:3px; opacity:.16; pointer-events:none; }
     .hero-bars span { width:7%; max-width:70px; background:#4dabf7; border-radius:4px 4px 0 0; height:var(--h); transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i) * 90ms); }
     @keyframes grow { from { transform:scaleY(0); } }
     .hero-header .container { position:relative; z-index:1; }
 
-    /* Navegación de la página */
-    .sec-nav { position:sticky; top:56px; z-index:1020; background:#fff; box-shadow:var(--shadow-sm); overflow-x:auto; white-space:nowrap; }
+    /* Nav de secciones fijo al hacer scroll */
+    .sec-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+      white-space: nowrap;
+      transition: box-shadow .2s;
+    }
+    .sec-nav.is-stuck { box-shadow: 0 4px 16px rgba(15,23,42,.18); }
     .sec-nav a { display:inline-block; padding:.7rem 1rem; font-size:.88rem; color:#343a40; text-decoration:none; border-bottom:3px solid transparent; font-weight:600; }
     .sec-nav a:hover, .sec-nav a.active { border-bottom-color:#1c7ed6; color:#1c7ed6; }
 
-    /* Tarjetas */
     .lesson-card { border:0; border-radius:20px; box-shadow:var(--shadow-md); overflow:hidden; background:#fff; }
     .lesson-head { padding:1.2rem 1.6rem; color:#fff; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; box-shadow:0 4px 12px rgba(0,0,0,.15); }
     .lesson-head .num { width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.25rem; flex:0 0 auto; }
@@ -53,7 +59,6 @@
     .stat-pill b { font-family:'Courier New',monospace; }
     #data { font-family:'Courier New',monospace; font-size:.9rem; }
 
-    /* Instructivo: pasos vivos */
     .istep { border-radius:16px; padding:1rem 1.1rem; height:100%; border-top:5px solid var(--c); background:#fff; box-shadow:var(--shadow-sm); animation:pop .4s both; }
     .istep h6 { color:var(--c); font-weight:800; }
     .istep .badge-n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--c); color:#fff; align-items:center; justify-content:center; font-size:.8rem; margin-right:.4rem; }
@@ -61,14 +66,12 @@
     .verdict { display:inline-block; padding:.25rem .75rem; border-radius:999px; font-weight:800; color:#fff; }
     .verdict.pure { background:var(--ok); } .verdict.impure { background:var(--bad); }
 
-    /* Fórmulas y leyendas */
     .fx { overflow-x:auto; padding:.4rem 0; }
     .vchip { display:inline-flex; align-items:center; gap:.35rem; border:1.5px solid var(--c); background:color-mix(in srgb,var(--c) 12%,#fff); border-radius:10px; padding:.1rem .55rem; margin:.15rem .25rem .15rem 0; font-size:.88rem; }
     .legend-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.9rem; margin-bottom:.4rem; }
     .legend-row .vchip { flex:0 0 auto; min-width:46px; justify-content:center; margin:0; }
     .usebox { border-left:5px solid var(--c); background:color-mix(in srgb,var(--c) 8%,#fff); border-radius:0 12px 12px 0; padding:.6rem .9rem; font-size:.9rem; margin-bottom:.6rem; }
 
-    /* Tablas de frecuencias */
     .freq-table { font-size:.95rem; text-align:center; margin:0; }
     .freq-table th { background:#1e293b; color:#fff; font-weight:700; white-space:nowrap; }
     .freq-table td, .freq-table th { vertical-align:middle; padding:.5rem .7rem; }
@@ -76,7 +79,6 @@
     .freq-table tbody tr.row-hover td { background:#fff3bf !important; }
     .freq-table tfoot td { background:#f1f5f9; font-weight:800; }
     .hl-legend { font-size:.85rem; min-height:1.4rem; }
-    /* Resaltados por medida */
     [data-hl="mean"] td.c-use { background:rgba(24,100,171,.2); font-weight:800; }
     [data-hl="med"] tr.r-before td { background:rgba(240,140,0,.12); }
     [data-hl="med"] tr.r-med td { background:rgba(240,140,0,.38); font-weight:800; }
@@ -95,7 +97,6 @@
     .chart-box { position:relative; height:420px; }
     .nav-pills .nav-link { color:#334155; font-weight:600; } .nav-pills .nav-link.active { background:#0f172a; }
     :focus-visible { outline:3px solid #f08c00; outline-offset:2px; }
-    /* ===== Fórmulas estilo calculadora ===== */
     .cx { font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif; font-size:1.08em; line-height:1.55; white-space:nowrap; font-variant-numeric:lining-nums; }
     .cx.d { display:block; text-align:center; overflow-x:auto; overflow-y:hidden; padding:.35em .2em; font-size:1.2em; }
     .cx sup, .cx sub { font-size:.68em; line-height:0; position:relative; vertical-align:baseline; font-weight:700; }
@@ -117,7 +118,6 @@
     .cx .ac.hat::before { content:'^'; } .cx .ac.tilde::before { content:'~'; top:-.42em; }
     .cx .sm { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .15em; line-height:1.05; }
     .cx .sm .sg { font-size:1.6em; line-height:.95; } .cx .sm .sh, .cx .sm .sl { font-size:.62em; min-height:.7em; font-weight:700; }
-    /* Operaciones con popover */
     .pp { cursor:pointer; border-radius:6px; border-bottom:2px dotted rgba(30,41,59,.55); transition:background .15s, box-shadow .15s; outline:0; }
     .pp:hover, .pp:focus-visible { background:#fff3bf; box-shadow:0 0 0 3px #fff3bf; }
     td.pp, th.pp { border-bottom:0; } td.pp:hover { background:#fff3bf !important; box-shadow:inset 0 0 0 2px #f59f00; } th.pp:hover { filter:brightness(1.35); }
@@ -130,12 +130,10 @@
     .pn { font-size:.82rem; color:#475569; margin-top:.4rem; }
     .mem { display:flex; flex-wrap:wrap; gap:3px; margin-top:.2rem; } .mem span { background:#e7f1fb; border-radius:6px; padding:0 .35rem; font-family:'Courier New',monospace; font-size:.82rem; font-weight:700; color:#1864ab; }
     .pm { font-size:.88rem; }
-    /* Pantalla de resultado */
     .calc-screen { background:#0f172a; color:#e0f2fe; border-radius:14px; padding:.95rem 1rem .5rem; overflow-x:auto; box-shadow:inset 0 2px 8px rgba(0,0,0,.5); text-align:center; border-bottom:4px solid var(--c,#1864ab); }
     .calc-screen .cx { font-size:1.45rem; } .calc-screen .pp { border-bottom-color:#7dd3fc; } .calc-screen .pp:hover { background:rgba(125,211,252,.18); box-shadow:0 0 0 3px rgba(125,211,252,.18); }
     .cmp-chips { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.5rem; }
     .cmp-chip { font-size:.8rem; border-radius:999px; padding:.15rem .7rem; background:#f1f5f9; border:1.5px solid #e2e8f0; color:#475569; } .cmp-chip b { font-family:'Courier New',monospace; color:#0f172a; } .cmp-chip.on { background:#fff4e0; border-color:#f08c00; }
-    /* Tabla unificada */
     .tbl-bar { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 1.2rem; margin-bottom:.8rem; }
     .real-switch { display:flex; align-items:center; gap:.5rem; background:#fff4e0; border:2px solid #f08c00; border-radius:999px; padding:.35rem 1rem .35rem .6rem; box-shadow:var(--shadow-sm); transition:background .25s, border-color .25s, color .25s; }
     .real-switch .form-check-input { width:2.6em; height:1.4em; cursor:pointer; margin:0; } .real-switch .form-check-input:checked { background-color:#f08c00; border-color:#f08c00; }
@@ -152,12 +150,10 @@
     .formula-card { border-radius:14px; padding:.8rem; background:#fff; border:1px solid #e2e8f0; height:100%; }
 
     @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} .hero-bars span,.istep,.freq-table.anim td.chg,.real-banner{animation:none} }
-  
-    /* ===== Medidas de dispersión: colores por medida ===== */
+
     :root { --m-mean:#1864ab; --m-dm:#0c8599; --m-var:#e8590c; --m-sd:#7048e8; }
     .h-6 { background:linear-gradient(135deg,#c2255c,#8f1a43); }
     .hero-bars span { background:#74c0fc; }
-    /* Interruptores */
     .seg-sw { display:inline-flex; background:#fff; border:2px solid #1e293b; border-radius:999px; padding:3px; box-shadow:var(--shadow-sm); }
     .seg-sw button { border:0; background:transparent; font-weight:800; font-size:.88rem; padding:.3rem 1rem; border-radius:999px; color:#334155; transition:background .25s, color .25s, transform .2s; }
     .seg-sw button.on { background:#1e293b; color:#fff; transform:scale(1.04); }
@@ -165,7 +161,6 @@
     .mbtn { border:2px solid var(--c); color:var(--c); background:#fff; font-weight:800; font-size:.88rem; padding:.3rem .9rem; border-radius:999px; transition:all .25s; }
     .mbtn:hover { background:color-mix(in srgb,var(--c) 12%,#fff); }
     .mbtn.on { background:var(--c); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--c) 45%,transparent); transform:translateY(-2px); }
-    /* Tabla: columnas coloreadas por medida */
     #tbl-wrap { --mc:var(--m-mean); }
     #tbl-wrap[data-m="dm"] { --mc:var(--m-dm); } #tbl-wrap[data-m="var"] { --mc:var(--m-var); } #tbl-wrap[data-m="sd"] { --mc:var(--m-sd); }
     .freq-table td.cb-fi { background:rgba(214,51,108,.10); } .freq-table td.cb-x { background:rgba(47,158,68,.12); }
@@ -182,7 +177,6 @@
     .fi-in:focus { outline:3px solid #fbc2d5; }
     .col-legend { display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.82rem; margin:.6rem 0 0; }
     .col-legend span { display:inline-flex; align-items:center; gap:.35rem; } .col-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
-    /* Tarjetas de resultado */
     .tile { cursor:pointer; border:2px solid var(--c); border-radius:16px; background:#fff; padding:.8rem 1rem; text-align:center; transition:transform .25s, box-shadow .25s, background .25s; height:100%; position:relative; overflow:hidden; }
     .tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
     .tile.on { background:var(--c); color:#fff; transform:translateY(-4px); box-shadow:0 10px 26px color-mix(in srgb,var(--c) 45%,transparent); }
@@ -192,7 +186,6 @@
     .tile .cx { font-size:1em; }
     .tile::after { content:''; position:absolute; left:0; bottom:0; height:5px; width:100%; background:var(--c); transform:scaleX(0); transform-origin:left; animation:tileBar 1s .2s forwards; } .tile.on::after { background:rgba(255,255,255,.5); }
     @keyframes tileBar { to { transform:scaleX(1); } }
-    /* Formulario estilo hoja */
     .sheet-title { color:#2b3a7a; font-weight:800; font-size:1.15rem; margin:1.4rem 0 .4rem; }
     .form-tbl { width:100%; border-collapse:collapse; background:#fff; font-size:.92rem; margin-bottom:.6rem; }
     .form-tbl td { border:1.5px solid #343a40; padding:.55rem .8rem; vertical-align:middle; }
@@ -202,7 +195,6 @@
     .form-tbl td.fr2 .dw { font-weight:600; }
     .form-tbl tr.vm .badge-v { background:#e8590c; } .form-tbl tr.vp .badge-v { background:#2f9e44; }
     .form-tbl tr { animation:pop .5s both; }
-    /* Gráfica SVG */
     .chart-svg { width:100%; height:auto; display:block; background:#fff; border-radius:14px; border:1px solid #e2e8f0; }
     .chart-svg text { font-family:'Segoe UI',sans-serif; }
     .bar-r { transform-box:fill-box; transform-origin:bottom; animation:barUp .8s cubic-bezier(.2,.9,.3,1.1) both; animation-delay:calc(var(--i) * 70ms); cursor:pointer; transition:fill .2s; }
@@ -215,7 +207,6 @@
     .no-chart { text-align:center; padding:2.2rem 1rem; border:2px dashed #cbd5e1; border-radius:16px; color:#64748b; }
     @media (prefers-reduced-motion:reduce) { .freq-table.anim td, .freq-table.anim th, .bar-r, .poly-l, .band-r, .vline, .tile::after { animation:none !important; stroke-dashoffset:0; } }
 
-    /* ===== Correlación lineal ===== */
     :root { --c-x:#1c7ed6; --c-y:#e8590c; --c-m:#e03131; --c-b:#2f9e44; --c-r:#7048e8; --c-cov:#0c8599; }
     .h-6 { background:linear-gradient(135deg,#1864ab,#0b3d6e); }
     .hero-bars span { background:#74c0fc; }
@@ -237,7 +228,6 @@
     .freq-table tfoot tr.mean-r td { background:#f1f5f9; color:#334155; font-weight:700; }
     .freq-table tfoot tr.mean-r td.cb-x { background:rgba(28,126,214,.18); color:#1864ab; } .freq-table tfoot tr.mean-r td.cb-y { background:rgba(232,89,12,.18); color:#b34000; }
     .freq-table.anim td.mc, .freq-table.anim th.mc { animation:colWave .9s both; animation-delay:calc(var(--ci) * 300ms + var(--ri,0) * 50ms); }
-    @keyframes colWave { 0% { background:var(--mc); color:#fff; transform:scale(1.14); box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 35%,transparent); } 100% { transform:none; box-shadow:none; } }
     .freq-table td input { width:84px; text-align:center; font-weight:800; font-family:'Courier New',monospace; border:2px solid #94a3b8; border-radius:10px; padding:.15rem .2rem; background:#fff; }
     .freq-table td input:focus { outline:3px solid #bac8ff; }
     .freq-table td.pos { color:#2b8a3e; } .freq-table td.neg { color:#c92a2a; }
@@ -278,6 +268,18 @@
     .tile .tl { text-transform:none; font-size:.85rem; }
     .modal-header .modal-title { color:#fff !important; }
 
+    /* ===== NUEVOS ESTILOS: modales correlación y recta interactiva ===== */
+    .corr-rule-row td { vertical-align:middle; }
+    .corr-mini-svg { background:#f8fafc; border-radius:10px; }
+    .recta-slider-wrap { background:#f1f5f9; border-radius:14px; padding:.9rem 1rem; border:1px solid #e2e8f0; }
+    .recta-slider-wrap .form-range { cursor:pointer; }
+    #recta-svg { background:#fff; }
+    #recta-svg .grid-line { stroke:#e2e8f0; stroke-width:.7; }
+    #recta-svg .axis-line { stroke:#334155; stroke-width:1.5; }
+    .recta-badge-m { background:#e03131; }
+    .recta-badge-b { background:#2f9e44; }
+    .recta-legend-item { display:inline-flex; align-items:center; gap:.35rem; font-size:.85rem; }
+    .recta-legend-item i { display:inline-block; width:14px; height:3px; border-radius:2px; }
   </style>
 </head>
 <body>
@@ -294,14 +296,15 @@
         <h1 class="display-5 fw-bold"><i class="bi bi-graph-up-arrow text-info me-2"></i>Correlación lineal</h1>
         <p class="lead mb-1">Covarianza • coeficiente de Pearson ($r$) • recta de regresión $Y = mx + b$</p>
         <p class="mb-3 text-light opacity-75">Escribe tus pares $(x, y)$, elige la fórmula y mira cómo se calcula cada columna</p>
-        <button class="btn btn-warning rounded-pill px-4 fw-semibold me-1" data-theo="1"><i class="bi bi-mortarboard-fill me-1"></i>Teoremas y fundamentos</button>
-        <button class="btn btn-outline-light rounded-pill px-4 fw-semibold" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button>
+        <button class="btn btn-warning rounded-pill px-4 fw-semibold me-1 mb-1" data-theo="1"><i class="bi bi-mortarboard-fill me-1"></i>Teoremas y fundamentos</button>
+        <button class="btn btn-outline-light rounded-pill px-4 fw-semibold mb-1" data-form="1"><i class="bi bi-journal-richtext me-1"></i>Formulario</button>
+        <button class="btn btn-info rounded-pill px-4 fw-semibold me-1 mb-1" data-modal="correlacion"><i class="bi bi-diagram-3 me-1"></i>Elementos de correlación</button>
+        <button class="btn btn-success rounded-pill px-4 fw-semibold mb-1" data-modal="recta"><i class="bi bi-sliders me-1"></i>Recta Y = mx + b</button>
       </div>
     </header>
 
     <div class="container mb-5">
 
-      <!-- 1. DATOS -->
       <section class="lesson mb-5" id="s1">
         <div class="card lesson-card">
           <div class="lesson-head h-1"><div class="num">1</div><div><h2 class="h4 fw-bold mb-0">Tus datos: pares (x, y)</h2><small>$X$ es la variable independiente y $Y$ la dependiente</small></div></div>
@@ -331,16 +334,25 @@
 
       <div id="results">
 
-      <!-- 2. COVARIANZA -->
       <section class="lesson mb-5" id="s2">
         <div class="card lesson-card">
           <div class="lesson-head h-2"><div class="num">2</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Covarianza</h2><small>Cómo varían juntas $X$ y $Y$ · elige la fórmula</small></div>
             <button class="btn btn-sm btn-light rounded-pill" data-theo="cov"><i class="bi bi-mortarboard me-1"></i>Teorema</button></div>
-          <div class="card-body"><div class="d-flex flex-wrap gap-2 mb-3" id="v-cov"></div><div id="x-cov"></div></div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-3" id="v-cov"></div>
+            <div id="x-cov"></div>
+            <div class="tip-box s-volt small mt-3" id="cov-why">
+              <strong><i class="bi bi-info-circle-fill me-1"></i>¿Por qué la covarianza es la base de todo el modelo?</strong>
+              Aparece en <strong>Pearson</strong> como <em>r = s<sub>xy</sub> / (s<sub>x</sub>·s<sub>y</sub>)</em>,
+              en la <strong>pendiente</strong> como <em>m = s<sub>xy</sub> / s<sub>x</sub>²</em>,
+              y su definición usa las <strong>medias</strong>: <em>Cov(X,Y) = E[(X−μ<sub>x</sub>)(Y−μ<sub>y</sub>)]</em>.
+              Es la pieza que conecta media → covarianza → r → m → recta.
+              <button class="btn btn-sm btn-link p-0 ms-1 align-baseline" data-theo="cov">Ver teoremas completos →</button>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- 3. PEARSON -->
       <section class="lesson mb-5" id="s3">
         <div class="card lesson-card">
           <div class="lesson-head h-3"><div class="num">3</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Coeficiente de correlación de Pearson ($r$)</h2><small>Qué tan fuerte y en qué sentido es la relación lineal · elige la fórmula</small></div>
@@ -349,7 +361,6 @@
         </div>
       </section>
 
-      <!-- 4. PENDIENTE -->
       <section class="lesson mb-5" id="s4">
         <div class="card lesson-card">
           <div class="lesson-head h-4"><div class="num">4</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Pendiente ($m$)</h2><small>«Qué tan inclinada está la recta» · elige la fórmula</small></div>
@@ -358,7 +369,6 @@
         </div>
       </section>
 
-      <!-- 5. ORDENADA -->
       <section class="lesson mb-5" id="s5">
         <div class="card lesson-card">
           <div class="lesson-head h-5"><div class="num">5</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Ordenada al origen ($b$)</h2><small>«Dónde cruza la recta el eje y» · elige la fórmula</small></div>
@@ -367,7 +377,6 @@
         </div>
       </section>
 
-      <!-- 6. RECTA Y GRÁFICA -->
       <section class="lesson mb-5" id="s6">
         <div class="card lesson-card">
           <div class="lesson-head h-6"><div class="num">6</div><div class="me-auto"><h2 class="h4 fw-bold mb-0">Recta de regresión y gráfica</h2><small>$Y = mx + b$ con tus resultados, predicción y residuos</small></div></div>
@@ -424,17 +433,200 @@
     </div>
   </div>
 
+  <!-- MODAL: ELEMENTOS DE CORRELACIÓN -->
+  <div class="modal fade" id="correlacionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#1864ab">
+          <h5 class="modal-title fw-bold"><i class="bi bi-diagram-3 me-2"></i>Elementos de correlación lineal</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body bg-light">
+          <p class="small text-muted mb-3">Resumen visual de las reglas del coeficiente de correlación de Pearson (<strong>r</strong>), convertidas y vectorizadas desde el material de estudio.</p>
+
+          <div class="table-responsive rounded-3 border mb-4">
+            <table class="table table-bordered align-middle mb-0" style="font-size:.95rem">
+              <thead class="table-dark">
+                <tr>
+                  <th style="width:22%">Valor de <em>r</em></th>
+                  <th>Interpretación</th>
+                  <th style="width:18%">Color guía</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="corr-rule-row">
+                  <td class="text-center fw-bold">r ≈ 0</td>
+                  <td>Indica respectivamente <strong>poca o ninguna relación lineal</strong> entre las variables.</td>
+                  <td class="text-center"><span class="badge" style="background:#868e96">Gris</span></td>
+                </tr>
+                <tr class="corr-rule-row">
+                  <td class="text-center fw-bold">|r| cercano a 1</td>
+                  <td>Cuanto más se acerque en valor absoluto a 1, <strong>mayor será el grado de asociación lineal</strong> entre las variables.</td>
+                  <td class="text-center"><span class="badge" style="background:#1864ab">Azul</span></td>
+                </tr>
+                <tr class="corr-rule-row">
+                  <td class="text-center fw-bold">r &gt; 0 (positivo)</td>
+                  <td>Indica <strong>asociación lineal positiva</strong>: las variables tienden a variar en el mismo sentido.</td>
+                  <td class="text-center"><span class="badge" style="background:#2f9e44">Verde</span></td>
+                </tr>
+                <tr class="corr-rule-row">
+                  <td class="text-center fw-bold">r &lt; 0 (negativo)</td>
+                  <td>Indica <strong>asociación lineal negativa</strong>: las variables tienden a variar en sentido opuesto.</td>
+                  <td class="text-center"><span class="badge" style="background:#e03131">Rojo</span></td>
+                </tr>
+                <tr class="corr-rule-row">
+                  <td class="text-center fw-bold">r = ±1</td>
+                  <td>La correlación será <strong>perfecta</strong>.</td>
+                  <td class="text-center"><span class="badge" style="background:#f08c00">Dorado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h6 class="fw-bold mb-2"><i class="bi bi-eye me-1"></i>Ejemplo visual de los tres casos típicos</h6>
+          <div class="row g-3 text-center">
+            <div class="col-md-4">
+              <div class="border rounded-3 p-2 bg-white h-100">
+                <svg viewBox="0 0 120 90" class="w-100 corr-mini-svg" style="max-height:110px">
+                  <line x1="10" y1="80" x2="110" y2="80" stroke="#adb5bd" stroke-width="1"/>
+                  <line x1="10" y1="80" x2="10" y2="10" stroke="#adb5bd" stroke-width="1"/>
+                  <line x1="15" y1="75" x2="105" y2="18" stroke="#2f9e44" stroke-width="1.6" stroke-dasharray="3 3"/>
+                  <circle cx="20" cy="70" r="3.5" fill="#2f9e44"/><circle cx="35" cy="60" r="3.5" fill="#2f9e44"/><circle cx="50" cy="50" r="3.5" fill="#2f9e44"/>
+                  <circle cx="65" cy="40" r="3.5" fill="#2f9e44"/><circle cx="80" cy="30" r="3.5" fill="#2f9e44"/><circle cx="95" cy="20" r="3.5" fill="#2f9e44"/>
+                </svg>
+                <div class="small fw-bold text-success mt-1">r ≈ +1<br><span class="fw-normal">Perfecta positiva</span></div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="border rounded-3 p-2 bg-white h-100">
+                <svg viewBox="0 0 120 90" class="w-100 corr-mini-svg" style="max-height:110px">
+                  <line x1="10" y1="80" x2="110" y2="80" stroke="#adb5bd" stroke-width="1"/>
+                  <line x1="10" y1="80" x2="10" y2="10" stroke="#adb5bd" stroke-width="1"/>
+                  <line x1="15" y1="18" x2="105" y2="75" stroke="#e03131" stroke-width="1.6" stroke-dasharray="3 3"/>
+                  <circle cx="20" cy="20" r="3.5" fill="#e03131"/><circle cx="35" cy="30" r="3.5" fill="#e03131"/><circle cx="50" cy="40" r="3.5" fill="#e03131"/>
+                  <circle cx="65" cy="50" r="3.5" fill="#e03131"/><circle cx="80" cy="60" r="3.5" fill="#e03131"/><circle cx="95" cy="70" r="3.5" fill="#e03131"/>
+                </svg>
+                <div class="small fw-bold text-danger mt-1">r ≈ −1<br><span class="fw-normal">Perfecta negativa</span></div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="border rounded-3 p-2 bg-white h-100">
+                <svg viewBox="0 0 120 90" class="w-100 corr-mini-svg" style="max-height:110px">
+                  <line x1="10" y1="80" x2="110" y2="80" stroke="#adb5bd" stroke-width="1"/>
+                  <line x1="10" y1="80" x2="10" y2="10" stroke="#adb5bd" stroke-width="1"/>
+                  <circle cx="25" cy="20" r="3.5" fill="#868e96"/><circle cx="60" cy="70" r="3.5" fill="#868e96"/><circle cx="80" cy="25" r="3.5" fill="#868e96"/>
+                  <circle cx="35" cy="60" r="3.5" fill="#868e96"/><circle cx="95" cy="55" r="3.5" fill="#868e96"/><circle cx="50" cy="35" r="3.5" fill="#868e96"/>
+                </svg>
+                <div class="small fw-bold text-secondary mt-1">r ≈ 0<br><span class="fw-normal">Sin relación lineal</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tip-box s-volt small mt-3">
+            <i class="bi bi-lightbulb-fill me-1"></i><strong>Recuerda:</strong> la correlación solo mide relaciones <em>lineales</em>. Un valor de <em>r</em> cercano a 0 no implica que no exista relación, sino que no es lineal.
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0">
+          <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RECTA Y = mx + b INTERACTIVA -->
+  <div class="modal fade" id="rectaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header text-white" style="background:#2b8a3e">
+          <h5 class="modal-title fw-bold"><i class="bi bi-sliders me-2"></i>Recta de regresión: Y = mx + b</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body bg-light">
+          <div class="row g-3">
+            <div class="col-lg-4">
+              <div class="panel h-100">
+                <h6 class="fw-bold" style="color:#2b8a3e"><i class="bi bi-info-circle me-1"></i>¿Qué significan <em>m</em> y <em>b</em>?</h6>
+                <p class="small mb-2"><strong>m (pendiente):</strong> indica cuánto cambia el valor promedio de <em>Y</em> por cada unidad que aumenta <em>X</em>. Si <em>m</em> &gt; 0 la recta sube (relación directa); si <em>m</em> &lt; 0 la recta baja (relación inversa); si <em>m</em> = 0 la recta es horizontal.</p>
+                <p class="small mb-2"><strong>b (ordenada al origen):</strong> es el valor de <em>Y</em> cuando <em>X = 0</em> (donde la recta cruza el eje vertical).</p>
+                <p class="small mb-2"><strong>¿Para qué sirve?</strong> Es el modelo de <em>regresión lineal simple</em>: permite <strong>predecir</strong> el valor de <em>Y</em> a partir de un valor de <em>X</em>, y se calcula con <em>mínimos cuadrados</em> para que la recta pase lo más cerca posible de todos los puntos observados.</p>
+                <div class="tip-box s-ok small">
+                  <i class="bi bi-lightbulb-fill me-1"></i>La recta siempre pasa por el punto de las medias <strong>(x̄, ȳ)</strong>, porque se obtiene minimizando la suma de los residuos al cuadrado.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-8">
+              <div class="panel">
+                <div class="recta-slider-wrap mb-3">
+                  <div class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                      <label class="form-label small fw-bold mb-1" for="slider-m">Pendiente <em>m</em>: <span id="val-m" class="badge recta-badge-m">1.00</span></label>
+                      <input type="range" class="form-range" id="slider-m" min="-5" max="5" step="0.1" value="1">
+                      <div class="d-flex justify-content-between small text-muted"><span>−5</span><span>0</span><span>5</span></div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label small fw-bold mb-1" for="slider-b">Ordenada <em>b</em>: <span id="val-b" class="badge recta-badge-b">0.00</span></label>
+                      <input type="range" class="form-range" id="slider-b" min="-10" max="10" step="0.5" value="0">
+                      <div class="d-flex justify-content-between small text-muted"><span>−10</span><span>0</span><span>10</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="viz-card border rounded-3 p-1 bg-white mb-3">
+                  <svg id="recta-svg" viewBox="0 0 500 320" class="w-100" style="max-height:320px">
+                    <g id="recta-grid"></g>
+                    <line id="eje-x" x1="40" y1="270" x2="485" y2="270" stroke="#334155" stroke-width="1.5"/>
+                    <line id="eje-y" x1="40" y1="15" x2="40" y2="285" stroke="#334155" stroke-width="1.5"/>
+                    <text x="262" y="305" text-anchor="middle" font-size="12" fill="#1c7ed6" font-weight="700">X</text>
+                    <text x="18" y="150" text-anchor="middle" font-size="12" fill="#e8590c" font-weight="700" transform="rotate(-90 18,150)">Y</text>
+                    <line id="recta-linea" x1="40" y1="270" x2="485" y2="270" stroke="#e03131" stroke-width="3"/>
+                    <circle id="punto-b" cx="40" cy="270" r="6" fill="#2f9e44" stroke="#fff" stroke-width="1.5"/>
+                    <text id="label-b" x="48" y="262" font-size="11" fill="#2f9e44" font-weight="700">(0, b)</text>
+                    <text id="eq-text" x="262" y="30" text-anchor="middle" font-size="14" fill="#0f172a" font-weight="700">Y = 1.00·X + 0.00</text>
+                  </svg>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3 mb-2 align-items-center">
+                  <span class="recta-legend-item"><i style="background:#e03131"></i>Recta</span>
+                  <span class="recta-legend-item"><i style="background:#2f9e44;border-radius:50%;width:10px;height:10px"></i>Intercepto (0, b)</span>
+                  <span class="recta-legend-item"><i style="background:#adb5bd;height:1px"></i>Cuadrícula</span>
+                </div>
+
+                <div class="small">
+                  <div class="d-flex align-items-start gap-2 mb-1">
+                    <span class="badge rounded-pill bg-primary">1</span>
+                    <span>Si <strong>m</strong> aumenta, la recta se hace más inclinada (sube más rápido). Si <strong>m</strong> es negativa, la recta baja.</span>
+                  </div>
+                  <div class="d-flex align-items-start gap-2 mb-1">
+                    <span class="badge rounded-pill bg-success">2</span>
+                    <span>Si <strong>b</strong> aumenta, toda la recta se desplaza hacia arriba; si disminuye, se desplaza hacia abajo.</span>
+                  </div>
+                  <div class="d-flex align-items-start gap-2">
+                    <span class="badge rounded-pill bg-warning text-dark">3</span>
+                    <span>El punto verde marca <strong>(0, b)</strong>: donde la recta corta el eje <em>Y</em>.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light border-0">
+          <button class="btn btn-outline-secondary rounded-pill px-4 me-2" id="reset-recta"><i class="bi bi-arrow-counterclockwise me-1"></i>Reiniciar</button>
+          <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Correlación lineal</small></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ===================== HEADER DINÁMICO ===================== -->
   <script src="auth-config.js"></script>
   <script src="aula-header.js"></script>
   <script src="aula-datos.js"></script><script>window.AulaDatos||(window.AulaDatos={link(){},controls(){},dirty(){}});</script>
 <script>
 /*FX*/
-    /* ---- Renderizador estilo calculadora: convierte la notación de fórmulas a HTML (fracciones apiladas, √ con vinculum, exponentes elevados) ---- */
     const UNK = [];
     function fx(src) {
       const s = String(src); let i = 0, last = 'start';
@@ -503,7 +695,6 @@
     const num = v => { const q = parseFloat(String(v).replace(',', '.')); return isFinite(q) ? q : 0; };
     const sumList = (a, f = x => x) => a.length > 5 ? [...a.slice(0, 2).map(f), '\\cdots', f(a[a.length - 1])].join(' + ') : a.map(f).join(' + ');
 
-    /* ---------- Colores y fórmulas ---------- */
     const CX = '#1c7ed6', CY = '#e8590c', CM = '#e03131', CB = '#2f9e44', CR = '#7048e8', CC = '#0c8599', CN = '#343a40', CZ = '#d6336c';
     const SC = { cov: CC, r: CR, m: CM, b: CB };
     const K = (c, s) => T`\textcolor{${c}}{${s}}`;
@@ -518,9 +709,7 @@
         if (!found) return; html += escH(t.slice(at)); const sp = document.createElement('span'); sp.innerHTML = html; n.replaceWith(...sp.childNodes); });
     }
 
-    /* ---------- Popovers con el paso a paso de cada operación ---------- */
     let POPS = {}, PID = 0;
-    // lines: [caption, tex, 'res'?] | [caption, html, 'html'] | 'texto'
     function reg(title, lines, color) {
       const id = 'p' + (++PID);
       POPS[id] = { t: `<i class="bi bi-calculator-fill me-1" style="color:${color || '#7dd3fc'}"></i>${title}`, h: lines.map(l => typeof l === 'string' ? `<div class="pn">${l}</div>`
@@ -543,7 +732,6 @@
     const X = K(CX, 'x_i'), Y = K(CY, 'y_i'), BX = K(CX, '\\bar{x}'), BY = K(CY, '\\bar{y}'), NN = K(CN, 'n');
     const SUMN = T`\sum_{i=1}^{n}`;
     const SXY = K(CC, 'S_{xy}'), SXX = K(CX, 'S_{xx}'), SYY = K(CY, 'S_{yy}');
-    /* Fórmulas: FT[sección][variante](pop) → arreglo de líneas TeX */
     const FT = {
       cov: {
         std: pop => { const y = SYP(pop); return [T`${K(CC, y.cov)} = \frac{\sum_{i=1}^{${y.N}} (${X} - ${K(CX, y.mx)})(${Y} - ${K(CY, y.my)})}{${K(CN, y.den)}}`]; },
@@ -579,7 +767,6 @@
     };
     const SECN = { cov: 'Covarianza', r: 'Coeficiente de Pearson', m: 'Pendiente', b: 'Ordenada al origen' };
 
-    /* Descripción de cada símbolo (para el formulario) */
     const SYM = {
       n: ['n', 'Número de pares de datos (tamaño de la muestra)', CN], N: ['N', 'Número total de pares (tamaño de la población)', CN], n1: ['n - 1', 'Grados de libertad: corrección de Bessel para muestras', CN],
       sum: ['\\sum', 'Suma de todos los pares (de i = 1 hasta n)', '#495057'], x: ['x_i', 'Valor de la variable X (independiente) en el par i', CX], y: ['y_i', 'Valor de la variable Y (dependiente) en el par i', CY],
@@ -603,7 +790,6 @@
       b: { sums: () => ['b', 'm', 'sy', 'sx', 'n'], means: () => ['b', 'm', 'yb', 'xb'] }
     };
 
-    /* ---------- Estado y cálculo ---------- */
     const S = { xs: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], ys: ['52', '55', '61', '60', '68', '72', '75', '80', '79', '88'], pop: false, v: { cov: 'std', r: 'sums', m: 'sums', b: 'sums' }, px: '' };
     let ST = null, ANIM = new Set(), P = {};
     function stats() {
@@ -622,8 +808,6 @@
     }
     const interp = r => { const a = Math.abs(r); return !isFinite(r) ? ['Sin datos suficientes', '#868e96', -1] : a >= .9 ? ['Muy fuerte', '#1864ab', 4] : a >= .7 ? ['Fuerte', '#2f9e44', 3] : a >= .4 ? ['Moderada', '#f08c00', 2] : a >= .2 ? ['Débil', '#e8590c', 1] : ['Muy débil o nula', '#868e96', 0]; };
 
-
-    /* ---------- Popovers de totales y columnas ---------- */
     let CPM = {};
     function buildP(st) {
       const f = fmt, rs = st.rows, y = SYP(st.pop), L = g => sumList(rs, g); CPM = {};
@@ -651,7 +835,6 @@
         m: reg('Pendiente m', [['Valor sin redondear', T`m = ${f(st.m, 6)}`], ['A 2 decimales', T`m = ${f2(st.m)}`, 'res']], CM)
       };
     }
-    /* Columnas: encabezado, popover de celda y de total */
     function colMeta(k, st) {
       const y = SYP(st.pop), mxH = st.pop ? 'μ<sub>x</sub>' : 'x̄', myH = st.pop ? 'μ<sub>y</sub>' : 'ȳ', mx = ng(st.mx), my = ng(st.my);
       const M = {
@@ -678,7 +861,6 @@
     const cp = (k, i) => { const key = k + i; if (!CPM[key]) { const st = ST, m = colMeta(k, st); CPM[key] = reg(`Par ${i + 1}: ${m[1].toLowerCase()}`, [[m[1], m[3](st.rows[i]), 'res'], k === 'dxy' ? (st.rows[i].dxy >= 0 ? 'Producto positivo: este par aporta a una relación directa.' : 'Producto negativo: este par aporta a una relación inversa.') : ''].filter(Boolean), m[4]); } return CPM[key]; };
     const totPop = (k, st) => { const m = colMeta(k, st), tot = st.rows.reduce((a, r) => a + r[k], 0); return reg('Suma de ' + m[0].replace(/<\/?sub>/g, ''), [['Se suman todos los valores', T`\sum = ${sumList(st.rows, r => ng(r[k]))} = ${f2(tot)}`, 'res'], ['dx', 'dy', 'e'].includes(k) ? 'La suma de las desviaciones respecto a la media siempre es 0 (salvo redondeo).' : ''].filter(Boolean), m[4]); };
 
-    /* Tabla de cálculo por columnas */
     function fillTbl(tbl, cols, st, o = {}) {
       const lastC = cols[cols.length - 1], tot = k => st.rows.reduce((a, r) => a + r[k], 0), td = (id, inner, c = '', s = '') => `<td class="pp ${c}" ${s ? `style="${s}"` : ''} data-pop="${id}" tabindex="0" role="button">${inner}</td>`;
       tbl.querySelector('thead').innerHTML = `<tr><th>#</th><th class="cb-x">x<sub>i</sub></th><th class="cb-y">y<sub>i</sub></th>${cols.map((k, ci) => `<th class="mc pp${k === lastC ? ' last' : ''}" style="--ci:${ci}" data-pop="${hpId(k, st)}" tabindex="0" role="button">${colMeta(k, st)[0]} <i class="bi bi-question-circle"></i></th>`).join('')}</tr>`;
@@ -687,7 +869,6 @@
       tbl.classList.remove('anim'); if (o.anim) { void tbl.offsetWidth; tbl.classList.add('anim'); }
     }
 
-    /* ---------- Especificaciones de cada fórmula (valores, pasos) ---------- */
     const VALS = {
       cov: st => ({ std: st.Sxy / st.den, ari: st.pop ? st.sxy / st.n - st.mx * st.my : (st.sxy - st.n * st.mx * st.my) / (st.n - 1), sums: st.pop ? st.sxy / st.n - st.sx * st.sy / (st.n * st.n) : (st.sxy - st.sx * st.sy / st.n) / (st.n - 1) }),
       r: st => ({ sums: st.num / Math.sqrt(st.Dx * st.Dy), dev: st.Sxy / Math.sqrt(st.Sxx * st.Syy), cov: st.cov / (st.sdx * st.sdy), z: st.rows.reduce((a, r) => a + r.zxy, 0) / st.den }),
@@ -783,8 +964,6 @@
       fillTbl($('#t-' + sec), sp.cols, st, { anim: ANIM.has(sec) }); ANIM.delete(sec);
     }
 
-
-    /* ---------- Gráficas de dispersión (SVG animado) ---------- */
     function niceTicks(lo, hi, cnt = 6) {
       const span = (hi - lo) || 1, raw = span / cnt, p = Math.pow(10, Math.floor(Math.log10(raw))), q = raw / p, step = (q <= 1 ? 1 : q <= 2 ? 2 : q <= 5 ? 5 : 10) * p;
       const a = Math.floor(lo / step + 1e-9) * step, out = [];
@@ -814,7 +993,6 @@
     }
     const drawSc2 = anim => scatter('sc2', { means: $('#g-mean').checked, line: $('#g-line').checked, res: $('#g-res').checked, px: S.px !== '' && isFinite(parseFloat(S.px)) ? parseFloat(S.px) : null, anim: anim !== false });
 
-    /* ---------- Tabla de datos y sumas ---------- */
     const escA = t => String(t).replace(/"/g, '&quot;');
     function renderDataBody() {
       const t = $('#d-tbl');
@@ -830,7 +1008,6 @@
       $('#sums').innerHTML = [c(P.n, T`n = ${st.n}`, CN), c(P.sx, T`\sum x = ${f2(st.sx)}`, CX), c(P.sy, T`\sum y = ${f2(st.sy)}`, CY), c(P.sxy, T`\sum xy = ${f2(st.sxy)}`, CR), c(P.sx2, T`\sum x^2 = ${f2(st.sx2)}`, CX), c(P.sy2, T`\sum y^2 = ${f2(st.sy2)}`, CY), c(P.mx, T`\bar{x} = ${f2(st.mx)}`, CX), c(P.my, T`\bar{y} = ${f2(st.my)}`, CY)].join('');
     }
 
-    /* ---------- Sección 6: recta, tarjetas, predicción ---------- */
     function renderPred() {
       const st = ST, v = parseFloat(String(S.px).replace(',', '.')), box = $('#pred');
       if (S.px === '' || !isFinite(v)) { box.innerHTML = '<div class="small text-muted">Escribe un valor de $x$ para ver el punto en la gráfica.</div>'; math(box); return; }
@@ -851,7 +1028,6 @@
       const w = $('#w-reg'); w.style.setProperty('--mc', CB); fillTbl($('#t-reg'), ['yh', 'e', 'e2'], st, { anim: !!anim });
     }
 
-    /* ---------- Formulario (modal) ---------- */
     function renderForm() {
       const popDep = (sec, v) => sec === 'cov' || (sec === 'r' && (v === 'cov' || v === 'z')) || (sec === 'm' && (v === 'cov' || v === 'r'));
       let h = '<p class="small text-muted">Cada fórmula se calcula con las mismas columnas de la página; «Muestra» divide entre $n-1$ y «Población» entre $N$. Las fórmulas marcadas con <i class="bi bi-star-fill text-warning"></i> son las de tu hoja.</p>';
@@ -873,7 +1049,6 @@
       $('#form-wrap').innerHTML = h; math($('#form-wrap'));
     }
 
-    /* ---------- Teoremas y fundamentos (modal) ---------- */
     const TABS = [['fund', 'Fundamentos', 'bi-book', '#0b7285'], ['cov', 'Covarianza', 'bi-bullseye', CC], ['r', 'Pearson', 'bi-link-45deg', CR], ['ls', 'Mínimos cuadrados', 'bi-graph-up', CM], ['int', 'Interpretación y cuidados', 'bi-lightbulb', '#f08c00']];
     const card = (c, title, body) => `<div class="theo-card" style="--c:${c}"><h6>${title}</h6>${body}</div>`;
     function theoHtml(tab) {
@@ -883,8 +1058,12 @@
         + card('#e8590c', 'Supuestos del modelo lineal', String.raw`<ul><li>La relación entre $X$ y $Y$ es aproximadamente <em>lineal</em>.</li><li>Los datos son <em>pares</em> $(x_i, y_i)$ medidos en la misma unidad de observación.</li><li>Hay variación en ambas variables ($\sum (x-\bar{x})^2 > 0$ y $\sum (y-\bar{y})^2 > 0$); si todos los $x$ son iguales no se puede trazar la recta.</li><li>Sin valores atípicos extremos que dominen el resultado.</li></ul>`);
       if (tab === 'cov') return card(CC, 'Definición de covarianza', String.raw`<p>La covarianza es el promedio del producto de las desviaciones de cada variable respecto a su media:</p><div class="box">$$s_{xy} = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{n - 1} \qquad σ_{xy} = \frac{\sum_{i=1}^{N} (x_i - μ_x)(y_i - μ_y)}{N}$$</div><p>Se divide entre $n-1$ en muestras (corrección de Bessel: se usaron $\bar{x}$ y $\bar{y}$ estimadas con los mismos datos) y entre $N$ en poblaciones.</p><ul><li><strong>$s_{xy} > 0$:</strong> cuando $x$ está sobre su media, $y$ tiende a estar sobre la suya: relación <em>directa</em>.</li><li><strong>$s_{xy} < 0$:</strong> relación <em>inversa</em>.</li><li><strong>$s_{xy} \approx 0$:</strong> no hay relación <em>lineal</em>.</li><li>Sus unidades son (unidades de $X$) × (unidades de $Y$), por eso su tamaño no dice si la relación es fuerte: de ahí nace $r$.</li></ul>`)
         + card('#7048e8', 'Teorema (fórmula aritmética o de cálculo)', String.raw`<div class="box">$$\sum (x_i - \bar{x})(y_i - \bar{y}) = \sum x_i y_i - n\,\bar{x}\,\bar{y} = \sum xy - \frac{(\sum x)(\sum y)}{n}$$</div><p class="pf"><strong>Demostración.</strong> Se desarrolla el producto y se suma término a término:</p><div class="box pf">$$\sum (x_i y_i - x_i \bar{y} - \bar{x} y_i + \bar{x}\bar{y}) = \sum x_i y_i - \bar{y} \sum x_i - \bar{x} \sum y_i + n\bar{x}\bar{y}$$</div><p class="pf">Como $\sum x_i = n\bar{x}$ y $\sum y_i = n\bar{y}$, queda $\sum xy - n\bar{x}\bar{y} - n\bar{x}\bar{y} + n\bar{x}\bar{y} = \sum xy - n\bar{x}\bar{y}$. Y como $n\bar{x}\bar{y} = \frac{(\sum x)(\sum y)}{n}$ se obtiene la tercera forma. ∎</p><p class="pf">En población equivale a $σ_{xy} = \dfrac{\sum xy}{N} - μ_x μ_y$, que es $E[XY] - E[X]E[Y]$.</p>`) + live(CC, st ? `$\\sum (x-\\bar{x})(y-\\bar{y}) = ${f2(st.Sxy)}$ y $\\sum xy - \\frac{(\\sum x)(\\sum y)}{n} = ${f2(st.sxy - st.sx * st.sy / st.n)}$: son iguales.` : '')
+        + card('#1864ab', '¿Por qué la covarianza aparece con las medias?', String.raw`<p>La covarianza se define como el promedio del producto de las desviaciones respecto a las <strong>medias</strong>:</p><div class="box">$$Cov(X,Y) = E[(X - μ_x)(Y - μ_y)]$$</div><p>Cada término mide <em>hacia dónde se aleja cada observación de su centro</em>. La media es el punto de equilibrio; sin ella no hay "dirección" que medir. Por eso en la fórmula <strong>estándar</strong> aparecen las desviaciones y en la <strong>aritmética</strong> aparece restando el producto de las medias:</p><div class="box">$$Cov(X,Y) = E[XY] - E[X]E[Y] = \frac{\sum xy}{n} - \bar{x}\,\bar{y}$$</div><p>La suma de las desviaciones respecto a la media siempre es cero; la covarianza "rescata" el producto de esas desviaciones que de otro modo se cancelarían.</p>`)
+        + card('#7048e8', '¿Por qué la covarianza está dentro de Pearson?', String.raw`<p>La covarianza mezcla las unidades de X y de Y (kg·cm, por ejemplo). Eso impide juzgar si un valor como 250 es "fuerte". Pearson la <strong>estandariza</strong>:</p><div class="box">$$r = \frac{Cov(X,Y)}{s_x \cdot s_y}$$</div><p>Al dividir entre el producto de las desviaciones estándar se cancelan las unidades y el resultado queda siempre entre −1 y 1. El <strong>signo</strong> de r es exactamente el signo de la covarianza (las desviaciones siempre son positivas). Pearson es covarianza normalizada; sin covarianza no existe r.</p>`)
+        + card('#e03131', '¿Por qué la covarianza está dentro de la pendiente m?', String.raw`<p>La pendiente mide cuánto cambia Y por cada unidad que aumenta X. Esa razón de cambio promedio es exactamente la covarianza dividida entre la varianza de X:</p><div class="box">$$m = \frac{Cov(X,Y)}{Var(X)} = \frac{s_{xy}}{s_x^2} = \frac{S_{xy}}{S_{xx}}$$</div><ul><li>Cov &gt; 0 → X e Y crecen juntas → <strong>m &gt; 0</strong> (recta sube).</li><li>Cov &lt; 0 → X crece mientras Y baja → <strong>m &lt; 0</strong> (recta baja).</li><li>Cov = 0 → sin variación conjunta → <strong>m = 0</strong> (recta horizontal).</li></ul><p>La recta de mínimos cuadrados es, literalmente, <em>la covarianza repartida entre la varianza de X</em>. Por eso la fórmula con sumas <em>n∑xy − (∑x)(∑y)</em> sobre <em>n∑x² − (∑x)²</em> es equivalente: numerador = covarianza·n, denominador = varianza·n.</p>`)
+        + card('#0c8599', '¿Para qué se calcula la covarianza?', String.raw`<ul><li><strong>Detectar variación conjunta:</strong> saber si dos variables se mueven en el mismo sentido o en sentidos opuestos.</li><li><strong>Base del coeficiente de Pearson:</strong> sin covarianza no hay r.</li><li><strong>Base de la recta de regresión:</strong> m = Cov(X,Y) / Var(X); sin covarianza no hay pendiente.</li><li><strong>Varianza de una suma:</strong> Var(X+Y) = Var(X) + Var(Y) + 2·Cov(X,Y). Fundamental en finanzas y estadística multivariante.</li><li><strong>Diversificación de portafolios:</strong> se buscan activos con covarianza baja o negativa para reducir riesgo.</li><li><strong>Matriz de covarianzas:</strong> aparece en PCA, análisis factorial, regresión múltiple y filtros de Kalman.</li><li><strong>Método de los momentos:</strong> es el momento central de orden (1,1), base de muchos estimadores.</li></ul>`)
         + card('#0c8599', 'Propiedades', String.raw`<ul><li><strong>Simétrica:</strong> $\text{Cov}(X,Y) = \text{Cov}(Y,X)$.</li><li><strong>Con ella misma:</strong> $\text{Cov}(X,X) = \text{Var}(X)$.</li><li><strong>Cambio lineal:</strong> $\text{Cov}(aX+b,\ cY+d) = ac\ \text{Cov}(X,Y)$. Sumar constantes no la cambia; multiplicar la escala sí.</li><li><strong>Suma de variables:</strong> $\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y) + 2\,\text{Cov}(X,Y)$.</li><li><strong>Independencia:</strong> si $X$ y $Y$ son independientes, $\text{Cov} = 0$. El recíproco es falso: con $Y = X^2$ y $X$ simétrica alrededor de 0, la covarianza es 0 y aun así $Y$ depende de $X$.</li></ul>`);
-      if (tab === 'r') return card(CR, 'Definición del coeficiente de Pearson', String.raw`<p>Es la covarianza «estandarizada», es decir, dividida entre las desviaciones estándar para quitar las unidades:</p><div class="box">$$r = \frac{s_{xy}}{s_x\, s_y} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\left[\sum (x_i - \bar{x})^2\right]\left[\sum (y_i - \bar{y})^2\right]}} = \frac{\sum z_x z_y}{n - 1}$$</div><p class="pf">Con la notación de sumas de cuadrados la fórmula estándar se escribe:</p><div class="box">$$r = \frac{S_{xy}}{\sqrt{S_{xx} \cdot S_{yy}}} \qquad m = \frac{S_{xy}}{S_{xx}}$$</div><div class="box">$$S_{xy} = \sum (x_i - \bar{x})(y_i - \bar{y}) = \sum xy - \frac{(\sum x)(\sum y)}{n}$$ $$S_{xx} = \sum (x_i - \bar{x})^2 = \sum x^2 - \frac{(\sum x)^2}{n} \qquad S_{yy} = \sum (y_i - \bar{y})^2 = \sum y^2 - \frac{(\sum y)^2}{n}$$</div><p class="pf">Las tres son sumas, no promedios: no se dividen entre $n$ ni entre $n-1$. Por eso $s_{xy} = \frac{S_{xy}}{n-1}$ y $s_x^2 = \frac{S_{xx}}{n-1}$.</p><p class="pf">Los factores $n-1$ del numerador y de las dos desviaciones estándar se cancelan: por eso $r$ vale lo mismo en muestra y en población.</p>`)
+      if (tab === 'r') return card(CR, 'Definición del coeficiente de Pearson', String.raw`<p>Es la covarianza «estandarizada», es decir, dividida entre las desviaciones estándar para quitar las unidades:</p><div class="box">$$r = \frac{s_{xy}}{s_x\, s_y} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\left[\sum (x_i - \bar{x})^2\right]\left[\sum (y_i - \bar{y})^2\right]}} = \frac{\sum z_x z_y}{n - 1}$$</div><p class="pf">Con la notación de sumas de cuadrados la fórmula estándar se escribe:</p><div class="box">$$r = \frac{S_{xy}}{\sqrt{S_{xx} \cdot S_{yy}}} \qquad m = \frac{S_{xy}}{S_{xx}}$$</div><div class="box">$$S_{xy} = \sum (x_i - \bar{x})(y_i - \bar{y}) = \sum xy - \frac{(\sum x)(\sum y)}{n}$$ $$S_{xx} = \sum (x_i - \bar{x})^2 = \sum x^2 - \frac{(\sum x)^2}{n} \qquad S_{yy} = \sum (y_i - \bar{y})^2 = \sum y^2 - \frac{(\sum y)^2}{n}$$</div><p class="pf">Las tres son sumas, no promedios: no se dividen entre $n$ ni entre $n-1$. Por eso $s_{xy} = \frac{S_{xy}}{n-1}$ y $s_x^2 = \frac{S_{xx}}{n-1}$.</p><p class="pf">Los factores $n-1$ del numerador y de las dos desviaciones estándar se cancelan: por eso $r$ vale lo mismo en muestra y en población.</p>`) 
         + card('#7048e8', 'De la forma con desviaciones a la forma con sumas (tu fórmula)', String.raw`<p class="pf">Se sustituyen $\sum (x-\bar{x})(y-\bar{y}) = \sum xy - \frac{(\sum x)(\sum y)}{n}$ y $\sum (x-\bar{x})^2 = \sum x^2 - \frac{(\sum x)^2}{n}$ (igual para $y$). Al multiplicar numerador y denominador por $n$:</p><div class="box">$$r = \frac{n\sum xy - (\sum x)(\sum y)}{\sqrt{\left[n\sum x^2 - (\sum x)^2\right]\left[n\sum y^2 - (\sum y)^2\right]}}$$</div><p class="pf">Dentro de la raíz, el producto de los dos corchetes queda multiplicado por $n^2$; al extraer la raíz sale $n$, que es justo el factor con el que se multiplicó el numerador. ∎</p>`)
         + card('#e03131', 'Teorema: −1 ≤ r ≤ 1', String.raw`<p class="pf"><strong>Demostración.</strong> Con los puntajes z, $\sum z_x^2 = n-1$ y $\sum z_y^2 = n-1$ (cada variable estandarizada tiene varianza 1). Como un cuadrado nunca es negativo:</p><div class="box">$$0 \le \sum (z_x \pm z_y)^2 = \sum z_x^2 \pm 2\sum z_x z_y + \sum z_y^2 = 2(n-1) \pm 2(n-1)\,r = 2(n-1)(1 \pm r)$$</div><p class="pf">Entonces $1 + r \ge 0$ y $1 - r \ge 0$, es decir, $-1 \le r \le 1$. ∎ (Es la desigualdad de Cauchy–Schwarz.) La igualdad ocurre solo si $z_x = \mp z_y$ en todos los pares, o sea, si <em>todos los puntos están exactamente sobre una recta</em>.</p>`) + live(CR, st ? `$\\sum z_x^2 = ${f2(st.rows.reduce((a, q) => a + q.zx * q.zx, 0))}$ y $n - 1 = ${st.n - 1}$ (o $N = ${st.n}$ si es población).` : '')
         + card('#2f9e44', 'Otras propiedades', String.raw`<ul><li><strong>Sin unidades:</strong> no cambia si se pasa de metros a centímetros.</li><li><strong>Invariancia lineal:</strong> $r(aX+b,\ cY+d) = \text{signo}(ac)\cdot r(X,Y)$.</li><li><strong>Simétrica:</strong> $r(X,Y) = r(Y,X)$.</li><li><strong>$r = 1$:</strong> recta perfecta creciente; <strong>$r = -1$:</strong> recta perfecta decreciente; <strong>$r = 0$:</strong> sin relación lineal.</li><li><strong>Prueba de significancia (opcional):</strong> para $H_0\!: ρ = 0$ se usa $t = r\sqrt{\dfrac{n-2}{1-r^2}}$ con $n-2$ grados de libertad.</li></ul>`);
@@ -903,7 +1082,6 @@
       $('#theo-body').innerHTML = theoHtml(tab); math($('#theo-body'));
     }
 
-    /* ---------- Actualización general ---------- */
     const validNum = v => isFinite(parseFloat(String(v).replace(',', '.')));
     function update(o = {}) {
       POPS = {}; PID = 0; hideAllPops();
@@ -920,7 +1098,6 @@
       math(document.body); initPops();
     }
 
-    /* ---------- Eventos ---------- */
     const EX = { xs: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], ys: ['52', '55', '61', '60', '68', '72', '75', '80', '79', '88'] };
     const rnd = (a, b) => a + Math.random() * (b - a);
     function gen(kind) {
@@ -955,13 +1132,132 @@
     const navLinks = $$('#sec-nav a'), io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
     $$('section.lesson').forEach(s => io.observe(s));
 
-    /* ---------- Arranque ---------- */
     $('#hero-bars').innerHTML = [30, 48, 70, 92, 100, 80, 58, 38, 22].map((h, i) => `<span style="--h:${h}%;--i:${i}"></span>`).join('');
-    /* Datos temporales del navegador: la tabla (x, y) de ejemplo se usa hasta que el usuario capture otra */
     AulaDatos.controls({ early: true });
     AulaDatos.link('S', S, ['xs', 'ys', 'pop', 'v', 'px']);
     renderForm();
     update({ anim: true });
+
+    /* ============================================================
+       NUEVOS MODALES: ELEMENTOS DE CORRELACIÓN Y RECTA INTERACTIVA
+       ============================================================ */
+    document.addEventListener('click', e => {
+      const btnCorr = e.target.closest('[data-modal="correlacion"]');
+      const btnRecta = e.target.closest('[data-modal="recta"]');
+      if (btnCorr) { hideAllPops(); bootstrap.Modal.getOrCreateInstance(document.getElementById('correlacionModal')).show(); }
+      if (btnRecta) { hideAllPops(); bootstrap.Modal.getOrCreateInstance(document.getElementById('rectaModal')).show(); }
+    });
+
+    (function initRectaInteractiva() {
+      const modal = document.getElementById('rectaModal');
+      if (!modal) return;
+      const sliderM = document.getElementById('slider-m');
+      const sliderB = document.getElementById('slider-b');
+      const valM = document.getElementById('val-m');
+      const valB = document.getElementById('val-b');
+      const linea = document.getElementById('recta-linea');
+      const puntoB = document.getElementById('punto-b');
+      const labelB = document.getElementById('label-b');
+      const eqText = document.getElementById('eq-text');
+      const grid = document.getElementById('recta-grid');
+      const X_MIN = -5, X_MAX = 10, Y_MIN = -10, Y_MAX = 10;
+      const margenIzq = 40, margenDer = 15, margenSup = 15, margenInf = 50;
+      const svgW = 500, svgH = 320;
+      const anchoUtil = svgW - margenIzq - margenDer;
+      const altoUtil = svgH - margenSup - margenInf;
+      const dataToPxX = x => margenIzq + ((x - X_MIN) / (X_MAX - X_MIN)) * anchoUtil;
+      const dataToPxY = y => margenSup + altoUtil - ((y - Y_MIN) / (Y_MAX - Y_MIN)) * altoUtil;
+
+      function dibujarCuadricula() {
+        if (!grid) return;
+        let html = '';
+        for (let x = Math.ceil(X_MIN); x <= X_MAX; x++) {
+          const px = dataToPxX(x);
+          html += `<line class="grid-line" x1="${px}" y1="${margenSup}" x2="${px}" y2="${svgH - margenInf}" opacity=".35"/>`;
+        }
+        for (let y = Math.ceil(Y_MIN); y <= Y_MAX; y++) {
+          const py = dataToPxY(y);
+          html += `<line class="grid-line" x1="${margenIzq}" y1="${py}" x2="${svgW - margenDer}" y2="${py}" opacity=".35"/>`;
+        }
+        for (let x = -4; x <= 10; x += 2) {
+          if (x === 0) continue;
+          html += `<text x="${dataToPxX(x)}" y="${svgH - margenInf + 14}" text-anchor="middle" font-size="10" fill="#64748b">${x}</text>`;
+        }
+        for (let y = -10; y <= 10; y += 5) {
+          if (y === 0) continue;
+          html += `<text x="${margenIzq - 6}" y="${dataToPxY(y) + 3}" text-anchor="end" font-size="10" fill="#64748b">${y}</text>`;
+        }
+        grid.innerHTML = html;
+      }
+
+      function actualizarRecta() {
+        const m = parseFloat(sliderM.value);
+        const b = parseFloat(sliderB.value);
+        valM.textContent = m.toFixed(2);
+        valB.textContent = b.toFixed(2);
+        eqText.textContent = `Y = ${m.toFixed(2)}·X ${b >= 0 ? '+' : '−'} ${Math.abs(b).toFixed(2)}`;
+        const x1 = X_MIN, y1 = m * x1 + b;
+        const x2 = X_MAX, y2 = m * x2 + b;
+        linea.setAttribute('x1', dataToPxX(x1));
+        linea.setAttribute('y1', dataToPxY(y1));
+        linea.setAttribute('x2', dataToPxX(x2));
+        linea.setAttribute('y2', dataToPxY(y2));
+        const pxB = dataToPxX(0);
+        const pyB = dataToPxY(b);
+        puntoB.setAttribute('cx', pxB);
+        puntoB.setAttribute('cy', pyB);
+        labelB.setAttribute('x', pxB + 8);
+        labelB.setAttribute('y', pyB - 8);
+        labelB.textContent = `(0, ${b.toFixed(2)})`;
+      }
+
+      sliderM.addEventListener('input', actualizarRecta);
+      sliderB.addEventListener('input', actualizarRecta);
+      document.getElementById('reset-recta')?.addEventListener('click', () => {
+        sliderM.value = 1;
+        sliderB.value = 0;
+        actualizarRecta();
+      });
+      modal.addEventListener('shown.bs.modal', () => {
+        dibujarCuadricula();
+        actualizarRecta();
+      });
+      dibujarCuadricula();
+      actualizarRecta();
+    })();
+
+    /* ============================================================
+       FIX: mantener el nav de secciones pegado al scroll
+       ============================================================ */
+    (function fixSecNav() {
+      const nav = document.getElementById('sec-nav');
+      if (!nav) return;
+      function computeTop() {
+        const fixed = document.querySelector('.app-navbar, .navbar.fixed-top, header.fixed-top');
+        let offset = 0;
+        if (fixed) {
+          const s = getComputedStyle(fixed);
+          if (s.position === 'fixed' || s.position === 'sticky') {
+            offset = Math.round(fixed.getBoundingClientRect().height);
+          }
+        }
+        nav.style.top = offset + 'px';
+        document.documentElement.style.setProperty('--sec-nav-h', nav.offsetHeight + 'px');
+      }
+      computeTop();
+      window.addEventListener('resize', computeTop, { passive: true });
+      window.addEventListener('load', computeTop, { once: true });
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const topOffset = parseFloat(nav.style.top) || 0;
+          nav.classList.toggle('is-stuck', nav.getBoundingClientRect().top <= topOffset + 1);
+          ticking = false;
+        });
+      }, { passive: true });
+    })();
 
 </script>
 </body>
