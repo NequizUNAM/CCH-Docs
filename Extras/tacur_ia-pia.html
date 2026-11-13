@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IA, para el PIA · Taller de recursos interactivos</title>
+<script type="text/javascript" nonce="003ad34e69274fee93c645d4dd5" src="//local.adguard.org?ts=1794612909037&amp;type=content-script&amp;dmn=f11d9de9-f808-4a84-9c82-0e2430a33622.frame.claudeusercontent.com&amp;url=https%3A%2F%2Ff11d9de9-f808-4a84-9c82-0e2430a33622.frame.claudeusercontent.com%2F_f%2F1794613576-243d%2F_src%2Findex.html%3F__frame_t%3DW3Xsjyh9EzgzVxeqfSSq1kex.a4d1d127-496c-4361-8ac9-bf9c0fb48ad2.bb4c77f9-058f-4a70-a0a6-8dc3879494d9.1794617177&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="003ad34e69274fee93c645d4dd5" src="//local.adguard.org?ts=1794612909037&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Literata:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f4f7;--s:#fff;--ink:#14192b;--mut:#566074;--ln:#d5d9e2;--bl:#00205b;--blS:#dce4f4;--go:#e8a900;--goS:#fbf0cd;--ok:#1b7a4a;--okS:#d8f0e2;--no:#b13a2c;--noS:#f6dfdb;--hd:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--bd:"Literata",Georgia,serif;--r:12px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1424;--s:#182038;--ink:#eef1f8;--mut:#a3adc4;--ln:#2d3757;--bl:#9db8ff;--blS:#222d52;--go:#f2b705;--goS:#3a3213;--ok:#6fd59b;--okS:#173a2a;--no:#ff8f80;--noS:#43211d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1424;--s:#182038;--ink:#eef1f8;--mut:#a3adc4;--ln:#2d3757;--bl:#9db8ff;--blS:#222d52;--go:#f2b705;--goS:#3a3213;--ok:#6fd59b;--okS:#173a2a;--no:#ff8f80;--noS:#43211d;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:calc(70px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 var(--bd)}
+h1,h2,h3{font-family:var(--hd);line-height:1.15;margin:0 0 .5em;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800}h2{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:700}h3{font-size:1.15rem}
+p{margin:0 0 .8em;max-width:68ch}.mut{color:var(--mut)}.sm{font-size:.9rem}
+.w{max-width:1000px;margin:0 auto;padding:0 18px}section{padding:56px 0 8px}
+nav{position:sticky;top:0;z-index:9;background:var(--bl);padding-top:env(safe-area-inset-top,0px);border-bottom:3px solid var(--go)}
+nav .w{display:flex;gap:4px;align-items:center;overflow-x:auto;min-height:52px}
+nav b{font-family:var(--hd);color:#fff;margin-right:auto;white-space:nowrap}
+nav a{color:#dfe7fb;text-decoration:none;font:500 .88rem var(--hd);padding:8px 10px;border-radius:8px;white-space:nowrap}nav a:hover{background:rgba(255,255,255,.14)}
+:where(button,select,input,textarea,a):focus-visible{outline:3px solid var(--go);outline-offset:2px}
+button,select,input,textarea{font:inherit;color:var(--ink)}
+.btn{font:600 .92rem var(--hd);padding:9px 16px;border-radius:9px;border:1px solid var(--ln);background:var(--s);cursor:pointer;transition:transform .12s,background .15s}
+.btn:active{transform:scale(.96)}.btn.p{background:var(--bl);border-color:var(--bl);color:var(--bg)}
+.chip{font:500 .88rem var(--hd);padding:6px 13px;border-radius:99px;border:1px solid var(--ln);background:var(--s);cursor:pointer;transition:all .15s}
+.chip[aria-pressed=true]{background:var(--bl);color:var(--bg);border-color:var(--bl)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card{background:var(--s);border:1px solid var(--ln);border-radius:var(--r);padding:20px}
+.g{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+/* hero */
+.hero{padding:44px 0 20px}.hero .sub{font:500 1.2rem var(--hd);color:var(--bl);margin-bottom:20px}
+.term{background:#0d1530;color:#e9eefc;border-radius:var(--r);padding:18px;font:.86rem/1.7 ui-monospace,Menlo,Consolas,monospace;min-height:250px;border-top:4px solid var(--go)}
+.term .ln{opacity:0;transform:translateY(8px);animation:in .5s forwards;margin-bottom:4px}
+.term b{display:inline-block;min-width:2.4em;text-align:center;border-radius:5px;padding:0 6px;margin-right:8px;color:#0d1530;font-weight:700}
+@keyframes in{to{opacity:1;transform:none}}
+.picker{margin:22px 0 0}
+/* timeline */
+.tl{display:grid;gap:10px}
+.ses{background:var(--s);border:1px solid var(--ln);border-left:6px solid var(--bl);border-radius:var(--r);padding:0}
+.ses button{all:unset;display:flex;gap:12px;align-items:center;width:100%;padding:14px 18px;cursor:pointer;box-sizing:border-box;font:600 1.02rem var(--hd)}
+.ses .d{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s}.ses.on .d{grid-template-rows:1fr}
+.ses .d>div{overflow:hidden;padding:0 18px}.ses.on .d>div{padding-bottom:14px}.ses.on{border-left-color:var(--go)}
+.n{background:var(--bl);color:var(--bg);border-radius:50%;width:30px;height:30px;display:grid;place-items:center;flex:none;font-size:.9rem}
+/* match */
+.fm{border:1px solid var(--ln);border-radius:var(--r);padding:14px;background:var(--s);transition:all .3s}
+.fm.hit{border-color:var(--go);background:var(--goS);transform:translateY(-3px)}.fm.dim{opacity:.4}
+/* methods */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;margin-bottom:8px;animation:in .4s both;cursor:pointer}
+.pt:hover{filter:brightness(.97)}.pt i{font:800 1rem var(--hd);font-style:normal;min-width:1.4em}
+.c0{background:#dce4f4;color:#0b2a66}.c1{background:#fbf0cd;color:#6b4b00}.c2{background:#d8f0e2;color:#0f5a34}.c3{background:#f6dfdb;color:#7e2418}.c4{background:#e9dcf6;color:#4b2273}.c5{background:#d9eef2;color:#0b5565}
+.pre{background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:14px;font:.84rem/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;margin:0}
+/* wizard */
+.bar{height:8px;background:var(--ln);border-radius:9px;overflow:hidden;margin-bottom:16px}.bar i{display:block;height:100%;width:0;background:var(--go);transition:width .5s}
+.st{animation:in .4s both}label{display:block;font:600 .86rem var(--hd);margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--ln);border-radius:9px;background:var(--bg)}textarea{min-height:64px;resize:vertical}
+/* ex */
+.ex{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--ln)}
+@media(max-width:600px){.ex{grid-template-columns:1fr}}
+.ex.ok{background:var(--okS)}.ex.bad{background:var(--noS);animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:12px;border:1px solid var(--ln);border-radius:10px;background:var(--s);cursor:pointer;font-size:.92rem}
+.opt.ok{background:var(--okS);border-color:var(--ok)}.opt.bad{background:var(--noS);border-color:var(--no)}
+.fb{margin-top:8px;padding:10px 12px;border-radius:9px;background:var(--goS);font-size:.92rem;animation:in .3s both}
+.ck{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--ln);cursor:pointer;margin:0;font:400 1rem var(--bd)}.ck input{width:20px;height:20px;margin-top:3px;accent-color:var(--bl)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;opacity:0;transition:.25s;pointer-events:none;z-index:20}.toast.on{opacity:1;transform:translate(-50%,0)}
+footer{padding:36px 0 60px;color:var(--mut);font-size:.88rem}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<nav><div class="w"><b>IA, para el PIA</b><a href="#ruta">Ruta</a><a href="#formatos">Formatos</a><a href="#metodos">Métodos de prompt</a><a href="#taller">Taller</a><a href="#ejercicios">Ejercicios</a><a href="#cotejo">Cotejo</a></div></nav>
+
+<header class="w hero">
+  <div class="sub">Curso intersemestral para asesoras y asesores · 18 al 22 de enero de 2027 · 20 h en línea</div>
+  <h1>Convierte una actividad tuya en un recurso interactivo</h1>
+  <p class="mut">Cinco sesiones para diseñar, generar con IA, probar y ajustar un recurso para tu asignatura. Elige tu disciplina y la página adapta ejemplos, métodos y ejercicios.</p>
+  <div class="row picker" id="disc" role="group" aria-label="Disciplina"></div>
+  <div class="term" id="term" aria-live="polite" style="margin-top:20px"></div>
+</header>
+
+<main class="w">
+<section id="ruta"><h2>Ruta del curso</h2><p class="mut">Toca una sesión para ver qué haces y qué entregas.</p><div class="tl" id="tl"></div></section>
+
+<section id="formatos"><h2>Formatos y operaciones intelectuales</h2><p class="mut">Módulos 1 y 2. Elige la operación que quieres observar y verás qué formatos la favorecen.</p>
+<div class="row" id="ops" role="group" aria-label="Operación"></div>
+<div class="g" id="fmts" style="margin-top:16px"></div><p class="fb" id="mhint" style="margin-top:14px"></p></section>
+
+<section id="metodos"><h2>Métodos de prompt, adaptados a la docencia</h2>
+<p class="mut">Cada método es una lista de piezas. Toca una pieza para ver cómo se escribe en tu disciplina y cómo se arma el prompt completo.</p>
+<div class="tabs" id="mt" role="group" aria-label="Método"></div>
+<div class="g"><div class="card"><div id="mparts"></div></div>
+<div class="card"><h3>Cuándo usarlo en el aula</h3><p id="muse"></p><h3>Prompt resultante</h3><pre class="pre" id="mpre"></pre><div class="row" style="margin-top:10px"><button class="btn" id="mcopy">Copiar</button></div></div></div></section>
+
+<section id="taller"><h2>Taller paso a paso</h2><p class="mut">Sigue el orden del curso. Al final obtienes un prompt listo, basado en CRISP con etiquetas, para pegar en Gemini, ChatGPT o Muse.</p>
+<div class="card"><div class="bar"><i id="wbar"></i></div><div id="wiz"></div><div class="row" style="margin-top:16px;justify-content:space-between"><button class="btn" id="wprev">Anterior</button><button class="btn p" id="wnext">Siguiente</button></div></div></section>
+
+<section id="ejercicios"><h2>Ejercicios</h2>
+<div class="g" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+<div class="card"><h3>1. Clasifica las piezas de CRISP</h3><p class="sm mut">¿A qué letra corresponde cada fragmento? Contexto, Rol, Instrucciones, Steps (pasos), Propósito.</p><div id="e1"></div><div class="row" style="margin-top:12px"><button class="btn p" id="e1b">Revisar</button><span id="e1r" class="sm"></span></div></div>
+<div class="card"><h3>2. ¿Cuál prompt funciona mejor?</h3><p class="sm mut" id="e2c"></p><div id="e2"></div></div></div></section>
+
+<section id="cotejo"><h2>Lista de cotejo para probar tu prototipo</h2><p class="mut">Sesión 4. Marca lo que ya verificaste.</p>
+<div class="card"><div class="bar"><i id="cbar"></i></div><div id="ck"></div><p class="fb" id="cmsg"></p></div></section>
+</main>
+
+<footer><div class="w"><p>Evaluación: ficha de diseño 20 %, guion e instrucciones 20 %, prototipo y registro de prueba 25 %, recurso final y ficha de aplicación 35 %.</p>
+<p>Base: Grupo Académico de IAGen UNAM (2025), <em>Recomendaciones para el uso educativo de la inteligencia artificial generativa en la UNAM</em>. Verifica siempre el contenido generado y no incluyas datos personales de estudiantes en tus prompts.</p>
+<p>Diseño: Pedro Ernesto Nequiz Medina y Elsa Rodríguez Saldaña · CCH-UNAM · PIA.</p></div></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+const $=(s,r=document)=>r.querySelector(s),H=(el,h)=>{el.innerHTML=h};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let tt;const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),2200)};
+const copy=async t=>{try{await navigator.clipboard.writeText(t);toast("Copiado")}catch{toast("No se pudo copiar")}};
+const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+/* ---- datos ---- */
+const D={
+ mat:{n:"Matemáticas",m:"Matemáticas",tema:"la pendiente de una recta",niv:"3.er semestre",ap:"Interpreta la pendiente como razón de cambio",op:"interpretar",fmt:"simulación con deslizadores",prop:"relacionen la gráfica con la pendiente antes de resolver ejercicios",ej:"Si la pendiente es −2, ¿qué pasa con y cuando x aumenta en 1?"},
+ his:{n:"Historia",m:"Historia de México",tema:"causas de la Revolución mexicana",niv:"4.º semestre",ap:"Ordena procesos y explica sus causas",op:"ordenar",fmt:"línea del tiempo interactiva",prop:"expliquen cómo un hecho condiciona al siguiente",ej:"Arrastra el Plan de San Luis a su lugar y justifica por qué va ahí."},
+ bio:{n:"Biología",m:"Biología",tema:"fases de la mitosis",niv:"2.º semestre",ap:"Clasifica las fases según los eventos celulares",op:"clasificar",fmt:"arrastrar y soltar",prop:"identifiquen errores frecuentes antes del examen",ej:"Los cromosomas se alinean en el ecuador de la célula: ¿qué fase es?"},
+ lec:{n:"Lectura y redacción",m:"Taller de Lectura, Redacción e Iniciación a la Investigación Documental",tema:"idea central y detalles de un texto",niv:"1.er semestre",ap:"Infiere la idea central de un texto expositivo",op:"inferir",fmt:"completar con pistas",prop:"practiquen la inferencia con retroalimentación inmediata",ej:"Subraya la oración que sostiene el resto del párrafo."},
+ qui:{n:"Química",m:"Química",tema:"balanceo de ecuaciones",niv:"3.er semestre",ap:"Aplica la conservación de la masa al balancear",op:"aplicar",fmt:"escenario de toma de decisiones",prop:"detecten por qué falla un balanceo",ej:"H₂ + O₂ → H₂O: ¿qué coeficiente falta en el producto?"},
+ ing:{n:"Inglés",m:"Inglés",tema:"present perfect vs. simple past",niv:"4.º semestre",ap:"Justifica el uso del tiempo verbal según el contexto",op:"justificar",fmt:"relacionar",prop:"elijan el tiempo verbal y expliquen su decisión",ej:"“I have visited Oaxaca” o “I visited Oaxaca last year”: ¿por qué?"}
+};
+const SES=[
+ ["El qué y el para qué","Exploras dos ejemplos de interacción, revisas el repertorio de formatos y comparas dos para tu actividad.","Ficha con actividad, formato, justificación y producto esperado."],
+ ["Guion e instrucciones para la IA","Bosquejas pantallas, instrucciones al estudiante, respuestas esperadas, errores previsibles y pistas.","Guion e instrucciones de generación."],
+ ["Primer prototipo","Aplicas tus instrucciones en un asistente de IA, publicas en GitHub y ajustas de forma gradual.","Prototipo funcional y un ajuste pendiente."],
+ ["Prueba y hallazgos","Revisas claridad, contenido, navegación y uso en celular; intercambias prototipos.","Hallazgos registrados y ajustes propuestos."],
+ ["Ajuste, aplicación y seguimiento","Corriges, vuelves a probar y describes el recurso con metadatos y su uso en clase.","Recurso final y ficha de aplicación para el Portal Académico."]];
+const OPS=["clasificar","ordenar","interpretar","inferir","aplicar","explicar","justificar"];
+const FM=[["Arrastrar y soltar",["clasificar","ordenar"],"La respuesta se ve en la posición que elige el estudiante."],["Completar",["explicar","justificar","aplicar"],"Obliga a producir una palabra, cifra o razón."],["Relacionar",["clasificar","interpretar","justificar"],"Une conceptos con ejemplos, causas o definiciones."],["Imagen o mapa explorable",["interpretar","inferir"],"Pistas escondidas en zonas de una imagen."],["Línea del tiempo",["ordenar","explicar"],"Secuencia y causalidad de procesos."],["Video interactivo",["interpretar","inferir"],"Pausas con preguntas sobre lo observado."],["Simulación",["aplicar","inferir","interpretar"],"Cambia variables y observa consecuencias."],["Escenarios",["aplicar","justificar"],"Decisiones con consecuencias; pide justificar."]];
+const MET=[
+ {k:"APEX",use:"Ediciones rápidas: qué, para qué y con qué experiencia.",p:[["A","Acción","accion"],["P","Propósito","pro"],["E","Experiencia","rol"]]},
+ {k:"TAKE",use:"Cuando tienes un ítem modelo que la IA debe imitar.",p:[["T","Tarea","tarea"],["A","Acción (salida)","sal"],["K","Conocimiento","kn"],["E","Ejemplo","ej"]]},
+ {k:"CRISP",use:"El más completo para recursos: casi toda tu ficha cabe aquí.",p:[["C","Contexto","ctx"],["R","Rol","rol"],["I","Instrucciones","ins"],["S","Steps (pasos)","pas"],["P","Propósito","pro"]]},
+ {k:"RACE",use:"Pedir un componente suelto, como un solo ítem o un quiz.",p:[["R","Rol","rol"],["A","Acción","accion"],["C","Contexto","ctx"],["E","Expectativa","exp"]]},
+ {k:"PROMPT",use:"Cuando el estilo y el formato final importan tanto como el contenido.",p:[["P","Persona (estudiante)","per"],["R","Rol","rol"],["O","Objetivo","pro"],["M","Modo (tono)","modo"],["P","Paso a paso","pas"],["T","Tipo de salida","sal"]]},
+ {k:"TARS",use:"Casos situados: aula sin internet, proyector, asesoría breve.",p:[["T","Tarea","tarea"],["A","Acción","accion"],["R","Rol","rol"],["S","Scenario","esc"]]}];
+const PT=d=>({accion:`Crea un recurso interactivo de tipo ${d.fmt}`,pro:`Para que el estudiantado ${d.prop}`,rol:`Eres docente de ${d.m} y desarrollador front-end que cuida la accesibilidad`,tarea:`Recurso sobre ${d.tema} para ${d.niv}`,sal:`Archivo único .html, en español, responsivo, que funcione en celular`,kn:`Aprendizaje del Programa: ${d.ap}`,ej:`Ítem modelo: ${d.ej}`,ctx:`Bachillerato CCH, ${d.niv}; se usa en asesoría y en clase`,ins:`Usa solo el material que adjunto y marca con (verificar) lo que dudes`,pas:`1) esquema de pantallas, 2) interacción, 3) pistas y retroalimentación, 4) verificar en celular`,exp:`Retroalimentación que explique el porqué; sin datos inventados`,per:`Estudiantes de ${d.niv}, sin sesión iniciada`,modo:`Tono cercano y sobrio, instrucciones breves`,esc:`Estudiante en celular, 10 minutos, sin acompañamiento`});
+const E1=[["Para que el estudiantado practique antes del examen","P"],["Estudiantes de 4.º semestre; se usará en celular","C"],["Eres docente de Química con experiencia en bachillerato","R"],["1) esquema, 2) pantallas, 3) retroalimentación, 4) verificación","S"],["Genera 5 ítems y usa solo el material adjunto","I"]];
+const E2=[["Haz una página sobre fracciones.","Crea fracciones.html para 1.er semestre: relacionar fracción y representación, con pista tras el primer error y explicación al final.",1,"El segundo fija nivel, formato, operación y retroalimentación."],["Eres docente de Biología. Genera 8 ítems de mitosis con el PDF adjunto. Si no puedes verificar un dato, márcalo.","Genera ítems de mitosis, inventa los datos que falten.",0,"Pedir marcar lo dudoso reduce invenciones."],["Incluye el nombre y la calificación de mis estudiantes de 2.º A para personalizar.","Usa un ejemplo genérico, sin nombres ni calificaciones reales.",1,"No se comparten datos personales con la IA."]];
+const CK=["Todas las interacciones responden al primer toque","La retroalimentación explica, no solo dice correcto o incorrecto","El contenido coincide con el material verificado","Se ve y se usa bien en celular vertical","Se puede navegar con teclado y el contraste es suficiente","Las instrucciones al estudiante son claras","Hay créditos y atribución de materiales","No hay datos personales"];
+
+/* ---- estado ---- */
+let cur="mat",mi=2,ws=0,tm=[];const W={};
+const d=()=>D[cur];
+
+/* ---- hero ---- */
+const COL=["#9db8ff","#f2b705","#6fd59b","#ff8f80","#d6b6ff"];
+function hero(){tm.forEach(clearTimeout);tm=[];const t=$("#term"),p=PT(d()),m=MET[2];H(t,`<div style="opacity:.6;margin-bottom:8px">prompt · CRISP · ${esc(d().n)}</div>`);
+ m.p.forEach(([l,n,k],i)=>{const go=()=>t.insertAdjacentHTML("beforeend",`<div class="ln"><b style="background:${COL[i]}">${l}</b>${esc(p[k])}</div>`);still?go():tm.push(setTimeout(go,500+i*750))})}
+function discUI(){H($("#disc"),Object.entries(D).map(([k,v])=>`<button class="chip" aria-pressed="${k===cur}" data-d="${k}">${v.n}</button>`).join(""))}
+$("#disc").onclick=e=>{const b=e.target.closest("[data-d]");if(!b)return;cur=b.dataset.d;Object.assign(W,defW());discUI();hero();meth();wiz();ex();toast("Disciplina: "+d().n)};
+
+/* ---- ruta ---- */
+H($("#tl"),SES.map((s,i)=>`<div class="ses"><button aria-expanded="false"><span class="n">${i+1}</span>${s[0]}</button><div class="d"><div><p>${s[1]}</p><p class="sm mut"><b>Entrega:</b> ${s[2]}</p></div></div></div>`).join(""));
+$("#tl").onclick=e=>{const b=e.target.closest("button");if(!b)return;const s=b.parentElement,o=s.classList.toggle("on");b.setAttribute("aria-expanded",o)};
+
+/* ---- formatos ---- */
+let op=null;
+function fmts(){H($("#ops"),OPS.map(o=>`<button class="chip" aria-pressed="${o===op}" data-o="${o}">${o}</button>`).join(""));
+ H($("#fmts"),FM.map(f=>`<div class="fm ${op?(f[1].includes(op)?"hit":"dim"):""}"><h3>${f[0]}</h3><p class="sm" style="margin:0">${f[2]}</p></div>`).join(""));
+ H($("#mhint"),op?`Para <b>${op}</b> en ${esc(d().n)}: ${FM.filter(f=>f[1].includes(op)).map(f=>f[0]).join(", ")}. Tu disciplina sugiere <b>${esc(d().fmt)}</b> para “${esc(d().tema)}”.`:`Elige una operación. En ${esc(d().n)} una combinación posible: ${esc(d().op)} con ${esc(d().fmt)}.`)}
+$("#ops").onclick=e=>{const b=e.target.closest("[data-o]");if(b){op=op===b.dataset.o?null:b.dataset.o;fmts()}};
+
+/* ---- métodos ---- */
+function meth(){const m=MET[mi],p=PT(d());
+ H($("#mt"),MET.map((x,i)=>`<button class="chip" aria-pressed="${i===mi}" data-m="${i}">${x.k}</button>`).join(""));
+ H($("#mparts"),m.p.map(([l,n,k],i)=>`<div class="pt c${i}" style="animation-delay:${i*70}ms" data-k="${k}" tabindex="0"><i>${l}</i><div><b>${n}</b><div class="sm">${esc(p[k])}</div></div></div>`).join(""));
+ H($("#muse"),m.use);$("#mpre").textContent=m.p.map(([l,n,k])=>`${n}: ${p[k]}.`).join("\n")}
+$("#mt").onclick=e=>{const b=e.target.closest("[data-m]");if(b){mi=+b.dataset.m;meth()}};
+$("#mcopy").onclick=()=>copy($("#mpre").textContent);
+
+/* ---- taller ---- */
+const defW=()=>({ap:d().ap,fmt:d().fmt,op:d().op,pant:"Pantalla 1: instrucción y primer ítem. Pantalla 2: pista. Pantalla 3: cierre con explicación.",resp:"",err:"",pista:"",mat:"",met:"CRISP"});
+Object.assign(W,defW());
+const STEPS=[
+ ["Ficha de diseño","Define qué aprendizaje trabajas y con qué formato.",[["ap","Aprendizaje del Programa de Estudios","t"],["fmt","Formato elegido","t"],["op","Operación intelectual","s",OPS]]],
+ ["Guion","Bosqueja pantallas, respuesta esperada, error previsible y pista.",[["pant","Pantallas","a"],["resp","Respuesta esperada","t"],["err","Error previsible","t"],["pista","Pista que no regala la respuesta","t"]]],
+ ["Material verificado","Pega el material base o describe qué adjuntarás. Sin datos personales de estudiantes.",[["mat","Material base (texto, fuente o descripción de imágenes)","a"]]],
+ ["Prompt final","Tu prompt armado con etiquetas. Copia y pega en tu asistente de IA.",[]],
+ ["Prueba y ajuste","Publica en GitHub, abre en tu celular y recorre la lista de cotejo de más abajo.",[]]];
+const build=()=>{const x=d(),w=W,mt=(s,f)=>s&&s.trim()?s:f;return`<contexto>\nBachillerato CCH, ${x.niv}, asignatura ${x.m}. Tema: ${x.tema}. Uso en asesoría o clase, principalmente en celular.\n</contexto>\n<rol>\nEres docente de ${x.m} y desarrollador front-end que cuida la accesibilidad.\n</rol>\n<instrucciones>\nAprendizaje: ${w.ap}.\nFormato: ${w.fmt}. Operación a observar: ${w.op}.\nRespuesta esperada: ${mt(w.resp,"[completar]")}. Error previsible: ${mt(w.err,"[completar]")}. Pista: ${mt(w.pista,"[completar]")}.\nUsa solo el material de <material>; si dudas de un dato, márcalo con (verificar).\n</instrucciones>\n<pasos>\n${w.pant}\nVerifica antes de entregar: sin errores, retroalimentación que explica, uso en celular.\n</pasos>\n<proposito>\nQue el estudiantado ${x.prop}.\n</proposito>\n<formato>\nArchivo único .html, en español, responsivo.\n</formato>\n<material>\n${mt(w.mat,"[pegar material verificado]")}\n</material>`};
+function wiz(){const s=STEPS[ws];$("#wbar").style.width=((ws+1)/STEPS.length*100)+"%";
+ let b=s[2].map(([k,l,t,o])=>`<label for="w_${k}">${l}</label>`+(t==="a"?`<textarea id="w_${k}" data-w="${k}">${esc(W[k])}</textarea>`:t==="s"?`<select id="w_${k}" data-w="${k}">${o.map(x=>`<option ${x===W[k]?"selected":""}>${x}</option>`).join("")}</select>`:`<input id="w_${k}" data-w="${k}" value="${esc(W[k])}">`)).join("");
+ if(ws===3)b=`<pre class="pre" id="wout" style="max-height:340px;overflow:auto">${esc(build())}</pre><div class="row" style="margin-top:10px"><button class="btn p" id="wcopy">Copiar prompt</button></div>`;
+ if(ws===4)b=`<p>Checklist rápido: ¿se ve bien en celular? ¿cada error previsible tiene pista? ¿el contenido coincide con tu material? Anota un ajuste pendiente y repite el ciclo.</p>`;
+ H($("#wiz"),`<div class="st"><h3>Paso ${ws+1} de ${STEPS.length}: ${s[0]}</h3><p class="mut">${s[1]}</p>${b}</div>`);
+ $("#wprev").disabled=!ws;$("#wnext").textContent=ws===STEPS.length-1?"Reiniciar":"Siguiente"}
+$("#wiz").addEventListener("input",e=>{if(e.target.dataset.w)W[e.target.dataset.w]=e.target.value});
+$("#wiz").addEventListener("click",e=>{if(e.target.id==="wcopy")copy(build())});
+$("#wprev").onclick=()=>{ws=Math.max(0,ws-1);wiz()};
+$("#wnext").onclick=()=>{ws=ws===STEPS.length-1?0:ws+1;wiz()};
+
+/* ---- ejercicios ---- */
+function ex(){H($("#e1"),E1.map((f,i)=>`<div class="ex" id="r${i}"><span class="sm">${f[0]}</span><select data-e="${i}" aria-label="Elemento CRISP"><option value="">Elige…</option><option value="C">C · Contexto</option><option value="R">R · Rol</option><option value="I">I · Instrucciones</option><option value="S">S · Steps</option><option value="P">P · Propósito</option></select></div>`).join(""));$("#e1r").textContent="";
+ e2(0)}
+$("#e1b").onclick=()=>{let ok=0;E1.forEach((f,i)=>{const r=$("#r"+i),v=$(`[data-e="${i}"]`).value;r.classList.remove("ok","bad");void r.offsetWidth;const g=v===f[1];if(g)ok++;r.classList.add(g?"ok":"bad")});$("#e1r").textContent=ok===5?"Perfecto: 5 de 5.":`${ok} de 5. Revisa las marcadas en rojo.`};
+let q=0,sc=0;
+function e2(i){q=i;if(i===0)sc=0;if(i>=E2.length){H($("#e2"),`<div class="fb">Terminaste: ${sc} de ${E2.length} aciertos.</div><button class="btn" id="e2r" style="margin-top:10px">Repetir</button>`);$("#e2c").textContent="";return}
+ const x=E2[i];$("#e2c").textContent=`Pregunta ${i+1} de ${E2.length}`;
+ H($("#e2"),[x[0],x[1]].map((t,j)=>`<button class="opt" data-q="${j}">${t}</button>`).join("")+`<div id="e2f"></div>`)}
+$("#e2").onclick=e=>{if(e.target.id==="e2r")return e2(0);const b=e.target.closest("[data-q]");if(!b||$("#e2f").innerHTML)return;const x=E2[q],j=+b.dataset.q,g=j===x[2];if(g)sc++;b.classList.add(g?"ok":"bad");$$(".opt")[x[2]].classList.add("ok");
+ H($("#e2f"),`<div class="fb"><b>${g?"Correcto.":"No exactamente."}</b> ${x[3]}</div><button class="btn p" id="e2n" style="margin-top:10px">${q===E2.length-1?"Ver resultado":"Siguiente"}</button>`);$("#e2n").onclick=()=>e2(q+1)};
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+
+/* ---- cotejo ---- */
+H($("#ck"),CK.map((t,i)=>`<label class="ck"><input type="checkbox" data-c="${i}">${t}</label>`).join(""));
+function ckU(){const n=$$("[data-c]:checked").length;$("#cbar").style.width=(n/CK.length*100)+"%";$("#cmsg").textContent=n===CK.length?"Listo: tu recurso puede pasar a la ficha de aplicación y al registro para el Portal Académico.":`${n} de ${CK.length} verificados.`}
+$("#ck").onchange=ckU;ckU();
+
+discUI();hero();fmts();meth();wiz();ex();
+</script>
+</body>
+</html>
