@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Estadística - Distribución Muestral y Datos Agrupados</title>
+  <title>Estadística - Distribución de frecuencias con datos agrupados</title>
 
   <!-- CDNs: Bootstrap 5, Bootstrap Icons, fórmulas tipo calculadora propias, Chart.js (histograma y polígono), SweetAlert2 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -201,9 +201,10 @@
     <header class="hero-header text-center mb-4">
       <div class="hero-bars" id="hero-bars"></div>
       <div class="container">
-        <h1 class="display-5 fw-bold"><i class="bi bi-bar-chart-line-fill text-info me-2"></i>Distribución Muestral</h1>
+        <h1 class="display-5 fw-bold"><i class="bi bi-bar-chart-line-fill text-info me-2"></i>Distribución de frecuencias con datos agrupados</h1>
         <p class="lead mb-1">Estadística descriptiva con datos agrupados: intervalos • frecuencias • media, mediana y moda • histograma</p>
         <p class="mb-3 text-light opacity-75">Escribe tus datos y mira cómo se construye cada resultado, paso a paso</p>
+        <p class="mb-3 text-light opacity-75 small">La distribución muestral y el teorema central del límite quedan como extensión en el Manual; no son el tema de esta página.</p>
         <a class="btn btn-info text-white rounded-pill px-4 fw-semibold me-1 mb-1" href="#s4"><i class="bi bi-play-circle-fill me-1"></i>Intervalos animados</a><button class="btn btn-warning rounded-pill px-4 fw-semibold mb-1" data-manual="size"><i class="bi bi-journal-bookmark-fill me-1"></i>Abrir manual</button>
       </div>
     </header>
@@ -347,18 +348,19 @@
       <!-- 6. GRÁFICA -->
       <section class="lesson mb-5" id="s6">
         <div class="card lesson-card">
-          <div class="lesson-head h-5"><div class="num">6</div><div><h2 class="h4 fw-bold mb-0">Histograma y polígono de frecuencias</h2><small>Se redibuja con tu tabla</small></div></div>
+          <div class="lesson-head h-5"><div class="num">6</div><div><h2 class="h4 fw-bold mb-0">Histograma, polígono y ojiva</h2><small>Se redibuja con tu tabla</small></div></div>
           <div class="card-body">
             <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
               <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-hist" checked><label class="form-check-label" for="g-hist">Histograma</label></div>
               <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-poly" checked><label class="form-check-label" for="g-poly">Polígono</label></div>
+              <div class="form-check form-switch"><input class="form-check-input g-opt" type="checkbox" id="g-ojiva"><label class="form-check-label" for="g-ojiva">Ojiva (polígono acumulado)</label></div>
               <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-mean"><label class="form-check-label" style="color:#1864ab" for="g-mean">Media</label></div>
               <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-med"><label class="form-check-label" style="color:#c26e00" for="g-med">Mediana</label></div>
               <div class="form-check"><input class="form-check-input g-opt" type="checkbox" id="g-mode"><label class="form-check-label" style="color:#5130b9" for="g-mode">Moda</label></div>
-              <select id="g-type" class="form-select form-select-sm w-auto g-opt" aria-label="Tipo de frecuencia"><option value="fi">Frecuencia absoluta (fi)</option><option value="fr">Frecuencia relativa</option></select>
+              <select id="g-type" class="form-select form-select-sm w-auto g-opt" aria-label="Tipo de frecuencia"><option value="fi">Frecuencia absoluta (fi)</option><option value="fr">Frecuencia relativa</option><option value="Fa">Frecuencia acumulada (Fa)</option><option value="Fr">Relativa acumulada (Fr)</option></select>
             </div>
             <div class="chart-box"><canvas id="chart"></canvas></div>
-            <div class="tip-box s-amp mt-3 small"><i class="bi bi-info-circle-fill me-1"></i>El polígono une las <strong>marcas de clase</strong> y se cierra en el eje con una clase vacía a cada lado. Activa las líneas de media, mediana y moda para ver dónde caen sobre el histograma.</div>
+            <div class="tip-box s-amp mt-3 small"><i class="bi bi-info-circle-fill me-1"></i>El polígono une las <strong>marcas de clase</strong> y se cierra en el eje con una clase vacía a cada lado. Con el tipo <strong>Fa</strong> o <strong>Fr</strong>, la gráfica muestra las frecuencias acumuladas: la <strong>ojiva</strong> une los puntos $(L_{s_j}, Fa_j)$ empezando en $(L_{i_1}, 0)$ y termina en $(L_{s_k}, n)$ — o en 1 si es $Fr$ —; sin ojiva, el polígono acumulado une las marcas de clase. Las líneas de media, mediana y moda solo se dibujan en modo $f_i$ / $f_r$.</div>
           </div>
         </div>
       </section>
@@ -380,7 +382,7 @@
     </div>
   </div>
 
-  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Distribución Muestral</small></footer>
+  <footer class="text-center py-3 text-muted bg-white border-top"><small>Aula Digital • Estadística • Distribución de frecuencias</small></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -492,7 +494,7 @@
       const origin = o.real ? mn - u / 2 : mn;
       data.forEach(v => { const r = rows[Math.min(k - 1, Math.max(0, Math.floor((v - origin) / c + 1e-9)))]; r.fi++; r.mem.push(v); });
       let Fa = 0, sxf = 0, sxf0 = 0;
-      rows.forEach(r => { r.fr = r.fi / n; r.xifi0 = r10(r.xi * r.fi); r.xifi = r10(r.x * r.fi); sxf += r.xifi; sxf0 += r.xifi0; r.faPrev = Fa; Fa += r.fi; r.Fa = Fa; });
+      rows.forEach(r => { r.fr = r.fi / n; r.xifi0 = r10(r.xi * r.fi); r.xifi = r10(r.x * r.fi); sxf += r.xifi; sxf0 += r.xifi0; r.faPrev = Fa; Fa += r.fi; r.Fa = Fa; r.frPct = r.fr * 100; r.Fr = r.Fa / n; r.FrPct = r.Fr * 100; });
       const mean = sxf / n, half = n / 2;
       const mi = rows.findIndex(r => r.Fa >= half), mr = rows[mi];
       const median = mr.L + ((half - mr.faPrev) / mr.fi) * mr.w;
@@ -516,12 +518,14 @@
       check: T`c \cdot k = R \;\Rightarrow\; \text{fracción pura} \qquad c \cdot k \neq R \;\Rightarrow\; \text{impura (se redondea)}`,
       xi:    T`${K(CL.xi, 'x_i')} \;=\; \frac{L_i + L_s}{2}`,
       fr:    T`f_r \;=\; \frac{${K(CL.fi, 'f_i')}}{${K(CL.n, 'n')}}`,
+      frPct: T`f_r\% \;=\; f_r \cdot 100`,
       xifi:  T`${K(CL.xi, 'x_i')} \cdot ${K(CL.fi, 'f_i')} \qquad\Rightarrow\qquad \sum_{i=1}^{k} x_i \cdot f_i`,
       fa:    T`Fa_j \;=\; Fa_{j-1} + ${K(CL.fi, 'f_j')}`,
+      Fr:    T`Fr_j \;=\; \frac{Fa_j}{${K(CL.n, 'n')}} \;=\; \sum_{i \le j} f_{r_i}`,
       sturges: T`${K('#0c8599', 'k')} \;=\; 1 + 3.322 \, \log_{10}(${K(CL.n, 'n')})`,
       front: T`F_{inf} = L_i - \frac{u}{2} \qquad F_{sup} = L_s - \frac{u}{2} \qquad u = 10^{-d}`,
       mean:  T`${K(CL.mean, '\\bar{x}')} \;=\; \frac{\sum_{i=1}^{k} ${K(CL.xi, 'x_i')} \cdot ${K(CL.fi, 'f_i')}}{${K(CL.n, 'n')}}`,
-      med:   T`${K(CL.med, '\\tilde{x}')} \;=\; ${K(CL.Li, 'L_i')} + \left( \frac{\frac{${K(CL.n, 'n')}}{2} - ${K(CL.fa, '\\sum fa')}}{${K(CL.fmed, 'f_{med}')}} \right) ${K(CL.c, 'c')}`,
+      med:   T`${K(CL.med, '\\tilde{x}')} \;=\; ${K(CL.Li, 'L_i')} + \left( \frac{\frac{${K(CL.n, 'n')}}{2} - ${K(CL.fa, 'Fa_{j-1}')}}{${K(CL.fmed, 'f_{med}')}} \right) ${K(CL.c, 'c')}`,
       mode:  T`${K(CL.mode, '\\hat{x}')} \;=\; ${K(CL.Li, 'L_i')} + \left( \frac{${K(CL.d1, '\\Delta_1')}}{${K(CL.d1, '\\Delta_1')} + ${K(CL.d2, '\\Delta_2')}} \right) ${K(CL.c, 'c')}`
     };
     const fd = t => `<div class="cx d">${fx(t)}</div>`, fi = t => `<span class="cx">${fx(t)}</span>`;
@@ -530,12 +534,14 @@
       size:  [['c', 'Es el tamaño del intervalo (ancho de clase)', CL.c], ['R', 'Es el rango', '#495057'], ['k', 'Es el número de intervalos deseados', '#495057']],
       xi:    [['x_i', 'Es la marca de clase (punto medio del intervalo)', CL.xi], ['L_i', 'Límite inferior del intervalo', CL.Li], ['L_s', 'Límite superior del intervalo', CL.fa]],
       fr:    [['f_r', 'Es la frecuencia relativa (proporción de datos en la clase)', '#495057'], ['f_i', 'Es la frecuencia de clase', CL.fi], ['n', 'Es el tamaño de la muestra', CL.n]],
+      frPct: [['f_r\\%', 'Frecuencia relativa en porcentaje (de 0 a 100)', '#495057'], ['f_r', 'Frecuencia relativa', CL.fi]],
       xifi:  [['x_i \\cdot f_i', 'Producto de la marca de clase por su frecuencia', CL.xi], ['\\sum x_i f_i', 'Suma de todos los productos (numerador de la media)', CL.mean]],
       fa:    [['Fa_j', 'Frecuencia acumulada: datos que hay hasta esa clase', CL.fa], ['f_j', 'Frecuencia de la clase', CL.fi]],
+      Fr:    [['Fr_j', 'Frecuencia relativa acumulada hasta la clase j', CL.fa], ['Fa_j', 'Frecuencia acumulada', CL.fa], ['n', 'Tamaño de la muestra', CL.n]],
       sturges: [['k', 'Es el número de intervalos sugerido (se redondea al entero más cercano)', '#0c8599'], ['n', 'Es el tamaño de la muestra', CL.n]],
       front: [['F_{inf}', 'Frontera real inferior de la clase', CL.Li], ['F_{sup}', 'Frontera real superior de la clase', CL.fa], ['u', 'Unidad de medida de los datos (1 para enteros, 0.1 con un decimal...)', '#495057'], ['d', 'Decimales con los que se miden los datos', '#495057']],
       mean:  [['\\bar{x}', 'La media de la muestra', CL.mean], ['n', 'Es el tamaño de la muestra', CL.n], ['x_i', 'Es la marca de clase', CL.xi], ['f_i', 'Es la frecuencia de clase', CL.fi]],
-      med:   [['\\tilde{x}', 'Es la mediana de la muestra', CL.med], ['n', 'Es el tamaño de la muestra', CL.n], ['L_i', 'Es el límite inferior del intervalo que contiene a la mediana', CL.Li], ['\\sum fa', 'La suma de las frecuencias anteriores al intervalo donde se localiza la mediana', CL.fa], ['f_{med}', 'Es la frecuencia del intervalo donde se ubica la mediana', CL.fmed], ['c', 'Es el tamaño del intervalo', CL.c]],
+      med:   [['\\tilde{x}', 'Es la mediana de la muestra', CL.med], ['n', 'Es el tamaño de la muestra', CL.n], ['L_i', 'Es el límite inferior del intervalo que contiene a la mediana', CL.Li], ['Fa_{j-1}', 'Fa de la clase anterior al intervalo mediano', CL.fa], ['f_{med}', 'Es la frecuencia del intervalo donde se ubica la mediana', CL.fmed], ['c', 'Es el tamaño del intervalo', CL.c]],
       mode:  [['\\hat{x}', 'Es la moda de la muestra', CL.mode], ['L_i', 'Es el límite inferior del intervalo que contiene a la moda', CL.Li], ['\\Delta_1', 'Es el exceso de frecuencia del intervalo donde se localiza la moda con el intervalo contiguo anterior', CL.d1], ['\\Delta_2', 'Es el exceso de frecuencia del intervalo donde se ubica la moda con el intervalo contiguo posterior', CL.d2], ['c', 'Es el tamaño del intervalo', CL.c]]
     };
     const legend = key => LEG[key].map(([s, t, c]) => `<div class="legend-row"><span class="vchip" style="--c:${c}">${fi(s)}</span><span>${t}</span></div>`).join('');
@@ -580,8 +586,8 @@
         how: ['Cuenta cuántos datos tienes ($n$).', 'Calcula $\\log_{10}(n)$ y multiplícalo por 3.322.', 'Suma 1 al resultado.', 'Redondea al entero más cercano: ese es el número de intervalos $k$ sugerido.', 'Con ese $k$ se calcula el tamaño de clase $c = R / k$ como en el instructivo.'] },
       front:   { t: 'Fronteras reales', ic: 'bi-rulers', f: ['front'], leg: ['front'],
         how: ['Determina la unidad de medida $u$ de tus datos (enteros → $u = 1$).', 'Resta $u/2$ al límite inferior y al superior de cada intervalo.', 'Si el dato máximo coincide con el último límite, ese último intervalo es cerrado: su frontera superior es $L_s + u/2$.', 'La marca de clase se recalcula como el punto medio de las fronteras.', 'En mediana y moda, $L_i$ pasa a ser la frontera inferior real y $c$ el ancho real de la clase.', 'Cambian: intervalos, $x_i$, $x_i \\cdot f_i$, media, $L_i$. No cambian: $f_i$, $f_r$, $Fa$, $\\Delta_1$, $\\Delta_2$.'] },
-      marca:   { t: 'Marca de clase, frecuencias y Fa', ic: 'bi-table', f: ['xi', 'xifi', 'fr', 'fa'], leg: ['xi', 'xifi', 'fr', 'fa'],
-        how: ['Cuenta cuántos datos caen en cada intervalo: esa es la frecuencia $f_i$.', 'La marca de clase es el punto medio: suma los dos límites y divide entre 2.', 'Multiplica cada marca de clase por su frecuencia: así obtienes la columna $x_i \\cdot f_i$.', 'La frecuencia relativa se obtiene dividiendo $f_i$ entre $n$. Todas deben sumar 1.', 'La frecuencia acumulada suma la $f_i$ de la clase a la acumulada anterior.'] },
+      marca:   { t: 'Marca de clase, frecuencias y Fa', ic: 'bi-table', f: ['xi', 'xifi', 'fr', 'frPct', 'fa', 'Fr'], leg: ['xi', 'xifi', 'fr', 'frPct', 'fa', 'Fr'],
+        how: ['Cuenta cuántos datos caen en cada intervalo: esa es la frecuencia $f_i$.', 'La marca de clase es el punto medio: suma los dos límites y divide entre 2.', 'Multiplica cada marca de clase por su frecuencia: así obtienes la columna $x_i \\cdot f_i$.', 'La frecuencia relativa se obtiene dividiendo $f_i$ entre $n$. Todas deben sumar 1.', 'La frecuencia relativa en porcentaje es $f_r \\cdot 100$; todas deben sumar 100.', 'La frecuencia acumulada suma la $f_i$ de la clase a la acumulada anterior.', 'La frecuencia relativa acumulada es $Fr_j = Fa_j / n$ (también la suma de las $f_r$ hasta esa clase); en la última clase vale 1, o 100 %.'] },
       media:   { t: 'Media', ic: 'bi-graph-up', f: ['mean'], leg: ['mean'],
         how: ['Multiplica cada marca de clase $x_i$ por su frecuencia $f_i$.', 'Suma todos esos productos.', 'Divide la suma entre el tamaño de la muestra $n$.', '<em>Nota:</em> la suma recorre todas las clases de la tabla.'] },
       mediana: { t: 'Mediana', ic: 'bi-distribute-vertical', f: ['med'], leg: ['med'],
@@ -629,7 +635,7 @@
         thmT: 'Propiedad del punto de equilibrio y mínimos cuadrados', thm: 'Las desviaciones respecto a la media se compensan: $\\sum f_i (x_i - \\bar{x}) = 0$; la media es el <strong>centro de gravedad</strong> de la distribución. Además es el valor $c$ que hace mínima $\\sum f_i (x_i - c)^2$. Con datos agrupados es una aproximación, porque cada dato se sustituye por su marca; con los datos sin agrupar se obtiene el valor exacto.',
         ex: s => fd(T`\bar{x} = \frac{${fmt(s.sxf, 2)}}{${s.n}} = ${f2(s.mean)}`) + `<div class="small">Con los datos sin agrupar: $\\bar{x} = ${f2(s.raw.mean)}$.</div>` },
       mediana: { def: 'La <strong>mediana</strong> $\\tilde{x}$ es el valor que deja la mitad de los datos por debajo y la otra mitad por encima. Se ubica en la <strong>clase mediana</strong>: la primera con $Fa \\ge n/2$.',
-        thmT: 'Interpolación lineal y propiedad de robustez', thm: 'Se supone que los $f_{med}$ datos de la clase mediana se reparten <strong>uniformemente</strong>: antes de ella hay $\\sum fa$ datos y faltan $n/2 - \\sum fa$ para llegar a la mitad; esa fracción de $f_{med}$ se avanza sobre el ancho $c$. Es <strong>robusta</strong>: un dato extremo no la mueve (sí mueve a la media), y la suma $\\sum |x_i - c|$ es mínima en la mediana.',
+        thmT: 'Interpolación lineal y propiedad de robustez', thm: 'Se supone que los $f_{med}$ datos de la clase mediana se reparten <strong>uniformemente</strong>: antes de ella hay $Fa_{j-1}$ datos y faltan $n/2 - Fa_{j-1}$ para llegar a la mitad; esa fracción de $f_{med}$ se avanza sobre el ancho $c$. Es <strong>robusta</strong>: un dato extremo no la mueve (sí mueve a la media), y la suma $\\sum |x_i - c|$ es mínima en la mediana.',
         ex: s => { const r = s.rows[s.mi]; return fd(T`\tilde{x} = ${fmt(r.L)} + \left( \frac{${fmt(s.half)} - ${r.faPrev}}{${r.fi}} \right) ${fmt(r.w)} = ${f2(s.median)}`); } },
       moda: { def: 'La <strong>moda</strong> $\\hat{x}$ es el valor que más se repite. Con datos agrupados se busca la <strong>clase modal</strong> (la de mayor frecuencia) y se ubica dentro de ella.',
         thmT: 'Método de los excesos (interpolación)', thm: 'La moda está en la clase modal y se acerca a la vecina que tiene más datos: se avanza la fracción $\\Delta_1/(\\Delta_1 + \\Delta_2)$ del ancho, donde $\\Delta_1$ y $\\Delta_2$ son los excesos de la clase modal sobre la anterior y la siguiente. Una distribución puede ser <em>unimodal</em>, <em>bimodal</em> o <em>amodal</em> (si todas las frecuencias empatan).',
@@ -705,10 +711,11 @@
       const pk = reg('Número de intervalos', [['Lo elegiste con el control (o con Sturges)', T`k = ${s.k}`, 'res'], s.manual ? 'Con tamaño fijo, k se obtiene como ⌈R / c⌉.' : 'Puedes cambiarlo con el deslizador o con «Aplicar Sturges».'], b);
       let s3, s4;
       if (st.manual) {
+        const cov = Math.abs(s.c * s.k - s.R) < 1e-9;
         const pc = reg('Intervalos necesarios', [['Se redondea hacia arriba', T`k = \lceil \frac{R}{c} \rceil = \lceil \frac{${f(s.R)}}{${f(s.c)}} \rceil = ${s.k}`, 'res']], cc);
         s3 = `Elegiste $c = ${f(s.c)}$ manualmente, así que el número de intervalos sale de $${pp(pc, `\\lceil R / c \\rceil = ${s.k}`)}$.`;
-        const pf = reg('Cobertura', [['Multiplica c por k', T`c \cdot k = ${f(s.c)} \cdot ${s.k} = ${f(s.c * s.k)}`], ['Compara con el rango', T`${f(s.c * s.k)} ${s.c * s.k === s.R ? '=' : '\\ge'} ${f(s.R)}`, 'res']], d);
-        s4 = `$${pp(pf, `c \\cdot k = ${f(s.c)} \\cdot ${s.k} = ${f(s.c * s.k)}`)}$ ${s.c * s.k === s.R ? '= R' : '≥ R'}. Los intervalos llegan hasta <strong>${f(s.mn + s.c * s.k)}</strong>.`;
+        const pf = reg('Cobertura', [['Multiplica c por k', T`c \cdot k = ${f(s.c)} \cdot ${s.k} = ${f(s.c * s.k)}`], ['Compara con el rango', T`${f(s.c * s.k)} ${cov ? '=' : '\\ge'} ${f(s.R)}`, 'res']], d);
+        s4 = `$${pp(pf, `c \\cdot k = ${f(s.c)} \\cdot ${s.k} = ${f(s.c * s.k)}`)}$ ${cov ? '= R' : '≥ R'}. Los intervalos llegan hasta <strong>${f(s.mn + s.c * s.k)}</strong>.`;
       } else {
         const pc = reg('Comprobación', [['Tamaño sin redondear, a la precisión de tus datos', T`c = ${f(st.trunc)}`], ['Multiplica por k', T`${f(st.trunc)} \cdot ${s.k} = ${f(st.prod)}`], ['Compara con el rango', T`${f(st.prod)} ${st.pure ? '=' : '\\neq'} ${f(s.R)}`, 'res'], st.pure ? 'Son iguales: fracción pura.' : 'Son distintos: fracción impura → se redondea el decimal.'], cc);
         s3 = `$${pp(pc, `${f(st.trunc)} \\times ${s.k} = ${f(st.prod)}`)}$ y el rango es $${f(s.R)}$ → ${st.pure ? `<span class="verdict pure">son iguales: fracción PURA</span>` : `<span class="verdict impure">son distintos: fracción IMPURA</span>`}`;
@@ -742,14 +749,20 @@
           xi: reg(`${t}: marca de clase`, mid, CL.xi),
           xifi: reg(`${t}: xi · fi`, [['Marca de clase por frecuencia', T`x_i \cdot f_i = ${f(r.x)} \cdot ${r.fi} = ${f(r.xifi)}`, 'res'], R ? 'Sin fronteras: ' + f(r.xi) + ' · ' + r.fi + ' = ' + f(r.xifi0) : ''].filter(Boolean), CL.xi),
           fr: reg(`${t}: frecuencia relativa`, [['Frecuencia entre el total', T`f_r = \frac{f_i}{n} = \frac{${r.fi}}{${s.n}} = ${f(r.fr, 6)}`], ['Como porcentaje', T`${f(r.fr, 6)} \cdot 100 = ${f(r.fr * 100, 2)}\,\%`, 'res']], CL.fi),
-          fa: reg(`${t}: frecuencia acumulada`, [['Acumulada anterior + frecuencia de la clase', j ? T`Fa = ${r.faPrev} + ${r.fi} = ${r.Fa}` : T`Fa = f_1 = ${r.Fa}`, 'res']], CL.fa)
+          frPct: reg(`${t}: frecuencia relativa %`, [['Frecuencia relativa por 100', T`f_r\% = f_r \cdot 100 = ${f(r.fr, 6)} \cdot 100 = ${f(r.frPct, 2)}\,\%`, 'res']], CL.fi),
+          fa: reg(`${t}: frecuencia acumulada`, [['Acumulada anterior + frecuencia de la clase', j ? T`Fa = ${r.faPrev} + ${r.fi} = ${r.Fa}` : T`Fa = f_1 = ${r.Fa}`, 'res']], CL.fa),
+          Fr: reg(`${t}: frecuencia relativa acumulada`, [['Acumulada entre n', T`Fr_j = \frac{Fa_j}{n} = \frac{${r.Fa}}{${s.n}} = ${f(r.Fr, 6)}`, 'res'], ['También es la suma de las fr hasta esta clase', T`Fr_j = \sum_{i \le j} f_{r_i} = ${sumList(s.rows.slice(0, j + 1), q => f(q.fr, 3))} = ${f(r.Fr, 4)}`]], CL.fa),
+          FrPct: reg(`${t}: frecuencia relativa acumulada %`, [['Relativa acumulada por 100', T`Fr\% = Fr_j \cdot 100 = ${f(r.Fr, 6)} \cdot 100 = ${f(r.FrPct, 2)}\,\%`, 'res']], CL.fa)
         };
       });
       const rs = s.rows, all = f => sumList(rs, f);
       RP.tot = {
         fi: reg('Suma de frecuencias', [['Todas las clases', T`\sum f_i = ${all(r => r.fi)} = ${s.n}`, 'res'], 'Debe ser igual al tamaño de la muestra n.'], CL.fi),
         xf: reg('Suma de xi · fi', [['Se suman todos los productos', T`\sum x_i f_i = ${all(r => f(r.xifi))} = ${f(s.sxf)}`, 'res'], s.real ? 'Sin fronteras: ' + f(s.sxf0) + '.' : 'Este total es el numerador de la media.'], CL.mean),
-        fr: reg('Suma de frecuencias relativas', [['Todas deben sumar 1', T`\sum f_r = ${all(r => f(r.fr, 3))} = ${f(rs.reduce((a, r) => a + r.fr, 0), 4)}`, 'res']], CL.fi)
+        fr: reg('Suma de frecuencias relativas', [['Todas deben sumar 1', T`\sum f_r = ${all(r => f(r.fr, 3))} = ${f(rs.reduce((a, r) => a + r.fr, 0), 4)}`, 'res']], CL.fi),
+        frPct: reg('Suma de frecuencias relativas %', [['Todas deben sumar 100 %', T`\sum f_r\% = ${all(r => f(r.frPct, 2))} = ${f(rs.reduce((a, r) => a + r.frPct, 0), 2)}\,\%`, 'res']], CL.fi),
+        Fr: reg('Relativa acumulada final', [['Última clase: Fa = n', T`Fr_k = \frac{Fa_k}{n} = \frac{${s.n}}{${s.n}} = 1`, 'res']], CL.fa),
+        FrPct: reg('Relativa acumulada final %', [['Última clase', T`Fr\%_k = Fr_k \cdot 100 = 1 \cdot 100 = 100\,\%`, 'res']], CL.fa)
       };
     }
     const HP = (key, title, lines, c) => reg(title, lines, c);
@@ -761,10 +774,13 @@
         xi: reg(R ? 'Marca de clase real' : 'Marca de clase', [['Punto medio', R ? T`x_i = \frac{F_{inf} + F_{sup}}{2}` : T`x_i = \frac{L_i + L_s}{2}`, 'res']], CL.xi),
         xifi: reg('Producto xi · fi', [['Marca de clase por frecuencia', T`x_i \cdot f_i`], ['Su suma es el numerador de la media', T`\sum_{i=1}^{k} x_i f_i`, 'res']], CL.xi),
         fr: reg('Frecuencia relativa', [['Proporción de datos', T`f_r = \frac{f_i}{n}`, 'res']], CL.fi),
-        fa: reg('Frecuencia acumulada', [['Suma corrida de las frecuencias', T`Fa_j = Fa_{j-1} + f_j`, 'res'], 'La mediana se busca aquí: primera clase con Fa ≥ n/2.'], CL.fa)
+        frPct: reg('Frecuencia relativa %', [['Porcentaje de datos', T`f_r\% = f_r \cdot 100`, 'res'], 'La suma de la columna es 100 %.'], CL.fi),
+        fa: reg('Frecuencia acumulada', [['Suma corrida de las frecuencias', T`Fa_j = Fa_{j-1} + f_j`, 'res'], 'La mediana se busca aquí: primera clase con Fa ≥ n/2.'], CL.fa),
+        Fr: reg('Frecuencia relativa acumulada', [['Acumulada entre n', T`Fr_j = \frac{Fa_j}{n}`, 'res'], ['También es la suma de las fr hasta esa clase', T`Fr_j = \sum_{i \le j} f_{r_i}`], 'La ojiva se dibuja con esta columna.'], CL.fa),
+        FrPct: reg('Frecuencia relativa acumulada %', [['Acumulada en porcentaje', T`Fr\% = Fr_j \cdot 100`, 'res'], 'En la última clase vale 100 %.'], CL.fa)
       };
       const th = (k, html, cls = '') => `<th class="pp ${cls}" data-pop="${hp[k]}" tabindex="0" role="button">${html} <i class="bi bi-question-circle"></i></th>`;
-      $('#tbl thead').innerHTML = `<tr><th>Clase</th>${th('int', R ? 'Fronteras reales<small>Li − u/2 , Ls − u/2</small>' : 'Intervalos<small>Li – Ls</small>')}${th('fi', 'Frecuencia<small>f<sub>i</sub></small>')}${th('xi', (R ? 'Marca real' : 'Marca de clase') + '<small>x<sub>i</sub></small>')}${th('xifi', 'x<sub>i</sub> · f<sub>i</sub>')}${th('fr', 'Frec. relativa<small>f<sub>r</sub></small>')}${th('fa', 'Acumulada<small>Fa</small>')}</tr>`;
+      $('#tbl thead').innerHTML = `<tr><th>Clase</th>${th('int', R ? 'Fronteras reales<small>Li − u/2 , Ls − u/2</small>' : 'Intervalos<small>Li – Ls</small>')}${th('fi', 'Frecuencia<small>f<sub>i</sub></small>')}${th('xi', (R ? 'Marca real' : 'Marca de clase') + '<small>x<sub>i</sub></small>')}${th('xifi', 'x<sub>i</sub> · f<sub>i</sub>')}${th('fr', 'Frec. relativa<small>f<sub>r</sub></small>')}${th('frPct', 'Frec. relativa %<small>f<sub>r</sub>%</small>')}${th('fa', 'Acumulada<small>Fa</small>')}${th('Fr', 'Rel. acumulada<small>Fr</small>')}${th('FrPct', 'Rel. acum. %<small>Fr%</small>')}</tr>`;
       const cls = r => [r.j <= s.mi ? (r.j < s.mi ? 'r-before' : 'r-med') : '', s.modals[0] === r.j ? 'r-mode' : '', (r.j === s.oi - 1 || r.j === s.oi + 1) ? 'r-near' : ''].join(' ');
       const td = (id, inner, c = '') => `<td class="pp ${c}" data-pop="${id}" tabindex="0" role="button">${inner}</td>`, old = v => R ? `<span class="old">${v}</span>` : '';
       $('#tbl tbody').innerHTML = s.rows.map((r, j) => `<tr data-j="${j}" class="${cls(r)}"><td class="cl-n" data-sel="${j}" title="Ver esta clase animada" style="cursor:pointer">${j + 1}</td>
@@ -772,9 +788,12 @@
         ${td(RP[j].fi, r.fi, 'c-use')}
         ${td(RP[j].xi, `${f(r.x)}${old(f(r.xi))}`, 'c-use' + (R ? ' chg' : ''))}
         ${td(RP[j].xifi, `${f(r.xifi)}${old(f(r.xifi0))}`, 'c-use' + (R ? ' chg' : ''))}
-        ${td(RP[j].fr, `${f(r.fr)} <span class="text-muted small">(${f(r.fr * 100, 2)}%)</span>`)}
-        ${td(RP[j].fa, r.Fa, 'c-fa')}</tr>`).join('');
-      $('#tbl tfoot').innerHTML = `<tr><td colspan="2">Total</td>${td(RP.tot.fi, s.n)}<td>—</td>${td(RP.tot.xf, `${f(s.sxf)}${old(f(s.sxf0))}`, R ? 'chg' : '')}${td(RP.tot.fr, f(s.rows.reduce((a, r) => a + r.fr, 0), 4))}<td>—</td></tr>`;
+        ${td(RP[j].fr, f(r.fr))}
+        ${td(RP[j].frPct, f(r.frPct, 2) + ' %')}
+        ${td(RP[j].fa, r.Fa, 'c-fa')}
+        ${td(RP[j].Fr, f(r.Fr))}
+        ${td(RP[j].FrPct, f(r.FrPct, 2) + ' %')}</tr>`).join('');
+      $('#tbl tfoot').innerHTML = `<tr><td colspan="2">Total</td>${td(RP.tot.fi, s.n)}<td>—</td>${td(RP.tot.xf, `${f(s.sxf)}${old(f(s.sxf0))}`, R ? 'chg' : '')}${td(RP.tot.fr, f(s.rows.reduce((a, r) => a + r.fr, 0), 4))}${td(RP.tot.frPct, f(s.rows.reduce((a, r) => a + r.frPct, 0), 2) + ' %')}<td>${s.n}</td>${td(RP.tot.Fr, f(s.rows[s.k - 1].Fr, 4))}${td(RP.tot.FrPct, f(s.rows[s.k - 1].FrPct, 2) + ' %')}</tr>`;
       $$('#tbl tbody tr').forEach(tr => { tr.onmouseenter = () => setHover(+tr.dataset.j); tr.onmouseleave = () => setHover(-1); });
       const t = $('#tbl'); t.classList.remove('anim'); if (ANIM) { void t.offsetWidth; t.classList.add('anim'); } ANIM = false;
     }
@@ -784,7 +803,7 @@
       const box = $('#real-info'); $('#real-switch').classList.toggle('on', s.real);
       if (!s.real) { box.classList.add('d-none'); box.innerHTML = ''; return; }
       box.classList.remove('d-none'); const f = fmt, r0 = s.rows[0];
-      const yes = ['Intervalos', 'Marca de clase xi', 'xi · fi', 'Media', 'Li de la mediana', 'Li de la moda'], no = ['Frecuencia fi', 'Frec. relativa fr', 'Acumulada Fa', 'Tamaño c', 'Δ₁ y Δ₂'];
+      const yes = ['Intervalos', 'Marca de clase xi', 'xi · fi', 'Media', 'Li de la mediana', 'Li de la moda'], no = ['Frecuencia fi', 'Frec. relativa fr', 'Frec. relativa % fr%', 'Acumulada Fa', 'Rel. acumulada Fr', 'Rel. acum. % Fr%', 'Tamaño c', 'Δ₁ y Δ₂'];
       box.innerHTML = `<div class="real-banner"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><h5 class="fw-bold mb-0 me-auto"><i class="bi bi-rulers text-warning me-1"></i>Fronteras reales activas: la tabla se ajustó en su lugar</h5><button class="btn btn-sm btn-outline-dark rounded-pill" data-manual="front"><i class="bi bi-journal-text me-1"></i>Manual</button><button class="btn btn-sm btn-dark rounded-pill" id="b-unreal"><i class="bi bi-arrow-counterclockwise me-1"></i>Volver a los intervalos originales</button></div>
         ${s.fine ? '<div class="tip-box s-res small mb-2"><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>Algunos datos tienen más decimales que la precisión elegida. Ajusta «Decimales de tus datos» para que las fronteras sean correctas.</div>' : ''}
         <div class="row g-3"><div class="col-lg-7"><p class="small mb-2"><strong>¿Qué son?</strong> Los datos se miden con una precisión limitada (aquí la unidad es <strong>$u = ${f(s.u)}$</strong>). En la clase <span class="mono">${lab(r0)}</span> el dato más grande posible es <strong>${f(r0.Ls - s.u)}</strong>; el ${f(r0.Ls)} pertenece a la siguiente, así que queda un «hueco» de una unidad. La <strong>frontera real</strong> es el punto medio de ese hueco: las clases se tocan sin vacíos ni traslapes.${s.closedEnd ? ` El máximo (${f(s.mx)}) coincide con el último límite: ese intervalo es <strong>cerrado</strong> y su frontera superior es $L_s + u/2$.` : ''}</p>
@@ -823,14 +842,14 @@
       // MEDIANA
       const r = s.rows[s.mi], faList = s.rows.map(q => `<div class="${q.j === s.mi ? 'fw-bold text-danger' : ''}">Clase ${q.j + 1}: Fa = ${q.Fa}${q.j === s.mi ? ' ← primera ≥ ' + f(s.half) : ''}</div>`).join('');
       const pPos = reg('Posición de la mediana', [['Mitad de los datos', T`\frac{n}{2} = \frac{${s.n}}{2} = ${f(s.half)}`], ['Se busca la primera Fa ≥ ' + f(s.half), `<div style="max-height:150px;overflow:auto">${faList}</div>`, 'html'], ['Clase mediana', T`\text{clase } ${r.j + 1}\;(\text{${lbl(r)}})`, 'res']], CL.fmed);
-      const pFa = reg('Σfa: acumulada anterior', [['Frecuencias de las clases anteriores', r.j ? T`\sum fa = ${sumList(s.rows.slice(0, r.j), q => q.fi)} = ${r.faPrev}` : T`\sum fa = 0`, 'res'], r.j ? '' : 'La clase mediana es la primera: no hay clases anteriores.'].filter(Boolean), CL.fa);
+      const pFa = reg('Fa_{j-1}: acumulada anterior', [['Frecuencias de las clases anteriores', r.j ? T`Fa_{j-1} = ${sumList(s.rows.slice(0, r.j), q => q.fi)} = ${r.faPrev}` : T`Fa_{j-1} = 0`, 'res'], r.j ? '' : 'La clase mediana es la primera: no hay clases anteriores.'].filter(Boolean), CL.fa);
       const pFm = reg('Frecuencia de la clase mediana', [['Se lee en la tabla', T`f_{med} = f_{${r.j + 1}} = ${r.fi}`, 'res']], CL.fmed);
       const pLi = reg('Li de la clase mediana', rLi(r), CL.Li), pC = reg('Tamaño de la clase', rW(r), CL.c);
       const q = (s.half - r.faPrev) / r.fi;
-      const pRes = reg('Resultado de la mediana', [['Numerador', T`\frac{n}{2} - \sum fa = ${f(s.half)} - ${r.faPrev} = ${f(s.half - r.faPrev)}`], ['Se divide entre f_med', T`\frac{${f(s.half - r.faPrev)}}{${r.fi}} = ${f(q, 6)}`], ['Se multiplica por c', T`${f(q, 6)} \cdot ${f(r.w)} = ${f(q * r.w, 6)}`], ['Se suma Li', T`\tilde{x} = ${f(r.L)} + ${f(q * r.w, 6)} = ${f(s.median, 6)}`, 'res'], ['Referencia: datos sin agrupar', T`\tilde{x} = ${f(s.raw.median, 6)}`]], CL.med);
+      const pRes = reg('Resultado de la mediana', [['Numerador', T`\frac{n}{2} - Fa_{j-1} = ${f(s.half)} - ${r.faPrev} = ${f(s.half - r.faPrev)}`], ['Se divide entre f_med', T`\frac{${f(s.half - r.faPrev)}}{${r.fi}} = ${f(q, 6)}`], ['Se multiplica por c', T`${f(q, 6)} \cdot ${f(r.w)} = ${f(q * r.w, 6)}`], ['Se suma Li', T`\tilde{x} = ${f(r.L)} + ${f(q * r.w, 6)} = ${f(s.median, 6)}`, 'res'], ['Referencia: datos sin agrupar', T`\tilde{x} = ${f(s.raw.median, 6)}`]], CL.med);
       measure('#m-med', CL.med, 'bi-distribute-vertical', 'Mediana', 'med',
         use(CL.fmed, `<strong>1) Posición:</strong> $n/2 = ${s.n}/2 = ${f(s.half)}$. La primera frecuencia acumulada ≥ ${f(s.half)} es <strong>Fa = ${r.Fa}</strong>, en la <strong>clase ${r.j + 1}</strong> (${lbl(r)}).`) +
-        use(CL.Li, `<strong>2) De esa clase tomamos:</strong> ${chip(CL.Li, '$L_i = ' + f(r.L) + '$')} ${chip(CL.fmed, '$f_{med} = ' + r.fi + '$')} y de la anterior ${chip(CL.fa, '$\\sum fa = ' + r.faPrev + '$')} ${chip(CL.c, '$c = ' + f(r.w) + '$')}`) +
+        use(CL.Li, `<strong>2) De esa clase tomamos:</strong> ${chip(CL.Li, '$L_i = ' + f(r.L) + '$')} ${chip(CL.fmed, '$f_{med} = ' + r.fi + '$')} y de la anterior ${chip(CL.fa, '$Fa_{j-1} = ' + r.faPrev + '$')} ${chip(CL.c, '$c = ' + f(r.w) + '$')}`) +
         `<div class="small fw-bold text-muted">Sustitución <span class="fw-normal">(toca los números)</span></div>${fd(T`\tilde{x} = ${pp(pLi, K(CL.Li, f(r.L)))} + \left( \frac{\frac{${pp(nId, K(CL.n, s.n))}}{2} - ${pp(pFa, K(CL.fa, r.faPrev))}}{${pp(pFm, K(CL.fmed, r.fi))}} \right) ${pp(pC, K(CL.c, f(r.w)))}`)}
         ${fd(T`= ${f(r.L)} + \left( \frac{${pp(pPos, f(s.half - r.faPrev))}}{${r.fi}} \right) ${f(r.w)} = ${f(r.L)} + ${f(q, 4)} \cdot ${f(r.w)}`)}`,
         T`\tilde{x} = ${pp(pRes, f(s.median))}`, 'med', cmpOf('median', f));
@@ -851,7 +870,7 @@
 
     const HL_TXT = {
       none: '', mean: 'Azul: marca de clase y frecuencia de todas las clases.',
-      med: 'Naranja fuerte: clase mediana · naranja suave: clases anteriores (suman Σfa).',
+      med: 'Naranja fuerte: clase mediana · naranja suave: clases anteriores (suman Fa_{j-1}).',
       mode: 'Violeta: clase modal · turquesa: clases contiguas (para Δ₁ y Δ₂).'
     };
     function setHL(m) {
@@ -864,7 +883,8 @@
     /* ---------- Gráfica ---------- */
     const posOf = v => { const rs = ST.rows; let j = rs.findIndex(r => v < r.L + r.w - 1e-9); if (j < 0) j = rs.length - 1; return j + 1 + (v - rs[j].L) / rs[j].w; };
     const vlines = { id: 'vlines', afterDatasetsDraw(ch) {
-      if (!ST) return; const { ctx, chartArea: a } = ch, N = ch.data.labels.length, w = (a.right - a.left) / N;
+      if (!ST) return; const _t = $('#g-type').value; if (_t === 'Fa' || _t === 'Fr') return;
+      const { ctx, chartArea: a } = ch, N = ch.data.labels.length, w = (a.right - a.left) / N;
       [['g-mean', ST.mean, CL.mean, 'Media'], ['g-med', ST.median, CL.med, 'Mediana'], ['g-mode', ST.mode, CL.mode, 'Moda']].forEach(([id, v, col, lb], i) => {
         if (!$('#' + id).checked || !isFinite(v)) return;
         const x = a.left + posOf(v) * w;
@@ -878,21 +898,34 @@
     }
     function drawChart() {
       if (!ST) return; if (chart) chart.destroy();
-      const s = ST, fr = $('#g-type').value === 'fr', val = r => fr ? r.fr : r.fi, f0 = s.rows[0], fl = s.rows[s.k - 1];
-      const labels = [`${fmt(f0.L - s.c)}-${fmt(f0.L)}`, ...s.rows.map(r => `${fmt(r.L)}-${fmt(r.L + r.w)}`), `${fmt(fl.L + fl.w)}-${fmt(fl.L + fl.w + s.c)}`];
-      const ds = [];
-      if ($('#g-hist').checked) ds.push({ type: 'bar', label: 'Histograma', data: [null, ...s.rows.map(val), null], barPercentage: 1, categoryPercentage: 1, borderColor: '#1864ab', borderWidth: 1.5,
-        backgroundColor: c => c.dataIndex === hov + 1 ? 'rgba(255,212,59,.85)' : 'rgba(28,126,214,.55)', order: 2 });
-      if ($('#g-poly').checked) ds.push({ type: 'line', label: 'Polígono', data: [0, ...s.rows.map(val), 0], borderColor: '#e03131', backgroundColor: '#e03131', borderWidth: 3, tension: 0, pointRadius: 5, pointHoverRadius: 8, order: 1 });
+      const s = ST, type = $('#g-type').value, acc = type === 'Fa' || type === 'Fr';
+      const oj = $('#g-ojiva'); oj.disabled = !acc; oj.parentElement.classList.toggle('opacity-50', !acc);
+      const f0 = s.rows[0], fl = s.rows[s.k - 1];
+      const val = r => type === 'fi' ? r.fi : type === 'fr' ? r.fr : type === 'Fa' ? r.Fa : r.Fr;
+      const yTitle = { fi: 'Frecuencia (fi)', fr: 'Frecuencia relativa', Fa: 'Frecuencia acumulada (Fa)', Fr: 'Frecuencia relativa acumulada (Fr)' }[type];
+      let labels, ds = [];
+      if (!acc) {
+        labels = [`${fmt(f0.L - s.c)}-${fmt(f0.L)}`, ...s.rows.map(r => `${fmt(r.L)}-${fmt(r.L + r.w)}`), `${fmt(fl.L + fl.w)}-${fmt(fl.L + fl.w + fl.w)}`];
+        if ($('#g-hist').checked) ds.push({ type: 'bar', label: 'Histograma', data: [null, ...s.rows.map(val), null], barPercentage: 1, categoryPercentage: 1, borderColor: '#1864ab', borderWidth: 1.5,
+          backgroundColor: c => c.dataIndex === hov + 1 ? 'rgba(255,212,59,.85)' : 'rgba(28,126,214,.55)', order: 2 });
+        if ($('#g-poly').checked) ds.push({ type: 'line', label: 'Polígono', data: [0, ...s.rows.map(val), 0], borderColor: '#e03131', backgroundColor: '#e03131', borderWidth: 3, tension: 0, pointRadius: 5, pointHoverRadius: 8, order: 1 });
+      } else {
+        labels = [fmt(f0.L), ...s.rows.map(r => fmt(r.L + r.w))];
+        if ($('#g-hist').checked) ds.push({ type: 'bar', label: type === 'Fa' ? 'Frecuencia acumulada' : 'Relativa acumulada', data: [null, ...s.rows.map(val)], barPercentage: 1, categoryPercentage: 1, borderColor: '#1864ab', borderWidth: 1.5,
+          backgroundColor: c => c.dataIndex === hov + 1 ? 'rgba(255,212,59,.85)' : 'rgba(28,126,214,.55)', order: 2 });
+        if (oj.checked) ds.push({ type: 'line', label: 'Ojiva', data: [0, ...s.rows.map(val)], borderColor: '#e03131', backgroundColor: '#e03131', borderWidth: 3, tension: 0, pointRadius: 5, pointHoverRadius: 8, order: 1 });
+        else ds.push({ type: 'line', label: 'Polígono acumulado', data: [null, ...s.rows.map(val)], borderColor: '#e03131', backgroundColor: '#e03131', borderWidth: 3, tension: 0, pointRadius: 5, pointHoverRadius: 8, order: 1 });
+      }
       chart = new Chart($('#chart'), { data: { labels, datasets: ds }, plugins: [vlines], options: {
         responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
         onHover: (e, els, ch) => { const el = ch.getElementsAtEventForMode(e, 'index', { intersect: false }, true)[0], j = el ? el.index - 1 : -1; const nj = j >= 0 && j < s.k ? j : -1; if (nj !== hov) setHover(nj); },
-        scales: { x: { title: { display: true, text: s.real ? 'Fronteras reales de clase' : 'Intervalos de clase' }, grid: { display: false } }, y: { beginAtZero: true, title: { display: true, text: fr ? 'Frecuencia relativa' : 'Frecuencia (fi)' } } },
-        plugins: { tooltip: { callbacks: { title: i => (s.real ? 'Fronteras ' : 'Intervalo ') + i[0].label, label: c => { const r = s.rows[c.dataIndex - 1]; return r ? `${c.dataset.label}: ${fmt(c.parsed.y)}  (xi = ${fmt(r.x)}, fi = ${r.fi})` : `${c.dataset.label}: 0 (clase vacía de cierre)`; } } }, legend: { position: 'bottom' } }
+        scales: { x: { title: { display: true, text: acc ? 'Límite superior de clase' : (s.real ? 'Fronteras reales de clase' : 'Intervalos de clase') }, grid: { display: false } }, y: { beginAtZero: true, title: { display: true, text: yTitle } } },
+        plugins: { tooltip: { callbacks: { title: i => acc ? 'Hasta ' + i[0].label : (s.real ? 'Fronteras ' : 'Intervalo ') + i[0].label, label: c => { const r = s.rows[c.dataIndex - 1];
+          if (!r) return acc ? `${c.dataset.label}: ${fmt(c.parsed.y)} (inicio, x = ${fmt(f0.L)})` : `${c.dataset.label}: 0 (clase vacía de cierre)`;
+          return `${c.dataset.label}: ${fmt(c.parsed.y)}  (xi = ${fmt(r.x)}, fi = ${r.fi})`; } } }, legend: { position: 'bottom' } }
       } });
     }
     $$('.g-opt').forEach(el => el.addEventListener('change', drawChart));
-
 
     /* ---------- Intervalos animados con los datos ---------- */
     const TYPES = {
@@ -1009,6 +1042,13 @@
       if (s0.err) { err.classList.remove('d-none'); err.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>${s0.err}`; $('#results').classList.add('d-none'); ST = null; math($('#s1')); initPops(); return; }
       const s1 = calc(data, { ...o, real: true }), s = REAL ? s1 : s0; s.cmp = { s0, s1 };
       err.classList.add('d-none'); $('#results').classList.remove('d-none'); ST = s;
+      if (data.length >= 2) {
+        const krN = Math.max(2, Math.round(sturgesK(data.length)));
+        if (krN !== +k.value) {
+          const noteTxt = s0.step.pure ? `Sturges sugiere $k \\approx ${krN}$; el ejemplo usa $k = ${+k.value}$ para que $c = ${fmt(s0.c)}$ sea exacto (fracción pura).` : `Sturges sugiere $k \\approx ${krN}$; el k elegido es ${+k.value}$.`;
+          $('#sturges-live').insertAdjacentHTML('beforeend', `<div class="small text-muted mt-1">${noteTxt}</div>`);
+        }
+      }
       $('#data-stats').insertAdjacentHTML('beforeend', `<span class="stat-pill">Rango: <b>${fmt(s.R)}</b></span><span class="stat-pill">Intervalos: <b>${s.k}</b></span><span class="stat-pill">$c$ = <b>${fmt(s.c)}</b></span>`);
       $('#sw-real').checked = REAL;
       buildRowPops(s); renderSteps(s); renderTable(s); renderReal(s); renderMeasures(s); renderViz(s); setHL(HL); drawChart(); math(); initPops();
