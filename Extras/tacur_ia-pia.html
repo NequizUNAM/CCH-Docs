@@ -4,17 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IA, para el PIA · Taller de recursos interactivos</title>
-<script type="text/javascript" nonce="003ad34e69274fee93c645d4dd5" src="//local.adguard.org?ts=1794612909037&amp;type=content-script&amp;dmn=f11d9de9-f808-4a84-9c82-0e2430a33622.frame.claudeusercontent.com&amp;url=https%3A%2F%2Ff11d9de9-f808-4a84-9c82-0e2430a33622.frame.claudeusercontent.com%2F_f%2F1794613576-243d%2F_src%2Findex.html%3F__frame_t%3DW3Xsjyh9EzgzVxeqfSSq1kex.a4d1d127-496c-4361-8ac9-bf9c0fb48ad2.bb4c77f9-058f-4a70-a0a6-8dc3879494d9.1794617177&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="003ad34e69274fee93c645d4dd5" src="//local.adguard.org?ts=1794612909037&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><link rel="preconnect" href="https://fonts.googleapis.com">
+<script type="text/javascript" nonce="003ad34e69274fee93c645d4dd5" src="//local.adguard.org?ts=1794614261520&amp;type=content-script&amp;dmn=44c4af20-6eed-43c9-b6ad-3417769c4e03.frame.claudeusercontent.com&amp;url=https%3A%2F%2F44c4af20-6eed-43c9-b6ad-3417769c4e03.frame.claudeusercontent.com%2F_f%2F1794614959-7445%2F_src%2Findex.html%3F__frame_t%3DeFlPRn4jKDVhXe_8iK4bJaEU.a4d1d127-496c-4361-8ac9-bf9c0fb48ad2.bb4c77f9-058f-4a70-a0a6-8dc3879494d9.1794618560&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="003ad34e69274fee93c645d4dd5" src="//local.adguard.org?ts=1794614261520&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Literata:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f4f7;--s:#fff;--ink:#14192b;--mut:#566074;--ln:#d5d9e2;--bl:#00205b;--blS:#dce4f4;--go:#e8a900;--goS:#fbf0cd;--ok:#1b7a4a;--okS:#d8f0e2;--no:#b13a2c;--noS:#f6dfdb;--hd:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--bd:"Literata",Georgia,serif;--r:12px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1424;--s:#182038;--ink:#eef1f8;--mut:#a3adc4;--ln:#2d3757;--bl:#9db8ff;--blS:#222d52;--go:#f2b705;--goS:#3a3213;--ok:#6fd59b;--okS:#173a2a;--no:#ff8f80;--noS:#43211d;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f1424;--s:#182038;--ink:#eef1f8;--mut:#a3adc4;--ln:#2d3757;--bl:#9db8ff;--blS:#222d52;--go:#f2b705;--goS:#3a3213;--ok:#6fd59b;--okS:#173a2a;--no:#ff8f80;--noS:#43211d;color-scheme:dark}
+/* Paleta UNAM: azul ≈ Pantone 281 (#00205B) y oro ≈ Pantone 124 (#EAAA00). Tema claro fijo. */
+:root{color-scheme:light;--bg:#f3f4f7;--s:#fff;--ink:#14192b;--mut:#566074;--ln:#d5d9e2;--bl:#00205b;--blM:#4a74c9;--blS:#dce4f4;--go:#eaaa00;--goD:#8a6200;--goS:#fbf0cd;--ok:#1b7a4a;--okS:#d8f0e2;--no:#b13a2c;--noS:#f6dfdb;--hd:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--bd:"Literata",Georgia,serif;--r:12px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:calc(70px + env(safe-area-inset-top,0px))}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 var(--bd)}
 h1,h2,h3{font-family:var(--hd);line-height:1.15;margin:0 0 .5em;letter-spacing:-.02em}
-h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800}h2{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:700}h3{font-size:1.15rem}
-p{margin:0 0 .8em;max-width:68ch}.mut{color:var(--mut)}.sm{font-size:.9rem}
+h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800;color:var(--bl)}h2{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:700;color:var(--bl)}h2::after{content:"";display:block;width:44px;height:4px;background:var(--go);border-radius:2px;margin-top:8px}h3{font-size:1.15rem}
+p{margin:0 0 .8em;max-width:68ch}.mut{color:var(--mut)}.sm{font-size:.9rem}a{color:var(--bl)}
 .w{max-width:1000px;margin:0 auto;padding:0 18px}section{padding:56px 0 8px}
 nav{position:sticky;top:0;z-index:9;background:var(--bl);padding-top:env(safe-area-inset-top,0px);border-bottom:3px solid var(--go)}
 nav .w{display:flex;gap:4px;align-items:center;overflow-x:auto;min-height:52px}
@@ -22,41 +21,35 @@ nav b{font-family:var(--hd);color:#fff;margin-right:auto;white-space:nowrap}
 nav a{color:#dfe7fb;text-decoration:none;font:500 .88rem var(--hd);padding:8px 10px;border-radius:8px;white-space:nowrap}nav a:hover{background:rgba(255,255,255,.14)}
 :where(button,select,input,textarea,a):focus-visible{outline:3px solid var(--go);outline-offset:2px}
 button,select,input,textarea{font:inherit;color:var(--ink)}
-.btn{font:600 .92rem var(--hd);padding:9px 16px;border-radius:9px;border:1px solid var(--ln);background:var(--s);cursor:pointer;transition:transform .12s,background .15s}
-.btn:active{transform:scale(.96)}.btn.p{background:var(--bl);border-color:var(--bl);color:var(--bg)}
+.btn{font:600 .92rem var(--hd);padding:9px 16px;border-radius:9px;border:1px solid var(--ln);background:var(--s);cursor:pointer;transition:transform .12s,background .15s;text-decoration:none;display:inline-block}
+.btn:active{transform:scale(.96)}.btn.p{background:var(--bl);border-color:var(--bl);color:#fff}.btn.g{background:var(--go);border-color:var(--go);color:#14192b}
 .chip{font:500 .88rem var(--hd);padding:6px 13px;border-radius:99px;border:1px solid var(--ln);background:var(--s);cursor:pointer;transition:all .15s}
-.chip[aria-pressed=true]{background:var(--bl);color:var(--bg);border-color:var(--bl)}
+.chip[aria-pressed=true]{background:var(--bl);color:#fff;border-color:var(--bl)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .card{background:var(--s);border:1px solid var(--ln);border-radius:var(--r);padding:20px}
 .g{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-/* hero */
-.hero{padding:44px 0 20px}.hero .sub{font:500 1.2rem var(--hd);color:var(--bl);margin-bottom:20px}
-.term{background:#0d1530;color:#e9eefc;border-radius:var(--r);padding:18px;font:.86rem/1.7 ui-monospace,Menlo,Consolas,monospace;min-height:250px;border-top:4px solid var(--go)}
+.hero{padding:44px 0 20px}.hero .sub{font:500 1.2rem var(--hd);color:var(--goD);margin-bottom:20px}
+.term{background:#001a4d;color:#e9eefc;border-radius:var(--r);padding:18px;font:.86rem/1.7 ui-monospace,Menlo,Consolas,monospace;min-height:250px;border-top:4px solid var(--go)}
 .term .ln{opacity:0;transform:translateY(8px);animation:in .5s forwards;margin-bottom:4px}
-.term b{display:inline-block;min-width:2.4em;text-align:center;border-radius:5px;padding:0 6px;margin-right:8px;color:#0d1530;font-weight:700}
+.term b{display:inline-block;min-width:2.4em;text-align:center;border-radius:5px;padding:0 6px;margin-right:8px;color:#001a4d;font-weight:700}
 @keyframes in{to{opacity:1;transform:none}}
 .picker{margin:22px 0 0}
-/* timeline */
 .tl{display:grid;gap:10px}
 .ses{background:var(--s);border:1px solid var(--ln);border-left:6px solid var(--bl);border-radius:var(--r);padding:0}
 .ses button{all:unset;display:flex;gap:12px;align-items:center;width:100%;padding:14px 18px;cursor:pointer;box-sizing:border-box;font:600 1.02rem var(--hd)}
 .ses .d{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s}.ses.on .d{grid-template-rows:1fr}
 .ses .d>div{overflow:hidden;padding:0 18px}.ses.on .d>div{padding-bottom:14px}.ses.on{border-left-color:var(--go)}
-.n{background:var(--bl);color:var(--bg);border-radius:50%;width:30px;height:30px;display:grid;place-items:center;flex:none;font-size:.9rem}
-/* match */
+.n{background:var(--bl);color:#fff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;flex:none;font-size:.9rem}
 .fm{border:1px solid var(--ln);border-radius:var(--r);padding:14px;background:var(--s);transition:all .3s}
 .fm.hit{border-color:var(--go);background:var(--goS);transform:translateY(-3px)}.fm.dim{opacity:.4}
-/* methods */
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .pt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;margin-bottom:8px;animation:in .4s both;cursor:pointer}
 .pt:hover{filter:brightness(.97)}.pt i{font:800 1rem var(--hd);font-style:normal;min-width:1.4em}
-.c0{background:#dce4f4;color:#0b2a66}.c1{background:#fbf0cd;color:#6b4b00}.c2{background:#d8f0e2;color:#0f5a34}.c3{background:#f6dfdb;color:#7e2418}.c4{background:#e9dcf6;color:#4b2273}.c5{background:#d9eef2;color:#0b5565}
+.c0{background:#dce4f4;color:#00205b}.c1{background:#fbf0cd;color:#6b4b00}.c2{background:#e8edf7;color:#0b3a8f}.c3{background:#f7e3a6;color:#5a3f00}.c4{background:#c9d6ee;color:#00205b}.c5{background:#fff6dc;color:#7a5600}
 .pre{background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:14px;font:.84rem/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;margin:0}
-/* wizard */
 .bar{height:8px;background:var(--ln);border-radius:9px;overflow:hidden;margin-bottom:16px}.bar i{display:block;height:100%;width:0;background:var(--go);transition:width .5s}
 .st{animation:in .4s both}label{display:block;font:600 .86rem var(--hd);margin:12px 0 4px}
 input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--ln);border-radius:9px;background:var(--bg)}textarea{min-height:64px;resize:vertical}
-/* ex */
 .ex{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--ln)}
 @media(max-width:600px){.ex{grid-template-columns:1fr}}
 .ex.ok{background:var(--okS)}.ex.bad{background:var(--noS);animation:sh .35s}
@@ -65,13 +58,23 @@ input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--ln);bo
 .opt.ok{background:var(--okS);border-color:var(--ok)}.opt.bad{background:var(--noS);border-color:var(--no)}
 .fb{margin-top:8px;padding:10px 12px;border-radius:9px;background:var(--goS);font-size:.92rem;animation:in .3s both}
 .ck{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--ln);cursor:pointer;margin:0;font:400 1rem var(--bd)}.ck input{width:20px;height:20px;margin-top:3px;accent-color:var(--bl)}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;opacity:0;transition:.25s;pointer-events:none;z-index:20}.toast.on{opacity:1;transform:translate(-50%,0)}
+/* gráfica de acreditación */
+.acr{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:center}
+@media(max-width:640px){.acr{grid-template-columns:1fr;justify-items:center}.acr>div{width:100%}}
+#dn{width:240px;height:240px;overflow:visible}
+#dn circle{fill:none;stroke-width:26;transition:stroke-dasharray 1.1s cubic-bezier(.2,.7,.2,1),stroke-width .25s,opacity .25s;cursor:pointer}
+#dn circle.bg{stroke:var(--ln);cursor:default}#dn circle.on{stroke-width:32}#dn circle.off{opacity:.3}
+#dn text{text-anchor:middle;fill:var(--bl);font-family:var(--hd)}
+.lg{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--ln);border-radius:10px;background:var(--s);cursor:pointer;margin-bottom:8px;font:600 .95rem var(--hd);transition:all .2s}
+.lg:hover{transform:translateX(3px)}.lg[aria-pressed=true]{border-color:var(--go);background:var(--goS)}
+.lg i{width:14px;height:14px;border-radius:4px;flex:none}.lg b{margin-left:auto;font-weight:800}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--bl);color:#fff;padding:9px 16px;border-radius:99px;opacity:0;transition:.25s;pointer-events:none;z-index:20}.toast.on{opacity:1;transform:translate(-50%,0)}
 footer{padding:36px 0 60px;color:var(--mut);font-size:.88rem}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<nav><div class="w"><b>IA, para el PIA</b><a href="#ruta">Ruta</a><a href="#formatos">Formatos</a><a href="#metodos">Métodos de prompt</a><a href="#taller">Taller</a><a href="#ejercicios">Ejercicios</a><a href="#cotejo">Cotejo</a></div></nav>
+<nav><div class="w"><b>IA, para el PIA</b><a href="#ruta">Ruta</a><a href="#formatos">Formatos</a><a href="#metodos">Métodos de prompt</a><a href="#taller">Taller</a><a href="#ejercicios">Ejercicios</a><a href="#cotejo">Cotejo</a><a href="#acreditacion">Acreditación</a><a href="#uso">Uso de IA</a></div></nav>
 
 <header class="w hero">
   <div class="sub">Curso intersemestral para asesoras y asesores · 18 al 22 de enero de 2027 · 20 h en línea</div>
@@ -104,22 +107,32 @@ footer{padding:36px 0 60px;color:var(--mut);font-size:.88rem}
 
 <section id="cotejo"><h2>Lista de cotejo para probar tu prototipo</h2><p class="mut">Sesión 4. Marca lo que ya verificaste.</p>
 <div class="card"><div class="bar"><i id="cbar"></i></div><div id="ck"></div><p class="fb" id="cmsg"></p></div></section>
+
+<section id="acreditacion"><h2>Criterios de acreditación</h2><p class="mut">Cuatro evidencias suman el 100 %. Toca un criterio o un segmento de la gráfica.</p>
+<div class="card acr"><svg id="dn" viewBox="0 0 200 200" role="group" aria-label="Gráfica de dona de los criterios de acreditación"></svg>
+<div><div id="aleg"></div><p class="fb" id="adesc" style="margin:4px 0 0"></p></div></div>
+<p class="sm mut" style="margin-top:12px">Para acreditar se deben entregar las evidencias del taller y cumplir la asistencia y los requisitos institucionales para la constancia.</p></section>
+
+<section id="uso"><h2>Uso responsable de la IA</h2>
+<div class="card"><p>El curso promueve las <b>Recomendaciones institucionales para el uso de IA generativa</b>. Antes de generar tu recurso, ten presente:</p>
+<ul><li>Verifica siempre el contenido que produce la IA contra tu material y el Programa de Estudios.</li><li>No incluyas datos personales de estudiantes en tus prompts.</li><li>Atribuye los materiales y reconoce la autoría del recurso.</li></ul>
+<a class="btn g" href="https://iagen.unam.mx/recursos/Recomendaciones_IAGEN_UNAM_2025.pdf" target="_blank" rel="noopener">📄 Abrir el PDF: Recomendaciones para el uso educativo de la IAGen en la UNAM</a></div></section>
 </main>
 
-<footer><div class="w"><p>Evaluación: ficha de diseño 20 %, guion e instrucciones 20 %, prototipo y registro de prueba 25 %, recurso final y ficha de aplicación 35 %.</p>
-<p>Base: Grupo Académico de IAGen UNAM (2025), <em>Recomendaciones para el uso educativo de la inteligencia artificial generativa en la UNAM</em>. Verifica siempre el contenido generado y no incluyas datos personales de estudiantes en tus prompts.</p>
+<footer><div class="w">
+<p>Base: Grupo Académico de IAGen UNAM (2025), <em>Recomendaciones para el uso educativo de la inteligencia artificial generativa en la UNAM</em>. <a href="https://iagen.unam.mx/recursos/Recomendaciones_IAGEN_UNAM_2025.pdf" target="_blank" rel="noopener">Ver PDF</a>.</p>
 <p>Diseño: Pedro Ernesto Nequiz Medina y Elsa Rodríguez Saldaña · CCH-UNAM · PIA.</p></div></footer>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
 const $=(s,r=document)=>r.querySelector(s),H=(el,h)=>{el.innerHTML=h};
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let tt;const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),2200)};
 const copy=async t=>{try{await navigator.clipboard.writeText(t);toast("Copiado")}catch{toast("No se pudo copiar")}};
 const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-/* ---- datos ---- */
 const D={
  mat:{n:"Matemáticas",m:"Matemáticas",tema:"la pendiente de una recta",niv:"3.er semestre",ap:"Interpreta la pendiente como razón de cambio",op:"interpretar",fmt:"simulación con deslizadores",prop:"relacionen la gráfica con la pendiente antes de resolver ejercicios",ej:"Si la pendiente es −2, ¿qué pasa con y cuando x aumenta en 1?"},
  his:{n:"Historia",m:"Historia de México",tema:"causas de la Revolución mexicana",niv:"4.º semestre",ap:"Ordena procesos y explica sus causas",op:"ordenar",fmt:"línea del tiempo interactiva",prop:"expliquen cómo un hecho condiciona al siguiente",ej:"Arrastra el Plan de San Luis a su lugar y justifica por qué va ahí."},
@@ -147,30 +160,26 @@ const PT=d=>({accion:`Crea un recurso interactivo de tipo ${d.fmt}`,pro:`Para qu
 const E1=[["Para que el estudiantado practique antes del examen","P"],["Estudiantes de 4.º semestre; se usará en celular","C"],["Eres docente de Química con experiencia en bachillerato","R"],["1) esquema, 2) pantallas, 3) retroalimentación, 4) verificación","S"],["Genera 5 ítems y usa solo el material adjunto","I"]];
 const E2=[["Haz una página sobre fracciones.","Crea fracciones.html para 1.er semestre: relacionar fracción y representación, con pista tras el primer error y explicación al final.",1,"El segundo fija nivel, formato, operación y retroalimentación."],["Eres docente de Biología. Genera 8 ítems de mitosis con el PDF adjunto. Si no puedes verificar un dato, márcalo.","Genera ítems de mitosis, inventa los datos que falten.",0,"Pedir marcar lo dudoso reduce invenciones."],["Incluye el nombre y la calificación de mis estudiantes de 2.º A para personalizar.","Usa un ejemplo genérico, sin nombres ni calificaciones reales.",1,"No se comparten datos personales con la IA."]];
 const CK=["Todas las interacciones responden al primer toque","La retroalimentación explica, no solo dice correcto o incorrecto","El contenido coincide con el material verificado","Se ve y se usa bien en celular vertical","Se puede navegar con teclado y el contraste es suficiente","Las instrucciones al estudiante son claras","Hay créditos y atribución de materiales","No hay datos personales"];
+const AC=[["Ficha de diseño didáctico",20,"#00205b","Coherencia entre el aprendizaje, el formato y la operación intelectual implicada."],["Guion e instrucciones para la IA",20,"#4a74c9","Claridad de la secuencia y pertinencia de la retroalimentación."],["Prototipo y registro de prueba",25,"#eaaa00","Funcionamiento de las interacciones, calidad de la revisión disciplinar y evidencia de ajustes."],["Recurso final y ficha de aplicación",35,"#8a6200","Rigor del contenido, facilidad de uso, atención a la responsividad y aprovechamiento en clase o asesoría."]];
 
-/* ---- estado ---- */
 let cur="mat",mi=2,ws=0,tm=[];const W={};
 const d=()=>D[cur];
 
-/* ---- hero ---- */
-const COL=["#9db8ff","#f2b705","#6fd59b","#ff8f80","#d6b6ff"];
+const COL=["#8fb0ff","#eaaa00","#ffffff","#f6d56a","#b9ccf5"];
 function hero(){tm.forEach(clearTimeout);tm=[];const t=$("#term"),p=PT(d()),m=MET[2];H(t,`<div style="opacity:.6;margin-bottom:8px">prompt · CRISP · ${esc(d().n)}</div>`);
  m.p.forEach(([l,n,k],i)=>{const go=()=>t.insertAdjacentHTML("beforeend",`<div class="ln"><b style="background:${COL[i]}">${l}</b>${esc(p[k])}</div>`);still?go():tm.push(setTimeout(go,500+i*750))})}
 function discUI(){H($("#disc"),Object.entries(D).map(([k,v])=>`<button class="chip" aria-pressed="${k===cur}" data-d="${k}">${v.n}</button>`).join(""))}
-$("#disc").onclick=e=>{const b=e.target.closest("[data-d]");if(!b)return;cur=b.dataset.d;Object.assign(W,defW());discUI();hero();meth();wiz();ex();toast("Disciplina: "+d().n)};
+$("#disc").onclick=e=>{const b=e.target.closest("[data-d]");if(!b)return;cur=b.dataset.d;Object.assign(W,defW());discUI();hero();fmts();meth();wiz();ex();toast("Disciplina: "+d().n)};
 
-/* ---- ruta ---- */
 H($("#tl"),SES.map((s,i)=>`<div class="ses"><button aria-expanded="false"><span class="n">${i+1}</span>${s[0]}</button><div class="d"><div><p>${s[1]}</p><p class="sm mut"><b>Entrega:</b> ${s[2]}</p></div></div></div>`).join(""));
 $("#tl").onclick=e=>{const b=e.target.closest("button");if(!b)return;const s=b.parentElement,o=s.classList.toggle("on");b.setAttribute("aria-expanded",o)};
 
-/* ---- formatos ---- */
 let op=null;
 function fmts(){H($("#ops"),OPS.map(o=>`<button class="chip" aria-pressed="${o===op}" data-o="${o}">${o}</button>`).join(""));
  H($("#fmts"),FM.map(f=>`<div class="fm ${op?(f[1].includes(op)?"hit":"dim"):""}"><h3>${f[0]}</h3><p class="sm" style="margin:0">${f[2]}</p></div>`).join(""));
  H($("#mhint"),op?`Para <b>${op}</b> en ${esc(d().n)}: ${FM.filter(f=>f[1].includes(op)).map(f=>f[0]).join(", ")}. Tu disciplina sugiere <b>${esc(d().fmt)}</b> para “${esc(d().tema)}”.`:`Elige una operación. En ${esc(d().n)} una combinación posible: ${esc(d().op)} con ${esc(d().fmt)}.`)}
 $("#ops").onclick=e=>{const b=e.target.closest("[data-o]");if(b){op=op===b.dataset.o?null:b.dataset.o;fmts()}};
 
-/* ---- métodos ---- */
 function meth(){const m=MET[mi],p=PT(d());
  H($("#mt"),MET.map((x,i)=>`<button class="chip" aria-pressed="${i===mi}" data-m="${i}">${x.k}</button>`).join(""));
  H($("#mparts"),m.p.map(([l,n,k],i)=>`<div class="pt c${i}" style="animation-delay:${i*70}ms" data-k="${k}" tabindex="0"><i>${l}</i><div><b>${n}</b><div class="sm">${esc(p[k])}</div></div></div>`).join(""));
@@ -178,7 +187,6 @@ function meth(){const m=MET[mi],p=PT(d());
 $("#mt").onclick=e=>{const b=e.target.closest("[data-m]");if(b){mi=+b.dataset.m;meth()}};
 $("#mcopy").onclick=()=>copy($("#mpre").textContent);
 
-/* ---- taller ---- */
 const defW=()=>({ap:d().ap,fmt:d().fmt,op:d().op,pant:"Pantalla 1: instrucción y primer ítem. Pantalla 2: pista. Pantalla 3: cierre con explicación.",resp:"",err:"",pista:"",mat:"",met:"CRISP"});
 Object.assign(W,defW());
 const STEPS=[
@@ -199,7 +207,6 @@ $("#wiz").addEventListener("click",e=>{if(e.target.id==="wcopy")copy(build())});
 $("#wprev").onclick=()=>{ws=Math.max(0,ws-1);wiz()};
 $("#wnext").onclick=()=>{ws=ws===STEPS.length-1?0:ws+1;wiz()};
 
-/* ---- ejercicios ---- */
 function ex(){H($("#e1"),E1.map((f,i)=>`<div class="ex" id="r${i}"><span class="sm">${f[0]}</span><select data-e="${i}" aria-label="Elemento CRISP"><option value="">Elige…</option><option value="C">C · Contexto</option><option value="R">R · Rol</option><option value="I">I · Instrucciones</option><option value="S">S · Steps</option><option value="P">P · Propósito</option></select></div>`).join(""));$("#e1r").textContent="";
  e2(0)}
 $("#e1b").onclick=()=>{let ok=0;E1.forEach((f,i)=>{const r=$("#r"+i),v=$(`[data-e="${i}"]`).value;r.classList.remove("ok","bad");void r.offsetWidth;const g=v===f[1];if(g)ok++;r.classList.add(g?"ok":"bad")});$("#e1r").textContent=ok===5?"Perfecto: 5 de 5.":`${ok} de 5. Revisa las marcadas en rojo.`};
@@ -209,12 +216,28 @@ function e2(i){q=i;if(i===0)sc=0;if(i>=E2.length){H($("#e2"),`<div class="fb">Te
  H($("#e2"),[x[0],x[1]].map((t,j)=>`<button class="opt" data-q="${j}">${t}</button>`).join("")+`<div id="e2f"></div>`)}
 $("#e2").onclick=e=>{if(e.target.id==="e2r")return e2(0);const b=e.target.closest("[data-q]");if(!b||$("#e2f").innerHTML)return;const x=E2[q],j=+b.dataset.q,g=j===x[2];if(g)sc++;b.classList.add(g?"ok":"bad");$$(".opt")[x[2]].classList.add("ok");
  H($("#e2f"),`<div class="fb"><b>${g?"Correcto.":"No exactamente."}</b> ${x[3]}</div><button class="btn p" id="e2n" style="margin-top:10px">${q===E2.length-1?"Ver resultado":"Siguiente"}</button>`);$("#e2n").onclick=()=>e2(q+1)};
-const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
-/* ---- cotejo ---- */
 H($("#ck"),CK.map((t,i)=>`<label class="ck"><input type="checkbox" data-c="${i}">${t}</label>`).join(""));
 function ckU(){const n=$$("[data-c]:checked").length;$("#cbar").style.width=(n/CK.length*100)+"%";$("#cmsg").textContent=n===CK.length?"Listo: tu recurso puede pasar a la ficha de aplicación y al registro para el Portal Académico.":`${n} de ${CK.length} verificados.`}
 $("#ck").onchange=ckU;ckU();
+
+/* ---- gráfica animada de acreditación ---- */
+const R=70,CI=2*Math.PI*R;let ai=-1,drawn=false;
+function acInit(){let st=0;
+ H($("#dn"),`<circle class="bg" cx="100" cy="100" r="${R}"/>`+AC.map((a,i)=>{const L=CI*a[1]/100,o=-st;st+=L;return`<circle data-a="${i}" data-l="${L}" cx="100" cy="100" r="${R}" stroke="${a[2]}" stroke-dasharray="0 ${CI}" stroke-dashoffset="${o}" transform="rotate(-90 100 100)" tabindex="0" role="button" aria-label="${a[0]}: ${a[1]} por ciento" style="transition-delay:${i*.25}s,0s,0s"/>`}).join("")+`<text id="dp" x="100" y="106" font-size="32" font-weight="800">0 %</text><text id="dt" x="100" y="126" font-size="9" fill="#566074">Total</text>`);
+ H($("#aleg"),AC.map((a,i)=>`<button class="lg" data-a="${i}" aria-pressed="false"><i style="background:${a[2]}"></i>${a[0]}<b>${a[1]} %</b></button>`).join(""));
+ sel(-1)}
+function sel(i){ai=i;$$("#dn circle[data-a]").forEach(c=>{const k=+c.dataset.a;c.classList.toggle("on",k===i);c.classList.toggle("off",i>=0&&k!==i)});
+ $$(".lg").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.a===i));
+ if(drawn){$("#dp").textContent=i>=0?AC[i][1]+" %":"100 %";$("#dt").textContent=i>=0?AC[i][0].split(" ")[0]:"Total"}
+ $("#adesc").textContent=i>=0?AC[i][3]:"Elige un criterio para ver qué se evalúa."}
+function acDraw(){drawn=true;$$("#dn circle[data-a]").forEach(c=>{const L=+c.dataset.l;c.setAttribute("stroke-dasharray",`${Math.max(L-1.5,0)} ${CI-L+1.5}`)});
+ const t=$("#dp");if(still){t.textContent="100 %";return}let n=0;const iv=setInterval(()=>{n=Math.min(100,n+4);if(ai<0)t.textContent=n+" %";if(n>=100)clearInterval(iv)},40)}
+const act=e=>{const c=e.target.closest("[data-a]");if(c){const k=+c.dataset.a;sel(ai===k?-1:k)}};
+$("#dn").addEventListener("click",act);$("#aleg").addEventListener("click",act);
+$("#dn").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();act(e)}});
+acInit();
+new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){acDraw();o.disconnect()}},{threshold:.4}).observe($("#dn"));
 
 discUI();hero();fmts();meth();wiz();ex();
 </script>
