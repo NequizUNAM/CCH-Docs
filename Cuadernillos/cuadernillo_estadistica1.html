@@ -161,6 +161,7 @@ table.tb{border-collapse:collapse;width:100%;font-size:.88rem}
 .warn{background:var(--coral2)}.warn::before{content:'⚠️ '}
 .okb{background:var(--sage2)}.okb::before{content:'✅ '}
 .fm{background:#fff;border:1.5px dashed var(--ink);border-radius:12px;padding:10px 14px;margin:10px 0;overflow-x:auto;text-align:center}
+.fm-dl{display:flex;flex-wrap:wrap;gap:6px}
 .kpi{display:grid;gap:2px;background:#fff;border:1.5px solid var(--ink);border-radius:14px;padding:10px 14px;box-shadow:var(--sh2);min-width:0}
 .kpi small{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.05em}
 .kpi b{font-family:var(--f-mono);font-size:1.45rem;line-height:1.1;overflow-wrap:anywhere}
@@ -365,6 +366,7 @@ body.limpio .rail-search{display:block}
     <nav id="rail-nav"></nav>
     <div class="rail-foot">
       <button class="btn sm" data-act="formulas">🧮 Formulario</button>
+      <a class="btn sm" href="PDF/est1_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a>
       <button class="btn sm" data-act="revision">🔎 Notas de revisión</button>
       <button class="btn sm" data-act="apendice">📊 Apéndice</button>
       <button class="btn sm" data-act="reset">♻️ Borrar mi avance</button>
@@ -2900,7 +2902,8 @@ const FORMULARIO = String.raw`
 <p>$P(A\cup B)=P(A)+P(B)-P(A\cap B)$ (excluyentes: sin el último término)</p>
 <p>$P(A\mid B)=\dfrac{P(A\cap B)}{P(B)}$ · independientes: $P(A\cap B)=P(A)P(B)$</p>
 <p>$n!$ · $P(n,r)=\dfrac{n!}{(n-r)!}$ · $C(n,r)=\dfrac{n!}{r!(n-r)!}$ · principio multiplicativo $n_1n_2\cdots n_k$</p></div>
-</div>`;
+</div>
+<div class="fm-dl"><a class="btn sm" href="PDF/est1_formulario.pdf" download target="_blank" rel="noopener">⬇ Formulario (PDF)</a><a class="btn sm" href="PDF/est1_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios sin solución (PDF)</a><a class="btn sm" href="PDF/est1_datos_ordenados.pdf" download target="_blank" rel="noopener">⬇ Datos ordenados (PDF)</a></div><p class="sub">📎 Los archivos PDF (Formulario, Ejercicios y Datos ordenados) deben acompañar a este HTML en la carpeta <b>PDF/</b>; si abres solo el HTML, los botones de descarga no funcionarán.</p>`;
 
 const _hi = regress(EJ.hierro.x, EJ.hierro.y), _ti = regress(EJ.tienda.x, EJ.tienda.y), _dd = buildDist(DATA.calif, { k: 10, conv: 'semiD' }), _gg = groupedStats(_dd);
 const _rv = (pg, titulo, dice, es, nota = '') => `<tr><td><b>${pg}</b></td><td><b>${titulo}</b><br><span class="sub">${nota}</span></td><td class="bad">${dice}</td><td class="good">${es}</td></tr>`;

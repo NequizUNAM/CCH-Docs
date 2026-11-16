@@ -1729,6 +1729,18 @@ const nv = (p, id) => parseFloat(String($('#' + id, p).value).replace(',', '.'))
    la columna x de la tabla de cálculo, que conserva sus fracciones.
    Los ejemplos resueltos suponen resultados equiprobables (p = 1/n por
    resultado); la suposición se escribe en una nota visible bajo las tablas.
+   Ítem 19 (2026-11-15): la misma forma se aplica a TODO el banco de
+   preguntas donde se muestra una FDP. fdpPart: los ejercicios que aún no
+   enumeraban sus resultados (fdp 7, 9, 10, 11, 12; esp 26, 27, 29) ya
+   pasan etiquetas y muestran Tabla 1 + Tabla 2; esp 25 y rev 2 no se
+   pueden enumerar (la FDP viene dada como tabla, sin experimento) y
+   quedan solo con la Tabla 2; rev 1 no es FDP. binPart 'tab': Tabla 1
+   con las secuencias solo si n ≤ 5 (32 filas); si n es mayor, la Tabla 2
+   lleva el término binomial, la x tintada y P en fracción cuando es
+   exacta (si no, decimal/científica como antes). espPart (juegos y
+   decisiones): su tabla ya es la Tabla 1 (resultado | g(x) = recorrido
+   | P(x) en fracción); la g(x) se tinta por valor y no se añade una
+   segunda tabla porque ningún pago se repite.
    ===================================================================== */
 /* chip de color por valor de X (mismo tinte que la rejilla del ítem 11) */
 const xTag = (x, xs) => `<span class="xt" style="background:${FIG.gcolor(xs.indexOf(x), xs.length)}">${fc(x, 4)}</span>`;
@@ -2181,7 +2193,10 @@ function binPart(l, q, n, p, ev, o = {}) {
         ans = `${MM(`${evTex(ev)}=${fpr(val)}`)}${val >= 0.0005 ? ` (≈ ${fc(val * 100, 2)} %)` : ''}`;
         viz = svgPmf(xs, ps, { w: 520, h: 210, hl: pred, vals: n <= 12, vd: 3, xt: 'x', maxTicks: 21 });
       } else if (ev.k === 'tab') {
-        steps.push(['Calcula cada P(X = x)', `<div class="eqbox">$P(X=x)=\\binom{${n}}{x}(${pt})^{x}(${qt})^{${n}-x}$</div>` + tbl(['x', 'P(X = x)'], xs.map(x => tr([`$${x}$`, `$${term(x)}=${fpr(ps[x])}$`]))) + `<p class="sub">Comprobación: $\\sum P(X=x)=${TN(sum(ps), 4)}$</p>`]);
+        // ítem 19: Tabla 1 con las secuencias (solo si n ≤ 5: 2^n ≤ 32 filas) y Tabla 2 con el término binomial, x tintada y P en fracción cuando es exacta (si no, decimal/científica como antes)
+        const pv = v => { const fr = toFrac(v); return fr && fr[1] > 1 && fr[1] <= 4096 ? pf(v) : fpr(v); };
+        const t1 = n <= 5 ? fdpTable(fdpFrom(enumSeq(Array.from({ length: n }, () => [['E', p], ['F', 1 - p]])).map(([l, pr]) => [cnt('E')(l), pr, l.split('').join(' ')])), { frac: true, only1: true }) + `<p class="sub">Cada secuencia de ${n} ensayos es un resultado: E = éxito, F = fracaso.</p>` : `<p class="sub">Los $2^{${n}}=${Math.pow(2, n)}$ resultados (secuencias de éxitos y fracasos) no se listan uno por uno; la tabla agrupa por valor de $X$.</p>`;
+        steps.push(['Calcula cada P(X = x)', `<div class="eqbox">$P(X=x)=\\binom{${n}}{x}(${pt})^{x}(${qt})^{${n}-x}$</div>` + t1 + tbl(['x', 'P(X = x)'], xs.map(x => tr([xTag(x, xs), `$${term(x)}=${pv(ps[x])}$`]))) + `<p class="sub">Comprobación: $\\sum P(X=x)=${TN(sum(ps), 4)}$</p>`]);
         ans = 'tabla de la distribución (arriba) y su gráfica'; viz = svgPmf(xs, ps, { w: 520, h: 220, vals: n <= 12, vd: 3, xt: 'x', maxTicks: 21 });
       } else if (['mu', 'sd', 'var', 'musd', 'msv'].includes(ev.k)) {
         const mu = n * p, v = n * p * qq;
@@ -2246,7 +2261,9 @@ function fdpPart(l, q, getPairs, ask, o = {}) {
 /* rows: [[etiqueta, g, P], ...] ; devuelve {tabla html, E} */
 function espTable(rows, o = {}) {
   const E_ = sum(rows.map(r => r[1] * r[2]));
-  const html = tbl([o.lab || 'Resultado', '$g(x)$', '$P(x)$', '$g(x)\\cdot P(x)$'], [...rows.map(r => tr([r[0], `$${TN(r[1], 2)}$`, `$${o.frac ? pf(r[2]) : TN(r[2], 4)}$`, `$${TN(r[1] * r[2], 4)}$`])), tr(['<b>Σ</b>', '', `<b>${fc(sum(rows.map(r => r[2])), 4)}</b>`, `<b>$${TN(E_, 4)}$</b>`], 'sum')]);
+  // ítem 19: la columna g(x) es el recorrido de la FDP del pago: se tinta por valor (mismo color que en las tablas de FDP) y P(x) va siempre en fracción
+  const xs = [...new Set(rows.map(r => r[1]))].sort((a, b) => a - b);
+  const html = tbl([o.lab || 'Resultado', '$g(x)$', '$P(x)$', '$g(x)\\cdot P(x)$'], [...rows.map(r => tr([r[0], xTag(r[1], xs), `$${pf(r[2])}$`, `$${TN(r[1] * r[2], 4)}$`])), tr(['<b>Σ</b>', '', `<b>${fc(sum(rows.map(r => r[2])), 4)}</b>`, `<b>$${TN(E_, 4)}$</b>`], 'sum')]);
   return { html, E: E_ };
 }
 const veredicto = e => e > 1e-9 ? '<b>conviene</b> (E > 0)' : e < -1e-9 ? '<b>no conviene</b> (E < 0)' : '<b>juego justo</b> (E = 0)';
@@ -2526,10 +2543,10 @@ add('esp', 25, 'Varianza de una FDP dada', '$X$: 3, 4, 5, 6, 7, 8, 9 con $P(X)$:
   fdpPart('', 'Calcula $\\sigma^2$ y $\\sigma$.', () => [[3, .08], [4, .14], [5, .22], [6, .30], [7, .14], [8, .08], [9, .04]], 'sd')
 ]);
 add('esp', 26, 'Alumnos de Biología (sin reemplazo)', 'De los alumnos seleccionados, 6 están en Biología, 3 en Química y 1 en Física. Se escogen 2 sin reemplazamiento. $X$ = número de alumnos de Biología.', [
-  fdpPart('', 'Calcula la varianza de la FDP.', () => [0, 1, 2].map(k => [k, Number(nCr(6, k)) * Number(nCr(4, 2 - k)) / 45]), 'var', { frac: true, space: () => '<p>Hipergeométrica: $P(x)=\\dfrac{\\binom6x\\binom4{2-x}}{\\binom{10}2}$, con $\\binom{10}2=45$.</p>' })
+  fdpPart('', 'Calcula la varianza de la FDP.', () => { const it = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'Q1', 'Q2', 'Q3', 'F1'], o = []; for (let i = 0; i < it.length; i++) for (let j = i + 1; j < it.length; j++) o.push([(it[i][0] === 'B' ? 1 : 0) + (it[j][0] === 'B' ? 1 : 0), 1 / 45, '(' + it[i] + ', ' + it[j] + ')']); return o; }, 'var', { frac: true, space: () => '<p>Hipergeométrica: $P(x)=\\dfrac{\\binom6x\\binom4{2-x}}{\\binom{10}2}$, con $\\binom{10}2=45$.</p>' + '<p class="sub">La Tabla 1 enumera las 45 parejas: los 6 de Biología (B1–B6), los 3 de Química (Q1–Q3) y el de Física (F1).</p>' })
 ]);
 add('esp', 27, 'Semillas de girasol y cártamo', 'Una bolsa tiene 5 semillas de girasol y 4 de cártamo; se sacan 3 sin reemplazamiento. $X$ = número de semillas de cártamo.', [
-  fdpPart('', 'Construye la FDP y la gráfica de la acumulada.', () => [0, 1, 2, 3].map(k => [k, Number(nCr(4, k)) * Number(nCr(5, 3 - k)) / 84]), 'cum', { frac: true, space: () => '<p>$P(x)=\\dfrac{\\binom4x\\binom5{3-x}}{\\binom93}$, con $\\binom93=84$.</p>' })
+  fdpPart('', 'Construye la FDP y la gráfica de la acumulada.', () => { const it = ['G1', 'G2', 'G3', 'G4', 'G5', 'C1', 'C2', 'C3', 'C4'], o = []; for (let i = 0; i < it.length; i++) for (let j = i + 1; j < it.length; j++) for (let k = j + 1; k < it.length; k++) o.push([(it[i][0] === 'C' ? 1 : 0) + (it[j][0] === 'C' ? 1 : 0) + (it[k][0] === 'C' ? 1 : 0), 1 / 84, '(' + it[i] + ', ' + it[j] + ', ' + it[k] + ')']); return o; }, 'cum', { frac: true, space: () => '<p>$P(x)=\\dfrac{\\binom4x\\binom5{3-x}}{\\binom93}$, con $\\binom93=84$.</p>' + '<p class="sub">La Tabla 1 enumera las 84 ternas: las 5 de girasol (G1–G5) y las 4 de cártamo (C1–C4).</p>' })
 ]);
 add('esp', 28, 'Materias aprobadas', 'Un alumno aprueba Biología con $\\tfrac23$, Estadística con $\\tfrac35$ y Filosofía con $\\tfrac34$ (se supone que son eventos independientes). $X$ = materias aprobadas.', [
   fdpPart('', 'Construye la FDP.', () => enumSeq([[['1', 2 / 3], ['0', 1 / 3]], [['1', 3 / 5], ['0', 2 / 5]], [['1', 3 / 4], ['0', 1 / 4]]]).map(([l, p]) => [cnt('1')(l), p, l.split('').join(' ')]), 'tab', {
@@ -2537,7 +2554,7 @@ add('esp', 28, 'Materias aprobadas', 'Un alumno aprueba Biología con $\\tfrac23
   })
 ]);
 add('esp', 29, 'Llavero de 4 llaves', 'Un llavero tiene 4 llaves idénticas en apariencia; solo una abre la puerta. Se prueban una a una hasta encontrarla. $X$ = número de llaves que se prueban.', [
-  fdpPart('', 'Calcula $\\sigma$.', () => [[1, .25], [2, .25], [3, .25], [4, .25]], 'sd', { frac: true, space: () => '<p>La llave buena puede estar en cualquiera de las 4 posiciones con igual probabilidad: $P(X=k)=\\tfrac14$, $k=1,2,3,4$. (Se cuenta también la 4.ª llave aunque, si fallaron 3, ya se sabe que es la buena.)</p>' })
+  fdpPart('', 'Calcula $\\sigma$.', () => [1, 2, 3, 4].map(k => [k, 1 / 4, k + '.ª llave']), 'sd', { frac: true, space: () => '<p>La llave buena puede estar en cualquiera de las 4 posiciones con igual probabilidad: $P(X=k)=\\tfrac14$, $k=1,2,3,4$. (Se cuenta también la 4.ª llave aunque, si fallaron 3, ya se sabe que es la buena.)</p>' })
 ]);
 add('esp', 30, 'Moneda hasta 3 veces con premios', 'Se lanza una moneda hasta 3 veces; el juego termina cuando aparece la cara elegida. Si sale en el 1.º gana §100; en el 2.º gana §50; en el 3.º pierde §25. Si no sale la cara escogida, el jugador paga $x$.', [{
   l: '', q: '¿Cuánto debe pagar si no aparece la cara escogida para que el juego sea justo?', sol() {
@@ -2606,7 +2623,7 @@ add('fdp', 6, 'Tres máquinas independientes', 'Tres máquinas A, B y C trabajan
   })
 ]);
 add('fdp', 7, 'Adivinar sabores', 'A un estudiante se le pide identificar el sabor de 3 drogas (ácido, dulce, amargo; una por cada droga). El experimento es con reemplazo y el estudiante adivina. $X$ = número de aciertos.', [
-  fdpPart('', 'Calcula la varianza $\\sigma^2$ de la FDP.', () => binDist(3, 1 / 3).map((p, k) => [k, p]), 'var', {
+  fdpPart('', 'Calcula la varianza $\\sigma^2$ de la FDP.', () => enumSeq(Array.from({ length: 3 }, () => [['A', 1 / 3], ['F', 2 / 3]])).map(([l, p]) => [cnt('A')(l), p, l.split('').join(' ')]), 'var', {
     frac: true, space: () => '<p>Cada intento es independiente y acierta con $p=\\tfrac13$ → binomial $n=3$, $p=\\tfrac13$: $P(x)=\\binom3x\\left(\\tfrac13\\right)^x\\left(\\tfrac23\\right)^{3-x}$.</p><p class="sub">Atajo: $\\sigma^2=npq=3\\cdot\\tfrac13\\cdot\\tfrac23=\\tfrac23$.</p>'
   })
 ]);
@@ -2616,18 +2633,18 @@ add('fdp', 8, 'Etiquetas del 1 al 9: suma', 'Una caja contiene 9 etiquetas numer
   })
 ]);
 add('fdp', 9, 'Grupos sanguíneos', 'Probabilidades: $P(O)=0.45$, $P(A)=0.40$, $P(B)=0.10$, $P(AB)=0.05$. A 4 personas se les hace un análisis. $X$ = número de personas con sangre tipo O.', [
-  fdpPart('', 'Calcula $\\sigma$.', () => binDist(4, .45).map((p, k) => [k, p]), 'sd', { space: () => '<p>Cada persona es «O» con $p=0.45$ y «no O» con $q=0.55$ (se agrupan A, B y AB). Es binomial $n=4$, $p=0.45$.</p><p class="sub">Atajo: $\\sigma=\\sqrt{npq}=\\sqrt{4(0.45)(0.55)}=\\sqrt{0.99}$.</p>' })
+  fdpPart('', 'Calcula $\\sigma$.', () => enumSeq(Array.from({ length: 4 }, () => [['O', .45], ['N', .55]])).map(([l, p]) => [cnt('O')(l), p, l.split('').join(' ')]), 'sd', { space: () => '<p>Cada persona es «O» con $p=0.45$ y «no O» con $q=0.55$ (se agrupan A, B y AB). Es binomial $n=4$, $p=0.45$.</p><p class="sub">Atajo: $\\sigma=\\sqrt{npq}=\\sqrt{4(0.45)(0.55)}=\\sqrt{0.99}$.</p>' })
 ]);
 add('fdp', 10, 'Moneda con máximo de 4 lanzamientos', 'Se lanza una moneda hasta un máximo de 4 veces; una persona adivina la cara antes de cada lanzamiento y se deja de lanzar cuando acierta. $X$ = número de lanzamientos.', [
-  fdpPart('', 'Calcula $\\sigma$.', () => [[1, 1 / 2], [2, 1 / 4], [3, 1 / 8], [4, 1 / 8]], 'sd', {
-    frac: true, space: () => tbl(['Secuencia (A = acierta, F = falla)', '$x$ (recorrido)', 'Probabilidad'], [tr(['A', xTag(1, [1, 2, 3, 4]), '$\\frac12$']), tr(['F A', xTag(2, [1, 2, 3, 4]), '$\\frac14$']), tr(['F F A', xTag(3, [1, 2, 3, 4]), '$\\frac18$']), tr(['F F F (·)', xTag(4, [1, 2, 3, 4]), '$\\frac18$'])]) + '<p class="sub">Si falla las tres primeras veces se hace el 4.º lanzamiento y el juego termina (acierte o no): $P(X=4)=\\left(\\tfrac12\\right)^3=\\tfrac18$.</p>'
+  fdpPart('', 'Calcula $\\sigma$.', () => [['A', 1, 1 / 2], ['F A', 2, 1 / 4], ['F F A', 3, 1 / 8], ['F F F A', 4, 1 / 16], ['F F F F', 4, 1 / 16]].map(([lab, x, p]) => [x, p, lab]), 'sd', {
+    frac: true, space: () => tbl(['Secuencia (A = acierta, F = falla)', '$x$ (recorrido)', 'Probabilidad'], [tr(['A', xTag(1, [1, 2, 3, 4]), '$\\frac12$']), tr(['F A', xTag(2, [1, 2, 3, 4]), '$\\frac14$']), tr(['F F A', xTag(3, [1, 2, 3, 4]), '$\\frac18$']), tr(['F F F A', xTag(4, [1, 2, 3, 4]), '$\\frac{1}{16}$']), tr(['F F F F', xTag(4, [1, 2, 3, 4]), '$\\frac{1}{16}$'])]) + '<p class="sub">Si falla las tres primeras veces se hace el 4.º lanzamiento y el juego termina (acierte o no): $P(X=4)=\\left(\\tfrac12\\right)^3=\\tfrac18$.</p>'
   })
 ]);
 add('fdp', 11, 'Fábricas A, B y C', 'Las fábricas A, B y C producen $\\tfrac58$, $\\tfrac28$ y $\\tfrac18$ de los aparatos. Se seleccionan 3 aparatos al azar. $X$ = número de aparatos de la fábrica C.', [
-  fdpPart('', 'Construye la FDP y la gráfica acumulada.', () => binDist(3, 1 / 8).map((p, k) => [k, p]), 'cum', { frac: true, space: () => '<p>Cada aparato es de C con $p=\\tfrac18$ → binomial $n=3$, $p=\\tfrac18$: $P(x)=\\binom3x\\left(\\tfrac18\\right)^x\\left(\\tfrac78\\right)^{3-x}$.</p>' })
+  fdpPart('', 'Construye la FDP y la gráfica acumulada.', () => enumSeq(Array.from({ length: 3 }, () => [['C', 1 / 8], ['X', 7 / 8]])).map(([l, p]) => [cnt('C')(l), p, l.split('').join(' ')]), 'cum', { frac: true, space: () => '<p>Cada aparato es de C con $p=\\tfrac18$ → binomial $n=3$, $p=\\tfrac18$: $P(x)=\\binom3x\\left(\\tfrac18\\right)^x\\left(\\tfrac78\\right)^{3-x}$.</p>' })
 ]);
 add('fdp', 12, 'Pacientes de los bronquios', 'Un doctor ha observado que la tercera parte de sus pacientes está enferma de los bronquios. De 4 pacientes, $X$ = número de pacientes que <b>NO</b> están enfermos.', [
-  fdpPart('', 'Calcula la desviación estándar.', () => binDist(4, 2 / 3).map((p, k) => [k, p]), 'sd', { frac: true, space: () => '<p>«Éxito» = no estar enfermo: $p=\\tfrac23$, $n=4$. Atajo: $\\sigma=\\sqrt{npq}=\\sqrt{4\\cdot\\tfrac23\\cdot\\tfrac13}=\\sqrt{\\tfrac89}$.</p>' })
+  fdpPart('', 'Calcula la desviación estándar.', () => enumSeq(Array.from({ length: 4 }, () => [['S', 2 / 3], ['E', 1 / 3]])).map(([l, p]) => [cnt('S')(l), p, l.split('').join(' ')]), 'sd', { frac: true, space: () => '<p>«Éxito» = no estar enfermo: $p=\\tfrac23$, $n=4$. Atajo: $\\sigma=\\sqrt{npq}=\\sqrt{4\\cdot\\tfrac23\\cdot\\tfrac13}=\\sqrt{\\tfrac89}$.</p>' })
 ]);
 add('fdp', 13, 'Monedero con monedas de distinto valor', 'Un monedero contiene 5 monedas de §10, 4 de §5 y 1 de §2. Se extraen 2 monedas <b>sin reemplazo</b>. $X$ = cantidad de dinero extraído.', [
   fdpPart('', 'Calcula la media de la FDP.', () => { const it = [10, 10, 10, 10, 10, 5, 5, 5, 5, 2], o = []; for (let i = 0; i < it.length; i++) for (let j = i + 1; j < it.length; j++) o.push([it[i] + it[j], 1 / 45, '(' + it[i] + ', ' + it[j] + ')']); return o; }, 'mu', {
