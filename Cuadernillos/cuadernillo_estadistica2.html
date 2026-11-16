@@ -659,6 +659,7 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
 .fm-chips .chip{border:1.5px solid var(--fc,#475569);background:#fff;color:#0f172a;border-radius:999px;padding:4px 10px;font-size:.78rem;font-weight:700;cursor:pointer}
 .fm-chips .chip.on{background:var(--fc,#0f172a);color:#fff}
 .fm-dl{display:flex;flex-wrap:wrap;gap:6px}
+.xt{display:inline-block;border-radius:4px;padding:1px 7px;font-weight:600}
 .fsec{margin-block:14px 22px}
 .fsec-h{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 12px;border-radius:12px;background:var(--fp);border-left:6px solid var(--fc);color:#0f172a}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
@@ -740,6 +741,7 @@ body.limpio .rail-search{display:block}
     <div class="rail-foot">
       <button class="btn sm" data-act="plan">📄 Plan de estudios</button>
       <button class="btn sm" data-act="formulas">🧮 Formulario</button>
+      <a class="btn sm" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a>
       <button class="btn sm" data-act="tablaz">📊 Tabla z</button>
       <button class="btn sm" data-act="apendice">📊 Apéndice</button>
       <button class="btn sm" data-act="reset">♻️ Borrar mi avance</button>
@@ -989,12 +991,14 @@ const poiPmf = (k, l) => k < 0 ? 0 : Math.exp(-l + k * Math.log(l) - lnFact(k));
 const poiCdf = (k, l) => { let s = 0; for (let i = 0; i <= k; i++) s += poiPmf(i, l); return Math.min(1, s); };
 
 /* ---------- FDP discreta a partir de pares [x, p] ---------- */
-function fdpFrom(pairs) {      // pairs: [[x, p], ...] (puede haber x repetidas)
+function fdpFrom(pairs) {      // pairs: [[x, p], ...] o [[x, p, etiqueta], ...] (etiqueta = resultado del espacio muestral; ver homologacion item 16 sobre fdpTable)
   const m = new Map(); pairs.forEach(([x, p]) => m.set(x, (m.get(x) || 0) + p));
   const xs = [...m.keys()].sort((a, b) => a - b), ps = xs.map(x => m.get(x));
   const mu = sum(xs.map((x, i) => x * ps[i])), ex2 = sum(xs.map((x, i) => x * x * ps[i]));
   const F = []; let a = 0; ps.forEach(p => F.push(a += p));
-  return { xs, ps, F, mu, ex2, varz: ex2 - mu * mu, sd: Math.sqrt(Math.max(0, ex2 - mu * mu)), tot: sum(ps) };
+  const groups = {}, hasLab = pairs.length > 0 && pairs.every(([, , lab]) => lab != null && lab !== '');
+  if (hasLab) pairs.forEach(([x, p, lab]) => (groups[x] = groups[x] || []).push({ lab, p }));
+  return { xs, ps, F, mu, ex2, varz: ex2 - mu * mu, sd: Math.sqrt(Math.max(0, ex2 - mu * mu)), tot: sum(ps), groups, hasLab };
 }
 /* enumera todas las sucesiones de una lista de "etapas" (cada etapa: [[etiqueta, prob], ...]) */
 function enumSeq(stages) {
@@ -1702,13 +1706,55 @@ function svgCI(items, target, o = {}) {
 const numIn = (id, label, val, st = {}) => `<label class="f">${label}<input id="${id}" type="number" aria-label="${label.split('$').join('').split('\\').join('')}" step="${st.step || 'any'}" ${st.min != null ? `min="${st.min}"` : ''} ${st.max != null ? `max="${st.max}"` : ''} value="${val}"></label>`; // v2: aria-label en numéricos
 const rng1 = (id, label, min, max, val, st = 1) => `<label class="f"><span>${label}: <b id="${id}-v">${val}</b></span><input id="${id}" type="range" aria-label="${label.split('$').join('').split('\\').join('')}" min="${min}" max="${max}" step="${st}" value="${val}"></label>`; // v2: aria-label en sliders
 const nv = (p, id) => parseFloat(String($('#' + id, p).value).replace(',', '.'));
+/* =====================================================================
+   HOMOLOGACIÓN — FORMA DE MOSTRAR UNA FDP (ítem 16, 2026-11-15)
+   Tabla 1 «Por resultado»: las n filas (todas, sin recortar), columnas
+   [Resultado | Recorrido (X) | p(x) en fracción]. Una fila por cada
+   resultado del espacio muestral, agrupadas por valor de X.
+   Tabla 2 «Agrupada (FDP)»: una fila por valor de X; P(X = x) es la suma
+   de las fracciones de los resultados con ese X. Sin columna de recorrido.
+   Color: cada valor de X lleva el tinte pastel de FIG.gcolor(índice de x
+   en xs ordenadas, nº de valores) — el MISMO en la Tabla 1, en la Tabla 2
+   y en la rejilla del espacio muestral (ítem 11). No confundir con la
+   regla 9 (colores por CONCEPTO en sustituciones): aquí el color
+   identifica el VALOR de X.
+   Alcance: la Tabla 1 solo aparece cuando el ejercicio enumera todos sus
+   resultados (enumSeq, pares de dados, parejas sin orden i<j). En FDP
+   dadas por fórmula o por tabla (binomial, Poisson, hipergeométrica por
+   fórmula, literales) solo se muestra la Tabla 2, con color y fracciones.
+   Ítem 17 (2026-11-15): la misma forma se aplica a los ejemplos resueltos
+   (u1-va: tetraedro, examen, huevos, artículos; u1-fdp Profundización:
+   3 monedas y máximo de dos dados). En Profundización la Tabla 2 ya existe
+   como tabla de cálculo (con momentos): solo se añade la Tabla 1 y se tinta
+   la columna x de la tabla de cálculo, que conserva sus fracciones.
+   Los ejemplos resueltos suponen resultados equiprobables (p = 1/n por
+   resultado); la suposición se escribe en una nota visible bajo las tablas.
+   ===================================================================== */
+/* chip de color por valor de X (mismo tinte que la rejilla del ítem 11) */
+const xTag = (x, xs) => `<span class="xt" style="background:${FIG.gcolor(xs.indexOf(x), xs.length)}">${fc(x, 4)}</span>`;
 /* tabla FDP simple a partir de {xs,ps} con columnas opcionales */
 function fdpTable(f, o = {}) {
   const head = ['x', 'P(X = x)']; if (o.cum) head.push('F(x)'); if (o.mom) head.push('x · P(x)', 'x² · P(x)');
-  const rows = f.xs.map((x, i) => tr([fc(x, 4), o.frac ? `$${pf(f.ps[i])}$` : fc(f.ps[i], 4), ...(o.cum ? [fc(f.F[i], 4)] : []), ...(o.mom ? [fc(x * f.ps[i], 4), fc(x * x * f.ps[i], 4)] : [])]));
+  const rows = f.xs.map((x, i) => tr([xTag(x, f.xs), `$${pf(f.ps[i])}$`, ...(o.cum ? [fc(f.F[i], 4)] : []), ...(o.mom ? [fc(x * f.ps[i], 4), fc(x * x * f.ps[i], 4)] : [])]));
   rows.push(tr(['<b>Σ</b>', `<b>${fc(f.tot, 4)}</b>`, ...(o.cum ? [''] : []), ...(o.mom ? [`<b>${fc(f.mu, 4)}</b>`, `<b>${fc(f.ex2, 4)}</b>`] : [])], 'sum'));
-  return tbl(head, rows);
+  const grouped = tbl(head, rows);
+  if (!f.hasLab || o.detail === false) return grouped;
+  const det = [];
+  f.xs.forEach(x => (f.groups[x] || []).forEach(({ lab, p }) => det.push(tr([lab, xTag(x, f.xs), `$${pf(p)}$`]))));
+  det.push(tr(['<b>Σ</b>', '', `<b>${fc(f.tot, 4)}</b>`], 'sum'));
+  const t1 = `<p class="sub"><b>Tabla 1 · Por resultado:</b> cada resultado, su recorrido ($X$) y su $p(x)$ en fracción (las $n$ filas, sin recortar).</p>` + tbl(['Resultado', 'Recorrido ($X$)', '$p(x)$'], det);
+  if (o.only1) return t1;
+  return t1 + `<p class="sub"><b>Tabla 2 · Agrupada (FDP):</b> se suman las fracciones de cada valor de $X$. El color identifica cada posible resultado y es el mismo en las dos tablas.</p>` + grouped;
 }
+/* Tabla 1 (+ Tabla 2) a partir de una rejilla rows × cols con cell(r,c) => [etiqueta, x]
+   (ítem 17, 2026-11-15): los resultados se suponen equiprobables,
+   p = 1/(n filas × n columnas). Reutiliza la MISMA función cell que dibuja la
+   rejilla, así la tabla nunca discrepa de ella.
+   o.only1: solo la Tabla 1 (cuando la agrupada ya existe como tabla de cálculo). */
+const fdpGrid = (rows, cols, cell, o = {}) => {
+  const f = fdpFrom(rows.flatMap(r => cols.map(c => { const [lab, x] = cell(r, c); return [x, 1 / (rows.length * cols.length), lab]; })));
+  return fdpTable(f, { frac: true, ...o }) + `<p class="sub">Resultados equiprobables: cada uno con $p=\\frac{1}{${rows.length * cols.length}}$.</p>`;
+};
 
 'use strict';
 /* =====================================================================
@@ -2186,7 +2232,7 @@ function fdpPart(l, q, getPairs, ask, o = {}) {
       const showT = ask === 'tab' || !o.noTab;
       if (showT) steps.push([ask === 'tab' ? 'Distribución de probabilidad' : 'Tabla de la FDP', fdpTable(f, { frac: o.frac, cum: ask === 'cum' }) + `<p class="sub">Comprobación: $\\sum P(X=x)=${TN(f.tot, 4)}=1$ ✔</p>`]);
       let ans = '', viz = svgPmf(f.xs, f.ps, { w: 520, h: 210, vals: f.xs.length <= 12, vd: 3, xt: 'x', maxTicks: 21 });
-      const mom = `${fdpTable(f, { frac: o.frac, mom: true })}`;
+      const mom = `${fdpTable(f, { frac: o.frac, mom: true, detail: false })}`;
       const mu = `\\mu=E(X)=\\sum x\\,P(x)=${TN(f.mu, 4)}`, v = `\\sigma^2=E(X^2)-\\mu^2=${TN(f.ex2, 4)}-(${TN(f.mu, 4)})^2=${TN(f.varz, 4)}`, sd = `\\sigma=\\sqrt{${TN(f.varz, 4)}}=${TN(f.sd, 4)}`;
       if (ask === 'mu') { steps.push(['Media (valor esperado)', mom + `<div class="eqbox">$${mu}$</div>`]); ans = MM(mu); }
       if (ask === 'var' || ask === 'sd') { steps.push(['Columnas $xP(x)$ y $x^2P(x)$', mom]); steps.push(['Media', `<div class="eqbox">$${mu}$</div>`]); steps.push([ask === 'var' ? 'Varianza' : 'Varianza y desviación estándar', `<div class="eqbox">$${v}$</div>` + (ask === 'sd' ? `<div class="eqbox">$${sd}$</div>` : '')]); ans = ask === 'var' ? MM(`\\sigma^2=${TN(f.varz, 4)}`) : MM(`\\sigma=${TN(f.sd, 4)}`) + ` (con ${MM(`\\sigma^2=${TN(f.varz, 4)}`)})`; }
@@ -2486,7 +2532,7 @@ add('esp', 27, 'Semillas de girasol y cártamo', 'Una bolsa tiene 5 semillas de 
   fdpPart('', 'Construye la FDP y la gráfica de la acumulada.', () => [0, 1, 2, 3].map(k => [k, Number(nCr(4, k)) * Number(nCr(5, 3 - k)) / 84]), 'cum', { frac: true, space: () => '<p>$P(x)=\\dfrac{\\binom4x\\binom5{3-x}}{\\binom93}$, con $\\binom93=84$.</p>' })
 ]);
 add('esp', 28, 'Materias aprobadas', 'Un alumno aprueba Biología con $\\tfrac23$, Estadística con $\\tfrac35$ y Filosofía con $\\tfrac34$ (se supone que son eventos independientes). $X$ = materias aprobadas.', [
-  fdpPart('', 'Construye la FDP.', () => enumSeq([[['1', 2 / 3], ['0', 1 / 3]], [['1', 3 / 5], ['0', 2 / 5]], [['1', 3 / 4], ['0', 1 / 4]]]).map(([l, p]) => [cnt('1')(l), p]), 'tab', {
+  fdpPart('', 'Construye la FDP.', () => enumSeq([[['1', 2 / 3], ['0', 1 / 3]], [['1', 3 / 5], ['0', 2 / 5]], [['1', 3 / 4], ['0', 1 / 4]]]).map(([l, p]) => [cnt('1')(l), p, l.split('').join(' ')]), 'tab', {
     frac: true, space: () => spaceHtml([[['1', 2 / 3], ['0', 1 / 3]], [['1', 3 / 5], ['0', 2 / 5]], [['1', 3 / 4], ['0', 1 / 4]]], cnt('1'), { frac: true, intro: '1 = aprueba, 0 = no aprueba (Biología, Estadística, Filosofía).' })
   })
 ]);
@@ -2518,7 +2564,7 @@ add('esp', 32, 'Torneo de básquet', 'Los equipos A y B juegan un torneo. Gana e
     })('', 0, 0, '');
     const f = fdpFrom(seqs.map(s => [s.length, Math.pow(.5, s.length)]));
     return {
-      steps: [['Secuencias que terminan el torneo', `<p>El torneo termina cuando alguien gana 2 juegos seguidos (p. ej. AA) o llega a 3 victorias. Las ${seqs.length} secuencias posibles:</p>` + tbl(['Secuencia', 'Juegos', 'Probabilidad'], seqs.sort((a, b) => a.length - b.length).map(s => tr([s.split('').join(' '), s.length, `$\\left(\\tfrac12\\right)^{${s.length}}=${pf(Math.pow(.5, s.length))}$`])))],
+      steps: [['Secuencias que terminan el torneo', `<p>El torneo termina cuando alguien gana 2 juegos seguidos (p. ej. AA) o llega a 3 victorias. Las ${seqs.length} secuencias posibles:</p>` + tbl(['Secuencia', 'Juegos', 'Probabilidad'], seqs.sort((a, b) => a.length - b.length).map(s => tr([s.split('').join(' '), xTag(s.length, f.xs), `$\\left(\\tfrac12\\right)^{${s.length}}=${pf(Math.pow(.5, s.length))}$`])))],
         ['Agrupa por número de juegos', fdpTable(f, { frac: true }) + '<p class="sub">Suma 1 ✔. Es decir: $P(2)=\\tfrac12$, $P(3)=\\tfrac14$, $P(4)=\\tfrac18$, $P(5)=\\tfrac18$.</p>']],
       ans: 'tabla de $X$ (arriba) con $E(X)=' + TN(f.mu, 3) + '$ juegos', viz: svgPmf(f.xs, f.ps, { w: 480, h: 200, vals: true, vd: 3, xt: 'juegos jugados' })
     };
@@ -2531,31 +2577,31 @@ add('esp', 32, 'Torneo de básquet', 'Los equipos A y B juegan un torneo. Gana e
    ===================================================================== */
 const D6 = [1, 2, 3, 4, 5, 6];
 add('fdp', 1, 'Par de dados: producto y máximo', 'Experimento: lanzar un par de dados (36 resultados equiprobables).', [
-  fdpPart('a)', 'Calcula la media de la FDP, con $X$ = producto de los números.', () => D6.flatMap(a => D6.map(b => [a * b, 1 / 36])), 'mu', {
+  fdpPart('a)', 'Calcula la media de la FDP, con $X$ = producto de los números.', () => D6.flatMap(a => D6.map(b => [a * b, 1 / 36, '(' + a + ', ' + b + ')'])), 'mu', {
     frac: true, space: () => `<p>Cada celda es el producto $a\\cdot b$ (36 resultados, cada uno con $P=\\tfrac1{36}$). Se cuentan cuántas veces aparece cada producto.</p>` + tbl(['a \\ b', ...D6.map(String)], D6.map(a => tr([`<b>${a}</b>`, ...D6.map(b => a * b)])))
   }),
-  fdpPart('b)', 'Calcula la varianza de la FDP, con $X$ = máximo de los números.', () => D6.flatMap(a => D6.map(b => [Math.max(a, b), 1 / 36])), 'var', {
+  fdpPart('b)', 'Calcula la varianza de la FDP, con $X$ = máximo de los números.', () => D6.flatMap(a => D6.map(b => [Math.max(a, b), 1 / 36, '(' + a + ', ' + b + ')'])), 'var', {
     frac: true, space: () => `<p>El máximo es $k$ en $2k-1$ de los 36 resultados (los pares con al menos un $k$ y ningún número mayor): $P(X=k)=\\dfrac{2k-1}{36}$.</p>`
   })
 ], [{ t: 'Dados', c: 'a' }]);
 add('fdp', 3, 'Disco con tres colores', 'Un disco está dividido en tres partes iguales (verde, blanco y rojo) con una manecilla giratoria. Se gira dos veces. Construye la FDP con $X$ = número de veces que sale rojo.', [
-  fdpPart('', 'Construye y grafica la FDP.', () => enumSeq([[['V', 1 / 3], ['B', 1 / 3], ['R', 1 / 3]], [['V', 1 / 3], ['B', 1 / 3], ['R', 1 / 3]]]).map(([l, p]) => [cnt('R')(l), p]), 'tab', {
+  fdpPart('', 'Construye y grafica la FDP.', () => enumSeq([[['V', 1 / 3], ['B', 1 / 3], ['R', 1 / 3]], [['V', 1 / 3], ['B', 1 / 3], ['R', 1 / 3]]]).map(([l, p]) => [cnt('R')(l), p, l.split('').join(' ')]), 'tab', {
     frac: true, space: () => spaceHtml([[['V', 1 / 3], ['B', 1 / 3], ['R', 1 / 3]], [['V', 1 / 3], ['B', 1 / 3], ['R', 1 / 3]]], cnt('R'), { frac: true }) + '<p class="sub">Atajo: es binomial con $n=2$ y $p=\\tfrac13$ (rojo).</p>'
   })
 ]);
 add('fdp', 4, 'Caja con productos buenos y malos', 'Una caja contiene 8 productos en buenas condiciones y 4 en malas condiciones. Se extraen 2 productos al azar <b>con reemplazamiento</b>. $X$ = número de productos en malas condiciones.', [
-  fdpPart('', 'Calcula la desviación estándar de la FDP.', () => enumSeq([[['B', 2 / 3], ['M', 1 / 3]], [['B', 2 / 3], ['M', 1 / 3]]]).map(([l, p]) => [cnt('M')(l), p]), 'sd', {
+  fdpPart('', 'Calcula la desviación estándar de la FDP.', () => enumSeq([[['B', 2 / 3], ['M', 1 / 3]], [['B', 2 / 3], ['M', 1 / 3]]]).map(([l, p]) => [cnt('M')(l), p, l.split('').join(' ')]), 'sd', {
     frac: true, space: () => spaceHtml([[['B', 2 / 3], ['M', 1 / 3]], [['B', 2 / 3], ['M', 1 / 3]]], cnt('M'), { frac: true, intro: 'Con reemplazo: $P(\\text{mala})=\\tfrac{4}{12}=\\tfrac13$ en cada extracción.' })
   })
 ]);
 const FAM = [['F', .52], ['M', .48]];
 add('fdp', 5, 'Familia de 3 hijos (varones)', 'Se ha observado que $P(\\text{mujer})=0.52$ y $P(\\text{varón})=0.48$. En una familia de 3 hijos, $X$ = número de varones.', [
-  fdpPart('', 'Calcula $\\sigma$ y construye la FDP.', () => enumSeq([FAM, FAM, FAM]).map(([l, p]) => [cnt('M')(l), p]), 'sd', {
+  fdpPart('', 'Calcula $\\sigma$ y construye la FDP.', () => enumSeq([FAM, FAM, FAM]).map(([l, p]) => [cnt('M')(l), p, l.split('').join(' ')]), 'sd', {
     space: () => spaceHtml([FAM, FAM, FAM], cnt('M'), { intro: 'Cada hijo: $P(F)=0.52$, $P(M)=0.48$. Es binomial con $n=3$, $p=0.48$.' })
   })
 ]);
 add('fdp', 6, 'Tres máquinas independientes', 'Tres máquinas A, B y C trabajan independientemente con $P(A)=0.9$, $P(B)=0.8$, $P(C)=0.7$. Construye la FDP con $X$ = número de máquinas que trabajan.', [
-  fdpPart('', 'Construye la FDP.', () => enumSeq([[[1, .9], [0, .1]], [[1, .8], [0, .2]], [[1, .7], [0, .3]]].map(st => st.map(([a, p]) => [String(a), p]))).map(([l, p]) => [cnt('1')(l), p]), 'tab', {
+  fdpPart('', 'Construye la FDP.', () => enumSeq([[[1, .9], [0, .1]], [[1, .8], [0, .2]], [[1, .7], [0, .3]]].map(st => st.map(([a, p]) => [String(a), p]))).map(([l, p]) => [cnt('1')(l), p, l.split('').join(' ')]), 'tab', {
     space: () => spaceHtml([[['1', .9], ['0', .1]], [['1', .8], ['0', .2]], [['1', .7], ['0', .3]]], cnt('1'), { intro: 'Cada dígito indica si trabaja (1) o no (0) la máquina A, B y C, en ese orden.' })
   })
 ]);
@@ -2565,7 +2611,7 @@ add('fdp', 7, 'Adivinar sabores', 'A un estudiante se le pide identificar el sab
   })
 ]);
 add('fdp', 8, 'Etiquetas del 1 al 9: suma', 'Una caja contiene 9 etiquetas numeradas del 1 al 9. Se extraen 2 al azar <b>sin reemplazamiento</b>. $X$ = suma de las dos.', [
-  fdpPart('', 'Construye la FDP.', () => { const o = []; for (let i = 1; i <= 9; i++) for (let j = i + 1; j <= 9; j++) o.push([i + j, 1 / 36]); return o; }, 'tab', {
+  fdpPart('', 'Construye la FDP.', () => { const o = []; for (let i = 1; i <= 9; i++) for (let j = i + 1; j <= 9; j++) o.push([i + j, 1 / 36, '(' + i + ', ' + j + ')']); return o; }, 'tab', {
     frac: true, space: () => '<p>Hay $\\binom92=36$ parejas sin orden, todas equiprobables ($\\tfrac1{36}$). La suma va de $1+2=3$ a $8+9=17$; se cuenta cuántas parejas dan cada suma.</p>'
   })
 ]);
@@ -2574,7 +2620,7 @@ add('fdp', 9, 'Grupos sanguíneos', 'Probabilidades: $P(O)=0.45$, $P(A)=0.40$, $
 ]);
 add('fdp', 10, 'Moneda con máximo de 4 lanzamientos', 'Se lanza una moneda hasta un máximo de 4 veces; una persona adivina la cara antes de cada lanzamiento y se deja de lanzar cuando acierta. $X$ = número de lanzamientos.', [
   fdpPart('', 'Calcula $\\sigma$.', () => [[1, 1 / 2], [2, 1 / 4], [3, 1 / 8], [4, 1 / 8]], 'sd', {
-    frac: true, space: () => tbl(['Secuencia (A = acierta, F = falla)', 'Probabilidad', '$x$'], [tr(['A', '$\\frac12$', '1']), tr(['F A', '$\\frac14$', '2']), tr(['F F A', '$\\frac18$', '3']), tr(['F F F (·)', '$\\frac18$', '4'])]) + '<p class="sub">Si falla las tres primeras veces se hace el 4.º lanzamiento y el juego termina (acierte o no): $P(X=4)=\\left(\\tfrac12\\right)^3=\\tfrac18$.</p>'
+    frac: true, space: () => tbl(['Secuencia (A = acierta, F = falla)', '$x$ (recorrido)', 'Probabilidad'], [tr(['A', xTag(1, [1, 2, 3, 4]), '$\\frac12$']), tr(['F A', xTag(2, [1, 2, 3, 4]), '$\\frac14$']), tr(['F F A', xTag(3, [1, 2, 3, 4]), '$\\frac18$']), tr(['F F F (·)', xTag(4, [1, 2, 3, 4]), '$\\frac18$'])]) + '<p class="sub">Si falla las tres primeras veces se hace el 4.º lanzamiento y el juego termina (acierte o no): $P(X=4)=\\left(\\tfrac12\\right)^3=\\tfrac18$.</p>'
   })
 ]);
 add('fdp', 11, 'Fábricas A, B y C', 'Las fábricas A, B y C producen $\\tfrac58$, $\\tfrac28$ y $\\tfrac18$ de los aparatos. Se seleccionan 3 aparatos al azar. $X$ = número de aparatos de la fábrica C.', [
@@ -2584,12 +2630,12 @@ add('fdp', 12, 'Pacientes de los bronquios', 'Un doctor ha observado que la terc
   fdpPart('', 'Calcula la desviación estándar.', () => binDist(4, 2 / 3).map((p, k) => [k, p]), 'sd', { frac: true, space: () => '<p>«Éxito» = no estar enfermo: $p=\\tfrac23$, $n=4$. Atajo: $\\sigma=\\sqrt{npq}=\\sqrt{4\\cdot\\tfrac23\\cdot\\tfrac13}=\\sqrt{\\tfrac89}$.</p>' })
 ]);
 add('fdp', 13, 'Monedero con monedas de distinto valor', 'Un monedero contiene 5 monedas de §10, 4 de §5 y 1 de §2. Se extraen 2 monedas <b>sin reemplazo</b>. $X$ = cantidad de dinero extraído.', [
-  fdpPart('', 'Calcula la media de la FDP.', () => drawsNoRepl([10, 10, 10, 10, 10, 5, 5, 5, 5, 2], 2).map(([v, p]) => [v[0] + v[1], p]), 'mu', {
+  fdpPart('', 'Calcula la media de la FDP.', () => { const it = [10, 10, 10, 10, 10, 5, 5, 5, 5, 2], o = []; for (let i = 0; i < it.length; i++) for (let j = i + 1; j < it.length; j++) o.push([it[i] + it[j], 1 / 45, '(' + it[i] + ', ' + it[j] + ')']); return o; }, 'mu', {
     frac: true, space: () => '<p>Hay $\\binom{10}2=45$ parejas equiprobables. Sumas posibles: 20 (dos de §10), 15 (§10+§5), 12 (§10+§2), 10 (dos de §5) y 7 (§5+§2).</p><p class="sub">Comprobación rápida: $E(X)=2\\cdot E(\\text{una moneda})=2\\cdot\\frac{5(10)+4(5)+2}{10}=14.4$.</p>'
   })
 ]);
 add('fdp', 14, 'Edades de 10 estudiantes', 'En una clase hay 10 estudiantes: 5 de 17 años, 4 de 19 y 1 de 21. Se seleccionan 2 <b>sin reemplazamiento</b>. $X$ = edad promedio de los dos.', [
-  fdpPart('', 'Calcula $\\mu$ de la FDP.', () => drawsNoRepl([17, 17, 17, 17, 17, 19, 19, 19, 19, 21], 2).map(([v, p]) => [(v[0] + v[1]) / 2, p]), 'mu', {
+  fdpPart('', 'Calcula $\\mu$ de la FDP.', () => { const it = [17, 17, 17, 17, 17, 19, 19, 19, 19, 21], o = []; for (let i = 0; i < it.length; i++) for (let j = i + 1; j < it.length; j++) o.push([(it[i] + it[j]) / 2, 1 / 45, '(' + it[i] + ', ' + it[j] + ')']); return o; }, 'mu', {
     frac: true, space: () => '<p>Promedios posibles: 17, 18, 19 y 20 (por parejas de edades; el 21 no puede salir porque solo hay un alumno de 21 años y es sin reemplazo). Hay 45 parejas equiprobables.</p><div class="note tip">Comprobación: sin reemplazo, $E(\\bar X)=\\mu_{\\text{población}}=\\frac{5(17)+4(19)+21}{10}=18.2$.</div>'
   })
 ]);
@@ -2760,7 +2806,7 @@ PAGES.push({
 <li><b>Leer la altura de la densidad como probabilidad:</b> en continuas $P(X=2)=0$; la probabilidad es el área.</li>
 <li><b>Decir “se acepta $H_0$”:</b> en inferencia se <b>rechaza</b> o <b>no se rechaza</b>; no rechazar no demuestra que $H_0$ sea verdadera.</li>
 </ul></section>
-<section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="apendice">📊 Apéndice · Tablas</button><button class="btn" data-act="tablas-word">📊 Tablas exactas (Word)</button></div></section></div>`;
+<section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="apendice">📊 Apéndice · Tablas</button><button class="btn" data-act="tablas-word">📊 Tablas exactas (Word)</button><p class="sub">📎 Los PDF de Ejercicios y Formulario deben acompañar a este archivo en la carpeta <b>PDF/</b>.</p></div></section></div>`;
       // portada: campana normal sobre barras binomiales (n = 20, p = 0.5)
       const n = 20, ps = binDist(n, .5), xs = ps.map((_, i) => i);
       $('#cover-chart', p).innerHTML = svgPmf(xs, ps, { w: 420, h: 200, norm: { mu: 10, sd: Math.sqrt(5) }, xt: 'binomial n = 20, p = 0.5 y su campana normal', yt: '' }).replace(/fill="#1c7ed6"/g, 'fill="#E7B8C6"');
@@ -2786,7 +2832,8 @@ PAGES.push({
   tabs: [
     { id: 'con', t: '1 · Concepto y ejemplos', render(p) {
       // ítem 11: vx() ya no es tabla vertical: rejilla simétrica (filas = etapas anteriores, columnas = última etapa)
-      const vx = (rows, cols, cell, cap) => symGrid(rows, cols, cell, { cap });
+      // ítem 17: la rejilla va seguida de las dos tablas de la FDP (Tabla 1 por resultado + Tabla 2 agrupada), con los mismos resultados y valores de X (fdpGrid reutiliza la misma cell)
+      const vx = (rows, cols, cell, cap) => symGrid(rows, cols, cell, { cap }) + fdpGrid(rows, cols, cell);
       const nota = txt => `<details class="nota"><summary>💡 Nota: ¿por qué importa este ejemplo?</summary><p>${txt}</p></details>`; // ítem 1b: cerrada por defecto
       p.innerHTML = `<div class="stack onecol">
         <div class="pn rv"><h3><span class="ico">📐</span>¿Qué es? ${thBtn('va', 'Teoría')}</h3>
@@ -2796,6 +2843,7 @@ PAGES.push({
         <div class="pn rv"><h3><span class="ico">🔺</span>Ejemplo 1 · Tetraedro</h3>
           <p>Un tetraedro con caras numeradas del 1 al 4 se lanza dos veces. $X$ = suma de los números. Los 16 resultados $(a,b)$ dan:</p>
           <div class="tw"><table class="tb"><tbody>${[1, 2, 3, 4].map(a => `<tr>${[1, 2, 3, 4].map(b => `<td>(${a},${b}) → <b>${a + b}</b></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+          ${fdpGrid([1, 2, 3, 4], [1, 2, 3, 4], (a, b) => ['(' + a + ',' + b + ')', a + b])}
           <p>Recorrido: $R_X=\\{2,3,4,5,6,7,8\\}$. <span class="sub">En un mismo espacio muestral se pueden definir variables aleatorias distintas.</span></p>${nota('La suma es la variable: cada pareja (a,b) es un resultado, pero varios resultados dan el mismo valor de $X$. Hay 16 parejas y solo 7 valores posibles, de 2 a 8.')}</div>
         <div class="pn rv"><h3><span class="ico">📝</span>Ejemplo 2 · Examen de 3 preguntas</h3>
           <p>Cada pregunta bien contestada (<b>g</b>) da +5 puntos y cada mal contestada (<b>p</b>) resta 2. $X$ = puntos obtenidos.</p>${vx(['gg', 'gp', 'pg', 'pp'], ['g', 'p'], (r, c) => { const s = r + c; return ['(' + [...s].join(',') + ')', [...s].reduce((t, ch) => t + (ch === 'g' ? 5 : -2), 0)]; }, 'Filas = 2 primeras preguntas · Columnas = 3.ª pregunta')}
@@ -2945,7 +2993,7 @@ PAGES.push({
           <p class="sub">La tabla de cálculo siempre lleva las columnas $x$, $P(x)$, $x\\cdot P(x)$ y $x^2\\cdot P(x)$: sus sumas dan $1$, $E[X]$ y $E[X^2]$.</p></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — $X$ = águilas al lanzar 3 monedas</h3>
           <ol class="steps">
-          <li><b>Paso 0 — Qué es $X$:</b> $X$ = número de águilas al lanzar 3 monedas. Espacio muestral: 8 resultados equiprobables, en rejilla 4×2 (filas = 2 primeras monedas · columnas = 3.ª moneda). $X$ toma $0,1,2,3$. ${symGrid(['AA', 'AS', 'SA', 'SS'], ['A', 'S'], (r, c) => { const s = r + c; return [s, (s.match(/A/g) || []).length]; })}</li>
+          <li><b>Paso 0 — Qué es $X$:</b> $X$ = número de águilas al lanzar 3 monedas. Espacio muestral: 8 resultados equiprobables, en rejilla 4×2 (filas = 2 primeras monedas · columnas = 3.ª moneda). $X$ toma $0,1,2,3$. ${symGrid(['AA', 'AS', 'SA', 'SS'], ['A', 'S'], (r, c) => { const s = r + c; return [s, (s.match(/A/g) || []).length]; })}${fdpGrid(['AA', 'AS', 'SA', 'SS'], ['A', 'S'], (r, c) => { const s = r + c; return [s.split('').join(' '), (s.match(/A/g) || []).length]; }, { only1: true })}</li>
           <li><b>Paso 1 — Construir la FDP (conteo):</b> $X=0$ sale 1 vez, $X=1$ 3 veces, $X=2$ 3 veces, $X=3$ 1 vez → $P(X=x)=\\frac{1}{8},\\frac{3}{8},\\frac{3}{8},\\frac{1}{8}$.</li>
           <li><b>Paso 2 — Tabla de cálculo:</b> columnas $x$, $P(x)$, $x\\cdot P(x)$, $x^2\\cdot P(x)$. La suma de $P(x)$ debe dar 1; la suma de $x\\cdot P(x)$ es $E[X]$; la suma de $x^2\\cdot P(x)$ es $E[X^2]$.</li>
           <li><b>Paso 3 — Esperanza:</b> $E[X]=\\sum x\\cdot P(x)=0+\\frac{3}{8}+\\frac{6}{8}+\\frac{3}{8}=\\frac{12}{8}=\\frac{3}{2}=1.50$.</li>
@@ -2955,10 +3003,10 @@ PAGES.push({
           <li><b>Paso 7 — Interpretación y comprobación:</b> a la larga salen en promedio 1.5 águilas por intento, aunque en un solo intento nunca salga exactamente 1.5. Comprobación: $\\sum P(x)=1$ y es la binomial con $n=3$, $p=\\frac{1}{2}$: $np=\\frac{3}{2}$ y $npq=\\frac{3}{4}$ ✓.</li>
           </ol>
           <div class="tw"><table class="tb"><thead><tr><th>x</th><th>P(X = x)</th><th>x · P(x)</th><th>x² · P(x)</th></tr></thead><tbody>
-          <tr><td>0</td><td>$\\frac{1}{8}$</td><td>0</td><td>0</td></tr>
-          <tr><td>1</td><td>$\\frac{3}{8}$</td><td>$\\frac{3}{8}$</td><td>$\\frac{3}{8}$</td></tr>
-          <tr><td>2</td><td>$\\frac{3}{8}$</td><td>$\\frac{6}{8}$</td><td>$\\frac{12}{8}$</td></tr>
-          <tr><td>3</td><td>$\\frac{1}{8}$</td><td>$\\frac{3}{8}$</td><td>$\\frac{9}{8}$</td></tr>
+          <tr><td>${xTag(0, [0, 1, 2, 3])}</td><td>$\\frac{1}{8}$</td><td>0</td><td>0</td></tr>
+          <tr><td>${xTag(1, [0, 1, 2, 3])}</td><td>$\\frac{3}{8}$</td><td>$\\frac{3}{8}$</td><td>$\\frac{3}{8}$</td></tr>
+          <tr><td>${xTag(2, [0, 1, 2, 3])}</td><td>$\\frac{3}{8}$</td><td>$\\frac{6}{8}$</td><td>$\\frac{12}{8}$</td></tr>
+          <tr><td>${xTag(3, [0, 1, 2, 3])}</td><td>$\\frac{1}{8}$</td><td>$\\frac{3}{8}$</td><td>$\\frac{9}{8}$</td></tr>
           <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>$\\frac{3}{2}$</b></td><td><b>3</b></td></tr>
           </tbody></table></div>
           <p>📐 <b>Fórmula → sustitución:</b> $E[X]=0+\\frac{3}{8}+\\frac{6}{8}+\\frac{3}{8}=\\frac{12}{8}=\\frac{3}{2}$ · $Var(X)=3-\\left(\\frac{3}{2}\\right)^2=3-\\frac{9}{4}=\\frac{3}{4}$.</p>
@@ -2969,13 +3017,14 @@ PAGES.push({
           <li><b>Paso 1 — Construir la FDP (conteo):</b> $X=x$ ocurre en $2x-1$ casillas (la fila y la columna del valor $x$, sin contar dos veces la casilla $(x,x)$) → $P(X=x)=\\frac{2x-1}{36}$: $\\frac{1}{36},\\frac{3}{36},\\frac{5}{36},\\frac{7}{36},\\frac{9}{36},\\frac{11}{36}$.</li>
           <li><b>Paso 2 — Tabla de cálculo:</b> columnas $x$, $P(x)$, $x\\cdot P(x)$, $x^2\\cdot P(x)$; sus sumas dan $1$, $E[X]$ y $E[X^2]$.</li>
           </ol>
+          ${fdpGrid([1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], (a, b) => ['(' + a + ', ' + b + ')', Math.max(a, b)], { only1: true })}
           <div class="tw"><table class="tb"><thead><tr><th>x</th><th>P(X = x)</th><th>x · P(x)</th><th>x² · P(x)</th></tr></thead><tbody>
-          <tr><td>1</td><td>$\\frac{1}{36}$</td><td>$\\frac{1}{36}$</td><td>$\\frac{1}{36}$</td></tr>
-          <tr><td>2</td><td>$\\frac{3}{36}$</td><td>$\\frac{6}{36}$</td><td>$\\frac{12}{36}$</td></tr>
-          <tr><td>3</td><td>$\\frac{5}{36}$</td><td>$\\frac{15}{36}$</td><td>$\\frac{45}{36}$</td></tr>
-          <tr><td>4</td><td>$\\frac{7}{36}$</td><td>$\\frac{28}{36}$</td><td>$\\frac{112}{36}$</td></tr>
-          <tr><td>5</td><td>$\\frac{9}{36}$</td><td>$\\frac{45}{36}$</td><td>$\\frac{225}{36}$</td></tr>
-          <tr><td>6</td><td>$\\frac{11}{36}$</td><td>$\\frac{66}{36}$</td><td>$\\frac{396}{36}$</td></tr>
+          <tr><td>${xTag(1, [1, 2, 3, 4, 5, 6])}</td><td>$\\frac{1}{36}$</td><td>$\\frac{1}{36}$</td><td>$\\frac{1}{36}$</td></tr>
+          <tr><td>${xTag(2, [1, 2, 3, 4, 5, 6])}</td><td>$\\frac{3}{36}$</td><td>$\\frac{6}{36}$</td><td>$\\frac{12}{36}$</td></tr>
+          <tr><td>${xTag(3, [1, 2, 3, 4, 5, 6])}</td><td>$\\frac{5}{36}$</td><td>$\\frac{15}{36}$</td><td>$\\frac{45}{36}$</td></tr>
+          <tr><td>${xTag(4, [1, 2, 3, 4, 5, 6])}</td><td>$\\frac{7}{36}$</td><td>$\\frac{28}{36}$</td><td>$\\frac{112}{36}$</td></tr>
+          <tr><td>${xTag(5, [1, 2, 3, 4, 5, 6])}</td><td>$\\frac{9}{36}$</td><td>$\\frac{45}{36}$</td><td>$\\frac{225}{36}$</td></tr>
+          <tr><td>${xTag(6, [1, 2, 3, 4, 5, 6])}</td><td>$\\frac{11}{36}$</td><td>$\\frac{66}{36}$</td><td>$\\frac{396}{36}$</td></tr>
           <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>$\\frac{161}{36}$</b></td><td><b>$\\frac{791}{36}$</b></td></tr>
           </tbody></table></div>
           <ol class="steps" start="4">
@@ -3859,6 +3908,7 @@ PAGES.push({
 
 'use strict';
 const R_ = String.raw;
+const DL = [{ t: 'Formulario (PDF)', href: 'PDF/est2_formulario.pdf', pri: 1 }, { t: 'Ejercicios sin solución (PDF)', href: 'PDF/est2_ejercicios.pdf' }];
 const FM = [
   { t: 'Variable aleatoria y FDP', ic: '🎯', c: '#1c7ed6', p: '#e7f1fb', f: [
     ['Función de probabilidad', R_`f(x)=P(X=x)`, '$X$: función del espacio muestral a los reales.'],
@@ -3901,9 +3951,9 @@ const FM = [
 /* ===== Formulario por secciones (cards + sombras) y descargas PDF ===== */
 function formHTML() {
   const chips = `<div class="fm-bar"><div class="fm-chips"><button class="chip on" data-act="fmf" data-s="*">Todas</button>${FM.map((s, i) => `<button class="chip" data-act="fmf" data-s="${i}" style="--fc:${s.c}">${s.ic} ${s.t}</button>`).join('')}</div>
-</div>`;
+    <div class="fm-dl">${DL.map(d => `<a class="btn sm${d.pri ? ' pri' : ''}" href="${d.href}" download target="_blank" rel="noopener">⬇ ${d.t}</a>`).join('')}</div></div>`;
   const secs = FM.map((s, i) => `<section class="fsec" data-s="${i}" style="--fc:${s.c};--fp:${s.p}"><h4 class="fsec-h"><span>${s.ic}</span>${s.t}</h4><div class="fgrid">${s.f.map((f, k) => `<article class="fcard" style="--i:${k}"><b>${f[0]}</b><div class="fx">$$${f[1]}$$</div>${f[2] ? `<p class="sub">${f[2]}</p>` : ''}</article>`).join('')}</div></section>`).join('');
-  return chips + `<div class="fm-wrap">${secs}</div>`;
+  return chips + `<p class="sub">📎 Los archivos PDF (Formulario y Ejercicios) deben acompañar a este HTML en la carpeta <b>PDF/</b>; si abres solo el HTML, los botones de descarga no funcionarán.</p><div class="fm-wrap">${secs}</div>`;
 }
 ACT.fmf = el => { const s = el.dataset.s; $$('.fm-chips .chip').forEach(c => c.classList.toggle('on', c === el)); $$('.fsec').forEach(x => x.hidden = !(s === '*' || x.dataset.s === s)); };
 
