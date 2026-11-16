@@ -6,7 +6,6 @@
 <title>Cuaderno de Estadística 2 · Aula Digital</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" rel="stylesheet">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -595,13 +594,13 @@ body{background:var(--desk)}
 /* fichas de ensayos (binomial) */
 .tokbox{background:var(--p2);border:1px solid var(--b2);border-radius:12px;padding:10px 12px;margin-block:8px}
 .tokrow{display:flex;gap:6px;flex-wrap:wrap;margin-block:6px}
-.tk{width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;font:700 .78rem var(--f-mono,monospace);border:2px solid var(--c2);animation:tkIn .35s calc(var(--i,0)*45ms) both}
-.tk.ok{background:var(--c3);border-color:var(--c3);color:#fff}
-.tk.no{background:#fff;color:var(--c2)}
-.tk.mini{width:20px;height:20px;font-size:.62rem;animation:none;vertical-align:middle}
+.tok{width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;font:700 .78rem var(--f-mono,monospace);border:2px solid var(--c2);animation:tkIn .35s calc(var(--i,0)*45ms) both}
+.tok.ok{background:var(--c3);border-color:var(--c3);color:#fff}
+.tok.no{background:#fff;color:var(--c2)}
+.tok.mini{width:20px;height:20px;font-size:.62rem;animation:none;vertical-align:middle}
 @keyframes tkIn{from{transform:scale(.3);opacity:0}}
-@media (prefers-reduced-motion:reduce){.tk{animation:none}}
-.tk.sm{width:22px;height:22px;font-size:.62rem}
+@media (prefers-reduced-motion:reduce){.tok{animation:none}}
+.tok.sm{width:22px;height:22px;font-size:.62rem}
 
 /* fracción ⇄ decimal */
 .nf-d{display:none}
@@ -634,6 +633,17 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
 .gll{font-size:.8rem}.glc{display:flex;flex-wrap:wrap;gap:4px}.glc span{background:#fff;border-radius:6px;padding:1px 6px;font:600 .74rem var(--f-mono,monospace)}
 .gln{font-style:normal;font-weight:800;background:#fff;border-radius:999px;padding:2px 9px;color:var(--c2)}
 @media (max-width:520px){.glr{grid-template-columns:1fr auto}.glc{grid-column:1/-1;order:3}.gsp{grid-template-columns:26px repeat(var(--n),minmax(20px,1fr));gap:2px}.gsp .gc,.gsp .gh{font-size:.62rem;min-height:22px}}
+
+/* ítem 11: rejillas simétricas de espacios muestrales */
+.gsp.wide{grid-template-columns:44px repeat(var(--n),minmax(72px,1fr))}
+.gsp.wide .gc{min-height:44px;font-size:.72rem;line-height:1.3;padding:4px 3px}
+.gsp.wide .gc small{display:block;font-weight:400;font-size:.66rem;line-height:1.25}
+@media (max-width:520px){.gsp.wide{grid-template-columns:30px repeat(var(--n),minmax(64px,1fr));gap:2px}.gsp.wide .gc{font-size:.62rem;min-height:38px}}
+.omega.sym{display:grid;grid-template-columns:34px repeat(var(--n),minmax(0,1fr));gap:5px;max-height:none}
+.omega.sym .oh{display:grid;place-items:center;font-weight:800;font-size:.74rem;background:#1e293b;color:#fff;border-radius:6px;min-height:26px}
+.omega.sym .oh.cn{background:transparent}
+.omega.sym .oc{width:100%;text-align:center;padding:3px 2px}
+@media (max-width:520px){.omega.sym{grid-template-columns:26px repeat(var(--n),minmax(0,1fr));gap:3px}.omega.sym .oc{font-size:.66rem;padding:2px 1px}}
 @media (prefers-reduced-motion:reduce){.fig,.gsp .gc,.glr,.fig.spin .arrow{animation:none}}
 .glx{font-style:normal;font-size:.82rem}
 
@@ -664,6 +674,60 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
 .dotc{display:inline-block;width:13px;height:13px;border-radius:50%;vertical-align:-2px;margin-right:6px;border:1px solid rgba(0,0,0,.3)}
 .katex-warn{background:#fff3cd;border:1px solid #f2c14e;border-radius:10px;padding:10px 12px;margin:12px 0}
 .apx-note{font-size:.9rem;color:var(--muted)}
+/* ---------- ítem 1: notas colapsadas + una columna a ancho completo ---------- */
+.onecol .tw{width:100%}
+.onecol table.tb{width:100%}
+.nota{margin-top:12px;border:1px dashed #b8c8e4;border-radius:10px;padding:8px 12px;background:#fff}
+.nota summary{cursor:pointer;font-weight:700;color:var(--ink)}
+.nota p{margin:.4rem 0 0}
+.steps li{margin:.35rem 0}
+.dgrid{display:grid;grid-template-columns:repeat(6,2.2rem);gap:.25rem;margin:.6rem 0}
+.dc{display:flex;align-items:center;justify-content:center;height:2.2rem;border:1px solid #cbd5e1;border-radius:.4rem;font-size:.8rem;color:#94a3b8;background:#fff}
+.dc.hit{background:#FDEBD0;border-color:#B45309;color:#7C2D12;font-weight:700}
+.twbar{position:sticky;top:0;z-index:5;background:#fff;border:1.5px solid var(--ink);border-radius:10px;padding:8px 12px;font-weight:700;margin:10px 0}
+.twd td.hl-row,.twd th.hl-row,.twd td.hl-col,.twd th.hl-col{background:#E3EDFB}
+.twd td.hl-cell{background:#B8C8E4;font-weight:700}
+.twd th.hl-row,.twd th.hl-col{font-weight:700}
+/* ---------- ítem 10: fondo blanco #FFFFFF forzado en ambos modos ---------- */
+body{background:#FFFFFF!important}
+.main{background-color:#FFFFFF!important;background-image:none!important}
+.stage{background-color:#FFFFFF!important}
+.top,.pager{background:#FFFFFF!important}
+.dlg{background:#FFFFFF!important}
+.stage{box-shadow:0 1px 2px rgba(0,43,122,.08),0 8px 24px rgba(0,43,122,.08)!important}
+/* ---------- ítem 10: modo Limpio ---------- */
+body.limpio .app{grid-template-columns:1fr}
+body.limpio .rail{position:fixed;left:0;top:0;bottom:0;width:300px;transform:translateX(-102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:8px 0 0 #0006;z-index:60}
+body.limpio .rail.open{transform:none}
+body.limpio .top .burger{display:inline-flex}
+body.limpio .stage{background-image:none!important}
+body.limpio .stage::before{display:none}
+body.limpio .pn.rv::before{display:none}
+body.limpio .stage h2{text-decoration:none;border-bottom:none}
+body.limpio .pn{background:#fff;border:1.5px solid var(--ink);border-radius:12px;box-shadow:0 1px 2px rgba(0,43,122,.08)}
+body.limpio .pn.sage{border-left:4px solid #1F9D55}
+body.limpio .pn.amber{border-left:4px solid #F2C14E}
+body.limpio .pn.sky{border-left:4px solid #1B4AA6}
+body.limpio .pn.coral{border-left:4px solid #E4572E}
+body.limpio .pn.violet{border-left:4px solid #7C5CF0}
+body.limpio .pn.gd{border-left:4px solid #C98AA0}
+body.limpio .pn.dark{background:linear-gradient(160deg,#0A3586,#002B7A);border-color:transparent;color:#e7eefc}
+.scrim{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:55;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+/* ---------- ítem 10: buscador global ---------- */
+.gsearch{position:relative;flex:0 1 260px;min-width:0}
+.gsearch input{width:100%;padding:7px 12px;border:1.5px solid var(--ink);border-radius:99px;font:inherit;font-size:.9rem;background:#fff}
+.gsearch-r{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid var(--ink);border-radius:12px;box-shadow:0 8px 24px rgba(0,43,122,.18);display:none;z-index:70;max-height:320px;overflow-y:auto}
+.gsearch-r.on{display:block}
+.gsearch-r button{display:block;width:100%;text-align:left;background:none;border:0;padding:9px 12px;font:inherit;font-size:.9rem;cursor:pointer;color:inherit}
+.gsearch-r button.sel,.gsearch-r button:hover{background:#E3EDFB}
+.gsearch-r button small{display:block;color:#475569;font-size:.78rem}
+.gsearch-btn{display:none}
+.rail-search{display:none;padding:12px 12px 0}
+.rail-search .gsearch{flex:none}
+body.limpio .rail-search{display:block}
+@media (max-width:1000px){.rail-search{display:block}}
+@media (max-width:640px){.gsearch{display:none}.rail-search .gsearch{display:block}.gsearch-btn{display:inline-flex}}
 </style>
 </head>
 <body>
@@ -671,17 +735,18 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
 <div class="app">
   <aside class="rail" id="rail">
     <a class="brand" href="#inicio"><span class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="2" y="12" width="5" height="12" rx="1.5" fill="#0e1b17"/><rect x="10" y="5" width="5" height="19" rx="1.5" fill="#0e1b17"/><rect x="18" y="9" width="5" height="15" rx="1.5" fill="#0e1b17"/></svg></span><span><b>Cuaderno de Estadística 2</b><small>Pedro Nequiz · 2026 · v2 refactorizado</small></span></a>
+    <div class="rail-search"><div class="gsearch"><input id="gsearch2" type="search" placeholder="Buscar en el cuaderno…" aria-label="Buscar en el cuaderno" autocomplete="off"><div class="gsearch-r" id="gsearch2-r" role="listbox"></div></div></div>
     <nav id="rail-nav"></nav>
     <div class="rail-foot">
       <button class="btn sm" data-act="plan">📄 Plan de estudios</button>
       <button class="btn sm" data-act="formulas">🧮 Formulario</button>
-      <a class="btn sm" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a>
       <button class="btn sm" data-act="tablaz">📊 Tabla z</button>
       <button class="btn sm" data-act="apendice">📊 Apéndice</button>
       <button class="btn sm" data-act="reset">♻️ Borrar mi avance</button>
       <a class="btn sm" href="../index.html">← Aula Digital</a>
     </div>
   </aside>
+  <div class="scrim" id="scrim"></div>
   <div class="main">
     <header class="top">
       <button class="btn sm burger" data-act="menu" aria-label="Menú">☰</button>
@@ -690,6 +755,9 @@ body.dec .nfbtn .nf-a{background:#fff;color:#64748b}body.dec .nfbtn .nf-b{backgr
       <button class="btn sm nfbtn" data-act="nf" hidden aria-pressed="false" title="Cambiar entre fracciones y decimales. Solo cambian las fracciones numéricas (como 3/8); las que tienen variables (como x²+5) quedan como fracción."><span class="nf-a">a/b</span><span class="nf-b">0.00</span></button>
       <button class="btn sm" data-act="plan">📄 <span>Plan</span></button>
       <button class="btn sm" data-act="formulas">🧮 <span>Formulario</span></button>
+      <div class="gsearch"><input id="gsearch" type="search" placeholder="Buscar en el cuaderno…" aria-label="Buscar en el cuaderno" autocomplete="off"><div class="gsearch-r" id="gsearch-r" role="listbox"></div></div>
+      <button class="btn sm gsearch-btn" data-act="search-open" aria-label="Buscar">🔍</button>
+      <button class="btn sm" data-act="modo" id="modo-btn" aria-pressed="false">✨ Limpio</button>
     </header>
     <main class="stage" id="stage"></main>
     <footer class="pager">
@@ -905,11 +973,12 @@ function zInv(p) {           // Acklam + un paso de Halley
   const e = Phi(x) - p, u = e * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2);
   return x - u / (1 + x * u / 2);
 }
-const zCrit = conf => zInv(1 - (1 - conf) / 2);          // z_{α/2} para un nivel de confianza
+const zCrit = conf => ({ 0.9: 1.645, 0.95: 1.96, 0.99: 2.576 })[conf] ?? zInv(1 - (1 - conf) / 2); // z_{α/2} de la tabla del cuaderno (1.645/1.96/2.576); otros niveles usan zInv exacto
 const normP = (a, b, mu = 0, s = 1) => Phi((b - mu) / s) - Phi((a - mu) / s);
 
 /* ---------- binomial y Poisson ---------- */
-const lnFact = n => { let s = 0; for (let i = 2; i <= n; i++) s += Math.log(i); return s; };
+const _lf = [0, 0];
+const lnFact = n => { for (let i = _lf.length; i <= n; i++) _lf[i] = _lf[i - 1] + Math.log(i); return _lf[n]; };
 function binPmf(n, k, p) {
   if (k < 0 || k > n) return 0; if (p === 0) return k === 0 ? 1 : 0; if (p === 1) return k === n ? 1 : 0;
   return Math.exp(lnFact(n) - lnFact(k) - lnFact(n - k) + k * Math.log(p) + (n - k) * Math.log(1 - p));
@@ -1055,12 +1124,45 @@ document.addEventListener('DOMContentLoaded', () => { let v = '0'; try { v = loc
 
 /* ---------- modal ---------- */
 function openModal(title, html, wide) {
+  openModal.prev = document.activeElement;
   const o = $('#ov'); $('#dlg').className = 'dlg' + (wide ? ' wide' : '');
-  $('#dlg-t').textContent = title; const b = $('#dlg-b'); b.innerHTML = html; math(b);
+  $('#dlg-t').textContent = title; const b = $('#dlg-b'); b.innerHTML = html; math(b); wireModalExtras(b);
   o.classList.add('on'); b.scrollTop = 0; document.body.style.overflow = 'hidden';
 }
-function closeModal() { $('#ov').classList.remove('on'); document.body.style.overflow = ''; }
+function closeModal() { $('#ov').classList.remove('on'); document.body.style.overflow = ''; const f = openModal.prev; if (f && f.focus && document.contains(f)) f.focus(); }
 ACT.th = el => { const t = TH[el.dataset.k]; if (t) openModal(t.t, t.h, t.wide); };
+ACT['esp-sim'] = () => { closeModal(); if (location.hash !== '#u1-esp') location.hash = '#u1-esp'; setTimeout(() => { const b = document.querySelector('[data-act="tab"][data-t="sim"]'); if (b) b.click(); }, 500); }; // ítem 5b: del modal de Esperanza a la simulación (pestaña 2)
+let JG_N = 0, JG_TOT = 0; // ítem 6: simulación del juego de dados (promedio de ganancia neta)
+ACT['jg-sim'] = el => {
+  const n = parseInt(el.dataset.n || '10', 10);
+  for (let i = 0; i < n; i++) { const d1 = 1 + Math.floor(Math.random() * 6), d2 = 1 + Math.floor(Math.random() * 6); JG_TOT += (d1 + d2 === 7) ? 40 : -10; JG_N++; }
+  const r = document.getElementById('jg-sim-r'); if (!r) return;
+  r.innerHTML = `Juegos: ${JG_N} · ganancia acumulada: ${JG_TOT} · promedio por juego: ${(JG_TOT / JG_N).toFixed(2)} (la teoría dice $E[G]=-\\frac{5}{3}\\approx -1.67$).`;
+  math(r);
+};
+ACT['jg-reset'] = () => { JG_N = 0; JG_TOT = 0; const r = document.getElementById('jg-sim-r'); if (!r) return; r.innerHTML = 'Aún no hay juegos simulados. La teoría dice $E[G]=-\\frac{5}{3}\\approx -1.67$.'; math(r); };
+/* ---------- ítem 3: interactivo del modal de intervalos (deslizador de x + mini-ejercicio) ---------- */
+function wireModalExtras(b) {
+  const g = $('#int-g', b); if (!g) return;
+  const xs = [0, 1, 2], F = [0.5, 0.8, 1];
+  const xPix = v => 48 + (v + 1.1) / 4.2 * (600 - 48 - 18);
+  const draw = v => { g.innerHTML = svgStep(xs, F).replace('</svg>', `<line x1="${xPix(v)}" x2="${xPix(v)}" y1="18" y2="236" stroke="#E4572E" stroke-width="2" stroke-dasharray="5 3"/><text x="${xPix(v)}" y="14" text-anchor="middle" style="font:700 12px sans-serif;fill:#E4572E">x = ${v}</text></svg>`); };
+  const out = $('#int-out', b), sl = $('#int-x', b), xv = $('#int-xv', b);
+  const upd = () => {
+    const v = parseFloat(sl.value); xv.textContent = v;
+    const Fv = v < 0 ? 0 : v < 1 ? 0.5 : v < 2 ? 0.8 : 1;
+    const inter = v < 0 ? '$x<0$' : v < 1 ? '$[0,1)$' : v < 2 ? '$[1,2)$' : '$[2,\\infty)$';
+    let h = `Estás en el escalón ${inter}: $F(${v})=${Fv}$.`;
+    if (v === 0 || v === 1 || v === 2) { const Fm = v === 0 ? 0 : v === 1 ? 0.5 : 0.8; h += ` En el salto de $x=${v}$: círculo relleno ● $F(${v})=${Fv}$ (incluido) y círculo en blanco ○ $F(${v}^-)=${Fm}$ (no incluido).`; }
+    out.innerHTML = h; math(out); draw(v);
+  };
+  sl.oninput = upd; upd();
+}
+ACT.intq = el => {
+  const box = document.getElementById(el.dataset.q); if (!box) return;
+  box.innerHTML = el.dataset.fb; box.classList.remove('sub'); box.classList.add(el.dataset.ok === '1' ? 'okb' : 'warn');
+  math(box);
+};
 ACT.close = () => closeModal();
 
 /* ---------- segmentos genéricos ---------- */
@@ -1073,7 +1175,7 @@ document.addEventListener('click', e => {
   if (e.target.id === 'ov') closeModal();
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') { closeModal(); closeRail(); }
   if ((e.target.tagName || '') .match(/INPUT|TEXTAREA|SELECT/)) return;
   if ($('#ov').classList.contains('on')) return;
   if (e.key === 'ArrowRight') go(+1); if (e.key === 'ArrowLeft') go(-1);
@@ -1125,7 +1227,7 @@ function revealBlock(id, label, html) {
 ACT.rvb = el => { const b = $('#' + el.dataset.id); const open = b.classList.toggle('hide'); el.textContent = open ? 'Ver solución' : 'Ocultar solución'; if (!open) { math(b); b.classList.add('pg'); } };
 
 /* ---------- gráficas SVG ---------- */
-const COL = { sage: '#2f9e44', leaf: '#2f9e44', coral: '#e03131', amber: '#f08c00', sky: '#1c7ed6', violet: '#7048e8', ink: '#0f172a' };
+const COL = { sage: '#1F9D55', leaf: '#1F9D55', coral: '#E4572E', amber: '#F2C14E', sky: '#1B4AA6', violet: '#7C5CF0', ink: '#002B7A' }; // ítem 8b: juego canónico regla 9 (coral ya no es rojo)
 const PAL = [COL.sky, COL.coral, COL.amber, COL.leaf, COL.violet, '#e85d9a', '#26a69a', '#8d6e63'];
 function niceStep(range, n = 5) {
   const raw = range / n, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p;
@@ -1153,7 +1255,7 @@ function svgBars(labels, values, o = {}) {
   g += `<line class="ax" x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${y(0)}"/><line class="ax" x1="${m.l}" x2="${W - m.r}" y1="${y(0)}" y2="${y(0)}"/>`;
   if (o.xt) g += `<text class="lbl" x="${W / 2}" y="${H - 4}" text-anchor="middle">${o.xt}</text>`;
   if (o.yt) g += `<text class="lbl" transform="translate(12,${H / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* histograma / polígono / ojiva a partir de una distribución D */
 function svgHist(D, o = {}) {
@@ -1197,7 +1299,7 @@ function svgHist(D, o = {}) {
   g += ticks.map(t => `<text class="tk" x="${x(t)}" y="${H - m.b + 16}" text-anchor="middle">${fc(t, 2)}</text>`).join('');
   if (o.poly && !isAcc) g += xm.map(v => `<line class="gl" x1="${x(v)}" x2="${x(v)}" y1="${y(0)}" y2="${y(0) + 5}"/>`).join('');
   g += `<text class="lbl" x="${W / 2}" y="${H - 8}" text-anchor="middle">${o.xt || 'Intervalos'}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* diagrama de puntos */
 function svgDots(counts, labels, o = {}) {
@@ -1210,7 +1312,7 @@ function svgDots(counts, labels, o = {}) {
     for (let j = 0; j < counts[i]; j++) g += `<circle class="drop" style="--i:${k++}" cx="${cx}" cy="${base - r - 4 - j * (r * 2 + 3)}" r="${r}" fill="${PAL[i % PAL.length]}" stroke="${COL.ink}" stroke-width="1.5"/>`;
   });
   if (o.xt) g += `<text class="tk" x="${W / 2}" y="${H - 6}" text-anchor="middle">${o.xt}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* diagrama de caja y bigotes */
 function svgBox(F, o = {}) {
@@ -1227,7 +1329,7 @@ function svgBox(F, o = {}) {
   [['Mín', F.min], ['Q1', F.q1], ['Q2', F.q2], ['Q3', F.q3], ['Máx', F.max]].forEach(([l, v], i) => {
     g += `<text class="lbl" x="${x(v)}" y="${i % 2 ? cy + bh / 2 + 18 : cy - bh / 2 - 8}" text-anchor="middle">${l}=${fc(v, 2)}</text>`;
   });
-  return `<svg class="ch" viewBox="0 0 ${W} ${H + 12}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H + 12}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* diagramas de Venn (3 conjuntos) con regiones resaltables */
 function svgVenn3(o) {
@@ -1291,7 +1393,7 @@ function svgTree(n, hiFn) {
   };
   rec('', 0);
   g += `<circle cx="20" cy="${yOf('')}" r="7" fill="${COL.ink}"/>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" style="max-width:${W}px" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" style="max-width:${W}px" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 
 /* ---------- router y estructura de páginas ---------- */
@@ -1319,8 +1421,67 @@ function refreshProgress() {
     const cnt = $('.cnt', c); if (cnt) cnt.textContent = `${v}/${ids.length} páginas`;
   });
 }
-ACT.nav = el => { location.hash = '#' + el.dataset.id; $('#rail').classList.remove('open'); };
-ACT.menu = () => $('#rail').classList.toggle('open');
+ACT.nav = el => { location.hash = '#' + el.dataset.id; $('#rail').classList.remove('open'); syncScrim(); };
+ACT.menu = () => { $('#rail').classList.toggle('open'); syncScrim(); };
+/* ---------- ítem 10: modos Libreta / Limpio + buscador global ---------- */
+function drawerMode() { return document.body.classList.contains('limpio') || window.innerWidth <= 1000; }
+function syncScrim() { const sc = document.getElementById('scrim'); if (sc) sc.classList.toggle('on', $('#rail').classList.contains('open') && drawerMode()); }
+function closeRail() { $('#rail').classList.remove('open'); syncScrim(); const b = document.querySelector('.top .burger'); if (b && document.activeElement && document.activeElement.closest && document.activeElement.closest('#rail')) b.focus(); }
+function setModo(m) {
+  const limpio = m === 'limpio';
+  document.body.classList.toggle('limpio', limpio);
+  const btn = document.getElementById('modo-btn');
+  if (btn) { btn.textContent = limpio ? '📖 Libreta' : '✨ Limpio'; btn.setAttribute('aria-pressed', limpio ? 'true' : 'false'); }
+  try { localStorage.setItem('cuadEst2:modo', limpio ? 'limpio' : 'libreta'); } catch (e) { }
+  syncScrim();
+}
+ACT.modo = () => setModo(document.body.classList.contains('limpio') ? 'libreta' : 'limpio');
+ACT['search-open'] = () => { $('#rail').classList.add('open'); syncScrim(); const inp = document.getElementById('gsearch2'); if (inp) setTimeout(() => inp.focus(), 100); };
+const SEARCH_IDX = [];
+const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+function buildSearchIndex() {
+  SEARCH_IDX.length = 0;
+  PAGES.forEach(pg => SEARCH_IDX.push({ t: pg.t, s: `${pg.ic || ''} ${pg.kick || ''}`.trim(), go: () => { location.hash = '#' + pg.id; } }));
+  PLAN.forEach(u => {
+    const first = { 1: 'u1-va', 2: 'u2-mue', 3: 'u3-ic' }[u.n];
+    if (first) SEARCH_IDX.push({ t: `Unidad ${u.n} · ${u.t}`, s: `${u.h} h · Estadística II`, go: () => { location.hash = '#' + first; } });
+  });
+  Object.keys(TH).forEach(k => {
+    const t = TH[k];
+    const pg = PAGES.find(p => (p.chips || []).includes(k));
+    SEARCH_IDX.push({ t: t.t, s: 'Teoría' + (pg ? ' · ' + pg.t : ''), go: () => {
+      if (pg && location.hash !== '#' + pg.id) { location.hash = '#' + pg.id; setTimeout(() => openModal(t.t, t.h, t.wide), 500); }
+      else openModal(t.t, t.h, t.wide);
+    } });
+  });
+}
+function wireSearch(inputId, resultsId) {
+  const inp = document.getElementById(inputId), box = document.getElementById(resultsId);
+  if (!inp || !box) return;
+  let cur = [], sel = 0;
+  const close = () => { box.classList.remove('on'); box.innerHTML = ''; cur = []; };
+  const activate = i => { const e = cur[i]; if (!e) return; close(); inp.value = ''; inp.blur(); closeRail(); e.go(); };
+  const render = () => {
+    const q = norm(inp.value.trim());
+    if (!q) { close(); return; }
+    cur = SEARCH_IDX.filter(e => norm(e.t).includes(q) || norm(e.s).includes(q)).slice(0, 8);
+    sel = 0;
+    box.innerHTML = cur.length ? cur.map((e, i) => `<button type="button" data-i="${i}" class="${i === sel ? 'sel' : ''}"><b>${e.t}</b><small>${e.s}</small></button>`).join('') : `<button type="button" disabled>Sin resultados para «${inp.value.trim()}»</button>`;
+    box.classList.add('on');
+  };
+  inp.addEventListener('input', render);
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!cur.length) return;
+      e.preventDefault();
+      sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + cur.length) % cur.length;
+      box.querySelectorAll('button').forEach((b, i) => b.classList.toggle('sel', i === sel));
+    } else if (e.key === 'Enter') { if (cur.length) { e.preventDefault(); activate(sel); } }
+    else if (e.key === 'Escape') { close(); inp.value = ''; }
+  });
+  box.addEventListener('mousedown', e => { const b = e.target.closest('button[data-i]'); if (b) { e.preventDefault(); activate(parseInt(b.dataset.i, 10)); } });
+  inp.addEventListener('blur', () => setTimeout(close, 150));
+}
 function go(d) { const i = CUR ? pageIdx(CUR.id) : 0, j = Math.max(0, Math.min(PAGES.length - 1, i + d)); if (j !== i) location.hash = '#' + PAGES[j].id; }
 ACT.prev = () => go(-1); ACT.next = () => go(+1);
 /* Skeleton (versión oculta con d-none): se muestra un instante mientras se arma cada pestaña por primera vez. No se usa con «reducir movimiento» ni en pruebas automáticas. */
@@ -1376,7 +1537,7 @@ function svgPie(labels, values, o = {}) {
     lg += `<g transform="translate(${cx + r + 24},${22 + i * 22})"><rect width="14" height="14" rx="3" fill="${cols[i % cols.length]}" stroke="${COL.ink}" stroke-width="1.5"/><text class="tk" x="20" y="12" style="font-size:12px">${esc(labels[i])}</text></g>`;
     a0 = a1;
   });
-  return `<svg class="ch" viewBox="0 0 ${W + 60} ${H}" style="max-width:${W + 60}px" role="img">${g}${lg}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W + 60} ${H}" style="max-width:${W + 60}px" role="img" aria-label="Gráfica o diagrama">${g}${lg}</svg>`;
 }
 /* líneas: xs (etiquetas o números), series [{n, v:[...], c}] */
 function svgLine(xs, series, o = {}) {
@@ -1395,7 +1556,7 @@ function svgLine(xs, series, o = {}) {
   if (o.xt) g += `<text class="lbl" x="${W / 2}" y="${H - 4}" text-anchor="middle">${o.xt}</text>`;
   if (o.yt) g += `<text class="lbl" transform="translate(12,${H / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>`;
   const lg = series.length > 1 ? `<div class="legend">${series.map((s, k) => `<span><i style="background:${s.c || PAL[k]}"></i>${s.n}</span>`).join('')}</div>` : '';
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>${lg}`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>${lg}`;
 }
 /* dispersión con recta opcional y residuos */
 function svgScatter(xs, ys, o = {}) {
@@ -1414,7 +1575,7 @@ function svgScatter(xs, ys, o = {}) {
   g += xs.map((v, i) => `<circle class="pt" style="--i:${i}" cx="${x(v)}" cy="${y(ys[i])}" r="${o.r || 6}" fill="${o.col || COL.sky}" stroke="${COL.ink}" stroke-width="2"><title>(${fc(v, 3)}, ${fc(ys[i], 3)})</title></circle>`).join('');
   if (o.xt) g += `<text class="lbl" x="${W / 2}" y="${H - 6}" text-anchor="middle">${o.xt}</text>`;
   if (o.yt) g += `<text class="lbl" transform="translate(13,${H / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" ${o.id ? `id="${o.id}"` : ''}>${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama" ${o.id ? `id="${o.id}"` : ''}>${g}</svg>`;
 }
 
 /* ---------- tablas para completar (formulario) ---------- */
@@ -1469,7 +1630,17 @@ function svgPmf(xs, ps, o = {}) {
   }
   g += `<line class="ax" x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${y(0)}"/><line class="ax" x1="${m.l}" x2="${W - m.r}" y1="${y(0)}" y2="${y(0)}"/>`;
   g += `<text class="lbl" x="${W / 2}" y="${H - 6}" text-anchor="middle">${o.xt || 'x'}</text><text class="lbl" transform="translate(13,${H / 2}) rotate(-90)" text-anchor="middle">${o.yt || 'P(X = x)'}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
+}
+/* barras de la FDP con una línea vertical en μ (ítem 5b): μ es el punto de equilibrio */
+function pmfWithMu(xs, ps, mu, o = {}) {
+  const W = o.w || 600, H = o.h || 300, m = { l: 52, r: 14, t: 20, b: 44 };
+  const step = xs.length > 1 ? Math.min(...xs.slice(1).map((v, i) => v - xs[i])) : 1;
+  const xlo = xs[0] - step * .7, xhi = xs[xs.length - 1] + step * .7;
+  const xm = m.l + (mu - xlo) / (xhi - xlo) * (W - m.l - m.r);
+  if (!(xm >= m.l && xm <= W - m.r)) return svgPmf(xs, ps, o);
+  const line = `<line x1="${xm}" x2="${xm}" y1="${m.t}" y2="${H - m.b}" stroke="#D64545" stroke-width="2.5" stroke-dasharray="6 4"/><text x="${xm}" y="${m.t + 12}" text-anchor="middle" style="font:700 12px sans-serif;fill:#D64545">${o.label || ('μ = ' + fc(mu, 3))}</text>`;
+  return svgPmf(xs, ps, o).replace('</svg>', line + '</svg>');
 }
 /* función de distribución acumulada (escalones) */
 function svgStep(xs, F, o = {}) {
@@ -1480,7 +1651,7 @@ function svgStep(xs, F, o = {}) {
   segs.forEach((s, i) => { g += `<line class="drw" style="--len:600;--d:${i * .1}s" x1="${x(s[0])}" y1="${y(s[1])}" x2="${x(s[2])}" y2="${y(s[3])}" stroke="${COL.coral}" stroke-width="3.2" stroke-linecap="round"/>`; });
   xs.forEach((v, i) => { const prev = i ? F[i - 1] : 0; g += `<line stroke="${COL.guindaM}" stroke-dasharray="3 3" x1="${x(v)}" x2="${x(v)}" y1="${y(prev)}" y2="${y(F[i])}"/><circle cx="${x(v)}" cy="${y(prev)}" r="4.5" fill="#fff" stroke="${COL.coral}" stroke-width="2"/><circle class="pt" style="--i:${i}" cx="${x(v)}" cy="${y(F[i])}" r="4.8" fill="${COL.coral}" stroke="${COL.ink}" stroke-width="1.5"><title>F(${fc(v, 3)}) = ${fc(F[i], 5)}</title></circle><text class="tk" x="${x(v)}" y="${H - m.b + 16}" text-anchor="middle">${fc(v, 2)}</text>`; });
   g += `<line class="ax" x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${y(0)}"/><line class="ax" x1="${m.l}" x2="${W - m.r}" y1="${y(0)}" y2="${y(0)}"/><text class="lbl" x="${W / 2}" y="${H - 6}" text-anchor="middle">x</text><text class="lbl" transform="translate(13,${H / 2}) rotate(-90)" text-anchor="middle">F(x) = P(X ≤ x)</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* campana normal con áreas sombreadas. o: {mu,sd,shade:[[a,b,color,op]],curve2:{mu,sd},zlab:true,marks:[x],w,h,range:[lo,hi]} */
 function svgBell(o = {}) {
@@ -1504,7 +1675,7 @@ function svgBell(o = {}) {
   (o.marks || []).forEach(v => { if (v >= lo && v <= hi) g += `<line stroke="${COL.coral}" stroke-width="2" stroke-dasharray="4 3" x1="${x(v)}" x2="${x(v)}" y1="${y(0)}" y2="${m.t + 8}"/>`; });
   g += `<line stroke="${COL.coral}" stroke-width="1.6" stroke-dasharray="4 4" x1="${x(mu)}" x2="${x(mu)}" y1="${y(0)}" y2="${y(phi(0) / sd)}"/>`;
   if (o.xt) g += `<text class="lbl" x="${W - m.r}" y="${H - 4}" text-anchor="end">${o.xt}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* histograma de una lista de valores simulados; o.norm={mu,sd} superpone campana; o.range=[lo,hi]; bins */
 function svgHistArr(arr, o = {}) {
@@ -1517,7 +1688,7 @@ function svgHistArr(arr, o = {}) {
   g += `<line class="ax" x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${y(0)}"/><line class="ax" x1="${m.l}" x2="${W - m.r}" y1="${y(0)}" y2="${y(0)}"/>`;
   const st = niceStep(hi - lo, 8); for (let t = Math.ceil(lo / st) * st; t <= hi + 1e-9; t += st) g += `<text class="tk" x="${x(t)}" y="${H - m.b + 15}" text-anchor="middle">${fc(t, 2)}</text>`;
   g += `<text class="lbl" x="${W / 2}" y="${H - 5}" text-anchor="middle">${o.xt || ''}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* intervalos de confianza simulados: items [{lo,hi,ok}] */
 function svgCI(items, target, o = {}) {
@@ -1525,7 +1696,7 @@ function svgCI(items, target, o = {}) {
   const lo = Math.min(...items.map(i => i.lo), target) , hi = Math.max(...items.map(i => i.hi), target), pad = (hi - lo) * .06, x = lin(lo - pad, hi + pad, m.l, W - m.r);
   let g = items.map((it, i) => `<line x1="${x(it.lo)}" x2="${x(it.hi)}" y1="${m.t + i * rowH + rowH / 2}" y2="${m.t + i * rowH + rowH / 2}" stroke="${it.ok ? COL.sky : COL.coral}" stroke-width="${it.ok ? 1.6 : 2.4}" stroke-linecap="round"/>`).join('');
   g += `<line stroke="${COL.coral}" stroke-width="2" stroke-dasharray="5 3" x1="${x(target)}" x2="${x(target)}" y1="${m.t - 6}" y2="${H - m.b + 4}"/><text class="lbl" x="${x(target)}" y="${H - 10}" text-anchor="middle" style="fill:${COL.coral}">${o.tl || 'parámetro'} = ${fc(target, 3)}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* campo numérico etiquetado */
 const numIn = (id, label, val, st = {}) => `<label class="f">${label}<input id="${id}" type="number" aria-label="${label.split('$').join('').split('\\').join('')}" step="${st.step || 'any'}" ${st.min != null ? `min="${st.min}"` : ''} ${st.max != null ? `max="${st.max}"` : ''} value="${val}"></label>`; // v2: aria-label en numéricos
@@ -1552,25 +1723,128 @@ T('va', 'Variable aleatoria', String.raw`
 <li><b>Continua (VAC):</b> puede tomar <i>cualquier valor de un intervalo</i>. Ej.: estatura, tiempo, peso, temperatura.</li></ul>
 <div class="note">Contar → discreta. Medir → continua.</div>
 <p>En un mismo espacio muestral se pueden definir distintas variables aleatorias (suma, producto, máximo…).</p>`);
-T('fdp', 'Función de distribución de probabilidad (FDP)', String.raw`
-<p>Para una VA discreta, la <b>función de probabilidad</b> (o distribución de probabilidad) es</p>
+T('fdp', '¿Qué es la FDP?', String.raw`
+<p>La <b>función de distribución de probabilidad (FDP)</b> de una variable aleatoria discreta $X$ es la función que asigna a cada valor posible de $X$ su probabilidad:</p>
 <div class="eqbox">$$f(x)=P(X=x)$$</div>
-<p>Se puede dar con una <b>tabla</b>, una <b>fórmula</b> o una <b>gráfica</b> de barras. Para que sea una FDP debe cumplir (axiomas de Kolmogorov):</p>
+<p>Se puede dar con una <b>tabla</b>, una <b>fórmula</b> o una <b>gráfica</b> de barras.</p>
+<h4>Condiciones de validez</h4>
+<p>Para que sea una FDP debe cumplir (axiomas de Kolmogorov):</p>
 <ol><li>$0\le f(x)\le 1$ para todo $x$.</li><li>$\displaystyle\sum_x f(x)=1$.</li></ol>
 <div class="tip">Si la suma no da 1, no es una FDP. Esa es la prueba más rápida.</div>
 <h4>Cómo se construye</h4>
-<ol><li>Espacio muestral (árbol de resultados).</li><li>Valor de $X$ de cada resultado.</li><li>Probabilidad de cada resultado (producto de las ramas).</li><li>Agrupar los resultados con el mismo valor de $X$ y sumar sus probabilidades.</li></ol>`);
-T('acum', 'Función de distribución acumulada F(x)', String.raw`
+<ol><li>Espacio muestral (árbol de resultados).</li><li>Valor de $X$ de cada resultado.</li><li>Probabilidad de cada resultado (producto de las ramas).</li><li>Agrupar los resultados con el mismo valor de $X$ y sumar sus probabilidades.</li></ol>
+<h4>Ejemplo</h4>
+<p>Con $f(x)=\frac{x^2+5}{50}$, $x=1,2,3,4,5$: $f=\frac{6}{50},\frac{9}{50},\frac{14}{50},\frac{21}{50},\frac{30}{50}$ y $\sum f(x)=\frac{80}{50}=1.6\ne 1$ → <b>no es una FDP</b> (es un contraejemplo intencional). En cambio, con $k+2k+0.5k=1$ sale $k=\frac{1}{3.5}=\frac{2}{7}$ y la tabla $\frac{2}{7},\frac{4}{7},\frac{1}{7}$ sí suma 1.</p>
+<h4>🧮 Formulario</h4>
+<p class="sub">Solo las fórmulas de este tema. Cada símbolo lleva su qué es.</p>
+<div class="eqbox">$$f(x)=P(X=x)$$</div>
+<p><b>Qué es cada elemento:</b> $X$ = variable aleatoria (función que asigna un número real a cada resultado del espacio muestral $S$); $x$ = un valor posible que puede tomar $X$ (minúscula = valor, mayúscula = variable); $f(x)$ = función de probabilidad (FDP): la probabilidad de que $X$ tome exactamente el valor $x$; $P(X=x)$ = probabilidad de que $X$ sea igual a $x$ (es lo mismo que $f(x)$); $P$ = operador «probabilidad de…».</p>
+<div class="eqbox">$$0\le f(x)\le 1$$</div>
+<p><b>Qué es cada elemento:</b> $f(x)$ = probabilidad del valor $x$; debe estar entre 0 y 1, como toda probabilidad.</p>
+<div class="eqbox">$$\sum_x f(x)=1$$</div>
+<p><b>Qué es cada elemento:</b> $\sum$ = suma sobre todos los valores posibles de $X$; $f(x)$ = probabilidad de cada valor. La suma de todas las probabilidades es 1.</p>
 <div class="eqbox">$$F(x)=P(X\le x)=\sum_{t\le x} f(t)$$</div>
-<ul><li>Es una <b>función escalón</b>: sube en cada valor posible de $X$ y vale 1 al final.</li><li>No decrece: $0\le F(x)\le1$.</li><li>$P(a< X\le b)=F(b)-F(a)$.</li><li>$P(X=x)=F(x)-F(x^-)$ = el tamaño del salto en $x$.</li><li>$P(X>x)=1-F(x)$.</li></ul>
+<p><b>Qué es cada elemento:</b> $F(x)$ = función de distribución acumulada: probabilidad acumulada hasta $x$; $t$ = variable muda de la suma, recorre los valores $t\le x$.</p>
+<div class="eqbox">$$P(a<X\le b)=F(b)-F(a)$$</div>
+<p><b>Qué es cada elemento:</b> $a$, $b$ = límites del intervalo que se pregunta; $F(b)-F(a)$ = acumulada hasta $b$ menos acumulada hasta $a$.</p>
+<div class="eqbox">$$P(X>a)=1-F(a)$$</div>
+<p><b>Qué es cada elemento:</b> $F(a)$ = probabilidad acumulada hasta $a$; $1-F(a)$ = lo que queda fuera, la cola a la derecha.</p>
+<div class="eqbox">$$P(X=x)=F(x)-F(x^-)$$</div>
+<p><b>Qué es cada elemento:</b> $F(x^-)$ = valor de $F$ justo antes de $x$ (límite por la izquierda); la diferencia es el tamaño del salto en $x$.</p>
+<div class="eqbox">$$P(X=x_k)=F(x_k)-F(x_{k-1})$$</div>
+<p><b>Qué es cada elemento:</b> $x_k$ = un valor de $X$ en orden; $x_{k-1}$ = el valor anterior a él. Es la misma idea del salto, con los valores en orden.</p>
+<p><b>En la tabla:</b> $p$ / $p_i$ = probabilidad asociada a un valor ($p_i=f(x_i)$); cada $p_i$ está entre 0 y 1 y todas las $p_i$ suman 1.</p>
+<div class="warn">Error común: creer que basta con que cada $f(x)\le 1$ sin comprobar que la suma sea 1.</div>`);
+T('fdp-uso', '¿Para qué sirve la FDP?', String.raw`
+<p>La FDP sirve para <b>comprobar si una tabla o fórmula es una distribución válida</b>, <b>asignar probabilidades</b> a cada valor de $X$ y ser la <b>base</b> para calcular $E(X)$, $Var(X)$ y las distribuciones (binomial, Poisson…).</p>
+<h4>Cómo se usa paso a paso</h4>
+<ol><li>Verifica las dos condiciones: cada $f(x)$ entre 0 y 1, y la suma igual a 1.</li><li>Lee $P(X=x)$ directo de la tabla, la fórmula o la gráfica.</li><li>Para intervalos, acumula con $F(x)$ (ver «¿Para qué sirve $F(x)$?»).</li><li>Con la FDP ya validada, calcula $E(X)$ y $Var(X)$ con la tabla de cálculo.</li></ol>
+<h4>🧮 Formulario</h4>
+<p class="sub">Solo las fórmulas de este tema. Cada símbolo lleva su qué es.</p>
+<div class="eqbox">$$f(x)=P(X=x)$$</div>
+<p><b>Qué es cada elemento:</b> $X$ = variable aleatoria (función que asigna un número real a cada resultado del espacio muestral $S$); $x$ = un valor posible que puede tomar $X$ (minúscula = valor, mayúscula = variable); $f(x)$ = función de probabilidad (FDP): la probabilidad de que $X$ tome exactamente el valor $x$; $P(X=x)$ = probabilidad de que $X$ sea igual a $x$ (es lo mismo que $f(x)$); $P$ = operador «probabilidad de…».</p>
+<div class="eqbox">$$0\le f(x)\le 1$$</div>
+<p><b>Qué es cada elemento:</b> $f(x)$ = probabilidad del valor $x$; debe estar entre 0 y 1, como toda probabilidad.</p>
+<div class="eqbox">$$\sum_x f(x)=1$$</div>
+<p><b>Qué es cada elemento:</b> $\sum$ = suma sobre todos los valores posibles de $X$; $f(x)$ = probabilidad de cada valor. La suma de todas las probabilidades es 1.</p>
+<div class="eqbox">$$F(x)=P(X\le x)=\sum_{t\le x} f(t)$$</div>
+<p><b>Qué es cada elemento:</b> $F(x)$ = función de distribución acumulada: probabilidad acumulada hasta $x$; $t$ = variable muda de la suma, recorre los valores $t\le x$.</p>
+<div class="eqbox">$$P(a<X\le b)=F(b)-F(a)$$</div>
+<p><b>Qué es cada elemento:</b> $a$, $b$ = límites del intervalo que se pregunta; $F(b)-F(a)$ = acumulada hasta $b$ menos acumulada hasta $a$.</p>
+<div class="eqbox">$$P(X>a)=1-F(a)$$</div>
+<p><b>Qué es cada elemento:</b> $F(a)$ = probabilidad acumulada hasta $a$; $1-F(a)$ = lo que queda fuera, la cola a la derecha.</p>
+<div class="eqbox">$$P(X=x)=F(x)-F(x^-)$$</div>
+<p><b>Qué es cada elemento:</b> $F(x^-)$ = valor de $F$ justo antes de $x$ (límite por la izquierda); la diferencia es el tamaño del salto en $x$.</p>
+<div class="eqbox">$$P(X=x_k)=F(x_k)-F(x_{k-1})$$</div>
+<p><b>Qué es cada elemento:</b> $x_k$ = un valor de $X$ en orden; $x_{k-1}$ = el valor anterior a él. Es la misma idea del salto, con los valores en orden.</p>
+<p><b>En la tabla:</b> $p$ / $p_i$ = probabilidad asociada a un valor ($p_i=f(x_i)$); cada $p_i$ está entre 0 y 1 y todas las $p_i$ suman 1.</p>
+<div class="warn">Error común: confundir $P(X=3)$ con $F(3)$. $F(3)$ acumula hasta 3; $P(X=3)$ es solo el salto en 3.</div>`);
+T('acum', '¿Qué es F(x)?', String.raw`
+<div class="eqbox">$$F(x)=P(X\le x)=\sum_{t\le x} f(t)$$</div>
+<p>La <b>función de distribución acumulada</b> $F(x)$ acumula las probabilidades de todos los valores de $X$ hasta $x$.</p>
+<ul><li>Es una <b>función escalón</b>: sube en cada valor posible de $X$ y vale 1 al final.</li>
+<li>No decrece: $0\le F(x)\le1$.</li>
+<li>$P(X=x)=F(x)-F(x^-)$ = el tamaño del salto en $x$.</li></ul>
+<h4>Los círculos de la gráfica</h4>
+<p><b>Círculo relleno ●:</b> el valor <b>sí está incluido</b>: es $F(x)$ en ese $x$. <b>Círculo en blanco ○:</b> el valor <b>no está incluido</b>: es $F(x^-)$, el valor justo antes del salto. La línea punteada vertical es el salto.</p>
 <div class="warn">Ojo: $P(X=3)$ <b>no</b> es $F(3)$, sino el salto de $F$ en 3.</div>`);
+T('acum-uso', '¿Para qué sirve F(x)?', String.raw`
+<p>$F(x)$ sirve para calcular <b>probabilidades de intervalos sin sumar término a término</b>: basta restar dos valores de la acumulada.</p>
+<div class="eqbox">$$P(a<X\le b)=F(b)-F(a)\qquad P(X>a)=1-F(a)\qquad P(X=x)=F(x)-F(x^-)$$</div>
+<h4>Cómo se usa paso a paso</h4>
+<ol><li>Escribe el evento como intervalo: $P(X\le a)$, $P(a<X\le b)$ o $P(X>a)$.</li><li>Lee los valores de $F$ en la tabla o en la gráfica (círculo relleno).</li><li>Resta o complementa según la fórmula.</li><li>Comprueba que el resultado esté entre 0 y 1.</li></ol>
+<h4>Ejemplo (gatitos vendidos)</h4>
+<p>Con $F(0)=0.5$, $F(1)=0.8$ y $F(2)=1$: $P(0<X\le 1)=F(1)-F(0)=0.8-0.5=0.3$ y $P(X>1)=1-F(1)=1-0.8=0.2$.</p>
+<div class="warn">Error común: leer $F(1)$ como 0.5 por mirar el círculo en blanco de $x=1$; $F(1)$ es el relleno, 0.8, y 0.5 es $F(1^-)$.</div>`);
+T('intervalos', 'Intervalos y la gráfica de F(x)', String.raw`
+<p>En la gráfica escalonada de $F(x)$ cada punto tiene dos marcas: un <b>círculo relleno ●</b> y un <b>círculo en blanco ○</b>.</p>
+<h4>● Círculo relleno: el valor sí está incluido</h4>
+<p>Es $F(x)$ en ese $x$. En los gatitos: en $x=0$ el relleno está en $F(0)=0.5$; en $x=1$, en $F(1)=0.8$; en $x=2$, en $F(2)=1$.</p>
+<h4>○ Círculo en blanco: el valor no está incluido</h4>
+<p>Es el valor justo antes del salto, $F(x^-)$ (límite por la izquierda). En $x=0$ el blanco está en $0$; en $x=1$, en $0.5$; en $x=2$, en $0.8$. La línea punteada vertical une ambos: es el <b>salto</b>, y su tamaño es $P(X=x)=F(x)-F(x^-)$.</p>
+<h4>¿Qué es un intervalo?</h4>
+<p>Un <b>intervalo</b> es un conjunto de números reales entre dos extremos $a$ y $b$, con $a<b$. Siempre se da en sus tres formas: notación de conjuntos, desigualdad y recta numérica.</p>
+<div class="tw"><table class="tb"><thead><tr><th>Intervalo</th><th>Notación de conjuntos</th><th>Desigualdad</th><th>En la recta</th></tr></thead><tbody>
+<tr><td><b>Cerrado</b> $[a,b]$</td><td>$\{x\mid a\le x\le b\}$</td><td>$a\le x\le b$</td><td>Corchete / punto relleno en $a$ y en $b$</td></tr>
+<tr><td><b>Abierto</b> $(a,b)$</td><td>$\{x\mid a<x<b\}$</td><td>$a<x<b$</td><td>Paréntesis / punto en blanco en $a$ y en $b$</td></tr>
+<tr><td><b>Semiabierto</b> $[a,b)$</td><td>$\{x\mid a\le x<b\}$</td><td>$a\le x<b$</td><td>Relleno en $a$, blanco en $b$</td></tr>
+<tr><td><b>Semiabierto</b> $(a,b]$</td><td>$\{x\mid a<x\le b\}$</td><td>$a<x\le b$</td><td>Blanco en $a$, relleno en $b$</td></tr>
+</tbody></table></div>
+<h4>La acumulada como intervalos (gatitos)</h4>
+<p>$X$ = número de gatitos vendidos en un día, $P(X=0)=0.5$, $P(X=1)=0.3$, $P(X=2)=0.2$ (suma 1). La gráfica es constante por tramos: $F(x)=0$ si $x<0$; $F(x)=0.5$ si $0\le x<1$, es decir, en $[0,1)$; $F(x)=0.8$ si $1\le x<2$, es decir, en $[1,2)$; $F(x)=1$ si $x\ge 2$, es decir, en $[2,\infty)$. Cada escalón es un intervalo semiabierto $[x_k,x_{k+1})$: cerrado a la izquierda (el círculo relleno, el valor sí cuenta) y abierto a la derecha (el círculo en blanco del siguiente salto, ese valor ya no cuenta en este escalón).</p>
+<div class="warn">Error común: leer $F(1)$ como $0.5$ por mirar el círculo en blanco de $x=1$; $F(1)$ es el relleno, $0.8$, y $0.5$ es $F(1^-)$.</div>
+<h4>🔎 Interactivo: mueve $x$ sobre la gráfica</h4>
+<div id="int-g"></div>
+<div class="row"><label class="f" style="flex:1">Mueve $x$: <b id="int-xv">0</b><input id="int-x" type="range" min="-0.5" max="2.5" step="0.5" value="0" aria-label="Valor de x"></label></div>
+<div id="int-out" style="margin-top:10px"></div>
+<h4>✏️ Mini-ejercicio</h4>
+<p><b>1.</b> ¿Cuánto vale $F(1)$?</p>
+<div class="row"><button class="btn sm" data-act="intq" data-q="int-q1" data-ok="0" data-fb="✗ No: 0.5 es $F(1^-)$, el círculo en blanco (el valor justo antes del salto). $F(1)$ es el círculo relleno: 0.8.">$0.5$</button><button class="btn sm" data-act="intq" data-q="int-q1" data-ok="1" data-fb="✓ Correcto: $F(1)=0.8$ es el círculo relleno en $x=1$ (el valor sí está incluido).">$0.8$</button><button class="btn sm" data-act="intq" data-q="int-q1" data-ok="0" data-fb="✗ No: 1 es $F(2)$, el valor final de la acumulada, no $F(1)$">$1$</button></div>
+<div class="sub" id="int-q1" style="margin-top:6px">Elige una opción.</div>
+<p style="margin-top:10px"><b>2.</b> ¿Cuánto vale $P(0<X\le 1)$?</p>
+<div class="row"><button class="btn sm" data-act="intq" data-q="int-q2" data-ok="0" data-fb="✗ No: 0.2 es $P(X=2)$">$0.2$</button><button class="btn sm" data-act="intq" data-q="int-q2" data-ok="1" data-fb="✓ Correcto: $P(0<X\le 1)=F(1)-F(0)=0.8-0.5=0.3$">$0.3$</button><button class="btn sm" data-act="intq" data-q="int-q2" data-ok="0" data-fb="✗ No: 0.5 es $F(0)$, no la probabilidad del intervalo">$0.5$</button></div>
+<div class="sub" id="int-q2" style="margin-top:6px">Elige una opción.</div>`);
 T('esperanza', 'Esperanza matemática (valor esperado)', String.raw`
+<h4>Qué es</h4>
+<p>La <b>esperanza matemática</b> $E(X)$, también llamada <b>valor esperado</b> o <b>media</b> $\mu$ de la variable aleatoria, es el <b>promedio a largo plazo</b> de $X$ si el experimento se repitiera muchísimas veces: cada valor se pondera con su probabilidad. <b>No tiene que ser un valor posible de $X$</b> (por ejemplo, 1.5 águilas).</p>
+<h4>Para qué sirve</h4>
+<ul><li><b>Resumir en un solo número el centro</b> de la distribución.</li><li><b>Comparar juegos, rifas y decisiones</b>: ¿conviene participar?</li><li>Ser la <b>base de la varianza</b> ($\sigma^2$ se calcula a partir de $\mu$) y de las distribuciones (binomial: $\mu=np$, etc.).</li></ul>
+<h4>Fórmulas</h4>
 <div class="eqbox">$$\mu=E(X)=\sum_i x_i\,P(X=x_i)$$</div>
-<p>Es el <b>promedio a largo plazo</b> de $X$ si el experimento se repitiera muchas veces: cada valor se pondera con su probabilidad. No tiene que ser un valor posible de $X$.</p>
-<p>Para una ganancia $g(X)$: $E[g(X)]=\sum g(x)\,f(x)$.</p>
+<div class="eqbox">$$E[g(X)]=\sum_i g(x_i)\,f(x_i)$$</div>
+<div class="eqbox">$$\mu=\frac{\sum x_i f_i}{N}\ \text{(con frecuencias)}$$</div>
+<p><b>Qué es cada elemento:</b> $X$ = variable aleatoria; $x_i$ = cada valor posible de $X$; $P(X=x_i)=f(x_i)$ = probabilidad de ese valor; $\sum_i$ = suma sobre todos los valores posibles; $\mu$ (mu) = esperanza / media poblacional de $X$; $E$ = operador «valor esperado de…»; $g(X)$ = ganancia o función de $X$ (por ejemplo, lo que se gana o se pierde en un juego); $f_i$ = frecuencia del valor $x_i$; $N$ = total de datos. Si $P(x_i)=\frac{f_i}{N}$, el $\div N$ ya está dentro de $P(x_i)$.</p>
+<h4>Cómo se usa paso a paso</h4>
+<ol><li>Arma la tabla de la FDP ($x$, $P(x)$).</li><li>Agrega la columna $x\cdot P(x)$.</li><li>Suma esa columna → $\mu$.</li><li>Interpreta y, si es un juego, decide: $E>0$ conviene participar, $E<0$ no conviene, $E=0$ juego justo.</li></ol>
+<h4>Ejemplo (el de la Calculadora)</h4>
+<p>$x=-16,2,4,6$ con $P=\frac{1}{8},\frac{3}{8},\frac{3}{8},\frac{1}{8}$ → $x\cdot P(x)=-2,\frac{3}{4},\frac{3}{2},\frac{3}{4}$ → $\mu=-2+\frac{3}{4}+\frac{3}{2}+\frac{3}{4}=1$. (Para la varianza: $E[X^2]=44$, $\sigma^2=44-1=43$, $\sigma=\sqrt{43}\approx 6.56$.)</p>
 <h4>Decisiones con el valor esperado</h4>
 <ul><li>$E>0$ → conviene participar.</li><li>$E<0$ → no conviene.</li><li>$E=0$ → <b>juego justo</b>.</li></ul>
-<div class="tip">Con frecuencias: $\mu=\dfrac{\sum x_if_i}{N}$. Si cada frecuencia se convierte a probabilidad ($f_i/N$), el $÷N$ ya está dentro de $P(x)$.</div>`);
+<div class="warn"><b>Precisión:</b> esa regla de decisión aplica cuando $E$ es la <b>ganancia neta esperada</b> $E[g(X)]$, no a cualquier variable $X$.</div>
+<div class="tip">Con frecuencias: $\mu=\dfrac{\sum x_if_i}{N}$. Si cada frecuencia se convierte a probabilidad ($f_i/N$), el $÷N$ ya está dentro de $P(x)$.</div>
+<div class="warn">Error común: confundir la esperanza con «el valor más probable» o con «lo que saldrá en el próximo intento». $E(X)$ es un promedio a largo plazo, no una predicción de un solo resultado, y puede no ser un valor posible de $X$.</div>
+<p>En la pestaña 2 de esta página, la simulación del máximo de dos dados muestra cómo el promedio simulado se acerca a $E(X)=4.472$.</p>
+<div class="row" style="margin-top:10px"><button class="btn go" data-act="esp-sim">▶ Ver la simulación: el promedio se acerca a μ</button></div>`);
 T('varianza', 'Varianza y desviación estándar de una VA', String.raw`
 <div class="eqbox">$$\sigma^2=\sum (x_i-\mu)^2P(x_i)=\sum x_i^2P(x_i)-\mu^2\qquad \sigma=\sqrt{\sigma^2}$$</div>
 <p>$E(X^2)=\sum x_i^2P(x_i)$. La forma corta es $\sigma^2=E(X^2)-\mu^2$. $\sigma$ está en las mismas unidades que $X$ y mide cuánto suelen alejarse los valores de $\mu$.</p>
@@ -1603,6 +1877,19 @@ T('binomial', 'Distribución binomial', String.raw`
 $$\mu=np\qquad \sigma^2=npq\qquad \sigma=\sqrt{npq}$$</div>
 <p>$\binom{n}{x}$ cuenta las formas de acomodar los $x$ éxitos; $p^xq^{n-x}$ es la probabilidad de <i>una</i> de esas formas (regla del producto).</p>
 <div class="warn">Si se extrae <b>sin reemplazo</b> de una población pequeña, $p$ cambia y no es binomial (es hipergeométrica). Con poblaciones muy grandes sí se usa la binomial como aproximación.</div>`);
+T('binomial-conceptos', 'Conceptos y definiciones · Distribución binomial', String.raw`
+<h4>Qué es</h4>
+<p>Un <b>experimento de Bernoulli</b> es un ensayo con solo dos resultados: <i>éxito</i> (probabilidad $p$) y <i>fracaso</i> (probabilidad $q=1-p$). La <b>distribución binomial</b> es Bernoulli repetido $n$ veces: $X$ = número de éxitos en los $n$ ensayos.</p>
+<h4>Cuándo se aplica (las 4 condiciones, con su porqué)</h4>
+<ol><li><b>$n$ fijo:</b> se sabe de antemano cuántas veces se repite el ensayo (sin $n$ fijo no hay tabla binomial).</li><li><b>Éxito o fracaso:</b> cada ensayo solo tiene dos resultados (si hay más, hay que agruparlos en «éxito» y «no éxito»).</li><li><b>$p$ igual:</b> la probabilidad de éxito es la misma en todos los ensayos (si cambia, las formas ya no tienen la misma probabilidad).</li><li><b>Independientes:</b> el resultado de un ensayo no cambia la probabilidad del siguiente.</li></ol>
+<h4>Cuándo NO se aplica</h4>
+<ul><li>Si $p$ <b>cambia</b> de ensayo a ensayo — por ejemplo, al extraer <b>sin reemplazo</b> de una población pequeña — no es binomial: es <b>hipergeométrica</b>. Con poblaciones muy grandes la binomial sí se usa como <b>aproximación</b>.</li><li>Si $n$ <b>no es fijo</b> (no se sabe cuántas veces se repetirá el ensayo).</li><li>Si cada ensayo tiene <b>más de dos resultados</b> que no se pueden agrupar en éxito/fracaso.</li></ul>
+<h4>Para qué sirve</h4>
+<ul><li>Calcular $P(X=x)$ (probabilidad de exactamente $x$ éxitos) y probabilidades <b>acumuladas</b> y <b>colas</b>, como $P(X\ge 1)=1-q^n$ (al menos un éxito).</li><li>Resumir con $\mu=np$ y $\sigma=\sqrt{npq}$.</li><li>Usos típicos: águilas en $n$ monedas, artículos defectuosos en una muestra, aciertos al adivinar en un examen de opción múltiple.</li></ul>
+<h4>Fórmulas</h4>
+<div class="eqbox">$$P(X=x)=\binom{n}{x}p^x q^{n-x},\quad x=0,1,\dots,n$$</div>
+<div class="eqbox">$$\mu=np\qquad \sigma^2=npq\qquad \sigma=\sqrt{npq}$$</div>
+<p><b>Qué es cada elemento:</b> $n$ = número de ensayos (repeticiones); $x$ = número de éxitos que se preguntan; $p$ = probabilidad de éxito en <i>un</i> ensayo; $q=1-p$ = probabilidad de fracaso en <i>un</i> ensayo; $\binom{n}{x}$ = número de formas de acomodar los $x$ éxitos entre los $n$ ensayos; $p^x q^{n-x}$ = probabilidad de <b>una</b> de esas formas (regla del producto: se multiplican las probabilidades de los ensayos independientes).</p>`);
 T('poisson', 'Distribución de Poisson (complemento)', String.raw`
 <p>Cuenta el número de ocurrencias de un evento en un <b>intervalo</b> de tiempo o espacio (llamadas por hora, accidentes por mes, ratas por manzana), cuando los eventos ocurren de forma independiente y a una tasa media constante.</p>
 <div class="eqbox">$$P(X=x)=\frac{e^{-\lambda}\lambda^{x}}{x!},\quad x=0,1,2,\dots$$
@@ -1825,10 +2112,10 @@ function sumSteps(n, pred, pmf, evt, termTex) {
 /* ---------- ficha visual: n ensayos, x éxitos ---------- */
 function tokStrip(n, x, succ) {
   if (n > 20 || x > n) return '';
-  const row = (arr) => `<div class="tokrow">${arr.map((v, i) => `<span class="tk ${v ? 'ok' : 'no'}${n > 12 ? ' sm' : ''}" style="--i:${i}">${v ? 'É' : 'F'}</span>`).join('')}</div>`;
+  const row = (arr) => `<div class="tokrow">${arr.map((v, i) => `<span class="tok ${v ? 'ok' : 'no'}${n > 12 ? ' sm' : ''}" style="--i:${i}">${v ? 'É' : 'F'}</span>`).join('')}</div>`;
   const base = Array.from({ length: n }, (_, i) => i < x), alt = base.slice().reverse();
   const ways = Number(nCr(n, x));
-  return `<div class="viz tokbox"><p class="sub"><b>Imagina los ${n} ensayos</b> como ${n} casillas: <span class="tk ok mini">É</span> = éxito${succ ? ' (' + succ + ')' : ''}, <span class="tk no mini">F</span> = fracaso. Queremos <b>${x}</b> éxitos y <b>${n - x}</b> fracasos.</p>${row(base)}${ways > 1 ? row(alt) : ''}<p class="sub">Esos ${x} éxitos pueden ir en distintos lugares: hay $\\binom{${n}}{${x}}=${ways}$ formas. Cada una tiene la misma probabilidad $p^{${x}}q^{${n - x}}$, por eso se multiplica.</p></div>`;
+  return `<div class="viz tokbox"><p class="sub"><b>Imagina los ${n} ensayos</b> como ${n} casillas: <span class="tok ok mini">É</span> = éxito${succ ? ' (' + succ + ')' : ''}, <span class="tok no mini">F</span> = fracaso. Queremos <b>${x}</b> éxitos y <b>${n - x}</b> fracasos.</p>${row(base)}${ways > 1 ? row(alt) : ''}<p class="sub">Esos ${x} éxitos pueden ir en distintos lugares: hay $\\binom{${n}}{${x}}=${ways}$ formas. Cada una tiene la misma probabilidad $p^{${x}}q^{${n - x}}$, por eso se multiplica.</p></div>`;
 }
 /* ---------- BINOMIAL ---------- */
 function binPart(l, q, n, p, ev, o = {}) {
@@ -1920,9 +2207,41 @@ const veredicto = e => e > 1e-9 ? '<b>conviene</b> (E > 0)' : e < -1e-9 ? '<b>no
 
 /* tabla del espacio muestral de un experimento por etapas: stages [[etiqueta,prob],...] por etapa */
 function spaceHtml(stages, xfun, o = {}) {
+  // ítem 11: rejilla simétrica en vez de tabla vertical (filas = etapas anteriores, columnas = última etapa)
   const out = enumSeq(stages).map(([lab, pr]) => [lab, pr, xfun(lab)]);
-  return `<p>${o.intro || 'Se enumeran los resultados posibles, su probabilidad (producto, porque las etapas son independientes) y el valor de $X$.'}</p>` + tbl(['Resultado', 'Probabilidad', '$x$'], out.map(([l, p, x]) => tr([l.split('').join(' '), `$${o.frac ? pf(p) : fpr(p)}$`, `<b>${fc(x, 2)}</b>`])));
+  const byLab = {}; out.forEach(([l, p, x]) => byLab[l] = [p, x]);
+  const last = stages[stages.length - 1].map(([a]) => a);
+  const rows = enumSeq(stages.slice(0, -1)).map(([l]) => l);
+  const cap = stages.length === 2 ? 'Filas = 1.ª etapa · Columnas = 2.ª etapa.' : 'Filas = 2 primeras etapas · Columnas = 3.ª etapa.';
+  return `<p>${o.intro || 'Se enumeran los resultados posibles, su probabilidad (producto, porque las etapas son independientes) y el valor de $X$.'}</p>` + symGrid(rows, last, (r, c) => { const l = r + c, [p, x] = byLab[l]; return [l.split('').join(' '), x, `$P=${o.frac ? pf(p) : fpr(p)}$`]; }, { cap: cap + ' Cada celda lleva el resultado, su probabilidad y el valor de $X$.' });
 }
+/* ítem 11: rejilla simétrica de un espacio muestral por etapas.
+   rows = valores de las etapas anteriores, cols = valores de la última etapa.
+   cell(r, c) => [etiqueta, x, extra?]; extra = texto pequeño opcional (p. ej. la probabilidad).
+   Mismo valor de x = mismo tinte pastel; la leyenda cuenta los casos por valor de x. */
+function symGrid(rowLabs, colLabs, cell, o = {}) {
+  const xl = o.xlab || 'X';
+  const xs = [];
+  rowLabs.forEach(r => colLabs.forEach(c => { const v = cell(r, c); if (v) xs.push(v[1]); }));
+  const ux = [...new Set(xs)].sort((a, b) => (typeof a === 'number' && typeof b === 'number') ? a - b : String(a).localeCompare(String(b)));
+  const col = x => FIG.gcolor(ux.indexOf(x), ux.length), cnt = {};
+  xs.forEach(x => cnt[x] = (cnt[x] || 0) + 1);
+  const fmt = x => o.xfmt ? o.xfmt(x) : x;
+  let q = 0, h = `<div class="tw"><div class="gsp wide" style="--n:${colLabs.length}"><div class="gh cn">${o.corner || ''}</div>${colLabs.map(c => `<div class="gh">${c}</div>`).join('')}`;
+  rowLabs.forEach(r => {
+    h += `<div class="gh">${r}</div>`;
+    colLabs.forEach(c => {
+      const v = cell(r, c);
+      if (!v) { h += '<div class="gc sk"></div>'; return; }
+      h += `<div class="gc" style="background:${col(v[1])};--i:${q++}" title="${v[0]}"><span>${v[0]} → <b>${fmt(v[1])}</b>${v[2] ? `<small>${v[2]}</small>` : ''}</span></div>`;
+    });
+  });
+  h += `</div></div>`;
+  if (o.legend !== false) h += `<p class="sub" style="margin-top:8px">Mismo color = mismo valor de $${xl}$:</p><div class="gks">${ux.map(x => `<span class="gk" style="background:${col(x)}"><b>$${xl} = ${fmt(x)}$</b><i>${cnt[x]}</i></span>`).join('')}</div>`;
+  if (o.cap) h += `<p class="sub">${o.cap}</p>`;
+  return h;
+}
+
 const cnt = ch => lab => lab.split('').filter(c => c === ch).length;
 
 'use strict';
@@ -2092,7 +2411,7 @@ add('esp', '16b', 'Rifa de 1,000 boletos (muebles)', 'Una rifa de 1,000 boletos 
       const pr = [[20750, 2], [18500, 2], [15000, 2], [500, 10]], tot = sum(pr.map(([v, k]) => v * k)), e1 = tot / 1000 - 150;
       return {
         steps: [['Premios en total', `<div class="eqbox">$2(20\\,750)+2(18\\,500)+2(15\\,000)+10(500)=${TN(tot, 0)}$</div>`],
-          ['Un boleto', tbl(['Resultado', 'Ganancia neta $g$', '$P$'], [...pr.map(([v, k]) => tr([`Premio §${fc(v, 0)}`, `$${TN(v - 150, 0)}$`, `${k}/1000`])), tr(['Sin premio', '$-150$', '984/1000'])]) + `<div class="eqbox">$E_1=\\dfrac{${TN(tot, 0)}}{1000}-150=${TN(tot / 1000, 1)}-150=${TN(e1, 1)}$</div>`],
+          ['Un boleto', tbl(['Resultado', 'Ganancia neta $g$', '$P$'], [...pr.map(([v, k]) => tr([`Premio §${fc(v, 0)}`, `$${TN(v - 150, 0)}$`, `$${ftex(k, 1000)}$`])), tr(['Sin premio', '$-150$', `$${ftex(984, 1000)}$`])]) + `<div class="eqbox">$E_1=\\dfrac{${TN(tot, 0)}}{1000}-150=${TN(tot / 1000, 1)}-150=${TN(e1, 1)}$</div>`],
           ['Cuatro boletos', `<div class="eqbox">$E=4\\cdot E_1=4(${TN(e1, 1)})=${TN(4 * e1, 1)}$</div><p class="sub">Equivale a esperar §${fc(4 * tot / 1000, 0)} en premios y pagar §600.</p>`]],
         ans: `$E=${TN(4 * e1, 1)}$ → pierde en promedio §${fc(-4 * e1, 0)}`
       };
@@ -2111,7 +2430,7 @@ add('esp', 18, 'Tres monedas: ¿cuánto pagar si salen 3 soles?', 'Se lanzan 3 m
     const g = [30, 60, 90], p = [3 / 8, 3 / 8, 1 / 8], s = sum(g.map((v, i) => v * p[i]));
     return {
       steps: [['Probabilidades', '<p>Número de águilas en 3 monedas: binomial $n=3$, $p=\\tfrac12$ → $P(1)=P(2)=\\tfrac38$, $P(3)=P(0)=\\tfrac18$.</p>'],
-        ['Ganancias', tbl(['Águilas', '$g(x)$', '$P(x)$', '$g\\cdot P$'], [tr(['1', '30', '3/8', `$${TN(30 * 3 / 8, 3)}$`]), tr(['2', '60', '3/8', `$${TN(60 * 3 / 8, 3)}$`]), tr(['3', '90', '1/8', `$${TN(90 / 8, 3)}$`]), tr(['0 (3 soles)', '$-x$', '1/8', '$-x/8$'])])],
+        ['Ganancias', tbl(['Águilas', '$g(x)$', '$P(x)$', '$g\\cdot P$'], [tr(['1', '30', `$${ftex(3, 8)}$`, `$${TN(30 * 3 / 8, 3)}$`]), tr(['2', '60', `$${ftex(3, 8)}$`, `$${TN(60 * 3 / 8, 3)}$`]), tr(['3', '90', `$${ftex(1, 8)}$`, `$${TN(90 / 8, 3)}$`]), tr(['0 (3 soles)', '$-x$', `$${ftex(1, 8)}$`, '$-x/8$'])])],
         ['Juego justo: $E=0$', `<div class="eqbox">$${TN(s, 2)}-\\dfrac{x}{8}=0\\ \\Rightarrow\\ x=8(${TN(s, 2)})=${TN(8 * s, 0)}$</div>`]],
       ans: `debe pagar §${fc(8 * s, 0)} cuando salgan 3 soles`
     };
@@ -2179,7 +2498,7 @@ add('esp', 30, 'Moneda hasta 3 veces con premios', 'Se lanza una moneda hasta 3 
     const g = [100, 50, -25], p = [1 / 2, 1 / 4, 1 / 8], s = sum(g.map((v, i) => v * p[i]));
     return {
       steps: [['Probabilidades', '<p>Sale en el 1.º: $\\tfrac12$; en el 2.º: $\\tfrac14$; en el 3.º: $\\tfrac18$; no sale en ninguno: $\\tfrac18$.</p>'],
-        ['Tabla', tbl(['Resultado', '$g$', '$P$', '$g\\cdot P$'], [tr(['1.º', '100', '1/2', '50']), tr(['2.º', '50', '1/4', '12.5']), tr(['3.º', '−25', '1/8', '−3.125']), tr(['Ninguno', '$-x$', '1/8', '$-x/8$'])])],
+        ['Tabla', tbl(['Resultado', '$g$', '$P$', '$g\\cdot P$'], [tr(['1.º', '100', `$${ftex(1, 2)}$`, '50']), tr(['2.º', '50', `$${ftex(1, 4)}$`, '12.5']), tr(['3.º', '−25', `$${ftex(1, 8)}$`, '−3.125']), tr(['Ninguno', '$-x$', `$${ftex(1, 8)}$`, '$-x/8$'])])],
         ['Juego justo: $E=0$', `<div class="eqbox">$${TN(s, 3)}-\\dfrac x8=0\\ \\Rightarrow\\ x=8(${TN(s, 3)})=${TN(8 * s, 0)}$</div>`]],
       ans: `debe pagar §${fc(8 * s, 0)}`
     };
@@ -2271,7 +2590,7 @@ add('fdp', 13, 'Monedero con monedas de distinto valor', 'Un monedero contiene 5
 ]);
 add('fdp', 14, 'Edades de 10 estudiantes', 'En una clase hay 10 estudiantes: 5 de 17 años, 4 de 19 y 1 de 21. Se seleccionan 2 <b>sin reemplazamiento</b>. $X$ = edad promedio de los dos.', [
   fdpPart('', 'Calcula $\\mu$ de la FDP.', () => drawsNoRepl([17, 17, 17, 17, 17, 19, 19, 19, 19, 21], 2).map(([v, p]) => [(v[0] + v[1]) / 2, p]), 'mu', {
-    frac: true, space: () => '<p>Promedios posibles: 17, 18, 19, 20 y 21 (por parejas de edades). Hay 45 parejas equiprobables.</p><div class="note tip">Comprobación: sin reemplazo, $E(\\bar X)=\\mu_{\\text{población}}=\\frac{5(17)+4(19)+21}{10}=18.2$.</div>'
+    frac: true, space: () => '<p>Promedios posibles: 17, 18, 19 y 20 (por parejas de edades; el 21 no puede salir porque solo hay un alumno de 21 años y es sin reemplazo). Hay 45 parejas equiprobables.</p><div class="note tip">Comprobación: sin reemplazo, $E(\\bar X)=\\mu_{\\text{población}}=\\frac{5(17)+4(19)+21}{10}=18.2$.</div>'
   })
 ]);
 
@@ -2402,42 +2721,46 @@ PAGES.push({
 <li><b>Tablas de llenado:</b> la tolerancia ya no se anulaba por un factor ×0.</li>
 <li><b>Carga:</b> la página ya no se dibuja dos veces al abrir.</li>
 <li><b>Botón a/b (fracción ⇄ decimal):</b> ahora también aparece en Variables continuas y Normal. Solo cambian las fracciones numéricas; las que tienen variables quedan como fracción.</li>
-<li><b>8 pestañas nuevas “🔎 Profundización”</b> (una por tema, del Paquete Ampliado) y <b>📊 Apéndice</b> con tablas A1–A8 generadas automáticamente.</li>
+<li><b>9 pestañas nuevas “🔎 Profundización”</b> (una por tema, del Paquete Ampliado) y <b>📊 Apéndice</b> con tablas A1–A8 generadas automáticamente.</li>
 <li><b>Mapa visual y errores comunes</b> en esta página, y <b>código de colores</b> con su nota de reconciliación.</li>
 <li><b>Accesibilidad:</b> etiquetas para sliders, puntos de navegación y diagramas de Venn; aviso si KaTeX no carga y mensaje si JavaScript está desactivado.</li>
 </ul></section>
 <section class="pn s12 rv"><h3><span class="ico">🎨</span>Código de colores e iconos</h3>
-<p class="sub">El mismo código del Paquete Didáctico. <b>⚠️ Reconciliación con este cuaderno:</b> aquí los <b>resultados finales ya se muestran en rojo</b> (estándar Aula Digital), así que el rojo tiene dos usos y no hay que confundirlos: el <b>rojo de la leyenda</b> es la <b>varianza</b> (siempre va con el símbolo $\sigma^2$ o $Var(X)$); el <b>rojo de un resultado</b> es “este es el número final” (siempre va en recuadro, con ✓ o con la palabra Resultado). La varianza nunca aparece sola en rojo sin su símbolo. Además, <b>nunca es solo color</b>: cada color lleva su nombre o su símbolo escrito.</p>
+<p class="sub">El mismo código del Paquete Didáctico. <b>⚠️ Reconciliación con este cuaderno:</b> aquí los <b>resultados finales ya se muestran en rojo</b> (estándar Aula Digital), así que el rojo tiene dos usos y no hay que confundirlos: el <b>rojo de la leyenda</b> es la <b>varianza</b> (siempre va con el símbolo $\\sigma^2$ o $Var(X)$); el <b>rojo de un resultado</b> es “este es el número final” (siempre va en recuadro, con ✓ o con la palabra Resultado). La varianza nunca aparece sola en rojo sin su símbolo. Además, <b>nunca es solo color</b>: cada color lleva su nombre o su símbolo escrito.</p>
 <div class="grid2" style="gap:8px">
-<div><span class="dotc" style="background:#1c7ed6"></span><b>Azul — media / esperanza</b> $\mu$, $\bar x$, $E[X]$: el centro, eje de simetría.</div>
-<div><span class="dotc" style="background:#e03131"></span><b>Rojo — varianza</b> $\sigma^2$, $Var(X)$: dispersión al cuadrado.</div>
-<div><span class="dotc" style="background:#7048e8"></span><b>Morado — desviación estándar</b> $\sigma$: vector flecha ↔ desde la media.</div>
-<div><span class="dotc" style="background:#2f9e44"></span><b>Verde — probabilidad y resultado</b> $P(A)$, $p$: área o proporción favorable.</div>
-<div><span class="dotc" style="background:#0c8599"></span><b>Turquesa — mediana / cuartiles</b> $Me$, $Q_1$, $Q_3$: posición.</div>
-<div><span class="dotc" style="background:#f783ac"></span><b>Rosa — moda</b> $Mo$: el valor más frecuente.</div>
-<div><span class="dotc" style="background:#f08c00"></span><b>Naranja — correlación / regresión</b> $r$, $\hat y$ (Estadística 1).</div>
+<div><span class="dotc" style="background:#1B4AA6"></span><b>Azul — media / esperanza</b> $\\mu$, $\\bar x$, $E[X]$: el centro, eje de simetría.</div>
+<div><span class="dotc" style="background:#D64545"></span><b>Rojo — varianza</b> $\\sigma^2$, $Var(X)$: dispersión al cuadrado.</div>
+<div><span class="dotc" style="background:#7C5CF0"></span><b>Morado — desviación estándar</b> $\\sigma$: vector flecha ↔ desde la media.</div>
+<div><span class="dotc" style="background:#1F9D55"></span><b>Verde — probabilidad y resultado</b> $P(A)$, $p$: área o proporción favorable.</div>
+<div><span class="dotc" style="background:#0c8599"></span><b>Turquesa — mediana / cuartiles y margen de error</b> $Me$, $Q_1$, $Q_3$ y $E$: posición, y el margen de error $E=z\\cdot se$ del intervalo de confianza.</div>
+<div><span class="dotc" style="background:#C2185B"></span><b>Rosa — moda</b> $Mo$: el valor más frecuente.</div>
+<div><span class="dotc" style="background:#f08c00"></span><b>Naranja — correlación / regresión</b> $r$, $\\hat y$ (Estadística 1).</div>
 <div><span class="dotc" style="background:#f2c14e"></span><b>Amarillo — fórmula</b>: primero sola en recuadro, luego sustituida, luego resuelta paso a paso.</div>
+<div><span class="dotc" style="background:#0F766E"></span><b>Teal — proporción muestral y errores</b> $\\hat p$, $\\alpha$, $\\beta$: $\\hat p$ es la proporción de la muestra; $\\alpha$ y $\\beta$ son las probabilidades de error tipo I y II.</div>
+<div><span class="dotc" style="background:#7C5CF0"></span><b>Morado — error estándar</b> $s$, $\\sigma_{\\bar x}$, $\\sigma_{\\hat p}$: la desviación de un estimador; $s$ es la desviación estándar muestral.</div>
+<div><span class="dotc" style="background:#1B4AA6"></span><b>Azul — parámetro de Poisson</b> $\\lambda$: el promedio de ocurrencias en Poisson (también es media y esperanza).</div>
+<div><span class="dotc" style="background:#8A6D00"></span><b>Dorado — población y frecuencias</b> $N$, $f_i$: $N$ es el tamaño de la población; $f_i$ es la frecuencia del valor $x_i$.</div>
 </div>
 <p class="sub">📘 definición · 🧠 concepto · ✏️ ejemplo · ⚠️ error común · 📐 fórmula → sustitución → solución.</p></section>
 <section class="pn s12 rv"><h3><span class="ico">🗺️</span>Mapa visual: si ves esto… piensa esto</h3>
 <div class="tw"><table class="tb"><thead><tr><th>Si ves esto…</th><th>…piensa esto</th></tr></thead><tbody>
-<tr><td>Tabla de valores sueltos $x$ con $P(X=x)$</td><td><b>FDP discreta</b>: verifica $\sum P(x)=1$ y usa $F(x)=P(X\le x)$.</td></tr>
-<tr><td>$n$ fijo, $p$ constante, “¿cuántos éxitos?”</td><td><b>Binomial</b> $P(X=k)=\binom nk p^k q^{n-k}$; no olvides $q=1-p$.</td></tr>
+<tr><td>Tabla de valores sueltos $x$ con $P(X=x)$</td><td><b>FDP discreta</b>: verifica $\\sum P(x)=1$ y usa $F(x)=P(X\\le x)$.</td></tr>
+<tr><td>$n$ fijo, $p$ constante, “¿cuántos éxitos?”</td><td><b>Binomial</b> $P(X=k)=\\binom nk p^k q^{n-k}$; no olvides $q=1-p$.</td></tr>
 <tr><td>Curva y un intervalo $[a,b]$</td><td><b>Continua = área</b> bajo la densidad; $P(X=x)=0$ en un punto.</td></tr>
-<tr><td>Campana con $\mu$ y $\sigma$</td><td><b>Normal</b>: estandariza $Z=\frac{X-\mu}{\sigma}$ y lee $\Phi(z)$.</td></tr>
-<tr><td>$P(\bar x\dots)$ o $P(\hat p\dots)$</td><td><b>Distribución muestral</b>: usa el error estándar $\sigma/\sqrt n$, no $\sigma$.</td></tr>
-<tr><td>“Estima $\mu$ o $p$” / “¿hay evidencia contra $H_0$?”</td><td><b>Inferencia</b>: IC = estimador $\pm$ margen; contraste = $z$ y valor $p$ contra $\alpha$.</td></tr>
+<tr><td>Campana con $\\mu$ y $\\sigma$</td><td><b>Normal</b>: estandariza $Z=\\frac{X-\\mu}{\\sigma}$ y lee $\\Phi(z)$.</td></tr>
+<tr><td>$P(\\bar x\\dots)$ o $P(\\hat p\\dots)$</td><td><b>Distribución muestral</b>: usa el error estándar $\\sigma/\\sqrt n$, no $\\sigma$.</td></tr>
+<tr><td>“Estima $\\mu$ o $p$” / “¿hay evidencia contra $H_0$?”</td><td><b>Inferencia</b>: IC = estimador $\\pm$ margen; contraste = $z$ y valor $p$ contra $\\alpha$.</td></tr>
 </tbody></table></div></section>
 <section class="pn s12 rv"><h3><span class="ico">⚠️</span>Errores comunes</h3>
 <ul>
-<li><b>Confundir $P(X=x)$ con $F(x)$:</b> $F(x)=P(X\le x)$ acumula; $P(X=x)$ es solo el salto $F(x)-F(x^-)$.</li>
-<li><b>Usar $\sigma$ en vez de $\sigma/\sqrt n$</b> para probabilidades de $\bar x$ o $\hat p$: es el error más frecuente de la Unidad 2.</li>
+<li><b>Confundir $P(X=x)$ con $F(x)$:</b> $F(x)=P(X\\le x)$ acumula; $P(X=x)$ es solo el salto $F(x)-F(x^-)$.</li>
+<li><b>Usar $\\sigma$ en vez de $\\sigma/\\sqrt n$</b> para probabilidades de $\\bar x$ o $\\hat p$: es el error más frecuente de la Unidad 2.</li>
 <li><b>Decir “95 % de probabilidad” del intervalo ya calculado:</b> el 95 % es del procedimiento, no de ese intervalo concreto.</li>
 <li><b>Olvidar $q=1-p$</b> en la binomial, o aplicar la binomial cuando $p$ cambia entre ensayos.</li>
 <li><b>Leer la altura de la densidad como probabilidad:</b> en continuas $P(X=2)=0$; la probabilidad es el área.</li>
 <li><b>Decir “se acepta $H_0$”:</b> en inferencia se <b>rechaza</b> o <b>no se rechaza</b>; no rechazar no demuestra que $H_0$ sea verdadera.</li>
 </ul></section>
-<section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><a class="btn" href="PDF/est2_ejercicios.pdf" download target="_blank" rel="noopener">⬇ Ejercicios (PDF)</a><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="apendice">📊 Apéndice · Tablas</button><p class="sub">📎 Los PDF de Ejercicios y Formulario deben acompañar a este archivo en la carpeta <b>PDF/</b>.</p></div></section></div>`;
+<section class="pn s4 rv"><h3><span class="ico">🧰</span>Consulta rápida</h3><div class="stack" style="gap:10px"><button class="btn" data-act="plan">📄 Plan de estudios</button><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="apendice">📊 Apéndice · Tablas</button><button class="btn" data-act="tablas-word">📊 Tablas exactas (Word)</button></div></section></div>`;
       // portada: campana normal sobre barras binomiales (n = 20, p = 0.5)
       const n = 20, ps = binDist(n, .5), xs = ps.map((_, i) => i);
       $('#cover-chart', p).innerHTML = svgPmf(xs, ps, { w: 420, h: 200, norm: { mu: 10, sd: Math.sqrt(5) }, xt: 'binomial n = 20, p = 0.5 y su campana normal', yt: '' }).replace(/fill="#1c7ed6"/g, 'fill="#E7B8C6"');
@@ -2462,9 +2785,10 @@ PAGES.push({
   chips: ['va', 'fdp'],
   tabs: [
     { id: 'con', t: '1 · Concepto y ejemplos', render(p) {
-      const vx = (s, vals) => `<div class="tw"><table class="tb"><thead><tr><th>Resultado</th><th>Valor de X</th></tr></thead><tbody>${s.map((r, i) => tr([r, `<b>${vals[i]}</b>`])).join('')}</tbody></table></div>`;
-      const ex2 = ['ggg', 'ggp', 'gpg', 'gpp', 'pgg', 'pgp', 'ppg', 'ppp'], v2 = ex2.map(s => [...s].reduce((t, c) => t + (c === 'g' ? 5 : -2), 0));
-      p.innerHTML = `<div class="gside"><div class="stack">
+      // ítem 11: vx() ya no es tabla vertical: rejilla simétrica (filas = etapas anteriores, columnas = última etapa)
+      const vx = (rows, cols, cell, cap) => symGrid(rows, cols, cell, { cap });
+      const nota = txt => `<details class="nota"><summary>💡 Nota: ¿por qué importa este ejemplo?</summary><p>${txt}</p></details>`; // ítem 1b: cerrada por defecto
+      p.innerHTML = `<div class="stack onecol">
         <div class="pn rv"><h3><span class="ico">📐</span>¿Qué es? ${thBtn('va', 'Teoría')}</h3>
           <p>Una <b>variable aleatoria</b> es una función $X$ cuyo <b>dominio</b> es el espacio muestral $S$ y cuyo <b>recorrido</b> es un conjunto de números reales.</p>
           <div class="eqbox">$$X:S\\longrightarrow\\mathbb R$$</div>
@@ -2472,21 +2796,20 @@ PAGES.push({
         <div class="pn rv"><h3><span class="ico">🔺</span>Ejemplo 1 · Tetraedro</h3>
           <p>Un tetraedro con caras numeradas del 1 al 4 se lanza dos veces. $X$ = suma de los números. Los 16 resultados $(a,b)$ dan:</p>
           <div class="tw"><table class="tb"><tbody>${[1, 2, 3, 4].map(a => `<tr>${[1, 2, 3, 4].map(b => `<td>(${a},${b}) → <b>${a + b}</b></td>`).join('')}</tr>`).join('')}</tbody></table></div>
-          <p>Recorrido: $R_X=\\{2,3,4,5,6,7,8\\}$. <span class="sub">En un mismo espacio muestral se pueden definir variables aleatorias distintas.</span></p></div>
+          <p>Recorrido: $R_X=\\{2,3,4,5,6,7,8\\}$. <span class="sub">En un mismo espacio muestral se pueden definir variables aleatorias distintas.</span></p>${nota('La suma es la variable: cada pareja (a,b) es un resultado, pero varios resultados dan el mismo valor de $X$. Hay 16 parejas y solo 7 valores posibles, de 2 a 8.')}</div>
         <div class="pn rv"><h3><span class="ico">📝</span>Ejemplo 2 · Examen de 3 preguntas</h3>
-          <p>Cada pregunta bien contestada (<b>g</b>) da +5 puntos y cada mal contestada (<b>p</b>) resta 2. $X$ = puntos obtenidos.</p>${vx(ex2, v2)}
-          <p>Recorrido: $R_X=\\{15,\\,8,\\,1,\\,-6\\}$ (8 resultados, pero sólo 4 valores distintos de $X$).</p></div></div>
-        <div class="stack">
+          <p>Cada pregunta bien contestada (<b>g</b>) da +5 puntos y cada mal contestada (<b>p</b>) resta 2. $X$ = puntos obtenidos.</p>${vx(['gg', 'gp', 'pg', 'pp'], ['g', 'p'], (r, c) => { const s = r + c; return ['(' + [...s].join(',') + ')', [...s].reduce((t, ch) => t + (ch === 'g' ? 5 : -2), 0)]; }, 'Filas = 2 primeras preguntas · Columnas = 3.ª pregunta')}
+          <p>Recorrido: $R_X=\\{15,\\,8,\\,1,\\,-6\\}$ (8 resultados, pero sólo 4 valores distintos de $X$).</p>${nota('La variable $X$ no cuenta aciertos, cuenta puntos: g vale +5 y p vale −2. Por eso hay 8 resultados pero solo 4 valores: 15, 8, 1 y −6.')}</div>
         <div class="pn amber rv"><h3><span class="ico">🥚</span>Ejemplo 3 · Huevos</h3>
           <p>Una canasta tiene dos huevos que pueden ser rojos (r) o blancos (b). Se revisan uno tras otro. $X$ = número de huevos rojos.</p>
-          ${vx(['(r,r)', '(r,b)', '(b,r)', '(b,b)'], [2, 1, 1, 0])}<p>$R_X=\\{0,1,2\\}$.</p></div>
+          ${vx(['r', 'b'], ['r', 'b'], (r, c) => ['(' + r + ',' + c + ')', (r === 'r' ? 1 : 0) + (c === 'r' ? 1 : 0)], 'Filas = 1.er huevo · Columnas = 2.º huevo')}<p>$R_X=\\{0,1,2\\}$.</p>${nota('(r,b) y (b,r) son resultados distintos, pero $X$ vale 1 en los dos: $X$ agrupa resultados.')}</div>
         <div class="pn rv"><h3><span class="ico">🏭</span>Ejercicio · Artículos defectuosos</h3>
           <p>Se escogen 3 artículos de un proceso de manufactura; cada uno puede estar funcionando (f) o defectuoso (d). $X$ = número de artículos defectuosos.</p>
-          ${vx(['(f,f,f)', '(f,f,d)', '(f,d,f)', '(d,f,f)', '(f,d,d)', '(d,f,d)', '(d,d,f)', '(d,d,d)'], [0, 1, 1, 1, 2, 2, 2, 3])}<p>$R_X=\\{0,1,2,3\\}$: el resultado $(f,f,f)$ también cuenta y tiene 0 defectuosos.</p></div>
+          ${vx(['ff', 'fd', 'df', 'dd'], ['f', 'd'], (r, c) => { const s = r + c; return ['(' + [...s].join(',') + ')', [...s].filter(ch => ch === 'd').length]; }, 'Filas = 2 primeros artículos · Columnas = 3.er artículo')}<p>$R_X=\\{0,1,2,3\\}$: el resultado $(f,f,f)$ también cuenta y tiene 0 defectuosos.</p>${nota('El resultado (f,f,f) también cuenta: $X=0$. Hay 8 resultados y $X$ toma 0, 1, 2 o 3.')}</div>
         <div class="pn gd rv"><h3><span class="ico">🪢</span>Discreta o continua</h3>
           <p><b>VAD:</b> valores <i>contables</i> (0, 1, 2…): número de águilas, de defectuosos, de llamadas.</p>
           <p><b>VAC:</b> cualquier valor de un intervalo. Entre 1 y 2 hay infinitos valores (1.9, 1.95, 1.999…): estatura, tiempo, peso.</p>
-          <div class="note">Contar → discreta · Medir → continua</div></div></div></div>`;
+          <div class="note">Contar → discreta · Medir → continua</div></div></div>`;
     } },
     { id: 'lab', t: '2 · Laboratorio: de resultados a números', render(p) {
       let ek = 'd2', vi = 0;
@@ -2499,7 +2822,13 @@ PAGES.push({
         const E = EXPS[ek], N = E.om.length, f = E.vars[vi][1], pr = E.om.map(([l, a]) => [l, f(a)]);
         const cnt = new Map(); pr.forEach(([, x]) => cnt.set(x, (cnt.get(x) || 0) + 1));
         const fd = fdpFrom(pr.map(([, x]) => [x, 1 / N]));
-        $('#lv-o', p).innerHTML = pr.map(([l, x], i) => `<span class="oc on" style="animation-delay:${i * 8}ms" title="${l}">${l}<sup>→${x}</sup></span>`).join('');
+        const omEl = $('#lv-o', p);
+        omEl.classList.add('sym');
+        const splitLab = l => l.includes('·') ? l.split('·') : [l.slice(0, -1), l.slice(-1)];
+        const rowLabs = [...new Set(pr.map(([l]) => splitLab(l)[0]))], colLabs = [...new Set(pr.map(([l]) => splitLab(l)[1]))];
+        const byRC = {}; pr.forEach(([l, x], i) => { const [r, c] = splitLab(l); byRC[r + '|' + c] = [l, x, i]; });
+        omEl.style.setProperty('--n', colLabs.length);
+        omEl.innerHTML = `<div class="oh cn"></div>${colLabs.map(c => `<div class="oh">${c}</div>`).join('')}` + rowLabs.map(r => `<div class="oh">${r}</div>` + colLabs.map(c => { const v = byRC[r + '|' + c]; return `<span class="oc on" style="animation-delay:${v[2] * 8}ms" title="${v[0]}">${v[0]}<sup>→${v[1]}</sup></span>`; }).join('')).join('') + `<p class="sub" style="grid-column:1/-1">Filas = etapas anteriores · Columnas = última etapa. Cada ficha es un resultado con su valor de $X$.</p>`;
         $('#lv-t', p).innerHTML = tbl(['x', 'Casos', 'P(X = x)'], [...fd.xs.map(x => tr([fc(x, 3), cnt.get(x), `$${ftex(cnt.get(x), N)}$`])), tr(['<b>Σ</b>', `<b>${N}</b>`, '<b>1</b>'], 'sum')])
           + `<div class="row" style="margin-top:8px"><div class="kpi gd"><small>Valores de X</small><b>${fd.xs.length}</b></div><div class="kpi gd"><small>Recorrido</small><b style="font-size:1rem">${fc(fd.xs[0], 3)} … ${fc(fd.xs[fd.xs.length - 1], 3)}</b></div></div>`;
         $('#lv-g', p).innerHTML = `<h3><span class="ico">📈</span>Gráfica de la FDP</h3>${svgPmf(fd.xs, fd.ps, { vals: true, vd: 3, xt: 'x = ' + E.vars[vi][0].split('(')[0].trim().toLowerCase() })}<p class="sub">Cada barra es $P(X=x)$: la suma de las probabilidades de todos los resultados que dan ese valor. Las barras suman 1.</p>`;
@@ -2551,7 +2880,7 @@ PAGES.push({
         t: { n: 'Probabilidades 0.25 y 0.50', xs: [0, 1, 2], ps: [.25, .5, .25] }
       };
       let key = 'a';
-      p.innerHTML = `<div class="gside"><div class="pn rv"><h3><span class="ico">✅</span>Condiciones de una FDP ${thBtn('fdp', 'Teoría')}</h3>
+      p.innerHTML = `<div class="gside"><div class="pn rv"><h3><span class="ico">✅</span>Condiciones de una FDP ${thBtn('fdp', '¿Qué es la FDP?')} ${thBtn('fdp-uso', '¿Para qué sirve?')}</h3>
         <ol><li>Cada probabilidad está entre 0 y 1: $0\\le f(x)\\le1$.</li><li>La suma de todas es exactamente 1: $\\sum f(x)=1$.</li></ol>
         <div class="row">${seg('pre', Object.entries(PRE).map(([k, v]) => [k, v.n]), key)}</div><div id="fd-o" style="margin-top:12px"></div></div>
         <div class="pn amber rv"><h3><span class="ico">✍️</span>Pon a prueba tu tabla</h3><p class="sub">Escribe hasta 6 probabilidades y comprueba si forman una FDP.</p>
@@ -2575,25 +2904,28 @@ PAGES.push({
     } },
     { id: 'con', t: '2 · Construir la FDP', render(p) {
       let ck = 'mon';
-      p.innerHTML = `<div class="pn rv"><h3><span class="ico">🌳</span>Elige un experimento ${thBtn('fdp', 'Teoría')}</h3><div class="row">${seg('cons', Object.entries(CONS).map(([k, v]) => [k, v.n]), ck)}</div><p id="cn-d" style="margin-top:10px"></p></div>
+      p.innerHTML = `<div class="pn rv"><h3><span class="ico">🌳</span>Elige un experimento ${thBtn('fdp', '¿Qué es la FDP?')} ${thBtn('fdp-uso', '¿Para qué sirve?')}</h3><div class="row">${seg('cons', Object.entries(CONS).map(([k, v]) => [k, v.n]), ck)}</div><p id="cn-d" style="margin-top:10px"></p></div>
         <div class="gside" style="margin-top:18px"><div class="pn rv"><h3><span class="ico">1️⃣</span>Resultados, probabilidad y X</h3><div id="cn-o"></div></div>
         <div class="stack"><div class="pn amber rv"><h3><span class="ico">2️⃣</span>Agrupar: la FDP</h3><div id="cn-t"></div></div></div></div>
         <div class="grid2" style="margin-top:18px"><div class="pn rv"><h3><span class="ico">📈</span>Gráfica de la FDP</h3><div id="cn-g"></div></div><div class="pn rv"><h3><span class="ico">🪜</span>FDP acumulada</h3><div id="cn-a"></div></div></div>`;
       const dr = () => {
         const E = CONS[ck], out = enumSeq(E.st).map(([l, pr]) => [l, pr, E.x(l)]), f = fdpFrom(out.map(([, pr, x]) => [x, pr]));
         $('#cn-d', p).innerHTML = E.d; $('#cn-t', p).innerHTML = fdpTable(f, { mom: true });
-        $('#cn-o', p).innerHTML = tbl(['Resultado', 'Probabilidad', 'X'], out.map(([l, pr, x]) => tr([`<b>${l}</b>`, fc(pr, 4), fc(x, 2)]))) + `<p class="sub">Probabilidad de cada resultado = producto de las ramas (los ensayos son independientes).</p>`;
+        const byLab = {}; out.forEach(([l, pr, x]) => byLab[l] = [pr, x]);
+        const lastC = E.st[E.st.length - 1].map(([a]) => a);
+        const rowsC = enumSeq(E.st.slice(0, -1)).map(([l]) => l);
+        $('#cn-o', p).innerHTML = symGrid(rowsC, lastC, (r, c) => { const l = r + c, [pr, x] = byLab[l]; return [l.split('').join(' '), x, `$P=${fc(pr, 4)}$`]; }, { cap: 'Filas = 2 primeras etapas · Columnas = 3.ª etapa. Probabilidad de cada resultado = producto de las ramas (los ensayos son independientes).' });
         $('#cn-g', p).innerHTML = svgPmf(f.xs, f.ps, { vals: true, vd: 3, xt: 'x' });
         $('#cn-a', p).innerHTML = svgStep(f.xs, f.F);
-        $('#cn-t', p).innerHTML += `<div class="row" style="margin-top:8px"><div class="kpi gd"><small>μ = E(X)</small><b>${fc(f.mu, 4)}</b></div><div class="kpi gd"><small>σ²</small><b>${fc(f.varz, 4)}</b></div><div class="kpi gd"><small>σ</small><b>${fc(f.sd, 4)}</b></div></div>`;
+        $('#cn-t', p).innerHTML += `<div class="row" style="margin-top:8px"><div class="kpi gd"><small>$\\mu=E(X)$</small><b>${fc(f.mu, 4)}</b></div><div class="kpi gd"><small>σ²</small><b>${fc(f.varz, 4)}</b></div><div class="kpi gd"><small>σ</small><b>${fc(f.sd, 4)}</b></div></div>`;
         math(p);
       };
       SEGH.cons = v => { ck = v; dr(); }; dr();
     } },
     { id: 'acu', t: '3 · Acumulada F(x) y probabilidades', render(p) {
       let dk = 'gat';
-      p.innerHTML = `<div class="pn rv"><h3><span class="ico">🪜</span>Función acumulada $F(x)=P(X\\le x)$ ${thBtn('acum', 'Teoría')}</h3><div class="row">${seg('acs', Object.entries(CLS).map(([k, v]) => [k, v.n]), dk)}</div><p id="ac-d" style="margin-top:10px"></p></div>
-        <div class="gside" style="margin-top:18px"><div class="pn rv"><div id="ac-t"></div><div id="ac-g" style="margin-top:12px"></div></div>
+      p.innerHTML = `<div class="pn rv"><h3><span class="ico">🪜</span>Función acumulada $F(x)=P(X\\le x)$ ${thBtn('acum', '¿Qué es F(x)?')} ${thBtn('acum-uso', '¿Para qué sirve?')}</h3><div class="row">${seg('acs', Object.entries(CLS).map(([k, v]) => [k, v.n]), dk)}</div><p id="ac-d" style="margin-top:10px"></p></div>
+        <div class="gside" style="margin-top:18px"><div class="pn rv"><div id="ac-t"></div><div id="ac-g" style="margin-top:12px"></div><div class="row" style="margin-top:12px">${thBtn('intervalos', '🔎 ¿Qué significan los círculos? Intervalos')}</div></div>
         <div class="pn amber rv"><h3><span class="ico">🧮</span>Calculadora de probabilidades</h3>
           <div class="row"><label class="f" style="flex:1">Evento<select id="ac-op"><option value="le">P(X ≤ a)</option><option value="lt">P(X &lt; a)</option><option value="eq">P(X = a)</option><option value="ge">P(X ≥ a)</option><option value="gt">P(X &gt; a)</option><option value="ab">P(a &lt; X ≤ b)</option></select></label>${numIn('ac-a', 'a', 1)}${numIn('ac-b', 'b', 3)}</div><div id="ac-r" style="margin-top:12px"></div></div></div>`;
       const dr = () => {
@@ -2612,22 +2944,49 @@ PAGES.push({
           <div class="eqbox">$E[X]=\\sum x\\cdot P(x)$ · $Var(X)=\\sum x^2\\cdot P(x)-(E[X])^2$ · $\\sigma=\\sqrt{Var(X)}$</div>
           <p class="sub">La tabla de cálculo siempre lleva las columnas $x$, $P(x)$, $x\\cdot P(x)$ y $x^2\\cdot P(x)$: sus sumas dan $1$, $E[X]$ y $E[X^2]$.</p></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — $X$ = águilas al lanzar 3 monedas</h3>
-          <p>Espacio muestral: 8 resultados equiprobables. $X=0$ sale 1 vez; $X=1$, 3 veces; $X=2$, 3 veces; $X=3$, 1 vez.</p>
+          <ol class="steps">
+          <li><b>Paso 0 — Qué es $X$:</b> $X$ = número de águilas al lanzar 3 monedas. Espacio muestral: 8 resultados equiprobables, en rejilla 4×2 (filas = 2 primeras monedas · columnas = 3.ª moneda). $X$ toma $0,1,2,3$. ${symGrid(['AA', 'AS', 'SA', 'SS'], ['A', 'S'], (r, c) => { const s = r + c; return [s, (s.match(/A/g) || []).length]; })}</li>
+          <li><b>Paso 1 — Construir la FDP (conteo):</b> $X=0$ sale 1 vez, $X=1$ 3 veces, $X=2$ 3 veces, $X=3$ 1 vez → $P(X=x)=\\frac{1}{8},\\frac{3}{8},\\frac{3}{8},\\frac{1}{8}$.</li>
+          <li><b>Paso 2 — Tabla de cálculo:</b> columnas $x$, $P(x)$, $x\\cdot P(x)$, $x^2\\cdot P(x)$. La suma de $P(x)$ debe dar 1; la suma de $x\\cdot P(x)$ es $E[X]$; la suma de $x^2\\cdot P(x)$ es $E[X^2]$.</li>
+          <li><b>Paso 3 — Esperanza:</b> $E[X]=\\sum x\\cdot P(x)=0+\\frac{3}{8}+\\frac{6}{8}+\\frac{3}{8}=\\frac{12}{8}=\\frac{3}{2}=1.50$.</li>
+          <li><b>Paso 4 — $E[X^2]$:</b> $E[X^2]=0+\\frac{3}{8}+\\frac{12}{8}+\\frac{9}{8}=\\frac{24}{8}=3$.</li>
+          <li><b>Paso 5 — Varianza (forma corta):</b> $Var(X)=E[X^2]-(E[X])^2=3-\\left(\\frac{3}{2}\\right)^2=3-\\frac{9}{4}=\\frac{3}{4}=0.75$.</li>
+          <li><b>Paso 6 — Desviación estándar:</b> $\\sigma=\\sqrt{Var(X)}=\\frac{\\sqrt{3}}{2}\\approx 0.87$.</li>
+          <li><b>Paso 7 — Interpretación y comprobación:</b> a la larga salen en promedio 1.5 águilas por intento, aunque en un solo intento nunca salga exactamente 1.5. Comprobación: $\\sum P(x)=1$ y es la binomial con $n=3$, $p=\\frac{1}{2}$: $np=\\frac{3}{2}$ y $npq=\\frac{3}{4}$ ✓.</li>
+          </ol>
           <div class="tw"><table class="tb"><thead><tr><th>x</th><th>P(X = x)</th><th>x · P(x)</th><th>x² · P(x)</th></tr></thead><tbody>
-          <tr><td>0</td><td>1/8</td><td>0</td><td>0</td></tr>
-          <tr><td>1</td><td>3/8</td><td>3/8</td><td>3/8</td></tr>
-          <tr><td>2</td><td>3/8</td><td>6/8</td><td>12/8</td></tr>
-          <tr><td>3</td><td>1/8</td><td>3/8</td><td>9/8</td></tr>
-          <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>3/2</b></td><td><b>3</b></td></tr>
+          <tr><td>0</td><td>$\\frac{1}{8}$</td><td>0</td><td>0</td></tr>
+          <tr><td>1</td><td>$\\frac{3}{8}$</td><td>$\\frac{3}{8}$</td><td>$\\frac{3}{8}$</td></tr>
+          <tr><td>2</td><td>$\\frac{3}{8}$</td><td>$\\frac{6}{8}$</td><td>$\\frac{12}{8}$</td></tr>
+          <tr><td>3</td><td>$\\frac{1}{8}$</td><td>$\\frac{3}{8}$</td><td>$\\frac{9}{8}$</td></tr>
+          <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>$\\frac{3}{2}$</b></td><td><b>3</b></td></tr>
           </tbody></table></div>
-          <p>📐 <b>Fórmula → sustitución:</b> $E[X]=0+3/8+6/8+3/8=12/8=3/2$ · $Var(X)=3-(3/2)^2=3-9/4=3/4$.</p>
-          <div class="ans on" style="display:block">✅ $E[X]=3/2=1.50$ águilas · $Var(X)=3/4=0.75$ · $\\sigma=\\sqrt 3/2\\approx 0.87$</div>
-          <p>💬 Interpretación: a la larga salen en promedio 1.5 águilas por intento, aunque en un solo intento nunca salga exactamente 1.5. ✓ Comprobación: $\\sum P(x)=1$ y es la Binomial con $n=3$, $p=1/2$: $np=3/2$ y $npq=3/4$ ✓.</p></div>
+          <p>📐 <b>Fórmula → sustitución:</b> $E[X]=0+\\frac{3}{8}+\\frac{6}{8}+\\frac{3}{8}=\\frac{12}{8}=\\frac{3}{2}$ · $Var(X)=3-\\left(\\frac{3}{2}\\right)^2=3-\\frac{9}{4}=\\frac{3}{4}$.</p>
+          <div class="ans on" style="display:block">✅ $E[X]=\\frac{3}{2}=1.50$ águilas · $Var(X)=\\frac{3}{4}=0.75$ · $\\sigma=\\frac{\\sqrt{3}}{2}\\approx 0.87$</div></div>
         <div class="pn rv"><h3><span class="ico">🎲</span>Ejemplo del programa — el máximo de dos dados</h3>
-          <p>$X$ = el mayor de los dos dados. En la cuadrícula de 36 resultados, $X=x$ ocurre en $2x-1$ casillas, así que $P(X=x)=(2x-1)/36$.</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $E[X]=(1+6+15+28+45+66)/36=161/36$ · $Var(X)=791/36-(161/36)^2=2555/1296$.</p>
-          <div class="ans on" style="display:block">✅ $E[X]=161/36\\approx 4.47$ · $Var(X)\\approx 1.97$ · $\\sigma\\approx 1.40$</div>
-          <p>💬 Aproximación frecuencial: en el programa, 600 lanzamientos dieron un promedio de 4.455 ≈ 4.46, muy cerca del 4.47 teórico: al repetir mucho, el promedio observado se acerca a $E[X]$.</p></div>
+          <ol class="steps">
+          <li><b>Paso 0 — Qué es $X$:</b> $X$ = el mayor de los dos dados. Cuadrícula de 36 resultados equiprobables; $X$ toma $1,2,3,4,5,6$.</li>
+          <li><b>Paso 1 — Construir la FDP (conteo):</b> $X=x$ ocurre en $2x-1$ casillas (la fila y la columna del valor $x$, sin contar dos veces la casilla $(x,x)$) → $P(X=x)=\\frac{2x-1}{36}$: $\\frac{1}{36},\\frac{3}{36},\\frac{5}{36},\\frac{7}{36},\\frac{9}{36},\\frac{11}{36}$.</li>
+          <li><b>Paso 2 — Tabla de cálculo:</b> columnas $x$, $P(x)$, $x\\cdot P(x)$, $x^2\\cdot P(x)$; sus sumas dan $1$, $E[X]$ y $E[X^2]$.</li>
+          </ol>
+          <div class="tw"><table class="tb"><thead><tr><th>x</th><th>P(X = x)</th><th>x · P(x)</th><th>x² · P(x)</th></tr></thead><tbody>
+          <tr><td>1</td><td>$\\frac{1}{36}$</td><td>$\\frac{1}{36}$</td><td>$\\frac{1}{36}$</td></tr>
+          <tr><td>2</td><td>$\\frac{3}{36}$</td><td>$\\frac{6}{36}$</td><td>$\\frac{12}{36}$</td></tr>
+          <tr><td>3</td><td>$\\frac{5}{36}$</td><td>$\\frac{15}{36}$</td><td>$\\frac{45}{36}$</td></tr>
+          <tr><td>4</td><td>$\\frac{7}{36}$</td><td>$\\frac{28}{36}$</td><td>$\\frac{112}{36}$</td></tr>
+          <tr><td>5</td><td>$\\frac{9}{36}$</td><td>$\\frac{45}{36}$</td><td>$\\frac{225}{36}$</td></tr>
+          <tr><td>6</td><td>$\\frac{11}{36}$</td><td>$\\frac{66}{36}$</td><td>$\\frac{396}{36}$</td></tr>
+          <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>$\\frac{161}{36}$</b></td><td><b>$\\frac{791}{36}$</b></td></tr>
+          </tbody></table></div>
+          <ol class="steps" start="4">
+          <li><b>Paso 3 — Esperanza:</b> $E[X]=\\frac{1+6+15+28+45+66}{36}=\\frac{161}{36}\\approx 4.47$ (cada sumando: $1\\cdot 1$, $2\\cdot 3$, $3\\cdot 5$, $4\\cdot 7$, $5\\cdot 9$, $6\\cdot 11$).</li>
+          <li><b>Paso 4 — $E[X^2]$:</b> $E[X^2]=\\frac{1+12+45+112+225+396}{36}=\\frac{791}{36}\\approx 21.97$ (cada sumando: $1^2\\cdot 1$, $2^2\\cdot 3$, $3^2\\cdot 5$, $4^2\\cdot 7$, $5^2\\cdot 9$, $6^2\\cdot 11$).</li>
+          <li><b>Paso 5 — Varianza (forma corta):</b> $Var(X)=E[X^2]-(E[X])^2=\\frac{791}{36}-\\left(\\frac{161}{36}\\right)^2=\\frac{2555}{1296}\\approx 1.97$.</li>
+          <li><b>Paso 6 — Desviación estándar:</b> $\\sigma=\\sqrt{Var(X)}\\approx 1.40$.</li>
+          <li><b>Paso 7 — Interpretación y comprobación:</b> en el programa, 600 lanzamientos dieron un promedio de 4.455 ≈ 4.46, muy cerca del 4.47 teórico: al repetir mucho, el promedio observado se acerca a $E[X]$ (aproximación frecuencial).</li>
+          </ol>
+          <p>📐 <b>Fórmula → sustitución:</b> $E[X]=\\frac{1+6+15+28+45+66}{36}=\\frac{161}{36}$ · $Var(X)=\\frac{791}{36}-\\left(\\frac{161}{36}\\right)^2=\\frac{2555}{1296}$.</p>
+          <div class="ans on" style="display:block">✅ $E[X]=\\frac{161}{36}\\approx 4.47$ · $Var(X)\\approx 1.97$ · $\\sigma\\approx 1.40$</div></div>
       </div>`;
     } }
   ]
@@ -2657,7 +3016,9 @@ PAGES.push({
         const f = fdpFrom(rows), ok = Math.abs(f.tot - 1) < 1e-9;
         box.innerHTML = (ok ? note('Σ P(x) = 1 ✓', 'okb') : note(`Σ P(x) = ${fc(f.tot, 5)} ≠ 1: no es una FDP, revisa las probabilidades.`, 'warn')) + (ok ? `
           ${tbl(['x', 'P(x)', 'x·P(x)', '(x−μ)²·P(x)'], [...f.xs.map((x, i) => tr([fc(x, 4), fc(f.ps[i], 4), fc(x * f.ps[i], 4), fc((x - f.mu) ** 2 * f.ps[i], 4)])), tr(['<b>Σ</b>', '<b>1</b>', `<b>${fc(f.mu, 4)}</b>`, `<b>${fc(f.varz, 4)}</b>`], 'sum')])}
-          <div class="eqbox">$\\mu=${fc(f.mu, 4)}$ · $E(X^2)=${fc(f.ex2, 4)}$ · $\\sigma^2=E(X^2)-\\mu^2=${fc(f.ex2, 4)}-${fc(f.mu * f.mu, 4)}=${fc(f.varz, 4)}$ · $\\sigma=${fc(f.sd, 4)}$</div>` : '');
+          <div class="eqbox">$\\mu=${fc(f.mu, 4)}$ · $E(X^2)=${fc(f.ex2, 4)}$ · $\\sigma^2=E(X^2)-\\mu^2=${fc(f.ex2, 4)}-${fc(f.mu * f.mu, 4)}=${fc(f.varz, 4)}$ · $\\sigma=${fc(f.sd, 4)}$</div>
+          <div id="ep-g" style="margin-top:12px">${pmfWithMu(f.xs, f.ps, f.mu, { vals: true, vd: 3, xt: 'x', yt: 'P(X = x)' })}</div>
+          <p class="sub">La línea roja es $\\mu$: el punto de equilibrio (balancín) de la distribución. Al cambiar un $x$ o una $p$, la línea se mueve: los valores con más probabilidad «tiran» más de $\\mu$ hacia ellos.</p>` : '');
         math(box);
       };
       $$('input.cell', p).forEach(i => i.oninput = dr); dr();
@@ -2717,12 +3078,30 @@ PAGES.push({
           <div class="eqbox">$E[G]=\\sum g\\cdot P(g)$ · juego justo si $E[G]=0$</div>
           <p class="sub">⚠️ Error común: creer que $E[X]$ debe ser un valor que $X$ puede tomar. Con 3 monedas, $E[X]=1.5$ águilas… y 1.5 águilas no salen nunca en un intento.</p></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — ¿Es justo el juego?</h3>
-          <p>Pagas $10 por lanzar dos dados. Si la suma es 7 recibes $50 (tu ganancia neta es $40); si no, pierdes los $10.</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $P(\\text{suma }7)=6/36=1/6$ · $E[G]=40\\cdot(1/6)+(-10)\\cdot(5/6)=40/6-50/6=-10/6=-5/3$.</p>
-          <div class="ans on" style="display:block">✅ $E[G]=-5/3\\approx -1.67$ pesos por juego: el juego <b>NO</b> es justo; a la larga pierdes $1.67 por partida.</div>
-          <p>✓ Comprobación: para que fuera justo haría falta un premio neto de $50: $50\\cdot(1/6)-10\\cdot(5/6)=0$ ✓.</p></div>
+          <p>Pagas §10 por lanzar dos dados. Si la suma es 7 recibes §50 (tu ganancia neta es §40); si no, pierdes los §10.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $P(\\text{suma }7)=\\frac{6}{36}=\\frac{1}{6}$ · $E[G]=40\\cdot\\frac{1}{6}+(-10)\\cdot\\frac{5}{6}=\\frac{40}{6}-\\frac{50}{6}=-\\frac{10}{6}=-\\frac{5}{3}$.</p>
+          <div class="ans on" style="display:block">✅ $E[G]=-\\frac{5}{3}\\approx -1.67$ pesos por juego: el juego <b>NO</b> es justo; a la larga pierdes §1.67 por partida.</div>
+          <p>✓ Comprobación: para que fuera justo haría falta un premio neto de 50 pesos: $50\\cdot\\frac{1}{6}-10\\cdot\\frac{5}{6}=\\frac{50}{6}-\\frac{50}{6}=0$ ✓.</p>
+          <p>💬 <b>Neto vs bruto:</b> el premio <b>neto</b> justo es 50 pesos (lo que ganas <i>además</i> de la entrada); el premio <b>bruto</b> justo es 60 pesos (50 netos + 10 de entrada), porque al ganar recuperas lo que pagaste para entrar.</p>
+          <h4>🎲 Cuadrícula de las 36 parejas</h4>
+          <div class="dgrid">${[1, 2, 3, 4, 5, 6].map(d1 => [1, 2, 3, 4, 5, 6].map(d2 => `<span class="dc${d1 + d2 === 7 ? ' hit' : ''}">${d1},${d2}</span>`).join('')).join('')}</div>
+          <p class="sub">Las 6 casillas de suma 7 (naranja): (1,6), (2,5), (3,4), (4,3), (5,2), (6,1). Las otras 30 están atenuadas: $P(\\text{suma }7)=\\frac{6}{36}=\\frac{1}{6}$.</p>
+          <h4>📊 Barras de la ganancia, con $E[G]$</h4>
+          <div style="margin-top:8px">${pmfWithMu([-10, 40], [5 / 6, 1 / 6], -5 / 3, { vals: true, vd: 3, xt: 'G', yt: 'P(G = g)', label: 'E[G] = -1.67' })}</div>
+          <p class="sub">La barra de $G=40$ (ganar) mide $\\frac{1}{6}$ y la de $G=-10$ (perder) mide $\\frac{5}{6}$: la línea roja en $E[G]=-\\frac{5}{3}\\approx -1.67$ queda cerca de −10 porque perder es mucho más probable.</p>
+          <h4>🎰 Simulación frecuencial</h4>
+          <div class="row"><button class="btn sm" data-act="jg-sim" data-n="10">Jugar ×10</button><button class="btn sm" data-act="jg-sim" data-n="100">Jugar ×100</button><button class="btn sm" data-act="jg-reset">Reiniciar</button></div>
+          <div id="jg-sim-r" class="sub" style="margin-top:8px">Aún no hay juegos simulados. La teoría dice $E[G]=-\\frac{5}{3}\\approx -1.67$.</div>
+          <p>💬 Aclaración: la variable ganancia $G$ toma 40 con probabilidad $\\frac{1}{6}$ y $-10$ con probabilidad $\\frac{5}{6}$. La esperanza negativa significa que por juego se pierden en promedio $1.67$ pesos: el juego no conviene.</p></div>
         <div class="pn rv"><h3><span class="ico">🧮</span>La tabla de cálculo, siempre igual</h3>
-          <p>Para cualquier FDP discreta arma las columnas $x$, $P(x)$, $x\\cdot P(x)$ y $x^2\\cdot P(x)$. Sus sumas son, en orden: $1$, $E[X]$ y $E[X^2]$. Luego $Var(X)=E[X^2]-(E[X])^2$ y $\\sigma=\\sqrt{Var(X)}$. Es el mismo procedimiento del ejemplo de las 3 monedas (pestaña de FDP) y del máximo de dos dados.</p></div>
+          <p>Para cualquier FDP discreta arma las columnas $x$, $P(x)$, $x\\cdot P(x)$ y $x^2\\cdot P(x)$. Sus sumas son, en orden: $1$, $E[X]$ y $E[X^2]$. Luego $Var(X)=E[X^2]-(E[X])^2$ y $\\sigma=\\sqrt{Var(X)}$. Es el mismo procedimiento del ejemplo de las 3 monedas (pestaña de FDP) y del máximo de dos dados.</p>
+          <h4>La tabla del juego</h4>
+          <div class="tw"><table class="tb"><thead><tr><th>G (ganancia neta)</th><th>P(G)</th><th>G · P(G)</th></tr></thead><tbody>
+          <tr><td>40</td><td>$\\frac{1}{6}$</td><td>$\\frac{40}{6}$</td></tr>
+          <tr><td>-10</td><td>$\\frac{5}{6}$</td><td>$-\\frac{50}{6}$</td></tr>
+          <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>$-\\frac{5}{3}$</b></td></tr>
+          </tbody></table></div>
+          <p class="sub">Ganar: $40$ con probabilidad $\\frac{1}{6}$; perder: $-10$ con probabilidad $\\frac{5}{6}$. Suma: $\\frac{40}{6}-\\frac{50}{6}=-\\frac{10}{6}=-\\frac{5}{3}\\approx -1.67$.</p></div>
       </div>`;
     } }
   ]
@@ -2745,11 +3124,24 @@ PAGES.push({
   chips: ['binomial', 'combinaciones', 'algebra'],
   tabs: [
     { id: 'ded', t: '1 · Deducir la fórmula', render(p) {
-      p.innerHTML = `<div class="gside"><div class="pn rv"><h3><span class="ico">🪙</span>Águilas en $n$ lanzamientos ${thBtn('binomial', 'Teoría')}</h3>
+      p.innerHTML = `<div class="gside"><div class="pn rv"><h3><span class="ico">🪙</span>Águilas en $n$ lanzamientos ${thBtn('binomial', 'Teoría')} ${thBtn('binomial-conceptos', '📖 Conceptos y definiciones · ¿Cuándo se aplica?')}</h3>
         <div class="grid2"><label class="f"><span>Lanzamientos $n$: <b id="dn-v">4</b></span><input id="dn" type="range" min="2" max="6" value="4"></label><label class="f"><span>$p$ (éxito = águila): <b id="dp-v">0.5</b></span><input id="dp" type="range" min="0.1" max="0.9" step="0.1" value="0.5"></label></div>
         <div id="dd-t" style="margin-top:12px"></div></div>
         <div class="stack"><div class="pn amber rv"><h3><span class="ico">✅</span>¿Cumple las condiciones?</h3><ol><li>Hay $n$ repeticiones fijas.</li><li>Cada una: éxito o fracaso.</li><li>$p$ es la misma en cada una.</li><li>Son independientes.</li></ol><p class="sub">$X$ = número de éxitos.</p></div>
-        <div class="pn gd rv"><h3><span class="ico">💡</span>La fórmula general</h3><div id="dd-f"></div></div></div></div>
+        <div class="pn gd rv"><h3><span class="ico">💡</span>La fórmula general</h3><div id="dd-f"></div>
+          <h4>Ejemplo paso a paso (regla 9): $n=4$, $p=0.5$, $x=2$ águilas</h4>
+          <p><b>Fórmula:</b></p>
+          <div class="eqbox">$$P(X=x)=\\binom{n}{x}p^x q^{n-x}$$</div>
+          <p><b>Sustitución</b> (cada símbolo con el mismo color que su valor):</p>
+          <div class="eqbox">$$P(X=\\textcolor{#E4572E}{2})=\\binom{\\textcolor{#8A6D00}{4}}{\\textcolor{#E4572E}{2}}(\\textcolor{#0F766E}{0.5})^{\\textcolor{#E4572E}{2}}(\\textcolor{#C2185B}{0.5})^{2}=6\\cdot 0.0625=\\textcolor{#1F9D55}{0.375}$$</div>
+          <p><b>De dónde sale cada elemento:</b></p>
+          <ul><li><span style="color:#8A6D00"><b>$n=4$</b></span>: 4 lanzamientos de la moneda.</li>
+          <li><span style="color:#E4572E"><b>$x=2$</b></span>: se preguntan 2 águilas.</li>
+          <li><span style="color:#0F766E"><b>$p=0.5$</b></span>: probabilidad de águila en una moneda común.</li>
+          <li><span style="color:#C2185B"><b>$q=1-0.5=0.5$</b></span>: probabilidad de sol en una moneda común.</li>
+          <li>$\\binom{4}{2}=6$ formas de acomodar las 2 águilas: AASS, ASAS, ASSA, SAAS, SASA, SSAA.</li>
+          <li>Cada forma tiene probabilidad $0.5^4=0.0625$ (regla del producto: $0.5\\cdot 0.5\\cdot 0.5\\cdot 0.5$).</li>
+          <li><span style="color:#1F9D55"><b>Resultado: $0.375$</b></span> ($6\\cdot 0.0625$).</li></ul></div></div></div>
         <div class="pn rv" style="margin-top:18px"><h3><span class="ico">🎯</span>¿Es binomial?</h3><div id="bq"></div></div>`;
       const dr = () => {
         const n = +$('#dn', p).value, pp = +$('#dp', p).value, q = 1 - pp; $('#dn-v', p).textContent = n; $('#dp-v', p).textContent = pp;
@@ -2767,7 +3159,7 @@ PAGES.push({
       quizWidget(p, 'bq', [
         ['Número de águilas en 10 lanzamientos de una moneda', 'y', 'Sí: n = 10, p = 0.5, independientes.'], ['Número de rojas al extraer 3 bolas de una urna pequeña SIN reemplazo', 'n', 'No: sin reemplazo p cambia en cada extracción (no son independientes).'],
         ['Número de alumnos que fuman en una muestra aleatoria de 6 (p = 0.25)', 'y', 'Sí (población grande, muestra aleatoria).'], ['Lanzar una moneda hasta que salga águila (número de lanzamientos)', 'n', 'No: n no es fijo.'],
-        ['Número de preguntas acertadas al adivinar 15 preguntas de 4 opciones', 'y', 'Sí: n = 15, p = 1/4.'], ['Estatura de 5 alumnos elegidos al azar', 'n', 'No es conteo de éxitos: la estatura es continua.']
+        ['Número de preguntas acertadas al adivinar 15 preguntas de 4 opciones', 'y', 'Sí: n = 15, $p=\\frac{1}{4}$.'], ['Estatura de 5 alumnos elegidos al azar', 'n', 'No es conteo de éxitos: la estatura es continua.']
       ], 'Sí es binomial', 'No es binomial', 'y', 'n');
     } },
     { id: 'lab', t: '2 · Laboratorio y calculadora', render(p) {
@@ -2784,7 +3176,7 @@ PAGES.push({
         let st = '';
         if (op === 'eq' && a >= 0 && a <= n) st = `<p>$b(${a};${n},${fc(pp, 2)})=\\binom{${n}}{${a}}(${fc(pp, 2)})^{${a}}(${fc(q, 2)})^{${n - a}}=${big(nCr(n, a))}\\cdot${fc(pp ** a, 6)}\\cdot${fc(q ** (n - a), 6)}$</p>`;
         $('#bn-r', p).innerHTML = `<div class="ans on" style="display:block">$${ev.tex}=${fc(P, 5)}$ <span class="sub">(${fc(P * 100, 2)} %)</span></div>${st}
-          <div class="row" style="margin-top:8px"><div class="kpi gd"><small>μ = np</small><b>${fc(mu, 3)}</b></div><div class="kpi gd"><small>σ² = npq</small><b>${fc(n * pp * q, 3)}</b></div><div class="kpi gd"><small>σ = √(npq)</small><b>${fc(sd, 4)}</b></div></div>
+          <div class="row" style="margin-top:8px"><div class="kpi gd"><small>$\\mu=np$</small><b>${fc(mu, 3)}</b></div><div class="kpi gd"><small>$\\sigma^2=npq$</small><b>${fc(n * pp * q, 3)}</b></div><div class="kpi gd"><small>$\\sigma=\\sqrt{npq}$</small><b>${fc(sd, 4)}</b></div></div>
           <p class="sub">Las barras resaltadas suman el valor del evento. $\\mu=np$ es el «centro» de la distribución.</p>`;
         $('#bn-t', p).innerHTML = tbl(['x', 'P(X = x)', 'P(X ≤ x)'], (() => { let c = 0; return xs.map((x, i) => { c += ps[i]; return tr([x, fc(ps[i], 5), fc(Math.min(1, c), 5)], ev.pred(x) ? 'hl' : ''); }); })());
         math(p);
@@ -2821,11 +3213,11 @@ PAGES.push({
           <tr><td>más de 3</td><td>$P(X&gt;3)$</td><td>$1-P(X\\le 3)$</td></tr>
           <tr><td>entre 2 y 4 (inclusive)</td><td>$P(2\\le X\\le 4)$</td><td>$P(X\\le 4)-P(X\\le 1)$</td></tr>
           </tbody></table></div></div>
-        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — $n=6$, $p=1/3$, exactamente 2</h3>
-          <p>La probabilidad de ganar cada ronda es $1/3$, independiente de las demás. Se juegan 6 rondas. ¿Cuál es la probabilidad de ganar exactamente 2?</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $P(X=2)=\\binom 62\\cdot(1/3)^2\\cdot(2/3)^4=15\\cdot(1/9)\\cdot(16/81)$.</p>
-          <div class="ans on" style="display:block">✅ $P(X=2)=240/729=80/243\\approx 0.33$</div>
-          <p>✓ Comprobación: $E[X]=np=6\\cdot(1/3)=2$: el valor más probable está junto a la media, como debe ser.</p></div>
+        <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — $n=6$, $p=\\frac{1}{3}$, exactamente 2</h3>
+          <p>La probabilidad de ganar cada ronda es $\\frac{1}{3}$, independiente de las demás. Se juegan 6 rondas. ¿Cuál es la probabilidad de ganar exactamente 2?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $P(X=2)=\\binom 62\\cdot\\left(\\frac{1}{3}\\right)^2\\cdot\\left(\\frac{2}{3}\\right)^4=15\\cdot\\frac{1}{9}\\cdot\\frac{16}{81}$.</p>
+          <div class="ans on" style="display:block">✅ $P(X=2)=\\frac{240}{729}=\\frac{80}{243}\\approx 0.33$</div>
+          <p>✓ Comprobación: $E[X]=np=6\\cdot\\left(\\frac{1}{3}\\right)=2$: el valor más probable está junto a la media, como debe ser.</p></div>
         <div class="pn rv"><h3><span class="ico">📊</span>Ejemplo — «al menos» con la tabla acumulada ($n=10$, $p=0.30$)</h3>
           <p>El 30 % del alumnado usa bicicleta. Se eligen 10 al azar. $P(0)=(0.7)^{10}=0.0282$ · $P(1)=10(0.3)(0.7)^9=0.1211$ · $P(2)=45(0.3)^2(0.7)^8=0.2335$.</p>
           <p>📐 <b>Fórmula → sustitución:</b> $P(X\\le 2)=0.0282+0.1211+0.2335=0.3828$ (en el Apéndice A2: renglón $n=10$, $k=2$, columna $p=0.30$ → 0.3828, el mismo valor sin hacer cuentas).</p>
@@ -2861,7 +3253,7 @@ PAGES.push({
         $('#po-r', p).innerHTML = `<div class="ans on" style="display:block">$${ev.tex}=${fc(P, 5)}$ <span class="sub">(${fc(P * 100, 2)} %)</span></div>
           ${op === 'eq' ? `<p>$P(X=${a})=\\dfrac{e^{-${fc(lam, 3)}}(${fc(lam, 3)})^{${a}}}{${a}!}=${fc(P, 5)}$</p>` : ''}
           <p>Para «por lo menos» se usa el complemento: $P(X\\ge a)=1-P(X\\le a-1)$.</p>
-          <div class="row"><div class="kpi gd"><small>μ = λ</small><b>${fc(lam, 3)}</b></div><div class="kpi gd"><small>σ = √λ</small><b>${fc(Math.sqrt(lam), 4)}</b></div></div>`; math(p);
+          <div class="row"><div class="kpi gd"><small>$\\mu=\\lambda$</small><b>${fc(lam, 3)}</b></div><div class="kpi gd"><small>$\\sigma=\\sqrt{\\lambda}$</small><b>${fc(Math.sqrt(lam), 4)}</b></div></div>`; math(p);
       };
       ['pl-t', 'pl-m', 'po-op', 'po-a', 'po-b'].forEach(id => $('#' + id, p).oninput = dr); dr();
     } },
@@ -2903,7 +3295,7 @@ PAGES.push({
         let g = `<rect x="${X(0)}" y="44" width="${X(15) - X(0)}" height="26" rx="6" fill="#fff" stroke="${COL.ink}" stroke-width="2"/><rect x="${X(s)}" y="44" width="${X(e) - X(s)}" height="26" fill="${COL.coral}" fill-opacity=".75" stroke="${COL.ink}" stroke-width="1.5"/><rect x="${X(x)}" y="74" width="${X(15) - X(x)}" height="10" rx="3" fill="${COL.sky}" fill-opacity=".8"/><line x1="${X(x)}" x2="${X(x)}" y1="30" y2="90" stroke="${COL.coral}" stroke-width="3"/>`;
         [0, 3, 5, 10, 15].concat([s, e]).filter((v, i, a) => a.indexOf(v) === i).forEach(t => g += `<text class="tk" x="${X(t)}" y="108" text-anchor="middle">${fc(t, 1)}</text>`);
         g += `<text class="lbl" x="${X(x)}" y="22" text-anchor="middle">x = ${fc(x, 1)}</text><text class="lbl" x="${(X(s) + X(e)) / 2}" y="62" text-anchor="middle" fill="#fff" style="fill:#fff">info</text>`;
-        $('#tl-g', p).innerHTML = `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg><p style="font-weight:700;color:${cls[1] === COL.amber ? '#8A6400' : COL.ink}">${cls[0]}</p><p class="sub">Azul = lo que se escucha desde el instante $x$; guinda = intervalo de la información.</p>`;
+        $('#tl-g', p).innerHTML = `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg><p style="font-weight:700;color:${cls[1] === COL.amber ? '#8A6400' : COL.ink}">${cls[0]}</p><p class="sub">Azul = lo que se escucha desde el instante $x$; guinda = intervalo de la información.</p>`;
         const pa = s / 15, pp = (e - s) / 15, pn = (15 - e) / 15;
         $('#tl-r', p).innerHTML = tbl(['Evento', 'x debe caer en…', 'Probabilidad'], [tr(['Escucha <b>toda</b> la info', `$[0,${fc(s, 1)}]$`, `$\\frac{${fc(s, 1)}}{15}=${fc(pa, 4)}$`]), tr(['Escucha <b>parte</b>', `$(${fc(s, 1)},${fc(e, 1)})$`, `$\\frac{${fc(e - s, 1)}}{15}=${fc(pp, 4)}$`]), tr(['No escucha <b>nada</b>', `$[${fc(e, 1)},15]$`, `$\\frac{${fc(15 - e, 1)}}{15}=${fc(pn, 4)}$`]), tr(['<b>Σ</b>', '', `<b>${fc(pa + pp + pn, 4)}</b>`], 'sum')])
           + note(`¿Y que se conecte <b>exactamente</b> en $x=${fc(s, 1)}$? La longitud favorable es la de un punto = 0, así que <b>$P(X=x)=0$</b>.`, 'tip'); math($('#tl-r', p));
@@ -2921,8 +3313,8 @@ PAGES.push({
         let g = `<rect x="${X(a)}" y="${Y(h)}" width="${X(b) - X(a)}" height="${Y(0) - Y(h)}" fill="${COL.sky}" fill-opacity=".25" stroke="${COL.ink}" stroke-width="2"/>`;
         if (L > 0) g += `<rect x="${X(cc)}" y="${Y(h)}" width="${X(dd) - X(cc)}" height="${Y(0) - Y(h)}" fill="${COL.coral}" fill-opacity=".6"/>`;
         g += `<line class="ax" x1="30" x2="${W - 10}" y1="${Y(0)}" y2="${Y(0)}"/>` + [a, b, c, d].filter((v, i, ar) => ar.indexOf(v) === i).map(t => `<text class="tk" x="${X(t)}" y="${Y(0) + 16}" text-anchor="middle">${t}</text>`).join('') + `<text class="lbl" x="${X(a) + 6}" y="${Y(h) - 8}">f(x) = 1/${b - a} = ${fc(h, 4)}</text>`;
-        $('#un-g', p).innerHTML = `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
-        $('#un-r', p).innerHTML = `<div class="eqbox">Área total $=(b-a)\\cdot\\dfrac{1}{b-a}=1$ ✓</div><div class="ans on" style="display:block">$P(${c}\\le X\\le ${d})=\\dfrac{${fc(L, 3)}}{${b - a}}=${fc(L / (b - a), 4)}$</div><p>Probabilidad = <b>área</b> = base × altura = $${fc(L, 3)}\\cdot${fc(h, 4)}$.</p><p class="sub">$P(X=${c})=0$ aunque $${c}$ sea un valor posible: un punto no tiene área. Por eso $P(c<X<d)=P(c\\le X\\le d)$.</p>`; math(p);
+        $('#un-g', p).innerHTML = `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
+        $('#un-r', p).innerHTML = `<div class="eqbox">Área total $=(b-a)\\cdot\\dfrac{1}{b-a}=1$ ✓</div><div class="ans on" style="display:block">$P(${c}\\le X\\le ${d})=\\dfrac{${fc(L, 3)}}{${b - a}}=${fc(L / (b - a), 4)}$</div><p>Probabilidad = <b>área</b> = base × altura = $${fc(L, 3)}\\cdot${fc(h, 4)}$.</p><p>$f(x)=\\frac{1}{b-a}=\\frac{1}{${b - a}}\\approx ${fc(h, 4)}$</p><p class="sub">$P(X=${c})=0$ aunque $${c}$ sea un valor posible: un punto no tiene área. Por eso $P(c<X<d)=P(c\\le X\\le d)$.</p>`; math(p);
       };
       ['un-a', 'un-b', 'un-c', 'un-d'].forEach(id => $('#' + id, p).oninput = dr); dr();
     } },
@@ -2933,15 +3325,15 @@ PAGES.push({
           <div class="eqbox">$P(a\\le X\\le b)=$ área bajo $f$ entre $a$ y $b$ · Uniforme: $f(x)=\\frac{1}{b-a}$</div></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo del programa — la llamada interceptada</h3>
           <p>Una conversación dura 15 minutos y la información comprometedora se dice en el intervalo $[3,5]$. La policía intercepta la llamada en un instante aleatorio $X$, uniforme en $[0,15]$.</p>
-          <p>📐 <b>Fórmula → sustitución:</b> altura $=1/15$ · $P(3\\le X\\le 5)=(5-3)/15=2/15$.</p>
-          <div class="ans on" style="display:block">✅ $P=2/15\\approx 0.13$</div>
-          <p>Paso a paso: el área total debe ser $15\\cdot(1/15)=1$ ✓; el área del rectángulo verde es base $2$ × altura $1/15$.</p></div>
+          <p>📐 <b>Fórmula → sustitución:</b> altura $=\\frac{1}{15}$ · $P(3\\le X\\le 5)=\\frac{5-3}{15}=\\frac{2}{15}$.</p>
+          <div class="ans on" style="display:block">✅ $P=\\frac{2}{15}\\approx 0.13$</div>
+          <p>Paso a paso: el área total debe ser $15\\cdot\\frac{1}{15}=1$ ✓; el área del rectángulo verde es base $2$ × altura $\\frac{1}{15}$.</p></div>
         <div class="pn rv"><h3><span class="ico">📐</span>Ejemplo — densidad triangular</h3>
           <p>El tiempo $X$ (horas) de una reparación tiene densidad triangular en $[0,4]$ con pico en $x=2$: $f(x)=x/4$ si $0\\le x\\le 2$ y $f(x)=(4-x)/4$ si $2\\le x\\le 4$.</p>
-          <p>📐 <b>Fórmula → sustitución:</b> altura en el pico $f(2)=2/4=1/2$ · área total $=(4\\cdot 1/2)/2=1$ ✓ · $P(X\\le 1)=(1\\cdot f(1))/2=(1\\cdot 1/4)/2=1/8$.</p>
-          <div class="ans on" style="display:block">✅ $P(X\\le 1)=1/8\\approx 0.13$ · $P(1\\le X\\le 3)=1-1/8-1/8=3/4=0.75$</div>
+          <p>📐 <b>Fórmula → sustitución:</b> altura en el pico $f(2)=\\frac{2}{4}=\\frac{1}{2}$ · área total $=(4\\cdot\\frac{1}{2})/2=1$ ✓ · $P(X\\le 1)=(1\\cdot f(1))/2=(1\\cdot\\frac{1}{4})/2=\\frac{1}{8}$.</p>
+          <div class="ans on" style="display:block">✅ $P(X\\le 1)=\\frac{1}{8}\\approx 0.13$ · $P(1\\le X\\le 3)=1-\\frac{1}{8}-\\frac{1}{8}=\\frac{3}{4}=0.75$</div>
           <p>💬 Interpretación: las reparaciones de alrededor de 2 horas son las más probables; 3 de cada 4 tardan entre 1 y 3 horas.</p>
-          <p class="sub">⚠️ Error común: decir que $P(X=2)=1/2$ porque esa es la altura de la curva: la altura NO es probabilidad; $P(X=2)=0$.</p></div>
+          <p class="sub">⚠️ Error común: decir que $P(X=2)=\\frac{1}{2}$ porque esa es la altura de la curva: la altura NO es probabilidad; $P(X=2)=0$.</p></div>
       </div>`;
     } }
   ]
@@ -3036,7 +3428,7 @@ PAGES.push({
           <p>✓ Comprobación con la tabla: $\\Phi(2.00)-\\Phi(-1.00)=0.9772-0.1587=0.8185$ ✓ (casi idéntico).</p></div>
         <div class="pn rv"><h3><span class="ico">🔁</span>Problema inverso (percentil) y aproximación a la binomial</h3>
           <p><b>Inverso:</b> se conoce el área y se busca el valor: se localiza el área DENTRO de la tabla, se lee $z$ y se “desestandariza” $x=\\mu+z\\cdot\\sigma$. Ejemplo: ¿qué puntaje se necesita para estar en el 10 % superior con $X\\sim N(500,100)$? Se busca $\\Phi(z)=0.90$ → $z=1.28$ → $x=500+1.28(100)=628$ puntos (percentil 90).</p>
-          <p><b>Aproximación Binomial → Normal:</b> el 40 % prefiere estudiar de noche; en $n=50$, ¿$P(X\\ge 25)$? $\\mu=50(2/5)=20$, $\\sigma=\\sqrt{12}\\approx 3.46$. Con corrección por continuidad, “25 o más” empieza en 24.5: $z=(24.5-20)/\\sqrt{12}\\approx 1.30$ → $P(Z\\ge 1.30)=1-\\Phi(1.30)=1-0.9032=0.0968\\approx 0.10$ (el valor exacto binomial es 0.0978 ✓). Condiciones: $np\\ge 5$ y $nq\\ge 5$.</p></div>
+          <p><b>Aproximación Binomial → Normal:</b> el 40 % prefiere estudiar de noche; en $n=50$, ¿$P(X\\ge 25)$? $\\mu=50\\left(\\frac{2}{5}\\right)=20$, $\\sigma=\\sqrt{12}\\approx 3.46$. Con corrección por continuidad, “25 o más” empieza en 24.5: $z=\\frac{24.5-20}{\\sqrt{12}}\\approx 1.30$ → $P(Z\\ge 1.30)=1-\\Phi(1.30)=1-0.9032=0.0968\\approx 0.10$ (el valor exacto binomial es 0.0978 ✓). Condiciones: $np\\ge 5$ y $nq\\ge 5$.</p></div>
       </div>`;
     } }
   ]
@@ -3096,7 +3488,12 @@ PAGES.push({
       $('#ds-pm', p).innerHTML = `<div class="eqbox">$\\mu_X=${fc(f0.mu, 2)}$ · $E(X^2)=${fc(f0.ex2, 2)}$ · $\\sigma_X^2=${fc(f0.ex2, 2)}-${fc(f0.mu ** 2, 4)}=${fc(f0.varz, 2)}$</div>`;
       const dr = () => {
         const fm = sampMeanDist(AGE.xs, AGE.ps, n), outs = enumSeq(Array(n).fill(AGE.xs.map((x, i) => [x + ',', AGE.ps[i]]))).map(([l, pr]) => { const v = l.split(',').filter(Boolean).map(Number); return [v, pr]; });
-        $('#ds-l', p).innerHTML = `<div style="max-height:300px;overflow:auto">${tbl(['Muestra', '$\\bar x$', 'Probabilidad'], outs.map(([v, pr]) => tr([`(${v.join(', ')})`, fc(mean(v), 3), fc(pr, 4)])))}</div><p class="sub">${outs.length} muestras posibles. La probabilidad de cada una es el producto de las de sus elementos.</p>`;
+        if (n === 2) {
+          const pm = {}; outs.forEach(([v, pr]) => pm[v.join(',')] = pr);
+          $('#ds-l', p).innerHTML = symGrid(AGE.xs, AGE.xs, (a, b) => [`(${a}, ${b})`, (a + b) / 2, `$P=${fc(pm[a + ',' + b], 4)}$`], { xlab: '\\bar x', xfmt: v => fc(v, 3), cap: 'Filas = 1.ª extracción · Columnas = 2.ª extracción. $\\bar x$ es la media de la pareja.' }) + `<p class="sub">${outs.length} muestras posibles. La probabilidad de cada una es el producto de las de sus elementos.</p>`;
+        } else {
+          $('#ds-l', p).innerHTML = `<div style="max-height:300px;overflow:auto">${tbl(['Muestra', '$\\bar x$', 'Probabilidad'], outs.map(([v, pr]) => tr([`(${v.join(', ')})`, fc(mean(v), 3), fc(pr, 4)])))}</div><p class="sub">${outs.length} muestras posibles. La probabilidad de cada una es el producto de las de sus elementos.</p>`;
+        }
         $('#ds-t', p).innerHTML = fillTable('ft-ds' + n, ['$\\bar x$', '$P(\\bar X=\\bar x)$'], fm.xs.map((x, i) => [fc(x, 3), { a: fm.ps[i], d: 4, t: 0.0006 }]), {});
         $('#ds-c', p).innerHTML = `<h3><span class="ico">🔍</span>Conclusiones</h3><div class="grid2"><div><p>$\\mu_{\\bar X}=\\sum \\bar x\\,P(\\bar x)=${fc(fm.mu, 4)}$ → <b>igual a $\\mu_X=${fc(f0.mu, 2)}$</b>.</p><p>$\\sigma^2_{\\bar X}=${fc(fm.varz, 4)}$ y $\\dfrac{\\sigma_X^2}{n}=\\dfrac{${fc(f0.varz, 2)}}{${n}}=${fc(f0.varz / n, 4)}$ → <b>coinciden</b>.</p></div><div>${svgPmf(fm.xs, fm.ps, { xt: 'x̄', maxTicks: 12, vals: fm.xs.length <= 10, vd: 3, yt: 'P(X̄ = x̄)' })}</div></div>
           <div class="note">¿Entre qué se divide para obtener $\\sigma^2_{\\bar X}$? <b>Entre $n$</b>: $\\sigma^2_{\\bar X}=\\sigma^2_X/n$ y $\\sigma_{\\bar X}=\\sigma_X/\\sqrt n$ (error estándar). La media de las medias es $\\mu$.</div>`; math(p);
@@ -3108,21 +3505,21 @@ PAGES.push({
         <div class="pn rv"><h3><span class="ico">📘</span>Profundización 2.1 — Construir una distribución muestral exacta (ejemplo del programa)</h3>
           <p>La <b>distribución muestral</b> de un estimador es la distribución de probabilidad de todos los valores que puede tomar (por ejemplo $\\bar x$) en todas las muestras posibles del mismo tamaño. Muestra que los estimadores son variables aleatorias. Un <b>parámetro</b> ($\\mu$, $\\sigma$, $p$) es fijo y de la población; un <b>estadístico</b> ($\\bar x$, $s$, $\\hat p$) cambia de muestra en muestra.</p>
           <p>En una población de estudiantes, $X$ = edad toma los valores 15, 16, 17 y 18 con probabilidades 0.2, 0.3, 0.2 y 0.3. Se toman muestras aleatorias de $n=2$ (con reemplazo) y se calcula la media de cada muestra.</p>
-          <p>📐 <b>Fórmula → sustitución (población):</b> $\\mu=15(1/5)+16(3/10)+17(1/5)+18(3/10)=3+4.8+3.4+5.4=16.6$ · $\\sigma^2=276.8-(16.6)^2=276.8-275.56=1.24$.</p>
-          <div class="ans on" style="display:block">✅ $\\mu=83/5=16.60$ años · $\\sigma^2=31/25=1.24$ · $\\sigma\\approx 1.11$</div></div>
+          <p>📐 <b>Fórmula → sustitución (población):</b> $\\mu=15\\cdot\\frac{1}{5}+16\\cdot\\frac{3}{10}+17\\cdot\\frac{1}{5}+18\\cdot\\frac{3}{10}=3+4.8+3.4+5.4=16.6$ · $\\sigma^2=276.8-(16.6)^2=276.8-275.56=1.24$.</p>
+          <div class="ans on" style="display:block">✅ $\\mu=\\frac{83}{5}=16.60$ años · $\\sigma^2=\\frac{31}{25}=1.24$ · $\\sigma\\approx 1.11$</div></div>
         <div class="pn rv"><h3><span class="ico">🧮</span>Distribución de $\\bar x$ con $n=2$</h3>
           <p>Hay $4\\times 4=16$ parejas ordenadas $(x_1,x_2)$. Como la selección es independiente: $P(x_1,x_2)=P(x_1)\\cdot P(x_2)$; por ejemplo $P(15,16)=(0.2)(0.3)=0.06$. Se agrupan las parejas con la misma media: $\\bar x=15.5$ sale con $(15,16)$ y $(16,15)$: $0.06+0.06=0.12$.</p>
           <div class="tw"><table class="tb"><thead><tr><th>x̄</th><th>P(x̄)</th><th>x̄ · P(x̄)</th></tr></thead><tbody>
-          <tr><td>15.00</td><td>1/25 = 0.04</td><td>0.6000</td></tr>
-          <tr><td>15.50</td><td>3/25 = 0.12</td><td>1.8600</td></tr>
-          <tr><td>16.00</td><td>17/100 = 0.17</td><td>2.7200</td></tr>
-          <tr><td>16.50</td><td>6/25 = 0.24</td><td>3.9600</td></tr>
-          <tr><td>17.00</td><td>11/50 = 0.22</td><td>3.7400</td></tr>
-          <tr><td>17.50</td><td>3/25 = 0.12</td><td>2.1000</td></tr>
-          <tr><td>18.00</td><td>9/100 = 0.09</td><td>1.6200</td></tr>
+          <tr><td>15.00</td><td>$\\frac{1}{25}=0.04$</td><td>0.6000</td></tr>
+          <tr><td>15.50</td><td>$\\frac{3}{25}=0.12$</td><td>1.8600</td></tr>
+          <tr><td>16.00</td><td>$\\frac{17}{100}=0.17$</td><td>2.7200</td></tr>
+          <tr><td>16.50</td><td>$\\frac{6}{25}=0.24$</td><td>3.9600</td></tr>
+          <tr><td>17.00</td><td>$\\frac{11}{50}=0.22$</td><td>3.7400</td></tr>
+          <tr><td>17.50</td><td>$\\frac{3}{25}=0.12$</td><td>2.1000</td></tr>
+          <tr><td>18.00</td><td>$\\frac{9}{100}=0.09$</td><td>1.6200</td></tr>
           <tr><td><b>Σ</b></td><td><b>1</b></td><td><b>16.6000</b></td></tr>
           </tbody></table></div>
-          <p>📐 <b>Fórmula → sustitución:</b> $E[\\bar x]=16.6000$ · $Var(\\bar x)=31/50=0.62$ · teoría: $Var(\\bar x)=\\sigma^2/n=1.24/2=0.62$ ✓.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $E[\\bar x]=16.6000$ · $Var(\\bar x)=\\frac{31}{50}=0.62$ · teoría: $Var(\\bar x)=\\frac{\\sigma^2}{n}=\\frac{1.24}{2}=0.62$ ✓.</p>
           <div class="ans on" style="display:block">✅ $E[\\bar x]=16.60=\\mu$ (insesgado) · $Var(\\bar x)=0.62=\\sigma^2/n$ · $\\sigma_{\\bar x}\\approx 0.79$, menor que $\\sigma\\approx 1.11$</div>
           <p>💬 Interpretación: las medias de muestras de dos estudiantes se concentran más cerca de 16.6 que las edades individuales: <b>promediar reduce la variabilidad</b>. La distribución de $\\bar x$ ya tiene forma de montaña aunque la población no la tenga. ✓ Comprobación: las 7 probabilidades de $\\bar x$ suman 1.</p></div>
       </div>`;
@@ -3157,7 +3554,7 @@ PAGES.push({
         $('#tl-g1', p).innerHTML = svgHistArr(xb, { range: n === 1 ? [P.lo, P.hi] : [Math.max(lo, P.lo - 1), Math.min(hi, P.hi + 1)], bins: 28, w: 480, h: 220, xt: `media muestral x̄ (n = ${n})`, norm: { mu: P.mu, sd: se } }) + `<p class="sub">Curva coral: $N(\\mu,\\ \\sigma/\\sqrt n)$ teórica.</p>`;
         const m = mean(xb), s = sdPop(xb);
         $('#tl-k', p).innerHTML = `<div class="row"><div class="kpi gd"><small>n</small><b>${n}</b></div><div class="kpi gd"><small>media de las x̄</small><b>${fc(m, 3)}</b></div><div class="kpi gd"><small>μ</small><b>${fc(P.mu, 3)}</b></div></div>
-          <div class="row" style="margin-top:6px"><div class="kpi gd"><small>desv. est. de las x̄</small><b>${fc(s, 3)}</b></div><div class="kpi gd"><small>σ/√n teórico</small><b>${fc(se, 3)}</b></div><div class="kpi gd"><small>sesgo de las x̄</small><b>${fc(skewOf(xb), 2)}</b></div></div>`;
+          <div class="row" style="margin-top:6px"><div class="kpi gd"><small>desv. est. de las x̄</small><b>${fc(s, 3)}</b></div><div class="kpi gd"><small>$\\sigma/\\sqrt{n}$ teórico</small><b>${fc(se, 3)}</b></div><div class="kpi gd"><small>sesgo de las x̄</small><b>${fc(skewOf(xb), 2)}</b></div></div>`;
         $('#tl-n2', p).innerHTML = note(`<b>Observa:</b> la media de las $\\bar x$ siempre queda cerca de $\\mu$; su desviación estándar es ≈ $\\sigma/\\sqrt n$ (se reduce al crecer $n$); y la forma se parece cada vez más a la campana (el sesgo se acerca a 0). Una población muy sesgada necesita más $n$ que una simétrica. Los resultados son <b>simulaciones</b>: cambian ligeramente en cada corrida.`, 'tip'); math(p);
       };
       ACT['tl-go'] = () => { clearInterval(timer); run(+$('#tl-n', p).value); };
@@ -3212,12 +3609,12 @@ PAGES.push({
           <p class="sub">Duplicar la precisión (partir el error estándar a la mitad) exige cuadruplicar $n$, porque va con $\\sqrt n$.</p></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — una cola para $\\bar x$</h3>
           <p>Las estaturas de un plantel tienen $\\mu=165$ cm y $\\sigma=8$ cm. Se elige una muestra aleatoria de $n=16$. ¿Cuál es la probabilidad de que su media supere 168 cm?</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma_{\\bar x}=8/\\sqrt{16}=8/4=2$ · $z=(168-165)/2=3/2=1.50$ · $P(\\bar x&gt;168)=1-\\Phi(1.50)=1-0.9332=0.0668$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma_{\\bar x}=\\frac{8}{\\sqrt{16}}=\\frac{8}{4}=2$ · $z=\\frac{168-165}{2}=\\frac{3}{2}=1.50$ · $P(\\bar x&gt;168)=1-\\Phi(1.50)=1-0.9332=0.0668$.</p>
           <div class="ans on" style="display:block">✅ $P(\\bar x&gt;168)=0.0668\\approx 0.07$</div>
           <p>💬 Interpretación: solo en 7 de cada 100 muestras de 16 estudiantes la media superaría 168 cm. Para UN estudiante, en cambio, $P(X&gt;168)=1-\\Phi(0.375)\\approx 0.35$: los individuos varían mucho más que las medias.</p></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — una cola para $\\hat p$ (con fracciones)</h3>
-          <p>El 30 % del alumnado usa transporte escolar ($p=3/10$). En una muestra de $n=84$, ¿cuál es la probabilidad de que la proporción muestral sea menor que 0.20?</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma_{\\hat p}=\\sqrt{(3/10)(7/10)/84}=\\sqrt{(21/100)/84}=\\sqrt{1/400}=1/20=0.05$ · $z=(0.20-0.30)/0.05=-2.00$ · $P(\\hat p&lt;0.20)=\\Phi(-2.00)=0.0228$.</p>
+          <p>El 30 % del alumnado usa transporte escolar ($p=\\frac{3}{10}$). En una muestra de $n=84$, ¿cuál es la probabilidad de que la proporción muestral sea menor que 0.20?</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma_{\\hat p}=\\sqrt{\\frac{3}{10}\\cdot\\frac{7}{10}\\cdot\\frac{1}{84}}=\\sqrt{\\frac{21}{100}\\cdot\\frac{1}{84}}=\\sqrt{\\frac{1}{400}}=\\frac{1}{20}=0.05$ · $z=(0.20-0.30)/0.05=-2.00$ · $P(\\hat p&lt;0.20)=\\Phi(-2.00)=0.0228$.</p>
           <div class="ans on" style="display:block">✅ $P(\\hat p&lt;0.20)=0.0228\\approx 0.02$</div>
           <p>✓ Comprobación: por la regla empírica, quedar más de 2 errores estándar por debajo tiene probabilidad $(1-0.9545)/2\\approx 0.0228$ ✓.</p>
           <p class="sub">⚠️ Errores comunes: usar $\\sigma$ en vez de $\\sigma/\\sqrt n$ para probabilidades de $\\bar x$ (el más frecuente de la unidad) y olvidar la raíz: $\\sigma_{\\hat p}=p(1-p)/n$ (sin raíz) daría 0.0025 y un $z$ absurdo de −40.</p></div>
@@ -3319,15 +3716,15 @@ PAGES.push({
           <p class="sub">Componentes: estimador ± margen de error. El margen <b>crece</b> con el nivel de confianza ($z$ mayor) y <b>decrece</b> con $n$ ($\\sqrt n$ en el denominador). Longitud del IC $=2\\times$ margen. Valores críticos usuales: 90 % → 1.645 · 95 % → 1.96 · 99 % → 2.576.</p></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — IC para la proporción (con fracciones)</h3>
           <p>En una encuesta aleatoria a 400 estudiantes, 160 dicen dormir menos de 6 horas. Construye el IC al 95 % para la proporción poblacional.</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $\\hat p=160/400=2/5=0.40$ · $\\sqrt{(2/5)(3/5)/400}=\\sqrt{6/10000}=\\sqrt 6/100\\approx 0.0245$ · $E=1.96\\times 0.0245=0.0480$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\hat p=\\frac{160}{400}=\\frac{2}{5}=0.40$ · $\\sqrt{\\frac{2}{5}\\cdot\\frac{3}{5}\\cdot\\frac{1}{400}}=\\sqrt{\\frac{6}{10000}}=\\frac{\\sqrt{6}}{100}\\approx 0.0245$ · $E=1.96\\times 0.0245=0.0480$.</p>
           <div class="ans on" style="display:block">✅ IC 95 % para $p\\approx (0.35,\\ 0.45)$: entre 35.20 % y 44.80 %</div>
           <p>Condiciones: $n\\hat p=160\\ge 5$ y $n(1-\\hat p)=240\\ge 5$ ✓.</p></div>
         <div class="pn rv"><h3><span class="ico">📏</span>Tamaño de muestra y caso con $\\sigma$ desconocida</h3>
           <p>📐 <b>Fórmulas:</b> media $n=(z\\cdot\\sigma/E)^2$ · proporción $n=z^2\\cdot p(1-p)/E^2$ (siempre se redondea hacia <b>ARRIBA</b>).</p>
-          <p>📐 <b>Sustitución:</b> media: $n=(1.96\\cdot 10/2)^2=(9.8)^2=96.04\\to 97$ · proporción: $n=(1.96)^2(0.5)(0.5)/(0.05)^2=0.9604/0.0025=384.16\\to 385$ (sin información previa se usa $p=0.5$, el caso más desfavorable).</p>
+          <p>📐 <b>Sustitución:</b> media: $n=\\left(\\frac{1.96\\cdot 10}{2}\\right)^2=(9.8)^2=96.04\\to 97$ · proporción: $n=\\frac{(1.96)^2(0.5)(0.5)}{(0.05)^2}=\\frac{0.9604}{0.0025}=384.16\\to 385$ (sin información previa se usa $p=0.5$, el caso más desfavorable).</p>
           <div class="ans on" style="display:block">✅ $n=97$ (media, $E=2$, $\\sigma=10$, 95 %) · $n=385$ (proporción, $E=0.05$, 95 %)</div>
           <p>💡 Observa: para reducir el margen de error a la mitad hay que <b>CUADRUPLICAR</b> $n$, porque $E$ depende de $1/\\sqrt n$.</p>
-          <p><b>Complemento ($\\sigma$ desconocida, muestra pequeña):</b> se usa $t$ de Student: $IC=\\bar x\\pm t(\\alpha/2, n-1)\\cdot s/\\sqrt n$. Ejemplo: $n=25$, $\\bar x=90$ min, $s=20$ min, 95 % → $gl=24$, $t=2.064$ (tabla $t$ del Apéndice), $s/\\sqrt n=20/5=4$, $E=2.064\\cdot 4=8.256$ → IC $\\approx (81.74,\\ 98.26)$ minutos. Con $z=1.96$ el margen sería 7.84: el de $t$ (8.26) es un poco mayor, porque además de la muestra se estima $\\sigma$.</p></div>
+          <p><b>Complemento ($\\sigma$ desconocida, muestra pequeña):</b> se usa $t$ de Student: $IC=\\bar x\\pm t(\\alpha/2, n-1)\\cdot s/\\sqrt n$. Ejemplo: $n=25$, $\\bar x=90$ min, $s=20$ min, 95 % → $gl=24$, $t=2.064$ (tabla $t$ del Apéndice), $\\frac{s}{\\sqrt{n}}=\\frac{20}{5}=4$, $E=2.064\\cdot 4=8.256$ → IC $\\approx (81.74,\\ 98.26)$ minutos. Con $z=1.96$ el margen sería 7.84: el de $t$ (8.26) es un poco mayor, porque además de la muestra se estima $\\sigma$.</p></div>
       </div>`;
     } }
   ]
@@ -3369,7 +3766,7 @@ PAGES.push({
         const al = +$('#ht-a', p).value, n = nv(p, 'ht-n'); if (!(n >= 1)) return; const sg = TAILS[tail][1]; let r, h0, h1, zf, ctx;
         if (kind === 'p') {
           const p0 = nv(p, 'ht-p0'), x = nv(p, 'ht-x'); if (!(p0 > 0 && p0 < 1) || Number.isNaN(x) || x > n) return; r = testProp(x, n, p0, al, tail);
-          h0 = `p=${fc(p0, 3)}`; h1 = `p${sg}${fc(p0, 3)}`; zf = `z=\\dfrac{\\hat p-p_0}{\\sqrt{p_0q_0/n}}=\\dfrac{${fc(r.ph, 4)}-${fc(p0, 3)}}{\\sqrt{${fc(p0, 3)}\\cdot${fc(1 - p0, 3)}/${fc(n, 0)}}}=\\dfrac{${fc(r.ph - p0, 4)}}{${fc(r.se, 4)}}=${fc(r.z, 3)}`;
+          h0 = `p=${fc(p0, 3)}`; h1 = `p${sg}${fc(p0, 3)}`; zf = `z=\\dfrac{\\hat p-p_0}{\\sqrt{p_0q_0/n}}=\\dfrac{${fc(r.ph, 4)}-${fc(p0, 3)}}{\\sqrt{\\frac{${fc(p0, 3)}\\cdot${fc(1 - p0, 3)}}{${fc(n, 0)}}}}=\\dfrac{${fc(r.ph - p0, 4)}}{${fc(r.se, 4)}}=${fc(r.z, 3)}`;
           ctx = r.np0 < 10 || r.nq0 < 10 ? note(`Condición no satisfecha: $np_0=${fc(r.np0, 1)}$, $nq_0=${fc(r.nq0, 1)}$ (se pide ≥ 10). La aproximación normal no es confiable.`, 'warn') : '';
         } else {
           const m0 = nv(p, 'ht-m0'), xb = nv(p, 'ht-xb'), s = nv(p, 'ht-s'); if (!(s > 0) || [m0, xb].some(Number.isNaN)) return; r = testMean(xb, m0, s, n, al, tail);
@@ -3418,12 +3815,12 @@ PAGES.push({
           <p><b>Procedimiento en 5 pasos (úsalo siempre):</b> 1. Hipótesis: $H_0$ y $H_1$ (con el parámetro, nunca con $\\bar x$ o $\\hat p$). 2. Nivel $\\alpha$ y tipo de prueba → valor crítico. 3. Estadístico de prueba: $z=$ (estimador − valor de $H_0$)/error estándar. 4. Decisión: ¿cae en la región de rechazo? o ¿valor $p&lt;\\alpha$? 5. Conclusión en el contexto, con lenguaje cuidadoso.</p></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — unilateral derecha para la media</h3>
           <p>Un taller de técnicas de estudio dice que aumenta el promedio, que antes era $\\mu=7.0$ con $\\sigma=1.2$. Una muestra de $n=36$ egresados del taller tuvo $\\bar x=7.42$. ¿Hay evidencia al 5 %?</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $\\sigma/\\sqrt n=1.2/\\sqrt{36}=1.2/6=0.2$ · $z=(7.42-7.0)/0.2=0.42/0.2=2.10$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\frac{\\sigma}{\\sqrt{n}}=\\frac{1.2}{\\sqrt{36}}=\\frac{1.2}{6}=0.2$ · $z=\\frac{7.42-7.0}{0.2}=\\frac{0.42}{0.2}=2.10$.</p>
           <p>Paso 1: $H_0:\\mu=7.0$ contra $H_1:\\mu&gt;7.0$ (“aumenta” → unilateral derecha). Paso 2: $\\alpha=0.05$ → crítico $z=1.645$. Paso 4: $2.10&gt;1.645$ → se rechaza $H_0$; valor $p=P(Z&gt;2.10)=1-0.9821=0.0179&lt;0.05$ ✓.</p>
           <div class="ans on" style="display:block">✅ Se rechaza $H_0$ ($z=2.10$, valor $p\\approx 0.02$): hay evidencia de que el promedio de quienes toman el taller es mayor que 7.0.</div></div>
         <div class="pn rv"><h3><span class="ico">✏️</span>Ejemplo — unilateral izquierda para la proporción</h3>
           <p>Una cafetería afirma que al menos 60 % del alumnado está satisfecho. En una muestra aleatoria de 150, 81 dijeron estar satisfechos. ¿Hay evidencia al 5 % de que la proporción es menor?</p>
-          <p>📐 <b>Fórmula → sustitución:</b> $\\hat p=81/150=27/50=0.54$ · $\\sqrt{0.6\\cdot 0.4/150}=\\sqrt{0.0016}=0.04$ · $z=(0.54-0.60)/0.04=-1.50$.</p>
+          <p>📐 <b>Fórmula → sustitución:</b> $\\hat p=\\frac{81}{150}=\\frac{27}{50}=0.54$ · $\\sqrt{\\frac{0.6\\cdot 0.4}{150}}=\\sqrt{0.0016}=0.04$ · $z=(0.54-0.60)/0.04=-1.50$.</p>
           <p>Paso 1: $H_0:p=0.60$ contra $H_1:p&lt;0.60$ (unilateral izquierda); $\\alpha=0.05$ → crítico −1.645. Condiciones con $p_0$: $150(0.6)=90\\ge 5$ y $150(0.4)=60\\ge 5$ ✓. Paso 4: −1.50 no es menor que −1.645 (valor $p=\\Phi(-1.50)=0.0668&gt;0.05$) → <b>NO</b> se rechaza $H_0$.</p>
           <div class="ans on" style="display:block">✅ No se rechaza $H_0$ ($z=-1.50$, valor $p\\approx 0.07$)</div>
           <div class="tw"><table class="tb"><thead><tr><th>Decisión \\ Realidad</th><th>H₀ verdadera</th><th>H₀ falsa</th></tr></thead><tbody>
@@ -3462,7 +3859,6 @@ PAGES.push({
 
 'use strict';
 const R_ = String.raw;
-const DL = [{ t: 'Formulario (PDF)', href: 'PDF/est2_formulario.pdf', pri: 1 }, { t: 'Ejercicios sin solución (PDF)', href: 'PDF/est2_ejercicios.pdf' }];
 const FM = [
   { t: 'Variable aleatoria y FDP', ic: '🎯', c: '#1c7ed6', p: '#e7f1fb', f: [
     ['Función de probabilidad', R_`f(x)=P(X=x)`, '$X$: función del espacio muestral a los reales.'],
@@ -3505,9 +3901,9 @@ const FM = [
 /* ===== Formulario por secciones (cards + sombras) y descargas PDF ===== */
 function formHTML() {
   const chips = `<div class="fm-bar"><div class="fm-chips"><button class="chip on" data-act="fmf" data-s="*">Todas</button>${FM.map((s, i) => `<button class="chip" data-act="fmf" data-s="${i}" style="--fc:${s.c}">${s.ic} ${s.t}</button>`).join('')}</div>
-    <div class="fm-dl">${DL.map(d => `<a class="btn sm${d.pri ? ' pri' : ''}" href="${d.href}" download target="_blank" rel="noopener">⬇ ${d.t}</a>`).join('')}</div></div>`;
+</div>`;
   const secs = FM.map((s, i) => `<section class="fsec" data-s="${i}" style="--fc:${s.c};--fp:${s.p}"><h4 class="fsec-h"><span>${s.ic}</span>${s.t}</h4><div class="fgrid">${s.f.map((f, k) => `<article class="fcard" style="--i:${k}"><b>${f[0]}</b><div class="fx">$$${f[1]}$$</div>${f[2] ? `<p class="sub">${f[2]}</p>` : ''}</article>`).join('')}</div></section>`).join('');
-  return chips + `<p class="sub">📎 Los archivos PDF (Formulario y Ejercicios) deben acompañar a este HTML en la carpeta <b>PDF/</b>; si abres solo el HTML, los botones de descarga no funcionarán.</p><div class="fm-wrap">${secs}</div>`;
+  return chips + `<div class="fm-wrap">${secs}</div>`;
 }
 ACT.fmf = el => { const s = el.dataset.s; $$('.fm-chips .chip').forEach(c => c.classList.toggle('on', c === el)); $$('.fsec').forEach(x => x.hidden = !(s === '*' || x.dataset.s === s)); };
 
@@ -3588,17 +3984,72 @@ function apxCombTable() {
   for (let n = 0; n <= 10; n++) { const cells = [`<b>${n}</b>`]; for (let k = 0; k <= 10; k++) cells.push(k <= n ? String(nCr(n, k)) : '—'); rows.push(tr(cells)); }
   return tbl(head, rows);
 }
+/* ---------- ítem 9: Tablas exactas del Word (Apéndice del plan, solo Estadística II) ---------- */
+const WORD_T = {"A1_n5": [["k", "p = 0,10", "p = 0,25", "p = 0,30", "p = 0,50", "p = 0,70"], ["0", "0.5905", "0.2373", "0.1681", "0.0312", "0.0024"], ["1", "0.3281", "0.3955", "0.3601", "0.1562", "0.0284"], ["2", "0.0729", "0.2637", "0.3087", "0.3125", "0.1323"], ["3", "0.0081", "0.0879", "0.1323", "0.3125", "0.3087"], ["4", "0.0005", "0.0146", "0.0283", "0.1562", "0.3601"], ["5", "0.0000", "0.0010", "0.0024", "0.0312", "0.1681"]], "A1_n10": [["k", "p = 0,10", "p = 0,25", "p = 0,30", "p = 0,50", "p = 0,70"], ["0", "0.3487", "0.0563", "0.0282", "0.0010", "0.0000"], ["1", "0.3874", "0.1877", "0.1211", "0.0098", "0.0001"], ["2", "0.1937", "0.2816", "0.2335", "0.0439", "0.0014"], ["3", "0.0574", "0.2503", "0.2668", "0.1172", "0.0090"], ["4", "0.0112", "0.1460", "0.2001", "0.2051", "0.0368"], ["5", "0.0015", "0.0584", "0.1029", "0.2461", "0.1029"], ["6", "0.0001", "0.0162", "0.0368", "0.2051", "0.2001"], ["7", "0.0000", "0.0031", "0.0090", "0.1172", "0.2668"], ["8", "0.0000", "0.0004", "0.0014", "0.0439", "0.2335"], ["9", "0.0000", "0.0000", "0.0001", "0.0098", "0.1211"], ["10", "0.0000", "0.0000", "0.0000", "0.0010", "0.0282"]], "A2_n10": [["k", "p = 0,10", "p = 0,25", "p = 0,30", "p = 0,50"], ["0", "0.3487", "0.0563", "0.0282", "0.0010"], ["1", "0.7361", "0.2440", "0.1493", "0.0107"], ["2", "0.9298", "0.5256", "0.3828", "0.0547"], ["3", "0.9872", "0.7759", "0.6496", "0.1719"], ["4", "0.9984", "0.9219", "0.8497", "0.3770"], ["5", "0.9999", "0.9803", "0.9527", "0.6230"], ["6", "1.0000", "0.9965", "0.9894", "0.8281"], ["7", "1.0000", "0.9996", "0.9984", "0.9453"], ["8", "1.0000", "1.0000", "0.9999", "0.9893"], ["9", "1.0000", "1.0000", "1.0000", "0.9990"], ["10", "1.0000", "1.0000", "1.0000", "1.0000"]], "A3": [["z", ".00", ".01", ".02", ".03", ".04", ".05", ".06", ".07", ".08", ".09"], ["0.0", "0.5000", "0.5040", "0.5080", "0.5120", "0.5160", "0.5199", "0.5239", "0.5279", "0.5319", "0.5359"], ["0.1", "0.5398", "0.5438", "0.5478", "0.5517", "0.5557", "0.5596", "0.5636", "0.5675", "0.5714", "0.5753"], ["0.2", "0.5793", "0.5832", "0.5871", "0.5910", "0.5948", "0.5987", "0.6026", "0.6064", "0.6103", "0.6141"], ["0.3", "0.6179", "0.6217", "0.6255", "0.6293", "0.6331", "0.6368", "0.6406", "0.6443", "0.6480", "0.6517"], ["0.4", "0.6554", "0.6591", "0.6628", "0.6664", "0.6700", "0.6736", "0.6772", "0.6808", "0.6844", "0.6879"], ["0.5", "0.6915", "0.6950", "0.6985", "0.7019", "0.7054", "0.7088", "0.7123", "0.7157", "0.7190", "0.7224"], ["0.6", "0.7257", "0.7291", "0.7324", "0.7357", "0.7389", "0.7422", "0.7454", "0.7486", "0.7517", "0.7549"], ["0.7", "0.7580", "0.7611", "0.7642", "0.7673", "0.7704", "0.7734", "0.7764", "0.7794", "0.7823", "0.7852"], ["0.8", "0.7881", "0.7910", "0.7939", "0.7967", "0.7995", "0.8023", "0.8051", "0.8078", "0.8106", "0.8133"], ["0.9", "0.8159", "0.8186", "0.8212", "0.8238", "0.8264", "0.8289", "0.8315", "0.8340", "0.8365", "0.8389"], ["1.0", "0.8413", "0.8438", "0.8461", "0.8485", "0.8508", "0.8531", "0.8554", "0.8577", "0.8599", "0.8621"], ["1.1", "0.8643", "0.8665", "0.8686", "0.8708", "0.8729", "0.8749", "0.8770", "0.8790", "0.8810", "0.8830"], ["1.2", "0.8849", "0.8869", "0.8888", "0.8907", "0.8925", "0.8944", "0.8962", "0.8980", "0.8997", "0.9015"], ["1.3", "0.9032", "0.9049", "0.9066", "0.9082", "0.9099", "0.9115", "0.9131", "0.9147", "0.9162", "0.9177"], ["1.4", "0.9192", "0.9207", "0.9222", "0.9236", "0.9251", "0.9265", "0.9279", "0.9292", "0.9306", "0.9319"], ["1.5", "0.9332", "0.9345", "0.9357", "0.9370", "0.9382", "0.9394", "0.9406", "0.9418", "0.9429", "0.9441"], ["1.6", "0.9452", "0.9463", "0.9474", "0.9484", "0.9495", "0.9505", "0.9515", "0.9525", "0.9535", "0.9545"], ["1.7", "0.9554", "0.9564", "0.9573", "0.9582", "0.9591", "0.9599", "0.9608", "0.9616", "0.9625", "0.9633"], ["1.8", "0.9641", "0.9649", "0.9656", "0.9664", "0.9671", "0.9678", "0.9686", "0.9693", "0.9699", "0.9706"], ["1.9", "0.9713", "0.9719", "0.9726", "0.9732", "0.9738", "0.9744", "0.9750", "0.9756", "0.9761", "0.9767"], ["2.0", "0.9772", "0.9778", "0.9783", "0.9788", "0.9793", "0.9798", "0.9803", "0.9808", "0.9812", "0.9817"], ["2.1", "0.9821", "0.9826", "0.9830", "0.9834", "0.9838", "0.9842", "0.9846", "0.9850", "0.9854", "0.9857"], ["2.2", "0.9861", "0.9864", "0.9868", "0.9871", "0.9875", "0.9878", "0.9881", "0.9884", "0.9887", "0.9890"], ["2.3", "0.9893", "0.9896", "0.9898", "0.9901", "0.9904", "0.9906", "0.9909", "0.9911", "0.9913", "0.9916"], ["2.4", "0.9918", "0.9920", "0.9922", "0.9925", "0.9927", "0.9929", "0.9931", "0.9932", "0.9934", "0.9936"], ["2.5", "0.9938", "0.9940", "0.9941", "0.9943", "0.9945", "0.9946", "0.9948", "0.9949", "0.9951", "0.9952"], ["2.6", "0.9953", "0.9955", "0.9956", "0.9957", "0.9959", "0.9960", "0.9961", "0.9962", "0.9963", "0.9964"], ["2.7", "0.9965", "0.9966", "0.9967", "0.9968", "0.9969", "0.9970", "0.9971", "0.9972", "0.9973", "0.9974"], ["2.8", "0.9974", "0.9975", "0.9976", "0.9977", "0.9977", "0.9978", "0.9979", "0.9979", "0.9980", "0.9981"], ["2.9", "0.9981", "0.9982", "0.9982", "0.9983", "0.9984", "0.9984", "0.9985", "0.9985", "0.9986", "0.9986"], ["3.0", "0.9987", "0.9987", "0.9987", "0.9988", "0.9988", "0.9989", "0.9989", "0.9989", "0.9990", "0.9990"], ["3.1", "0.9990", "0.9991", "0.9991", "0.9991", "0.9992", "0.9992", "0.9992", "0.9992", "0.9993", "0.9993"], ["3.2", "0.9993", "0.9993", "0.9994", "0.9994", "0.9994", "0.9994", "0.9994", "0.9995", "0.9995", "0.9995"], ["3.3", "0.9995", "0.9995", "0.9995", "0.9996", "0.9996", "0.9996", "0.9996", "0.9996", "0.9996", "0.9997"], ["3.4", "0.9997", "0.9997", "0.9997", "0.9997", "0.9997", "0.9997", "0.9997", "0.9997", "0.9997", "0.9998"]], "A4": [["Nivel", "z (normal)", "t (gl = 10)", "t (gl = 24)", "t (gl = 30)", "t (gl = ∞)"], ["90 %", "1,645", "1,812", "1,711", "1,697", "1,645"], ["95 %", "1,960", "2,228", "2,064", "2,042", "1,960"], ["99 %", "2,576", "3,169", "2,797", "2,750", "2,576"]], "A5": [["n \\ k", "0", "1", "2", "3", "4", "5"], ["0", "1", "0", "0", "0", "0", "0"], ["1", "1", "1", "0", "0", "0", "0"], ["2", "1", "2", "1", "0", "0", "0"], ["3", "1", "3", "3", "1", "0", "0"], ["4", "1", "4", "6", "4", "1", "0"], ["5", "1", "5", "10", "10", "5", "1"], ["6", "1", "6", "15", "20", "15", "6"], ["7", "1", "7", "21", "35", "35", "21"], ["8", "1", "8", "28", "56", "70", "56"], ["9", "1", "9", "36", "84", "126", "126"], ["10", "1", "10", "45", "120", "210", "252"]]};
+function twTable(tid, rows, title) {
+  const head = rows[0].map(h => `<th>${h}</th>`).join('');
+  const body = rows.slice(1).map(r => `<tr>${r.map((c, j) => j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('');
+  return `<h4>${title}</h4><div class="tw"><table class="tb twd" data-tid="${tid}"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function twHi(tbl, cell) {
+  const tr = cell.closest('tr'); if (!tr) return;
+  const ci = [...tr.children].indexOf(cell), ri = [...tbl.rows].indexOf(tr);
+  [...tbl.rows].forEach((row, i) => [...row.children].forEach((c, j) => {
+    c.classList.toggle('hl-row', i === ri); c.classList.toggle('hl-col', j === ci); c.classList.toggle('hl-cell', i === ri && j === ci);
+  }));
+}
+function twClear(tbl) { tbl.querySelectorAll('.hl-row,.hl-col,.hl-cell').forEach(c => c.classList.remove('hl-row', 'hl-col', 'hl-cell')); }
+function twBar(tid, r, c, v) {
+  const p = x => x.replace('p = ', 'p = ').replace(',', '.');
+  if (tid === 'A1_5') return `A1 · n = 5, k = ${r}, ${p(c)} → ${v}`;
+  if (tid === 'A1_10') return `A1 · n = 10, k = ${r}, ${p(c)} → ${v}`;
+  if (tid === 'A2') return `A2 · n = 10, k = ${r}, ${p(c)} → ${v}`;
+  if (tid === 'A3') return `A3 · z = ${(parseFloat(r) + parseFloat(c)).toFixed(2)} → Φ(z) = ${v}`;
+  if (tid === 'A4') return `A4 · ${r}, ${c} → ${v}`;
+  if (tid === 'A5') return `A5 · n = ${r}, k = ${c} → C(n,k) = ${v}`;
+  return `${tid} · ${r}, ${c} → ${v}`;
+}
+function wireTablasWord(b) {
+  const wrap = $('#tw-wrap', b), bar = $('#tw-bar', b); if (!wrap || !bar) return;
+  const show = cell => {
+    const tbl = cell.closest('table.twd'); if (!tbl) return;
+    twHi(tbl, cell);
+    if (cell.tagName !== 'TD') return;
+    const tr = cell.closest('tr'), ci = [...tr.children].indexOf(cell);
+    bar.textContent = twBar(tbl.dataset.tid, tr.children[0].textContent, tbl.rows[0].children[ci].textContent, cell.textContent);
+  };
+  wrap.addEventListener('mouseover', e => { const cell = e.target.closest('td,th'); if (cell && wrap.contains(cell)) show(cell); });
+  wrap.addEventListener('click', e => { const cell = e.target.closest('td,th'); if (cell && wrap.contains(cell)) show(cell); });
+  wrap.addEventListener('mouseleave', () => wrap.querySelectorAll('table.twd').forEach(twClear));
+}
+function tablasWordHTML() {
+  const tabs = [['w1', 'A1 · n = 5'], ['w2', 'A1 · n = 10'], ['w3', 'A2 · n = 10'], ['w4', 'A3 · Normal'], ['w5', 'A4 · z y t'], ['w6', 'A5 · C(n,k)']];
+  const pills = tabs.map(([u, l], i) => `<button class="plan-pill ${i ? '' : 'on'}" data-act="aptab" data-u="${u}" role="tab">${l}</button>`).join('');
+  const pane = (u, on, html) => `<div class="plan-pane ${on ? 'on' : ''}" data-u="${u}">${html}</div>`;
+  return `<p class="sub">Tablas <b>exactas del Word</b> del Plan de Estadística y Probabilidad I–II (solo Estadística II). Valores fijos: no se recalculan. A4 usa decimales con coma, tal como están en el Word.</p>
+  <div id="tw-bar" class="twbar">Pasa el cursor sobre una celda para ver sus coordenadas (en móvil, toca una celda).</div>
+  <div class="plan-pills" role="tablist">${pills}</div>
+  <div id="tw-wrap">
+  ${pane('w1', 1, twTable('A1_5', WORD_T.A1_n5, 'A1 · Binomial puntual $P(X=k)$ — $n=5$'))}
+  ${pane('w2', 0, twTable('A1_10', WORD_T.A1_n10, 'A1 · Binomial puntual $P(X=k)$ — $n=10$'))}
+  ${pane('w3', 0, twTable('A2', WORD_T.A2_n10, 'A2 · Binomial acumulada $P(X\\le k)$ — $n=10$'))}
+  ${pane('w4', 0, twTable('A3', WORD_T.A3, 'A3 · Normal estándar $\\Phi(z)=P(Z\\le z)$'))}
+  ${pane('w5', 0, twTable('A4', WORD_T.A4, 'A4 · Valores críticos $z$ y $t$'))}
+  ${pane('w6', 0, twTable('A5', WORD_T.A5, 'A5 · Combinaciones $C(n,k)$'))}
+  </div>`;
+}
+ACT['tablas-word'] = () => { openModal('📊 Apéndice · Tablas exactas (Word)', tablasWordHTML(), true); wireTablasWord($('#dlg-b')); };
 function apendiceHTML() {
   const tabs = [['a1', 'A1 · Binomial puntual'], ['a2', 'A2 · Binomial acumulada'], ['a3', 'A3 · Normal estándar'], ['a4', 'A4 · Valores críticos'], ['a6', 'A6 · Combinaciones'], ['a7', 'A7 · Números aleatorios'], ['a8', 'A8 · Resumen']];
   const pills = tabs.map(([u, l], i) => `<button class="plan-pill ${i ? '' : 'on'}" data-act="aptab" data-u="${u}" role="tab">${l}</button>`).join('');
   const segN = suf => seg('apx' + suf + '-n', [[5, 'n = 5'], [8, 'n = 8'], [10, 'n = 10'], [12, 'n = 12'], [15, 'n = 15'], [20, 'n = 20']], 10);
   const pane = (u, on, html) => `<div class="plan-pane ${on ? 'on' : ''}" data-u="${u}">${html}</div>`;
-  return `<p class="sub">Tablas generadas con las funciones del propio cuaderno ($binPmf$, $binCdf$, $\\Phi$, $zInv$, $C(n,k)$): si cambias $n$ o $p$, los valores se recalculan. La tabla z llega hasta $z=3.49$; para valores mayores usa el buscador inverso de A3.</p>
+  return `<p class="sub">Tablas generadas con las funciones del propio cuaderno ($binPmf$, $binCdf$, $\\Phi$, $zInv$, $C(n,k)$): si cambias $n$ o $p$, los valores se recalculan. La tabla z llega hasta $z=3.49$; para valores mayores usa el buscador inverso de A3.</p><div class="row"><button class="btn" data-act="tablas-word">📊 Tablas exactas (Word)</button></div>
   <div class="plan-pills" role="tablist">${pills}</div>
   ${pane('a1', 1, `<h4>A1 · Binomial puntual $P(X=k)$</h4><div class="row">${segN('')}${numIn('apx-p', 'p', 0.5, { min: 0.01, max: 0.99, step: 0.01 })}</div><div id="apx-t"></div>`)}
   ${pane('a2', 0, `<h4>A2 · Binomial acumulada $P(X\\le k)$</h4><p class="sub">Ejemplo del paquete: $n=10$, $p=0.30$ → $P(X\\le 2)=0.3828$ (fila ★). Con esa tabla, $P(X\\ge 3)=1-0.3828=0.6172$.</p><div class="row">${segN('2')}${numIn('apx2-p', 'p', 0.3, { min: 0.01, max: 0.99, step: 0.01 })}</div><div id="apx2-t"></div>`)}
   ${pane('a3', 0, `<h4>A3 · Normal estándar $\\Phi(z)=P(Z\\le z)$</h4><p class="sub">La tabla llega hasta $z=3.49$. Para $z$ negativo usa $\\Phi(-z)=1-\\Phi(z)$.</p><div class="row">${numIn('apx-area', 'Área a la izquierda Φ(z)', 0.95, { min: 0.001, max: 0.999, step: 0.001 })}</div><div id="apx-inv"></div>${zTableHTML()}`)}
-  ${pane('a4', 0, `<h4>A4 · Valores críticos $z$ y $t$</h4><p class="sub">En el paquete, la tabla $t$ es el Apéndice A5; aquí va junto con los valores $z$ en A4. $gl=n-1$.</p>${tbl(['Nivel', '90 %', '95 %', '99 %'], [tr(['<b>z</b>', '1.645', '1.960', '2.576'])])}${tbl(['gl', '90 %', '95 %', '99 %'], T_CRIT.map(r => tr([`<b>${r[0]}</b>`, ...r.slice(1).map(v => fc(v, 3))])))}<p class="sub">Ejemplo: IC al 95 % con $n=25$ y $\\sigma$ desconocida → $gl=24$, $t=2.064$ (renglón incluido en la tabla).</p>`)}
+  ${pane('a4', 0, `<h4>A4 · Valores críticos $z$ y $t$</h4><p class="sub">La tabla $t$ va junto con los valores $z$. $gl=n-1$.</p>${tbl(['Nivel', '90 %', '95 %', '99 %'], [tr(['<b>z</b>', '1.645', '1.960', '2.576'])])}${tbl(['gl', '90 %', '95 %', '99 %'], T_CRIT.map(r => tr([`<b>${r[0]}</b>`, ...r.slice(1).map(v => fc(v, 3))])))}<p class="sub">Ejemplo: IC al 95 % con $n=25$ y $\\sigma$ desconocida → $gl=24$, $t=2.064$ (renglón incluido en la tabla).</p>`)}
   ${pane('a6', 0, `<h4>A6 · Combinaciones $C(n,k)=\\frac{n!}{k!(n-k)!}$</h4><p class="sub">Simetría: $C(n,k)=C(n,n-k)$. Útil para la binomial: $C(10,5)=252$.</p>${apxCombTable()}`)}
   ${pane('a7', 0, `<h4>A7 · Números aleatorios (semilla fija 2026)</h4><p class="sub">Tabla reproducible: siempre salen los mismos números. Para un muestreo aleatorio simple: numera la población de 00 en adelante, lee de dos en dos dígitos, salta los repetidos y los que no correspondan a nadie, hasta completar la muestra.</p>${apxRandTable()}`)}
   ${pane('a8', 0, `<h4>A8 · Resumen</h4><p class="sub">Todo lo demás está en el Formulario y en la Tabla z del cuaderno.</p><div class="row"><button class="btn" data-act="formulas">🧮 Formulario</button><button class="btn" data-act="tablaz">📊 Tabla z</button><button class="btn" data-act="plan">📄 Plan de estudios</button></div><p class="sub">📎 Los PDF (Formulario y Ejercicios) deben acompañar a este HTML en la carpeta <b>PDF/</b>.</p>`)}`;
@@ -3637,6 +4088,11 @@ ACT.reset = () => {
   location.hash = '#inicio'; location.reload();
 };
 window.addEventListener('DOMContentLoaded', () => {
+  let modo = 'libreta'; try { modo = localStorage.getItem('cuadEst2:modo') || 'libreta'; } catch (e) { }
+  setModo(modo === 'limpio' ? 'limpio' : 'libreta');
+  const sc = document.getElementById('scrim'); if (sc) sc.addEventListener('click', closeRail);
+  buildSearchIndex(); wireSearch('gsearch', 'gsearch-r'); wireSearch('gsearch2', 'gsearch2-r');
+  window.addEventListener('resize', syncScrim);
   buildRail();
   // v2: antes se llamaba a route() dos veces (directo + por el cambio de hash). El cambio de hash ya dispara route() vía 'hashchange'; solo se llama directo si ya había hash.
   if (!location.hash) location.hash = '#inicio';

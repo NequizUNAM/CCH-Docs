@@ -6,7 +6,6 @@
 <title>Cuaderno de Estadística 1 · Aula Digital</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" rel="stylesheet">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -27,6 +26,8 @@ a{color:var(--leaf2)}
 button{font-family:inherit;cursor:pointer}
 code,.mono{font-family:var(--f-mono)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;z-index:200;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
 .hide{display:none!important}
 /* ---------- layout ---------- */
 .app{display:grid;grid-template-columns:292px 1fr;min-height:100vh}
@@ -268,6 +269,11 @@ svg text{font-family:var(--f-body)}
   .stage{padding:18px 14px 30px}
   .prog{display:none}
 }
+@media (max-width:1150px){
+  .top{gap:8px;padding:10px 14px}
+  .top .gsearch{flex-basis:170px}
+  .prog{display:none}
+}
 @media (max-width:640px){
   .grid2,.grid3,.grid4{grid-template-columns:1fr}
   .hero{padding:20px 18px}
@@ -312,13 +318,50 @@ table.rev td{text-align:left;font-family:var(--f-body);white-space:normal;vertic
 .katex-note{background:#fff1cc;border:2px solid var(--ink);border-radius:12px;padding:10px 14px;margin:12px;font-weight:600}
 .cc-row{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line)}
 .cc-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--ink);flex:none;margin-top:2px}
+
+/* ---------- diseño Est2 ítem 10: fondo blanco #FFFFFF forzado en ambos modos ---------- */
+body{background:#FFFFFF!important}
+.main{background-color:#FFFFFF!important}
+.stage{background-color:#FFFFFF!important}
+.top,.pager{background:#FFFFFF!important}
+.dlg{background:#FFFFFF!important}
+/* ---------- diseño Est2 ítem 10: modo Limpio ---------- */
+body.limpio .app{grid-template-columns:1fr}
+body.limpio .rail{position:fixed;left:0;top:0;bottom:0;width:300px;transform:translateX(-102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:8px 0 0 #0006;z-index:60}
+body.limpio .rail.open{transform:none}
+body.limpio .top .burger{display:inline-flex}
+body.limpio .main{background-image:none!important}
+body.limpio .pn{background:#fff;border:1.5px solid var(--ink);border-radius:12px;box-shadow:0 1px 2px rgba(0,43,122,.08)}
+body.limpio .pn.sage{border-left:4px solid #1F9D55}
+body.limpio .pn.amber{border-left:4px solid #F2C14E}
+body.limpio .pn.sky{border-left:4px solid #1B4AA6}
+body.limpio .pn.coral{border-left:4px solid #E4572E}
+body.limpio .pn.violet{border-left:4px solid #7C5CF0}
+.scrim{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:55;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+/* ---------- diseño Est2 ítem 10: buscador global ---------- */
+.gsearch{position:relative;flex:0 1 260px;min-width:0}
+.gsearch input{width:100%;padding:7px 12px;border:1.5px solid var(--ink);border-radius:99px;font:inherit;font-size:.9rem;background:#fff}
+.gsearch-r{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid var(--ink);border-radius:12px;box-shadow:0 8px 24px rgba(0,43,122,.18);display:none;z-index:70;max-height:320px;overflow-y:auto}
+.gsearch-r.on{display:block}
+.gsearch-r button{display:block;width:100%;text-align:left;background:none;border:0;padding:9px 12px;font:inherit;font-size:.9rem;cursor:pointer;color:inherit}
+.gsearch-r button.sel,.gsearch-r button:hover{background:#E3EDFB}
+.gsearch-r button small{display:block;color:#475569;font-size:.78rem}
+.gsearch-btn{display:none}
+.rail-search{display:none;padding:12px 12px 0}
+.rail-search .gsearch{flex:none}
+body.limpio .rail-search{display:block}
+@media (max-width:1000px){.rail-search{display:block}}
+@media (max-width:640px){.gsearch{display:none}.rail-search .gsearch{display:block}.gsearch-btn{display:inline-flex}}
 </style>
 </head>
 <body>
+<a class="skip" href="#stage">Saltar al contenido</a>
 <noscript><div class="katex-note" style="margin:12px">⚠️ Esta página necesita JavaScript activado: sin él no se cargan las páginas, los laboratorios ni los ejercicios.</div></noscript>
 <div class="app">
   <aside class="rail" id="rail">
     <a class="brand" href="#inicio"><span class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="2" y="12" width="5" height="12" rx="1.5" fill="#0e1b17"/><rect x="10" y="5" width="5" height="19" rx="1.5" fill="#0e1b17"/><rect x="18" y="9" width="5" height="15" rx="1.5" fill="#0e1b17"/></svg></span><span><b>Cuaderno de Estadística 1</b><small>Pedro Nequiz · 2026 · v2 refactorizado</small></span></a>
+    <div class="rail-search"><div class="gsearch"><input id="gsearch2" type="search" placeholder="Buscar en el cuaderno…" aria-label="Buscar en el cuaderno" autocomplete="off"><div class="gsearch-r" id="gsearch2-r" role="listbox"></div></div></div>
     <nav id="rail-nav"></nav>
     <div class="rail-foot">
       <button class="btn sm" data-act="formulas">🧮 Formulario</button>
@@ -328,14 +371,18 @@ table.rev td{text-align:left;font-family:var(--f-body);white-space:normal;vertic
       <a class="btn sm" href="index.html">← Aula Digital <span class="sub">(si abres este archivo solo, puede no existir)</span></a>
     </div>
   </aside>
+  <div class="scrim" id="scrim"></div>
   <div class="main">
     <header class="top">
       <button class="btn sm burger" data-act="menu" aria-label="Menú">☰</button>
       <div class="crumb" id="crumb"></div>
       <div class="prog" title="Páginas visitadas"><i id="prog-i"></i></div>
       <button class="btn sm" data-act="formulas">🧮 <span>Formulario</span></button>
+      <div class="gsearch"><input id="gsearch" type="search" placeholder="Buscar en el cuaderno…" aria-label="Buscar en el cuaderno" autocomplete="off"><div class="gsearch-r" id="gsearch-r" role="listbox"></div></div>
+      <button class="btn sm gsearch-btn" data-act="search-open" aria-label="Buscar">🔍</button>
+      <button class="btn sm" data-act="modo" id="modo-btn" aria-pressed="false">✨ Limpio</button>
     </header>
-    <main class="stage" id="stage"></main>
+    <main class="stage" id="stage" tabindex="-1"></main>
     <footer class="pager">
       <button class="btn sm" id="btn-prev" data-act="prev">← Anterior</button>
       <div class="dots" id="pager-dots"></div>
@@ -631,11 +678,12 @@ const tr = (cells, cls = '') => `<tr class="${cls}">${cells.map(c => `<td>${c}</
 
 /* ---------- modal ---------- */
 function openModal(title, html, wide) {
+  openModal.prev = document.activeElement;
   const o = $('#ov'); $('#dlg').className = 'dlg' + (wide ? ' wide' : '');
   $('#dlg-t').textContent = title; const b = $('#dlg-b'); b.innerHTML = html; math(b);
   o.classList.add('on'); b.scrollTop = 0; document.body.style.overflow = 'hidden';
 }
-function closeModal() { $('#ov').classList.remove('on'); document.body.style.overflow = ''; }
+function closeModal() { $('#ov').classList.remove('on'); document.body.style.overflow = ''; const f = openModal.prev; if (f && f.focus && document.contains(f)) f.focus(); }
 ACT.th = el => { const t = TH[el.dataset.k]; if (t) openModal(t.t, t.h, t.wide); };
 ACT.close = () => closeModal();
 
@@ -726,7 +774,7 @@ function svgBars(labels, values, o = {}) {
   g += `<line class="ax" x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${y(0)}"/><line class="ax" x1="${m.l}" x2="${W - m.r}" y1="${y(0)}" y2="${y(0)}"/>`;
   if (o.xt) g += `<text class="lbl" x="${W / 2}" y="${H - 4}" text-anchor="middle">${o.xt}</text>`;
   if (o.yt) g += `<text class="lbl" transform="translate(12,${H / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* histograma / polígono / ojiva a partir de una distribución D */
 function svgHist(D, o = {}) {
@@ -770,7 +818,7 @@ function svgHist(D, o = {}) {
   g += ticks.map(t => `<text class="tk" x="${x(t)}" y="${H - m.b + 16}" text-anchor="middle">${fc(t, 2)}</text>`).join('');
   if (o.poly && !isAcc) g += xm.map(v => `<line class="gl" x1="${x(v)}" x2="${x(v)}" y1="${y(0)}" y2="${y(0) + 5}"/>`).join('');
   g += `<text class="lbl" x="${W / 2}" y="${H - 8}" text-anchor="middle">${o.xt || 'Intervalos'}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* diagrama de puntos */
 function svgDots(counts, labels, o = {}) {
@@ -783,7 +831,7 @@ function svgDots(counts, labels, o = {}) {
     for (let j = 0; j < counts[i]; j++) g += `<circle class="drop" style="--i:${k++}" cx="${cx}" cy="${base - r - 4 - j * (r * 2 + 3)}" r="${r}" fill="${PAL[i % PAL.length]}" stroke="${COL.ink}" stroke-width="1.5"/>`;
   });
   if (o.xt) g += `<text class="tk" x="${W / 2}" y="${H - 6}" text-anchor="middle">${o.xt}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* diagrama de caja y bigotes */
 function svgBox(F, o = {}) {
@@ -925,8 +973,63 @@ function refreshProgress() {
     const cnt = $('.cnt', c); if (cnt) cnt.textContent = `${v}/${ids.length} páginas`;
   });
 }
-ACT.nav = el => { location.hash = '#' + el.dataset.id; $('#rail').classList.remove('open'); };
-ACT.menu = () => $('#rail').classList.toggle('open');
+ACT.nav = el => { location.hash = '#' + el.dataset.id; $('#rail').classList.remove('open'); syncScrim(); };
+ACT.menu = () => { $('#rail').classList.toggle('open'); syncScrim(); };
+/* ---------- diseño Est2 ítem 10: modos Libreta / Limpio + buscador global ---------- */
+function drawerMode() { return document.body.classList.contains('limpio') || window.innerWidth <= 1000; }
+function syncScrim() { const sc = document.getElementById('scrim'); if (sc) sc.classList.toggle('on', $('#rail').classList.contains('open') && drawerMode()); }
+function closeRail() { $('#rail').classList.remove('open'); syncScrim(); const b = document.querySelector('.top .burger'); if (b && document.activeElement && document.activeElement.closest && document.activeElement.closest('#rail')) b.focus(); }
+function setModo(m) {
+  const limpio = m === 'limpio';
+  document.body.classList.toggle('limpio', limpio);
+  const btn = document.getElementById('modo-btn');
+  if (btn) { btn.textContent = limpio ? '📖 Libreta' : '✨ Limpio'; btn.setAttribute('aria-pressed', limpio ? 'true' : 'false'); }
+  try { localStorage.setItem('cuadEst1:modo', limpio ? 'limpio' : 'libreta'); } catch (e) { }
+  syncScrim();
+}
+ACT.modo = () => setModo(document.body.classList.contains('limpio') ? 'libreta' : 'limpio');
+ACT['search-open'] = () => { $('#rail').classList.add('open'); syncScrim(); const inp = document.getElementById('gsearch2'); if (inp) setTimeout(() => inp.focus(), 100); };
+const SEARCH_IDX = [];
+const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+function buildSearchIndex() {
+  SEARCH_IDX.length = 0;
+  PAGES.forEach(pg => SEARCH_IDX.push({ t: pg.t, s: `${pg.ic || ''} ${pg.kick || ''}`.trim(), go: () => { location.hash = '#' + pg.id; } }));
+  Object.keys(TH).forEach(k => {
+    const t = TH[k];
+    const pg = PAGES.find(p => (p.chips || []).includes(k));
+    SEARCH_IDX.push({ t: t.t, s: 'Teoría' + (pg ? ' · ' + pg.t : ''), go: () => {
+      if (pg && location.hash !== '#' + pg.id) { location.hash = '#' + pg.id; setTimeout(() => openModal(t.t, t.h, t.wide), 500); }
+      else openModal(t.t, t.h, t.wide);
+    } });
+  });
+}
+function wireSearch(inputId, resultsId) {
+  const inp = document.getElementById(inputId), box = document.getElementById(resultsId);
+  if (!inp || !box) return;
+  let cur = [], sel = 0;
+  const close = () => { box.classList.remove('on'); box.innerHTML = ''; cur = []; };
+  const activate = i => { const e = cur[i]; if (!e) return; close(); inp.value = ''; inp.blur(); closeRail(); e.go(); };
+  const render = () => {
+    const q = norm(inp.value.trim());
+    if (!q) { close(); return; }
+    cur = SEARCH_IDX.filter(e => norm(e.t).includes(q) || norm(e.s).includes(q)).slice(0, 8);
+    sel = 0;
+    box.innerHTML = cur.length ? cur.map((e, i) => `<button type="button" data-i="${i}" class="${i === sel ? 'sel' : ''}"><b>${e.t}</b><small>${e.s}</small></button>`).join('') : `<button type="button" disabled>Sin resultados para «${inp.value.trim()}»</button>`;
+    box.classList.add('on');
+  };
+  inp.addEventListener('input', render);
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!cur.length) return;
+      e.preventDefault();
+      sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + cur.length) % cur.length;
+      box.querySelectorAll('button').forEach((b, i) => b.classList.toggle('sel', i === sel));
+    } else if (e.key === 'Enter') { if (cur.length) { e.preventDefault(); activate(sel); } }
+    else if (e.key === 'Escape') { close(); inp.value = ''; }
+  });
+  box.addEventListener('mousedown', e => { const b = e.target.closest('button[data-i]'); if (b) { e.preventDefault(); activate(parseInt(b.dataset.i, 10)); } });
+  inp.addEventListener('blur', () => setTimeout(close, 150));
+}
 function go(d) { const i = CUR ? pageIdx(CUR.id) : 0, j = Math.max(0, Math.min(PAGES.length - 1, i + d)); if (j !== i) location.hash = '#' + PAGES[j].id; }
 ACT.prev = () => go(-1); ACT.next = () => go(+1);
 function showTab(root, id) {
@@ -978,7 +1081,7 @@ function svgPie(labels, values, o = {}) {
     lg += `<g transform="translate(${cx + r + 24},${22 + i * 22})"><rect width="14" height="14" rx="3" fill="${cols[i % cols.length]}" stroke="${COL.ink}" stroke-width="1.5"/><text class="tk" x="20" y="12" style="font-size:12px">${esc(labels[i])}</text></g>`;
     a0 = a1;
   });
-  return `<svg class="ch" viewBox="0 0 ${W + 60} ${H}" style="max-width:${W + 60}px" role="img">${g}${lg}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W + 60} ${H}" style="max-width:${W + 60}px" role="img" aria-label="Gráfica o diagrama">${g}${lg}</svg>`;
 }
 /* líneas: xs (etiquetas o números), series [{n, v:[...], c}] */
 function svgLine(xs, series, o = {}) {
@@ -997,7 +1100,7 @@ function svgLine(xs, series, o = {}) {
   if (o.xt) g += `<text class="lbl" x="${W / 2}" y="${H - 4}" text-anchor="middle">${o.xt}</text>`;
   if (o.yt) g += `<text class="lbl" transform="translate(12,${H / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>`;
   const lg = series.length > 1 ? `<div class="legend">${series.map((s, k) => `<span><i style="background:${s.c || PAL[k]}"></i>${s.n}</span>`).join('')}</div>` : '';
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>${lg}`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>${lg}`;
 }
 /* dispersión con recta opcional y residuos */
 function svgScatter(xs, ys, o = {}) {
@@ -1016,7 +1119,7 @@ function svgScatter(xs, ys, o = {}) {
   g += xs.map((v, i) => `<circle class="pt" style="--i:${i}" cx="${x(v)}" cy="${y(ys[i])}" r="${o.r || 6}" fill="${o.col || COL.sky}" stroke="${COL.ink}" stroke-width="2"><title>(${fc(v, 3)}, ${fc(ys[i], 3)})</title></circle>`).join('');
   if (o.xt) g += `<text class="lbl" x="${W / 2}" y="${H - 6}" text-anchor="middle">${o.xt}</text>`;
   if (o.yt) g += `<text class="lbl" transform="translate(13,${H / 2}) rotate(-90)" text-anchor="middle">${o.yt}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" ${o.id ? `id="${o.id}"` : ''}>${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama" ${o.id ? `id="${o.id}"` : ''}>${g}</svg>`;
 }
 
 /* ---------- tablas para completar (formulario) ---------- */
@@ -1531,10 +1634,10 @@ add('ind', 2, 'Tres monedas: ¿qué eventos son independientes?', 'Considérese 
     return { steps: [['Los eventos como conjuntos', `$A=${nice(A)}$<br>$B=${nice(B)}$<br>$C=${nice(C)}$ (águilas «seguidas»: aas o saa)`], ['Criterio', `$A$ y $B$ son independientes si $P(A\\cap B)=P(A)\\cdot P(B)$.`], ['Comprobar cada pareja', [chk('(A, B)', A, B, 'A', 'B'), chk('(A, C)', A, C, 'A', 'C'), chk('(B, C)', B, C, 'B', 'C')].map(s => s.replace('$P(', '$P(')).join('<br><br>')], ['Conclusión', `Son independientes (A,B) y (A,C). Son dependientes (B,C): si C ocurre, la 2.ª moneda <i>siempre</i> es águila ($P(B\\mid C)=1\\neq\\frac12$).`]], ans: 'A y B: independientes · A y C: independientes · B y C: <b>dependientes</b>' };
   }
 }], [{ t: 'Cuaderno', c: 'g' }]);
-add('ind', 3, 'Vivir dentro de 5 años', 'La probabilidad de que un hombre viva dentro de 5 años es de 1/4 y la probabilidad de que su mujer viva dentro de 5 años es de 1/3. ¿Cuál es la probabilidad de que ambos vivan dentro de 5 años?', [{
+add('ind', 3, 'Vivir dentro de 5 años', 'La probabilidad de que un hombre viva dentro de 5 años es de $\\frac{1}{4}$ y la probabilidad de que su mujer viva dentro de 5 años es de $\\frac{1}{3}$. ¿Cuál es la probabilidad de que ambos vivan dentro de 5 años?', [{
   l: '', q: 'P(ambos vivan)', sol: () => ({ steps: [['Supuesto', `Se consideran eventos independientes.`], ['Producto', `$P(H\\cap M)=P(H)P(M)=\\dfrac14\\cdot\\dfrac13=\\dfrac1{12}$`]], ans: ansP(1, 12) })
 }], [{ t: 'Cuaderno', c: 'g' }]);
-add('ind', 4, 'Tres tiradores', 'Por experiencias observadas, se sabe que las probabilidades de que 3 hombres den en el blanco son de 1/6, 1/4 y 1/3 respectivamente. Cada uno dispara una vez al blanco. Hallar la probabilidad de que exactamente uno de ellos dé en el blanco.', [{
+add('ind', 4, 'Tres tiradores', 'Por experiencias observadas, se sabe que las probabilidades de que 3 hombres den en el blanco son de $\\frac{1}{6}$, $\\frac{1}{4}$ y $\\frac{1}{3}$ respectivamente. Cada uno dispara una vez al blanco. Hallar la probabilidad de que exactamente uno de ellos dé en el blanco.', [{
   l: '', q: 'P(exactamente uno acierta)', sol: () => {
     const p = [[1, 6], [1, 4], [1, 3]], q = p.map(([a, b]) => [b - a, b]);
     const cases = [0, 1, 2].map(i => { const n = p.map((_, j) => j === i ? p[j][0] : q[j][0]).reduce((x, y) => x * y), d = 6 * 4 * 3; return [n, d]; });
@@ -2151,7 +2254,7 @@ function svgNum(arr, o = {}) {
   let g = `<line class="ax" x1="${m.l}" x2="${W - m.r}" y1="${base}" y2="${base}"/>` + ax.ticks.map(t => `<line class="ax" x1="${x(t)}" x2="${x(t)}" y1="${base}" y2="${base + 5}"/><text class="tk" x="${x(t)}" y="${base + 18}" text-anchor="middle">${fc(t, 2)}</text>`).join('');
   const cnt = {}; s.forEach((v, i) => { const k = v; cnt[k] = (cnt[k] || 0) + 1; g += `<circle class="drop" style="--i:${i}" cx="${x(v)}" cy="${base - 9 - (cnt[k] - 1) * 18}" r="8" fill="${COL.sky}" stroke="${COL.ink}" stroke-width="1.8"/>`; });
   (o.marks || []).forEach((k, i) => { g += `<g class="fadein" style="--d:${.5 + i * .15}s"><line x1="${x(k.v)}" x2="${x(k.v)}" y1="${16 + (i % 3) * 16}" y2="${base}" stroke="${k.c}" stroke-width="3" ${k.dash ? 'stroke-dasharray="6 4"' : ''}/><rect x="${x(k.v) - 34}" y="${2 + (i % 3) * 16}" width="68" height="15" rx="6" fill="${k.c}"/><text x="${x(k.v)}" y="${13 + (i % 3) * 16}" text-anchor="middle" font-size="10.5" font-weight="700" style="fill:#fff">${k.l} ${fc(k.v, 2)}</text></g>`; });
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* pasos de las medidas para una distribución agrupada */
 function groupedSteps(D, G, which = ['mean', 'median', 'mode']) {
@@ -2238,7 +2341,7 @@ function svgDev(a, o = {}) {
   a.forEach((v, i) => { const x = m.l + i * bw + bw * .2, w = bw * .6, top = Math.min(y(v), y(mu)), h = Math.abs(y(v) - y(mu));
     g += `<rect style="transform-box:fill-box;transform-origin:${v >= mu ? 'bottom' : 'top'};animation:growy .6s ${i * 40}ms both" x="${x}" y="${top}" width="${w}" height="${Math.max(h, 1)}" rx="3" fill="${v >= mu ? COL.sage : COL.coral}" stroke="${COL.ink}" stroke-width="1.3"><title>x=${fc(v, 2)} · desviación ${fc(v - mu, 2)}</title></rect><circle class="pt" style="--i:${i}" cx="${x + w / 2}" cy="${y(v)}" r="4" fill="${COL.ink}"/>`; });
   g += `<line class="fadein" x1="${m.l}" x2="${W - m.r}" y1="${y(mu)}" y2="${y(mu)}" stroke="${COL.violet}" stroke-width="2.5" stroke-dasharray="7 5"/><text class="lbl" x="${m.l + 6}" y="${y(mu) - 6}" text-anchor="start" stroke="#fff" stroke-width="4" paint-order="stroke" style="fill:${COL.violet}">x̄ = ${fc(mu, 2)}</text>`;
-  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfica o diagrama">${g}</svg>`;
 }
 /* banda x̄ ± s sobre un histograma */
 function histBand(svg, D, mu, s, o = {}) {
@@ -2712,8 +2815,8 @@ PAGES.push({
     } },
     { id: 'bif', t: '2 · Diagrama de bifurcación', render(p) {
       p.innerHTML = `<div class="pn rv"><h3><span class="ico">🌀</span>De la estabilidad al caos</h3><p class="sub">Cada columna es un valor de $r$; los puntos son los valores a los que se acerca el sistema después de muchos pasos. Al principio hay un solo valor, luego 2, 4… y finalmente un conjunto caótico.</p><canvas id="bf" width="760" height="380" style="width:100%;max-width:760px;border:2px solid var(--ink);border-radius:14px;background:#fff"></canvas><div class="row"><button class="btn go" id="bfg">▶ Dibujar de nuevo</button></div></div>`;
-      const cv = $('#bf', p), ctx = cv.getContext('2d'); let raf;
-      const draw = () => { cancelAnimationFrame(raf); ctx.clearRect(0, 0, 760, 380); ctx.fillStyle = '#0e1b17'; ctx.font = '12px monospace'; [2.5, 3, 3.5, 4].forEach(r => { const x = (r - 2.5) / 1.5 * 740 + 10; ctx.fillText(r.toFixed(1), x - 10, 374); ctx.fillRect(x, 355, 1, 5); }); let c = 0;
+      const cv = $('#bf', p), ctx = cv ? cv.getContext('2d') : null; let raf;
+      const draw = () => { if (!ctx) return; cancelAnimationFrame(raf); ctx.clearRect(0, 0, 760, 380); ctx.fillStyle = '#0e1b17'; ctx.font = '12px monospace'; [2.5, 3, 3.5, 4].forEach(r => { const x = (r - 2.5) / 1.5 * 740 + 10; ctx.fillText(r.toFixed(1), x - 10, 374); ctx.fillRect(x, 355, 1, 5); }); let c = 0;
         const step = () => { for (let k = 0; k < 8 && c < 740; k++, c++) { const r = 2.5 + c / 740 * 1.5; let x = 0.5; for (let i = 0; i < 200; i++) x = r * x * (1 - x); ctx.fillStyle = `hsl(${150 + c / 740 * 190},65%,40%)`; for (let i = 0; i < 80; i++) { x = r * x * (1 - x); ctx.fillRect(c + 10, 350 - x * 340, 1.4, 1.4); } } if (c < 740) raf = requestAnimationFrame(step); }; step(); };
       $('#bfg', p).onclick = draw; draw();
     } }
@@ -2845,7 +2948,7 @@ const PROF = {
 <div class="pn flat amber"><h3>⚠️ Errores comunes</h3><p>Comparar frecuencias absolutas de grupos de distinto tamaño (compara porcentajes del mismo tipo). Interpretar $a$ cuando $x=0$ está lejos de los datos. Creer que $r=-0.99$ es «casi sin relación» (el signo solo da el sentido). Afirmar que $x$ causa $y$ solo porque $r$ es alto, o predecir muy fuera del rango de $x$ (extrapolar).</p></div>
 </div>`,
   u3: `<div class="grid2" style="gap:14px">
-<div class="pn flat sage"><h3>📘 Experimentos y espacio muestral</h3><p><b>Determinista:</b> en las mismas condiciones siempre da lo mismo (hervir agua a 100 °C). <b>Aleatorio:</b> se conocen los resultados posibles, no cuál saldrá (lanzar un dado). El <b>espacio muestral</b> $S$ es el conjunto de todos los resultados; un <b>evento</b> es un subconjunto de $S$. <b>Simple:</b> un resultado, $\\{6\\}$. <b>Compuesto:</b> varios, $\\{2,4,6\\}$. <b>Seguro:</b> $S$, $P=1$. <b>Imposible:</b> $\\varnothing$, $P=0$ (suma 13 con dos dados). Escala: 0 imposible · 1/4 poco probable · 1/2 tan probable como no · 3/4 muy probable · 1 seguro. <i>Ley de los grandes números:</i> al repetir muchas veces, la frecuencia relativa se acerca a la probabilidad.</p></div>
+<div class="pn flat sage"><h3>📘 Experimentos y espacio muestral</h3><p><b>Determinista:</b> en las mismas condiciones siempre da lo mismo (hervir agua a 100 °C). <b>Aleatorio:</b> se conocen los resultados posibles, no cuál saldrá (lanzar un dado). El <b>espacio muestral</b> $S$ es el conjunto de todos los resultados; un <b>evento</b> es un subconjunto de $S$. <b>Simple:</b> un resultado, $\\{6\\}$. <b>Compuesto:</b> varios, $\\{2,4,6\\}$. <b>Seguro:</b> $S$, $P=1$. <b>Imposible:</b> $\\varnothing$, $P=0$ (suma 13 con dos dados). Escala: 0 imposible · $\\frac{1}{4}$ poco probable · $\\frac{1}{2}$ tan probable como no · $\\frac{3}{4}$ muy probable · 1 seguro. <i>Ley de los grandes números:</i> al repetir muchas veces, la frecuencia relativa se acerca a la probabilidad.</p></div>
 <div class="pn flat sky"><h3>🔀 Operaciones entre eventos</h3><p><b>Unión</b> $A\\cup B$: ocurre A, B o ambos. <b>Intersección</b> $A\\cap B$: ocurren los dos. <b>Complemento</b> $A^c$: no ocurre A. <b>Excluyentes:</b> $A\\cap B=\\varnothing$ (no pueden ocurrir juntos). $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$; si son excluyentes, la resta desaparece. <i>Ejemplo (tabla):</i> 200 estudiantes, 80 deporte (D), 60 música (M), 30 ambas: $P(D\\cup M)=80/200+60/200-30/200=11/20=0.55$; $P(\\text{ninguna})=1-11/20=9/20=0.45$; $P(\\text{solo D})=50/200=1/4$.</p></div>
 <div class="pn flat amber"><h3>🌳 Árbol y probabilidad total</h3><p>Cada rama lleva la probabilidad <b>condicional</b> de esa etapa; la conjunta de un camino es el producto de sus ramas; la probabilidad total de un evento es la suma de los caminos que terminan en él. <i>Ejemplo:</i> llueve con $P=0.30$; si llueve, llegar tarde tiene $P=0.40$; si no, $0.10$. $P(T)=(3/10)(2/5)+(7/10)(1/10)=19/100=0.19$. Y al revés: si llegó tarde, $P(\\text{llovió}\\mid\\text{tarde})=12/19\\approx 0.63$. <b>Independencia desde una tabla:</b> $P(D\\cap M)=3/20=0.15 \\ne P(D)P(M)=3/25=0.12$ → D y M <b>no</b> son independientes.</p></div>
 <div class="pn flat coral"><h3>🧮 Conteo</h3><p><b>Multiplicativo:</b> $m$ formas y luego $n$ formas → $m\\cdot n$ (3 playeras × 4 pantalones = 12). <b>Permutaciones</b> (importa el orden): $P(n,k)=n!/(n-k)!$. <b>Combinaciones</b> (no importa): $C(n,k)=n!/[k!(n-k)!]$, $0!=1$. <i>Ejemplo:</i> presidente y secretario entre 10: $P(10,2)=90$; 2 representantes iguales: $C(10,2)=45$. Comité de 3 con 6 mujeres y 4 hombres, exactamente 2 mujeres: $C(6,2)C(4,1)/C(10,3)=60/120=1/2$.</p></div>
@@ -2878,6 +2981,11 @@ ACT.reset = () => {
   location.hash = '#inicio'; location.reload();
 };
 window.addEventListener('DOMContentLoaded', () => {
+  let modo = 'libreta'; try { modo = localStorage.getItem('cuadEst1:modo') || 'libreta'; } catch (e) { }
+  setModo(modo === 'limpio' ? 'limpio' : 'libreta');
+  const sc = document.getElementById('scrim'); if (sc) sc.addEventListener('click', closeRail);
+  buildSearchIndex(); wireSearch('gsearch', 'gsearch-r'); wireSearch('gsearch2', 'gsearch2-r');
+  window.addEventListener('resize', syncScrim);
   buildRail();
   if (!location.hash) history.replaceState(null, '', '#inicio'); // replaceState no dispara hashchange: evita el doble route()
   route();
