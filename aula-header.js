@@ -8,9 +8,33 @@
    - Campos de cada página: label, href, icon, desc (opcional), ext: true (se abre en otra pestaña),
      pw: 'contraseña' (se muestra con el botón de llave en un popover, con botón Copiar).
    Uso en cada página:  <script src="auth-config.js"></script><script src="aula-header.js"></script>
+   Si la página está en una subcarpeta usa rutas relativas:
+     <script src="../auth-config.js"></script><script src="../aula-header.js"></script>
+   El script detecta automáticamente su propio prefijo de ruta y ajusta todos los
+   enlaces internos del menú para que funcionen desde cualquier nivel de directorio.
    ============================================================ */
 (function () {
   const KEY = 'aula-unlocked';
+
+  /* ===== DETECCIÓN AUTOMÁTICA DE PREFIJO DE RUTA =====
+     Localiza la etiqueta <script> que cargó este archivo y extrae el prefijo
+     (p. ej. "", "../", "../../") que antecede a "aula-header.js" en el atributo src.
+     Esto permite que el MENU use rutas relativas a la raíz del proyecto y funcione
+     correctamente desde index.html, Extras/, Programas_2024/, Cuadernillos/, etc. */
+  const BASE = (function () {
+    try {
+      const scripts = document.querySelectorAll('script[src]');
+      for (let i = scripts.length - 1; i >= 0; i--) {
+        const src = scripts[i].getAttribute('src') || '';
+        const match = src.match(/^(.*?)aula-header\.js(\?.*)?$/);
+        if (match) return match[1]; // e.g. "" | "../" | "../../"
+      }
+    } catch (e) { /* silent */ }
+    return '';
+  }());
+
+  /* Resuelve un href del MENU aplicando el prefijo BASE si no es una URL absoluta */
+  const resolveHref = href => /^(https?:)?\/\//i.test(href) ? href : BASE + href;
   /* ===== FUENTE ÚNICA DEL MENÚ =====
      Para agregar una página, añade una línea en "items" del grupo que corresponda.
      Todas las páginas y las tarjetas del index leen este objeto. */
@@ -79,14 +103,18 @@
     get: () => { try { return sessionStorage.getItem(KEY) === '1'; } catch (e) { return false; } },
     set: v => { try { v ? sessionStorage.setItem(KEY, '1') : sessionStorage.removeItem(KEY); } catch (e) { } }
   };
+  /* PAGE: nombre del archivo actual para marcar el ítem activo en el menú.
+     Se compara contra el href del MENU ya resuelto, por lo que siempre coincide. */
   const PAGE = location.pathname.split('/').pop() || 'index.html';
   const getMenu = () => MENU;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const linkAttrs = i => `href="${esc(i.href)}"${i.ext ? ' target="_blank" rel="noopener noreferrer"' : ''}`;
+  /* linkAttrs aplica resolveHref para que todos los hrefs internos incluyan el prefijo BASE */
+  const linkAttrs = i => `href="${esc(resolveHref(i.href))}"${i.ext ? ' target="_blank" rel="noopener noreferrer"' : ''}`;
   /* Botón de llave: muestra la contraseña de la página en un popover (con botón Copiar) */
   const keyBtn = (i, cls = '') => i.pw ? `<button type="button" class="aula-key ${cls}" data-aula-pw="${esc(i.pw)}" aria-label="Ver la contraseña de ${esc(i.label)}" title="Contraseña"><i class="bi bi-key-fill"></i></button>` : '';
 
-  const brandHTML = b => `<a class="navbar-brand fw-bold" href="${b.href}"><i class="bi ${b.icon} me-2"></i>${b.label}</a>`;
+  /* brandHTML también resuelve la ruta del enlace de inicio */
+  const brandHTML = b => `<a class="navbar-brand fw-bold" href="${esc(resolveHref(b.href))}"><i class="bi ${b.icon} me-2"></i>${b.label}</a>`;
 
   function injectStyle() {
     if (document.getElementById('aula-header-style')) return;
@@ -134,8 +162,12 @@
         <button class="btn btn-outline-light rounded-pill fw-bold" type="button" data-unlock><i class="bi bi-lock-fill me-1"></i>Desbloquear</button></div></nav>`;
     } else {
       const groups = MENU.groups.map(g => {
-        const hasActive = g.items.some(i => i.href === PAGE);
-        const items = g.items.map(i => `<li><a class="dropdown-item ${i.href === PAGE ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" ${linkAttrs(i)}><i class="bi ${i.icon || 'bi-dot'}"></i><span>${esc(i.label)}</span>${i.ext ? '<i class="bi bi-box-arrow-up-right ext" aria-hidden="true"></i>' : ''}</a>${keyBtn(i)}</li>`).join('');
+        const hasActive = g.items.some(i => resolveHref(i.href).split('/').pop() === PAGE);
+        const items = g.items.map(i => {
+          const resolved = resolveHref(i.href);
+          const isActive = resolved.split('/').pop() === PAGE;
+          return `<li><a class="dropdown-item ${isActive ? 'active' : ''} ${i.disabled ? 'disabled' : ''}" ${linkAttrs(i)}><i class="bi ${i.icon || 'bi-dot'}"></i><span>${esc(i.label)}</span>${i.ext ? '<i class="bi bi-box-arrow-up-right ext" aria-hidden="true"></i>' : ''}</a>${keyBtn(i)}</li>`;
+        }).join('');
         const auto = g.items.some(i => i.pw) ? ' data-bs-auto-close="outside"' : '';
         return `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${hasActive ? 'active-group' : ''}" href="#" role="button" data-bs-toggle="dropdown"${auto} aria-expanded="false" title="${esc(g.label)}"><i class="bi ${g.icon} me-1"></i><span class="d-xl-none">${esc(g.label)}</span><span class="d-none d-xl-inline">${esc(g.short || g.label)}</span></a><ul class="dropdown-menu dropdown-menu-end aula-dd"><li class="dd-head">${esc(g.label)}</li>${items}</ul></li>`;
       }).join('');
