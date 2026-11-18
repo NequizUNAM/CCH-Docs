@@ -92,10 +92,10 @@
         { label: 'Proyecto SILADIN: estrés', href: 'Extras/proyecto_siladin_estres.html', icon: 'bi-heart-pulse-fill' } ] },
       { id: 'apps', label: 'Páginas (Google Apps Script)', short: 'Apps GS', icon: 'bi-google', color: 'c-gs', apps: true, items: [
         { label: 'Catalogador de trayectoria CCH', href: 'https://script.google.com/macros/s/AKfycbwK58ejKPQCKUdQ5tiiNEYAAvcPlyhciyMGvtV9jk0VaiTzJo2WRft-lPbqfC7S0sII/exec', icon: 'bi-tags-fill', ext: true },
-        { label: 'PAE · Asistencia (formulario CCH)', href: 'https://script.google.com/macros/s/AKfycbyla09kXDSMx6iAQUPcpNaQ816tYYno0qxCJwyF48L88FEWXalIMJZDS0IwyjqtJwSh/exec', icon: 'bi-clipboard-check-fill', ext: true },
-        { label: 'Página de equipos (Forms)', href: 'https://script.google.com/macros/s/AKfycbz_ZaVPtNAmCskTjpcOHZMruXkPtxuYfmCcAsR0BtJbzVi3cDYAiJI5jgxK31XciyCpLA/exec', icon: 'bi-people-fill', ext: true, pw: 'K88B88JP' },
+        { label: 'PAE · Asistencia (formulario)', href: 'https://script.google.com/macros/s/AKfycbyla09kXDSMx6iAQUPcpNaQ816tYYno0qxCJwyF48L88FEWXalIMJZDS0IwyjqtJwSh/exec', icon: 'bi-clipboard-check-fill', ext: true },
         { label: 'Página de Constancias PIA', href: 'https://script.google.com/macros/s/AKfycbw7X1WmvaLZ30GKhahp2osrVk5PRQ8tck8Xd8O0a6iB6NOvpg-ZQhtCvdIyIXndDpef/exec', icon: 'bi-people-fill', ext: true, pw: 'PIA2026' },
         { label: 'Página de prompts', href: 'https://script.google.com/macros/s/AKfycbxlwk3_YrcEeQUXT3JKhxHTDfZ4ZAXgOHRThvAsXfRHAKQA8ZoivvbStrLoKyMzaKsXcA/exec', icon: 'bi-chat-dots-fill', ext: true },
+        { label: 'Página de equipos (Forms) (Deprecated)', href: 'https://script.google.com/macros/s/AKfycbz_ZaVPtNAmCskTjpcOHZMruXkPtxuYfmCcAsR0BtJbzVi3cDYAiJI5jgxK31XciyCpLA/exec', icon: 'bi-people-fill', ext: true, pw: 'K88B88JP' },
         { label: 'Base de proyectos SILADIN Jóvenes', href: 'https://script.google.com/macros/s/AKfycbx2StWKh-jvfSTVSyjR3cwRf5q_t4tGpJznwt0p4Jw2kfe9Rg0PB2HWnjawnb9DQi3q9A/exec', icon: 'bi-database-fill', ext: true } ] }
     ]
   };
