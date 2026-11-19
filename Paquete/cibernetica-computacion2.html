@@ -4041,7 +4041,7 @@ const Admin = (function () {
     const exFin = Ex.filter(r => r["Estado"] !== "Cerrado sin finalizar");
     const pend = Outbox.q().length;
     $("#dash-src").textContent = source;
-    $("#dash-sheet").hidden = !sheetUrl; if (sheetUrl) $("#dash-sheet").href = sheetUrl;
+    const sheetLink = $("#dash-sheet"); if (sheetLink) { sheetLink.hidden = !sheetUrl; if (sheetUrl) sheetLink.href = sheetUrl; }
     const secc = countBy(Ev.filter(r => r["Evento"] === "seccion"), "Sección");
     const unit = {}, unitInfo = {}; ["U1", "U2", "U3", "U4"].forEach(u => { const r = Rq.filter(x => x["Unidad"] === u); if (r.length) { const ok = r.filter(x => x["Acierto"] === "Sí").length; unit[u] = pct(ok, r.length); unitInfo[u] = `<b>${ok}</b> aciertos de ${r.length} respuestas`; } });
     const sat = {}; ["Claridad", "Laboratorios", "Preparación"].forEach(k => { const a = avg(Sv.map(r => r[k])); if (a !== null) sat[k] = Math.round(a * 100) / 100; });
@@ -4117,7 +4117,8 @@ const Admin = (function () {
   });
 
   /* ---------- Borrar datos (con confirmación dentro del panel) ---------- */
-  $("#dash-reset").addEventListener("click", () => {
+  const resetButton = $("#dash-reset");
+  if (resetButton) resetButton.addEventListener("click", () => {
     const z = $("#reset-zone"); if (!z) return;
     z.innerHTML = `<div class="reset-box" role="alertdialog" aria-labelledby="rs-t">
       <h4 id="rs-t">¿Deseas borrar todos los datos?</h4>
