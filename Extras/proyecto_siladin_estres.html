@@ -1559,7 +1559,7 @@ document.getElementById('btnExport').onclick=()=>download('avance_proyectos_sila
 document.getElementById('fileImport').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);if(o.p1||o.p2){ALL.p1=Object.assign(blank(),o.p1||{});ALL.p2=Object.assign(blank(),o.p2||{})}else{ALL[PID]=Object.assign(blank(),o)}S=ALL[PID];save();renderProject()}catch(err){document.getElementById('saveState').textContent='El archivo no es un JSON válido.'}};rd.readAsText(f)};
 
 /* ===================== header del Aula (fallback) ===================== */
-function ensureHeader(){const h=document.getElementById('app-header');if(h&&!h.children.length){h.innerHTML='<div class="nav-fallback"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i><a href="index.html">Aula Digital</a><span class="tag">Proyectos SILADIN · CCH Oriente</span></div>'}}
+function ensureHeader(){const h=document.getElementById('app-header');if(h&&!h.children.length){h.innerHTML='<div class="nav-fallback"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i><a href="../index.html">Aula Digital</a><span class="tag">Proyectos SILADIN · CCH Oriente</span></div>'}}
 function initReveal(){if(!('IntersectionObserver' in window)){document.querySelectorAll('.rv').forEach(e=>e.classList.add('in'));return}const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{threshold:.08});document.querySelectorAll('.rv').forEach(e=>io.observe(e));
   const links=[...document.querySelectorAll('.sec-nav a')],io2=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});document.querySelectorAll('section.sec').forEach(s=>io2.observe(s))}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&window.bootstrap){document.querySelectorAll('.modal.show').forEach(m=>bootstrap.Modal.getInstance(m)?.hide())}});
@@ -1568,6 +1568,6 @@ VIEW=/-machote$/.test(location.hash)?'mach':'panel';document.body.classList.togg
 renderProject();showMach();initReveal();
 </script>
 <!-- Para integrarla al Aula Digital: descomentar estas dos líneas y agregar la página al MENU de aula-header.js -->
-<!-- <script src="auth-config.js"></script><script src="aula-header.js"></script> -->
+<!-- <script src="../auth-config.js"></script><script src="../aula-header.js"></script> -->
 </body>
 </html>

@@ -153,15 +153,15 @@
           <button type="button" class="clr" id="q-clr" aria-label="Borrar búsqueda" hidden><i class="bi bi-x-lg"></i></button></div>
         <div class="stats"><span class="st"><b>${total}</b>páginas</span><span class="st"><b>${MENU.groups.length}</b>secciones</span><span class="st"><b>${apps}</b>apps de Google</span></div>`;
       chips.innerHTML = `<div class="chips"><div class="container"><div class="scroller" role="tablist" aria-label="Filtrar por sección">
-          <button type="button" class="chip on" data-g="all"><i class="bi bi-grid-fill"></i>Todo</button>
-          ${MENU.groups.map(g => `<button type="button" class="chip ${g.color}" data-g="${g.id}"><i class="bi ${g.icon}"></i>${esc(g.short || g.label)}<span class="n">${g.items.length}</span></button>`).join('')}
+          <button type="button" class="chip on" data-g="all" role="tab" aria-selected="true"><i class="bi bi-grid-fill"></i>Todo</button>
+          ${MENU.groups.map(g => `<button type="button" class="chip ${g.color}" data-g="${g.id}" role="tab" aria-selected="false"><i class="bi ${g.icon}"></i>${esc(g.short || g.label)}<span class="n">${g.items.length}</span></button>`).join('')}
         </div></div></div>`;
       const q = document.getElementById('q'), clr = document.getElementById('q-clr');
       q.addEventListener('input', () => { state.q = q.value; clr.hidden = !q.value; renderHome(true); });
       clr.addEventListener('click', () => { q.value = ''; state.q = ''; clr.hidden = true; renderHome(true); q.focus(); });
       chips.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
         state.g = c.dataset.g;
-        chips.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+        chips.querySelectorAll('.chip').forEach(x => { x.classList.toggle('on', x === c); x.setAttribute('aria-selected', x === c ? 'true' : 'false'); });
         renderHome(true);
         document.getElementById('home').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
       }));

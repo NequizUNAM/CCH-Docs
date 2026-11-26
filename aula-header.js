@@ -83,7 +83,7 @@
         { label: 'Proyectos finales EyP', href: 'proyectos_finales_eyp.html', icon: 'bi-journal-check' },
         { label: 'Examen Estadística', href: 'examenes_estadistica.html', icon: 'bi-file-earmark-check-fill' } ] },
       { id: 'extras', label: 'Extras', short: 'Extras', icon: 'bi-stars', color: 'c-ext', items: [
-        { label: 'Pagina Asistencias', href: 'https://nequizunam.github.io/CCH-Page/', icon: 'bi-chat-square-text-fill' },
+        { label: 'Página Asistencias', href: 'https://nequizunam.github.io/CCH-Page/', icon: 'bi-chat-square-text-fill', ext: true },
         { label: 'Guía CONAMAT', href: 'Extras/guia_conamat.html', icon: 'bi-trophy-fill' },
         { label: 'Tacur LibreOffice', href: 'Extras/libre_office.html', icon: 'bi-file-earmark-richtext-fill' },
         { label: 'Tacur IA Para PIA', href: 'Extras/tacur_ia-pia.html', icon: 'bi-chat-square-text-fill' },

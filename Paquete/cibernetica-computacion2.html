@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
 <title>Cibernética y Computación II</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Guía interactiva para el examen extraordinario de Cibernética y Computación II (UNAM-CCH Oriente).">
@@ -902,6 +906,8 @@ body.modal-open .fab-top,body.mnav-open .fab-top{opacity:0!important;pointer-eve
   html{scroll-behavior:auto}
 }
 </style>
+</head>
+<body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
 <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol>
@@ -1977,7 +1983,7 @@ JComboBox&lt;String&gt; pais = new JComboBox&lt;&gt;(paises);</code></pre>
                 <label style="font-weight:400"><input type="checkbox" class="tpg" value="Chispas de chocolate" checked> Chispas de chocolate</label>
                 <label style="font-weight:400"><input type="checkbox" class="tpg" value="Nuez"> Nuez</label>
                 <label style="font-weight:400"><input type="checkbox" class="tpg" value="Lechera" checked> Lechera</label></div>
-              <div class="hrow" style="align-items:flex-start"><button class="swbtn" id="pp-go">Confirmar Pedido</button><textarea class="swfield" id="pp-out" rows="3" readonly style="flex:1;min-width:160px;font-size:.8rem" aria-label="Resultado"></textarea></div>
+              <div class="hrow" style="align-items:flex-start"><button class="swbtn" id="pp-go">Confirmar Pedido</button><textarea class="swfield" id="pp-order-out" rows="3" readonly style="flex:1;min-width:160px;font-size:.8rem" aria-label="Resultado"></textarea></div>
             </div></div>
           <p class="small muted" style="margin-top:8px">Los <b>JRadioButton</b> van en un <code>ButtonGroup</code>: solo uno seleccionado. Los <b>JCheckBox</b> son independientes. Ambos se consultan con <code>isSelected()</code>.</p>
         </div>
@@ -3438,7 +3444,7 @@ $$("#f2 .swbtn").forEach(b => b.addEventListener("click", () => { const c = { VE
   });
   document.addEventListener("click", e => { if (!e.target.closest("#mb")) $$(".jmenu", mb).forEach(x => { x.classList.remove("open"); $(".items", x).hidden = true; }); });
 })();
-$("#pp-go").addEventListener("click", () => { const r = $('input[name="pp"]:checked'); const t = $$(".tpg").filter(c => c.checked).map(c => c.value); $("#pp-out").value = `Tu postre: ${r ? r.value : "Ninguno seleccionado"}\nToppings: ${t.join(", ")}`; });
+$("#pp-go").addEventListener("click", () => { const r = $('input[name="pp"]:checked'); const t = $$(".tpg").filter(c => c.checked).map(c => c.value); $("#pp-order-out").value = `Tu postre: ${r ? r.value : "Ninguno seleccionado"}\nToppings: ${t.join(", ")}`; });
 $("#pp-go").click();
 
 /* =================== U4 · Graphics =================== */
@@ -4181,3 +4187,5 @@ function afterLogin(isNew) {
   }
 })();
 </script>
+</body>
+</html>
